@@ -1,0 +1,37 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  position: relative;
+  margin: 0;
+}
+
+html {
+  background: var(--eepy-color-background);
+  scroll-behavior: smooth;
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+body {
+  flex: 1;
+  min-height: 100%;
+  position: relative;
+
+  border-radius: 2px;
+  color: var(--eepy-color-text);
+  
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.5;
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
