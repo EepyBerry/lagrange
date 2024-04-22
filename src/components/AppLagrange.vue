@@ -8,6 +8,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js'
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import { perlinShader } from '../utils/glsl/perlin'
 
 // THREE canvas/scene root
 const sceneRoot: Ref<any> = ref(null)
@@ -28,12 +29,15 @@ function init() {
   renderer = new THREE.WebGLRenderer( { antialias: true } )
   camera.position.z = 5
 
-  const geometry = new THREE.SphereGeometry(1, 64, 32)
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+  const texture = new THREE.TextureLoader().load('/2k_earth_daymap.jpg'); 
+  const geometry = new THREE.IcosahedronGeometry(1, 10)
+  const material = new THREE.MeshBasicMaterial({ color: 0xffffff, map: texture })
+  //const material = new THREE.ShaderMaterial({ wireframe: false, vertexShader: perlinShader() })
   const mesh = new THREE.Mesh(geometry, material)
-  const wireframeLines = initWireframe(mesh)
+  //const wireframeLines = initWireframe(mesh)
   //scene.add(mesh)
-  scene.add(wireframeLines)
+  //scene.add(wireframeLines)
+  scene.add(mesh)
 
   renderer.setSize( width, height )
   renderer.setAnimationLoop((time: number) => renderFrame(mesh, time))
