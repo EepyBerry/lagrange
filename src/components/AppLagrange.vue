@@ -5,10 +5,11 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
 import * as THREE from 'three'
-import { MeshPhysicalNodeMaterial, normalWorld, mx_fractal_noise_vec3 } from 'three/nodes';
-import { nodeFrame } from 'three/addons/renderers/webgl-legacy/nodes/WebGLNodes.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import * as ThreeUtils from '@/utils/three-utils';
+
+import fbmFragmentShader from '@/assets/glsl/generative_fbm.frag.glsl?raw'
+import defaultVertexShader from '@/assets/glsl/default.vert.glsl?raw'
 
 // THREE canvas/scene root
 const sceneRoot: Ref<any> = ref(null)
@@ -25,64 +26,38 @@ function init() {
   const width = window.innerWidth, height = window.innerHeight
 
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(70, width / height, 0.01, 10)
+  scene.background = new THREE.Color(0x0)
+  scene.background.convertLinearToSRGB()
   renderer = new THREE.WebGLRenderer( { antialias: true } )
-  camera.position.z = 5
+  camera = new THREE.PerspectiveCamera(70, width / height, 0.01, 10)
+  camera.position.z = 3
 
-  const texture = new THREE.TextureLoader().load('/2k_earth_daymap.jpg'); 
   const geometry = new THREE.IcosahedronGeometry(1, 10)
-  //const material = new THREE.MeshBasicMaterial({ color: 0xffffff, map: texture })
-  const material = new MeshPhysicalNodeMaterial()
-  material.colorNode = mx_fractal_noise_vec3(normalWorld.mul(.5))
+/*   const material = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    map: ThreeUtils.loadTextureFromUrl('/2k_earth_daymap.jpg', THREE.SRGBColorSpace),
+    toneMapped: false
+  }) */
+  const material = ThreeUtils.createRawShaderMaterial({
+    u_resolution: { value: new THREE.Vector2(width, height)},
+    u_time: { value: 0 }
+  }, defaultVertexShader, fbmFragmentShader)
 
   const mesh = new THREE.Mesh(geometry, material)
-  const wireframeLines = initWireframe(mesh)
-  scene.add(wireframeLines)
   scene.add(mesh)
-
-  const particleLight = new THREE.Mesh(
-    new THREE.SphereGeometry( 0.4, 8, 8 ),
-    new THREE.MeshBasicMaterial( { color: 0xffffff } )
-  );
-  scene.add( particleLight );
-  particleLight.add( new THREE.PointLight( 0xffffff, 1000 ) );
-
 
   renderer.setSize( width, height )
   renderer.setAnimationLoop((time: number) => renderFrame(mesh, time))
   sceneRoot.value.appendChild(renderer.domElement)
 
-  const controls = initControls(camera, renderer.domElement)
+  const controls = ThreeUtils.createControls(camera, renderer.domElement)
   const gui = new GUI();
   gui.add(controls, 'zoomToCursor');
 
   window.addEventListener( 'resize', onWindowResize );
 }
 
-function initControls(camera: THREE.Camera, canvas: HTMLCanvasElement): OrbitControls {
-  const controls = new OrbitControls( camera, canvas );
-  controls.enablePan = false
-  controls.enableDamping = false
-  controls.dampingFactor = 0.05
-  controls.screenSpacePanning = false
-  controls.minDistance = 1
-  controls.maxDistance = 5
-  controls.maxPolarAngle = Math.PI
-  return controls
-}
-
-function initWireframe(mesh: THREE.Mesh): THREE.LineSegments {
-  const wireframe = new THREE.WireframeGeometry(mesh.geometry)
-  let line = new THREE.LineSegments( wireframe );
-  const mat = line.material as THREE.Material
-  mat.depthTest = false
-  mat.opacity = 0.25
-  mat.transparent = true
-  return line
-}
-
 function renderFrame(mesh: THREE.Mesh, time: number) {
-	nodeFrame.update();
   renderer.render(scene, camera)
 }
 

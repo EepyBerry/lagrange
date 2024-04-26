@@ -14,6 +14,7 @@
     "target": "ESNext",
     "useDefineForClassFields": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "removeComments": false,
@@ -21,6 +22,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+
+    "types": [
+      "vite-plugin-glsl/ext"
+    ]
   }
 }
