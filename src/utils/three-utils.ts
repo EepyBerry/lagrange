@@ -1,7 +1,10 @@
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/Addons.js';
-import { TGALoader } from 'three/addons/loaders/TGALoader.js';
-import * as lygia from 'resolve-lygia';
+import { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { TGALoader } from 'three/addons/loaders/TGALoader.js'
+
+import perlinNoise from '@/assets/glsl/classic_pnoise.func.glsl?raw'
+import planetFragShader from '@/assets/glsl/planet.frag.glsl?raw'
+import planetVertShader from '@/assets/glsl/planet.vert.glsl?raw'
 
 export type SceneElements = {
   scene: THREE.Scene,
@@ -42,7 +45,7 @@ export function createScene(width: number, height: number): SceneElements
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   // setup camera
-  const camera = new THREE.PerspectiveCamera(70, width / height, 0.1, 1e9)
+  const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1e9)
   camera.position.z = 3
 
   return { scene, renderer, camera }
@@ -50,7 +53,7 @@ export function createScene(width: number, height: number): SceneElements
 
 export function createSun() {
   const geometry = new THREE.IcosahedronGeometry(50, 4)
-  const material = new THREE.MeshStandardMaterial( { color: 0xffffff, emissive: 0xffffff } )
+  const material = new THREE.MeshStandardMaterial( { color: 0xffffff, emissive: new THREE.Color(100, 100, 100) } )
   const sun = new THREE.PointLight(0xfff6e8, 5e8)
   sun.castShadow = true
   sun.receiveShadow = false
@@ -60,14 +63,15 @@ export function createSun() {
 
 export function createPlanetMesh()  {
   const geometry = new THREE.IcosahedronGeometry(1, 12)
-  /* const material = ThreeUtils.createRawShaderMaterial({
-    u_resolution: { value: new THREE.Vector2(width, height)},
-    u_time: { value: 0 }
-  }, defaultVertexShader, fbmFragmentShader) */
   const defaultTexture = loadTextureFromUrl('/2k_earth_daymap.jpg', THREE.SRGBColorSpace)
-  const material = new THREE.MeshStandardMaterial ({
+  /* const material = new THREE.MeshStandardMaterial ({
     map: defaultTexture,
-  })
+  }) */
+  const material = createRawShaderMaterial(perlinNoise, {
+    u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
+    u_time: { value: 0 },
+  }, )
+  //const material = createShaderBackedMaterial()
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
   return mesh
@@ -116,6 +120,37 @@ export function loadTextureFromUrl(url: string, colorSpace: THREE.ColorSpace) {
 // ----------------------------------------------------------------------------------------------------------------------
 // SHADER FUNCTIONS
 
+export function createShaderBackedMaterial() {
+  const mat = new THREE.MeshLambertMaterial()
+  mat.onBeforeCompile = (shader) => {
+    shader.vertexShader = `
+      	varying vec3 vPos;
+        ${shader.vertexShader}
+      `.replace(
+        `#include <begin_vertex>`,
+        `#include <begin_vertex>
+        	vPos = position;
+        `
+      );
+      console.log(shader.vertexShader);
+      shader.fragmentShader = `
+      	varying vec3 vPos;
+        ${perlinNoise}
+        ${shader.fragmentShader}
+      `.replace(
+        `vec4 diffuseColor = vec4( diffuse, opacity );`,
+        `
+        float noise = cnoise(normalize(vPos) * vec3(1, 2., 1.) * 2.);
+        float r = max(0.0, noise);
+        float b = max(0.0, -noise);
+        
+        vec4 diffuseColor = vec4( vec3(r, 0, b), opacity );`
+      );
+      console.log(shader.fragmentShader);
+  }
+  return mat;
+}
+
 /**
  * Creates a RawShaderMaterial instance from the given parameters
  * @param uniforms shader uniforms
@@ -124,14 +159,14 @@ export function loadTextureFromUrl(url: string, colorSpace: THREE.ColorSpace) {
  * @returns the RawShaderMaterial instance
  */
 export function createRawShaderMaterial(
-  uniforms: { [uniform: string]: THREE.IUniform<any>; },
-  vertexShader: string,
-  fragmentShader: string
+  shaderFunctions: string,
+  uniforms: { [uniform: string]: THREE.IUniform<any>; }
 ) {
-  return new THREE.RawShaderMaterial({
+  return new THREE.ShaderMaterial({
     uniforms,
-    vertexShader: lygia.resolveLygia(vertexShader),
-    fragmentShader: lygia.resolveLygia(fragmentShader), glslVersion: THREE.GLSL3
+    vertexShader: planetVertShader,
+    fragmentShader: planetFragShader.replace('/*__SHADER_FUNCTIONS__*/', shaderFunctions), 
+    glslVersion: THREE.GLSL1
   })
 }
 

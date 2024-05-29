@@ -9,9 +9,6 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import Stats from 'three/addons/libs/stats.module.js';
 import * as ThreeUtils from '@/utils/three-utils';
 
-import fbmFragmentShader from '@/assets/glsl/generative_fbm.frag.glsl?raw'
-import defaultVertexShader from '@/assets/glsl/default.vert.glsl?raw'
-
 // THREE canvas/scene root
 const sceneRoot: Ref<any> = ref(null)
 
