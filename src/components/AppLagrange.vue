@@ -21,7 +21,7 @@ function init() {
   const width = window.innerWidth, height = window.innerHeight
   $scene = ThreeUtils.createScene(width, height)
 
-  const mesh = ThreeUtils.createPlanetMesh()
+  const mesh = ThreeUtils.createPlanet()
   $scene.scene.add(mesh)
 
   const sun = ThreeUtils.createSun()

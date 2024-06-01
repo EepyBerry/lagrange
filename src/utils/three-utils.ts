@@ -2,7 +2,8 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import { TGALoader } from 'three/addons/loaders/TGALoader.js'
 
-import perlinNoise from '@/assets/glsl/classic_pnoise.func.glsl?raw'
+import fbmNoise from '@/assets/glsl/fbm.func.glsl?raw'
+import colorUtils from '@/assets/glsl/utils/color_utils.func.glsl?raw'
 import planetFragShader from '@/assets/glsl/planet.frag.glsl?raw'
 import planetVertShader from '@/assets/glsl/planet.vert.glsl?raw'
 
@@ -10,6 +11,10 @@ export type SceneElements = {
   scene: THREE.Scene,
   renderer: THREE.WebGLRenderer,
   camera: THREE.PerspectiveCamera
+}
+export type ColorRampStep = {
+  color: THREE.Color,
+  factor: number,
 }
 
 const CUBE_TEXTURE_LOADER = new THREE.CubeTextureLoader()
@@ -61,17 +66,21 @@ export function createSun() {
   return sun
 }
 
-export function createPlanetMesh()  {
+export function createPlanet()  {
   const geometry = new THREE.IcosahedronGeometry(1, 12)
   const defaultTexture = loadTextureFromUrl('/2k_earth_daymap.jpg', THREE.SRGBColorSpace)
-  /* const material = new THREE.MeshStandardMaterial ({
-    map: defaultTexture,
-  }) */
-  const material = createRawShaderMaterial(perlinNoise, {
+
+  const { rampSize, steps } = buildColorRamp([
+    { color: new THREE.Color(0x4f2d79), factor: 0.5 },
+    { color: new THREE.Color(0xecec00), factor: 0.8 },
+  ])
+  const material = createShaderMaterial([fbmNoise, colorUtils], {
     u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
-    u_time: { value: 0 },
+    u_octaves: { value: 16 },
+    u_cr_colors: { value: steps.map(crs => crs.color) },
+    u_cr_positions: { value: steps.map(crs => crs.factor) },
+    u_cr_size: { value: rampSize },
   }, )
-  //const material = createShaderBackedMaterial()
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
   return mesh
@@ -83,8 +92,8 @@ export function createControls(camera: THREE.Camera, canvas: HTMLCanvasElement):
   controls.enableDamping = false
   controls.dampingFactor = 0.05
   controls.screenSpacePanning = false
-  controls.minDistance = 1
-  controls.maxDistance = 5
+  controls.minDistance = 1.5
+  controls.maxDistance = 16
   controls.maxPolarAngle = Math.PI
   controls.rotateSpeed = 0.5
   return controls
@@ -117,10 +126,17 @@ export function loadTextureFromUrl(url: string, colorSpace: THREE.ColorSpace) {
   return texture
 }
 
+export function buildColorRamp(steps: ColorRampStep[]): { rampSize: number, steps: ColorRampStep[] } {
+  const filledSteps = Array(8) // max length
+    .fill({color: new THREE.Color(0x0), factor: -1})
+    .map((step, i) => i < steps.length ? ({color: steps[i].color, factor: steps[i].factor}) : step)
+    return { rampSize: steps.length, steps: filledSteps }
+}
+
 // ----------------------------------------------------------------------------------------------------------------------
 // SHADER FUNCTIONS
 
-export function createShaderBackedMaterial() {
+/* export function createShaderBackedMaterial() {
   const mat = new THREE.MeshLambertMaterial()
   mat.onBeforeCompile = (shader) => {
     shader.vertexShader = `
@@ -149,7 +165,7 @@ export function createShaderBackedMaterial() {
       console.log(shader.fragmentShader);
   }
   return mat;
-}
+} */
 
 /**
  * Creates a RawShaderMaterial instance from the given parameters
@@ -158,14 +174,14 @@ export function createShaderBackedMaterial() {
  * @param fragmentShader GLSL fragment shader
  * @returns the RawShaderMaterial instance
  */
-export function createRawShaderMaterial(
-  shaderFunctions: string,
+export function createShaderMaterial(
+  shaderFunctions: string[],
   uniforms: { [uniform: string]: THREE.IUniform<any>; }
 ) {
   return new THREE.ShaderMaterial({
     uniforms,
     vertexShader: planetVertShader,
-    fragmentShader: planetFragShader.replace('/*__SHADER_FUNCTIONS__*/', shaderFunctions), 
+    fragmentShader: planetFragShader.replace('/*__SHADER_FUNCTIONS__*/', shaderFunctions.join('\r\n')), 
     glslVersion: THREE.GLSL1
   })
 }

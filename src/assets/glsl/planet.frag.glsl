@@ -2,16 +2,27 @@
 precision highp float;
 #endif
 
+// Main uniforms
+uniform int u_octaves;
+uniform vec2 u_resolution;
+uniform float u_time;
+
+// Color ramp uniforms
+uniform float[8] u_cr_positions;
+uniform vec3[8] u_cr_colors;
+uniform int u_cr_size;
+
 varying vec3 vPos;
-uniform float opacity;
 
 /*__SHADER_FUNCTIONS__*/
 
 void main() {
-    float noise = cnoise(normalize(vPos) * vec3(1., 1., 1.) * 2.);
-    float r = max(0.0, noise);
-    float b = max(0.0, -noise);
-    
-    vec4 diffuseColor = vec4( vec3(r, 0.0, b), 1.0 );
-    gl_FragColor = diffuseColor;
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    st.x *= u_resolution.x/u_resolution.y;
+
+    vec3 color = vec3(0.0);
+    color += fbm(vPos*2.0, u_octaves);
+    color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
+
+    gl_FragColor = vec4(color,1.0);
 }
