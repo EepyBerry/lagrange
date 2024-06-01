@@ -34,7 +34,6 @@ function init() {
   sceneRoot.value.appendChild($scene.renderer.domElement)
 
   ThreeUtils.createControls($scene.camera, $scene.renderer.domElement)
-  new GUI();
 
   const stats = new Stats();
 	document.body.appendChild( stats.dom );

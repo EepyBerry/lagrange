@@ -6,6 +6,7 @@ import fbmNoise from '@/assets/glsl/fbm.func.glsl?raw'
 import colorUtils from '@/assets/glsl/utils/color_utils.func.glsl?raw'
 import planetFragShader from '@/assets/glsl/planet.frag.glsl?raw'
 import planetVertShader from '@/assets/glsl/planet.vert.glsl?raw'
+import { degToRad } from 'three/src/math/MathUtils.js'
 
 export type SceneElements = {
   scene: THREE.Scene,
@@ -71,8 +72,13 @@ export function createPlanet()  {
   const defaultTexture = loadTextureFromUrl('/2k_earth_daymap.jpg', THREE.SRGBColorSpace)
 
   const { rampSize, steps } = buildColorRamp([
-    { color: new THREE.Color(0x4f2d79), factor: 0.5 },
-    { color: new THREE.Color(0xecec00), factor: 0.8 },
+    { color: new THREE.Color(0x101b38), factor: 0 },
+    { color: new THREE.Color(0x182852), factor: 0.4 },
+    { color: new THREE.Color(0x2a3b80), factor: 0.495 },
+    { color: new THREE.Color(0x757515), factor: 0.5 },
+    { color: new THREE.Color(0x446611), factor: 0.505 },
+    { color: new THREE.Color(0x223b05), factor: 0.65 },
+    { color: new THREE.Color(0x223b05), factor: 1 },
   ])
   const material = createShaderMaterial([fbmNoise, colorUtils], {
     u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
@@ -127,7 +133,7 @@ export function loadTextureFromUrl(url: string, colorSpace: THREE.ColorSpace) {
 }
 
 export function buildColorRamp(steps: ColorRampStep[]): { rampSize: number, steps: ColorRampStep[] } {
-  const filledSteps = Array(8) // max length
+  const filledSteps = Array(16) // max length
     .fill({color: new THREE.Color(0x0), factor: -1})
     .map((step, i) => i < steps.length ? ({color: steps[i].color, factor: steps[i].factor}) : step)
     return { rampSize: steps.length, steps: filledSteps }
