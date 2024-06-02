@@ -20,7 +20,6 @@ void main() {
     vec3 color = vec3(0.0);
     color += fbm(vPos*2.0, u_octaves);
     color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
-    color = linear_to_srgb(color);
     
     csm_DiffuseColor = vec4(color,1.0);
 }

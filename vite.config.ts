@@ -1,16 +1,24 @@
 import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import vue, { Options } from '@vitejs/plugin-vue'
 import VueDevTools from 'vite-plugin-vue-devtools'
 import glsl from 'vite-plugin-glsl';
+
+const vuePluginConfig: Options = {
+  template: {
+    compilerOptions: {
+      isCustomElement: tag => tag.startsWith('iconify-')
+    }
+  }
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
+    vue(vuePluginConfig),
     VueDevTools(),
-    //glsl()
+    glsl()
   ],
   resolve: {
     alias: {

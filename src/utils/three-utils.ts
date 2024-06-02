@@ -23,6 +23,10 @@ const CUBE_TEXTURE_LOADER = new THREE.CubeTextureLoader()
 const TEXTURE_LOADER = new THREE.TextureLoader()
 const TGA_LOADER = new TGALoader()
 
+const INIT_CAM_DISTANCE = 4
+const INIT_CAM_ANGLE = -45
+const INIT_PLANET_SIZE = 12
+
 // ----------------------------------------------------------------------------------------------------------------------
 // SCENE FUNCTIONS
 
@@ -53,7 +57,9 @@ export function createScene(width: number, height: number): SceneElements
 
   // setup camera
   const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1e9)
-  camera.position.z = 3
+  const planetOrbit = new THREE.Spherical(INIT_CAM_DISTANCE, Math.PI / 2.0, degToRad(INIT_CAM_ANGLE));
+  planetOrbit.makeSafe();
+  camera.position.setFromSpherical(planetOrbit);
 
   return { scene, renderer, camera }
 }
@@ -80,6 +86,25 @@ export function createPlanet()  {
     { color: new THREE.Color(0x446611), factor: 0.505 },
     { color: new THREE.Color(0x223b05), factor: 0.65 },
     { color: new THREE.Color(0x223b05), factor: 1 },
+  ])
+  const material = createShaderMaterial([fbmNoise, colorUtils], {
+    u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
+    u_octaves: { value: 16 },
+    u_cr_colors: { value: steps.map(crs => crs.color) },
+    u_cr_positions: { value: steps.map(crs => crs.factor) },
+    u_cr_size: { value: rampSize },
+  }, )
+  const mesh = new THREE.Mesh(geometry, material)
+  mesh.receiveShadow = true
+  return mesh
+}
+
+export function createClouds(height: number) {
+  const geometry = new THREE.IcosahedronGeometry(1, 12 + height)
+
+  const { rampSize, steps } = buildColorRamp([
+    { color: new THREE.Color(0x0), factor: 0 },
+    { color: new THREE.Color(0xffffff), factor: 1 },
   ])
   const material = createShaderMaterial([fbmNoise, colorUtils], {
     u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
