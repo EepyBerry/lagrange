@@ -155,7 +155,7 @@ export function createShaderMaterial(
   uniforms: { [uniform: string]: THREE.IUniform<any>; }
 ) {
   return new CustomShaderMaterial({
-    baseMaterial: THREE.MeshPhongMaterial,
+    baseMaterial: THREE.MeshStandardMaterial,
     vertexShader: planetVertShader,
     fragmentShader: planetFragShader.replace('/*__SHADER_FUNCTIONS__*/', shaderFunctions.join('\r\n')),
     uniforms,
