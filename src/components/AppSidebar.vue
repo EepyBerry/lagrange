@@ -1,14 +1,19 @@
 <template>
   <div id="sidebar">
-    <section id="sidebar-section">
-      <h1 id="title">
-        <iconify-icon icon="mingcute:planet-fill" />
-        Planet Settings
-      </h1>
-    </section>
-    <section id="sidebar-section">
-      <p>WIP :3</p>
-      <input type="checkbox">
+    <section>
+      <div id="title">
+        <h1 class="headline-sm">
+          <iconify-icon icon="mingcute:planet-line" width="1.25em" />
+          Planet settings
+        </h1>
+      <iconify-icon icon="mingcute:down-fill" width="1.25em" />
+      </div>
+      <ParameterTable>
+        <ParameterField type="number" unit="°">Axial tilt</ParameterField>
+        <ParameterField type="number" unit="°">Rotation</ParameterField>
+        <ParameterDivider />
+        <ParameterField type="number" unit="°">Axial tilt</ParameterField>
+      </ParameterTable>
     </section>
   </div>
 </template>
@@ -23,19 +28,31 @@
   inset: 0 auto 0 0;
   width: 20rem;
   margin: 1%;
+  overflow-y: auto;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
 
-  #sidebar-section {
+  section {
     background-color: var(--lg-primary);
-    border-radius: 8px;
+    border-bottom: 2px solid var(--lg-accent);
     width: 100%;
     padding: 0.5rem 0.75rem;
+
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: space-between;
+    gap: 4px;
   }
+}
+
+#title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 </style>

@@ -7,7 +7,7 @@ export default class ColorRampStep {
   factor: number
 
   constructor(color: number | string, factor: number) {
-    this.color = new THREE.Color(color);
-    this.factor = factor;
+    this.color = new THREE.Color(color)
+    this.factor = factor
   }
 }

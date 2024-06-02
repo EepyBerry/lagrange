@@ -2,9 +2,9 @@
   <svg id="app-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 328.46 317.85">
     <g id="circles">
       <circle class="cls-4" cx="164.23" cy="158.92" r="157.92" />
-      <circle class="cls-3" cx="6.31" cy="158.8" r="6.31" />
-      <circle class="cls-3" cx="243.32" cy="21.81" r="6.31" />
-      <circle class="cls-3" cx="243.32" cy="295.78" r="6.31" />
+      <circle class="cls-3" cx="4.5" cy="158.92" r="4.5" />
+      <circle class="cls-3" cx="241.51" cy="22.11" r="4.5" />
+      <circle class="cls-3" cx="241.51" cy="295.91" r="4.5" />
       <circle id="earth" class="cls-3" cx="322.15" cy="158.8" r="6.31" />
     </g>
     <g>      

@@ -25,7 +25,6 @@ const TGA_LOADER = new TGALoader()
 
 const INIT_CAM_DISTANCE = 4
 const INIT_CAM_ANGLE = -45
-const INIT_PLANET_SIZE = 12
 
 // ----------------------------------------------------------------------------------------------------------------------
 // SCENE FUNCTIONS
