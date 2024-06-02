@@ -22,5 +22,5 @@ void main() {
     color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
     color = linear_to_srgb(color);
     
-    gl_FragColor = vec4(color,1.0);
+    csm_DiffuseColor = vec4(color,1.0);
 }

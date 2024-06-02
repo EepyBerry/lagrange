@@ -7,6 +7,7 @@ import colorUtils from '@/assets/glsl/utils/color_utils.func.glsl?raw'
 import planetFragShader from '@/assets/glsl/planet.frag.glsl?raw'
 import planetVertShader from '@/assets/glsl/planet.vert.glsl?raw'
 import { degToRad } from 'three/src/math/MathUtils.js'
+import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 
 export type SceneElements = {
   scene: THREE.Scene,
@@ -142,37 +143,6 @@ export function buildColorRamp(steps: ColorRampStep[]): { rampSize: number, step
 // ----------------------------------------------------------------------------------------------------------------------
 // SHADER FUNCTIONS
 
-/* export function createShaderBackedMaterial() {
-  const mat = new THREE.MeshLambertMaterial()
-  mat.onBeforeCompile = (shader) => {
-    shader.vertexShader = `
-      	varying vec3 vPos;
-        ${shader.vertexShader}
-      `.replace(
-        `#include <begin_vertex>`,
-        `#include <begin_vertex>
-        	vPos = position;
-        `
-      );
-      console.log(shader.vertexShader);
-      shader.fragmentShader = `
-      	varying vec3 vPos;
-        ${perlinNoise}
-        ${shader.fragmentShader}
-      `.replace(
-        `vec4 diffuseColor = vec4( diffuse, opacity );`,
-        `
-        float noise = cnoise(normalize(vPos) * vec3(1, 2., 1.) * 2.);
-        float r = max(0.0, noise);
-        float b = max(0.0, -noise);
-        
-        vec4 diffuseColor = vec4( vec3(r, 0, b), opacity );`
-      );
-      console.log(shader.fragmentShader);
-  }
-  return mat;
-} */
-
 /**
  * Creates a RawShaderMaterial instance from the given parameters
  * @param uniforms shader uniforms
@@ -184,11 +154,11 @@ export function createShaderMaterial(
   shaderFunctions: string[],
   uniforms: { [uniform: string]: THREE.IUniform<any>; }
 ) {
-  return new THREE.ShaderMaterial({
-    uniforms,
+  return new CustomShaderMaterial({
+    baseMaterial: THREE.MeshPhongMaterial,
     vertexShader: planetVertShader,
-    fragmentShader: planetFragShader.replace('/*__SHADER_FUNCTIONS__*/', shaderFunctions.join('\r\n')), 
-    glslVersion: THREE.GLSL1
+    fragmentShader: planetFragShader.replace('/*__SHADER_FUNCTIONS__*/', shaderFunctions.join('\r\n')),
+    uniforms,
   })
 }
 
