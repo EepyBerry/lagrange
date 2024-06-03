@@ -9,16 +9,23 @@
       <iconify-icon icon="mingcute:down-fill" width="1.25em" />
       </div>
       <ParameterTable>
-        <ParameterField type="number" unit="°">Axial tilt</ParameterField>
-        <ParameterField type="number" unit="°">Rotation</ParameterField>
+        <ParameterField v-model="LG_PARAMETERS.planetMeshQuality" type="number">Mesh quality</ParameterField>
+        <ParameterField v-model="LG_PARAMETERS.planetRadius" type="number">Radius</ParameterField>
+        <ParameterField v-model="LG_PARAMETERS.planetAxialTilt" type="number" unit="°">Axial tilt</ParameterField>
+        <ParameterField v-model="LG_PARAMETERS.planetRotation" type="number" unit="°">Rotation</ParameterField>
         <ParameterDivider />
-        <ParameterField type="number" unit="°">Axial tilt</ParameterField>
       </ParameterTable>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
+import { watch } from 'vue';
+import { LG_PARAMETERS } from '@/utils/globals'
+
+watch(LG_PARAMETERS, (newValue) => {
+  console.log(newValue)
+})
 </script>
 
 <style scoped lang="scss">

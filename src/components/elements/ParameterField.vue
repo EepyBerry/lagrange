@@ -4,31 +4,18 @@
       <slot>ParameterName</slot>
     </td>
     <td>
-      <input v-if="type === 'number'" type="text" inputmode="numeric" pattern="[0-9.,]*"
-        @keydown.backspace="emit('input')"
-        @keydown.delete="emit('input')"
-        @input="checkDigit">
-      <input v-if="['text', 'checkbox'].includes(type)" :type="type"
-        @input="emit('input')">
+      <input v-if="type === 'number'" type="text" inputmode="numeric" pattern="[0-9.,]*" v-model="lgParam">
+      <input v-if="['text', 'checkbox'].includes(type)" :type="type" ref="input" v-model="lgParam">
     </td>
-    <td>
+    <td class="unit">
       {{ unit }}
     </td>
   </tr>
 </template>
 
 <script setup lang="ts">
-const numberRgx = /^(-?\d{1,}[\\.,]?\d{1,})$/
-const keyRgx = /[\d\b\\.,]/
-
-const emit = defineEmits(['input'])
-defineProps<{ type: string, unit: string }>()
-
-function checkDigit(event: Event) {
-  if (keyRgx.test((event as KeyboardEvent).key)) {
-    emit('input')
-  }
-}
+const lgParam = defineModel<string | number | boolean>()
+defineProps<{ type: string, unit?: string }>()
 </script>
 
 <style scoped lang="scss">
@@ -47,6 +34,10 @@ tr.field {
   td:last-child {
     width: auto;
     padding-left: 4px;
+  }
+
+  td.unit {
+    font-size: 0.75rem;
   }
 }
 

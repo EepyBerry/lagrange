@@ -8,6 +8,7 @@ import planetFragShader from '@/assets/glsl/planet.frag.glsl?raw'
 import planetVertShader from '@/assets/glsl/planet.vert.glsl?raw'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
+import { LG_PARAMETERS } from './globals'
 
 export type SceneElements = {
   scene: THREE.Scene,
@@ -22,9 +23,6 @@ export type ColorRampStep = {
 const CUBE_TEXTURE_LOADER = new THREE.CubeTextureLoader()
 const TEXTURE_LOADER = new THREE.TextureLoader()
 const TGA_LOADER = new TGALoader()
-
-const INIT_CAM_DISTANCE = 4
-const INIT_CAM_ANGLE = -45
 
 // ----------------------------------------------------------------------------------------------------------------------
 // SCENE FUNCTIONS
@@ -56,7 +54,8 @@ export function createScene(width: number, height: number): SceneElements
 
   // setup camera
   const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1e9)
-  const planetOrbit = new THREE.Spherical(INIT_CAM_DISTANCE, Math.PI / 2.0, degToRad(INIT_CAM_ANGLE));
+  const planetOrbit = new THREE.Spherical(
+    LG_PARAMETERS.initCamDistance, Math.PI / 2.0, degToRad(LG_PARAMETERS.initCamAngle));
   planetOrbit.makeSafe();
   camera.position.setFromSpherical(planetOrbit);
 

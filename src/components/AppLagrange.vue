@@ -21,8 +21,6 @@ let $scene: ThreeUtils.SceneElements
 onMounted(() => init())
 
 function init() {
-const params = new LagrangeParameters()
-
   const width = window.innerWidth, height = window.innerHeight
   $scene = ThreeUtils.createScene(width, height)
 
