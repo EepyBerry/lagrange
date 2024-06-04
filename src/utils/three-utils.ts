@@ -69,12 +69,13 @@ export function createSun() {
   sun.castShadow = true
   sun.receiveShadow = false
   sun.add(new THREE.Mesh(geometry, material))
+  sun.name = 'lg_sun'
   return sun
 }
 
 export function createPlanet()  {
   const geometry = new THREE.IcosahedronGeometry(1, 12)
-  const defaultTexture = loadTextureFromUrl('/2k_earth_daymap.jpg', THREE.SRGBColorSpace)
+  //const defaultTexture = loadTextureFromUrl('/2k_earth_daymap.jpg', THREE.SRGBColorSpace)
 
   const { rampSize, steps } = buildColorRamp([
     { color: new THREE.Color(0x101b38), factor: 0 },
@@ -91,9 +92,10 @@ export function createPlanet()  {
     u_cr_colors: { value: steps.map(crs => crs.color) },
     u_cr_positions: { value: steps.map(crs => crs.factor) },
     u_cr_size: { value: rampSize },
-  }, )
+  })
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
+  mesh.name = 'lg_planet'
   return mesh
 }
 
@@ -113,6 +115,7 @@ export function createClouds(height: number) {
   }, )
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
+  mesh.name = 'lg_clouds'
   return mesh
 }
 
@@ -177,12 +180,14 @@ export function createShaderMaterial(
   shaderFunctions: string[],
   uniforms: { [uniform: string]: THREE.IUniform<any>; }
 ) {
-  return new CustomShaderMaterial({
+  const mat = new CustomShaderMaterial({
     baseMaterial: THREE.MeshStandardMaterial,
     vertexShader: planetVertShader,
     fragmentShader: planetFragShader.replace('/*__SHADER_FUNCTIONS__*/', shaderFunctions.join('\r\n')),
     uniforms,
   })
+  mat.needsUpdate = true
+  return mat
 }
 
 // ----------------------------------------------------------------------------------------------------------------------
