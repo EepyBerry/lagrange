@@ -1,6 +1,7 @@
 <template>
   <AppSidebar />
   <div ref="sceneRoot"></div>
+  <OverlaySpinner :load="showSpinner" />
 </template>
 
 <script setup lang="ts">
@@ -9,15 +10,17 @@ import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
 import * as ThreeUtils from '@/utils/three-utils';
 import AppSidebar from './AppSidebar.vue';
-import { LG_PARAMETERS } from '@/utils/globals';
-import type LagrangeParameters from '@/utils/lagrange-parameters';
+import { LG_PARAMETERS } from '@core/globals';
+import type LagrangeParameters from '@/core/models/lagrange-parameters.model';
 import { degToRad } from 'three/src/math/MathUtils.js';
+import { GeometryType, type SceneElements } from '@core/types';
 
 // THREE canvas/scene root
 const sceneRoot: Ref<any> = ref(null)
+const showSpinner: Ref<boolean> = ref(false)
 
 // Main THREE objects
-let $scene: ThreeUtils.SceneElements
+let $se: SceneElements
 let _sun: THREE.Object3D
 let _planet: THREE.Object3D
 
@@ -25,60 +28,53 @@ const VEC_Z = new THREE.Vector3(0, 0, 1)
 const VEC_UP = new THREE.Vector3(0, 1, 0)
 
 onMounted(() => init())
-watch(LG_PARAMETERS, (newValue) => {
-  updateScene(newValue)
-})
+watch(LG_PARAMETERS, (newValue) => updateScene(newValue as LagrangeParameters))
 
 function init() {
   const width = window.innerWidth, height = window.innerHeight
-  $scene = ThreeUtils.createScene(width, height)
+  $se = ThreeUtils.createScene(width, height)
 
-  const planet = initPlanet()
   initSun()
+  initPlanet()
+  initRendering(width, height)
 
-  initRendering(width, height, planet)
-  ThreeUtils.createControls($scene.camera, $scene.renderer.domElement)
+  ThreeUtils.createControls($se.camera, $se.renderer.domElement)
   window.addEventListener('resize', onWindowResize);
 }
 
-function initRendering(width: number, height: number, planet: THREE.Mesh) {
+function initRendering(width: number, height: number) {
   const stats = new Stats();
-  stats.dom.style.right = "0"
-  stats.dom.style.left = "auto"
+  stats.dom.style.right = '0'
+  stats.dom.style.left = 'auto'
 	document.body.appendChild( stats.dom )
 
-  $scene.renderer.setSize( width, height )
-  $scene.renderer.setAnimationLoop(() => renderFrame(stats))
-  sceneRoot.value.appendChild($scene.renderer.domElement)
+  $se.renderer.setSize( width, height )
+  $se.renderer.setAnimationLoop(() => renderFrame(stats))
+  sceneRoot.value.appendChild($se.renderer.domElement)
 }
 
-function initPlanet(wireframe: boolean = false): THREE.Mesh {
-  const planet = ThreeUtils.createPlanet()
-  $scene.scene.add(planet)
-  if (wireframe) {
-    $scene.scene.add(ThreeUtils.createPlanetWireframe(planet))
-  }
+function initPlanet(): void {
+  const planet = ThreeUtils.createPlanet(GeometryType.ICOSPHERE)
+  $se.scene.add(planet)
   _planet = planet
-  return planet
 }
 
-function initSun(): THREE.PointLight {
+function initSun(): void {
   const sun = ThreeUtils.createSun()
   sun.position.set(0, 5e3, 1e4)
-  $scene.scene.add(sun)
+  $se.scene.add(sun)
   _sun = sun
-  return sun
 }
 
 function renderFrame(stats: Stats) {
   stats.update()
-  $scene.renderer.render($scene.scene, $scene.camera)
+  $se.renderer.render($se.scene, $se.camera)
 }
 
 function onWindowResize() {
-  $scene.camera.aspect = window.innerWidth / window.innerHeight
-  $scene.camera.updateProjectionMatrix()
-  $scene.renderer.setSize(window.innerWidth, window.innerHeight)
+  $se.camera.aspect = window.innerWidth / window.innerHeight
+  $se.camera.updateProjectionMatrix()
+  $se.renderer.setSize(window.innerWidth, window.innerHeight)
 }
 
 function updateScene(params: LagrangeParameters) {
@@ -86,13 +82,20 @@ function updateScene(params: LagrangeParameters) {
     const key = entry[0]
     const value = entry[1]
     switch (key) {
-      case 'planetRadius':
+      case '_planetGeometryType': {
+        showSpinner.value = true
+        const newPlanet = ThreeUtils.switchPlanetMesh($se.scene, value)
+        _planet = newPlanet
+        showSpinner.value = false
+        break
+      }
+      case '_planetRadius':
         _planet.scale.setScalar(isNaN(value) ? 1 : value)
         break;
-      case 'planetAxialTilt':
+      case '_planetAxialTilt':
         _planet.rotateOnWorldAxis(VEC_Z, degToRad(isNaN(value) ? 0 : value) - _planet.rotation.z)
         break;
-      case 'planetRotation':
+      case '_planetRotation':
         _planet.rotateOnAxis(VEC_UP, degToRad(isNaN(value) ? 0 : value) - _planet.rotation.y)
         break;
     }

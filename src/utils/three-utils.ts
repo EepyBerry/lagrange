@@ -2,23 +2,15 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import { TGALoader } from 'three/addons/loaders/TGALoader.js'
 
-import fbmNoise from '@/assets/glsl/fbm.func.glsl?raw'
-import colorUtils from '@/assets/glsl/utils/color_utils.func.glsl?raw'
-import planetFragShader from '@/assets/glsl/planet.frag.glsl?raw'
-import planetVertShader from '@/assets/glsl/planet.vert.glsl?raw'
+import fbmNoise from '@assets/glsl/fbm.func.glsl?raw'
+import colorUtils from '@assets/glsl/utils/color_utils.func.glsl?raw'
+import planetFragShader from '@assets/glsl/planet.frag.glsl?raw'
+import planetVertShader from '@assets/glsl/planet.vert.glsl?raw'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
-import { LG_PARAMETERS } from './globals'
-
-export type SceneElements = {
-  scene: THREE.Scene,
-  renderer: THREE.WebGLRenderer,
-  camera: THREE.PerspectiveCamera
-}
-export type ColorRampStep = {
-  color: THREE.Color,
-  factor: number,
-}
+import { LG_PARAMETERS, LG_NAME_CLOUDS, LG_NAME_PLANET, LG_NAME_SUN } from '@core/globals'
+import { GeometryType, type SceneElements } from '@core/types'
+import type { ColorRampStep } from '@core/models/color-ramp.model'
 
 const CUBE_TEXTURE_LOADER = new THREE.CubeTextureLoader()
 const TEXTURE_LOADER = new THREE.TextureLoader()
@@ -55,7 +47,10 @@ export function createScene(width: number, height: number): SceneElements
   // setup camera
   const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1e9)
   const planetOrbit = new THREE.Spherical(
-    LG_PARAMETERS.initCamDistance, Math.PI / 2.0, degToRad(LG_PARAMETERS.initCamAngle));
+    LG_PARAMETERS.initCamDistance,
+    Math.PI / 2.0,
+    degToRad(LG_PARAMETERS.initCamAngle)
+  );
   planetOrbit.makeSafe();
   camera.position.setFromSpherical(planetOrbit);
 
@@ -69,33 +64,46 @@ export function createSun() {
   sun.castShadow = true
   sun.receiveShadow = false
   sun.add(new THREE.Mesh(geometry, material))
-  sun.name = 'lg_sun'
+  sun.name = LG_NAME_SUN
   return sun
 }
 
-export function createPlanet()  {
-  const geometry = new THREE.IcosahedronGeometry(1, 12)
+export function createPlanet(type: GeometryType)  {
+  let geometry = undefined
+  switch (type) {
+    case GeometryType.ICOSPHERE:
+      geometry = new THREE.IcosahedronGeometry(
+        LG_PARAMETERS.initPlanetRadius,
+        LG_PARAMETERS.planetMeshQuality,
+      )
+      break;
+    case GeometryType.TORUS:
+      geometry = new THREE.TorusGeometry(
+        LG_PARAMETERS.initPlanetRadius,
+        LG_PARAMETERS.initPlanetRadius / 2.0,
+        LG_PARAMETERS.planetMeshQuality,
+        LG_PARAMETERS.planetMeshQuality * 4.0,
+      )
+      break;
+    case GeometryType.BOX:
+      geometry = new THREE.BoxGeometry(
+        LG_PARAMETERS.initPlanetRadius,
+        LG_PARAMETERS.initPlanetRadius,
+      )
+      break;
+  }
   //const defaultTexture = loadTextureFromUrl('/2k_earth_daymap.jpg', THREE.SRGBColorSpace)
 
-  const { rampSize, steps } = buildColorRamp([
-    { color: new THREE.Color(0x101b38), factor: 0 },
-    { color: new THREE.Color(0x182852), factor: 0.4 },
-    { color: new THREE.Color(0x2a3b80), factor: 0.495 },
-    { color: new THREE.Color(0x757515), factor: 0.5 },
-    { color: new THREE.Color(0x446611), factor: 0.505 },
-    { color: new THREE.Color(0x223b05), factor: 0.65 },
-    { color: new THREE.Color(0x223b05), factor: 1 },
-  ])
   const material = createShaderMaterial([fbmNoise, colorUtils], {
     u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
     u_octaves: { value: 16 },
-    u_cr_colors: { value: steps.map(crs => crs.color) },
-    u_cr_positions: { value: steps.map(crs => crs.factor) },
-    u_cr_size: { value: rampSize },
+    u_cr_colors: { value: LG_PARAMETERS.planetSurfaceColorRamp.map(crs => crs.color) },
+    u_cr_positions: { value: LG_PARAMETERS.planetSurfaceColorRamp.map(crs => crs.factor) },
+    u_cr_size: { value: LG_PARAMETERS.planetSurfaceColorRampSize },
   })
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
-  mesh.name = 'lg_planet'
+  mesh.name = LG_NAME_PLANET
   return mesh
 }
 
@@ -115,7 +123,7 @@ export function createClouds(height: number) {
   }, )
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
-  mesh.name = 'lg_clouds'
+  mesh.name = LG_NAME_CLOUDS
   return mesh
 }
 
@@ -130,6 +138,20 @@ export function createControls(camera: THREE.Camera, canvas: HTMLCanvasElement):
   controls.maxPolarAngle = Math.PI
   controls.rotateSpeed = 0.5
   return controls
+}
+
+// ----------------------------------------------------------------------------------------------------------------------
+// UPDATE FUNCTIONS
+
+export function switchPlanetMesh(scene: THREE.Scene, type: GeometryType): THREE.Mesh {
+  const planet = scene.getObjectByName(LG_NAME_PLANET) as THREE.Mesh
+  (planet.material as THREE.Material).dispose()
+  planet.geometry.dispose()
+  scene.remove(planet)
+
+  const newPlanet = createPlanet(type)
+  scene.add(newPlanet)
+  return newPlanet
 }
 
 // ----------------------------------------------------------------------------------------------------------------------
@@ -188,17 +210,4 @@ export function createShaderMaterial(
   })
   mat.needsUpdate = true
   return mat
-}
-
-// ----------------------------------------------------------------------------------------------------------------------
-// DEBUG FUNCTIONS
-
-export function createPlanetWireframe(mesh: THREE.Mesh): THREE.LineSegments {
-  const wireframe = new THREE.WireframeGeometry(mesh.geometry)
-  const line = new THREE.LineSegments( wireframe );
-  const mat = line.material as THREE.Material
-  mat.depthTest = true
-  mat.opacity = 0.25
-  mat.transparent = true
-  return line
 }

@@ -1,8 +1,13 @@
 <template>
-    <div class="spinner">
+    <div v-if="load" class="spinner">
         <iconify-icon class="spinner-icon" icon="mingcute:loading-3-fill" width="3rem"/>
     </div>
 </template>
+
+<script setup lang="ts">
+defineProps<{ load: boolean }>()
+</script>
+
 <style scoped lang="scss">
 .spinner {
     position: absolute;

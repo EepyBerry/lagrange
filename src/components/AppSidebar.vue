@@ -4,7 +4,7 @@
       <template v-slot:title>Planet Settings</template>
       <template v-slot:content>
         <ParameterTable>
-          <ParameterField v-model="LG_PARAMETERS.planetRadius" type="number">Radius</ParameterField>
+          <ParameterField v-model="LG_PARAMETERS.planetMeshQuality" type="number" unit="°">Mesh quality</ParameterField>
           <ParameterField v-model="LG_PARAMETERS.planetAxialTilt" type="number" unit="°">Axial tilt</ParameterField>
           <ParameterField v-model="LG_PARAMETERS.planetRotation" type="number" unit="°">Rotation</ParameterField>
           <ParameterDivider />
@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { watch } from 'vue';
-import { LG_PARAMETERS } from '@/utils/globals'
+import { LG_PARAMETERS } from '@core/globals'
 
 watch(LG_PARAMETERS, (newValue) => {
   console.log(newValue)
