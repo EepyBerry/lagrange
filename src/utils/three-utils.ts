@@ -81,14 +81,15 @@ export function createPlanet(type: GeometryType)  {
       geometry = new THREE.TorusGeometry(
         LG_PARAMETERS.initPlanetRadius,
         LG_PARAMETERS.initPlanetRadius / 2.0,
-        LG_PARAMETERS.planetMeshQuality,
+        LG_PARAMETERS.planetMeshQuality * 2.0,
         LG_PARAMETERS.planetMeshQuality * 4.0,
       )
       break;
     case GeometryType.BOX:
       geometry = new THREE.BoxGeometry(
-        LG_PARAMETERS.initPlanetRadius,
-        LG_PARAMETERS.initPlanetRadius,
+        LG_PARAMETERS.initPlanetRadius * 1.5,
+        LG_PARAMETERS.initPlanetRadius * 1.5,
+        LG_PARAMETERS.initPlanetRadius * 1.5,
       )
       break;
   }
