@@ -34,6 +34,7 @@ tr.field {
   td:last-child {
     width: auto;
     padding-left: 4px;
+    text-align: end;
   }
 
   td.unit {

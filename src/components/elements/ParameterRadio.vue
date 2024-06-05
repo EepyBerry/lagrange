@@ -1,29 +1,15 @@
 <template>
   <tr class="field">
     <td>
-      <slot>ParameterName</slot>
+      <slot name="title">ParameterName</slot>
     </td>
-    <td colspan="2">
-      <template v-for="(opt, idx) in options" :key="opt">
-        <label :for="`group-${idx}`"></label>
-        <input 
-          class="native-radio"
-          type="radio"
-          :id="`group-${idx}`"
-          :name="group"
-          :value="opt"
-          v-model="lgParam">
-      </template>
+    <td colspan="2" class="radio-options">
+      <slot name="options"></slot>
     </td>
   </tr>
 </template>
 
-<script setup lang="ts">
-const lgParam = defineModel<string | number | boolean>()
-defineProps<{ group: string, options: any[] }>()
-</script>
-
-<style scoped lang="scss">
+<style lang="scss">
 tr.field {
   width: 100%;
 
@@ -32,8 +18,8 @@ tr.field {
     text-wrap: nowrap;
   }
   td:first-child {
-      width: 100%;
-      white-space: nowrap;
+    width: 100%;
+    white-space: nowrap;
   }
   td:nth-child(2),
   td:last-child {
@@ -45,12 +31,19 @@ tr.field {
     font-size: 0.75rem;
   }
 }
+.radio-options {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
 
-input[type=text] {
-  border: none;
-  border-radius: 2px;
-  width: 3rem;
-  color: var(--lg-text);
-  background: var(--lg-input);
+  & > :nth-child(2) {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+  }
+  & > :last-child {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
 }
 </style>

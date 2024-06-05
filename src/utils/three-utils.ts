@@ -145,6 +145,14 @@ export function createControls(camera: THREE.Camera, canvas: HTMLCanvasElement):
 
 export function switchPlanetMesh(scene: THREE.Scene, type: GeometryType): THREE.Mesh {
   const planet = scene.getObjectByName(LG_NAME_PLANET) as THREE.Mesh
+  if (
+    planet.geometry instanceof THREE.IcosahedronGeometry && type === GeometryType.ICOSPHERE
+    || planet.geometry instanceof THREE.TorusGeometry && type === GeometryType.TORUS
+    || planet.geometry instanceof THREE.BoxGeometry && type === GeometryType.BOX
+  ) {
+    return planet
+  }
+
   (planet.material as THREE.Material).dispose()
   planet.geometry.dispose()
   scene.remove(planet)

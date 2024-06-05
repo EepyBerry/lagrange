@@ -14,6 +14,7 @@ import { LG_PARAMETERS } from '@core/globals';
 import type LagrangeParameters from '@/core/models/lagrange-parameters.model';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType, type SceneElements } from '@core/types';
+import { extractChanges } from '@/utils/utils';
 
 // THREE canvas/scene root
 const sceneRoot: Ref<any> = ref(null)
@@ -28,7 +29,13 @@ const VEC_Z = new THREE.Vector3(0, 0, 1)
 const VEC_UP = new THREE.Vector3(0, 1, 0)
 
 onMounted(() => init())
-watch(LG_PARAMETERS, (newValue) => updateScene(newValue as LagrangeParameters))
+watch(() => ({ ...LG_PARAMETERS }), (newValue, oldValue) => {
+  const changes = extractChanges(
+    oldValue,
+    newValue
+  )
+  updateScene(changes)
+}, { deep: true })
 
 function init() {
   const width = window.innerWidth, height = window.innerHeight
@@ -77,27 +84,37 @@ function onWindowResize() {
   $se.renderer.setSize(window.innerWidth, window.innerHeight)
 }
 
-function updateScene(params: LagrangeParameters) {
+function updateScene(params: Partial<LagrangeParameters>) {
   for (const entry of Object.entries(params)) {
     const key = entry[0]
     const value = entry[1]
     switch (key) {
       case '_planetGeometryType': {
+        const v = value as GeometryType
         showSpinner.value = true
-        const newPlanet = ThreeUtils.switchPlanetMesh($se.scene, value)
-        _planet = newPlanet
-        showSpinner.value = false
+        setTimeout(() => {
+          const newPlanet = ThreeUtils.switchPlanetMesh($se.scene, v)
+          _planet = newPlanet
+          showSpinner.value = false
+        }, 200)
         break
       }
-      case '_planetRadius':
-        _planet.scale.setScalar(isNaN(value) ? 1 : value)
+      case '_planetRadius': {
+        const v = value as number
+        _planet.scale.setScalar(isNaN(v) ? 1 : v)
         break;
-      case '_planetAxialTilt':
-        _planet.rotateOnWorldAxis(VEC_Z, degToRad(isNaN(value) ? 0 : value) - _planet.rotation.z)
+      }
+      case '_planetAxialTilt': {
+        const v = value as number
+        _planet.rotateOnWorldAxis(VEC_Z, degToRad(isNaN(v) ? 0 : v) - _planet.rotation.z)
         break;
-      case '_planetRotation':
-        _planet.rotateOnAxis(VEC_UP, degToRad(isNaN(value) ? 0 : value) - _planet.rotation.y)
+      }
+        
+      case '_planetRotation': {
+        const v = value as number
+        _planet.rotateOnAxis(VEC_UP, degToRad(isNaN(v) ? 0 : v) - _planet.rotation.y)
         break;
+      }
     }
   }
 }

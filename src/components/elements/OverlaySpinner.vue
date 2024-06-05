@@ -1,6 +1,6 @@
 <template>
-    <div v-if="load" class="spinner">
-        <iconify-icon class="spinner-icon" icon="mingcute:loading-3-fill" width="3rem"/>
+    <div v-show="load" class="spinner">
+        <iconify-icon class="spinner-icon" icon="mingcute:loading-3-fill" width="6rem"/>
     </div>
 </template>
 
@@ -15,13 +15,15 @@ defineProps<{ load: boolean }>()
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--lg-overlay);
+    //background-color: var(--lg-overlay);
+    backdrop-filter: brightness(50%);
+    z-index: 5;
 
     &-icon {
-        animation: load 500ms linear infinite;
+        animation: rotate 500ms linear infinite;
     }
 }
-@keyframes load {
+@keyframes rotate {
     0% { transform: rotateZ(0deg) }
     100% { transform: rotateZ(360deg) }
 }
