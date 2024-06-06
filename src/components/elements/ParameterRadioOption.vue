@@ -1,6 +1,5 @@
 <template>
   <input ref="htmlRadio"
-    class="native-radio"
     type="radio"
     :id="`${name}-${id}`"
     :name="name"
@@ -43,5 +42,5 @@ function select() {
   background-color: var(--lg-button-hover);
 }
 
-.native-radio { visibility: collapse; }
+input[type=radio] { display: none; }
 </style>

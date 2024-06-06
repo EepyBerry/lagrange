@@ -7,3 +7,7 @@ export function extractChanges<T>(prev: T, current: T): Partial<T> {
   }
   return changes
 }
+
+export function hasAnyProperty(obj: any, paramsToCheck: string[]) {
+  return Object.keys(obj).some(v => paramsToCheck.includes(v));
+}

@@ -2,8 +2,8 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import { TGALoader } from 'three/addons/loaders/TGALoader.js'
 
-import fbmNoise from '@assets/glsl/fbm.func.glsl?raw'
-import colorUtils from '@assets/glsl/utils/color_utils.func.glsl?raw'
+import fbmNoise from '@assets/glsl/functions/fbm.func.glsl?raw'
+import colorUtils from '@assets/glsl/functions/color_utils.func.glsl?raw'
 import planetFragShader from '@assets/glsl/planet.frag.glsl?raw'
 import planetVertShader from '@assets/glsl/planet.vert.glsl?raw'
 import { degToRad } from 'three/src/math/MathUtils.js'
@@ -159,6 +159,17 @@ export function switchPlanetMesh(scene: THREE.Scene, type: GeometryType): THREE.
   scene.remove(planet)
 
   const newPlanet = createPlanet(type)
+  scene.add(newPlanet)
+  return newPlanet
+}
+
+export function forceUpdatePlanet(scene: THREE.Scene): THREE.Mesh {
+  const planet = scene.getObjectByName(LG_NAME_PLANET) as THREE.Mesh
+  (planet.material as THREE.Material).dispose()
+  planet.geometry.dispose()
+  scene.remove(planet)
+
+  const newPlanet = createPlanet(LG_PARAMETERS.planetGeometryType)
   scene.add(newPlanet)
   return newPlanet
 }

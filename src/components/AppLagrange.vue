@@ -10,11 +10,11 @@ import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
 import * as ThreeUtils from '@/utils/three-utils';
 import AppSidebar from './AppSidebar.vue';
-import { LG_PARAMETERS } from '@core/globals';
+import { LG_PARAMETERS, LG_UPDATE_PARAMS } from '@core/globals';
 import type LagrangeParameters from '@/core/models/lagrange-parameters.model';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType, type SceneElements } from '@core/types';
-import { extractChanges } from '@/utils/utils';
+import { extractChanges, hasAnyProperty } from '@/utils/utils';
 
 // THREE canvas/scene root
 const sceneRoot: Ref<any> = ref(null)
@@ -30,10 +30,10 @@ const VEC_UP = new THREE.Vector3(0, 1, 0)
 
 onMounted(() => init())
 watch(() => ({ ...LG_PARAMETERS }), (newValue, oldValue) => {
-  const changes = extractChanges(
-    oldValue,
-    newValue
-  )
+  let changes = extractChanges(oldValue,newValue)
+  if (hasAnyProperty(changes, LG_UPDATE_PARAMS)) {
+    changes = LG_PARAMETERS
+  }
   updateScene(changes)
 }, { deep: true })
 
@@ -85,33 +85,32 @@ function onWindowResize() {
 }
 
 function updateScene(params: Partial<LagrangeParameters>) {
-  for (const entry of Object.entries(params)) {
-    const key = entry[0]
-    const value = entry[1]
+  for (const key of Object.keys(params)) {
     switch (key) {
       case '_planetGeometryType': {
-        const v = value as GeometryType
-        showSpinner.value = true
-        setTimeout(() => {
-          const newPlanet = ThreeUtils.switchPlanetMesh($se.scene, v)
-          _planet = newPlanet
-          showSpinner.value = false
-        }, 200)
+        const v = LG_PARAMETERS.planetGeometryType
+        const newPlanet = ThreeUtils.switchPlanetMesh($se.scene, v)
+        _planet = newPlanet
+        break
+      }
+      case '_planetMeshQuality': {
+        const newPlanet = ThreeUtils.forceUpdatePlanet($se.scene)
+        _planet = newPlanet
         break
       }
       case '_planetRadius': {
-        const v = value as number
+        const v = LG_PARAMETERS.initPlanetRadius
         _planet.scale.setScalar(isNaN(v) ? 1 : v)
         break;
       }
       case '_planetAxialTilt': {
-        const v = value as number
+        const v = LG_PARAMETERS.planetAxialTilt
         _planet.rotateOnWorldAxis(VEC_Z, degToRad(isNaN(v) ? 0 : v) - _planet.rotation.z)
         break;
       }
         
       case '_planetRotation': {
-        const v = value as number
+        const v = LG_PARAMETERS.planetRotation
         _planet.rotateOnAxis(VEC_UP, degToRad(isNaN(v) ? 0 : v) - _planet.rotation.y)
         break;
       }
