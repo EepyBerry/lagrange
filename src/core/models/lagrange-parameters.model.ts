@@ -1,4 +1,4 @@
-import { ColorRampStep } from './color-ramp.model'
+import { ColorRamp, ColorRampStep } from './color-ramp.model'
 import { GeometryType } from '@core/types'
 import { clamp, epsilonClamp, isNumeric } from '@/utils/math-utils'
 import { Color } from 'three'
@@ -13,7 +13,7 @@ export default class LagrangeParameters {
   private _initCamAngle: number = -45
   private _initPlanetRadius: number = 1
 
-  // -------------------------------------------------
+  // --------------------------------------------------
 
   public get initCamDistance() {
     return this._initCamDistance
@@ -34,7 +34,7 @@ export default class LagrangeParameters {
   private _planetAxialTilt: number = 0
   private _planetRotation: number = 0
   
-  // -------------------------------------------------
+  // --------------------------------------------------
 
   public get planetGeometryType() {
     return this._planetGeometryType
@@ -45,53 +45,91 @@ export default class LagrangeParameters {
   public get planetMeshQuality() {
     return this._planetMeshQuality
   }
-  public set planetMeshQuality(x: number) {
-    this._planetMeshQuality = isNumeric(x) ? clamp(x, 0, 16) : 16
+  public set planetMeshQuality(quality: number) {
+    this._planetMeshQuality = isNumeric(quality) ? clamp(quality, 0, 16) : 16
   }
 
   public get planetAxialTilt() {
     return this._planetAxialTilt
   }
-  public set planetAxialTilt(x: number) {
-    this._planetAxialTilt = isNumeric(x) ? epsilonClamp(x, -360, 360) : 0
+  public set planetAxialTilt(tilt: number) {
+    this._planetAxialTilt = isNumeric(tilt) ? epsilonClamp(tilt, -360, 360) : 0
   }
 
   public get planetRotation() {
     return this._planetRotation
   }
-  public set planetRotation(x: number) {
-    this._planetRotation = isNumeric(x) ? epsilonClamp(x, -360, 360) : 0
+  public set planetRotation(rot: number) {
+    this._planetRotation = isNumeric(rot) ? epsilonClamp(rot, -360, 360) : 0
   }
 
   // --------------------------------------------------
   // |                Surface settings                |
   // --------------------------------------------------
 
-  private _planetSurfaceColorRamp: ColorRampStep[] = []
-  private _planetSurfaceColorRampSize: number = 0
+  private _planetSurfaceColorRamp: ColorRamp = ColorRamp.EMPTY
 
-  // -------------------------------------------------
+  // --------------------------------------------------
 
   public get planetSurfaceColorRamp() {
     return this._planetSurfaceColorRamp
   }
-  public set planetSurfaceColorRamp(steps: ColorRampStep[]) {
-    this._planetSurfaceColorRamp = Array(16)
-      .fill(ColorRampStep.EMPTY)
-      .map((step, i) => i < steps.length ? ({color: steps[i].color, factor: steps[i].factor}) : step)
-    this._planetSurfaceColorRampSize = steps.length
+  public set planetSurfaceColorRamp(ramp: ColorRamp) {
+    this._planetSurfaceColorRamp = ramp
   }
   
   public get planetSurfaceColorRampSize() {
-    return this._planetSurfaceColorRampSize
+    return this._planetSurfaceColorRamp.definedSize
   }
 
+  // --------------------------------------------------
+  // |                Clouds settings                 |
+  // --------------------------------------------------
+
+  private _cloudsAxialTilt: number = 0
+  private _cloudsRotation: number = 0
+  private _cloudsHeight: number = 2
+  private _cloudsColorRamp: ColorRamp = ColorRamp.EMPTY
+
+  // --------------------------------------------------
+
+  public get cloudsAxialTilt() {
+    return this._cloudsAxialTilt
+  }
+  public set cloudsAxialTilt(tilt: number) {
+    this._cloudsAxialTilt = isNumeric(tilt) ? epsilonClamp(tilt, -360, 360) : 0
+  }
+
+  public get cloudsRotation() {
+    return this._cloudsRotation
+  }
+  public set cloudsRotation(rot: number) {
+    this._cloudsRotation = isNumeric(rot) ? epsilonClamp(rot, -360, 360) : 0
+  }
+
+  public get cloudsHeight() {
+    return this._cloudsHeight
+  }
+  public set cloudsHeight(height: number) {
+    this._cloudsHeight = clamp(height, 1, 10)
+  }
+
+  public set cloudsColorRamp(ramp: ColorRamp) {
+    this._cloudsColorRamp = ramp
+  }
+  public get cloudsColorRamp() {
+    return this._cloudsColorRamp
+  }
+  public get cloudsColorRampSize() {
+    return this._cloudsColorRamp.definedSize
+  }
+  
   // --------------------------------------------------
   // |                  Constructor                   |
   // --------------------------------------------------
 
   constructor() {
-    this.planetSurfaceColorRamp = [
+    this.planetSurfaceColorRamp = new ColorRamp([
       { color: new Color(0x101b38), factor: 0 },
       { color: new Color(0x182852), factor: 0.4 },
       { color: new Color(0x2a3b80), factor: 0.495 },
@@ -99,6 +137,11 @@ export default class LagrangeParameters {
       { color: new Color(0x446611), factor: 0.505 },
       { color: new Color(0x223b05), factor: 0.65 },
       { color: new Color(0x223b05), factor: 1 },
-    ]
+    ])
+    this.cloudsColorRamp = new ColorRamp([
+      { color: new Color(0x000000), factor: 0 },
+      { color: new Color(0x000000), factor: 0.5 },
+      { color: new Color(0xbbbbbb), factor: 1 },
+    ])
   }
 }

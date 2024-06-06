@@ -33,6 +33,7 @@ tr.field {
   td:nth-child(2),
   td:last-child {
     width: auto;
+    min-width: 10px;
     padding-left: 4px;
     text-align: end;
   }
@@ -42,6 +43,9 @@ tr.field {
   }
 }
 
+input {
+  text-align: center;
+}
 input[type=text] {
   border: none;
   border-radius: 2px;

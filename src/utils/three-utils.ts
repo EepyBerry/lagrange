@@ -6,9 +6,11 @@ import fbmNoise from '@assets/glsl/functions/fbm.func.glsl?raw'
 import colorUtils from '@assets/glsl/functions/color_utils.func.glsl?raw'
 import planetFragShader from '@assets/glsl/planet.frag.glsl?raw'
 import planetVertShader from '@assets/glsl/planet.vert.glsl?raw'
+import cloudsFragShader from '@assets/glsl/clouds.frag.glsl?raw'
+import cloudsVertShader from '@assets/glsl/clouds.vert.glsl?raw'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
-import { LG_PARAMETERS, LG_NAME_CLOUDS, LG_NAME_PLANET, LG_NAME_SUN } from '@core/globals'
+import { LG_PARAMETERS, LG_NAME_CLOUDS, LG_NAME_PLANET, LG_NAME_SUN, LG_CLOUDS_DIVIDER, LG_CLOUDS_SHADOW_HEIGHT } from '@core/globals'
 import { GeometryType, type SceneElements } from '@core/types'
 import type { ColorRampStep } from '@core/models/color-ramp.model'
 
@@ -38,7 +40,7 @@ export function createScene(width: number, height: number): SceneElements
   const renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } )
   renderer.setPixelRatio(window.devicePixelRatio)
   renderer.setSize(width, height)
-  renderer.setClearColor(0xffffff, 0)
+  renderer.setClearColor(0x0, 0)
   renderer.setClearAlpha(0)
   renderer.shadowMap.enabled = true
   renderer.shadowMap.autoUpdate = true
@@ -54,6 +56,10 @@ export function createScene(width: number, height: number): SceneElements
   planetOrbit.makeSafe();
   camera.position.setFromSpherical(planetOrbit);
 
+  // Setup ambient light
+  const light = new THREE.AmbientLight(0x505050); // soft white light
+  scene.add(light);
+
   return { scene, renderer, camera }
 }
 
@@ -62,7 +68,6 @@ export function createSun() {
   const material = new THREE.MeshStandardMaterial( { color: 0xffffff, emissive: new THREE.Color(100, 100, 100) } )
   const sun = new THREE.PointLight(0xfff6e8, 5e8)
   sun.castShadow = true
-  sun.receiveShadow = false
   sun.add(new THREE.Mesh(geometry, material))
   sun.name = LG_NAME_SUN
   return sun
@@ -93,40 +98,103 @@ export function createPlanet(type: GeometryType)  {
       )
       break;
   }
-  //const defaultTexture = loadTextureFromUrl('/2k_earth_daymap.jpg', THREE.SRGBColorSpace)
 
-  const material = createShaderMaterial([fbmNoise, colorUtils], {
+  const material = createShaderMaterial(planetVertShader, planetFragShader, [fbmNoise, colorUtils], {
     u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
     u_octaves: { value: 16 },
-    u_cr_colors: { value: LG_PARAMETERS.planetSurfaceColorRamp.map(crs => crs.color) },
-    u_cr_positions: { value: LG_PARAMETERS.planetSurfaceColorRamp.map(crs => crs.factor) },
+    u_cr_colors: { value: LG_PARAMETERS.planetSurfaceColorRamp.definedColors },
+    u_cr_positions: { value: LG_PARAMETERS.planetSurfaceColorRamp.definedFactors },
     u_cr_size: { value: LG_PARAMETERS.planetSurfaceColorRampSize },
   })
+
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
   mesh.name = LG_NAME_PLANET
   return mesh
 }
 
-export function createClouds(height: number) {
-  const geometry = new THREE.IcosahedronGeometry(1, 12 + height)
-
-  const { rampSize, steps } = buildColorRamp([
-    { color: new THREE.Color(0x0), factor: 0 },
-    { color: new THREE.Color(0xffffff), factor: 1 },
-  ])
-  const material = createShaderMaterial([fbmNoise, colorUtils], {
+export function createClouds(type: GeometryType) {
+  let geometry = undefined
+  const cloudHeight = (LG_PARAMETERS.cloudsHeight / LG_CLOUDS_DIVIDER)
+  switch (type) {
+    case GeometryType.ICOSPHERE:
+      geometry = new THREE.IcosahedronGeometry(
+        LG_PARAMETERS.initPlanetRadius + cloudHeight,
+        LG_PARAMETERS.planetMeshQuality,
+      )
+      break;
+    case GeometryType.TORUS:
+      geometry = new THREE.TorusGeometry(
+        LG_PARAMETERS.initPlanetRadius + (cloudHeight / 4.0),
+        (LG_PARAMETERS.initPlanetRadius / 2.0) + (cloudHeight * 2.0),
+        LG_PARAMETERS.planetMeshQuality * 2.0,
+        LG_PARAMETERS.planetMeshQuality * 4.0,
+      )
+      break;
+    case GeometryType.BOX:
+      geometry = new THREE.BoxGeometry(
+        LG_PARAMETERS.initPlanetRadius * 1.5 + cloudHeight,
+        LG_PARAMETERS.initPlanetRadius * 1.5 + cloudHeight,
+        LG_PARAMETERS.initPlanetRadius * 1.5 + cloudHeight,
+      )
+      break;
+  }
+  const material = createShaderMaterial(cloudsVertShader, cloudsFragShader, [fbmNoise, colorUtils], {
     u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
-    u_octaves: { value: 16 },
-    u_cr_colors: { value: steps.map(crs => crs.color) },
-    u_cr_positions: { value: steps.map(crs => crs.factor) },
-    u_cr_size: { value: rampSize },
-  }, )
+    u_octaves: { value: 12 },
+    u_cr_colors: { value: LG_PARAMETERS.cloudsColorRamp.definedColors },
+    u_cr_positions: { value: LG_PARAMETERS.cloudsColorRamp.definedFactors },
+    u_cr_size: { value: LG_PARAMETERS.cloudsColorRampSize },
+  })
+  material.transparent = true
+  material.side = THREE.DoubleSide
+  material.shadowSide = THREE.BackSide
+
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
   mesh.name = LG_NAME_CLOUDS
   return mesh
 }
+
+export function createCloudsShadows(type: GeometryType) {
+  let geometry = undefined
+  switch (type) {
+    case GeometryType.ICOSPHERE:
+      geometry = new THREE.IcosahedronGeometry(
+        LG_PARAMETERS.initPlanetRadius + LG_CLOUDS_SHADOW_HEIGHT,
+        LG_PARAMETERS.planetMeshQuality,
+      )
+      break;
+    case GeometryType.TORUS:
+      geometry = new THREE.TorusGeometry(
+        LG_PARAMETERS.initPlanetRadius + LG_CLOUDS_SHADOW_HEIGHT,
+        (LG_PARAMETERS.initPlanetRadius / 2.0) - LG_CLOUDS_SHADOW_HEIGHT,
+        LG_PARAMETERS.planetMeshQuality * 2.0,
+        LG_PARAMETERS.planetMeshQuality * 4.0,
+      )
+      break;
+    case GeometryType.BOX:
+      geometry = new THREE.BoxGeometry(
+        LG_PARAMETERS.initPlanetRadius * 1.5 + LG_CLOUDS_SHADOW_HEIGHT,
+        LG_PARAMETERS.initPlanetRadius * 1.5 + LG_CLOUDS_SHADOW_HEIGHT,
+        LG_PARAMETERS.initPlanetRadius * 1.5 + LG_CLOUDS_SHADOW_HEIGHT,
+      )
+      break;
+  }
+  const material = createShaderMaterial(cloudsVertShader, cloudsFragShader, [fbmNoise, colorUtils], {
+    u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
+    u_octaves: { value: 12 },
+    u_cr_colors: { value: LG_PARAMETERS.cloudsColorRamp.definedColors },
+    u_cr_positions: { value: LG_PARAMETERS.cloudsColorRamp.definedFactors },
+    u_cr_size: { value: LG_PARAMETERS.cloudsColorRampSize },
+  })
+  material.transparent = true
+
+  const mesh = new THREE.Mesh(geometry, material)
+  mesh.name = LG_NAME_CLOUDS
+  return mesh
+}
+
 
 export function createControls(camera: THREE.Camera, canvas: HTMLCanvasElement): OrbitControls {
   const controls = new OrbitControls( camera, canvas );
@@ -174,6 +242,17 @@ export function forceUpdatePlanet(scene: THREE.Scene): THREE.Mesh {
   return newPlanet
 }
 
+export function forceUpdateClouds(scene: THREE.Scene): THREE.Mesh {
+  const clouds = scene.getObjectByName(LG_NAME_CLOUDS) as THREE.Mesh
+  (clouds.material as THREE.Material).dispose()
+  clouds.geometry.dispose()
+  scene.remove(clouds)
+
+  const newClouds = createClouds(LG_PARAMETERS.planetGeometryType)
+  scene.add(newClouds)
+  return newClouds
+}
+
 // ----------------------------------------------------------------------------------------------------------------------
 // DATA FUNCTIONS
 
@@ -219,13 +298,16 @@ export function buildColorRamp(steps: ColorRampStep[]): { rampSize: number, step
  * @returns the RawShaderMaterial instance
  */
 export function createShaderMaterial(
+  vertexShader: string,
+  fragmentShader: string,
   shaderFunctions: string[],
-  uniforms: { [uniform: string]: THREE.IUniform<any>; }
+  uniforms: { [uniform: string]: THREE.IUniform<any>; },
+  baseMaterial?: THREE.Material
 ) {
   const mat = new CustomShaderMaterial({
-    baseMaterial: THREE.MeshStandardMaterial,
-    vertexShader: planetVertShader,
-    fragmentShader: planetFragShader.replace('/*__SHADER_FUNCTIONS__*/', shaderFunctions.join('\r\n')),
+    baseMaterial: baseMaterial ?? THREE.MeshStandardMaterial,
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader.replace('/*__SHADER_FUNCTIONS__*/', shaderFunctions.join('\r\n')),
     uniforms,
   })
   mat.needsUpdate = true

@@ -10,7 +10,7 @@ import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
 import * as ThreeUtils from '@/utils/three-utils';
 import AppSidebar from './AppSidebar.vue';
-import { LG_PARAMETERS, LG_UPDATE_PARAMS } from '@core/globals';
+import { LG_CLOUDS_DIVIDER, LG_PARAMETERS, LG_UPDATE_PARAMS } from '@core/globals';
 import type LagrangeParameters from '@/core/models/lagrange-parameters.model';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType, type SceneElements } from '@core/types';
@@ -24,6 +24,7 @@ const showSpinner: Ref<boolean> = ref(false)
 let $se: SceneElements
 let _sun: THREE.Object3D
 let _planet: THREE.Object3D
+let _clouds: THREE.Object3D
 
 const VEC_Z = new THREE.Vector3(0, 0, 1)
 const VEC_UP = new THREE.Vector3(0, 1, 0)
@@ -34,7 +35,7 @@ watch(() => ({ ...LG_PARAMETERS }), (newValue, oldValue) => {
   if (hasAnyProperty(changes, LG_UPDATE_PARAMS)) {
     changes = LG_PARAMETERS
   }
-  updateScene(changes)
+  updateScene(changes as Partial<LagrangeParameters>)
 }, { deep: true })
 
 function init() {
@@ -62,8 +63,13 @@ function initRendering(width: number, height: number) {
 
 function initPlanet(): void {
   const planet = ThreeUtils.createPlanet(GeometryType.ICOSPHERE)
+  const clouds = ThreeUtils.createClouds(GeometryType.ICOSPHERE)
+  const cloudsShadows = ThreeUtils.createCloudsShadows(GeometryType.ICOSPHERE)
   $se.scene.add(planet)
+  $se.scene.add(clouds)
+  //$se.scene.add(cloudsShadows)
   _planet = planet
+  _clouds = clouds
 }
 
 function initSun(): void {
@@ -95,7 +101,9 @@ function updateScene(params: Partial<LagrangeParameters>) {
       }
       case '_planetMeshQuality': {
         const newPlanet = ThreeUtils.forceUpdatePlanet($se.scene)
+        const newClouds = ThreeUtils.forceUpdateClouds($se.scene)
         _planet = newPlanet
+        _clouds = newClouds
         break
       }
       case '_planetRadius': {
@@ -108,10 +116,24 @@ function updateScene(params: Partial<LagrangeParameters>) {
         _planet.rotateOnWorldAxis(VEC_Z, degToRad(isNaN(v) ? 0 : v) - _planet.rotation.z)
         break;
       }
-        
       case '_planetRotation': {
         const v = LG_PARAMETERS.planetRotation
         _planet.rotateOnAxis(VEC_UP, degToRad(isNaN(v) ? 0 : v) - _planet.rotation.y)
+        break;
+      }
+      case '_cloudsAxialTilt': {
+        const v = LG_PARAMETERS.cloudsAxialTilt
+        _clouds.rotateOnWorldAxis(VEC_Z, degToRad(isNaN(v) ? 0 : v) - _clouds.rotation.z)
+        break;
+      }
+      case '_cloudsRotation': {
+        const v = LG_PARAMETERS.cloudsRotation
+        _clouds.rotateOnAxis(VEC_UP, degToRad(isNaN(v) ? 0 : v) - _clouds.rotation.y)
+        break;
+      }
+      case '_cloudsHeight': {
+        const v = LG_PARAMETERS.cloudsHeight
+        _clouds.scale.setScalar(1 + ((isNaN(v) ? 1 : v) / LG_CLOUDS_DIVIDER))
         break;
       }
     }
