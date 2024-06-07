@@ -17,7 +17,7 @@ const vuePluginConfig: Options = {
 export default defineConfig({
   plugins: [
     vue(vuePluginConfig),
-    VueDevTools(),
+    //VueDevTools(),
     glsl()
   ],
   resolve: {

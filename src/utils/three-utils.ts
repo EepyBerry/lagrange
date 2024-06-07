@@ -57,7 +57,8 @@ export function createScene(width: number, height: number): SceneElements
   camera.position.setFromSpherical(planetOrbit);
 
   // Setup ambient light
-  const light = new THREE.AmbientLight(0x505050); // soft white light
+  const light = new THREE.AmbientLight(0xffffff); // soft white light
+  light.intensity = 0.125
   scene.add(light);
 
   return { scene, renderer, camera }

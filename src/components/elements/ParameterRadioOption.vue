@@ -7,7 +7,7 @@
     v-model="lgParam">
   
   <button class="radio-button" :class="{selected: htmlRadio?.checked }" @click="select()">
-    <iconify-icon :icon="icon" width="1.5rem" />
+    <iconify-icon :icon="icon" width="1.25rem" />
   </button>
 </template>
 

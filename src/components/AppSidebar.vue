@@ -79,7 +79,7 @@ import { GeometryType } from '@core/types'
   position: absolute;
   inset: 0 auto 0 0;
   width: 20rem;
-  margin: 1%;
+  margin: 1rem;
   overflow-y: auto;
 
   display: flex;
