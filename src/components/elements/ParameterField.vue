@@ -4,7 +4,7 @@
       <slot>ParameterName</slot>
     </td>
     <td>
-      <input v-if="type === 'number'" type="text" inputmode="numeric" pattern="[0-9.,]*" v-model="lgParam">
+      <input v-if="type === 'number'" type="number" inputmode="numeric" pattern="[0-9.,]*" :step="step ?? 1" v-model="lgParam">
       <input v-if="['text', 'checkbox'].includes(type)" :type="type" ref="input" v-model="lgParam">
     </td>
     <td class="unit">
@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 const lgParam = defineModel<string | number | boolean>()
-defineProps<{ type: string, unit?: string }>()
+defineProps<{ type: string, unit?: string, step?: number }>()
 </script>
 
 <style scoped lang="scss">
@@ -44,13 +44,7 @@ tr.field {
 }
 
 input {
-  text-align: center;
-}
-input[type=text] {
-  border: none;
-  border-radius: 2px;
-  width: 3rem;
-  color: var(--lg-text);
-  background: var(--lg-input);
+  text-align: end;
+  width: 4.5rem;
 }
 </style>

@@ -15,6 +15,7 @@ import type LagrangeParameters from '@/core/models/lagrange-parameters.model';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType, type SceneElements } from '@core/types';
 import { extractChanges, hasAnyProperty } from '@/utils/utils';
+import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla';
 
 // THREE canvas/scene root
 const sceneRoot: Ref<any> = ref(null)
@@ -23,20 +24,14 @@ const showSpinner: Ref<boolean> = ref(false)
 // Main THREE objects
 let $se: SceneElements
 let _sun: THREE.Object3D
-let _planet: THREE.Object3D
-let _clouds: THREE.Object3D
+let _planet: THREE.Mesh
+let _clouds: THREE.Mesh
 
 const VEC_Z = new THREE.Vector3(0, 0, 1)
 const VEC_UP = new THREE.Vector3(0, 1, 0)
 
 onMounted(() => init())
-watch(() => ({ ...LG_PARAMETERS }), (newValue, oldValue) => {
-  let changes = extractChanges(oldValue,newValue)
-  if (hasAnyProperty(changes, LG_UPDATE_PARAMS)) {
-    changes = LG_PARAMETERS
-  }
-  updateScene(changes as Partial<LagrangeParameters>)
-}, { deep: true })
+watch(LG_PARAMETERS.changedProps, () => updatePlanet())
 
 function init() {
   const width = window.innerWidth, height = window.innerHeight
@@ -54,7 +49,7 @@ function initRendering(width: number, height: number) {
   const stats = new Stats();
   stats.dom.style.right = '0'
   stats.dom.style.left = 'auto'
-	document.body.appendChild( stats.dom )
+	document.body.appendChild(stats.dom)
 
   $se.renderer.setSize( width, height )
   $se.renderer.setAnimationLoop(() => renderFrame(stats))
@@ -64,12 +59,13 @@ function initRendering(width: number, height: number) {
 function initPlanet(): void {
   const planet = ThreeUtils.createPlanet(GeometryType.ICOSPHERE)
   const clouds = ThreeUtils.createClouds(GeometryType.ICOSPHERE)
-  const cloudsShadows = ThreeUtils.createCloudsShadows(GeometryType.ICOSPHERE)
   $se.scene.add(planet)
-  $se.scene.add(clouds)
-  //$se.scene.add(cloudsShadows)
+  //$se.scene.add(clouds)
   _planet = planet
   _clouds = clouds
+
+  //const helper = new VertexNormalsHelper( planet, 0.1, 0xff0000 );
+  //$se.scene.add( helper );
 }
 
 function initSun(): void {
@@ -90,8 +86,9 @@ function onWindowResize() {
   $se.renderer.setSize(window.innerWidth, window.innerHeight)
 }
 
-function updateScene(params: Partial<LagrangeParameters>) {
-  for (const key of Object.keys(params)) {
+function updatePlanet() {
+  if (LG_PARAMETERS.changedProps.length === 0) { return }
+  for (const key of LG_PARAMETERS.changedProps) {
     switch (key) {
       case '_planetGeometryType': {
         const v = LG_PARAMETERS.planetGeometryType
@@ -109,34 +106,56 @@ function updateScene(params: Partial<LagrangeParameters>) {
       case '_planetRadius': {
         const v = LG_PARAMETERS.initPlanetRadius
         _planet.scale.setScalar(isNaN(v) ? 1 : v)
-        break;
+        break
       }
       case '_planetAxialTilt': {
         const v = LG_PARAMETERS.planetAxialTilt
         _planet.rotateOnWorldAxis(VEC_Z, degToRad(isNaN(v) ? 0 : v) - _planet.rotation.z)
-        break;
+        break
       }
       case '_planetRotation': {
         const v = LG_PARAMETERS.planetRotation
         _planet.rotateOnAxis(VEC_UP, degToRad(isNaN(v) ? 0 : v) - _planet.rotation.y)
-        break;
+        break
+      }
+      case '_planetSurfaceNoise._frequency': {
+        const v = LG_PARAMETERS.planetSurfaceNoise;
+        const mat = _planet.material as CustomShaderMaterial
+        mat.uniforms.u_frequency = { value: v.frequency }
+        mat.needsUpdate = true
+        break
+      }
+      case '_planetSurfaceNoise._amplitude': {
+        const v = LG_PARAMETERS.planetSurfaceNoise;
+        const mat = _planet.material as CustomShaderMaterial
+        mat.uniforms.u_amplitude = { value: v.amplitude }
+        mat.needsUpdate = true
+        break
+      }
+      case '_planetSurfaceNoise._lacunarity': {
+        const v = LG_PARAMETERS.planetSurfaceNoise;
+        const mat = _planet.material as CustomShaderMaterial
+        mat.uniforms.u_lacunarity = { value: v.lacunarity }
+        mat.needsUpdate = true
+        break
       }
       case '_cloudsAxialTilt': {
         const v = LG_PARAMETERS.cloudsAxialTilt
         _clouds.rotateOnWorldAxis(VEC_Z, degToRad(isNaN(v) ? 0 : v) - _clouds.rotation.z)
-        break;
+        break
       }
       case '_cloudsRotation': {
         const v = LG_PARAMETERS.cloudsRotation
         _clouds.rotateOnAxis(VEC_UP, degToRad(isNaN(v) ? 0 : v) - _clouds.rotation.y)
-        break;
+        break
       }
       case '_cloudsHeight': {
         const v = LG_PARAMETERS.cloudsHeight
         _clouds.scale.setScalar(1 + ((isNaN(v) ? 1 : v) / LG_CLOUDS_DIVIDER))
-        break;
+        break
       }
     }
   }
+  LG_PARAMETERS.clearChangedProps()
 }
 </script>

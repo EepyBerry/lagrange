@@ -60,3 +60,18 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   cursor: pointer;
 }
+
+input {
+  border: none;
+  border-radius: 2px;
+  color: var(--lg-text);
+  background: var(--lg-input);
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

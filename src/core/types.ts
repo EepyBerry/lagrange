@@ -9,3 +9,6 @@ export type SceneElements = {
 export enum GeometryType {
   ICOSPHERE, TORUS, BOX
 }
+export enum NoiseType {
+  FBM, PERLIN
+}

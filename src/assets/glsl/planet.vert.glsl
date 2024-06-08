@@ -2,7 +2,7 @@
 precision highp float;
 #endif
 
-varying vec3 vPos;
+out vec3 vPos;
 
 void main() {
      vPos = position;

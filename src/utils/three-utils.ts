@@ -4,13 +4,20 @@ import { TGALoader } from 'three/addons/loaders/TGALoader.js'
 
 import fbmNoise from '@assets/glsl/functions/fbm.func.glsl?raw'
 import colorUtils from '@assets/glsl/functions/color_utils.func.glsl?raw'
+import bumpMap from '@assets/glsl/functions/bump_map.func.glsl?raw'
 import planetFragShader from '@assets/glsl/planet.frag.glsl?raw'
 import planetVertShader from '@assets/glsl/planet.vert.glsl?raw'
 import cloudsFragShader from '@assets/glsl/clouds.frag.glsl?raw'
 import cloudsVertShader from '@assets/glsl/clouds.vert.glsl?raw'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
-import { LG_PARAMETERS, LG_NAME_CLOUDS, LG_NAME_PLANET, LG_NAME_SUN, LG_CLOUDS_DIVIDER, LG_CLOUDS_SHADOW_HEIGHT } from '@core/globals'
+import {
+  LG_PARAMETERS,
+  LG_NAME_CLOUDS,
+  LG_NAME_PLANET,
+  LG_NAME_SUN,
+  LG_CLOUDS_DIVIDER,
+} from '@core/globals'
 import { GeometryType, type SceneElements } from '@core/types'
 import type { ColorRampStep } from '@core/models/color-ramp.model'
 
@@ -58,7 +65,7 @@ export function createScene(width: number, height: number): SceneElements
 
   // Setup ambient light
   const light = new THREE.AmbientLight(0xffffff); // soft white light
-  light.intensity = 0.125
+  light.intensity = 0.1
   scene.add(light);
 
   return { scene, renderer, camera }
@@ -100,12 +107,15 @@ export function createPlanet(type: GeometryType)  {
       break;
   }
 
-  const material = createShaderMaterial(planetVertShader, planetFragShader, [fbmNoise, colorUtils], {
-    u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
-    u_octaves: { value: 16 },
-    u_cr_colors: { value: LG_PARAMETERS.planetSurfaceColorRamp.definedColors },
-    u_cr_positions: { value: LG_PARAMETERS.planetSurfaceColorRamp.definedFactors },
-    u_cr_size: { value: LG_PARAMETERS.planetSurfaceColorRampSize },
+  const material = createShaderMaterial(planetVertShader, planetFragShader, [fbmNoise, colorUtils, bumpMap], {
+    u_resolution:     { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
+    u_octaves:        { value: 16 },
+    u_frequency:      { value: LG_PARAMETERS.planetSurfaceNoise.frequency },
+    u_amplitude:      { value: LG_PARAMETERS.planetSurfaceNoise.amplitude },
+    u_lacunarity:     { value: LG_PARAMETERS.planetSurfaceNoise.lacunarity },
+    u_cr_colors:      { value: LG_PARAMETERS.planetSurfaceColorRamp.definedColors },
+    u_cr_positions:   { value: LG_PARAMETERS.planetSurfaceColorRamp.definedFactors },
+    u_cr_size:        { value: LG_PARAMETERS.planetSurfaceColorRampSize },
   })
 
   const mesh = new THREE.Mesh(geometry, material)
@@ -156,46 +166,6 @@ export function createClouds(type: GeometryType) {
   mesh.name = LG_NAME_CLOUDS
   return mesh
 }
-
-export function createCloudsShadows(type: GeometryType) {
-  let geometry = undefined
-  switch (type) {
-    case GeometryType.ICOSPHERE:
-      geometry = new THREE.IcosahedronGeometry(
-        LG_PARAMETERS.initPlanetRadius + LG_CLOUDS_SHADOW_HEIGHT,
-        LG_PARAMETERS.planetMeshQuality,
-      )
-      break;
-    case GeometryType.TORUS:
-      geometry = new THREE.TorusGeometry(
-        LG_PARAMETERS.initPlanetRadius + LG_CLOUDS_SHADOW_HEIGHT,
-        (LG_PARAMETERS.initPlanetRadius / 2.0) - LG_CLOUDS_SHADOW_HEIGHT,
-        LG_PARAMETERS.planetMeshQuality * 2.0,
-        LG_PARAMETERS.planetMeshQuality * 4.0,
-      )
-      break;
-    case GeometryType.BOX:
-      geometry = new THREE.BoxGeometry(
-        LG_PARAMETERS.initPlanetRadius * 1.5 + LG_CLOUDS_SHADOW_HEIGHT,
-        LG_PARAMETERS.initPlanetRadius * 1.5 + LG_CLOUDS_SHADOW_HEIGHT,
-        LG_PARAMETERS.initPlanetRadius * 1.5 + LG_CLOUDS_SHADOW_HEIGHT,
-      )
-      break;
-  }
-  const material = createShaderMaterial(cloudsVertShader, cloudsFragShader, [fbmNoise, colorUtils], {
-    u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
-    u_octaves: { value: 12 },
-    u_cr_colors: { value: LG_PARAMETERS.cloudsColorRamp.definedColors },
-    u_cr_positions: { value: LG_PARAMETERS.cloudsColorRamp.definedFactors },
-    u_cr_size: { value: LG_PARAMETERS.cloudsColorRampSize },
-  })
-  material.transparent = true
-
-  const mesh = new THREE.Mesh(geometry, material)
-  mesh.name = LG_NAME_CLOUDS
-  return mesh
-}
-
 
 export function createControls(camera: THREE.Camera, canvas: HTMLCanvasElement): OrbitControls {
   const controls = new OrbitControls( camera, canvas );
@@ -292,10 +262,12 @@ export function buildColorRamp(steps: ColorRampStep[]): { rampSize: number, step
 // SHADER FUNCTIONS
 
 /**
- * Creates a RawShaderMaterial instance from the given parameters
- * @param uniforms shader uniforms
+ * Creates a CustomShaderMaterial instance from the given parameters
  * @param vertexShader GLSL vertex shader
  * @param fragmentShader GLSL fragment shader
+ * @param shaderFunctions additional shader functions
+ * @param uniforms shader uniforms
+ * @param baseMaterial (optional) base material to use
  * @returns the RawShaderMaterial instance
  */
 export function createShaderMaterial(
@@ -310,7 +282,7 @@ export function createShaderMaterial(
     vertexShader: vertexShader,
     fragmentShader: fragmentShader.replace('/*__SHADER_FUNCTIONS__*/', shaderFunctions.join('\r\n')),
     uniforms,
+    silent: true
   })
-  mat.needsUpdate = true
   return mat
 }

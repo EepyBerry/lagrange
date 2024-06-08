@@ -37,9 +37,15 @@
             </template>
           </ParameterRadio>
           <ParameterDivider />
-          <ParameterField v-model="LG_PARAMETERS.planetMeshQuality" type="number">Mesh quality</ParameterField>
-          <ParameterField v-model="LG_PARAMETERS.planetAxialTilt" type="number" unit="°">Axial tilt</ParameterField>
-          <ParameterField v-model="LG_PARAMETERS.planetRotation" type="number" unit="°">Rotation</ParameterField>
+          <ParameterField v-model="LG_PARAMETERS.planetMeshQuality" type="number">
+            Mesh quality
+          </ParameterField>
+          <ParameterField v-model="LG_PARAMETERS.planetAxialTilt" type="number" unit="°">
+            Axial tilt
+          </ParameterField>
+          <ParameterField v-model="LG_PARAMETERS.planetRotation" type="number" unit="°">
+            Rotation
+          </ParameterField>
           <ParameterDivider />
         </ParameterTable>
       </template>
@@ -48,6 +54,15 @@
       <template v-slot:title>Surface</template>
       <template v-slot:content>
         <ParameterTable>
+          <ParameterField v-model="LG_PARAMETERS.planetSurfaceNoise.frequency"  type="number" :step="0.01">
+            Frequency
+          </ParameterField>
+          <ParameterField v-model="LG_PARAMETERS.planetSurfaceNoise.amplitude"  type="number" :step="0.01">
+            Amplitude
+          </ParameterField>
+          <ParameterField v-model="LG_PARAMETERS.planetSurfaceNoise.lacunarity" type="number" :step="0.01">
+            Lacunarity
+          </ParameterField>
           <ParameterField type="color-ramp">Color ramp</ParameterField>
           <ParameterDivider />
         </ParameterTable>
@@ -57,9 +72,15 @@
       <template v-slot:title>Clouds</template>
       <template v-slot:content>
         <ParameterTable>
-          <ParameterField v-model="LG_PARAMETERS.cloudsAxialTilt" type="number" unit="°">Axial tilt</ParameterField>
-          <ParameterField v-model="LG_PARAMETERS.cloudsRotation" type="number" unit="°">Rotation</ParameterField>
-          <ParameterField v-model="LG_PARAMETERS.cloudsHeight" type="number">Height</ParameterField>
+          <ParameterField v-model="LG_PARAMETERS.cloudsAxialTilt" type="number" unit="°">
+            Axial tilt
+          </ParameterField>
+          <ParameterField v-model="LG_PARAMETERS.cloudsRotation" type="number" unit="°">
+            Rotation
+          </ParameterField>
+          <ParameterField v-model="LG_PARAMETERS.cloudsHeight" type="number">
+            Height
+          </ParameterField>
           <ParameterField type="color-ramp">Color ramp</ParameterField>
           <ParameterDivider />
         </ParameterTable>

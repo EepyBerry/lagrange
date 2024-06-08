@@ -1,9 +1,11 @@
-import { ColorRamp, ColorRampStep } from './color-ramp.model'
-import { GeometryType } from '@core/types'
+import { ColorRamp } from './color-ramp.model'
+import { GeometryType, NoiseType } from '@core/types'
 import { clamp, epsilonClamp, isNumeric } from '@/utils/math-utils'
 import { Color } from 'three'
+import { NoiseParameters } from './noise-parameters.model'
+import { ChangeTracker } from './change-tracker.model'
 
-export default class LagrangeParameters {
+export default class LagrangeParameters extends ChangeTracker {
 
   // --------------------------------------------------
   // |                      Init                      |
@@ -41,12 +43,14 @@ export default class LagrangeParameters {
   }
   public set planetGeometryType(gtype: GeometryType) {
     this._planetGeometryType = gtype
+    this.markForChange('_planetGeometryType')
   }
   public get planetMeshQuality() {
     return this._planetMeshQuality
   }
   public set planetMeshQuality(quality: number) {
     this._planetMeshQuality = isNumeric(quality) ? clamp(quality, 0, 16) : 16
+    this.markForChange('_planetMeshQuality')
   }
 
   public get planetAxialTilt() {
@@ -54,6 +58,7 @@ export default class LagrangeParameters {
   }
   public set planetAxialTilt(tilt: number) {
     this._planetAxialTilt = isNumeric(tilt) ? epsilonClamp(tilt, -360, 360) : 0
+    this.markForChange('_planetAxialTilt')
   }
 
   public get planetRotation() {
@@ -61,12 +66,17 @@ export default class LagrangeParameters {
   }
   public set planetRotation(rot: number) {
     this._planetRotation = isNumeric(rot) ? epsilonClamp(rot, -360, 360) : 0
+    this.markForChange('_planetRotation')
   }
+
 
   // --------------------------------------------------
   // |                Surface settings                |
   // --------------------------------------------------
 
+  private _planetSurfaceNoise: NoiseParameters = new NoiseParameters(
+    this._changedProps, '_planetSurfaceNoise', NoiseType.FBM
+  )
   private _planetSurfaceColorRamp: ColorRamp = ColorRamp.EMPTY
 
   // --------------------------------------------------
@@ -76,10 +86,14 @@ export default class LagrangeParameters {
   }
   public set planetSurfaceColorRamp(ramp: ColorRamp) {
     this._planetSurfaceColorRamp = ramp
+    this.markForChange('_planetSurfaceColorRamp')
   }
-  
   public get planetSurfaceColorRampSize() {
     return this._planetSurfaceColorRamp.definedSize
+  }
+
+  public get planetSurfaceNoise() {
+    return this._planetSurfaceNoise
   }
 
   // --------------------------------------------------
@@ -98,6 +112,7 @@ export default class LagrangeParameters {
   }
   public set cloudsAxialTilt(tilt: number) {
     this._cloudsAxialTilt = isNumeric(tilt) ? epsilonClamp(tilt, -360, 360) : 0
+    this.markForChange('_cloudsAxialTilt')
   }
 
   public get cloudsRotation() {
@@ -105,6 +120,7 @@ export default class LagrangeParameters {
   }
   public set cloudsRotation(rot: number) {
     this._cloudsRotation = isNumeric(rot) ? epsilonClamp(rot, -360, 360) : 0
+    this.markForChange('_cloudsRotation')
   }
 
   public get cloudsHeight() {
@@ -112,10 +128,12 @@ export default class LagrangeParameters {
   }
   public set cloudsHeight(height: number) {
     this._cloudsHeight = clamp(height, 1, 10)
+    this.markForChange('_cloudsHeight')
   }
 
   public set cloudsColorRamp(ramp: ColorRamp) {
     this._cloudsColorRamp = ramp
+    this.markForChange('_cloudsColorRamp')
   }
   public get cloudsColorRamp() {
     return this._cloudsColorRamp
@@ -123,12 +141,27 @@ export default class LagrangeParameters {
   public get cloudsColorRampSize() {
     return this._cloudsColorRamp.definedSize
   }
+
+  // --------------------------------------------------
+  // |                  Utils & misc                  |
+  // --------------------------------------------------
   
+  public get changedProps() {
+    return this._changedProps
+  }
+  public markForChange(prop: string) {
+    this._changedProps.push(prop)
+  }
+  public clearChangedProps() {
+    this._changedProps.splice(0)
+  }
+
   // --------------------------------------------------
   // |                  Constructor                   |
   // --------------------------------------------------
 
   constructor() {
+    super()
     this.planetSurfaceColorRamp = new ColorRamp([
       { color: new Color(0x101b38), factor: 0 },
       { color: new Color(0x182852), factor: 0.4 },

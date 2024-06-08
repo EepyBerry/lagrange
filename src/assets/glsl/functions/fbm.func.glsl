@@ -27,13 +27,12 @@ float noise(vec3 p){
     return o4.y * d.y + o4.x * (1.0 - d.y);
 }
 
-float fbm(vec3 x, int octaves) {
+float fbm(vec3 x, float freq, float amp, float lac, int octaves) {
 	float val = 0.0;
-	float amp = 0.5;
 	vec3 shift = vec3(100);
 	for (int i = 0; i < octaves; ++i) {
-		val += amp * noise(x);
-		x = x * 2.0 + shift;
+		val += amp * noise(x*freq);
+		x = x * lac + shift;
 		amp *= 0.5;
 	}
 	return val;
