@@ -8,14 +8,13 @@
 import { onMounted, ref, watch, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
-import * as ThreeUtils from '@/utils/three-utils';
+import * as ThreeUtils from '@/core/lagrange.service';
 import AppSidebar from './AppSidebar.vue';
-import { LG_CLOUDS_DIVIDER, LG_PARAMETERS, LG_UPDATE_PARAMS } from '@core/globals';
-import type LagrangeParameters from '@/core/models/lagrange-parameters.model';
+import { LG_CLOUDS_DIVIDER, LG_PARAMETERS } from '@core/globals';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType, type SceneElements } from '@core/types';
-import { extractChanges, hasAnyProperty } from '@/utils/utils';
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla';
+import { createControls } from '@/core/three/component.builder';
 
 // THREE canvas/scene root
 const sceneRoot: Ref<any> = ref(null)
@@ -34,14 +33,15 @@ onMounted(() => init())
 watch(LG_PARAMETERS.changedProps, () => updatePlanet())
 
 function init() {
-  const width = window.innerWidth, height = window.innerHeight
-  $se = ThreeUtils.createScene(width, height)
+  const width = window.innerWidth,
+        height = window.innerHeight,
+        pixelRatio = window.devicePixelRatio
+  $se = ThreeUtils.createScene(width, height, pixelRatio)
 
   initSun()
   initPlanet()
   initRendering(width, height)
-
-  ThreeUtils.createControls($se.camera, $se.renderer.domElement)
+  createControls($se.camera, $se.renderer.domElement)
   window.addEventListener('resize', onWindowResize);
 }
 
@@ -58,11 +58,11 @@ function initRendering(width: number, height: number) {
 
 function initPlanet(): void {
   const planet = ThreeUtils.createPlanet(GeometryType.ICOSPHERE)
-  const clouds = ThreeUtils.createClouds(GeometryType.ICOSPHERE)
+  //const clouds = ThreeUtils.createClouds(GeometryType.ICOSPHERE)
   $se.scene.add(planet)
   //$se.scene.add(clouds)
   _planet = planet
-  _clouds = clouds
+  //_clouds = clouds
 
   //const helper = new VertexNormalsHelper( planet, 0.1, 0xff0000 );
   //$se.scene.add( helper );
