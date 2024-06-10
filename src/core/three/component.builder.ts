@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
-import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
+import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-shader-material/vanilla';
 import { GeometryType } from '../types';
 import { LG_PARAMETERS } from '../globals';
 
@@ -94,13 +94,13 @@ export function createGeometry(type: GeometryType, addtlRadius: number = 0): THR
  * @param baseMaterial (optional) base material to use
  * @returns the RawShaderMaterial instance
  */
-export function createShaderMaterial(
+export function createShaderMaterial<T extends MaterialConstructor>(
   vertexShader: string,
   fragmentShader: string,
   shaderFunctions: string[],
   uniforms: { [uniform: string]: THREE.IUniform<any>; },
-  baseMaterial?: THREE.Material
-): CustomShaderMaterial {
+  baseMaterial?: T
+): CustomShaderMaterial<T> {
   const mat = new CustomShaderMaterial({
     baseMaterial: baseMaterial ?? THREE.MeshStandardMaterial,
     vertexShader: vertexShader,

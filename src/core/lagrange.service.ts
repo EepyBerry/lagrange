@@ -62,7 +62,10 @@ export function createSun() {
 
 export function createPlanet(type: GeometryType)  {
   const geometry = createGeometry(type)
-  const material = createShaderMaterial(planetVertShader, planetFragShader, [fbmNoise, colorUtils, bumpMap], {
+  const material = createShaderMaterial(
+    planetVertShader,
+    planetFragShader,
+    [fbmNoise, colorUtils, bumpMap], {
     u_resolution:     { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
     u_octaves:        { value: 16 },
     u_frequency:      { value: LG_PARAMETERS.planetSurfaceNoise.frequency },
@@ -71,7 +74,7 @@ export function createPlanet(type: GeometryType)  {
     u_cr_colors:      { value: LG_PARAMETERS.planetSurfaceColorRamp.definedColors },
     u_cr_positions:   { value: LG_PARAMETERS.planetSurfaceColorRamp.definedFactors },
     u_cr_size:        { value: LG_PARAMETERS.planetSurfaceColorRampSize },
-  })
+  }, THREE.MeshStandardMaterial)
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
