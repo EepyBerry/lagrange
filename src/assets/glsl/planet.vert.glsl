@@ -2,6 +2,7 @@
 precision highp float;
 #endif
 
+// Populated by ThreeJS via BufferGeometry#computeTangents()
 attribute vec3 tangent;
 
 out vec2 vUv;

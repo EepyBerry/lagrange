@@ -2,7 +2,7 @@
 precision highp float;
 #endif
 
-// Main uniforms
+// Noise uniforms
 uniform float u_radius;
 uniform int u_octaves;
 uniform vec2 u_resolution;
@@ -10,9 +10,11 @@ uniform float u_frequency;
 uniform float u_amplitude;
 uniform float u_lacunarity;
 
+// Bump uniforms
 uniform float u_bump_offset;
 uniform float u_bump_strength;
 
+// Water & roughness/metalness uniforms
 uniform float u_water_level;
 uniform float u_water_roughness;
 uniform float u_ground_roughness;

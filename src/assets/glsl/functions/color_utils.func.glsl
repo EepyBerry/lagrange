@@ -1,6 +1,5 @@
-// © 2024 EepyBerry
-
-// Modified from Visionary 3D's code (yt)
+// Modified from Visionary 3D's code:
+// https://www.youtube.com/watch?v=Ydu4epKEM3I
 vec3 color_ramp(vec3 colors[16], float positions[16], int ramp_size, float fac) {
   int MAX_ITERATIONS = min(ramp_size, 16);
   int pos_idx = 0;
