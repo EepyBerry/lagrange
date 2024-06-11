@@ -1,39 +1,18 @@
-# lagrange
+# Lagrange - Procedural Planet Builder 🪐
+<p>
+  <img src="https://img.shields.io/badge/VueJS-3.4-%2342B883?logo=vuedotjs&labelColor=%2335495E&logoColor=white">
+  <img src="https://img.shields.io/badge/Vite-5.2-%23BD34FE?logo=vite&labelColor=%2335495E&logoColor=white">
+  <img src="https://img.shields.io/badge/ThreeJS-r165-%23049EF4?logo=threedotjs&labelColor=%2335495E&logoColor=white">
+</p>
 
-This template should help get you started developing with Vue 3 in Vite.
+A WebGL experiment using VueJS and ThreeJS! <br>
+Lagrange is a browser application to help you create your own planets, using procedural noise as a foundation to build upon.
 
-## Recommended IDE Setup
+This project is heavily inspired by the awesome [PlanetMaker Chrome Experiment](https://planetmaker.apoapsys.com) (2013, Kevin M. Gill)!
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## 📓 Licensing
 
-## Type Support for `.vue` Imports in TS
+Original source code from this project is provided under a BSD-3 Clause "New" or "Revised" License.<br>
+Please consult the [license file](LICENSE) for full information.
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+Content from other parties is provided under their respective license, and attribution is given at the top of the aforementioned content.
