@@ -11,7 +11,7 @@
                 v-model="LG_PARAMETERS.planetGeometryType"
                 name="planet-mesh"
                 id="0"
-                :value="GeometryType.ICOSPHERE"
+                :value="GeometryType.SPHERE"
                 icon="tabler:sphere"
               >
                 Sphere

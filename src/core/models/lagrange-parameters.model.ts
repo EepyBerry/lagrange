@@ -31,8 +31,8 @@ export default class LagrangeParameters extends ChangeTracker {
   // |                Planet settings                 |
   // --------------------------------------------------
 
-  private _planetGeometryType: GeometryType = GeometryType.ICOSPHERE
-  private _planetMeshQuality: number = 16
+  private _planetGeometryType: GeometryType = GeometryType.SPHERE
+  private _planetMeshQuality: number = 64
   private _planetAxialTilt: number = 0
   private _planetRotation: number = 0
   
@@ -81,6 +81,10 @@ export default class LagrangeParameters extends ChangeTracker {
 
   // --------------------------------------------------
 
+  public get planetSurfaceNoise() {
+    return this._planetSurfaceNoise
+  }
+
   public get planetSurfaceColorRamp() {
     return this._planetSurfaceColorRamp
   }
@@ -92,10 +96,6 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._planetSurfaceColorRamp.definedSize
   }
 
-  public get planetSurfaceNoise() {
-    return this._planetSurfaceNoise
-  }
-
   // --------------------------------------------------
   // |                Clouds settings                 |
   // --------------------------------------------------
@@ -103,6 +103,9 @@ export default class LagrangeParameters extends ChangeTracker {
   private _cloudsAxialTilt: number = 0
   private _cloudsRotation: number = 0
   private _cloudsHeight: number = 2
+  private _cloudsNoise: NoiseParameters = new NoiseParameters(
+    this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.55, 2.5
+  )
   private _cloudsColorRamp: ColorRamp = ColorRamp.EMPTY
 
   // --------------------------------------------------
@@ -129,6 +132,10 @@ export default class LagrangeParameters extends ChangeTracker {
   public set cloudsHeight(height: number) {
     this._cloudsHeight = clamp(height, 1, 10)
     this.markForChange('_cloudsHeight')
+  }
+  
+  public get cloudsNoise() {
+    return this._cloudsNoise
   }
 
   public set cloudsColorRamp(ramp: ColorRamp) {

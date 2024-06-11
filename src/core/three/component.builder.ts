@@ -65,9 +65,10 @@ export function createAmbientight(color: THREE.ColorRepresentation, intensity: n
  */
 export function createGeometry(type: GeometryType, addtlRadius: number = 0): THREE.BufferGeometry {
   switch (type) {
-    case GeometryType.ICOSPHERE:
-      return new THREE.IcosahedronGeometry(
+    case GeometryType.SPHERE:
+      return new THREE.SphereGeometry(
         LG_PARAMETERS.initPlanetRadius + addtlRadius,
+        LG_PARAMETERS.planetMeshQuality,
         LG_PARAMETERS.planetMeshQuality,
       )
     case GeometryType.TORUS:

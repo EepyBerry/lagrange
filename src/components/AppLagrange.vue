@@ -25,6 +25,7 @@ let $se: SceneElements
 let _sun: THREE.Object3D
 let _planet: THREE.Mesh
 let _clouds: THREE.Mesh
+let _rt: THREE.WebGL3DRenderTarget
 
 const VEC_Z = new THREE.Vector3(0, 0, 1)
 const VEC_UP = new THREE.Vector3(0, 1, 0)
@@ -57,12 +58,12 @@ function initRendering(width: number, height: number) {
 }
 
 function initPlanet(): void {
-  const planet = ThreeUtils.createPlanet(GeometryType.ICOSPHERE)
-  //const clouds = ThreeUtils.createClouds(GeometryType.ICOSPHERE)
+  const planet = ThreeUtils.createPlanet(GeometryType.SPHERE)
+  const clouds = ThreeUtils.createClouds(GeometryType.SPHERE)
   $se.scene.add(planet)
   //$se.scene.add(clouds)
   _planet = planet
-  //_clouds = clouds
+  _clouds = clouds
 
   //const helper = new VertexNormalsHelper( planet, 0.1, 0xff0000 );
   //$se.scene.add( helper );
@@ -98,9 +99,9 @@ function updatePlanet() {
       }
       case '_planetMeshQuality': {
         const newPlanet = ThreeUtils.forceUpdatePlanet($se.scene)
-        const newClouds = ThreeUtils.forceUpdateClouds($se.scene)
+        //const newClouds = ThreeUtils.forceUpdateClouds($se.scene)
         _planet = newPlanet
-        _clouds = newClouds
+        //_clouds = newClouds
         break
       }
       case '_planetRadius': {

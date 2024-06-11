@@ -59,17 +59,23 @@ export function createSun() {
 
 export function createPlanet(type: GeometryType)  {
   const geometry = createGeometry(type)
+  geometry.computeTangents()
   const material = createShaderMaterial(planetVertShader, planetFragShader, {
-    u_resolution:     { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
-    u_octaves:        { value: 16 },
-    u_frequency:      { value: LG_PARAMETERS.planetSurfaceNoise.frequency },
-    u_amplitude:      { value: LG_PARAMETERS.planetSurfaceNoise.amplitude },
-    u_lacunarity:     { value: LG_PARAMETERS.planetSurfaceNoise.lacunarity },
-    u_cr_colors:      { value: LG_PARAMETERS.planetSurfaceColorRamp.definedColors },
-    u_cr_positions:   { value: LG_PARAMETERS.planetSurfaceColorRamp.definedFactors },
-    u_cr_size:        { value: LG_PARAMETERS.planetSurfaceColorRampSize },
+    u_resolution:           { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
+    u_radius:               { value: 1.0 },
+    u_octaves:              { value: 16 },
+    u_frequency:            { value: LG_PARAMETERS.planetSurfaceNoise.frequency },
+    u_amplitude:            { value: LG_PARAMETERS.planetSurfaceNoise.amplitude },
+    u_lacunarity:           { value: LG_PARAMETERS.planetSurfaceNoise.lacunarity },
+    u_water_level:          { value: 0.5 },
+    u_water_roughness:      { value: 0.65 },
+    u_ground_roughness:     { value: 0.95 },
+    u_water_metalness:      { value: 0.5 },
+    u_ground_metalness:     { value: 0.1 },
+    u_cr_colors:            { value: LG_PARAMETERS.planetSurfaceColorRamp.definedColors },
+    u_cr_positions:         { value: LG_PARAMETERS.planetSurfaceColorRamp.definedFactors },
+    u_cr_size:              { value: LG_PARAMETERS.planetSurfaceColorRampSize },
   }, THREE.MeshStandardMaterial)
-
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
   mesh.name = LG_NAME_PLANET
@@ -81,16 +87,16 @@ export function createClouds(type: GeometryType) {
   const geometry = createGeometry(type, cloudHeight)
   const material = createShaderMaterial(cloudsVertShader, cloudsFragShader, {
     u_resolution:     { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
-    u_octaves:        { value: 12 },
-    //u_frequency:      { value: LG_PARAMETERS.planetSurfaceNoise.frequency },
-    //u_amplitude:      { value: LG_PARAMETERS.planetSurfaceNoise.amplitude },
-    //u_lacunarity:     { value: LG_PARAMETERS.planetSurfaceNoise.lacunarity },
+    u_octaves:        { value: 8 },
+    u_frequency:      { value: LG_PARAMETERS.cloudsNoise.frequency },
+    u_amplitude:      { value: LG_PARAMETERS.cloudsNoise.amplitude },
+    u_lacunarity:     { value: LG_PARAMETERS.cloudsNoise.lacunarity },
     u_cr_colors:      { value: LG_PARAMETERS.cloudsColorRamp.definedColors },
     u_cr_positions:   { value: LG_PARAMETERS.cloudsColorRamp.definedFactors },
     u_cr_size:        { value: LG_PARAMETERS.cloudsColorRampSize },
   })
   material.transparent = true
-  material.side = THREE.DoubleSide
+  //material.side = THREE.DoubleSide
   material.shadowSide = THREE.BackSide
 
   const mesh = new THREE.Mesh(geometry, material)
@@ -105,7 +111,7 @@ export function createClouds(type: GeometryType) {
 export function switchPlanetMesh(scene: THREE.Scene, type: GeometryType): THREE.Mesh {
   const planet = scene.getObjectByName(LG_NAME_PLANET) as THREE.Mesh
   if (
-    planet.geometry instanceof THREE.IcosahedronGeometry && type === GeometryType.ICOSPHERE
+    planet.geometry instanceof THREE.IcosahedronGeometry && type === GeometryType.SPHERE
     || planet.geometry instanceof THREE.TorusGeometry && type === GeometryType.TORUS
     || planet.geometry instanceof THREE.BoxGeometry && type === GeometryType.BOX
   ) {
