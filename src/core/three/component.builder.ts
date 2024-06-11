@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-shader-material/vanilla';
 import { GeometryType } from '../types';
 import { LG_PARAMETERS } from '../globals';
+import { resolveImports } from './shader-imports.loader';
 
 /**
  * Creates a WebGL-based renderer
@@ -97,14 +98,13 @@ export function createGeometry(type: GeometryType, addtlRadius: number = 0): THR
 export function createShaderMaterial<T extends MaterialConstructor>(
   vertexShader: string,
   fragmentShader: string,
-  shaderFunctions: string[],
   uniforms: { [uniform: string]: THREE.IUniform<any>; },
   baseMaterial?: T
 ): CustomShaderMaterial<T> {
   const mat = new CustomShaderMaterial({
     baseMaterial: baseMaterial ?? THREE.MeshStandardMaterial,
     vertexShader: vertexShader,
-    fragmentShader: fragmentShader.replace('/*__SHADER_FUNCTIONS__*/', shaderFunctions.join('\r\n')),
+    fragmentShader: resolveImports(fragmentShader),
     uniforms,
     silent: true
   })

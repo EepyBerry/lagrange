@@ -1,7 +1,4 @@
 import * as THREE from 'three'
-import fbmNoise from '@assets/glsl/functions/fbm.func.glsl?raw'
-import colorUtils from '@assets/glsl/functions/color_utils.func.glsl?raw'
-import bumpMap from '@assets/glsl/functions/bump_map.func.glsl?raw'
 import planetFragShader from '@assets/glsl/planet.frag.glsl?raw'
 import planetVertShader from '@assets/glsl/planet.vert.glsl?raw'
 import cloudsFragShader from '@assets/glsl/clouds.frag.glsl?raw'
@@ -62,10 +59,7 @@ export function createSun() {
 
 export function createPlanet(type: GeometryType)  {
   const geometry = createGeometry(type)
-  const material = createShaderMaterial(
-    planetVertShader,
-    planetFragShader,
-    [fbmNoise, colorUtils, bumpMap], {
+  const material = createShaderMaterial(planetVertShader, planetFragShader, {
     u_resolution:     { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
     u_octaves:        { value: 16 },
     u_frequency:      { value: LG_PARAMETERS.planetSurfaceNoise.frequency },
@@ -85,7 +79,7 @@ export function createPlanet(type: GeometryType)  {
 export function createClouds(type: GeometryType) {
   const cloudHeight = (LG_PARAMETERS.cloudsHeight / LG_CLOUDS_DIVIDER)
   const geometry = createGeometry(type, cloudHeight)
-  const material = createShaderMaterial(cloudsVertShader, cloudsFragShader, [fbmNoise, colorUtils], {
+  const material = createShaderMaterial(cloudsVertShader, cloudsFragShader, {
     u_resolution:     { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
     u_octaves:        { value: 12 },
     //u_frequency:      { value: LG_PARAMETERS.planetSurfaceNoise.frequency },
