@@ -60,6 +60,7 @@ export function createSun() {
 export function createPlanet(type: GeometryType)  {
   const geometry = createGeometry(type)
   geometry.computeTangents()
+
   const material = createShaderMaterial(planetVertShader, planetFragShader, {
     u_resolution:           { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
     u_radius:               { value: 1.0 },
@@ -72,10 +73,13 @@ export function createPlanet(type: GeometryType)  {
     u_ground_roughness:     { value: 0.95 },
     u_water_metalness:      { value: 0.5 },
     u_ground_metalness:     { value: 0.1 },
+    u_bump_offset:          { value: 0.001 },
+    u_bump_strength:        { value: 0.1 },
     u_cr_colors:            { value: LG_PARAMETERS.planetSurfaceColorRamp.definedColors },
     u_cr_positions:         { value: LG_PARAMETERS.planetSurfaceColorRamp.definedFactors },
     u_cr_size:              { value: LG_PARAMETERS.planetSurfaceColorRampSize },
   }, THREE.MeshStandardMaterial)
+
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
   mesh.name = LG_NAME_PLANET
@@ -96,7 +100,7 @@ export function createClouds(type: GeometryType) {
     u_cr_size:        { value: LG_PARAMETERS.cloudsColorRampSize },
   })
   material.transparent = true
-  //material.side = THREE.DoubleSide
+  material.side = THREE.DoubleSide
   material.shadowSide = THREE.BackSide
 
   const mesh = new THREE.Mesh(geometry, material)
