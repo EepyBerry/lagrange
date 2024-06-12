@@ -1,5 +1,4 @@
 <template>
-  <AppSidebar />
   <div ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
 </template>
@@ -9,7 +8,6 @@ import { onMounted, ref, watch, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
 import * as ThreeUtils from '@/core/lagrange.service';
-import AppSidebar from './AppSidebar.vue';
 import { LG_CLOUDS_DIVIDER, LG_PARAMETERS } from '@core/globals';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType, type SceneElements } from '@core/types';
@@ -25,7 +23,6 @@ let $se: SceneElements
 let _sun: THREE.Object3D
 let _planet: THREE.Mesh
 let _clouds: THREE.Mesh
-let _rt: THREE.WebGL3DRenderTarget
 
 const VEC_Z = new THREE.Vector3(0, 0, 1)
 const VEC_UP = new THREE.Vector3(0, 1, 0)
@@ -61,7 +58,7 @@ function initPlanet(): void {
   const planet = ThreeUtils.createPlanet(GeometryType.SPHERE)
   const clouds = ThreeUtils.createClouds(GeometryType.SPHERE)
   $se.scene.add(planet)
-  //$se.scene.add(clouds)
+  $se.scene.add(clouds)
   _planet = planet
   _clouds = clouds
 
@@ -94,14 +91,16 @@ function updatePlanet() {
       case '_planetGeometryType': {
         const v = LG_PARAMETERS.planetGeometryType
         const newPlanet = ThreeUtils.switchPlanetMesh($se.scene, v)
+        const newClouds = ThreeUtils.switchCloudsMesh($se.scene, v)
         _planet = newPlanet
+        _clouds = newClouds
         break
       }
       case '_planetMeshQuality': {
         const newPlanet = ThreeUtils.forceUpdatePlanet($se.scene)
-        //const newClouds = ThreeUtils.forceUpdateClouds($se.scene)
+        const newClouds = ThreeUtils.forceUpdateClouds($se.scene)
         _planet = newPlanet
-        //_clouds = newClouds
+        _clouds = newClouds
         break
       }
       case '_planetRadius': {

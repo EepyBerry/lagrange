@@ -98,14 +98,14 @@ export function createGeometry(type: GeometryType, addtlRadius: number = 0): THR
  */
 export function createShaderMaterial<T extends MaterialConstructor>(
   vertexShader: string,
-  fragmentShader: string,
-  uniforms: { [uniform: string]: THREE.IUniform<any>; },
+  fragmentShader?: string,
+  uniforms?: { [uniform: string]: THREE.IUniform<any>; },
   baseMaterial?: T
 ): CustomShaderMaterial<T> {
   const mat = new CustomShaderMaterial({
     baseMaterial: baseMaterial ?? THREE.MeshStandardMaterial,
     vertexShader: vertexShader,
-    fragmentShader: resolveImports(fragmentShader),
+    fragmentShader: fragmentShader ? resolveImports(fragmentShader) : undefined,
     uniforms,
     silent: true
   })

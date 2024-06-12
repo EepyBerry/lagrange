@@ -102,9 +102,9 @@ export default class LagrangeParameters extends ChangeTracker {
 
   private _cloudsAxialTilt: number = 0
   private _cloudsRotation: number = 0
-  private _cloudsHeight: number = 2
+  private _cloudsHeight: number = 3
   private _cloudsNoise: NoiseParameters = new NoiseParameters(
-    this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.55, 2.5
+    this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 1.65
   )
   private _cloudsColorRamp: ColorRamp = ColorRamp.EMPTY
 
@@ -130,7 +130,7 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._cloudsHeight
   }
   public set cloudsHeight(height: number) {
-    this._cloudsHeight = clamp(height, 1, 10)
+    this._cloudsHeight = clamp(height, 0, 10)
     this.markForChange('_cloudsHeight')
   }
   
@@ -180,7 +180,7 @@ export default class LagrangeParameters extends ChangeTracker {
     ])
     this.cloudsColorRamp = new ColorRamp([
       { color: new Color(0x000000), factor: 0 },
-      { color: new Color(0x000000), factor: 0.5 },
+      { color: new Color(0x000000), factor: 0.6 },
       { color: new Color(0xbbbbbb), factor: 1 },
     ])
   }

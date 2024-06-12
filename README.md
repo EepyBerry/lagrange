@@ -12,7 +12,7 @@ This project is heavily inspired by the awesome [PlanetMaker Chrome Experiment](
 
 ## 📓 Licensing
 
-Original source code from this project is provided under a BSD-3 Clause "New" or "Revised" License.<br>
+Original assets and source code from this project are provided under a BSD-3 Clause "New" or "Revised" License.<br>
 Please consult the [license file](LICENSE) for full information.
 
 Content from other parties is provided under their respective license, and attribution is given at the top of the aforementioned content.

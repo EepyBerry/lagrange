@@ -41,9 +41,9 @@ void main() {
     // Calculate height, dxHeight and dyHeight
     vec3 dx = vTangent * u_bump_offset;
     vec3 dy = vBitangent * u_bump_offset;
-    float height   = fbm(vPos,      u_frequency, u_amplitude, u_lacunarity, u_octaves);
-    float dxHeight = fbm(vPos + dx, u_frequency, u_amplitude, u_lacunarity, u_octaves);
-    float dyHeight = fbm(vPos + dy, u_frequency, u_amplitude, u_lacunarity, u_octaves);
+    float height   = fbm3(vPos,      u_frequency, u_amplitude, u_lacunarity, u_octaves);
+    float dxHeight = fbm3(vPos + dx, u_frequency, u_amplitude, u_lacunarity, u_octaves);
+    float dyHeight = fbm3(vPos + dy, u_frequency, u_amplitude, u_lacunarity, u_octaves);
 
     // Perturb normal
     vec3 N = perturbNormal(vPos, dx, dy, height, dxHeight, dyHeight, u_radius, u_bump_strength);

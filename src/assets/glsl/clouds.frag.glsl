@@ -8,6 +8,7 @@ uniform vec2 u_resolution;
 uniform float u_frequency;
 uniform float u_amplitude;
 uniform float u_lacunarity;
+uniform vec3 u_color;
 
 // Color ramp uniforms
 uniform float[16] u_cr_positions;
@@ -20,9 +21,16 @@ in vec3 vPos;
 @import functions/color_utils;
 
 void main() {
-    vec3 color = vec3(0.0);
-    color += fbm(vPos, u_frequency, u_amplitude, u_lacunarity, u_octaves);
-    color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
+    vec3 opacity = vec3(0.0);
+    vec3 da = vec3(0.1, 0.1, 0.0);
+    vec3 db = vec3(0.2, 0.2, 0.0);
+    vec3 wOpacity = vec3(
+        fbm3(vPos + opacity, u_frequency, u_amplitude, u_lacunarity, u_octaves),
+        fbm3(vPos + da,      u_frequency, u_amplitude, u_lacunarity, u_octaves),
+        fbm3(vPos + db,      u_frequency, u_amplitude, u_lacunarity, u_octaves)
+    );
+    opacity += fbm3(vPos + wOpacity, u_frequency, u_amplitude, u_lacunarity, u_octaves);
+    opacity = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, opacity.x);
     
-    csm_DiffuseColor = vec4(vec3(1.0), color);
+    csm_DiffuseColor = vec4(u_color, opacity);
 }

@@ -4,8 +4,17 @@
       <slot>ParameterName</slot>
     </td>
     <td>
-      <input v-if="type === 'number'" type="number" inputmode="numeric" pattern="[0-9.,]*" :step="step ?? 1" v-model="lgParam">
-      <input v-if="['text', 'checkbox'].includes(type)" :type="type" ref="input" v-model="lgParam">
+      <input v-if="type === 'number'"
+        type="number"
+        inputmode="numeric"
+        pattern="[0-9.,]*"
+        min="0"
+        :step="step ?? 1"
+        v-model="lgParam">
+      <input v-if="['text', 'checkbox'].includes(type)"
+        :type="type"
+        min="0"
+        v-model="lgParam">
     </td>
     <td class="unit">
       {{ unit }}

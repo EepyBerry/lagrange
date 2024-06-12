@@ -41,7 +41,7 @@ export function createScene(width: number, height: number, pixelRatio: number): 
       degToRad(LG_PARAMETERS.initCamAngle)
     )
   )
-  const ambientLight = createAmbientight(0xffffff, 0.1)
+  const ambientLight = createAmbientight(0xffffff, 0.0875)
   scene.add(ambientLight);
 
   return { scene, renderer, camera }
@@ -50,8 +50,7 @@ export function createScene(width: number, height: number, pixelRatio: number): 
 export function createSun() {
   const geometry = new THREE.IcosahedronGeometry(50, 4)
   const material = new THREE.MeshStandardMaterial( { color: 0xffffff, emissive: new THREE.Color(100, 100, 100) } )
-  const sun = new THREE.PointLight(0xfff6e8, 5e8)
-  sun.castShadow = true
+  const sun = new THREE.DirectionalLight(0xfff6e8, 5)
   sun.add(new THREE.Mesh(geometry, material))
   sun.name = LG_NAME_SUN
   return sun
@@ -73,7 +72,7 @@ export function createPlanet(type: GeometryType)  {
     u_ground_roughness:     { value: 0.95 },
     u_water_metalness:      { value: 0.5 },
     u_ground_metalness:     { value: 0.1 },
-    u_bump_offset:          { value: 0.001 },
+    u_bump_offset:          { value: 0.002 },
     u_bump_strength:        { value: 0.1 },
     u_cr_colors:            { value: LG_PARAMETERS.planetSurfaceColorRamp.definedColors },
     u_cr_positions:         { value: LG_PARAMETERS.planetSurfaceColorRamp.definedFactors },
@@ -95,16 +94,18 @@ export function createClouds(type: GeometryType) {
     u_frequency:      { value: LG_PARAMETERS.cloudsNoise.frequency },
     u_amplitude:      { value: LG_PARAMETERS.cloudsNoise.amplitude },
     u_lacunarity:     { value: LG_PARAMETERS.cloudsNoise.lacunarity },
+    u_color:          { value: new THREE.Color(0xffffff) },
     u_cr_colors:      { value: LG_PARAMETERS.cloudsColorRamp.definedColors },
     u_cr_positions:   { value: LG_PARAMETERS.cloudsColorRamp.definedFactors },
     u_cr_size:        { value: LG_PARAMETERS.cloudsColorRampSize },
-  })
+  }, THREE.MeshStandardMaterial)
   material.transparent = true
   material.side = THREE.DoubleSide
   material.shadowSide = THREE.BackSide
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
+  mesh.castShadow = true
   mesh.name = LG_NAME_CLOUDS
   return mesh
 }
@@ -129,6 +130,25 @@ export function switchPlanetMesh(scene: THREE.Scene, type: GeometryType): THREE.
   const newPlanet = createPlanet(type)
   scene.add(newPlanet)
   return newPlanet
+}
+
+export function switchCloudsMesh(scene: THREE.Scene, type: GeometryType): THREE.Mesh {
+  const clouds = scene.getObjectByName(LG_NAME_CLOUDS) as THREE.Mesh
+  if (
+    clouds.geometry instanceof THREE.IcosahedronGeometry && type === GeometryType.SPHERE
+    || clouds.geometry instanceof THREE.TorusGeometry && type === GeometryType.TORUS
+    || clouds.geometry instanceof THREE.BoxGeometry && type === GeometryType.BOX
+  ) {
+    return clouds
+  }
+
+  (clouds.material as THREE.Material).dispose()
+  clouds.geometry.dispose()
+  scene.remove(clouds)
+
+  const newClouds = createClouds(type)
+  scene.add(newClouds)
+  return newClouds
 }
 
 export function forceUpdatePlanet(scene: THREE.Scene): THREE.Mesh {
