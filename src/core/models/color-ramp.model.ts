@@ -21,15 +21,15 @@ export class ColorRamp {
 
   constructor(steps: ColorRampStep[], maxSize: number = 16) {
     this._maxSize = maxSize
-    this._steps = this.computeSteps(steps)
+    this._steps = steps
     this._size = steps.length
   }
 
   public get steps() {
-    return this._steps
+    return this.computeSteps(this._steps)
   }
   public set steps(steps: ColorRampStep[]) {
-    this._steps = this.computeSteps(steps)
+    this._steps = steps
   }
 
   public get definedSize() {
@@ -40,12 +40,12 @@ export class ColorRamp {
     return this._maxSize
   }
 
-  public get definedColors() {
-    return this._steps.map(s => s.color)
+  public get colors() {
+    return this.computeSteps(this._steps).map(s => s.color)
   }
   
-  public get definedFactors() {
-    return this._steps.map(s => s.factor)
+  public get factors() {
+    return this.computeSteps(this._steps).map(s => s.factor)
   }
 
   // Utility functions
@@ -54,5 +54,20 @@ export class ColorRamp {
     return Array(this._maxSize)
       .fill(ColorRampStep.EMPTY)
       .map((step, i) => i < steps.length ? ({color: steps[i].color, factor: steps[i].factor}) : step)
+  }
+
+  public setStep(color: string, factor: number) {
+    const stepIdx = this._steps.findIndex(s => s.factor >= factor)
+    this._steps[stepIdx] = new ColorRampStep(color, factor)
+    this._steps.sort((a, b) => a.factor - b.factor)
+  }
+
+  public removeStep(factor: number) {
+    const stepIdx = this._steps.findIndex(s => s.factor === factor)
+    if (stepIdx === -1) {
+      throw new Error('No step found for the given factor')
+    }
+    this._steps[stepIdx] = ColorRampStep.EMPTY
+    this._steps.sort((a, b) => a.factor - b.factor)
   }
 }

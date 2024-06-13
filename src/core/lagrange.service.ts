@@ -75,8 +75,8 @@ export function createPlanet(type: GeometryType)  {
     u_bump:                 { value: true },
     u_bump_offset:          { value: 0.002 },
     u_bump_strength:        { value: 0.1 },
-    u_cr_colors:            { value: LG_PARAMETERS.planetSurfaceColorRamp.definedColors },
-    u_cr_positions:         { value: LG_PARAMETERS.planetSurfaceColorRamp.definedFactors },
+    u_cr_colors:            { value: LG_PARAMETERS.planetSurfaceColorRamp.colors },
+    u_cr_positions:         { value: LG_PARAMETERS.planetSurfaceColorRamp.factors },
     u_cr_size:              { value: LG_PARAMETERS.planetSurfaceColorRampSize },
   }, THREE.MeshStandardMaterial)
 
@@ -96,8 +96,8 @@ export function createClouds(type: GeometryType) {
     u_amplitude:      { value: LG_PARAMETERS.cloudsNoise.amplitude },
     u_lacunarity:     { value: LG_PARAMETERS.cloudsNoise.lacunarity },
     u_color:          { value: new THREE.Color(0xffffff) },
-    u_cr_colors:      { value: LG_PARAMETERS.cloudsColorRamp.definedColors },
-    u_cr_positions:   { value: LG_PARAMETERS.cloudsColorRamp.definedFactors },
+    u_cr_colors:      { value: LG_PARAMETERS.cloudsColorRamp.colors },
+    u_cr_positions:   { value: LG_PARAMETERS.cloudsColorRamp.factors },
     u_cr_size:        { value: LG_PARAMETERS.cloudsColorRampSize },
   }, THREE.MeshStandardMaterial)
   material.transparent = true
