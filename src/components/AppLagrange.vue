@@ -1,5 +1,5 @@
 <template>
-  <div ref="sceneRoot"></div>
+  <div ref="sceneRoot" aria-label="Planet viewer"></div>
   <OverlaySpinner :load="showSpinner" />
 </template>
 
@@ -164,6 +164,27 @@ function updatePlanet() {
       case '_cloudsHeight': {
         const v = LG_PARAMETERS.cloudsHeight
         _clouds.scale.setScalar(1 + ((isNaN(v) ? 1 : v) / LG_CLOUDS_DIVIDER))
+        break
+      }
+      case '_cloudsNoise._frequency': {
+        const v = LG_PARAMETERS.cloudsNoise;
+        const mat = _clouds.material as CustomShaderMaterial
+        mat.uniforms.u_frequency = { value: v.frequency }
+        mat.needsUpdate = true
+        break
+      }
+      case '_cloudsNoise._amplitude': {
+        const v = LG_PARAMETERS.cloudsNoise;
+        const mat = _clouds.material as CustomShaderMaterial
+        mat.uniforms.u_amplitude = { value: v.amplitude }
+        mat.needsUpdate = true
+        break
+      }
+      case '_cloudsNoise._lacunarity': {
+        const v = LG_PARAMETERS.cloudsNoise;
+        const mat = _clouds.material as CustomShaderMaterial
+        mat.uniforms.u_lacunarity = { value: v.lacunarity }
+        mat.needsUpdate = true
         break
       }
     }

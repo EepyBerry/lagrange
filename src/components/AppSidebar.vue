@@ -1,5 +1,5 @@
 <template>
-  <div id="sidebar">
+  <aside id="sidebar">
     <div class="sidebar-scroll">
       <SidebarSection icon="tabler:gizmo" :expand="true">
         <template v-slot:title>Planet Settings</template>
@@ -55,6 +55,10 @@
         <template v-slot:title>Surface</template>
         <template v-slot:content>
           <ParameterTable>
+            <ParameterField v-model="LG_PARAMETERS.planetSurfaceShowBumps" type="checkbox">
+              Show bumps
+            </ParameterField>
+            <ParameterDivider />
             <ParameterField v-model="LG_PARAMETERS.planetSurfaceNoise.frequency"  type="number" :step="0.01">
               Frequency
             </ParameterField>
@@ -65,10 +69,6 @@
               Lacunarity
             </ParameterField>
             <ParameterField type="color-ramp">Color ramp</ParameterField>
-            <ParameterDivider />
-            <ParameterField v-model="LG_PARAMETERS.planetSurfaceShowBumps" type="checkbox">
-              Show bumps
-            </ParameterField>
           </ParameterTable>
         </template>
       </SidebarSection>
@@ -79,6 +79,7 @@
             <ParameterField v-model="LG_PARAMETERS.cloudsEnabled" type="checkbox">
               Show clouds
             </ParameterField>
+            <ParameterDivider />
             <template v-if="LG_PARAMETERS.cloudsEnabled">
               <ParameterField v-model="LG_PARAMETERS.cloudsAxialTilt" type="number" unit="°">
                 Axial tilt
@@ -88,6 +89,16 @@
               </ParameterField>
               <ParameterField v-model="LG_PARAMETERS.cloudsHeight" type="number">
                 Height
+              </ParameterField>
+              <ParameterDivider />
+              <ParameterField v-model="LG_PARAMETERS.cloudsNoise.frequency"  type="number" :step="0.01">
+                Frequency
+              </ParameterField>
+              <ParameterField v-model="LG_PARAMETERS.cloudsNoise.amplitude"  type="number" :step="0.01">
+                Amplitude
+              </ParameterField>
+              <ParameterField v-model="LG_PARAMETERS.cloudsNoise.lacunarity" type="number" :step="0.01">
+                Lacunarity
               </ParameterField>
               <ParameterField type="color-ramp">Color ramp</ParameterField>
             </template>
@@ -100,7 +111,7 @@
         </template>
       </SidebarSection>
     </div>
-  </div>
+  </aside>
 </template>
 
 <script setup lang="ts">
@@ -120,13 +131,13 @@ import { GeometryType } from '@core/types'
   scrollbar-color: var(--lg-accent) transparent;
   scrollbar-width: thin;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-
   .sidebar-scroll {
     width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
   }
 }
 </style>

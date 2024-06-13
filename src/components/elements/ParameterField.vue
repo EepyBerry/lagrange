@@ -10,10 +10,12 @@
         pattern="[0-9.,]*"
         min="0"
         :step="step ?? 1"
+        aria-label="Parameter input"
         v-model="lgParam">
       <input v-if="['text', 'checkbox'].includes(type)"
         :type="type"
         min="0"
+        aria-label="Parameter input"
         v-model="lgParam">
     </td>
     <td class="unit">
