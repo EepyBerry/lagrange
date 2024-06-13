@@ -11,7 +11,7 @@
       </div>
       <div class="section-content" v-show="_expanded">
         <slot name="content">
-            SECTION_CONTENT
+            <span class="default">Nothing here yet, sorry :c</span>
         </slot>
       </div>
     </section>
@@ -30,7 +30,7 @@ onMounted(() => _expanded.value = _props.expand ?? true)
   background-color: var(--lg-primary);
   border-bottom: 2px solid var(--lg-accent);
   width: 100%;
-  padding: 0.5rem 0.5rem 0;
+  padding: 0.75rem;
   overflow: hidden;
 
   display: flex;
@@ -47,7 +47,13 @@ onMounted(() => _expanded.value = _props.expand ?? true)
     justify-content: space-between;
     align-items: center;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+  }
+  .section-content:has(.default) {
+    text-align: center;
+    .default {
+      font-size: 0.75rem;
+      opacity: 0.25;
+    }
   }
 
   .icon-button { padding: 0.25rem; }

@@ -32,7 +32,7 @@ export default class LagrangeParameters extends ChangeTracker {
   // --------------------------------------------------
 
   private _planetGeometryType: GeometryType = GeometryType.SPHERE
-  private _planetMeshQuality: number = 64
+  private _planetMeshQuality: number = 48
   private _planetAxialTilt: number = 0
   private _planetRotation: number = 0
   
@@ -49,7 +49,7 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._planetMeshQuality
   }
   public set planetMeshQuality(quality: number) {
-    this._planetMeshQuality = isNumeric(quality) ? clamp(quality, 0, 16) : 16
+    this._planetMeshQuality = isNumeric(quality) ? clamp(quality, 0, 48) : 48
     this.markForChange('_planetMeshQuality')
   }
 
@@ -74,12 +74,21 @@ export default class LagrangeParameters extends ChangeTracker {
   // |                Surface settings                |
   // --------------------------------------------------
 
+  private _planetSurfaceShowBumps: boolean
   private _planetSurfaceNoise: NoiseParameters = new NoiseParameters(
     this._changedProps, '_planetSurfaceNoise', NoiseType.FBM
   )
   private _planetSurfaceColorRamp: ColorRamp = ColorRamp.EMPTY
 
   // --------------------------------------------------
+
+  public get planetSurfaceShowBumps(): boolean {
+    return this._planetSurfaceShowBumps
+  }
+  public set planetSurfaceShowBumps(value: boolean) {
+    this._planetSurfaceShowBumps = value
+    this.markForChange('_planetSurfaceShowBumps')
+  }
 
   public get planetSurfaceNoise() {
     return this._planetSurfaceNoise
@@ -100,6 +109,7 @@ export default class LagrangeParameters extends ChangeTracker {
   // |                Clouds settings                 |
   // --------------------------------------------------
 
+  private _cloudsEnabled: boolean
   private _cloudsAxialTilt: number = 0
   private _cloudsRotation: number = 0
   private _cloudsHeight: number = 3
@@ -109,6 +119,14 @@ export default class LagrangeParameters extends ChangeTracker {
   private _cloudsColorRamp: ColorRamp = ColorRamp.EMPTY
 
   // --------------------------------------------------
+
+  public get cloudsEnabled(): boolean {
+    return this._cloudsEnabled
+  }
+  public set cloudsEnabled(value: boolean) {
+    this._cloudsEnabled = value
+    this.markForChange('_cloudsEnabled')
+  }
 
   public get cloudsAxialTilt() {
     return this._cloudsAxialTilt
@@ -169,6 +187,8 @@ export default class LagrangeParameters extends ChangeTracker {
 
   constructor() {
     super()
+    this._planetSurfaceShowBumps = true
+    this._cloudsEnabled = true
     this.planetSurfaceColorRamp = new ColorRamp([
       { color: new Color(0x101b38), factor: 0 },
       { color: new Color(0x182852), factor: 0.4 },

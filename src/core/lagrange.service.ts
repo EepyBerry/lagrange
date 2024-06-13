@@ -72,6 +72,7 @@ export function createPlanet(type: GeometryType)  {
     u_ground_roughness:     { value: 0.95 },
     u_water_metalness:      { value: 0.5 },
     u_ground_metalness:     { value: 0.1 },
+    u_bump:                 { value: true },
     u_bump_offset:          { value: 0.002 },
     u_bump_strength:        { value: 0.1 },
     u_cr_colors:            { value: LG_PARAMETERS.planetSurfaceColorRamp.definedColors },

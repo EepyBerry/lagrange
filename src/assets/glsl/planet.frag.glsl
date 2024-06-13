@@ -11,6 +11,7 @@ uniform float u_amplitude;
 uniform float u_lacunarity;
 
 // Bump uniforms
+uniform bool u_bump;
 uniform float u_bump_offset;
 uniform float u_bump_strength;
 
@@ -46,7 +47,9 @@ void main() {
     float dyHeight = fbm3(vPos + dy, u_frequency, u_amplitude, u_lacunarity, u_octaves);
 
     // Perturb normal
-    vec3 N = perturbNormal(vPos, dx, dy, height, dxHeight, dyHeight, u_radius, u_bump_strength);
+    vec3 N = u_bump
+        ? perturbNormal(vPos, dx, dy, height, dxHeight, dyHeight, u_radius, u_bump_strength)
+        : vNormal;
 
     // Render noise as color
     color += height;

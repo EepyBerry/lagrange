@@ -118,6 +118,13 @@ function updatePlanet() {
         _planet.rotateOnAxis(VEC_UP, degToRad(isNaN(v) ? 0 : v) - _planet.rotation.y)
         break
       }
+      case '_planetSurfaceShowBumps': {
+        const v = LG_PARAMETERS.planetSurfaceShowBumps;
+        const mat = _planet.material as CustomShaderMaterial
+        mat.uniforms.u_bump = { value: v }
+        mat.needsUpdate = true
+        break
+      }
       case '_planetSurfaceNoise._frequency': {
         const v = LG_PARAMETERS.planetSurfaceNoise;
         const mat = _planet.material as CustomShaderMaterial
@@ -137,6 +144,11 @@ function updatePlanet() {
         const mat = _planet.material as CustomShaderMaterial
         mat.uniforms.u_lacunarity = { value: v.lacunarity }
         mat.needsUpdate = true
+        break
+      }
+      case '_cloudsEnabled': {
+        const v = LG_PARAMETERS.cloudsEnabled
+        _clouds.visible = v
         break
       }
       case '_cloudsAxialTilt': {

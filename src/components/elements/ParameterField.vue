@@ -54,6 +54,8 @@ tr.field {
 
 input {
   text-align: end;
+}
+input:not([type=checkbox]) {
   width: 4.5rem;
 }
 </style>
