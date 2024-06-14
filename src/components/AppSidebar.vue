@@ -68,7 +68,7 @@
             <ParameterField v-model="LG_PARAMETERS.planetSurfaceNoise.lacunarity" type="number" :step="0.01">
               Lacunarity
             </ParameterField>
-            <ParameterField type="color-ramp">Color ramp</ParameterField>
+            <ParameterColorRamp v-model="LG_PARAMETERS.planetSurfaceColorRamp">Color ramp</ParameterColorRamp>
           </ParameterTable>
         </template>
       </SidebarSection>
@@ -117,6 +117,7 @@
 <script setup lang="ts">
 import { LG_PARAMETERS } from '@core/globals'
 import { GeometryType } from '@core/types'
+import ParameterColorRamp from './elements/ParameterColorRamp.vue';
 </script>
 
 <style scoped lang="scss">

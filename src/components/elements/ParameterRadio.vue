@@ -9,7 +9,7 @@
   </tr>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 tr.field {
   width: 100%;
 

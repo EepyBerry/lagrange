@@ -90,11 +90,11 @@ export default class LagrangeParameters extends ChangeTracker {
     this.markForChange('_planetSurfaceShowBumps')
   }
 
-  public get planetSurfaceNoise() {
+  public get planetSurfaceNoise(): NoiseParameters {
     return this._planetSurfaceNoise
   }
 
-  public get planetSurfaceColorRamp() {
+  public get planetSurfaceColorRamp(): ColorRamp {
     return this._planetSurfaceColorRamp
   }
   public set planetSurfaceColorRamp(ramp: ColorRamp) {
