@@ -1,5 +1,5 @@
 <template>
-  <div ref="sceneRoot" aria-label="Planet viewer"></div>
+  <div ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
 </template>
 
@@ -47,10 +47,12 @@ function initRendering(width: number, height: number) {
   const stats = new Stats();
   stats.dom.style.right = '0'
   stats.dom.style.left = 'auto'
+  stats.dom.ariaHidden = 'true'
 	document.body.appendChild(stats.dom)
 
   $se.renderer.setSize( width, height )
   $se.renderer.setAnimationLoop(() => renderFrame(stats))
+  $se.renderer.domElement.ariaLabel = '3D planet viewer'
   sceneRoot.value.appendChild($se.renderer.domElement)
 }
 

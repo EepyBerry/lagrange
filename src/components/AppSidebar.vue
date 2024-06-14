@@ -10,65 +10,93 @@
               <template v-slot:options>
                 <ParameterRadioOption
                   v-model="LG_PARAMETERS.planetGeometryType"
-                  name="planet-mesh"
-                  id="0"
+                  name="p-mesh"
+                  id="opt-sphere"
                   :value="GeometryType.SPHERE"
                   icon="tabler:sphere"
+                  ariaLabel="Sphere"
                 >
                   Sphere
                 </ParameterRadioOption>
                 <ParameterRadioOption
                   v-model="LG_PARAMETERS.planetGeometryType"
-                  name="planet-mesh"
-                  id="1"
+                  name="p-mesh"
+                  id="opt-torus"
                   :value="GeometryType.TORUS"
                   icon="lucide:torus"
+                  ariaLabel="Torus"
                 >
                   Torus
                 </ParameterRadioOption>
                 <ParameterRadioOption
                   v-model="LG_PARAMETERS.planetGeometryType"
-                  name="planet-mesh"
-                  id="2"
+                  name="p-mesh"
+                  id="opt-cube"
                   :value="GeometryType.BOX"
                   icon="tabler:cube"
+                  ariaLabel="Cube"
                 >
                   Torus
                 </ParameterRadioOption>
               </template>
             </ParameterRadio>
             <ParameterDivider />
-            <ParameterField v-model="LG_PARAMETERS.planetMeshQuality" type="number">
+            <ParameterField v-model="LG_PARAMETERS.planetMeshQuality" id="p-qual" type="number">
               Mesh quality
             </ParameterField>
-            <ParameterField v-model="LG_PARAMETERS.planetAxialTilt" type="number" unit="°">
+            <ParameterField v-model="LG_PARAMETERS.planetAxialTilt" id="p-tilt" type="number" unit="°">
               Axial tilt
             </ParameterField>
-            <ParameterField v-model="LG_PARAMETERS.planetRotation" type="number" unit="°">
+            <ParameterField v-model="LG_PARAMETERS.planetRotation" id="p-rot" type="number" unit="°">
               Rotation
             </ParameterField>
             <ParameterDivider />
           </ParameterTable>
         </template>
       </SidebarSection>
-      <SidebarSection icon="mingcute:planet-line" :expand="false">
+      <SidebarSection icon="mingcute:planet-line" :expand="true">
         <template v-slot:title>Surface</template>
         <template v-slot:content>
           <ParameterTable>
-            <ParameterField v-model="LG_PARAMETERS.planetSurfaceShowBumps" type="checkbox">
+            <ParameterField
+              v-model="LG_PARAMETERS.planetSurfaceShowBumps"
+              id="s-bumps"
+              type="checkbox"
+            >
               Show bumps
             </ParameterField>
             <ParameterDivider />
-            <ParameterField v-model="LG_PARAMETERS.planetSurfaceNoise.frequency"  type="number" :step="0.01">
+            <ParameterField
+              v-model="LG_PARAMETERS.planetSurfaceNoise.frequency"
+              id="s-freq"
+              type="number"
+              :step="0.01"
+            >
               Frequency
             </ParameterField>
-            <ParameterField v-model="LG_PARAMETERS.planetSurfaceNoise.amplitude"  type="number" :step="0.01">
+            <ParameterField
+              v-model="LG_PARAMETERS.planetSurfaceNoise.amplitude"
+              id="s-amp"
+              type="number"
+              :step="0.01"
+            >
               Amplitude
             </ParameterField>
-            <ParameterField v-model="LG_PARAMETERS.planetSurfaceNoise.lacunarity" type="number" :step="0.01">
+            <ParameterField
+              v-model="LG_PARAMETERS.planetSurfaceNoise.lacunarity"
+              id="s-lac"
+              type="number"
+              :step="0.01"
+            >
               Lacunarity
             </ParameterField>
-            <ParameterColorRamp v-model="LG_PARAMETERS.planetSurfaceColorRamp">Color ramp</ParameterColorRamp>
+            <ParameterDivider />
+            <ParameterColorRamp 
+              v-model="LG_PARAMETERS.planetSurfaceColorRamp"
+              id="s-color"
+            >
+              Color ramp
+            </ParameterColorRamp>
           </ParameterTable>
         </template>
       </SidebarSection>
@@ -76,31 +104,65 @@
         <template v-slot:title>Clouds</template>
         <template v-slot:content>
           <ParameterTable>
-            <ParameterField v-model="LG_PARAMETERS.cloudsEnabled" type="checkbox">
+            <ParameterField
+              v-model="LG_PARAMETERS.cloudsEnabled"
+              id="c-toggle"
+              type="checkbox"
+            >
               Show clouds
             </ParameterField>
             <ParameterDivider />
             <template v-if="LG_PARAMETERS.cloudsEnabled">
-              <ParameterField v-model="LG_PARAMETERS.cloudsAxialTilt" type="number" unit="°">
+              <ParameterField
+                v-model="LG_PARAMETERS.cloudsAxialTilt"
+                id="c-tilt"
+                type="number"
+                unit="°"
+              >
                 Axial tilt
               </ParameterField>
-              <ParameterField v-model="LG_PARAMETERS.cloudsRotation" type="number" unit="°">
+              <ParameterField
+                v-model="LG_PARAMETERS.cloudsRotation"
+                id="c-rot"
+                type="number"
+                unit="°"
+              >
                 Rotation
               </ParameterField>
-              <ParameterField v-model="LG_PARAMETERS.cloudsHeight" type="number">
+              <ParameterField 
+                v-model="LG_PARAMETERS.cloudsHeight"
+                id="c-height"
+                type="number"
+              >
                 Height
               </ParameterField>
               <ParameterDivider />
-              <ParameterField v-model="LG_PARAMETERS.cloudsNoise.frequency"  type="number" :step="0.01">
+              <ParameterField
+                v-model="LG_PARAMETERS.cloudsNoise.frequency"
+                id="c-freq"
+                type="number"
+                :step="0.01"
+              >
                 Frequency
               </ParameterField>
-              <ParameterField v-model="LG_PARAMETERS.cloudsNoise.amplitude"  type="number" :step="0.01">
+              <ParameterField
+                v-model="LG_PARAMETERS.cloudsNoise.amplitude"
+                id="c-amp"
+                type="number"
+                :step="0.01"
+              >
                 Amplitude
               </ParameterField>
-              <ParameterField v-model="LG_PARAMETERS.cloudsNoise.lacunarity" type="number" :step="0.01">
+              <ParameterField
+                v-model="LG_PARAMETERS.cloudsNoise.lacunarity"
+                id="c-lac"
+                type="number"
+                :step="0.01"
+              >
                 Lacunarity
               </ParameterField>
-              <ParameterField type="color-ramp">Color ramp</ParameterField>
+            <ParameterDivider />
+            <ParameterColorRamp v-model="LG_PARAMETERS.cloudsColorRamp">Color/Opacity ramp</ParameterColorRamp>
             </template>
           </ParameterTable>
         </template>
@@ -125,12 +187,13 @@ import ParameterColorRamp from './elements/ParameterColorRamp.vue';
   z-index: 5;
   position: absolute;
   inset: 0 auto 0 0;
-  width: 20rem;
-  margin: 1rem;
+  min-width: 24rem;
+  padding: 1rem;
 
   overflow-y: auto;
   scrollbar-color: var(--lg-accent) transparent;
   scrollbar-width: thin;
+  transform: scaleX(-1);
 
   .sidebar-scroll {
     width: 100%;
@@ -138,7 +201,14 @@ import ParameterColorRamp from './elements/ParameterColorRamp.vue';
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.375rem;
+    transform: scaleX(-1);
+  }
+}
+
+@media screen and (max-width:767px) {
+  #sidebar {
+    min-width: 2rem;
   }
 }
 </style>

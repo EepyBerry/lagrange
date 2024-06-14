@@ -6,15 +6,15 @@
     :value="value"
     v-model="lgParam">
   
-  <button class="radio-button" :class="{selected: htmlRadio?.checked }" @click="select()">
-    <iconify-icon :icon="icon" width="1.25rem" />
+  <button class="radio-button" :class="{selected: htmlRadio?.checked }" @click="select()" :aria-label="ariaLabel">
+    <iconify-icon :icon="icon" width="1.25rem" aria-hidden="true" />
   </button>
 </template>
 
 <script setup lang="ts">
 import { ref, type Ref } from 'vue';
 
-defineProps<{ name: string, id: string, value: any , icon?: string }>()
+defineProps<{ name: string, id: string, value: any , icon?: string, ariaLabel: string }>()
 const lgParam = defineModel<string | number | boolean>()
 const htmlRadio: Ref<HTMLInputElement | null> = ref(null)
 
@@ -29,7 +29,7 @@ function select() {
   color: var(--lg-text);
   border: none;
   padding: 0.125rem 0.5rem;
-  min-height: 100%;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;

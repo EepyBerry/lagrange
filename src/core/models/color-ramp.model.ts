@@ -48,6 +48,18 @@ export class ColorRamp {
     return this.computeSteps(this._steps).map(s => s.factor)
   }
 
+  public get definedSteps() {
+    return this._steps
+  }
+
+  public get definedColors() {
+    return this._steps.map(s => s.color)
+  }
+  
+  public get definedFactors() {
+    return this._steps.map(s => s.factor)
+  }
+
   // Utility functions
 
   private computeSteps(steps: ColorRampStep[]) {

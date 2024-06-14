@@ -1,10 +1,13 @@
 <template>
   <tr class="field">
     <td>
-      <slot>ParameterName</slot>
+      <label :for="id">
+        <slot>ParameterName</slot>
+      </label>
     </td>
     <td>
       <input v-if="type === 'number'"
+        :id="id"
         type="number"
         inputmode="numeric"
         pattern="[0-9.,]*"
@@ -13,6 +16,7 @@
         aria-label="Parameter input"
         v-model="lgParam">
       <input v-if="['text', 'checkbox'].includes(type)"
+        :id="id"
         :type="type"
         min="0"
         aria-label="Parameter input"
@@ -26,7 +30,7 @@
 
 <script setup lang="ts">
 const lgParam = defineModel<string | number | boolean>()
-defineProps<{ type: string, unit?: string, step?: number }>()
+defineProps<{ id: string, type: string, unit?: string, step?: number }>()
 </script>
 
 <style scoped lang="scss">

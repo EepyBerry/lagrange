@@ -128,5 +128,11 @@ export function createControls(camera: THREE.Camera, canvas: HTMLCanvasElement):
   controls.maxDistance = 16
   controls.maxPolarAngle = Math.PI
   controls.rotateSpeed = 0.5
+  controls.zoomSpeed = 1.5
+  controls.mouseButtons = {
+    LEFT: THREE.MOUSE.ROTATE,
+    MIDDLE: THREE.MOUSE.DOLLY,
+    RIGHT: THREE.MOUSE.DOLLY
+  }
   return controls
 }

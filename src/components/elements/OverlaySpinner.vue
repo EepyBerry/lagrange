@@ -1,6 +1,6 @@
 <template>
     <div v-show="load" class="spinner">
-        <iconify-icon class="spinner-icon" icon="mingcute:loading-3-fill" width="6rem"/>
+        <iconify-icon class="spinner-icon" icon="mingcute:loading-3-fill" width="6rem" aria-hidden="true" />
     </div>
 </template>
 

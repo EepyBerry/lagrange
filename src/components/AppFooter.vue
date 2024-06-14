@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <SVGAppLogo />
+    <SVGAppLogo aria-label="Lagrange logo" />
   </footer>
 </template>
 

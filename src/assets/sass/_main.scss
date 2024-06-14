@@ -63,7 +63,9 @@ h1, h2, h3, h4, h5, h6 {
 
 input {
   border: none;
-  border-radius: 2px;
+  border-radius: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
   color: var(--lg-text);
   background: var(--lg-input);
 }
@@ -74,4 +76,18 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+button {
+  background-color: var(--lg-button);
+  padding: 0;
+  min-width: 2rem;
+}
+button:hover {
+  cursor: pointer;
+  background-color: var(--lg-button-hover);
+}
+button:active {
+  cursor: pointer;
+  background-color: var(--lg-button-active);
 }
