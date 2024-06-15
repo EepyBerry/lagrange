@@ -7,6 +7,7 @@
     </td>
     <td>
       <input v-if="type === 'number'"
+        class="lg"
         :id="id"
         type="number"
         inputmode="numeric"
@@ -16,21 +17,19 @@
         aria-label="Parameter input"
         v-model="lgParam">
       <input v-if="['text', 'checkbox'].includes(type)"
+        class="lg"
         :id="id"
         :type="type"
         min="0"
         aria-label="Parameter input"
         v-model="lgParam">
     </td>
-    <td class="unit">
-      {{ unit }}
-    </td>
   </tr>
 </template>
 
 <script setup lang="ts">
 const lgParam = defineModel<string | number | boolean>()
-defineProps<{ id: string, type: string, unit?: string, step?: number }>()
+defineProps<{ id: string, type: string, step?: number }>()
 </script>
 
 <style scoped lang="scss">
@@ -41,12 +40,11 @@ tr.field {
     font-size: 0.875rem;
     text-wrap: nowrap;
   }
-  td:first-child {
-      width: 100%;
-      white-space: nowrap;
+  td:first-of-type {
+    width: 100%;
+    white-space: nowrap;
   }
-  td:nth-child(2),
-  td:last-child {
+  td:last-of-type {
     width: auto;
     min-width: 10px;
     padding-left: 4px;
@@ -58,10 +56,10 @@ tr.field {
   }
 }
 
-input {
+input.lg {
   text-align: end;
 }
-input:not([type=checkbox]) {
+input.lg:not([type=checkbox]) {
   width: 4.5rem;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <tr class="field">
-    <td colspan="3">
+    <td colspan="2">
       <slot>ParameterName</slot>
     </td>
   </tr>
@@ -12,7 +12,7 @@
             <span ref="htmlColorSteps" class="color-step"></span>
           </template>
         </div>
-        <button class="edit" aria-label="Edit ramp">
+        <button class="lg edit" aria-label="Edit ramp">
           <iconify-icon class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
         </button>
       </div>
@@ -40,7 +40,6 @@ function updateRamp() {
     gradient.push(`#${step.color.getHexString()} ${step.factor * 100.0}%`)
   }
   htmlColorRamp.value!.style.background = `linear-gradient(90deg, ${gradient.join(', ')})`
-  console.log(gradient)
 }
 
 function addColor(color: string, factor: number) {

@@ -10,7 +10,7 @@
         @keydown.enter="_expanded = !_expanded"
       >
         <h3 class="headline-sm">
-          <iconify-icon :icon="icon" width="1.25em" aria-hidden="true" />
+          <iconify-icon :icon="icon" width="1.25rem" aria-hidden="true" />
           <span><slot name="title">SECTION_TITLE</slot></span>
         </h3>
         <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.25rem" aria-hidden="true" />
@@ -38,7 +38,7 @@ onMounted(() => _expanded.value = _props.expand ?? true)
   border-radius: 4px;
   width: 100%;
   padding: 0.625rem;
-  overflow: hidden;
+  position: relative;
 
   display: flex;
   flex-direction: column;
@@ -70,8 +70,6 @@ onMounted(() => _expanded.value = _props.expand ?? true)
       font-size: 0.75rem;
     }
   }
-
-  .indicator { padding: 0.25rem; }
 }
 
 @media screen and (max-width:1023px) {

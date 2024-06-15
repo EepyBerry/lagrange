@@ -1,5 +1,6 @@
 <template>
   <input ref="htmlRadio"
+    class="lg"
     type="radio"
     :id="`${name}-${id}`"
     :name="name"
@@ -42,5 +43,5 @@ function select() {
   background-color: var(--lg-button-hover);
 }
 
-input[type=radio] { display: none; }
+input.lg[type=radio] { display: none; }
 </style>

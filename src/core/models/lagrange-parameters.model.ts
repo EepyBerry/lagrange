@@ -27,6 +27,46 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._initPlanetRadius
   }
 
+  
+  // --------------------------------------------------
+  // |               Lighting settings                |
+  // --------------------------------------------------
+
+  private _sunLightColor: Color = new Color(0xfff6e8)
+  private _sunLightIntensity: number = 7.5
+  private _ambLightColor: Color = new Color(0xffffff)
+  private _ambLightIntensity: number = 0.05
+
+  public get sunLightColor(): Color {
+    return this._sunLightColor
+  }
+  public set sunLightColor(value: Color) {
+    this._sunLightColor = value
+    this.markForChange('_sunLightColor')
+  }
+  public get sunLightIntensity(): number {
+    return this._sunLightIntensity
+  }
+  public set sunLightIntensity(value: number) {
+    this._sunLightIntensity = value
+    this.markForChange('_sunLightIntensity')
+  }
+  
+  public get ambLightColor(): Color {
+    return this._ambLightColor
+  }
+  public set ambLightColor(value: Color) {
+    this._ambLightColor = value
+    this.markForChange('_ambLightColor')
+  }
+  public get ambLightIntensity(): number {
+    return this._ambLightIntensity
+  }
+  public set ambLightIntensity(value: number) {
+    this._ambLightIntensity = value
+    this.markForChange('_ambLightIntensity')
+  }
+
   // --------------------------------------------------
   // |                Planet settings                 |
   // --------------------------------------------------
@@ -90,11 +130,11 @@ export default class LagrangeParameters extends ChangeTracker {
     this.markForChange('_planetSurfaceShowBumps')
   }
 
-  public get planetSurfaceNoise(): NoiseParameters {
+  public get planetSurfaceNoise() {
     return this._planetSurfaceNoise
   }
 
-  public get planetSurfaceColorRamp(): ColorRamp {
+  public get planetSurfaceColorRamp() {
     return this._planetSurfaceColorRamp
   }
   public set planetSurfaceColorRamp(ramp: ColorRamp) {

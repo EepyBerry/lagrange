@@ -1,10 +1,41 @@
 <template>
   <aside id="sidebar">
     <div class="sidebar-scroll">
+      <SidebarSection icon="mingcute:sun-line" :expand="false">
+        <template v-slot:title>Lighting Settings</template>
+        <template v-slot:content>
+          <ParameterTable>
+            <ParameterDivider />
+            <ParameterField v-model="LG_PARAMETERS.sunLightIntensity"
+              id="l-int"
+              type="number"
+              :step="0.05"
+            >
+              Sunlight intensity
+            </ParameterField>
+            <ParameterColor v-model="LG_PARAMETERS.sunLightColor">
+              Sunlight color
+            </ParameterColor>
+            <ParameterDivider />
+            <ParameterField v-model="LG_PARAMETERS.ambLightIntensity"
+              id="a-int"
+              type="number"
+              :step="0.05"
+            >
+              Ambient intensity
+            </ParameterField>
+            <ParameterColor v-model="LG_PARAMETERS.ambLightColor">
+              Ambient color
+            </ParameterColor>
+          </ParameterTable>
+        </template>
+      </SidebarSection>
+
       <SidebarSection icon="tabler:gizmo" :expand="true">
         <template v-slot:title>Planet Settings</template>
         <template v-slot:content>
           <ParameterTable>
+            <ParameterDivider />
             <ParameterRadio>
               <template v-slot:title>Mesh</template>
               <template v-slot:options>
@@ -44,11 +75,11 @@
             <ParameterField v-model="LG_PARAMETERS.planetMeshQuality" id="p-qual" type="number">
               Mesh quality
             </ParameterField>
-            <ParameterField v-model="LG_PARAMETERS.planetAxialTilt" id="p-tilt" type="number" unit="°">
-              Axial tilt
+            <ParameterField v-model="LG_PARAMETERS.planetAxialTilt" id="p-tilt" type="number">
+              Axial tilt <sup>(°)</sup>
             </ParameterField>
-            <ParameterField v-model="LG_PARAMETERS.planetRotation" id="p-rot" type="number" unit="°">
-              Rotation
+            <ParameterField v-model="LG_PARAMETERS.planetRotation" id="p-rot" type="number">
+              Rotation <sup>(°)</sup>
             </ParameterField>
             <ParameterDivider />
           </ParameterTable>
@@ -58,6 +89,7 @@
         <template v-slot:title>Surface</template>
         <template v-slot:content>
           <ParameterTable>
+            <ParameterDivider />
             <ParameterField
               v-model="LG_PARAMETERS.planetSurfaceShowBumps"
               id="s-bumps"
@@ -91,10 +123,7 @@
               Lacunarity
             </ParameterField>
             <ParameterDivider />
-            <ParameterColorRamp 
-              v-model="LG_PARAMETERS.planetSurfaceColorRamp"
-              id="s-color"
-            >
+            <ParameterColorRamp v-model="LG_PARAMETERS.planetSurfaceColorRamp">
               Color ramp
             </ParameterColorRamp>
           </ParameterTable>
@@ -104,6 +133,7 @@
         <template v-slot:title>Clouds</template>
         <template v-slot:content>
           <ParameterTable>
+            <ParameterDivider />
             <ParameterField
               v-model="LG_PARAMETERS.cloudsEnabled"
               id="c-toggle"
@@ -117,17 +147,15 @@
                 v-model="LG_PARAMETERS.cloudsAxialTilt"
                 id="c-tilt"
                 type="number"
-                unit="°"
               >
-                Axial tilt
+                Axial tilt <sup>(°)</sup>
               </ParameterField>
               <ParameterField
                 v-model="LG_PARAMETERS.cloudsRotation"
                 id="c-rot"
                 type="number"
-                unit="°"
               >
-                Rotation
+                Rotation <sup>(°)</sup>
               </ParameterField>
               <ParameterField 
                 v-model="LG_PARAMETERS.cloudsHeight"
@@ -180,6 +208,7 @@
 import { LG_PARAMETERS } from '@core/globals'
 import { GeometryType } from '@core/types'
 import ParameterColorRamp from './elements/ParameterColorRamp.vue';
+import ParameterDivider from './elements/ParameterDivider.vue';
 </script>
 
 <style scoped lang="scss">
@@ -191,6 +220,7 @@ import ParameterColorRamp from './elements/ParameterColorRamp.vue';
   padding: 1rem;
 
   overflow-y: auto;
+  overflow-x: visible;
   scrollbar-color: var(--lg-accent) transparent;
   scrollbar-width: thin;
   transform: scaleX(-1);

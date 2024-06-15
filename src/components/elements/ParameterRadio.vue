@@ -3,7 +3,7 @@
     <td>
       <slot name="title">ParameterName</slot>
     </td>
-    <td colspan="2" class="radio-options">
+    <td class="radio-options">
       <slot name="options"></slot>
     </td>
   </tr>
@@ -37,13 +37,18 @@ tr.field {
   height: 100%;
   justify-content: flex-end;
 
-  & > :nth-child(2) {
+  :deep(.radio-button) {
+    border-radius: 0;
+  }
+  & > :deep(.radio-button:first-of-type) {
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
+    border-right: 2px solid var(--lg-button-active);
   }
-  & > :last-child {
+  & > :deep(.radio-button:last-of-type) {
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
+    border-left: 2px solid var(--lg-button-active);
   }
 }
 </style>

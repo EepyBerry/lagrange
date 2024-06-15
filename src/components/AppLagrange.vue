@@ -8,7 +8,7 @@ import { onMounted, ref, watch, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
 import * as ThreeUtils from '@/core/lagrange.service';
-import { LG_CLOUDS_DIVIDER, LG_PARAMETERS } from '@core/globals';
+import { LG_CLOUDS_DIVIDER, LG_NAME_AMBLIGHT, LG_PARAMETERS } from '@core/globals';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType, type SceneElements } from '@core/types';
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla';
@@ -20,9 +20,10 @@ const showSpinner: Ref<boolean> = ref(false)
 
 // Main THREE objects
 let $se: SceneElements
-let _sun: THREE.Object3D
+let _sun: THREE.DirectionalLight
 let _planet: THREE.Mesh
 let _clouds: THREE.Mesh
+let _ambLight: THREE.AmbientLight
 
 const VEC_Z = new THREE.Vector3(0, 0, 1)
 const VEC_UP = new THREE.Vector3(0, 1, 0)
@@ -36,7 +37,7 @@ function init() {
         pixelRatio = window.devicePixelRatio
   $se = ThreeUtils.createScene(width, height, pixelRatio)
 
-  initSun()
+  initLighting()
   initPlanet()
   initRendering(width, height)
   createControls($se.camera, $se.renderer.domElement)
@@ -68,11 +69,12 @@ function initPlanet(): void {
   //$se.scene.add( helper );
 }
 
-function initSun(): void {
+function initLighting(): void {
   const sun = ThreeUtils.createSun()
   sun.position.set(0, 5e3, 1e4)
   $se.scene.add(sun)
   _sun = sun
+  _ambLight = $se.scene.getObjectByName(LG_NAME_AMBLIGHT) as THREE.AmbientLight
 }
 
 function renderFrame(stats: Stats) {
@@ -90,6 +92,22 @@ function updatePlanet() {
   if (LG_PARAMETERS.changedProps.length === 0) { return }
   for (const key of LG_PARAMETERS.changedProps) {
     switch (key) {
+      case '_sunLightColor': {
+        _sun.color = LG_PARAMETERS.sunLightColor
+        break
+      }
+      case '_sunLightIntensity': {
+        _sun.intensity = LG_PARAMETERS.sunLightIntensity
+        break
+      }
+      case '_ambLightColor': {
+        _ambLight.color = LG_PARAMETERS.ambLightColor
+        break
+      }
+      case '_ambLightIntensity': {
+        _ambLight.intensity = LG_PARAMETERS.ambLightIntensity
+        break
+      }
       case '_planetGeometryType': {
         const v = LG_PARAMETERS.planetGeometryType
         const newPlanet = ThreeUtils.switchPlanetMesh($se.scene, v)

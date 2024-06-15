@@ -10,6 +10,7 @@ import {
   LG_NAME_PLANET,
   LG_NAME_SUN,
   LG_CLOUDS_DIVIDER,
+  LG_NAME_AMBLIGHT,
 } from '@core/globals'
 import { GeometryType, type SceneElements } from '@core/types'
 import { loadCubeTexture } from '@/core/three/external-data.loader'
@@ -41,22 +42,29 @@ export function createScene(width: number, height: number, pixelRatio: number): 
       degToRad(LG_PARAMETERS.initCamAngle)
     )
   )
-  const ambientLight = createAmbientight(0xffffff, 0.0875)
-  scene.add(ambientLight);
+  const ambientLight = createAmbientight(
+    LG_PARAMETERS.ambLightColor,
+    LG_PARAMETERS.ambLightIntensity
+  )
+  ambientLight.name = LG_NAME_AMBLIGHT
+  scene.add(ambientLight)
 
   return { scene, renderer, camera }
 }
 
-export function createSun() {
+export function createSun(): THREE.DirectionalLight {
   const geometry = new THREE.IcosahedronGeometry(50, 4)
   const material = new THREE.MeshStandardMaterial( { color: 0xffffff, emissive: new THREE.Color(100, 100, 100) } )
-  const sun = new THREE.DirectionalLight(0xfff6e8, 5)
+  const sun = new THREE.DirectionalLight(
+    LG_PARAMETERS.sunLightColor, 
+    LG_PARAMETERS.sunLightIntensity
+  )
   sun.add(new THREE.Mesh(geometry, material))
   sun.name = LG_NAME_SUN
   return sun
 }
 
-export function createPlanet(type: GeometryType)  {
+export function createPlanet(type: GeometryType): THREE.Mesh {
   const geometry = createGeometry(type)
   geometry.computeTangents()
 
@@ -86,7 +94,7 @@ export function createPlanet(type: GeometryType)  {
   return mesh
 }
 
-export function createClouds(type: GeometryType) {
+export function createClouds(type: GeometryType): THREE.Mesh {
   const cloudHeight = (LG_PARAMETERS.cloudsHeight / LG_CLOUDS_DIVIDER)
   const geometry = createGeometry(type, cloudHeight)
   const material = createShaderMaterial(cloudsVertShader, cloudsFragShader, {

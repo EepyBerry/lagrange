@@ -11,6 +11,7 @@ import ParameterRadio from '@/components/elements/ParameterRadio.vue';
 import ParameterRadioOption from '@/components/elements/ParameterRadioOption.vue';
 import ParameterDivider from '@/components/elements/ParameterDivider.vue'
 import ParameterColorRamp from './components/elements/ParameterColorRamp.vue';
+import ParameterColor from './components/elements/ParameterColor.vue';
 
 createApp(App)
   .component('SidebarSection', SidebarSection)
@@ -18,6 +19,7 @@ createApp(App)
   .component('ParameterField', ParameterField)
   .component('ParameterRadio', ParameterRadio)
   .component('ParameterRadioOption', ParameterRadioOption)
+  .component('ParameterColor', ParameterColor)
   .component('ParameterColorRamp', ParameterColorRamp)
   .component('ParameterDivider', ParameterDivider)
   .component('OverlaySpinner', OverlaySpinner)
