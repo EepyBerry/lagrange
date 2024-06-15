@@ -6,8 +6,8 @@
       :aria-expanded="_expanded"
     >
       <button class="section-title"
-        @click="_expanded = !_expanded"
-        @keydown.enter="_expanded = !_expanded"
+        @click="toggleExpand()"
+        @keydown.enter="toggleExpand()"
       >
         <h3 class="headline-sm">
           <iconify-icon :icon="icon" width="1.25rem" aria-hidden="true" />
@@ -29,6 +29,10 @@ const _expanded: Ref<boolean> = ref(true)
 
 const _props = defineProps<{ icon: string, expand?: boolean }>()
 onMounted(() => _expanded.value = _props.expand ?? true)
+
+function toggleExpand() {
+  _expanded.value = !_expanded.value
+}
 </script>
 
 <style scoped lang="scss">
@@ -38,7 +42,6 @@ onMounted(() => _expanded.value = _props.expand ?? true)
   border-radius: 4px;
   width: 100%;
   padding: 0.625rem;
-  position: relative;
 
   display: flex;
   flex-direction: column;

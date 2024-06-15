@@ -87,9 +87,20 @@ button.lg:active {
   background-color: var(--lg-button-active);
 }
 button.lg.dark, a.lg.dark {
+  position: relative;
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
   padding: 0.5rem;
+  min-width: 2.625rem;
+  min-height: 2.625rem;
+  overflow: hidden;
+
+  .link-icon {
+    position: absolute;
+    top: -0.55rem;
+    right: -0.55rem;
+    transform: rotate(-45deg);
+  }
 }
 button.lg.dark:hover, a.lg.dark:hover {
   background-color: var(--lg-button-active);

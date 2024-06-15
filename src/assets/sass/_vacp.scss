@@ -1,5 +1,7 @@
 
 .vacp-color-picker {
+  position: absolute;
+  z-index: 10;
   display: grid;
   max-width: 300px;
   padding: 0.5rem;
@@ -11,9 +13,15 @@
   background-color: var(--lg-panel);
   border: 1px solid var(--lg-accent);
   border-radius: 4px; 
-  button.vacp-copy-button {
+
+  button.vacp-copy-button,
+  button.vacp-format-switch-button {
     background-color: transparent;
     cursor: pointer;
+  }
+  input[id^=color-picker-color-] {
+    background-color: var(--lg-input);
+    border-radius: 4px;
   }
 }
 .visually-hidden {

@@ -6,24 +6,26 @@
     <td class="color">
       <div class="color-wrapper">
         <span class="current-color" :style="{ backgroundColor: `#${lgColor?.getHexString()}` }"></span>
-        <button ref="reference" class="lg edit" aria-label="Open color panel">
+        <button ref="reference"
+          class="lg edit"
+          aria-label="Open color panel"
+          @click="togglePanel()"
+          @keydown.enter="togglePanel()"
+        >
           <iconify-icon class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
         </button>
       </div>
       <ColorPicker
         ref="floating"
+        class="panel"
         :style="floatingStyles"
         alpha-channel="hide"
         default-format="rgb"
-        :color="'#' + lgColor?.getHexString()"
         @color-change="setColor($event.colors.rgb)"
+        @focusout="closePanel()"
       >
         <template #hue-range-input-label>
           <span class="visually-hidden">Hue</span>
-        </template>
-
-        <template #alpha-range-input-label>
-          <span class="visually-hidden">Alpha</span>
         </template>
       </ColorPicker>
     </td>
@@ -32,24 +34,36 @@
 
 <script setup lang="ts">
 import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
-import type { Color, RGB } from 'three';
-import { ref } from 'vue';
+import { Color, type RGB } from 'three';
+import { ref, type Ref } from 'vue';
 import { ColorPicker } from 'vue-accessible-color-picker'
 
+const divider = 255.0
 const lgColor = defineModel<Color>()
 
-const reference = ref(null)
-const floating = ref(null)
+const reference: Ref<any|null> = ref(null)
+const floating: Ref<any|null> = ref(null)
 const { floatingStyles } = useFloating(reference, floating, {
   placement: 'right-start',
   middleware: [offset(10)],
   whileElementsMounted: autoUpdate,
 })
 
-function setColor(rgb: RGB) {
-  lgColor.value?.setRGB(rgb.r / 255.0, rgb.g / 255.0, rgb.b / 255.0)
-  console.log(lgColor.value?.getHexString())
+function setColor(rgb: RGB): void {
+  lgColor.value = new Color(rgb.r / divider, rgb.g / divider, rgb.b / divider)
 }
+
+function togglePanel(): void {
+  floating.value!.$el.style.display = isPanelOpen() ? '' : 'block'
+}
+function closePanel(): void {
+  floating.value!.$el.style.display = ''
+}
+
+function isPanelOpen(): boolean {
+  return floating.value!.$el.style.display === 'block'
+}
+
 </script>
 
 <style scoped lang="scss">
@@ -73,7 +87,6 @@ tr.field {
   }
 }
 .color-wrapper {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,5 +100,8 @@ tr.field {
   height: 2rem;
   border-radius: 4px;
   border: 1px solid var(--lg-accent);
+}
+.panel {
+  display: none;
 }
 </style>

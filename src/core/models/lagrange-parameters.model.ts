@@ -33,7 +33,7 @@ export default class LagrangeParameters extends ChangeTracker {
   // --------------------------------------------------
 
   private _sunLightColor: Color = new Color(0xfff6e8)
-  private _sunLightIntensity: number = 7.5
+  private _sunLightIntensity: number = 6
   private _ambLightColor: Color = new Color(0xffffff)
   private _ambLightIntensity: number = 0.05
 
@@ -154,7 +154,7 @@ export default class LagrangeParameters extends ChangeTracker {
   private _cloudsRotation: number = 0
   private _cloudsHeight: number = 3
   private _cloudsNoise: NoiseParameters = new NoiseParameters(
-    this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.55, 2.0
+    this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 2.0
   )
   private _cloudsColorRamp: ColorRamp = ColorRamp.EMPTY
 

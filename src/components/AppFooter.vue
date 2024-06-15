@@ -3,13 +3,15 @@
     <SVGAppLogo aria-label="Lagrange logo" />
     <div id="footer-nav">
       <a href="https://github.com/EepyBerry/lagrange" target="_blank" rel="noopener" class="lg dark">
-        <iconify-icon class="spinner-icon" icon="mingcute:github-line" width="1.5rem" aria-hidden="true" />
+        <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" />
+        <iconify-icon class="link-icon" icon="mingcute:right-line" width="1.5rem" aria-hidden="true" />
       </a>
+      <hr width="50%">
       <button class="lg dark">
-        <iconify-icon class="spinner-icon" icon="mingcute:settings-6-line" width="1.5rem" aria-hidden="true" />
+        <iconify-icon icon="mingcute:settings-6-line" width="1.5rem" aria-hidden="true" />
       </button>
       <button class="lg dark">
-        <iconify-icon class="spinner-icon" icon="mingcute:information-line" width="1.5rem" aria-hidden="true" />
+        <iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true" />
       </button>
     </div>
   </footer>
@@ -38,7 +40,11 @@ footer {
   #footer-nav {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+
+    hr { border-color: var(--lg-accent); }
   }
 }
 
