@@ -8,7 +8,7 @@ import { onMounted, ref, watch, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
 import * as ThreeUtils from '@/core/lagrange.service';
-import { LG_CLOUDS_DIVIDER, LG_NAME_AMBLIGHT, LG_PARAMETERS } from '@core/globals';
+import { LG_HEIGHT_DIVIDER, LG_NAME_AMBLIGHT, LG_PARAMETERS } from '@core/globals';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType, type SceneElements } from '@core/types';
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla';
@@ -60,8 +60,10 @@ function initRendering(width: number, height: number) {
 function initPlanet(): void {
   const planet = ThreeUtils.createPlanet(GeometryType.SPHERE)
   const clouds = ThreeUtils.createClouds(GeometryType.SPHERE)
+  const atmos = ThreeUtils.createAtmosphere(GeometryType.SPHERE, _sun.position)
   $se.scene.add(planet)
   $se.scene.add(clouds)
+  $se.scene.add(atmos)
   _planet = planet
   _clouds = clouds
 
@@ -183,7 +185,7 @@ function updatePlanet() {
       }
       case '_cloudsHeight': {
         const v = LG_PARAMETERS.cloudsHeight
-        _clouds.scale.setScalar(1 + ((isNaN(v) ? 1 : v) / LG_CLOUDS_DIVIDER))
+        _clouds.scale.setScalar(1 + ((isNaN(v) ? 1 : v) / LG_HEIGHT_DIVIDER))
         break
       }
       case '_cloudsNoise._frequency': {

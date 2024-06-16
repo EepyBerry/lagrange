@@ -3,18 +3,22 @@ import planetFragShader from '@assets/glsl/planet.frag.glsl?raw'
 import planetVertShader from '@assets/glsl/planet.vert.glsl?raw'
 import cloudsFragShader from '@assets/glsl/clouds.frag.glsl?raw'
 import cloudsVertShader from '@assets/glsl/clouds.vert.glsl?raw'
+import atmosphereFragShader from '@assets/glsl/atmosphere.frag.glsl?raw'
+import atmosphereVertShader from '@assets/glsl/atmosphere.vert.glsl?raw'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import {
   LG_PARAMETERS,
   LG_NAME_CLOUDS,
   LG_NAME_PLANET,
   LG_NAME_SUN,
-  LG_CLOUDS_DIVIDER,
+  LG_HEIGHT_DIVIDER,
   LG_NAME_AMBLIGHT,
+  LG_NAME_ATMOSPHERE,
 } from '@core/globals'
 import { GeometryType, type SceneElements } from '@core/types'
 import { loadCubeTexture } from '@/core/three/external-data.loader'
 import { createAmbientight, createGeometry, createPerspectiveCamera, createRenderer, createShaderMaterial } from '@/core/three/component.builder'
+import { resolveImports } from './three/shader-imports.loader'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // SCENE FUNCTIONS
@@ -70,14 +74,14 @@ export function createPlanet(type: GeometryType): THREE.Mesh {
 
   const material = createShaderMaterial(planetVertShader, planetFragShader, {
     u_resolution:           { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
-    u_radius:               { value: 1.0 },
+    u_radius:               { value: LG_PARAMETERS.initPlanetRadius },
     u_octaves:              { value: 16 },
     u_frequency:            { value: LG_PARAMETERS.planetSurfaceNoise.frequency },
     u_amplitude:            { value: LG_PARAMETERS.planetSurfaceNoise.amplitude },
     u_lacunarity:           { value: LG_PARAMETERS.planetSurfaceNoise.lacunarity },
     u_water_level:          { value: 0.5 },
-    u_water_roughness:      { value: 0.65 },
-    u_ground_roughness:     { value: 0.95 },
+    u_water_roughness:      { value: 0.55 },
+    u_ground_roughness:     { value: 0.8 },
     u_water_metalness:      { value: 0.5 },
     u_ground_metalness:     { value: 0.1 },
     u_bump:                 { value: true },
@@ -95,7 +99,7 @@ export function createPlanet(type: GeometryType): THREE.Mesh {
 }
 
 export function createClouds(type: GeometryType): THREE.Mesh {
-  const cloudHeight = (LG_PARAMETERS.cloudsHeight / LG_CLOUDS_DIVIDER)
+  const cloudHeight = (LG_PARAMETERS.cloudsHeight / LG_HEIGHT_DIVIDER)
   const geometry = createGeometry(type, cloudHeight)
   const material = createShaderMaterial(cloudsVertShader, cloudsFragShader, {
     u_resolution:     { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
@@ -114,6 +118,22 @@ export function createClouds(type: GeometryType): THREE.Mesh {
   mesh.receiveShadow = true
   mesh.castShadow = true
   mesh.name = LG_NAME_CLOUDS
+  return mesh
+}
+
+export function createAtmosphere(type: GeometryType, sunPos: THREE.Vector3): THREE.Mesh {
+  const atmosHeight = (LG_PARAMETERS.atmosphereHeight / LG_HEIGHT_DIVIDER)
+  const geometry = createGeometry(type, atmosHeight)
+  const material = createShaderMaterial(atmosphereVertShader, atmosphereFragShader, {
+    u_light_position: { value: sunPos },
+    u_light_intensity: { value: LG_PARAMETERS.sunLightIntensity },
+    u_surface_radius: { value: 1.0 },
+    u_radius: { value: LG_PARAMETERS.initPlanetRadius + atmosHeight }
+  }, THREE.ShaderMaterial)
+  material.transparent = true
+
+  const mesh = new THREE.Mesh(geometry, material)
+  mesh.name = LG_NAME_ATMOSPHERE
   return mesh
 }
 

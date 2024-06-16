@@ -11,9 +11,9 @@ out vec3 vTangent;
 out vec3 vBitangent;
 
 void main() {
-     vUv = uv;
-     vPos = position;
-     vTangent = tangent;
-     vBitangent = cross(normal, tangent);
-     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    vUv = uv;
+    vPos = position;
+    vTangent = tangent;
+    vBitangent = cross(normal, tangent);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }
