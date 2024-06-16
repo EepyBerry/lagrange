@@ -10,7 +10,7 @@ const float PI = 3.14159265359;
 const float MAX = 10000.0;
 
 const int NUM_OUT_SCATTER = 8;
-const int NUM_IN_SCATTER = 80;
+const int NUM_IN_SCATTER = 20;
 
 // ray intersects sphere
 // e = -b +/- sqrt( b^2 - c )

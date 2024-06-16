@@ -73,7 +73,7 @@ export function createPlanet(type: GeometryType): THREE.Mesh {
   geometry.computeTangents()
 
   const material = createShaderMaterial(planetVertShader, planetFragShader, {
-    u_resolution:           { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
+    u_resolution:           { value: new THREE.Vector2(256, 256)},
     u_radius:               { value: LG_PARAMETERS.initPlanetRadius },
     u_octaves:              { value: 16 },
     u_frequency:            { value: LG_PARAMETERS.planetSurfaceNoise.frequency },
@@ -102,7 +102,7 @@ export function createClouds(type: GeometryType): THREE.Mesh {
   const cloudHeight = (LG_PARAMETERS.cloudsHeight / LG_HEIGHT_DIVIDER)
   const geometry = createGeometry(type, cloudHeight)
   const material = createShaderMaterial(cloudsVertShader, cloudsFragShader, {
-    u_resolution:     { value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
+    u_resolution:     { value: new THREE.Vector2(256, 256) },
     u_octaves:        { value: 8 },
     u_frequency:      { value: LG_PARAMETERS.cloudsNoise.frequency },
     u_amplitude:      { value: LG_PARAMETERS.cloudsNoise.amplitude },
@@ -126,7 +126,7 @@ export function createAtmosphere(type: GeometryType, sunPos: THREE.Vector3): THR
   const geometry = createGeometry(type, atmosHeight)
   const material = createShaderMaterial(atmosphereVertShader, atmosphereFragShader, {
     u_light_position: { value: sunPos },
-    u_light_intensity: { value: LG_PARAMETERS.sunLightIntensity },
+    u_light_intensity: { value: LG_PARAMETERS.sunLightIntensity * 2 },
     u_surface_radius: { value: 1.0 },
     u_radius: { value: LG_PARAMETERS.initPlanetRadius + atmosHeight }
   }, THREE.ShaderMaterial)
