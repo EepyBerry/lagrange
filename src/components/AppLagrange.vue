@@ -8,7 +8,7 @@ import { onMounted, ref, watch, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
 import * as ThreeUtils from '@/core/lagrange.service';
-import { LG_HEIGHT_DIVIDER, LG_NAME_AMBLIGHT, LG_PARAMETERS } from '@core/globals';
+import { LG_HEIGHT_DIVIDER, LG_NAME_AMBLIGHT, LG_NAME_ATMOSPHERE, LG_NAME_CLOUDS, LG_NAME_PLANET, LG_PARAMETERS } from '@core/globals';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType, type SceneElements } from '@core/types';
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla';
@@ -63,15 +63,18 @@ function initPlanet(): void {
   const planet = ThreeUtils.createPlanet(GeometryType.SPHERE)
   const clouds = ThreeUtils.createClouds(GeometryType.SPHERE)
   const atmosphere = ThreeUtils.createAtmosphere(GeometryType.SPHERE, _sun.position)
-  const grp = new THREE.Group()
+  /* const grp = new THREE.Group()
   grp.add(planet)
   grp.add(clouds)
   grp.add(atmosphere)
-  $se.scene.add(grp)
+  $se.scene.add(grp) */
+  $se.scene.add(planet)
+  $se.scene.add(clouds)
+  $se.scene.add(atmosphere)
   _planet = planet
   _clouds = clouds
   _atmosphere = atmosphere
-  _renderGroup = grp
+  //_renderGroup = grp
   
   //const helper = new VertexNormalsHelper( planet, 0.1, 0xff0000 );
   //$se.scene.add( helper );
@@ -118,10 +121,11 @@ function updatePlanet() {
       }
       case '_planetGeometryType': {
         const v = LG_PARAMETERS.planetGeometryType
-        const newPlanet = ThreeUtils.switchPlanetMesh($se.scene, v)
-        const newClouds = ThreeUtils.switchCloudsMesh($se.scene, v)
+        const newPlanet = ThreeUtils.switchMeshFor($se.scene, LG_NAME_PLANET, v)
+        const newClouds = ThreeUtils.switchMeshFor($se.scene, LG_NAME_CLOUDS, v)
         _planet = newPlanet
         _clouds = newClouds
+        _atmosphere.visible = (v === GeometryType.SPHERE)
         break
       }
       case '_planetMeshQuality': {

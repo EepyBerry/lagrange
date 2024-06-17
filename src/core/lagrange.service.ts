@@ -141,42 +141,38 @@ export function createAtmosphere(type: GeometryType, sunPos: THREE.Vector3): THR
 // ----------------------------------------------------------------------------------------------------------------------
 // UPDATE FUNCTIONS
 
-export function switchPlanetMesh(scene: THREE.Scene, type: GeometryType): THREE.Mesh {
-  const planet = scene.getObjectByName(LG_NAME_PLANET) as THREE.Mesh
+export function switchMeshFor(scene: THREE.Scene, objName: string, type: GeometryType): THREE.Mesh {
+  const obj = scene.getObjectByName(objName) as THREE.Mesh
   if (
-    planet.geometry instanceof THREE.IcosahedronGeometry && type === GeometryType.SPHERE
-    || planet.geometry instanceof THREE.TorusGeometry && type === GeometryType.TORUS
-    || planet.geometry instanceof THREE.BoxGeometry && type === GeometryType.BOX
+    obj.geometry instanceof THREE.IcosahedronGeometry && type === GeometryType.SPHERE
+    || obj.geometry instanceof THREE.TorusGeometry && type === GeometryType.TORUS
+    || obj.geometry instanceof THREE.BoxGeometry && type === GeometryType.BOX
   ) {
-    return planet
+    return obj
   }
 
-  (planet.material as THREE.Material).dispose()
-  planet.geometry.dispose()
-  scene.remove(planet)
+  (obj.material as THREE.Material).dispose()
+  obj.geometry.dispose()
+  scene.remove(obj)
 
-  const newPlanet = createPlanet(type)
-  scene.add(newPlanet)
-  return newPlanet
-}
-
-export function switchCloudsMesh(scene: THREE.Scene, type: GeometryType): THREE.Mesh {
-  const clouds = scene.getObjectByName(LG_NAME_CLOUDS) as THREE.Mesh
-  if (
-    clouds.geometry instanceof THREE.IcosahedronGeometry && type === GeometryType.SPHERE
-    || clouds.geometry instanceof THREE.TorusGeometry && type === GeometryType.TORUS
-    || clouds.geometry instanceof THREE.BoxGeometry && type === GeometryType.BOX
-  ) {
-    return clouds
+  let newObj
+  switch(objName) {
+    case LG_NAME_PLANET:
+      newObj = createPlanet(type)
+      break
+    case LG_NAME_CLOUDS:
+      newObj = createClouds(type)
+      break
+    case LG_NAME_ATMOSPHERE: {
+      const sun = scene.getObjectByName(LG_NAME_SUN) as THREE.Mesh
+      newObj = createAtmosphere(type, sun.position)
+      break
+    }
+    default:
+      throw new Error('Cannot switch mesh for non-existent object name: ' + objName)
   }
-
-  (clouds.material as THREE.Material).dispose()
-  clouds.geometry.dispose()
-  scene.remove(clouds)
-
-  const newClouds = createClouds(type)
-  scene.add(newClouds)
-  return newClouds
+  scene.add(newObj)
+  return newObj
 }
 
 export function forceUpdatePlanet(scene: THREE.Scene): THREE.Mesh {
