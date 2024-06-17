@@ -6,23 +6,24 @@
     <td class="color">
       <div class="color-wrapper">
         <span class="current-color" :style="{ backgroundColor: `#${lgColor?.getHexString()}` }"></span>
-        <button ref="reference"
+        <button
           class="lg edit"
           aria-label="Open color panel"
           @click="togglePanel()"
-          @keydown.enter="togglePanel()"
         >
-          <iconify-icon class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
+          <iconify-icon v-if="_panelOpen" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+          <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
         </button>
       </div>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
       <ColorPicker
-        ref="floating"
-        class="panel"
-        :style="floatingStyles"
+        v-show="_panelOpen"
         alpha-channel="hide"
-        default-format="rgb"
+        default-format="hex"
         @color-change="setColor($event.colors.rgb)"
-        @focusout="closePanel()"
       >
         <template #hue-range-input-label>
           <span class="visually-hidden">Hue</span>
@@ -33,35 +34,24 @@
 </template>
 
 <script setup lang="ts">
-import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
 import { Color, type RGB } from 'three';
-import { ref, type Ref } from 'vue';
+import { onMounted, ref, type Ref } from 'vue';
 import { ColorPicker } from 'vue-accessible-color-picker'
 
 const divider = 255.0
 const lgColor = defineModel<Color>()
+const panelColor = ref('')
 
-const reference: Ref<any|null> = ref(null)
-const floating: Ref<any|null> = ref(null)
-const { floatingStyles } = useFloating(reference, floating, {
-  placement: 'right-start',
-  middleware: [offset(10)],
-  whileElementsMounted: autoUpdate,
-})
+const _panelOpen = ref(false)
+
+onMounted(() => panelColor.value = lgColor.value?.getHexString() || '')
 
 function setColor(rgb: RGB): void {
   lgColor.value = new Color(rgb.r / divider, rgb.g / divider, rgb.b / divider)
 }
 
 function togglePanel(): void {
-  floating.value!.$el.style.display = isPanelOpen() ? '' : 'block'
-}
-function closePanel(): void {
-  floating.value!.$el.style.display = ''
-}
-
-function isPanelOpen(): boolean {
-  return floating.value!.$el.style.display === 'block'
+  _panelOpen.value = !_panelOpen.value
 }
 
 </script>

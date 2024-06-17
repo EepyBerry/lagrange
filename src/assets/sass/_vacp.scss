@@ -1,19 +1,18 @@
 
 .vacp-color-picker {
-  position: absolute;
-  z-index: 10;
   display: grid;
-  max-width: 300px;
-  padding: 0.5rem;
   grid-gap: 6px;
   grid-template-columns: 1fr min-content;
   font-size: .8rem;
+  max-width: 100%;
+  padding: 0.25rem 0;
   //font-family: var(--vacp-font-family, -apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif);
   color: var(--lg-text);
-  background-color: var(--lg-panel);
-  border: 1px solid var(--lg-accent);
+  background-color: transparent;
   border-radius: 4px; 
 
+  div.vacp-color-space { aspect-ratio: 1/.4; }
+  
   button.vacp-copy-button,
   button.vacp-format-switch-button {
     background-color: transparent;
