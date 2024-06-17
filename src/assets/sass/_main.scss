@@ -54,6 +54,7 @@ input.lg {
   padding-right: 4px;
   color: var(--lg-text);
   background: var(--lg-input);
+  min-height: 1.5rem;
 }
 input.lg {
   -moz-appearance: textfield;
@@ -107,6 +108,5 @@ button.lg.dark:hover, a.lg.dark:hover {
 }
 
 sup {
-  position: absolute;
   font-family: monospace;
 }

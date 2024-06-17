@@ -23,7 +23,9 @@ let $se: SceneElements
 let _sun: THREE.DirectionalLight
 let _planet: THREE.Mesh
 let _clouds: THREE.Mesh
+let _atmosphere: THREE.Mesh
 let _ambLight: THREE.AmbientLight
+let _renderGroup: THREE.Group
 
 const VEC_Z = new THREE.Vector3(0, 0, 1)
 const VEC_UP = new THREE.Vector3(0, 1, 0)
@@ -60,13 +62,17 @@ function initRendering(width: number, height: number) {
 function initPlanet(): void {
   const planet = ThreeUtils.createPlanet(GeometryType.SPHERE)
   const clouds = ThreeUtils.createClouds(GeometryType.SPHERE)
-  const atmos = ThreeUtils.createAtmosphere(GeometryType.SPHERE, _sun.position)
-  $se.scene.add(planet)
-  $se.scene.add(clouds)
-  $se.scene.add(atmos)
+  const atmosphere = ThreeUtils.createAtmosphere(GeometryType.SPHERE, _sun.position)
+  const grp = new THREE.Group()
+  grp.add(planet)
+  grp.add(clouds)
+  grp.add(atmosphere)
+  $se.scene.add(grp)
   _planet = planet
   _clouds = clouds
-
+  _atmosphere = atmosphere
+  _renderGroup = grp
+  
   //const helper = new VertexNormalsHelper( planet, 0.1, 0xff0000 );
   //$se.scene.add( helper );
 }
@@ -207,6 +213,11 @@ function updatePlanet() {
         const mat = _clouds.material as CustomShaderMaterial
         mat.uniforms.u_lacunarity = { value: v.lacunarity }
         mat.needsUpdate = true
+        break
+      }
+      case '_atmosphereEnabled': {
+        const v = LG_PARAMETERS.atmosphereEnabled
+        _atmosphere.visible = v
         break
       }
     }

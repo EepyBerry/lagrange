@@ -128,7 +128,8 @@ export function createAtmosphere(type: GeometryType, sunPos: THREE.Vector3): THR
     u_light_position: { value: sunPos },
     u_light_intensity: { value: LG_PARAMETERS.sunLightIntensity * 2 },
     u_surface_radius: { value: 1.0 },
-    u_radius: { value: LG_PARAMETERS.initPlanetRadius + atmosHeight }
+    u_radius: { value: LG_PARAMETERS.initPlanetRadius + atmosHeight },
+    u_daylight_hue: { value: LG_PARAMETERS.atmosphereDaylightHue }
   }, THREE.ShaderMaterial)
   material.transparent = true
 

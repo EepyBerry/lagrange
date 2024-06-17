@@ -12,6 +12,13 @@ vec3 color_ramp(vec3 colors[16], float positions[16], int ramp_size, float fac) 
   return mix(colors[pos_idx], colors[pos_idx+1], lerpFac);
 }
 
+// From: https://gist.github.com/mairod/a75e7b44f68110e1576d77419d608786?permalink_comment_id=3195243#gistcomment-3195243
+vec3 hue_shift(vec3 color, float hue) {
+  const vec3 k = vec3(0.57735, 0.57735, 0.57735);
+  float cosAngle = cos(hue);
+  return vec3(color * cosAngle + cross(k, color) * sin(hue) + k * dot(k, color) * (1.0 - cosAngle));
+}
+
 // From: https://www.reddit.com/r/opengl/comments/6nghtj/glsl_mix_implementation_incorrect/
 vec3 srgb_to_linear(vec3 color) {
   return pow(color, vec3(2.2));

@@ -59,7 +59,7 @@ tr.field {
 input.lg {
   text-align: end;
 }
-input.lg:not([type=checkbox]) {
-  width: 4.5rem;
+input.lg:not([type=checkbox],[type=radio]) {
+  max-width: 3rem;
 }
 </style>

@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import AppSidebar from './components/AppSidebar.vue';
+import AppSidebar from './components/AppControls.vue';
 import AppLagrange from './components/AppLagrange.vue';
 import AppFooter from './components/AppFooter.vue';
 </script>

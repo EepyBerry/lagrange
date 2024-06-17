@@ -152,7 +152,7 @@ export default class LagrangeParameters extends ChangeTracker {
   private _cloudsEnabled: boolean
   private _cloudsAxialTilt: number = 0
   private _cloudsRotation: number = 0
-  private _cloudsHeight: number = 1
+  private _cloudsHeight: number = 0.1
   private _cloudsNoise: NoiseParameters = new NoiseParameters(
     this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 1.75
   )
@@ -211,7 +211,19 @@ export default class LagrangeParameters extends ChangeTracker {
   // |               Atmosphere settings              |
   // --------------------------------------------------
   
-  private _atmosphereHeight: number = 4
+  private _atmosphereEnabled: boolean
+  private _atmosphereHeight: number = 3
+  private _atmosphereDaylightHue: number = 0.0
+
+  // --------------------------------------------------
+
+  public get atmosphereEnabled(): boolean {
+    return this._atmosphereEnabled
+  }
+  public set atmosphereEnabled(value: boolean) {
+    this._atmosphereEnabled = value
+    this.markForChange('_atmosphereEnabled')
+  }
 
   public get atmosphereHeight(): number {
     return this._atmosphereHeight
@@ -219,6 +231,14 @@ export default class LagrangeParameters extends ChangeTracker {
   public set atmosphereHeight(value: number) {
     this._atmosphereHeight = value
     this.markForChange('_atmosphereHeight')
+  }
+
+  public get atmosphereDaylightHue(): number {
+    return this._atmosphereDaylightHue
+  }
+  public set atmosphereDaylightHue(value: number) {
+    this._atmosphereDaylightHue = value
+    this.markForChange('_atmosphereDaylightHue')
   }
 
   // --------------------------------------------------
@@ -243,6 +263,7 @@ export default class LagrangeParameters extends ChangeTracker {
     super()
     this._planetSurfaceShowBumps = true
     this._cloudsEnabled = true
+    this._atmosphereEnabled = true
     this.planetSurfaceColorRamp = new ColorRamp([
       { color: new Color(0x101b38), factor: 0 },
       { color: new Color(0x182852), factor: 0.4 },

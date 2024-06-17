@@ -10,7 +10,7 @@
 <style scoped lang="scss">
 table {
   border: none;
-  border-collapse: collapse;
-  gap: 4px;
+  border-collapse: separate;
+  border-spacing: 0 2px;
 }
 </style>

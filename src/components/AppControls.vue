@@ -1,6 +1,6 @@
 <template>
-  <aside id="sidebar">
-    <div class="sidebar-scroll">
+  <div id="controls">
+    <aside class="sidebar">
       <SidebarSection icon="mingcute:sun-line" :expand="false">
         <template v-slot:title>Lighting Settings</template>
         <template v-slot:content>
@@ -18,7 +18,7 @@
             </ParameterColor>
             <ParameterDivider />
             <ParameterField v-model="LG_PARAMETERS.ambLightIntensity"
-              id="a-int"
+              id="m-int"
               type="number"
               :step="0.05"
             >
@@ -198,10 +198,22 @@
       <SidebarSection icon="material-symbols:line-curve-rounded" :expand=false>
         <template v-slot:title>Atmosphere</template>
         <template v-slot:content>
+          <ParameterDivider />
+            <ParameterField
+              v-model="LG_PARAMETERS.atmosphereEnabled"
+              id="a-toggle"
+              type="checkbox"
+            >
+              Show atmosphere
+            </ParameterField>
+            <ParameterDivider />
+            <ParameterColor v-model="LG_PARAMETERS.atmosphereColor">
+              Daylight color
+            </ParameterColor>
         </template>
       </SidebarSection>
-    </div>
-  </aside>
+    </aside>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -212,32 +224,35 @@ import ParameterDivider from './elements/ParameterDivider.vue';
 </script>
 
 <style scoped lang="scss">
-#sidebar {
+#controls {
   z-index: 5;
   position: absolute;
-  inset: 0 auto 0 0;
-  min-width: 24rem;
-  padding: 1rem;
+  inset: 0;
 
-  overflow-y: auto;
-  overflow-x: visible;
-  scrollbar-color: var(--lg-accent) transparent;
-  scrollbar-width: thin;
-  transform: scaleX(-1);
+  display: flex;
+  justify-content: flex-start;
+  pointer-events: none;
+  overflow: hidden;
 
-  .sidebar-scroll {
+  .sidebar {
     width: 100%;
+    max-width: 24rem;
+    padding: 1rem;
 
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.375rem;
-    transform: scaleX(-1);
+
+    scrollbar-color: var(--lg-accent) transparent;
+    scrollbar-width: thin;
+    overflow: auto;
+    pointer-events: all;
   }
 }
 
 @media screen and (max-width:767px) {
-  #sidebar {
+  #controls {
     min-width: 2rem;
   }
 }
