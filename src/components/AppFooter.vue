@@ -2,15 +2,15 @@
   <footer>
     <SVGAppLogo aria-label="Lagrange logo" />
     <div id="footer-nav">
-      <a href="https://github.com/EepyBerry/lagrange" target="_blank" rel="noopener" class="lg dark">
+      <a href="https://github.com/EepyBerry/lagrange" target="_blank" rel="noopener" class="lg dark" aria-label="GitHub page">
         <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" />
         <iconify-icon class="link-icon" icon="mingcute:right-line" width="1.5rem" aria-hidden="true" />
       </a>
       <hr width="50%">
-      <button class="lg dark">
+      <button class="lg dark" aria-label="Settings">
         <iconify-icon icon="mingcute:settings-6-line" width="1.5rem" aria-hidden="true" />
       </button>
-      <button class="lg dark">
+      <button class="lg dark" aria-label="About Lagrange">
         <iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true" />
       </button>
     </div>

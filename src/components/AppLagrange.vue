@@ -220,6 +220,12 @@ function updatePlanet() {
         _atmosphere.visible = v
         break
       }
+      case '_atmosphereDaylightHue': {
+        const v = LG_PARAMETERS.atmosphereDaylightHue
+        const mat = _atmosphere.material as CustomShaderMaterial
+        mat.uniforms.u_daylight_color = { value: v }
+        break
+      }
     }
   }
   LG_PARAMETERS.clearChangedProps()

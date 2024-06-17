@@ -11,7 +11,7 @@
           aria-label="Open color panel"
           @click="togglePanel()"
         >
-          <iconify-icon v-if="_panelOpen" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+          <iconify-icon v-if="panelOpen" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
           <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
         </button>
       </div>
@@ -20,9 +20,10 @@
   <tr>
     <td colspan="2">
       <ColorPicker
-        v-show="_panelOpen"
+        v-show="panelOpen"
         alpha-channel="hide"
         default-format="hex"
+        :color="panelColor"
         @color-change="setColor($event.colors.rgb)"
       >
         <template #hue-range-input-label>
@@ -35,23 +36,22 @@
 
 <script setup lang="ts">
 import { Color, type RGB } from 'three';
-import { onMounted, ref, type Ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { ColorPicker } from 'vue-accessible-color-picker'
 
 const divider = 255.0
 const lgColor = defineModel<Color>()
 const panelColor = ref('')
+const panelOpen = ref(false)
 
-const _panelOpen = ref(false)
-
-onMounted(() => panelColor.value = lgColor.value?.getHexString() || '')
+onMounted(() => panelColor.value = '#' + lgColor.value?.getHexString())
 
 function setColor(rgb: RGB): void {
   lgColor.value = new Color(rgb.r / divider, rgb.g / divider, rgb.b / divider)
 }
 
 function togglePanel(): void {
-  _panelOpen.value = !_panelOpen.value
+  panelOpen.value = !panelOpen.value
 }
 
 </script>
