@@ -141,13 +141,19 @@ export function createAtmosphere(type: GeometryType, sunPos: THREE.Vector3): THR
 // ----------------------------------------------------------------------------------------------------------------------
 // UPDATE FUNCTIONS
 
-export function switchMeshFor(scene: THREE.Scene, objName: string, type: GeometryType): THREE.Mesh {
+export function switchMeshFor(
+  scene: THREE.Scene,
+  objName: string,
+  type: GeometryType,
+  force: boolean = false
+): THREE.Mesh {
   const obj = scene.getObjectByName(objName) as THREE.Mesh
   if (
+    !force && (
     obj.geometry instanceof THREE.IcosahedronGeometry && type === GeometryType.SPHERE
     || obj.geometry instanceof THREE.TorusGeometry && type === GeometryType.TORUS
     || obj.geometry instanceof THREE.BoxGeometry && type === GeometryType.BOX
-  ) {
+  )) {
     return obj
   }
 
@@ -173,26 +179,4 @@ export function switchMeshFor(scene: THREE.Scene, objName: string, type: Geometr
   }
   scene.add(newObj)
   return newObj
-}
-
-export function forceUpdatePlanet(scene: THREE.Scene): THREE.Mesh {
-  const planet = scene.getObjectByName(LG_NAME_PLANET) as THREE.Mesh
-  (planet.material as THREE.Material).dispose()
-  planet.geometry.dispose()
-  scene.remove(planet)
-
-  const newPlanet = createPlanet(LG_PARAMETERS.planetGeometryType)
-  scene.add(newPlanet)
-  return newPlanet
-}
-
-export function forceUpdateClouds(scene: THREE.Scene): THREE.Mesh {
-  const clouds = scene.getObjectByName(LG_NAME_CLOUDS) as THREE.Mesh
-  (clouds.material as THREE.Material).dispose()
-  clouds.geometry.dispose()
-  scene.remove(clouds)
-
-  const newClouds = createClouds(LG_PARAMETERS.planetGeometryType)
-  scene.add(newClouds)
-  return newClouds
 }

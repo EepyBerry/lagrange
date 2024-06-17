@@ -69,7 +69,7 @@ export function createGeometry(type: GeometryType, addtlRadius: number = 0): THR
       return new THREE.SphereGeometry(
         LG_PARAMETERS.initPlanetRadius + addtlRadius,
         LG_PARAMETERS.planetMeshQuality,
-        LG_PARAMETERS.planetMeshQuality,
+        LG_PARAMETERS.planetMeshQuality / 2.0,
       )
     case GeometryType.TORUS:
       return new THREE.TorusGeometry(

@@ -8,7 +8,7 @@ import { onMounted, ref, watch, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
 import * as ThreeUtils from '@/core/lagrange.service';
-import { LG_HEIGHT_DIVIDER, LG_NAME_AMBLIGHT, LG_NAME_ATMOSPHERE, LG_NAME_CLOUDS, LG_NAME_PLANET, LG_PARAMETERS } from '@core/globals';
+import { LG_HEIGHT_DIVIDER, LG_NAME_AMBLIGHT, LG_NAME_CLOUDS, LG_NAME_PLANET, LG_PARAMETERS } from '@core/globals';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType, type SceneElements } from '@core/types';
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla';
@@ -25,7 +25,6 @@ let _planet: THREE.Mesh
 let _clouds: THREE.Mesh
 let _atmosphere: THREE.Mesh
 let _ambLight: THREE.AmbientLight
-let _renderGroup: THREE.Group
 
 const VEC_Z = new THREE.Vector3(0, 0, 1)
 const VEC_UP = new THREE.Vector3(0, 1, 0)
@@ -129,10 +128,12 @@ function updatePlanet() {
         break
       }
       case '_planetMeshQuality': {
-        const newPlanet = ThreeUtils.forceUpdatePlanet($se.scene)
-        const newClouds = ThreeUtils.forceUpdateClouds($se.scene)
+        const geoType = LG_PARAMETERS.planetGeometryType
+        const newPlanet = ThreeUtils.switchMeshFor($se.scene, LG_NAME_PLANET, geoType, true)
+        const newClouds = ThreeUtils.switchMeshFor($se.scene, LG_NAME_CLOUDS, geoType, true)
         _planet = newPlanet
         _clouds = newClouds
+        _atmosphere.visible = (geoType === GeometryType.SPHERE)
         break
       }
       case '_planetRadius': {
