@@ -87,6 +87,7 @@ button.lg:active {
   cursor: pointer;
   background-color: var(--lg-button-active);
 }
+
 button.lg.dark, a.lg.dark {
   position: relative;
   background: var(--lg-primary);
@@ -105,6 +106,17 @@ button.lg.dark, a.lg.dark {
 }
 button.lg.dark:hover, a.lg.dark:hover {
   background-color: var(--lg-button-active);
+}
+button.lg.icon-button {
+  background-color: transparent;
+}
+button.lg.icon-button:hover {
+  background-color: transparent;
+  filter: brightness(80%);
+}
+button.lg.icon-button:active {
+  background-color: transparent;
+  filter: brightness(60%);
 }
 
 sup {

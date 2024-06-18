@@ -11,7 +11,7 @@
           aria-label="Open color panel"
           @click="togglePanel()"
         >
-          <iconify-icon v-if="panelOpen" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+          <iconify-icon v-if="pickerOpen" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
           <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
         </button>
       </div>
@@ -20,11 +20,11 @@
   <tr>
     <td colspan="2">
       <ColorPicker
-        v-show="panelOpen"
+        v-show="pickerOpen"
         alpha-channel="hide"
         default-format="hex"
-        :color="panelColor"
-        @color-change="setColor($event.colors.rgb)"
+        :color="pickerInitColor"
+        @color-change="setColor($event.colors.hex)"
       >
         <template #hue-range-input-label>
           <span class="visually-hidden">Hue</span>
@@ -41,17 +41,17 @@ import { ColorPicker } from 'vue-accessible-color-picker'
 
 const divider = 255.0
 const lgColor = defineModel<Color>()
-const panelColor = ref('')
-const panelOpen = ref(false)
+const pickerInitColor = ref('')
+const pickerOpen = ref(false)
 
-onMounted(() => panelColor.value = '#' + lgColor.value?.getHexString())
+onMounted(() => pickerInitColor.value = '#' + lgColor.value?.getHexString())
 
-function setColor(rgb: RGB): void {
-  lgColor.value = new Color(rgb.r / divider, rgb.g / divider, rgb.b / divider)
+function setColor(hex: string): void {
+  lgColor.value = new Color(hex.substring(0, 7)) // Strip alpha
 }
 
 function togglePanel(): void {
-  panelOpen.value = !panelOpen.value
+  pickerOpen.value = !pickerOpen.value
 }
 
 </script>
@@ -61,7 +61,6 @@ tr.field {
   width: 100%;
 
   & > td.color {
-    font-size: 0.875rem;
     text-wrap: nowrap;
     height: 100%;
   }

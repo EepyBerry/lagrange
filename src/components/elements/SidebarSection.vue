@@ -67,6 +67,9 @@ function toggleExpand() {
     justify-content: space-between;
     align-items: center;
   }
+  .section-content {
+    font-size: 0.875rem;
+  }
   .section-content:has(.default) {
     text-align: center;
     .default {

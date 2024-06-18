@@ -1,4 +1,4 @@
-import { ColorRamp } from './color-ramp.model'
+import { ColorRamp, ColorRampStep } from './color-ramp.model'
 import { GeometryType, NoiseType } from '@core/types'
 import { clamp, epsilonClamp, isNumeric } from '@/utils/math-utils'
 import { Color } from 'three'
@@ -118,7 +118,7 @@ export default class LagrangeParameters extends ChangeTracker {
   private _planetSurfaceNoise: NoiseParameters = new NoiseParameters(
     this._changedProps, '_planetSurfaceNoise', NoiseType.FBM
   )
-  private _planetSurfaceColorRamp: ColorRamp = ColorRamp.EMPTY
+  private _planetSurfaceColorRamp: ColorRamp
 
   // --------------------------------------------------
 
@@ -156,7 +156,7 @@ export default class LagrangeParameters extends ChangeTracker {
   private _cloudsNoise: NoiseParameters = new NoiseParameters(
     this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 1.75
   )
-  private _cloudsColorRamp: ColorRamp = ColorRamp.EMPTY
+  private _cloudsColorRamp: ColorRamp
 
   // --------------------------------------------------
 
@@ -264,19 +264,19 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetSurfaceShowBumps = true
     this._cloudsEnabled = true
     this._atmosphereEnabled = true
-    this.planetSurfaceColorRamp = new ColorRamp([
-      { color: new Color(0x101b38), factor: 0 },
-      { color: new Color(0x182852), factor: 0.4 },
-      { color: new Color(0x2a3b80), factor: 0.495 },
-      { color: new Color(0x757515), factor: 0.5 },
-      { color: new Color(0x446611), factor: 0.505 },
-      { color: new Color(0x223b05), factor: 0.65 },
-      { color: new Color(0x223b05), factor: 1 },
+    this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
+      new ColorRampStep(0x101b38, 0),
+      new ColorRampStep(0x182852, 0.4),
+      new ColorRampStep(0x2a3b80, 0.495),
+      new ColorRampStep(0x757515, 0.5),
+      new ColorRampStep(0x446611, 0.505),
+      new ColorRampStep(0x223b05, 0.65),
+      new ColorRampStep(0x223b05, 1),
     ])
-    this.cloudsColorRamp = new ColorRamp([
-      { color: new Color(0x000000), factor: 0 },
-      { color: new Color(0x000000), factor: 0.6 },
-      { color: new Color(0xbbbbbb), factor: 1 },
+    this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
+      new ColorRampStep(0x000000, 0),
+      new ColorRampStep(0x000000, 0.6),
+      new ColorRampStep(0xbbbbbb, 1),
     ])
   }
 }

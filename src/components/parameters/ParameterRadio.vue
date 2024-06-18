@@ -14,7 +14,6 @@
 <style scoped lang="scss">
 tr.field {
   td {
-    font-size: 0.875rem;
     text-wrap: nowrap;
   }
 }

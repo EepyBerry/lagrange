@@ -219,8 +219,8 @@
 <script setup lang="ts">
 import { LG_PARAMETERS } from '@core/globals'
 import { GeometryType } from '@core/types'
-import ParameterColorRamp from './elements/ParameterColorRamp.vue';
-import ParameterDivider from './elements/ParameterDivider.vue';
+import ParameterColorRamp from './parameters/ParameterColorRamp.vue';
+import ParameterDivider from './parameters/ParameterDivider.vue';
 </script>
 
 <style scoped lang="scss">

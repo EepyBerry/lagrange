@@ -6,12 +6,12 @@ import App from './App.vue'
 import SidebarSection from '@/components/elements/SidebarSection.vue';
 import OverlaySpinner from '@/components/elements/OverlaySpinner.vue';
 import ParameterTable from '@/components/elements/ParameterTable.vue'
-import ParameterField from '@/components/elements/ParameterField.vue'
-import ParameterRadio from '@/components/elements/ParameterRadio.vue';
-import ParameterRadioOption from '@/components/elements/ParameterRadioOption.vue';
-import ParameterDivider from '@/components/elements/ParameterDivider.vue'
-import ParameterColorRamp from './components/elements/ParameterColorRamp.vue';
-import ParameterColor from './components/elements/ParameterColor.vue';
+import ParameterField from '@/components/parameters/ParameterField.vue'
+import ParameterRadio from '@/components/parameters/ParameterRadio.vue';
+import ParameterRadioOption from '@/components/parameters/ParameterRadioOption.vue';
+import ParameterDivider from '@/components/parameters/ParameterDivider.vue'
+import ParameterColorRamp from './components/parameters/ParameterColorRamp.vue';
+import ParameterColor from './components/parameters/ParameterColor.vue';
 
 createApp(App)
   .component('SidebarSection', SidebarSection)

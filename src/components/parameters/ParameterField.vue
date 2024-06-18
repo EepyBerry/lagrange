@@ -37,7 +37,6 @@ tr.field {
   width: 100%;
 
   td {
-    font-size: 0.875rem;
     text-wrap: nowrap;
   }
   td:first-of-type {

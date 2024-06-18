@@ -152,30 +152,38 @@ function updatePlanet() {
         break
       }
       case '_planetSurfaceShowBumps': {
-        const v = LG_PARAMETERS.planetSurfaceShowBumps;
+        const v = LG_PARAMETERS.planetSurfaceShowBumps
         const mat = _planet.material as CustomShaderMaterial
         mat.uniforms.u_bump = { value: v }
         mat.needsUpdate = true
         break
       }
       case '_planetSurfaceNoise._frequency': {
-        const v = LG_PARAMETERS.planetSurfaceNoise;
+        const v = LG_PARAMETERS.planetSurfaceNoise
         const mat = _planet.material as CustomShaderMaterial
         mat.uniforms.u_frequency = { value: v.frequency }
         mat.needsUpdate = true
         break
       }
       case '_planetSurfaceNoise._amplitude': {
-        const v = LG_PARAMETERS.planetSurfaceNoise;
+        const v = LG_PARAMETERS.planetSurfaceNoise
         const mat = _planet.material as CustomShaderMaterial
         mat.uniforms.u_amplitude = { value: v.amplitude }
         mat.needsUpdate = true
         break
       }
       case '_planetSurfaceNoise._lacunarity': {
-        const v = LG_PARAMETERS.planetSurfaceNoise;
+        const v = LG_PARAMETERS.planetSurfaceNoise
         const mat = _planet.material as CustomShaderMaterial
         mat.uniforms.u_lacunarity = { value: v.lacunarity }
+        mat.needsUpdate = true
+        break
+      }
+      case '_planetSurfaceColorRamp': {
+        const v = LG_PARAMETERS.planetSurfaceColorRamp
+        const mat = _planet.material as CustomShaderMaterial
+        mat.uniforms.u_cr_colors = { value: v.colors },
+        mat.uniforms.u_cr_positions = { value: v.factors },
         mat.needsUpdate = true
         break
       }
@@ -217,6 +225,14 @@ function updatePlanet() {
         const v = LG_PARAMETERS.cloudsNoise;
         const mat = _clouds.material as CustomShaderMaterial
         mat.uniforms.u_lacunarity = { value: v.lacunarity }
+        mat.needsUpdate = true
+        break
+      }
+      case '_cloudsColorRamp': {
+        const v = LG_PARAMETERS.cloudsColorRamp
+        const mat = _clouds.material as CustomShaderMaterial
+        mat.uniforms.u_cr_colors = { value: v.colors },
+        mat.uniforms.u_cr_positions = { value: v.factors },
         mat.needsUpdate = true
         break
       }
