@@ -152,7 +152,7 @@ export default class LagrangeParameters extends ChangeTracker {
   private _cloudsEnabled: boolean
   private _cloudsAxialTilt: number = 0
   private _cloudsRotation: number = 0
-  private _cloudsHeight: number = 0.1
+  private _cloudsHeight: number = 1
   private _cloudsNoise: NoiseParameters = new NoiseParameters(
     this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 1.75
   )
