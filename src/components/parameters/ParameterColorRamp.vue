@@ -40,6 +40,7 @@
                 </div>
                 <div v-else class="factor-wrapper">
                   <input
+                    ref="htmlFactorInputs"
                     class="lg"
                     type="number"
                     min="0.001"
@@ -118,11 +119,21 @@ import { ColorPicker } from 'vue-accessible-color-picker'
 const lgColorRamp = defineModel<ColorRamp>()
 const htmlColorRamp: Ref<HTMLElement|null> = ref(null)
 const htmlColorSteps: Ref<HTMLElement[]> = ref([])
+const htmlFactorInputs: Ref<HTMLInputElement[]> = ref([])
 
 const panelOpen = ref(false)
 const pickerIdOpen: Ref<string | null> = ref(null)
 
-onMounted(() => updateRamp())
+onMounted(() => {
+  initInputs()
+  updateRamp()
+})
+
+function initInputs() {
+  for (let i = 0; i < htmlFactorInputs.value.length; i++) {
+    htmlFactorInputs.value[i].value = lgColorRamp.value!.steps[i].factor.toString()
+  }
+}
 
 function updateRamp() {
   const gradient: string[] = []
@@ -134,6 +145,7 @@ function updateRamp() {
     gradient.push(`#${step.color.getHexString()} ${step.factor * 100.0}%`)
   }
   htmlColorRamp.value!.style.background = `linear-gradient(90deg, ${gradient.join(', ')})`
+  
 }
 
 function togglePanel(): void {
@@ -162,7 +174,11 @@ function addStep() {
 }
 
 function updateStepFactor(id: string, e: Event) {
-  lgColorRamp.value?.setStep(id, undefined, (e.target as HTMLInputElement).valueAsNumber)
+  const htmlInput = e.target as HTMLInputElement
+  if (!htmlInput.valueAsNumber || isNaN(htmlInput.valueAsNumber)) {
+    return
+  }
+  lgColorRamp.value?.setStep(id, undefined, htmlInput.valueAsNumber)
   updateRamp()
 }
 function updateStepColor(id: string, c: string) {

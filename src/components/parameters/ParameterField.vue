@@ -7,11 +7,9 @@
     </td>
     <td>
       <input v-if="type === 'number'"
-        class="lg"
         :id="id"
+        class="lg"
         type="number"
-        inputmode="numeric"
-        pattern="[0-9.,]*"
         min="0"
         :step="step ?? 1"
         aria-label="Parameter input"
