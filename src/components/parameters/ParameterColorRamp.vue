@@ -67,7 +67,7 @@
               </td>
               <td class="action">
                 <button
-                  v-if="!lgColorRamp?.isBoundStep(step.id)"
+                  v-if="!lgColorRamp?.isBoundStep(step.id) && mode !== 'opacity'"
                   class="lg icon-button action"
                   aria-label="Open color panel"
                   @click="removeStep(step.id)"
@@ -92,7 +92,7 @@
               </td>
             </tr>
           </template>
-          <tr>
+          <tr v-if="mode === 'color' || !mode">
             <td colspan="4">
               <div class="add-step">
                 <button class="lg" @click="addStep()" aria-label="Add color step">
@@ -124,6 +124,7 @@ const htmlFactorInputs: Ref<HTMLInputElement[]> = ref([])
 const panelOpen = ref(false)
 const pickerIdOpen: Ref<string | null> = ref(null)
 
+const $props = defineProps<{ mode?: 'color' | 'opacity' }>()
 onMounted(() => {
   initInputs()
   updateRamp()
@@ -153,6 +154,7 @@ function togglePanel(): void {
 }
 
 function togglePicker(id: string): void {
+  // Update picker
   if (pickerIdOpen.value === id) {
     pickerIdOpen.value = null
   } else {

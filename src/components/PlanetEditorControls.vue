@@ -82,7 +82,7 @@
               Lacunarity
             </ParameterField>
             <ParameterDivider />
-            <ParameterColorRamp v-model="LG_PARAMETERS.planetSurfaceColorRamp">
+            <ParameterColorRamp mode="color" v-model="LG_PARAMETERS.planetSurfaceColorRamp">
               Color ramp
             </ParameterColorRamp>
           </ParameterTable>
@@ -148,8 +148,9 @@
               >
                 Lacunarity
               </ParameterField>
-            <ParameterDivider />
-            <ParameterColorRamp v-model="LG_PARAMETERS.cloudsColorRamp">Color/Opacity ramp</ParameterColorRamp>
+              <ParameterDivider />
+              <ParameterColor v-model="LG_PARAMETERS.cloudsColor">Color</ParameterColor>
+              <ParameterColorRamp mode="opacity" v-model="LG_PARAMETERS.cloudsColorRamp">Opacity ramp</ParameterColorRamp>
             </template>
           </ParameterTable>
         </template>

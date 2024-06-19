@@ -111,6 +111,14 @@ export class ColorRamp extends ChangeTracker {
     this.markForChange(this._changePrefix)
   }
 
+  public getStep(stepId: string) {
+    const index = this._steps.findIndex(s => s.id === stepId)
+    if (index === -1) {
+      throw new Error('Cannot find step with ID '+stepId)
+    }
+    return this._steps[index]
+  }
+
   public setStep(stepId: string, color?: string, factor?: number) {
     const index = this._steps.findIndex(s => s.id === stepId)
     if (index === -1) {

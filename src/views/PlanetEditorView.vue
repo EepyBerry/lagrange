@@ -229,6 +229,13 @@ function updatePlanet() {
         mat.needsUpdate = true
         break
       }
+      case '_cloudsColor': {
+        const v = LG_PARAMETERS.cloudsColor
+        const mat = _clouds.material as CustomShaderMaterial
+        mat.uniforms.u_color = { value: v }
+        mat.needsUpdate = true
+        break
+      }
       case '_cloudsColorRamp': {
         const v = LG_PARAMETERS.cloudsColorRamp
         const mat = _clouds.material as CustomShaderMaterial

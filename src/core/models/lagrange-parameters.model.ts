@@ -156,6 +156,7 @@ export default class LagrangeParameters extends ChangeTracker {
   private _cloudsNoise: NoiseParameters = new NoiseParameters(
     this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 1.75
   )
+  private _cloudsColor: Color = new Color(0xffffff)
   private _cloudsColorRamp: ColorRamp
 
   // --------------------------------------------------
@@ -194,6 +195,14 @@ export default class LagrangeParameters extends ChangeTracker {
   
   public get cloudsNoise(): NoiseParameters {
     return this._cloudsNoise
+  }
+
+  public get cloudsColor(): Color {
+    return this._cloudsColor
+  }
+  public set cloudsColor(value: Color) {
+    this._cloudsColor = value
+    this.markForChange('_cloudsColor')
   }
 
   public set cloudsColorRamp(ramp: ColorRamp) {
@@ -261,9 +270,17 @@ export default class LagrangeParameters extends ChangeTracker {
 
   constructor() {
     super()
+    this._sunLightColor = new Color(0xfff6e8)
+    this._sunLightIntensity = 6
+    this._ambLightColor = new Color(0xffffff)
+    this._ambLightIntensity = 0.05
+
+    this._planetGeometryType = GeometryType.SPHERE
+    this._planetMeshQuality = 48
+    this._planetAxialTilt = 0
+    this._planetRotation = 0
+
     this._planetSurfaceShowBumps = true
-    this._cloudsEnabled = true
-    this._atmosphereEnabled = true
     this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
       new ColorRampStep(0x101b38, 0, true),
       new ColorRampStep(0x182852, 0.4),
@@ -273,10 +290,21 @@ export default class LagrangeParameters extends ChangeTracker {
       new ColorRampStep(0x223b05, 0.65),
       new ColorRampStep(0x223b05, 1, true),
     ])
+
+    this._cloudsEnabled = true
+    this._cloudsAxialTilt = 0
+    this._cloudsRotation = 0
+    this._cloudsHeight = 1
+    this._cloudsNoise = new NoiseParameters(
+      this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 1.75
+    )
+    this._cloudsColor = new Color(0xffffff)
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
       new ColorRampStep(0x000000, 0, true),
       new ColorRampStep(0x000000, 0.6),
       new ColorRampStep(0xbbbbbb, 1, true),
     ])
+
+    this._atmosphereEnabled = true
   }
 }

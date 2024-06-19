@@ -107,7 +107,7 @@ export function createClouds(type: GeometryType): THREE.Mesh {
     u_frequency:      { value: LG_PARAMETERS.cloudsNoise.frequency },
     u_amplitude:      { value: LG_PARAMETERS.cloudsNoise.amplitude },
     u_lacunarity:     { value: LG_PARAMETERS.cloudsNoise.lacunarity },
-    u_color:          { value: new THREE.Color(0xffffff) },
+    u_color:          { value: LG_PARAMETERS.cloudsColor },
     u_cr_colors:      { value: LG_PARAMETERS.cloudsColorRamp.colors },
     u_cr_positions:   { value: LG_PARAMETERS.cloudsColorRamp.factors },
     u_cr_size:        { value: LG_PARAMETERS.cloudsColorRampSize },
