@@ -207,9 +207,13 @@
               Show atmosphere
             </ParameterField>
             <ParameterDivider />
-            <ParameterColor v-model="LG_PARAMETERS.atmosphereColor">
-              Daylight color
-            </ParameterColor>
+            <ParameterField
+              v-model="LG_PARAMETERS.atmosphereDaylightHue"
+              id="a-hue"
+              type="number"
+            >
+              Daylight hue
+            </ParameterField>
         </template>
       </SidebarSection>
     </aside>
@@ -247,7 +251,6 @@ import ParameterDivider from './parameters/ParameterDivider.vue';
     scrollbar-color: var(--lg-accent) transparent;
     scrollbar-width: thin;
     overflow: auto;
-    pointer-events: all;
   }
 }
 

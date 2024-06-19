@@ -37,6 +37,7 @@ function toggleExpand() {
 
 <style scoped lang="scss">
 .param-section {
+  pointer-events: all;
   background-color: var(--lg-primary);
   border: 1px solid var(--lg-accent);
   border-radius: 4px;
