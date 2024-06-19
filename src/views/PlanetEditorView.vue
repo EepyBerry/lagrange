@@ -180,6 +180,7 @@ function updatePlanet() {
         break
       }
       case '_planetSurfaceColorRamp': {
+        console.log('update')
         const v = LG_PARAMETERS.planetSurfaceColorRamp
         const mat = _planet.material as CustomShaderMaterial
         mat.uniforms.u_cr_colors = { value: v.colors },

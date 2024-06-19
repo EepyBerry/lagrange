@@ -9,6 +9,7 @@
         <button
           class="lg edit"
           aria-label="Open color panel"
+          :class="{ 'menu-expanded': pickerOpen }"
           @click="togglePanel()"
         >
           <iconify-icon v-if="pickerOpen" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
@@ -35,11 +36,10 @@
 </template>
 
 <script setup lang="ts">
-import { Color, type RGB } from 'three';
+import { Color } from 'three';
 import { onMounted, ref } from 'vue';
 import { ColorPicker } from 'vue-accessible-color-picker'
 
-const divider = 255.0
 const lgColor = defineModel<Color>()
 const pickerInitColor = ref('')
 const pickerOpen = ref(false)

@@ -8,12 +8,13 @@
     <td colspan="2">
       <div class="container">
         <div class="color-ramp" ref="htmlColorRamp">
-          <template v-for="fac of lgColorRamp?.definedFactors" :key="fac">
+          <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
             <span ref="htmlColorSteps" class="color-step"></span>
           </template>
         </div>
         <button
           class="lg edit"
+          :class="{ 'menu-expanded': panelOpen }"
           aria-label="Edit ramp"
           @click="togglePanel()"
         >
@@ -28,13 +29,13 @@
     <td colspan="2">
       <table class="panel-table">
         <tbody>
-          <template v-for="(step, index) of lgColorRamp?.definedSteps" :key="step.id">
+          <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
             <tr>
               <td>
                 <iconify-icon icon="mingcute:dots-line" width="1.5rem" aria-hidden="true" />
               </td>
               <td style="text-align: end;">
-                <div v-if="lgColorRamp?.isBoundStep(index)" class="factor-wrapper">
+                <div v-if="lgColorRamp?.isBoundStep(step.id)" class="factor-wrapper">
                   <span>{{ step.factor }}</span>
                 </div>
                 <div v-else class="factor-wrapper">
@@ -45,7 +46,7 @@
                     max="0.999"
                     step="0.001"
                     :value="step.factor"
-                    @input="updateStepFactor(index, $event)"
+                    @input="updateStepFactor(step.id, $event)"
                   >
                 </div>
               </td>
@@ -54,33 +55,34 @@
                   <span class="current-color" :style="{ backgroundColor: `#${step.color.getHexString()}` }"></span>
                   <button
                     class="lg edit"
+                    :class="{ 'menu-expanded': pickerIdOpen === step.id }"
                     aria-label="Open color panel"
-                    @click="togglePicker(index)"
+                    @click="togglePicker(step.id)"
                   >
-                    <iconify-icon v-if="pickersOpen[index]" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+                    <iconify-icon v-if="pickerIdOpen === step.id" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
                     <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
                   </button>
                 </div>
               </td>
-              <td>
-                <span class="action" v-if="lgColorRamp?.isBoundStep(index)"></span>
+              <td class="action">
                 <button
-                  v-else
+                  v-if="!lgColorRamp?.isBoundStep(step.id)"
                   class="lg icon-button action"
                   aria-label="Open color panel"
-                  @click="removeStep(index)"
+                  @click="removeStep(step.id)"
+                  :disabled="pickerIdOpen === step.id"
                 >
                   <iconify-icon class="icon" icon="mingcute:delete-line" width="1.25rem" aria-hidden="true" />
                 </button>
               </td>
             </tr>
-            <tr v-if="pickersOpen[index]">
+            <tr v-if="pickerIdOpen === step.id">
               <td colspan="4">
                 <ColorPicker
                   alpha-channel="hide"
                   default-format="hex"
                   :color="'#'+step.color.getHexString()"
-                  @color-change="updateStepColor(index, $event.colors.hex)"
+                  @color-change="updateStepColor(step.id, $event.colors.hex)"
                 >
                   <template #hue-range-input-label>
                     <span class="visually-hidden">Hue</span>
@@ -89,6 +91,19 @@
               </td>
             </tr>
           </template>
+          <tr>
+            <td colspan="4">
+              <div class="add-step">
+                <button class="lg" @click="addStep()" aria-label="Add color step">
+                  <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
+                </button>
+                <iconify-icon class="icon" icon="ph:dot-outline-fill" width="1.25rem" aria-hidden="true" />
+                <button class="lg" @click="sortSteps()" aria-label="Sort color steps">
+                  <iconify-icon class="icon" icon="mingcute:numbers-09-sort-ascending-line" width="1.25rem" aria-hidden="true" />
+                </button>
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
     </td>
@@ -105,7 +120,7 @@ const htmlColorRamp: Ref<HTMLElement|null> = ref(null)
 const htmlColorSteps: Ref<HTMLElement[]> = ref([])
 
 const panelOpen = ref(false)
-const pickersOpen: Ref<boolean[]> = ref(Array(lgColorRamp.value?.definedSteps.length).fill(false))
+const pickerIdOpen: Ref<string | null> = ref(null)
 
 onMounted(() => updateRamp())
 
@@ -114,7 +129,7 @@ function updateRamp() {
   for (let i = 0; i < lgColorRamp.value!.definedSteps.length; i++) {
     const htmlStep = htmlColorSteps.value[i]
     const step = lgColorRamp.value!.definedSteps[i]
-    htmlStep.style.display = [0,1].includes(step.factor) ? 'none' : 'initial'
+    htmlStep.style.display = step.isBound ? 'none' : 'initial'
     htmlStep.style.left = `${step.factor * 100}%`
     gradient.push(`#${step.color.getHexString()} ${step.factor * 100.0}%`)
   }
@@ -124,32 +139,43 @@ function updateRamp() {
 function togglePanel(): void {
   panelOpen.value = !panelOpen.value
 }
-function togglePicker(index: number): void {
-  pickersOpen.value[index] = !pickersOpen.value[index]
+
+function togglePicker(id: string): void {
+  if (pickerIdOpen.value === id) {
+    pickerIdOpen.value = null
+  } else {
+    pickerIdOpen.value = id
+  }
 }
 
 // Step operations
 
 function sortSteps() {
-  //lgColorRamp.value?.sortSteps()
-  pickersOpen.value.fill(false)
+  lgColorRamp.value?.sortSteps()
+  pickerIdOpen.value = null
+  setTimeout(updateRamp, 20)
 }
 
-function updateStepFactor(index: number, e: Event) {
-  lgColorRamp.value?.setStep(index, undefined, (e.target as HTMLInputElement).valueAsNumber)
+function addStep() {
+  lgColorRamp.value?.addStep()
+  setTimeout(updateRamp, 20)
+}
+
+function updateStepFactor(id: string, e: Event) {
+  lgColorRamp.value?.setStep(id, undefined, (e.target as HTMLInputElement).valueAsNumber)
   updateRamp()
 }
-function updateStepColor(index: number, c: string) {
-  lgColorRamp.value?.setStep(index, c.substring(0, 7)) // strip alpha from color
+function updateStepColor(id: string, c: string) {
+  lgColorRamp.value?.setStep(id, c.substring(0, 7)) // strip alpha from color
   updateRamp()
 }
 
-function removeStep(index: number) {
-  if (lgColorRamp.value?.isBoundStep(index)) {
+function removeStep(id: string) {
+  if (lgColorRamp.value?.isBoundStep(id)) {
     return
   }
-  pickersOpen.value.splice(index, 1)
-  lgColorRamp.value?.removeStep(index)
+  pickerIdOpen.value = null
+  lgColorRamp.value?.removeStep(id)
   updateRamp()
 }
 
@@ -205,8 +231,17 @@ function removeStep(index: number) {
     border-radius: 4px;
     border: 1px solid var(--lg-accent);
   }
-  .action {
-    min-width: 2rem;
+  .action > button {
+    float: right;
+  }
+  .add-step {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    & > button {
+      flex: 1;
+    }
   }
 }
 

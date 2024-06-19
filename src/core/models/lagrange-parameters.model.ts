@@ -134,7 +134,7 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._planetSurfaceNoise
   }
 
-  public get planetSurfaceColorRamp() {
+  public get planetSurfaceColorRamp(): ColorRamp {
     return this._planetSurfaceColorRamp
   }
   public set planetSurfaceColorRamp(ramp: ColorRamp) {
@@ -192,7 +192,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this.markForChange('_cloudsHeight')
   }
   
-  public get cloudsNoise() {
+  public get cloudsNoise(): NoiseParameters {
     return this._cloudsNoise
   }
 
@@ -200,10 +200,10 @@ export default class LagrangeParameters extends ChangeTracker {
     this._cloudsColorRamp = ramp
     this.markForChange('_cloudsColorRamp')
   }
-  public get cloudsColorRamp() {
+  public get cloudsColorRamp(): ColorRamp {
     return this._cloudsColorRamp
   }
-  public get cloudsColorRampSize() {
+  public get cloudsColorRampSize(): number {
     return this._cloudsColorRamp.definedSize
   }
 
@@ -265,18 +265,18 @@ export default class LagrangeParameters extends ChangeTracker {
     this._cloudsEnabled = true
     this._atmosphereEnabled = true
     this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
-      new ColorRampStep(0x101b38, 0),
+      new ColorRampStep(0x101b38, 0, true),
       new ColorRampStep(0x182852, 0.4),
       new ColorRampStep(0x2a3b80, 0.495),
       new ColorRampStep(0x757515, 0.5),
       new ColorRampStep(0x446611, 0.505),
       new ColorRampStep(0x223b05, 0.65),
-      new ColorRampStep(0x223b05, 1),
+      new ColorRampStep(0x223b05, 1, true),
     ])
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
-      new ColorRampStep(0x000000, 0),
+      new ColorRampStep(0x000000, 0, true),
       new ColorRampStep(0x000000, 0.6),
-      new ColorRampStep(0xbbbbbb, 1),
+      new ColorRampStep(0xbbbbbb, 1, true),
     ])
   }
 }

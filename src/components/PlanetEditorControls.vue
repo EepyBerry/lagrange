@@ -36,52 +36,12 @@
         <template v-slot:content>
           <ParameterTable>
             <ParameterDivider />
-            <ParameterRadio>
-              <template v-slot:title>Mesh</template>
-              <template v-slot:options>
-                <ParameterRadioOption
-                  v-model="LG_PARAMETERS.planetGeometryType"
-                  name="p-mesh"
-                  id="opt-sphere"
-                  :value="GeometryType.SPHERE"
-                  icon="tabler:sphere"
-                  ariaLabel="Sphere"
-                >
-                  Sphere
-                </ParameterRadioOption>
-                <ParameterRadioOption
-                  v-model="LG_PARAMETERS.planetGeometryType"
-                  name="p-mesh"
-                  id="opt-torus"
-                  :value="GeometryType.TORUS"
-                  icon="lucide:torus"
-                  ariaLabel="Torus"
-                >
-                  Torus
-                </ParameterRadioOption>
-                <ParameterRadioOption
-                  v-model="LG_PARAMETERS.planetGeometryType"
-                  name="p-mesh"
-                  id="opt-cube"
-                  :value="GeometryType.BOX"
-                  icon="tabler:cube"
-                  ariaLabel="Cube"
-                >
-                  Torus
-                </ParameterRadioOption>
-              </template>
-            </ParameterRadio>
-            <ParameterDivider />
-            <ParameterField v-model="LG_PARAMETERS.planetMeshQuality" id="p-qual" type="number">
-              Mesh quality
-            </ParameterField>
             <ParameterField v-model="LG_PARAMETERS.planetAxialTilt" id="p-tilt" type="number">
               Axial tilt <sup>(°)</sup>
             </ParameterField>
             <ParameterField v-model="LG_PARAMETERS.planetRotation" id="p-rot" type="number">
               Rotation <sup>(°)</sup>
             </ParameterField>
-            <ParameterDivider />
           </ParameterTable>
         </template>
       </SidebarSection>
@@ -97,7 +57,6 @@
             >
               Show bumps
             </ParameterField>
-            <ParameterDivider />
             <ParameterField
               v-model="LG_PARAMETERS.planetSurfaceNoise.frequency"
               id="s-freq"

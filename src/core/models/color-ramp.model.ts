@@ -8,11 +8,13 @@ export class ColorRampStep {
   private _id: string // internal ID for tracking changes
   private _color: THREE.Color
   private _factor: number
+  private _isBound: boolean
 
-  constructor(color: number | string, factor: number) {
+  constructor(color: number | string, factor: number, isBound: boolean = false) {
     this._id = generateUUID()
     this._color = new THREE.Color(color)
     this._factor = factor
+    this._isBound = isBound
   }
 
   public get id() {
@@ -30,6 +32,9 @@ export class ColorRampStep {
   }
   public set factor(factor: number) {
     this._factor = factor
+  }
+  public get isBound(): boolean {
+    return this._isBound
   }
 }
 
@@ -89,35 +94,49 @@ export class ColorRamp extends ChangeTracker {
     return Array(this._maxSize)
       .fill(ColorRampStep.EMPTY)
       .map((step, i) => i < steps.length ? ({color: steps[i].color, factor: steps[i].factor}) : step)
+      .sort((a, b) => a.factor - b.factor)
   }
 
   public sortSteps() {
     this._steps.sort((a, b) => a.factor - b.factor)
   }
 
-  public setStep(index: number, color?: string, factor?: number) {
-    if (index < 0 || index > this._maxSize) {
-      throw new Error('(ColorRamp) Invalid index given: '+index)
+  public addStep() {
+    if (this._steps.length >= this._maxSize - 1) {
+      throw new Error('(ColorRamp) Maximum size reached')
     }
-    this._steps[index].color = color ? new THREE.Color(color) : this._steps[index].color
-    this._steps[index].factor = factor ?? this._steps[index].factor
-    //this.sortSteps()
+    this._steps.push(new ColorRampStep('black', this._steps[this._size-2].factor + 0.01))
+    this.sortSteps()
+    this._size++
     this.markForChange(this._changePrefix)
   }
 
-  public removeStep(index: number) {
-    if (index < 0 || index > this._maxSize) {
-      throw new Error('(ColorRamp) Invalid index given: '+index)
+  public setStep(stepId: string, color?: string, factor?: number) {
+    const index = this._steps.findIndex(s => s.id === stepId)
+    if (index === -1) {
+      throw new Error('Cannot find step with ID '+stepId)
     }
-    if (this.isBoundStep(index)) {
+
+    this._steps[index].color = color ? new THREE.Color(color) : this._steps[index].color
+    this._steps[index].factor = factor ?? this._steps[index].factor
+    this.markForChange(this._changePrefix)
+  }
+
+  public removeStep(stepId: string) {
+    if (this.isBoundStep(stepId)) {
       console.warn('(ColorRamp) Cannot delete ramp bounds! (factor=0|1)')
       return
     }
+    const index = this._steps.findIndex(s => s.id === stepId)
+    if (index === -1) {
+      throw new Error('Cannot find step with ID '+stepId)
+    }
     this._steps.splice(index, 1)
+    this._size--
     this.markForChange(this._changePrefix)
   }
   
-  public isBoundStep(stepIdx: number) {
-    return [0,1].includes(this._steps[stepIdx].factor)
+  public isBoundStep(stepId: string) {
+    return this._steps.find(s => s.id === stepId)?.isBound
   }
 }
