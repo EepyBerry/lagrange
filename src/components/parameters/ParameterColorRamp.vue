@@ -31,25 +31,33 @@
         <tbody>
           <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
             <tr>
-              <td>
-                <iconify-icon icon="mingcute:dots-line" width="1.5rem" aria-hidden="true" />
+              <td class="action">
+                <button
+                  v-if="!lgColorRamp?.isBoundStep(step.id) && mode !== 'opacity'"
+                  class="lg warn"
+                  aria-label="Open color panel"
+                  @click="removeStep(step.id)"
+                  :disabled="pickerIdOpen === step.id"
+                >
+                  <iconify-icon class="icon" icon="mingcute:delete-line" width="1.25rem" aria-hidden="true" />
+                </button>
               </td>
-              <td style="text-align: end;">
+              <td>
                 <div v-if="lgColorRamp?.isBoundStep(step.id)" class="factor-wrapper">
-                  <span>{{ step.factor }}</span>
-                </div>
-                <div v-else class="factor-wrapper">
-                  <input
-                    ref="htmlFactorInputs"
-                    class="lg"
-                    type="number"
-                    min="0.001"
-                    max="0.999"
-                    step="0.001"
-                    :value="step.factor"
-                    @input="updateStepFactor(step.id, $event)"
-                  >
-                </div>
+                    <span>{{ step.factor }}</span>
+                  </div>
+                  <div v-else class="factor-wrapper">
+                    <input
+                      ref="htmlFactorInputs"
+                      class="lg"
+                      type="number"
+                      min="0.001"
+                      max="0.999"
+                      step="0.001"
+                      :value="step.factor"
+                      @input="updateStepFactor(step.id, $event)"
+                    >
+                  </div>
               </td>
               <td>
                 <div class="color-wrapper">
@@ -65,20 +73,9 @@
                   </button>
                 </div>
               </td>
-              <td class="action">
-                <button
-                  v-if="!lgColorRamp?.isBoundStep(step.id) && mode !== 'opacity'"
-                  class="lg icon-button action"
-                  aria-label="Open color panel"
-                  @click="removeStep(step.id)"
-                  :disabled="pickerIdOpen === step.id"
-                >
-                  <iconify-icon class="icon" icon="mingcute:delete-line" width="1.25rem" aria-hidden="true" />
-                </button>
-              </td>
             </tr>
             <tr v-if="pickerIdOpen === step.id">
-              <td colspan="4">
+              <td colspan="4" class="picker-wrapper">
                 <ColorPicker
                   alpha-channel="hide"
                   default-format="hex"
@@ -227,12 +224,18 @@ function removeStep(id: string) {
   }
 }
 
+.picker-wrapper {
+  padding-bottom: 1rem;
+}
 .panel-table {
   width: 100%;
   margin-top: 0.5rem;
   border-collapse: inherit;
   border-spacing: inherit;
 
+  td {
+    text-align: end;
+  }
   .color-wrapper {
     display: flex;
     align-items: center;
@@ -248,9 +251,6 @@ function removeStep(id: string) {
     height: 2rem;
     border-radius: 4px;
     border: 1px solid var(--lg-accent);
-  }
-  .action > button {
-    float: right;
   }
   .add-step {
     margin-top: 0.5rem;

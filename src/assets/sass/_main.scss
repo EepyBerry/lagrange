@@ -87,6 +87,11 @@ button.lg:active {
   cursor: pointer;
   background-color: var(--lg-button-active);
 }
+button.lg:disabled {
+  cursor: not-allowed;
+  background-color: var(--lg-button-disabled);
+  color: var(--lg-text-disabled);
+}
 button.lg.menu-expanded {
   background-color: var(--lg-button-menu-expanded);
 }

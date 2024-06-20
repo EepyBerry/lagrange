@@ -1,5 +1,6 @@
 :root {
   --lg-text: #f7f7f7;
+  --lg-text-disabled: #b6b6b6;
   --lg-primary: #060b0faa;
   --lg-panel: #060b0f;
   --lg-accent: #263238;
@@ -10,5 +11,22 @@
   --lg-button: #37474e;
   --lg-button-hover: #2d3b41;
   --lg-button-active: var(--lg-accent);
+  --lg-button-disabled: #535353;
   --lg-button-menu-expanded: var(--lg-contrast);
+  --lg-warn: #b63f1a;
+  --lg-warn-hover: #a53614;
+  --lg-warn-active: #912a0b;
+}
+
+.lg.warn {
+  background: var(--lg-warn);
+  background-color: var(--lg-warn);
+}
+.lg.warn:not(:disabled):hover {
+  background: var(--lg-warn-hover);
+  background-color: var(--lg-warn-hover);
+}
+.lg.warn:not(:disabled):active {
+  background: var(--lg-warn-active);
+  background-color: var(--lg-warn-active);
 }
