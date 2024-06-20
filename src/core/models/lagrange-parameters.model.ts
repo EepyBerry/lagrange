@@ -282,10 +282,10 @@ export default class LagrangeParameters extends ChangeTracker {
 
     this._planetSurfaceShowBumps = true
     this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
-      new ColorRampStep(0x101b38, 0, true),
-      new ColorRampStep(0x182852, 0.4),
-      new ColorRampStep(0x2a3b80, 0.495),
-      new ColorRampStep(0x757515, 0.5),
+      new ColorRampStep(0x061c3f, 0, true),
+      new ColorRampStep(0x0f2851, 0.4),
+      new ColorRampStep(0x1f4178, 0.495),
+      new ColorRampStep(0x2f2e10, 0.5),
       new ColorRampStep(0x446611, 0.505),
       new ColorRampStep(0x223b05, 0.65),
       new ColorRampStep(0x223b05, 1, true),

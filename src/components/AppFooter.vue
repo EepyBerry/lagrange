@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <SVGAppLogo aria-label="Lagrange logo" />
+    <AppLogo />
     <div id="footer-nav">
       <a href="https://github.com/EepyBerry/lagrange" target="_blank" rel="noopener" class="lg dark" aria-label="GitHub page">
         <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" />
@@ -18,8 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import SVGAppLogo from './svg/SVGAppLogo.vue';
-import SVGProgressIcon from './svg/SVGProgressIcon.vue';
+import AppLogo from './elements/AppLogo.vue';
 </script>
 
 <style lang="scss">
@@ -32,7 +31,7 @@ footer {
   gap: 1rem;
   z-index: 5;
 
-  #app-logo {
+  #app-logo, #app-logo-uwu {
     width: clamp(160px, 10rem + 5vw, 25vw);
     grid-column: 1;
     grid-row: span 3;
@@ -50,7 +49,7 @@ footer {
 
 @media screen and (max-width: 767px) {
   footer {
-    #app-logo {
+    #app-logo, #app-logo-uwu {
       display: none;
     }
   }

@@ -26,11 +26,13 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "@floating-ui/vue": "^1.0.6",
+    "@unhead/vue": "^1.9.14",
     "iconify-icon": "^2.1.0",
     "three": "^0.165.0",
     "three-custom-shader-material": "^5.4.0",
     "vue": "^3.4.21",
-    "vue-accessible-color-picker": "^5.0.1"
+    "vue-accessible-color-picker": "^5.0.1",
+    "vue-router": "^4.3.3"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",

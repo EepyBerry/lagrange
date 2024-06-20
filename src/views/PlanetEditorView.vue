@@ -13,6 +13,11 @@ import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType, type SceneElements } from '@core/types';
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla';
 import { createControls } from '@/core/three/component.builder';
+import { useHead } from '@unhead/vue';
+
+useHead({ meta: [
+  { name: 'description', content: 'A procedural planet building app' }
+]})
 
 // THREE canvas/scene root
 const sceneRoot: Ref<any> = ref(null)

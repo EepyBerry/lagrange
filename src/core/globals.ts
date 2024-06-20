@@ -1,6 +1,8 @@
 import { reactive } from "vue";
 import LagrangeParameters from "@core/models/lagrange-parameters.model";
 
+export const SITE_NAME = 'Lagrange'
+
 export const LG_PARAMETERS = reactive(new LagrangeParameters())
 export const LG_DEFAULTS = new LagrangeParameters()
 
