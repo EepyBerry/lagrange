@@ -1,9 +1,11 @@
 <template>
+  <PlanetEditorControls />
   <div ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
 </template>
 
 <script setup lang="ts">
+import PlanetEditorControls from '@/components/PlanetEditorControls.vue';
 import { onMounted, ref, watch, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
