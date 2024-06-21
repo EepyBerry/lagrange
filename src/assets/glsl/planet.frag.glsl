@@ -22,6 +22,10 @@ uniform float u_ground_roughness;
 uniform float u_water_metalness;
 uniform float u_ground_metalness;
 
+// Pole uniforms
+uniform bool u_show_poles;
+uniform float u_pole_limit;
+
 // Color ramp uniforms
 uniform float[16] u_cr_positions;
 uniform vec3[16] u_cr_colors;
@@ -54,6 +58,19 @@ void main() {
     // Render noise as color
     color += height;
     color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
+
+    // Render poles
+    if (u_show_poles) {
+        float northBlendValue = (vPos.y - u_pole_limit) / (u_radius - u_pole_limit);
+        color = vPos.y > u_pole_limit && height > u_water_level
+            ? mix(color, vec3(1.0), northBlendValue)
+            : color;
+        float southBlendValue = (vPos.y + u_radius) / (-u_pole_limit + u_radius);
+        color = vPos.y < -u_pole_limit && height > u_water_level
+            ? mix( vec3(1.0), color, southBlendValue)
+            : color;
+    }
+   
 
     // Set outputs
     csm_Bump = height > u_water_level ? N : vNormal;

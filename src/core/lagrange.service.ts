@@ -87,6 +87,8 @@ export function createPlanet(type: GeometryType): THREE.Mesh {
     u_bump:                 { value: true },
     u_bump_offset:          { value: 0.005 },
     u_bump_strength:        { value: 0.0875 },
+    u_show_poles:           { value: true },
+    u_pole_limit: { value: 0.8 },
     u_cr_colors:            { value: LG_PARAMETERS.planetSurfaceColorRamp.colors },
     u_cr_positions:         { value: LG_PARAMETERS.planetSurfaceColorRamp.factors },
     u_cr_size:              { value: LG_PARAMETERS.planetSurfaceColorRampSize },

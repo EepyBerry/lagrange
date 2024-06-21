@@ -43,21 +43,21 @@
                 </button>
               </td>
               <td>
-                <div v-if="lgColorRamp?.isBoundStep(step.id)" class="factor-wrapper">
-                    <span>{{ step.factor }}</span>
-                  </div>
-                  <div v-else class="factor-wrapper">
-                    <input
-                      ref="htmlFactorInputs"
-                      class="lg"
-                      type="number"
-                      min="0.001"
-                      max="0.999"
-                      step="0.001"
-                      :value="step.factor"
-                      @input="updateStepFactor(step.id, $event)"
-                    >
-                  </div>
+                <div class="factor-wrapper">
+                  <span></span>
+                  <span v-if="lgColorRamp?.isBoundStep(step.id)">{{ step.factor }}</span>
+                  <input
+                    v-else
+                    ref="htmlFactorInputs"
+                    class="lg"
+                    type="number"
+                    min="0.001"
+                    max="0.999"
+                    step="0.001"
+                    :value="step.factor"
+                    @input="updateStepFactor(step.id, $event)"
+                  >
+                </div>
               </td>
               <td>
                 <div class="color-wrapper">
@@ -235,6 +235,10 @@ function removeStep(id: string) {
 
   td {
     text-align: end;
+  }
+  .factor-wrapper {
+    display: flex;
+    justify-content: space-between
   }
   .color-wrapper {
     display: flex;
