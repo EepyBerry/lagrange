@@ -133,7 +133,7 @@ const htmlFactorInputs: Ref<HTMLInputElement[]> = ref([])
 const panelOpen = ref(false)
 const pickerIdOpen: Ref<string | null> = ref(null)
 
-const $props = defineProps<{ mode?: 'color' | 'opacity' }>()
+defineProps<{ mode?: 'color' | 'opacity' }>()
 onMounted(() => {
   initInputs()
   updateRamp()

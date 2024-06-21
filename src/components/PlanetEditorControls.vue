@@ -217,7 +217,6 @@
 
 <script setup lang="ts">
 import { LG_PARAMETERS } from '@core/globals'
-import { GeometryType } from '@core/types'
 import ParameterColorRamp from './parameters/ParameterColorRamp.vue';
 import ParameterDivider from './parameters/ParameterDivider.vue';
 import type { ColorRamp } from '@/core/models/color-ramp.model';
