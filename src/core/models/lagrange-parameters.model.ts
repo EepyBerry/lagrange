@@ -32,10 +32,10 @@ export default class LagrangeParameters extends ChangeTracker {
   // |               Lighting settings                |
   // --------------------------------------------------
 
-  private _sunLightColor: Color = new Color(0xfff6e8)
-  private _sunLightIntensity: number = 6
-  private _ambLightColor: Color = new Color(0xffffff)
-  private _ambLightIntensity: number = 0.05
+  private _sunLightColor: Color
+  private _sunLightIntensity: number
+  private _ambLightColor: Color
+  private _ambLightIntensity: number
 
   public get sunLightColor(): Color {
     return this._sunLightColor
@@ -72,9 +72,9 @@ export default class LagrangeParameters extends ChangeTracker {
   // --------------------------------------------------
 
   private _planetGeometryType: GeometryType = GeometryType.SPHERE
-  private _planetMeshQuality: number = 48
-  private _planetAxialTilt: number = 0
-  private _planetRotation: number = 0
+  private _planetMeshQuality: number
+  private _planetAxialTilt: number
+  private _planetRotation: number
   
   // --------------------------------------------------
 
@@ -115,9 +115,7 @@ export default class LagrangeParameters extends ChangeTracker {
   // --------------------------------------------------
 
   private _planetSurfaceShowBumps: boolean
-  private _planetSurfaceNoise: NoiseParameters = new NoiseParameters(
-    this._changedProps, '_planetSurfaceNoise', NoiseType.FBM
-  )
+  private _planetSurfaceNoise: NoiseParameters
   private _planetSurfaceColorRamp: ColorRamp
 
   // --------------------------------------------------
@@ -150,12 +148,10 @@ export default class LagrangeParameters extends ChangeTracker {
   // --------------------------------------------------
 
   private _cloudsEnabled: boolean
-  private _cloudsAxialTilt: number = 0
-  private _cloudsRotation: number = 0
-  private _cloudsHeight: number = 1
-  private _cloudsNoise: NoiseParameters = new NoiseParameters(
-    this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 1.75
-  )
+  private _cloudsAxialTilt: number
+  private _cloudsRotation: number
+  private _cloudsHeight: number
+  private _cloudsNoise: NoiseParameters
   private _cloudsColor: Color = new Color(0xffffff)
   private _cloudsColorRamp: ColorRamp
 
@@ -221,8 +217,8 @@ export default class LagrangeParameters extends ChangeTracker {
   // --------------------------------------------------
   
   private _atmosphereEnabled: boolean
-  private _atmosphereHeight: number = 3
-  private _atmosphereDaylightHue: number = 0.0
+  private _atmosphereHeight: number
+  private _atmosphereDaylightHue: number
 
   // --------------------------------------------------
 
@@ -271,7 +267,7 @@ export default class LagrangeParameters extends ChangeTracker {
   constructor() {
     super()
     this._sunLightColor = new Color(0xfff6e8)
-    this._sunLightIntensity = 6
+    this._sunLightIntensity = 10
     this._ambLightColor = new Color(0xffffff)
     this._ambLightIntensity = 0.05
 
@@ -281,6 +277,9 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetRotation = 0
 
     this._planetSurfaceShowBumps = true
+    this._planetSurfaceNoise = new NoiseParameters(
+      this._changedProps, '_planetSurfaceNoise', NoiseType.FBM
+    )
     this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
       new ColorRampStep(0x061c3f, 0, true),
       new ColorRampStep(0x0f2851, 0.4),
@@ -306,5 +305,7 @@ export default class LagrangeParameters extends ChangeTracker {
     ])
 
     this._atmosphereEnabled = true
+    this._atmosphereHeight = 3
+    this._atmosphereDaylightHue = 0.0
   }
 }

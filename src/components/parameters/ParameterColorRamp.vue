@@ -46,7 +46,18 @@
                 <div class="factor-wrapper">
                   <span></span>
                   <span v-if="lgColorRamp?.isBoundStep(step.id)">{{ step.factor }}</span>
-                  <input
+                  <InputSliderElement v-else
+                    ref="htmlFactorInputs"
+                    class="lg fw"
+                    :id="step.id"
+                    :min="0.001"
+                    :max="0.999"
+                    :step="0.001"
+                    aria-label="Parameter input"
+                    v-model="step.factor"
+                    @input="updateStepFactor(step.id, $event)"
+                  />
+                  <!-- <input
                     v-else
                     ref="htmlFactorInputs"
                     class="lg"
@@ -56,7 +67,7 @@
                     step="0.001"
                     :value="step.factor"
                     @input="updateStepFactor(step.id, $event)"
-                  >
+                  > -->
                 </div>
               </td>
               <td>
@@ -112,6 +123,7 @@
 import { onMounted, ref, type Ref } from 'vue';
 import { ColorRamp } from '@/core/models/color-ramp.model';
 import { ColorPicker } from 'vue-accessible-color-picker'
+import InputSliderElement from '../elements/InputSliderElement.vue';
 
 const lgColorRamp = defineModel<ColorRamp>()
 const htmlColorRamp: Ref<HTMLElement|null> = ref(null)
@@ -229,9 +241,11 @@ function removeStep(id: string) {
 }
 .panel-table {
   width: 100%;
-  margin-top: 0.5rem;
-  border-collapse: inherit;
-  border-spacing: inherit;
+  border-spacing: 0.5rem 0.125rem;
+  padding: 0.375rem 0;
+
+  border-radius: 4px;
+  border: 1px solid var(--lg-input);
 
   td {
     text-align: end;

@@ -23,7 +23,7 @@ useHead({ meta: [
 
 // THREE canvas/scene root
 const sceneRoot: Ref<any> = ref(null)
-const showSpinner: Ref<boolean> = ref(false)
+const showSpinner: Ref<boolean> = ref(true)
 
 // Main THREE objects
 let $se: SceneElements
@@ -50,6 +50,7 @@ function init() {
   initRendering(width, height)
   createControls($se.camera, $se.renderer.domElement)
   window.addEventListener('resize', onWindowResize);
+  showSpinner.value = false
 }
 
 function initRendering(width: number, height: number) {
