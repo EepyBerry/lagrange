@@ -95,6 +95,8 @@ function initLighting(): void {
   _ambLight = $se.scene.getObjectByName(LG_NAME_AMBLIGHT) as THREE.AmbientLight
 }
 
+// ------------------------------------------------------------------------------------------------
+
 function renderFrame(stats: Stats) {
   stats.update()
   $se.renderer.render($se.scene, $se.camera)

@@ -49,6 +49,7 @@ footer {
 
 @media screen and (max-width: 767px) {
   footer {
+    padding: 0.5rem;
     #app-logo, #app-logo-uwu {
       display: none;
     }

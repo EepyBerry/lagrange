@@ -27,7 +27,9 @@
   "dependencies": {
     "@floating-ui/vue": "^1.0.6",
     "@unhead/vue": "^1.9.14",
+    "file-saver": "^2.0.5",
     "iconify-icon": "^2.1.0",
+    "pako": "^2.1.0",
     "three": "^0.165.0",
     "three-custom-shader-material": "^5.4.0",
     "vue": "^3.4.21",
@@ -36,7 +38,9 @@
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^20.12.5",
+    "@types/pako": "^2.0.3",
     "@types/three": "^0.165.0",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/eslint-config-typescript": "^13.0.0",

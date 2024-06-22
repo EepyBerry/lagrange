@@ -11,11 +11,20 @@ export default class LagrangeParameters extends ChangeTracker {
   // |                      Init                      |
   // --------------------------------------------------
 
+  private _planetName: string
+  
   private _initCamDistance: number = 4
   private _initCamAngle: number = -45
   private _initPlanetRadius: number = 1
 
   // --------------------------------------------------
+
+  public get planetName(): string {
+    return this._planetName
+  }
+  public set planetName(value: string) {
+    this._planetName = value
+  }
 
   public get initCamDistance() {
     return this._initCamDistance
@@ -266,8 +275,9 @@ export default class LagrangeParameters extends ChangeTracker {
 
   constructor() {
     super()
+    this._planetName = 'New Planet'
     this._sunLightColor = new Color(0xfff6e8)
-    this._sunLightIntensity = 10
+    this._sunLightIntensity = 6
     this._ambLightColor = new Color(0xffffff)
     this._ambLightIntensity = 0.05
 
@@ -307,5 +317,11 @@ export default class LagrangeParameters extends ChangeTracker {
     this._atmosphereEnabled = true
     this._atmosphereHeight = 3
     this._atmosphereDaylightHue = 0.0
+  }
+
+  public load(data: any) {
+    const colorFields = ['_sunLightColor', '_ambLightColor', '_cloudsColor', '_color']
+    const dataEntries = Object.entries(data)
+    console.log(dataEntries)
   }
 }

@@ -10,18 +10,20 @@ const router = createRouter({
       },
       {
         path: '/planet-editor',
-        name: 'Planet Editor',
-        component: () => import('./views/PlanetEditorView.vue')
+        name: 'planet-editor',
+        component: () => import('./views/PlanetEditorView.vue'),
+        meta: { title: 'Planet Editor' }
       },
       { 
         path: '/:pathMatch(.*)*',
-        name: '404',
-        component: () => import('./views/PageNotFoundView.vue')
+        name: 'page-not-found',
+        component: () => import('./views/PageNotFoundView.vue'),
+        meta: { title: 'Page Not Found' }
       }
     ]
 })
 router.afterEach((to) => {
-  document.title = (to.name ? `${String(to.name)} · ` : '') + SITE_NAME;
+  document.title = (to.meta.title ? `${String(to.meta.title)} · ` : '') + SITE_NAME;
 })
 
 export default router
