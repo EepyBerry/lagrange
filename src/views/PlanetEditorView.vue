@@ -1,16 +1,18 @@
 <template>
+  <PlanetInfoControls @data-load="reloadMaterials" />
   <PlanetEditorControls />
   <div ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
 </template>
 
 <script setup lang="ts">
-import PlanetEditorControls from '@/components/PlanetEditorControls.vue';
+import PlanetEditorControls from '@/components/controls/PlanetEditorControls.vue';
+import PlanetInfoControls from '@/components/controls/PlanetInfoControls.vue'
 import { onMounted, ref, watch, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
 import * as ThreeUtils from '@/core/lagrange.service';
-import { LG_HEIGHT_DIVIDER, LG_NAME_AMBLIGHT, LG_NAME_CLOUDS, LG_NAME_PLANET, LG_PARAMETERS } from '@core/globals';
+import { LG_NAME_AMBLIGHT, LG_PARAMETERS } from '@core/globals';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType, type SceneElements } from '@core/types';
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla';
@@ -108,6 +110,19 @@ function onWindowResize() {
   $se.renderer.setSize(window.innerWidth, window.innerHeight)
 }
 
+function reloadMaterials() {
+  LG_PARAMETERS.markAllForChange([
+    '_sunLightColor', '_sunLightIntensity', '_ambLightColor', '_ambLightIntensity',
+    '_planetAxialTilt', '_planetRotation', '_planetSurfaceShowBumps',
+    '_planetSurfaceNoise._frequency', '_planetSurfaceNoise._amplitude', '_planetSurfaceNoise._lacunarity',
+    '_planetSurfaceColorRamp',
+    '_cloudsEnabled', '_cloudsAxialTilt', '_cloudsRotation',
+    '_cloudsNoise._frequency', '_cloudsNoise._amplitude', '_cloudsNoise._lacunarity',
+    '_cloudsColor', '_cloudsColorRamp',
+    '_atmosphereEnabled'
+  ])
+}
+
 function updatePlanet() {
   if (LG_PARAMETERS.changedProps.length === 0) { return }
   for (const key of LG_PARAMETERS.changedProps) {
@@ -126,29 +141,6 @@ function updatePlanet() {
       }
       case '_ambLightIntensity': {
         _ambLight.intensity = LG_PARAMETERS.ambLightIntensity
-        break
-      }
-      case '_planetGeometryType': {
-        const v = LG_PARAMETERS.planetGeometryType
-        const newPlanet = ThreeUtils.switchMeshFor($se.scene, LG_NAME_PLANET, v)
-        const newClouds = ThreeUtils.switchMeshFor($se.scene, LG_NAME_CLOUDS, v)
-        _planet = newPlanet
-        _clouds = newClouds
-        _atmosphere.visible = (v === GeometryType.SPHERE)
-        break
-      }
-      case '_planetMeshQuality': {
-        const geoType = LG_PARAMETERS.planetGeometryType
-        const newPlanet = ThreeUtils.switchMeshFor($se.scene, LG_NAME_PLANET, geoType, true)
-        const newClouds = ThreeUtils.switchMeshFor($se.scene, LG_NAME_CLOUDS, geoType, true)
-        _planet = newPlanet
-        _clouds = newClouds
-        _atmosphere.visible = (geoType === GeometryType.SPHERE)
-        break
-      }
-      case '_planetRadius': {
-        const v = LG_PARAMETERS.initPlanetRadius
-        _planet.scale.setScalar(isNaN(v) ? 1 : v)
         break
       }
       case '_planetAxialTilt': {
@@ -190,7 +182,6 @@ function updatePlanet() {
         break
       }
       case '_planetSurfaceColorRamp': {
-        console.log('update')
         const v = LG_PARAMETERS.planetSurfaceColorRamp
         const mat = _planet.material as CustomShaderMaterial
         mat.uniforms.u_cr_colors = { value: v.colors },
@@ -211,11 +202,6 @@ function updatePlanet() {
       case '_cloudsRotation': {
         const v = LG_PARAMETERS.cloudsRotation
         _clouds.rotateOnAxis(VEC_UP, degToRad(isNaN(v) ? 0 : v) - _clouds.rotation.y)
-        break
-      }
-      case '_cloudsHeight': {
-        const v = LG_PARAMETERS.cloudsHeight
-        _clouds.scale.setScalar(1 + ((isNaN(v) ? 1 : v) / LG_HEIGHT_DIVIDER))
         break
       }
       case '_cloudsNoise._frequency': {

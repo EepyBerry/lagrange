@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { ChangeTracker } from './change-tracker.model'
 import { generateUUID } from 'three/src/math/MathUtils.js'
+import { numberToHex } from '@/utils/utils'
 
 export class ColorRampStep {
   static EMPTY = new ColorRampStep(0x0, 1)
@@ -10,7 +11,7 @@ export class ColorRampStep {
   private _factor: number
   private _isBound: boolean
 
-  constructor(color: number | string, factor: number, isBound: boolean = false) {
+  constructor(color: THREE.ColorRepresentation, factor: number, isBound: boolean = false) {
     this._id = generateUUID()
     this._color = new THREE.Color(color)
     this._factor = factor
@@ -42,14 +43,12 @@ export class ColorRamp extends ChangeTracker {
   static EMPTY = new ColorRamp([], '', [])
 
   private _steps: ColorRampStep[] = []
-  private _size: number
   private  _maxSize: number = 16
 
   constructor(changedPropsRef: string[], changePrefix: string, steps: ColorRampStep[], maxSize: number = 16) {
     super(changedPropsRef, changePrefix)
     this._maxSize = maxSize
     this._steps = steps
-    this._size = steps.length
     this.markForChange(this._changePrefix)
   }
 
@@ -57,11 +56,8 @@ export class ColorRamp extends ChangeTracker {
     return this.computeSteps(this._steps)
   }
   public set steps(steps: ColorRampStep[]) {
-    this._steps = steps
-  }
-
-  public get definedSize() {
-    return this._size
+    this._steps.splice(0)
+    this._steps.push(...steps)
   }
 
   public get maxSize() {
@@ -105,9 +101,8 @@ export class ColorRamp extends ChangeTracker {
     if (this._steps.length >= this._maxSize - 1) {
       throw new Error('(ColorRamp) Maximum size reached')
     }
-    this._steps.push(new ColorRampStep('black', this._steps[this._size-2].factor + 0.01))
+    this._steps.push(new ColorRampStep('black', this._steps[this._steps.length-2].factor + 0.01))
     this.sortSteps()
-    this._size++
     this.markForChange(this._changePrefix)
   }
 
@@ -140,11 +135,19 @@ export class ColorRamp extends ChangeTracker {
       throw new Error('Cannot find step with ID '+stepId)
     }
     this._steps.splice(index, 1)
-    this._size--
     this.markForChange(this._changePrefix)
   }
   
   public isBoundStep(stepId: string) {
     return this._steps.find(s => s.id === stepId)?.isBound
+  }
+
+  public load(data: any) {
+    this._steps.splice(0)
+    this._steps.push(...data._steps.map((s: any) => new ColorRampStep(
+      new THREE.Color(numberToHex(s._color)),
+      s._factor,
+      s._isBound
+    )))
   }
 }

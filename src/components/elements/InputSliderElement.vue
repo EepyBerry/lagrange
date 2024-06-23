@@ -70,12 +70,12 @@ input.lg[type=range] {
     appearance: none;
     width: 4px;
     height: 1.5rem;
-    background: var(--lg-contrast);
+    background: var(--lg-contrast-focus);
     cursor: pointer;
   }
 
   &::-moz-range-thumb {
-    background: var(--lg-contrast);
+    background: var(--lg-contrast-focus);
     border: none;
     border-radius: 2px;
     width: 4px;

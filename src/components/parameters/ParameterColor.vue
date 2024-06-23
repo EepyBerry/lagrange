@@ -36,15 +36,22 @@
 </template>
 
 <script setup lang="ts">
+import { LG_PARAMETERS } from '@/core/globals';
 import { Color } from 'three';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { ColorPicker } from 'vue-accessible-color-picker'
 
 const lgColor = defineModel<Color>()
 const pickerInitColor = ref('')
 const pickerOpen = ref(false)
 
-onMounted(() => pickerInitColor.value = '#' + lgColor.value?.getHexString())
+onMounted(() => initPickerColor())
+watch(() => lgColor.value?.getHexString(), () => initPickerColor())
+
+function initPickerColor() {
+  console.log(LG_PARAMETERS.id)
+  pickerInitColor.value = '#' + lgColor.value?.getHexString()
+}
 
 function setColor(hex: string): void {
   lgColor.value = new Color(hex.substring(0, 7)) // Strip alpha

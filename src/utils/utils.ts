@@ -24,3 +24,11 @@ export function rgbToGrayscale(hex: string) {
       .padStart(2,'0')
   );
 }
+
+export function endsWithAny(suffixes: string[], str: string) {
+  return suffixes.some(s => str.endsWith(s))
+}
+
+export function numberToHex(n: number): string {
+  return "#" + (n & 0x00FFFFFF).toString(16).padStart(6, '0')
+}

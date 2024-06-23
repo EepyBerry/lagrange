@@ -4,6 +4,8 @@ import { clamp, epsilonClamp, isNumeric } from '@/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeTracker } from './change-tracker.model'
+import { numberToHex } from '@/utils/utils'
+import { generateUUID } from 'three/src/math/MathUtils.js'
 
 export default class LagrangeParameters extends ChangeTracker {
 
@@ -11,19 +13,24 @@ export default class LagrangeParameters extends ChangeTracker {
   // |                      Init                      |
   // --------------------------------------------------
 
+  private _id: string
   private _planetName: string
-  
+
   private _initCamDistance: number = 4
   private _initCamAngle: number = -45
   private _initPlanetRadius: number = 1
 
   // --------------------------------------------------
 
+  public get id() {
+    return this._id
+  }
+
   public get planetName(): string {
     return this._planetName
   }
   public set planetName(value: string) {
-    this._planetName = value
+    this._planetName = value ?? 'New Planet'
   }
 
   public get initCamDistance() {
@@ -145,11 +152,11 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._planetSurfaceColorRamp
   }
   public set planetSurfaceColorRamp(ramp: ColorRamp) {
-    this._planetSurfaceColorRamp = ramp
+    this._planetSurfaceColorRamp.steps = ramp.steps
     this.markForChange('_planetSurfaceColorRamp')
   }
   public get planetSurfaceColorRampSize() {
-    return this._planetSurfaceColorRamp.definedSize
+    return this._planetSurfaceColorRamp.definedSteps.length
   }
 
   // --------------------------------------------------
@@ -211,14 +218,14 @@ export default class LagrangeParameters extends ChangeTracker {
   }
 
   public set cloudsColorRamp(ramp: ColorRamp) {
-    this._cloudsColorRamp = ramp
+    Object.assign(this._cloudsColorRamp, ramp)
     this.markForChange('_cloudsColorRamp')
   }
   public get cloudsColorRamp(): ColorRamp {
     return this._cloudsColorRamp
   }
   public get cloudsColorRampSize(): number {
-    return this._cloudsColorRamp.definedSize
+    return this._cloudsColorRamp.definedSteps.length
   }
 
   // --------------------------------------------------
@@ -265,6 +272,9 @@ export default class LagrangeParameters extends ChangeTracker {
   public markForChange(prop: string) {
     this._changedProps.push(prop)
   }
+  public markAllForChange(props: string[]) {
+    this._changedProps.push(...props)
+  }
   public clearChangedProps() {
     this._changedProps.splice(0)
   }
@@ -275,6 +285,7 @@ export default class LagrangeParameters extends ChangeTracker {
 
   constructor() {
     super()
+    this._id = generateUUID()
     this._planetName = 'New Planet'
     this._sunLightColor = new Color(0xfff6e8)
     this._sunLightIntensity = 6
@@ -319,9 +330,35 @@ export default class LagrangeParameters extends ChangeTracker {
     this._atmosphereDaylightHue = 0.0
   }
 
-  public load(data: any) {
-    const colorFields = ['_sunLightColor', '_ambLightColor', '_cloudsColor', '_color']
-    const dataEntries = Object.entries(data)
-    console.log(dataEntries)
+  public loadData(data: any) {
+    if (!data._id) {
+      this._id = generateUUID()
+    }
+    this._planetName = data._planetName.replaceAll('_', ' ')
+
+    this._sunLightColor.set(numberToHex(data._sunLightColor))
+    this._sunLightIntensity = data._sunLightIntensity
+    this._ambLightColor.set(numberToHex(data._ambLightColor))
+    this._ambLightIntensity = data._ambLightIntensity
+
+    this._planetAxialTilt = data._planetAxialTilt
+    this._planetRotation = data._planetRotation
+
+    this._planetSurfaceShowBumps = data._planetSurfaceShowBumps
+    this._planetSurfaceNoise.amplitude = data._planetSurfaceNoise._amplitude
+    this._planetSurfaceNoise.frequency = data._planetSurfaceNoise._frequency
+    this._planetSurfaceNoise.lacunarity = data._planetSurfaceNoise._lacunarity
+    this._planetSurfaceColorRamp.load(data._planetSurfaceColorRamp)
+
+    this._cloudsEnabled = true
+    this._cloudsAxialTilt = data._cloudsAxialTilt
+    this._cloudsRotation = data._cloudsRotation
+    this._cloudsNoise.amplitude = data._cloudsNoise._amplitude
+    this._cloudsNoise.frequency = data._cloudsNoise._frequency
+    this._cloudsNoise.lacunarity = data._cloudsNoise._lacunarity
+    this._cloudsColor.set(numberToHex(data._cloudsColor))
+    this._cloudsColorRamp.load(data._cloudsColorRamp)
+
+    this._atmosphereEnabled = data._atmosphereEnabled
   }
 }

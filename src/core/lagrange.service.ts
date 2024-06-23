@@ -18,7 +18,6 @@ import {
 import { GeometryType, type SceneElements } from '@core/types'
 import { loadCubeTexture } from '@/core/three/external-data.loader'
 import { createAmbientight, createGeometry, createPerspectiveCamera, createRenderer, createShaderMaterial } from '@/core/three/component.builder'
-import { resolveImports } from './three/shader-imports.loader'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // SCENE FUNCTIONS

@@ -9,7 +9,13 @@
       <div class="container">
         <div class="color-ramp" ref="htmlColorRamp">
           <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
-            <span ref="htmlColorSteps" class="color-step"></span>
+            <span ref="htmlColorSteps"
+              class="color-step"
+              :style="{
+                left: `${step.factor * 100}%`,
+                display: step.isBound ? 'none' : 'initial'
+              }">
+            </span>
           </template>
         </div>
         <button
@@ -25,7 +31,7 @@
     </td>
   </tr>
   
-  <tr v-if="panelOpen">
+  <tr v-show="panelOpen">
     <td colspan="2">
       <table class="panel-table">
         <tbody>
@@ -85,7 +91,7 @@
                 </div>
               </td>
             </tr>
-            <tr v-if="pickerIdOpen === step.id">
+            <tr v-show="pickerIdOpen === step.id">
               <td colspan="4" class="picker-wrapper">
                 <ColorPicker
                   alpha-channel="hide"
@@ -120,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, type Ref } from 'vue';
+import { ref, watch, type Ref } from 'vue';
 import { ColorRamp } from '@/core/models/color-ramp.model';
 import { ColorPicker } from 'vue-accessible-color-picker'
 import InputSliderElement from '../elements/InputSliderElement.vue';
@@ -134,28 +140,17 @@ const panelOpen = ref(false)
 const pickerIdOpen: Ref<string | null> = ref(null)
 
 defineProps<{ mode?: 'color' | 'opacity' }>()
-onMounted(() => {
-  initInputs()
+watch(() => lgColorRamp.value?.definedSteps, () => {
   updateRamp()
 })
-
-function initInputs() {
-  for (let i = 0; i < htmlFactorInputs.value.length; i++) {
-    htmlFactorInputs.value[i].value = lgColorRamp.value!.steps[i].factor.toString()
-  }
-}
 
 function updateRamp() {
   const gradient: string[] = []
   for (let i = 0; i < lgColorRamp.value!.definedSteps.length; i++) {
-    const htmlStep = htmlColorSteps.value[i]
     const step = lgColorRamp.value!.definedSteps[i]
-    htmlStep.style.display = step.isBound ? 'none' : 'initial'
-    htmlStep.style.left = `${step.factor * 100}%`
     gradient.push(`#${step.color.getHexString()} ${step.factor * 100.0}%`)
   }
   htmlColorRamp.value!.style.background = `linear-gradient(90deg, ${gradient.join(', ')})`
-  
 }
 
 function togglePanel(): void {
