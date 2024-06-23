@@ -80,6 +80,16 @@
               Show bumps
             </ParameterField>
             <ParameterField
+              v-model="LG_PARAMETERS.planetSurfaceBumpStrength"
+              id="s-bumps"
+              type="range"
+              :step="0.0005"
+              :min="0.02"
+              :max="0.2"
+            >
+              Bump strength
+            </ParameterField>
+            <ParameterField
               v-model="LG_PARAMETERS.planetSurfaceNoise.frequency"
               id="s-freq"
               type="range"
@@ -118,6 +128,31 @@
           </ParameterTable>
         </template>
       </SidebarSection>
+
+      <!-- Biomes -->
+       <SidebarSection icon="mingcute:mountain-2-line" :expand="false">
+        <template v-slot:title>Biomes</template>
+        <template v-slot:content>
+          <ParameterTable>
+            <ParameterField
+              v-model="LG_PARAMETERS.biomesEnabled"
+              id="b-biomes"
+              type="checkbox"
+            >
+              Show biomes
+            </ParameterField>
+            <template v-if="LG_PARAMETERS.biomesEnabled">
+              <ParameterField
+                v-model="LG_PARAMETERS.biomePolesEnabled"
+                id="b-poles"
+                type="checkbox"
+              >
+                Show poles
+              </ParameterField>
+            </template>
+          </ParameterTable>
+        </template>
+       </SidebarSection>
 
       <!-- Clouds -->
       <SidebarSection icon="mingcute:clouds-line" :expand="false">
@@ -228,6 +263,8 @@ import { LG_PARAMETERS } from '@core/globals'
 import ParameterColorRamp from '../parameters/ParameterColorRamp.vue'
 import ParameterDivider from '../parameters/ParameterDivider.vue'
 import type { ColorRamp } from '@/core/models/color-ramp.model'
+import SidebarSection from '../elements/SidebarSection.vue';
+import ParameterField from '../parameters/ParameterField.vue';
 </script>
 
 <style scoped lang="scss">

@@ -111,22 +111,16 @@ function onWindowResize() {
 }
 
 function reloadMaterials() {
-  LG_PARAMETERS.markAllForChange([
-    '_sunLightColor', '_sunLightIntensity', '_ambLightColor', '_ambLightIntensity',
-    '_planetAxialTilt', '_planetRotation', '_planetSurfaceShowBumps',
-    '_planetSurfaceNoise._frequency', '_planetSurfaceNoise._amplitude', '_planetSurfaceNoise._lacunarity',
-    '_planetSurfaceColorRamp',
-    '_cloudsEnabled', '_cloudsAxialTilt', '_cloudsRotation',
-    '_cloudsNoise._frequency', '_cloudsNoise._amplitude', '_cloudsNoise._lacunarity',
-    '_cloudsColor', '_cloudsColorRamp',
-    '_atmosphereEnabled'
-  ])
+  LG_PARAMETERS.markAllForChange()
 }
 
 function updatePlanet() {
   if (LG_PARAMETERS.changedProps.length === 0) { return }
   for (const key of LG_PARAMETERS.changedProps) {
     switch (key) {
+      // --------------------------------------------------
+      // |               Lighting settings                |
+      // --------------------------------------------------
       case '_sunLightColor': {
         _sun.color = LG_PARAMETERS.sunLightColor
         break
@@ -143,6 +137,10 @@ function updatePlanet() {
         _ambLight.intensity = LG_PARAMETERS.ambLightIntensity
         break
       }
+
+      // --------------------------------------------------
+      // |                Planet settings                 |
+      // --------------------------------------------------
       case '_planetAxialTilt': {
         const v = LG_PARAMETERS.planetAxialTilt
         _planet.rotateOnWorldAxis(VEC_Z, degToRad(isNaN(v) ? 0 : v) - _planet.rotation.z)
@@ -153,10 +151,21 @@ function updatePlanet() {
         _planet.rotateOnAxis(VEC_UP, degToRad(isNaN(v) ? 0 : v) - _planet.rotation.y)
         break
       }
+
+      // --------------------------------------------------
+      // |                Surface settings                |
+      // --------------------------------------------------
       case '_planetSurfaceShowBumps': {
         const v = LG_PARAMETERS.planetSurfaceShowBumps
         const mat = _planet.material as CustomShaderMaterial
         mat.uniforms.u_bump = { value: v }
+        mat.needsUpdate = true
+        break
+      }
+      case '_planetSurfaceBumpStrength': {
+        const v = LG_PARAMETERS.planetSurfaceBumpStrength
+        const mat = _planet.material as CustomShaderMaterial
+        mat.uniforms.u_bump_strength = { value: v }
         mat.needsUpdate = true
         break
       }
@@ -184,11 +193,34 @@ function updatePlanet() {
       case '_planetSurfaceColorRamp': {
         const v = LG_PARAMETERS.planetSurfaceColorRamp
         const mat = _planet.material as CustomShaderMaterial
+        mat.uniforms.u_cr_size = { value: v.definedSteps.length }
         mat.uniforms.u_cr_colors = { value: v.colors },
         mat.uniforms.u_cr_positions = { value: v.factors },
         mat.needsUpdate = true
         break
       }
+     
+      // --------------------------------------------------
+      // |                 Biome settings                 |
+      // --------------------------------------------------
+      case '_biomesEnabled': {
+        const v = LG_PARAMETERS.biomesEnabled
+        const mat = _planet.material as CustomShaderMaterial
+        mat.uniforms.u_show_poles = { value: LG_PARAMETERS.biomePolesEnabled && v }
+        mat.needsUpdate = true
+        break
+      }
+      case '_biomePolesEnabled': {
+        const v = LG_PARAMETERS.biomePolesEnabled
+        const mat = _planet.material as CustomShaderMaterial
+        mat.uniforms.u_show_poles = { value: v }
+        mat.needsUpdate = true
+        break
+      }
+      
+      // --------------------------------------------------
+      // |                Clouds settings                 |
+      // --------------------------------------------------
       case '_cloudsEnabled': {
         const v = LG_PARAMETERS.cloudsEnabled
         _clouds.visible = v
@@ -235,11 +267,16 @@ function updatePlanet() {
       case '_cloudsColorRamp': {
         const v = LG_PARAMETERS.cloudsColorRamp
         const mat = _clouds.material as CustomShaderMaterial
+        mat.uniforms.u_cr_size = { value: v.definedSteps.length }
         mat.uniforms.u_cr_colors = { value: v.colors },
         mat.uniforms.u_cr_positions = { value: v.factors },
         mat.needsUpdate = true
         break
       }
+
+      // --------------------------------------------------
+      // |               Atmosphere settings              |
+      // --------------------------------------------------
       case '_atmosphereEnabled': {
         const v = LG_PARAMETERS.atmosphereEnabled
         _atmosphere.visible = v

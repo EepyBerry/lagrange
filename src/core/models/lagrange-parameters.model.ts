@@ -131,6 +131,7 @@ export default class LagrangeParameters extends ChangeTracker {
   // --------------------------------------------------
 
   private _planetSurfaceShowBumps: boolean
+  private _planetSurfaceBumpStrength: number
   private _planetSurfaceNoise: NoiseParameters
   private _planetSurfaceColorRamp: ColorRamp
 
@@ -142,6 +143,13 @@ export default class LagrangeParameters extends ChangeTracker {
   public set planetSurfaceShowBumps(value: boolean) {
     this._planetSurfaceShowBumps = value
     this.markForChange('_planetSurfaceShowBumps')
+  }
+  public get planetSurfaceBumpStrength(): number {
+    return this._planetSurfaceBumpStrength
+  }
+  public set planetSurfaceBumpStrength(value: number) {
+    this._planetSurfaceBumpStrength = value
+    this.markForChange('_planetSurfaceBumpStrength')
   }
 
   public get planetSurfaceNoise() {
@@ -157,6 +165,32 @@ export default class LagrangeParameters extends ChangeTracker {
   }
   public get planetSurfaceColorRampSize() {
     return this._planetSurfaceColorRamp.definedSteps.length
+  }
+
+
+  // --------------------------------------------------
+  // |                 Biome settings                 |
+  // --------------------------------------------------
+
+  private _biomesEnabled: boolean
+  private _biomePolesEnabled: boolean
+  
+  // --------------------------------------------------
+
+  public get biomesEnabled(): boolean {
+    return this._biomesEnabled
+  }
+  public set biomesEnabled(value: boolean) {
+    this._biomesEnabled = value
+    this.markForChange('_biomesEnabled')
+  }
+
+  public get biomePolesEnabled(): boolean {
+    return this._biomePolesEnabled
+  }
+  public set biomePolesEnabled(value: boolean) {
+    this._biomePolesEnabled = value
+    this.markForChange('_biomePolesEnabled')
   }
 
   // --------------------------------------------------
@@ -272,8 +306,8 @@ export default class LagrangeParameters extends ChangeTracker {
   public markForChange(prop: string) {
     this._changedProps.push(prop)
   }
-  public markAllForChange(props: string[]) {
-    this._changedProps.push(...props)
+  public markAllForChange() {
+    this._changedProps.push(...Object.keys(this))
   }
   public clearChangedProps() {
     this._changedProps.splice(0)
@@ -298,6 +332,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetRotation = 0
 
     this._planetSurfaceShowBumps = true
+    this._planetSurfaceBumpStrength = 0.0875
     this._planetSurfaceNoise = new NoiseParameters(
       this._changedProps, '_planetSurfaceNoise', NoiseType.FBM
     )
@@ -310,6 +345,9 @@ export default class LagrangeParameters extends ChangeTracker {
       new ColorRampStep(0x223b05, 0.65),
       new ColorRampStep(0x223b05, 1, true),
     ])
+
+    this._biomePolesEnabled = true
+    this._biomesEnabled = true
 
     this._cloudsEnabled = true
     this._cloudsAxialTilt = 0
@@ -345,10 +383,14 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetRotation = data._planetRotation
 
     this._planetSurfaceShowBumps = data._planetSurfaceShowBumps
+    this._planetSurfaceBumpStrength = data._planetSurfaceBumpStrength
     this._planetSurfaceNoise.amplitude = data._planetSurfaceNoise._amplitude
     this._planetSurfaceNoise.frequency = data._planetSurfaceNoise._frequency
     this._planetSurfaceNoise.lacunarity = data._planetSurfaceNoise._lacunarity
     this._planetSurfaceColorRamp.load(data._planetSurfaceColorRamp)
+
+    this._biomePolesEnabled = data._biomePolesEnabled
+    this._biomesEnabled = data._biomesEnabled
 
     this._cloudsEnabled = true
     this._cloudsAxialTilt = data._cloudsAxialTilt

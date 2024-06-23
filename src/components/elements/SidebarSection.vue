@@ -6,7 +6,7 @@
       :aria-expanded="_expanded"
     >
       <div v-if="static"  class="section-title static">
-        <h3 class="headline-sm">
+        <h3>
           <span><slot name="title">SECTION_TITLE</slot></span>
         </h3>
       </div>
@@ -14,7 +14,7 @@
         @click="toggleExpand()"
         @keydown.enter="toggleExpand()"
       >
-        <h3 class="headline-sm">
+        <h3>
           <iconify-icon :icon="icon" width="1.25rem" aria-hidden="true" />
           <span><slot name="title">SECTION_TITLE</slot></span>
         </h3>
@@ -103,7 +103,7 @@ function toggleExpand() {
     .section-title {
       min-width: auto;
 
-      .headline-sm > span, .indicator {
+      span, .indicator {
         display: none;
       }
     }

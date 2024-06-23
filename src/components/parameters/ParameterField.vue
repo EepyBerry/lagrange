@@ -13,6 +13,7 @@
         :min="min ?? 0"
         :step="step ?? 1"
         aria-label="Parameter input"
+        :disabled="disabled"
         v-model="lgParam">
       <input v-if="['text', 'checkbox'].includes(type)"
         class="lg"
@@ -20,6 +21,7 @@
         :type="type"
         :min="min ?? 0"
         aria-label="Parameter input"
+        :disabled="disabled"
         v-model="lgParam">
       <InputSliderElement v-if="type === 'range'"
         class="lg"
@@ -28,6 +30,7 @@
         :max="max ?? 10"
         :step="step ?? 1"
         aria-label="Parameter input"
+        :disabled="disabled"
         v-model="(lgParam as number)" />
     </td>
   </tr>
@@ -36,7 +39,7 @@
 <script setup lang="ts">
 import InputSliderElement from '../elements/InputSliderElement.vue';
 const lgParam = defineModel<string | number | boolean>()
-defineProps<{ id: string, type: string, step?: number, min ?: number, max?: number }>()
+defineProps<{ id: string, type: string, step?: number, min ?: number, max?: number, disabled?: boolean }>()
 </script>
 
 <style scoped lang="scss">

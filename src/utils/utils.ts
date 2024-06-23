@@ -32,3 +32,7 @@ export function endsWithAny(suffixes: string[], str: string) {
 export function numberToHex(n: number): string {
   return "#" + (n & 0x00FFFFFF).toString(16).padStart(6, '0')
 }
+
+export function numberEquals(na: number, nb: number) {
+  return Math.abs(na - nb) < Number.EPSILON;
+}

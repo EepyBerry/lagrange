@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { ChangeTracker } from './change-tracker.model'
 import { generateUUID } from 'three/src/math/MathUtils.js'
-import { numberToHex } from '@/utils/utils'
+import { numberEquals, numberToHex } from '@/utils/utils'
 
 export class ColorRampStep {
   static EMPTY = new ColorRampStep(0x0, 1)
@@ -53,7 +53,7 @@ export class ColorRamp extends ChangeTracker {
   }
 
   public get steps() {
-    return this.computeSteps(this._steps)
+    return this.computeSteps()
   }
   public set steps(steps: ColorRampStep[]) {
     this._steps.splice(0)
@@ -65,11 +65,11 @@ export class ColorRamp extends ChangeTracker {
   }
 
   public get colors() {
-    return this.computeSteps(this._steps).map(s => s.color)
+    return this.computeSteps().map(s => s.color)
   }
   
   public get factors() {
-    return this.computeSteps(this._steps).map(s => s.factor)
+    return this.computeSteps().map(s => s.factor)
   }
 
   public get definedSteps() {
@@ -86,11 +86,12 @@ export class ColorRamp extends ChangeTracker {
 
   // Utility functions
 
-  private computeSteps(steps: ColorRampStep[]) {
-    return Array(this._maxSize)
-      .fill(ColorRampStep.EMPTY)
-      .map((step, i) => i < steps.length ? ({color: steps[i].color, factor: steps[i].factor}) : step)
+  private computeSteps() {
+    const maxStep = this._steps.find(s => numberEquals(s.factor, 1))
+    const computed = Array.from(this._steps)
       .sort((a, b) => a.factor - b.factor)
+    computed.push(...Array(this._maxSize - this._steps.length).fill(maxStep))
+    return computed
   }
 
   public sortSteps() {
