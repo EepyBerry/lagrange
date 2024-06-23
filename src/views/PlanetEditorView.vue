@@ -30,13 +30,13 @@ const showSpinner: Ref<boolean> = ref(true)
 // Main THREE objects
 let $se: SceneElements
 let _sun: THREE.DirectionalLight
+let _planetPivot: THREE.Group
 let _planet: THREE.Mesh
 let _clouds: THREE.Mesh
 let _atmosphere: THREE.Mesh
 let _ambLight: THREE.AmbientLight
 
 const VEC_Z = new THREE.Vector3(0, 0, 1)
-const VEC_UP = new THREE.Vector3(0, 1, 0)
 
 onMounted(() => init())
 watch(LG_PARAMETERS.changedProps, () => updatePlanet())
@@ -72,18 +72,15 @@ function initPlanet(): void {
   const planet = ThreeUtils.createPlanet(GeometryType.SPHERE)
   const clouds = ThreeUtils.createClouds(GeometryType.SPHERE)
   const atmosphere = ThreeUtils.createAtmosphere(GeometryType.SPHERE, _sun.position)
-  /* const grp = new THREE.Group()
-  grp.add(planet)
-  grp.add(clouds)
-  grp.add(atmosphere)
-  $se.scene.add(grp) */
-  $se.scene.add(planet)
-  $se.scene.add(clouds)
-  $se.scene.add(atmosphere)
+  const pivot = new THREE.Group()
+  pivot.add(planet)
+  pivot.add(clouds)
+  pivot.add(atmosphere)
+  $se.scene.add(pivot)
   _planet = planet
   _clouds = clouds
   _atmosphere = atmosphere
-  //_renderGroup = grp
+  _planetPivot = pivot
   
   //const helper = new VertexNormalsHelper( planet, 0.1, 0xff0000 );
   //$se.scene.add( helper );
@@ -142,13 +139,15 @@ function updatePlanet() {
       // |                Planet settings                 |
       // --------------------------------------------------
       case '_planetAxialTilt': {
-        const v = LG_PARAMETERS.planetAxialTilt
-        _planet.rotateOnWorldAxis(VEC_Z, degToRad(isNaN(v) ? 0 : v) - _planet.rotation.z)
+        const v = degToRad(isNaN(LG_PARAMETERS.planetAxialTilt) ? 0 : LG_PARAMETERS.planetAxialTilt)
+        _planetPivot.setRotationFromAxisAngle(VEC_Z, v)
         break
       }
       case '_planetRotation': {
-        const v = LG_PARAMETERS.planetRotation
-        _planet.rotateOnAxis(VEC_UP, degToRad(isNaN(v) ? 0 : v) - _planet.rotation.y)
+        const vRad = degToRad(isNaN(LG_PARAMETERS.planetRotation) ? 0 : LG_PARAMETERS.planetRotation)
+        const cloudsRotationRad = degToRad(isNaN(LG_PARAMETERS.cloudsRotation) ? 0 : LG_PARAMETERS.cloudsRotation)
+        _planet.setRotationFromAxisAngle(_planet.up, vRad)
+        _clouds.setRotationFromAxisAngle(_clouds.up, vRad + cloudsRotationRad)
         break
       }
 
@@ -226,14 +225,10 @@ function updatePlanet() {
         _clouds.visible = v
         break
       }
-      case '_cloudsAxialTilt': {
-        const v = LG_PARAMETERS.cloudsAxialTilt
-        _clouds.rotateOnWorldAxis(VEC_Z, degToRad(isNaN(v) ? 0 : v) - _clouds.rotation.z)
-        break
-      }
       case '_cloudsRotation': {
-        const v = LG_PARAMETERS.cloudsRotation
-        _clouds.rotateOnAxis(VEC_UP, degToRad(isNaN(v) ? 0 : v) - _clouds.rotation.y)
+        const planetRotationRad = degToRad(isNaN(LG_PARAMETERS.planetRotation) ? 0 : LG_PARAMETERS.planetRotation)
+        const vRad = degToRad(isNaN(LG_PARAMETERS.cloudsRotation) ? 0 : LG_PARAMETERS.cloudsRotation) 
+        _clouds.setRotationFromAxisAngle(_clouds.up, planetRotationRad + vRad)
         break
       }
       case '_cloudsNoise._frequency': {

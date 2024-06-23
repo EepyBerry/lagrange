@@ -113,7 +113,7 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._planetAxialTilt
   }
   public set planetAxialTilt(tilt: number) {
-    this._planetAxialTilt = isNumeric(tilt) ? epsilonClamp(tilt, -360, 360) : 0
+    this._planetAxialTilt = isNumeric(tilt) ? clamp(tilt, 0, 180) : 0
     this.markForChange('_planetAxialTilt')
   }
 
@@ -121,7 +121,7 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._planetRotation
   }
   public set planetRotation(rot: number) {
-    this._planetRotation = isNumeric(rot) ? epsilonClamp(rot, -360, 360) : 0
+    this._planetRotation = isNumeric(rot) ? clamp(rot, 0, 360) : 0
     this.markForChange('_planetRotation')
   }
 
@@ -198,7 +198,6 @@ export default class LagrangeParameters extends ChangeTracker {
   // --------------------------------------------------
 
   private _cloudsEnabled: boolean
-  private _cloudsAxialTilt: number
   private _cloudsRotation: number
   private _cloudsHeight: number
   private _cloudsNoise: NoiseParameters
@@ -215,19 +214,11 @@ export default class LagrangeParameters extends ChangeTracker {
     this.markForChange('_cloudsEnabled')
   }
 
-  public get cloudsAxialTilt() {
-    return this._cloudsAxialTilt
-  }
-  public set cloudsAxialTilt(tilt: number) {
-    this._cloudsAxialTilt = isNumeric(tilt) ? epsilonClamp(tilt, -360, 360) : 0
-    this.markForChange('_cloudsAxialTilt')
-  }
-
   public get cloudsRotation() {
     return this._cloudsRotation
   }
   public set cloudsRotation(rot: number) {
-    this._cloudsRotation = isNumeric(rot) ? epsilonClamp(rot, -360, 360) : 0
+    this._cloudsRotation = isNumeric(rot) ? epsilonClamp(rot, 0, 360) : 0
     this.markForChange('_cloudsRotation')
   }
 
@@ -350,7 +341,6 @@ export default class LagrangeParameters extends ChangeTracker {
     this._biomesEnabled = true
 
     this._cloudsEnabled = true
-    this._cloudsAxialTilt = 0
     this._cloudsRotation = 0
     this._cloudsHeight = 1
     this._cloudsNoise = new NoiseParameters(
@@ -393,7 +383,6 @@ export default class LagrangeParameters extends ChangeTracker {
     this._biomesEnabled = data._biomesEnabled
 
     this._cloudsEnabled = true
-    this._cloudsAxialTilt = data._cloudsAxialTilt
     this._cloudsRotation = data._cloudsRotation
     this._cloudsNoise.amplitude = data._cloudsNoise._amplitude
     this._cloudsNoise.frequency = data._cloudsNoise._frequency

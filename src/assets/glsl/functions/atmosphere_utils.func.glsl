@@ -9,7 +9,7 @@
 const float PI = 3.14159265359;
 const float MAX = 10000.0;
 
-const int NUM_OUT_SCATTER = 1;
+const int NUM_OUT_SCATTER = 2;
 const int NUM_IN_SCATTER = 10;
 
 // ray intersects sphere

@@ -48,7 +48,7 @@
               type="range"
               :step="1"
               :min="0"
-              :max="360"
+              :max="180"
             >
               Axial tilt <sup>(°)</sup>
             </ParameterField>
@@ -169,16 +169,6 @@
             </ParameterField>
             <ParameterDivider />
             <template v-if="LG_PARAMETERS.cloudsEnabled">
-              <ParameterField
-                v-model="LG_PARAMETERS.cloudsAxialTilt"
-                id="c-tilt"
-                type="range"
-                :step="1"
-                :min="0"
-                :max="360"
-              >
-                Axial tilt <sup>(°)</sup>
-              </ParameterField>
               <ParameterField
                 v-model="LG_PARAMETERS.cloudsRotation"
                 id="c-rot"
