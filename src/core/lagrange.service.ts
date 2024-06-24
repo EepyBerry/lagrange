@@ -114,10 +114,9 @@ export function createClouds(type: GeometryType): THREE.Mesh {
     u_cr_size:        { value: LG_PARAMETERS.cloudsColorRampSize },
   }, THREE.MeshStandardMaterial)
   material.transparent = true
+  material.depthTest = false
 
   const mesh = new THREE.Mesh(geometry, material)
-  mesh.receiveShadow = true
-  mesh.castShadow = true
   mesh.name = LG_NAME_CLOUDS
   return mesh
 }
