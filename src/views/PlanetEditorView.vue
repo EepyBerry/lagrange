@@ -112,6 +112,11 @@ function reloadMaterials() {
   LG_PARAMETERS.markAllForChange()
 }
 
+function setMaterialUniform(mat: CustomShaderMaterial, uname: string, uvalue: any): void {
+  mat.uniforms[uname] = { value: uvalue }
+  mat.needsUpdate = true
+}
+
 function updatePlanet() {
   if (LG_PARAMETERS.changedProps.length === 0) { return }
   for (const key of LG_PARAMETERS.changedProps) {
@@ -149,6 +154,46 @@ function updatePlanet() {
         const cloudsRotationRad = degToRad(isNaN(LG_PARAMETERS.cloudsRotation) ? 0 : LG_PARAMETERS.cloudsRotation)
         _planet.setRotationFromAxisAngle(_planet.up, vRad)
         _clouds.setRotationFromAxisAngle(_clouds.up, vRad + cloudsRotationRad)
+        break
+      }
+      case '_planetWaterRoughness': {
+        setMaterialUniform(
+          _planet.material as CustomShaderMaterial,
+          'u_water_roughness',
+          LG_PARAMETERS.planetWaterRoughness
+        )
+        break
+      }
+      case '_planetWaterMetalness': {
+        setMaterialUniform(
+          _planet.material as CustomShaderMaterial,
+          'u_water_metalness',
+          LG_PARAMETERS.planetWaterMetalness
+        )
+        break
+      }
+      case '_planetGroundRoughness': {
+        setMaterialUniform(
+          _planet.material as CustomShaderMaterial,
+          'u_ground_roughness',
+          LG_PARAMETERS.planetGroundRoughness
+        )
+        break
+      }
+      case '_planetGroundMetalness': {
+        setMaterialUniform(
+          _planet.material as CustomShaderMaterial,
+          'u_ground_metalness',
+          LG_PARAMETERS.planetGroundMetalness
+        )
+        break
+      }
+      case '_planetWaterLevel': {
+        setMaterialUniform(
+          _planet.material as CustomShaderMaterial,
+          'u_water_level',
+          LG_PARAMETERS.planetWaterLevel
+        )
         break
       }
 

@@ -62,6 +62,58 @@
             >
               Rotation <sup>(°)</sup>
             </ParameterField>
+            <ParameterDivider />
+            <ParameterField
+              v-model="LG_PARAMETERS.planetWaterLevel"
+              id="p-gmetal"
+              type="range"
+              :step="0.01"
+              :min="0"
+              :max="1"
+            >
+              Water level
+            </ParameterField>
+            <ParameterDivider />
+            <ParameterField
+              v-model="LG_PARAMETERS.planetWaterRoughness"
+              id="p-wrough"
+              type="range"
+              :step="0.01"
+              :min="0"
+              :max="1"
+            >
+              Water roughness
+            </ParameterField>
+            <ParameterField
+              v-model="LG_PARAMETERS.planetWaterMetalness"
+              id="p-wmetal"
+              type="range"
+              :step="0.01"
+              :min="0"
+              :max="1"
+            >
+              Water metalness
+            </ParameterField>
+            <ParameterField
+              v-model="LG_PARAMETERS.planetGroundRoughness"
+              id="p-grough"
+              type="range"
+              :step="0.01"
+              :min="0"
+              :max="1"
+            >
+              Ground roughness
+            </ParameterField>
+            <ParameterField
+              v-model="LG_PARAMETERS.planetGroundMetalness"
+              id="p-gmetal"
+              type="range"
+              :step="0.01"
+              :min="0"
+              :max="1"
+            >
+              Ground metalness
+            </ParameterField>
           </ParameterTable>
         </template>
       </SidebarSection>

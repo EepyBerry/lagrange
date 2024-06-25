@@ -91,6 +91,11 @@ export default class LagrangeParameters extends ChangeTracker {
   private _planetMeshQuality: number
   private _planetAxialTilt: number
   private _planetRotation: number
+  private _planetWaterRoughness: number
+  private _planetWaterMetalness: number
+  private _planetGroundRoughness: number
+  private _planetGroundMetalness: number
+  private _planetWaterLevel: number
   
   // --------------------------------------------------
 
@@ -125,6 +130,43 @@ export default class LagrangeParameters extends ChangeTracker {
     this.markForChange('_planetRotation')
   }
 
+  public get planetWaterMetalness(): number {
+    return this._planetWaterMetalness
+  }
+  public set planetWaterMetalness(value: number) {
+    this._planetWaterMetalness = clamp(value, 0, 1)
+    this.markForChange('_planetWaterMetalness')
+  }
+  public get planetWaterRoughness(): number {
+    return this._planetWaterRoughness
+  }
+  public set planetWaterRoughness(value: number) {
+    this._planetWaterRoughness = clamp(value, 0, 1)
+    this.markForChange('_planetWaterRoughness')
+  }
+  
+  public get planetGroundMetalness(): number {
+    return this._planetGroundMetalness
+  }
+  public set planetGroundMetalness(value: number) {
+    this._planetGroundMetalness = clamp(value, 0, 1)
+    this.markForChange('_planetGroundMetalness')
+  }
+  public get planetGroundRoughness(): number {
+    return this._planetGroundRoughness
+  }
+  public set planetGroundRoughness(value: number) {
+    this._planetGroundRoughness = clamp(value, 0, 1)
+    this.markForChange('_planetGroundRoughness')
+  }
+  
+  public get planetWaterLevel(): number {
+    return this._planetWaterLevel
+  }
+  public set planetWaterLevel(value: number) {
+    this._planetWaterLevel = clamp(value, 0, 1)
+    this.markForChange('_planetWaterLevel')
+  }
 
   // --------------------------------------------------
   // |                Surface settings                |
@@ -321,6 +363,11 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetMeshQuality = 48
     this._planetAxialTilt = 0
     this._planetRotation = 0
+    this._planetWaterRoughness = 0.55
+    this._planetWaterMetalness = 0.5
+    this._planetGroundRoughness = 0.8
+    this._planetGroundMetalness = 0.1
+    this._planetWaterLevel = 0.5
 
     this._planetSurfaceShowBumps = true
     this._planetSurfaceBumpStrength = 0.0875
@@ -371,6 +418,11 @@ export default class LagrangeParameters extends ChangeTracker {
 
     this._planetAxialTilt = data._planetAxialTilt
     this._planetRotation = data._planetRotation
+    this._planetWaterRoughness = data._planetWaterRoughness
+    this._planetWaterMetalness = data._planetWaterMetalness
+    this._planetGroundRoughness = data._planetSurfaceRoughness
+    this._planetGroundMetalness = data._planetSurfaceMetalness
+    this._planetWaterLevel = data._planetWaterLevel
 
     this._planetSurfaceShowBumps = data._planetSurfaceShowBumps
     this._planetSurfaceBumpStrength = data._planetSurfaceBumpStrength
