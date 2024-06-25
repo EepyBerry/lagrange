@@ -49,7 +49,6 @@ onMounted(() => initPickerColor())
 watch(() => lgColor.value?.getHexString(), () => initPickerColor())
 
 function initPickerColor() {
-  console.log(LG_PARAMETERS.id)
   pickerInitColor.value = '#' + lgColor.value?.getHexString()
 }
 

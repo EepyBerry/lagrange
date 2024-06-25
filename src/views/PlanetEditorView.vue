@@ -14,10 +14,11 @@ import Stats from 'three/addons/libs/stats.module.js';
 import * as ThreeUtils from '@/core/lagrange.service';
 import { LG_NAME_AMBLIGHT, LG_PARAMETERS } from '@core/globals';
 import { degToRad } from 'three/src/math/MathUtils.js';
-import { GeometryType, type SceneElements } from '@core/types';
+import { GeometryType } from '@core/types';
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla';
 import { createControls } from '@/core/three/component.builder';
 import { useHead } from '@unhead/vue';
+import type { SceneElements } from '@/core/models/scene-elements.model';
 
 useHead({ meta: [
   { name: 'description', content: 'A procedural planet building app' }

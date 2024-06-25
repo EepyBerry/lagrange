@@ -15,9 +15,10 @@ import {
   LG_NAME_AMBLIGHT,
   LG_NAME_ATMOSPHERE,
 } from '@core/globals'
-import { GeometryType, type SceneElements } from '@core/types'
+import { GeometryType } from '@core/types'
 import { loadCubeTexture } from '@/core/three/external-data.loader'
 import { createAmbientight, createGeometry, createPerspectiveCamera, createRenderer, createShaderMaterial } from '@/core/three/component.builder'
+import { SceneElements } from './models/scene-elements.model'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // SCENE FUNCTIONS
@@ -52,7 +53,7 @@ export function createScene(width: number, height: number, pixelRatio: number): 
   ambientLight.name = LG_NAME_AMBLIGHT
   scene.add(ambientLight)
 
-  return { scene, renderer, camera }
+  return new SceneElements(scene, renderer, camera)
 }
 
 export function createSun(): THREE.DirectionalLight {
@@ -114,7 +115,6 @@ export function createClouds(type: GeometryType): THREE.Mesh {
     u_cr_size:        { value: LG_PARAMETERS.cloudsColorRampSize },
   }, THREE.MeshStandardMaterial)
   material.transparent = true
-  material.depthTest = false
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.name = LG_NAME_CLOUDS
