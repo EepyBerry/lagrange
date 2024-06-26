@@ -420,8 +420,8 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetRotation = data._planetRotation
     this._planetWaterRoughness = data._planetWaterRoughness
     this._planetWaterMetalness = data._planetWaterMetalness
-    this._planetGroundRoughness = data._planetSurfaceRoughness
-    this._planetGroundMetalness = data._planetSurfaceMetalness
+    this._planetGroundRoughness = data._planetGroundRoughness
+    this._planetGroundMetalness = data._planetGroundMetalness
     this._planetWaterLevel = data._planetWaterLevel
 
     this._planetSurfaceShowBumps = data._planetSurfaceShowBumps
