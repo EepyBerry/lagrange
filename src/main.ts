@@ -14,6 +14,7 @@ import ParameterDivider from '@/components/parameters/ParameterDivider.vue'
 import ParameterColorRamp from './components/parameters/ParameterColorRamp.vue';
 import ParameterColor from './components/parameters/ParameterColor.vue';
 import { createHead } from '@unhead/vue';
+import ParameterCategory from './components/parameters/ParameterCategory.vue';
 
 createApp(App)
   .use(router)
@@ -26,5 +27,6 @@ createApp(App)
   .component('ParameterColor', ParameterColor)
   .component('ParameterColorRamp', ParameterColorRamp)
   .component('ParameterDivider', ParameterDivider)
+  .component('ParameterCategory', ParameterCategory)
   .component('OverlaySpinner', OverlaySpinner)
   .mount('#app')

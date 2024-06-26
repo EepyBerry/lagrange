@@ -7,6 +7,7 @@
         <template v-slot:content>
           <ParameterTable>
             <ParameterDivider />
+            <ParameterCategory>Sunlight</ParameterCategory>
             <ParameterField v-model="LG_PARAMETERS.sunLightIntensity"
               id="l-int"
               type="range"
@@ -14,12 +15,13 @@
               :min="0"
               :max="16"
             >
-              Sunlight intensity
+              Intensity
             </ParameterField>
             <ParameterColor v-model="LG_PARAMETERS.sunLightColor">
-              Sunlight color
+              Color
             </ParameterColor>
             <ParameterDivider />
+            <ParameterCategory>Ambient light</ParameterCategory>
             <ParameterField v-model="LG_PARAMETERS.ambLightIntensity"
               id="m-int"
               type="range"
@@ -27,10 +29,10 @@
               :min="0"
               :max="2"
             >
-              Ambient intensity
+              Intensity
             </ParameterField>
             <ParameterColor v-model="LG_PARAMETERS.ambLightColor">
-              Ambient color
+              Color
             </ParameterColor>
           </ParameterTable>
         </template>
@@ -41,7 +43,7 @@
         <template v-slot:title>Planet Settings</template>
         <template v-slot:content>
           <ParameterTable>
-            <ParameterDivider />
+            <ParameterCategory>Transform</ParameterCategory>
             <ParameterField
               v-model="LG_PARAMETERS.planetAxialTilt"
               id="p-tilt"
@@ -63,6 +65,7 @@
               Rotation <sup>(°)</sup>
             </ParameterField>
             <ParameterDivider />
+            <ParameterCategory>PBR parameters</ParameterCategory>
             <ParameterField
               v-model="LG_PARAMETERS.planetWaterLevel"
               id="p-gmetal"
@@ -123,7 +126,7 @@
         <template v-slot:title>Surface</template>
         <template v-slot:content>
           <ParameterTable>
-            <ParameterDivider />
+            <ParameterCategory>Bump-map</ParameterCategory>
             <ParameterField
               v-model="LG_PARAMETERS.planetSurfaceShowBumps"
               id="s-bumps"
@@ -141,6 +144,8 @@
             >
               Bump strength
             </ParameterField>
+            <ParameterDivider />
+            <ParameterCategory>Noise parameters</ParameterCategory>
             <ParameterField
               v-model="LG_PARAMETERS.planetSurfaceNoise.frequency"
               id="s-freq"
@@ -219,8 +224,8 @@
             >
               Show clouds
             </ParameterField>
-            <ParameterDivider />
             <template v-if="LG_PARAMETERS.cloudsEnabled">
+              <ParameterCategory>Transform</ParameterCategory>
               <ParameterField
                 v-model="LG_PARAMETERS.cloudsRotation"
                 id="c-rot"
@@ -232,6 +237,7 @@
                 Rotation <sup>(°)</sup>
               </ParameterField>
               <ParameterDivider />
+              <ParameterCategory>Noise parameters</ParameterCategory>
               <ParameterField
                 v-model="LG_PARAMETERS.cloudsNoise.frequency"
                 id="c-freq"
@@ -263,6 +269,7 @@
                 Lacunarity
               </ParameterField>
               <ParameterDivider />
+              <ParameterCategory>Color & opacity</ParameterCategory>
               <ParameterColor v-model="LG_PARAMETERS.cloudsColor">Color</ParameterColor>
               <ParameterColorRamp
                 mode="opacity"
