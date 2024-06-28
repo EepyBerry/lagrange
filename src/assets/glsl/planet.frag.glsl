@@ -42,18 +42,21 @@ in vec3 vBitangent;
 
 void main() {
     vec3 color = vec3(0.0);
+    vec3 N = vNormal;
+    float height = fbm3(vPos,  u_frequency, u_amplitude, u_lacunarity, u_octaves);
 
-    // Calculate height, dxHeight and dyHeight
-    vec3 dx = vTangent * u_bump_offset;
-    vec3 dy = vBitangent * u_bump_offset;
-    float height   = fbm3(vPos,      u_frequency, u_amplitude, u_lacunarity, u_octaves);
-    float dxHeight = fbm3(vPos + dx, u_frequency, u_amplitude, u_lacunarity, u_octaves);
-    float dyHeight = fbm3(vPos + dy, u_frequency, u_amplitude, u_lacunarity, u_octaves);
+    if (u_bump) {
+        // Calculate height, dxHeight and dyHeight
+        vec3 dx = vTangent * u_bump_offset;
+        vec3 dy = vBitangent * u_bump_offset;
+        float dxHeight = fbm3(vPos + dx, u_frequency, u_amplitude, u_lacunarity, u_octaves);
+        float dyHeight = fbm3(vPos + dy, u_frequency, u_amplitude, u_lacunarity, u_octaves);
 
-    // Perturb normal
-    vec3 N = u_bump
-        ? perturbNormal(vPos, dx, dy, height, dxHeight, dyHeight, u_radius, u_bump_strength)
-        : vNormal;
+        // Perturb normal
+        N = u_bump
+            ? perturbNormal(vPos, dx, dy, height, dxHeight, dyHeight, u_radius, u_bump_strength)
+            : vNormal;
+    }
 
     // Render noise as color
     color += height;

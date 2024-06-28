@@ -30,9 +30,6 @@ void main() {
         fbm3(vPos + db,      u_frequency, u_amplitude, u_lacunarity, u_octaves)
     );
     opacity += fbm3(vPos + wOpacity, u_frequency, u_amplitude, u_lacunarity, u_octaves);
-    if (opacity.x < 0.01) {
-        discard;
-    }
 
     opacity = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, opacity.x);
     csm_DiffuseColor = vec4(u_color, opacity.x);
