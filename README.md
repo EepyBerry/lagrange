@@ -5,10 +5,30 @@
   <img src="https://img.shields.io/badge/ThreeJS-r165-%23049EF4?logo=threedotjs&labelColor=%2335495E&logoColor=white">
 </p>
 
-A WebGL experiment using VueJS and ThreeJS! <br>
+A WebGL project using VueJS and ThreeJS! <br>
 Lagrange is a browser application to help you create your own planets, using procedural noise as a foundation to build upon.
 
-This project is heavily inspired by the awesome [PlanetMaker Chrome Experiment](https://planetmaker.apoapsys.com) (2013, Kevin M. Gill)!
+## 📋 Current Features
+
+| Category          | Subcategory      | Available functions                                                 | Notes                |
+|-------------------|------------------|---------------------------------------------------------------------|----------------------|
+| Lighting Settings | Sunlight         | color, intensity                                                    |                      |
+|                   | Ambient light    | color, intensity                                                    |                      |
+| Planet Settings   | Transform        | axial tilt, rotation                                                |                      |
+|                   | PBR Parameters   | water level, water roughness/metalness, surface roughness/metalness |                      |
+| Surface           | Bump-map         | toggle, strength                                                    |                      |
+|                   | Noise Parameters | frequency, amplitude, lacunarity, color ramp                        | fBM only             |
+| Biomes            | -                | toggle, show poles                                                  | see planned features |
+| Clouds            | Transform        | rotation                                                            |                      |
+|                   | Noise Parameters | frequency, amplitude, lacunarity                                    |                      |
+|                   | Color & Opacity  | color, opacity ramp                                                 |                      |
+| Atmosphere        | -                | toggle                                                              |                      |
+
+## ✨ Inspirations
+
+This project is heavily inspired by the awesome projects below:
+ - [PlanetMaker Chrome Experiment](https://planetmaker.apoapsys.com) (2013, Kevin M. Gill)
+ - [NASA's Eye on Exoplanets](https://eyes.nasa.gov/apps/exo/#/) (Unknown date, NASA)
 
 ## 📓 Licensing
 

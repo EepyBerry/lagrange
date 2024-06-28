@@ -293,14 +293,6 @@
             >
               Show atmosphere
             </ParameterField>
-            <ParameterDivider />
-            <ParameterField
-              v-model="LG_PARAMETERS.atmosphereDaylightHue"
-              id="a-hue"
-              type="number"
-            >
-              Daylight hue
-            </ParameterField>
         </template>
       </SidebarSection>
     </aside>
