@@ -10,19 +10,27 @@ Lagrange is a browser application to help you create your own planets, using pro
 
 ## 📋 Current Features
 
-| Category          | Subcategory      | Available functions                                                 | Notes                |
-|-------------------|------------------|---------------------------------------------------------------------|----------------------|
-| Lighting Settings | Sunlight         | color, intensity                                                    |                      |
-|                   | Ambient light    | color, intensity                                                    |                      |
-| Planet Settings   | Transform        | axial tilt, rotation                                                |                      |
-|                   | PBR Parameters   | water level, water roughness/metalness, surface roughness/metalness |                      |
-| Surface           | Bump-map         | toggle, strength                                                    |                      |
-|                   | Noise Parameters | frequency, amplitude, lacunarity, color ramp                        | fBM only             |
-| Biomes            | -                | toggle, show poles                                                  | see planned features |
-| Clouds            | Transform        | rotation                                                            |                      |
-|                   | Noise Parameters | frequency, amplitude, lacunarity                                    |                      |
-|                   | Color & Opacity  | color, opacity ramp                                                 |                      |
-| Atmosphere        | -                | toggle                                                              |                      |
+| Category              | Subcategory      | Available functions                                                 | Notes                |
+|-----------------------|------------------|---------------------------------------------------------------------|----------------------|
+| **Lighting Settings** | Sunlight         | color, intensity                                                    |                      |
+|                       | Ambient light    | color, intensity                                                    |                      |
+| **Planet Settings**   | Transform        | axial tilt, rotation                                                |                      |
+|                       | PBR Parameters   | water level, water roughness/metalness, surface roughness/metalness |                      |
+| **Surface**           | Bump-map         | toggle, strength                                                    |                      |
+|                       | Noise Parameters | frequency, amplitude, lacunarity, color ramp                        | fBM only             |
+| **Biomes**            | -                | toggle, show poles                                                  | see planned features |
+| **Clouds**            | Transform        | rotation                                                            |                      |
+|                       | Noise Parameters | frequency, amplitude, lacunarity                                    |                      |
+|                       | Color & Opacity  | color, opacity ramp                                                 |                      |
+| **Atmosphere**        | -                | toggle                                                              |                      |
+
+## ⏰ Planned features
+
+- More biomes!
+- Cracks & Craters!
+- Gas Giants!
+- _Planetary Codex_, to view all your planets at once!
+- _Galactic Map_, to organize them around stars!
 
 ## ✨ Inspirations
 
