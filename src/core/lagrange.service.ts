@@ -125,13 +125,16 @@ export function createClouds(type: GeometryType): THREE.Mesh {
 
 export function createAtmosphere(type: GeometryType, sunPos: THREE.Vector3): THREE.Mesh {
   const atmosHeight = (LG_PARAMETERS.atmosphereHeight / LG_HEIGHT_DIVIDER)
+  const atmosDensity = (LG_PARAMETERS.atmosphereDensityScale / LG_HEIGHT_DIVIDER)
   const geometry = createGeometry(type, atmosHeight)
   const material = createShaderMaterial(atmosphereVertShader, atmosphereFragShader, {
-    u_light_position: { value: sunPos },
-    u_light_intensity: { value: LG_PARAMETERS.sunLightIntensity * 2 },
-    u_surface_radius: { value: 1.0 },
-    u_radius: { value: LG_PARAMETERS.initPlanetRadius + atmosHeight },
-    u_daylight_hue: { value: LG_PARAMETERS.atmosphereDaylightHue }
+    u_light_position:   { value: sunPos },
+    u_light_intensity:  { value: LG_PARAMETERS.sunLightIntensity },
+    u_surface_radius:   { value: LG_PARAMETERS.initPlanetRadius },
+    u_radius:           { value: LG_PARAMETERS.initPlanetRadius + atmosHeight },
+    u_density:          { value: atmosDensity },
+    u_hue:              { value: LG_PARAMETERS.atmosphereHue },
+    u_intensity:        { value: LG_PARAMETERS.atmosphereIntensity }
   }, THREE.ShaderMaterial)
   material.transparent = true
 

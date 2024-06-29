@@ -12,7 +12,7 @@ import { onMounted, ref, watch, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
 import * as ThreeUtils from '@/core/lagrange.service';
-import { LG_NAME_AMBLIGHT, LG_PARAMETERS } from '@core/globals';
+import { LG_HEIGHT_DIVIDER, LG_NAME_AMBLIGHT, LG_PARAMETERS } from '@core/globals';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType } from '@core/types';
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla';
@@ -338,6 +338,39 @@ function updatePlanet() {
       case '_atmosphereEnabled': {
         const v = LG_PARAMETERS.atmosphereEnabled
         _atmosphere.visible = v
+        break
+      }
+      case '_atmosphereHeight': {
+        const atmosHeight = (LG_PARAMETERS.atmosphereHeight / LG_HEIGHT_DIVIDER)
+        setMaterialUniform(
+          _atmosphere.material as CustomShaderMaterial,
+          'u_radius',
+          LG_PARAMETERS.initPlanetRadius + atmosHeight
+        )
+        break
+      }
+      case '_atmosphereDensityScale': {
+        setMaterialUniform(
+          _atmosphere.material as CustomShaderMaterial,
+          'u_density',
+          LG_PARAMETERS.atmosphereDensityScale / LG_HEIGHT_DIVIDER
+        )
+        break
+      }
+      case '_atmosphereHue': {
+        setMaterialUniform(
+          _atmosphere.material as CustomShaderMaterial,
+          'u_hue',
+          LG_PARAMETERS.atmosphereHue
+        )
+        break
+      }
+      case '_atmosphereIntensity': {
+        setMaterialUniform(
+          _atmosphere.material as CustomShaderMaterial,
+          'u_intensity',
+          LG_PARAMETERS.atmosphereIntensity
+        )
         break
       }
     }

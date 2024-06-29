@@ -10,7 +10,9 @@ uniform vec3 u_light_position;
 uniform float u_light_intensity;
 uniform float u_surface_radius;
 uniform float u_radius;
-uniform float u_daylight_hue;
+uniform float u_density;
+uniform float u_hue;
+uniform float u_intensity;
 
 in float fov;
 in vec4 vWorldPosition;
@@ -35,7 +37,7 @@ void main() {
 
     // something went horribly wrong so set the pixel transparent
     if ( e.x > e.y ) {
-        csm_DiffuseColor = vec4(0.0, 0.0, 0.0, 0.0);
+        csm_DiffuseColor = vec4(0.0);
         return;
     }
 
@@ -45,7 +47,6 @@ void main() {
 
     vec4 I = in_scatter(eye, rayDir, e, sunglightDir, u_light_intensity);
     vec4 I_gamma = pow(I, vec4(1.0 / 2.2));
-    vec4 I_shifted = vec4(hue_shift(I_gamma.xyz, u_daylight_hue), I_gamma.a);
-
-    csm_DiffuseColor = I_shifted;
+    vec4 I_shifted = vec4(hue_shift(I_gamma.xyz, u_hue * PI), I_gamma.a);
+    csm_DiffuseColor = I_shifted * u_intensity;
 }

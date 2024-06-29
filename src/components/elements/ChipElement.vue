@@ -1,5 +1,7 @@
 <template>
-  <span class="lg chip"><slot></slot></span>
+  <span class="lg chip">
+    <slot></slot>
+  </span>
 </template>
 <style scoped lang="scss">
 .chip.lg {
@@ -7,5 +9,7 @@
   border-radius: 0.5rem;
   background-color: var(--lg-contrast);
   height: min-content;
+  text-wrap: nowrap;
+  word-break: keep-all;
 }
 </style>

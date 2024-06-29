@@ -48,7 +48,7 @@ float phase_ray(float cc) {
 
 float density(vec3 p, float ph) {
     float actualScaleHeight = 8500.0;  // The scale height on Earth in meters
-    float scale = (u_radius - u_surface_radius) / actualScaleHeight; // Scaling factor based on the gap
+    float scale = u_density / actualScaleHeight; // Scaling factor based on the gap
     float altitude = length(p) - u_surface_radius;
     
     // Initial density at the surface (sea level). Set this to your desired value.

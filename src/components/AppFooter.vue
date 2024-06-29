@@ -88,7 +88,7 @@ footer {
     gap: 1.5rem;
 
     #app-logo, #app-logo-uwu {
-      width: 200px;
+      width: 220px;
       grid-area: logo;
       max-width: 16rem;
       align-self: center;
@@ -106,7 +106,7 @@ footer {
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
-      gap: 2rem;
+      gap: 2.5rem;
 
       .row {
         display: flex;

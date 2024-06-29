@@ -13,10 +13,10 @@ sup {
   font-family: monospace;
 }
 
-a {
+a:not(.dark) {
   color: var(--lg-link);
 }
-a:visited {
+a:not(.dark):visited {
   color: var(--lg-link-visited);
 }
 

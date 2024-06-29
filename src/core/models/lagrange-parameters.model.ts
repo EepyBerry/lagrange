@@ -301,7 +301,9 @@ export default class LagrangeParameters extends ChangeTracker {
   
   private _atmosphereEnabled: boolean
   private _atmosphereHeight: number
-  private _atmosphereDaylightHue: number
+  private _atmosphereDensityScale: number
+  private _atmosphereIntensity: number
+  private _atmosphereHue: number
 
   // --------------------------------------------------
 
@@ -317,16 +319,32 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._atmosphereHeight
   }
   public set atmosphereHeight(value: number) {
-    this._atmosphereHeight = value
+    this._atmosphereHeight = clamp(value, 1.0, 8.0)
     this.markForChange('_atmosphereHeight')
   }
 
-  public get atmosphereDaylightHue(): number {
-    return this._atmosphereDaylightHue
+  public get atmosphereDensityScale(): number {
+    return this._atmosphereDensityScale
   }
-  public set atmosphereDaylightHue(value: number) {
-    this._atmosphereDaylightHue = value
-    this.markForChange('_atmosphereDaylightHue')
+  public set atmosphereDensityScale(value: number) {
+    this._atmosphereDensityScale = clamp(value, 1.0, 10.0)
+    this.markForChange('_atmosphereDensityScale')
+  }
+
+  public get atmosphereIntensity(): number {
+    return this._atmosphereIntensity
+  }
+  public set atmosphereIntensity(value: number) {
+    this._atmosphereIntensity = value
+    this.markForChange('_atmosphereIntensity')
+  }
+
+  public get atmosphereHue(): number {
+    return this._atmosphereHue
+  }
+  public set atmosphereHue(value: number) {
+    this._atmosphereHue = clamp(value, 0.0, 2.0)
+    this.markForChange('_atmosphereHue')
   }
 
   // --------------------------------------------------
@@ -355,14 +373,14 @@ export default class LagrangeParameters extends ChangeTracker {
     this._id = generateUUID()
     this._planetName = 'New Planet'
     this._sunLightColor = new Color(0xfff6e8)
-    this._sunLightIntensity = 10
+    this._sunLightIntensity = 10.0
     this._ambLightColor = new Color(0xffffff)
     this._ambLightIntensity = 0.05
 
     this._planetGeometryType = GeometryType.SPHERE
-    this._planetMeshQuality = 48
-    this._planetAxialTilt = 0
-    this._planetRotation = 0
+    this._planetMeshQuality = 48.0
+    this._planetAxialTilt = 0.0
+    this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
     this._planetWaterMetalness = 0.5
     this._planetGroundRoughness = 0.8
@@ -388,21 +406,23 @@ export default class LagrangeParameters extends ChangeTracker {
     this._biomesEnabled = true
 
     this._cloudsEnabled = true
-    this._cloudsRotation = 0
-    this._cloudsHeight = 1
+    this._cloudsRotation = 0.0
+    this._cloudsHeight = 1.0
     this._cloudsNoise = new NoiseParameters(
       this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 1.75
     )
     this._cloudsColor = new Color(0xffffff)
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
-      new ColorRampStep(0x000000, 0, true),
+      new ColorRampStep(0x000000, 0.0, true),
       new ColorRampStep(0x000000, 0.6),
-      new ColorRampStep(0xbbbbbb, 1, true),
+      new ColorRampStep(0xbbbbbb, 1.0, true),
     ])
 
     this._atmosphereEnabled = true
-    this._atmosphereHeight = 3
-    this._atmosphereDaylightHue = 0.0
+    this._atmosphereHeight = 8.0
+    this._atmosphereDensityScale = 1.75
+    this._atmosphereIntensity = 1.5
+    this._atmosphereHue = 0
   }
 
   public loadData(data: any) {
@@ -443,5 +463,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._cloudsColorRamp.load(data._cloudsColorRamp)
 
     this._atmosphereEnabled = data._atmosphereEnabled
+    this._atmosphereIntensity = data._atmosphereIntensity
+    this._atmosphereHue = data._atmosphereHue
   }
 }

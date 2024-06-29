@@ -25,9 +25,9 @@
             <ParameterField v-model="LG_PARAMETERS.ambLightIntensity"
               id="m-int"
               type="range"
-              :step="0.05"
+              :step="0.01"
               :min="0"
-              :max="2"
+              :max="1"
             >
               Intensity
             </ParameterField>
@@ -39,7 +39,7 @@
       </SidebarSection>
 
       <!-- Planet Settings -->
-      <SidebarSection icon="tabler:gizmo" :expand="true">
+      <SidebarSection icon="tabler:gizmo" :expand="false">
         <template v-slot:title>Planet Settings</template>
         <template v-slot:content>
           <ParameterTable>
@@ -122,7 +122,7 @@
       </SidebarSection>
 
       <!-- Surface -->
-      <SidebarSection icon="mingcute:planet-line" :expand="true">
+      <SidebarSection icon="mingcute:planet-line" :expand="false">
         <template v-slot:title>Surface</template>
         <template v-slot:content>
           <ParameterTable>
@@ -285,7 +285,8 @@
       <SidebarSection icon="material-symbols:line-curve-rounded" :expand=false>
         <template v-slot:title>Atmosphere</template>
         <template v-slot:content>
-          <ParameterDivider />
+          <ParameterTable>
+            <ParameterDivider />
             <ParameterField
               v-model="LG_PARAMETERS.atmosphereEnabled"
               id="a-toggle"
@@ -293,6 +294,51 @@
             >
               Show atmosphere
             </ParameterField>
+            <template v-if="LG_PARAMETERS.atmosphereEnabled">
+              <ParameterCategory>Transform</ParameterCategory>
+              <ParameterField
+                v-model="LG_PARAMETERS.atmosphereHeight"
+                id="a-height"
+                type="range"
+                :step="0.1"
+                :min="1"
+                :max="8"
+              >
+                Height
+              </ParameterField>
+              <ParameterField
+                v-model="LG_PARAMETERS.atmosphereDensityScale"
+                id="a-density"
+                type="range"
+                :step="0.01"
+                :min="1"
+                :max="10"
+              >
+                Density
+              </ParameterField>
+              <ParameterCategory>Coloration</ParameterCategory>
+              <ParameterField
+                v-model="LG_PARAMETERS.atmosphereHue"
+                id="a-hue"
+                type="range"
+                :step="0.01"
+                :min="0"
+                :max="2"
+              >
+                Hue
+              </ParameterField>
+              <ParameterField
+                v-model="LG_PARAMETERS.atmosphereIntensity"
+                id="a-int"
+                type="range"
+                :step="0.01"
+                :min="0"
+                :max="2"
+              >
+                Intensity
+              </ParameterField>
+            </template>
+          </ParameterTable>
         </template>
       </SidebarSection>
     </aside>
