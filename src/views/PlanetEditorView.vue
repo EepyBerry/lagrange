@@ -116,6 +116,12 @@ function setMaterialUniform(mat: CustomShaderMaterial, uname: string, uvalue: an
   mat.uniforms[uname] = { value: uvalue }
   mat.needsUpdate = true
 }
+function setMaterialUniforms(mat: CustomShaderMaterial, unames: string[], uvalues: any[]): void {
+  for (let i = 0; i < unames.length; i++) {
+    mat.uniforms[unames[i]] = { value: uvalues[i] }
+  }
+  mat.needsUpdate = true
+}
 
 function updatePlanet() {
   if (LG_PARAMETERS.changedProps.length === 0) { return }
@@ -201,47 +207,52 @@ function updatePlanet() {
       // |                Surface settings                |
       // --------------------------------------------------
       case '_planetSurfaceShowBumps': {
-        const v = LG_PARAMETERS.planetSurfaceShowBumps
-        const mat = _planet.material as CustomShaderMaterial
-        mat.uniforms.u_bump = { value: v }
-        mat.needsUpdate = true
+        setMaterialUniform(
+          _planet.material as CustomShaderMaterial,
+          'u_bump',
+          LG_PARAMETERS.planetSurfaceShowBumps
+        )
         break
       }
       case '_planetSurfaceBumpStrength': {
-        const v = LG_PARAMETERS.planetSurfaceBumpStrength
-        const mat = _planet.material as CustomShaderMaterial
-        mat.uniforms.u_bump_strength = { value: v }
-        mat.needsUpdate = true
+        setMaterialUniform(
+          _planet.material as CustomShaderMaterial,
+          'u_bump_strength',
+          LG_PARAMETERS.planetSurfaceBumpStrength
+        )
         break
       }
       case '_planetSurfaceNoise._frequency': {
-        const v = LG_PARAMETERS.planetSurfaceNoise
-        const mat = _planet.material as CustomShaderMaterial
-        mat.uniforms.u_frequency = { value: v.frequency }
-        mat.needsUpdate = true
+        setMaterialUniform(
+          _planet.material as CustomShaderMaterial,
+          'u_frequency',
+          LG_PARAMETERS.planetSurfaceNoise.frequency
+        )
         break
       }
       case '_planetSurfaceNoise._amplitude': {
-        const v = LG_PARAMETERS.planetSurfaceNoise
-        const mat = _planet.material as CustomShaderMaterial
-        mat.uniforms.u_amplitude = { value: v.amplitude }
-        mat.needsUpdate = true
+        setMaterialUniform(
+          _planet.material as CustomShaderMaterial,
+          'u_amplitude',
+          LG_PARAMETERS.planetSurfaceNoise.amplitude
+        )
         break
       }
       case '_planetSurfaceNoise._lacunarity': {
-        const v = LG_PARAMETERS.planetSurfaceNoise
-        const mat = _planet.material as CustomShaderMaterial
-        mat.uniforms.u_lacunarity = { value: v.lacunarity }
-        mat.needsUpdate = true
+        setMaterialUniform(
+          _planet.material as CustomShaderMaterial,
+          'u_lacunarity',
+          LG_PARAMETERS.planetSurfaceNoise.lacunarity
+        )
         break
       }
       case '_planetSurfaceColorRamp': {
         const v = LG_PARAMETERS.planetSurfaceColorRamp
-        const mat = _planet.material as CustomShaderMaterial
-        mat.uniforms.u_cr_size = { value: v.definedSteps.length }
-        mat.uniforms.u_cr_colors = { value: v.colors },
-        mat.uniforms.u_cr_positions = { value: v.factors },
-        mat.needsUpdate = true
+        setMaterialUniforms(
+          _planet.material as CustomShaderMaterial,
+          ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
+          [v.definedSteps.length, v.colors, v.factors]
+        )
         break
       }
      
@@ -249,17 +260,19 @@ function updatePlanet() {
       // |                 Biome settings                 |
       // --------------------------------------------------
       case '_biomesEnabled': {
-        const v = LG_PARAMETERS.biomesEnabled
-        const mat = _planet.material as CustomShaderMaterial
-        mat.uniforms.u_show_poles = { value: LG_PARAMETERS.biomePolesEnabled && v }
-        mat.needsUpdate = true
+        setMaterialUniform(
+          _planet.material as CustomShaderMaterial,
+          'u_show_poles',
+          LG_PARAMETERS.biomesEnabled && LG_PARAMETERS.biomePolesEnabled
+        )
         break
       }
       case '_biomePolesEnabled': {
-        const v = LG_PARAMETERS.biomePolesEnabled
-        const mat = _planet.material as CustomShaderMaterial
-        mat.uniforms.u_show_poles = { value: v }
-        mat.needsUpdate = true
+        setMaterialUniform(
+          _planet.material as CustomShaderMaterial,
+          'u_show_poles',
+          LG_PARAMETERS.biomePolesEnabled
+        )
         break
       }
       
@@ -278,40 +291,44 @@ function updatePlanet() {
         break
       }
       case '_cloudsNoise._frequency': {
-        const v = LG_PARAMETERS.cloudsNoise;
-        const mat = _clouds.material as CustomShaderMaterial
-        mat.uniforms.u_frequency = { value: v.frequency }
-        mat.needsUpdate = true
+        setMaterialUniform(
+          _clouds.material as CustomShaderMaterial,
+          'u_frequency',
+          LG_PARAMETERS.cloudsNoise.frequency
+        )
         break
       }
       case '_cloudsNoise._amplitude': {
-        const v = LG_PARAMETERS.cloudsNoise;
-        const mat = _clouds.material as CustomShaderMaterial
-        mat.uniforms.u_amplitude = { value: v.amplitude }
-        mat.needsUpdate = true
+        setMaterialUniform(
+          _clouds.material as CustomShaderMaterial,
+          'u_amplitude',
+          LG_PARAMETERS.cloudsNoise.amplitude
+        )
         break
       }
       case '_cloudsNoise._lacunarity': {
-        const v = LG_PARAMETERS.cloudsNoise;
-        const mat = _clouds.material as CustomShaderMaterial
-        mat.uniforms.u_lacunarity = { value: v.lacunarity }
-        mat.needsUpdate = true
+        setMaterialUniform(
+          _clouds.material as CustomShaderMaterial,
+          'u_lacunarity',
+          LG_PARAMETERS.cloudsNoise.lacunarity
+        )
         break
       }
       case '_cloudsColor': {
-        const v = LG_PARAMETERS.cloudsColor
-        const mat = _clouds.material as CustomShaderMaterial
-        mat.uniforms.u_color = { value: v }
-        mat.needsUpdate = true
+        setMaterialUniform(
+          _clouds.material as CustomShaderMaterial,
+          'u_color',
+          LG_PARAMETERS.cloudsColor
+        )
         break
       }
       case '_cloudsColorRamp': {
         const v = LG_PARAMETERS.cloudsColorRamp
-        const mat = _clouds.material as CustomShaderMaterial
-        mat.uniforms.u_cr_size = { value: v.definedSteps.length }
-        mat.uniforms.u_cr_colors = { value: v.colors },
-        mat.uniforms.u_cr_positions = { value: v.factors },
-        mat.needsUpdate = true
+        setMaterialUniforms(
+          _clouds.material as CustomShaderMaterial,
+          ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
+          [v.definedSteps.length, v.colors, v.factors]
+        )
         break
       }
 
@@ -321,12 +338,6 @@ function updatePlanet() {
       case '_atmosphereEnabled': {
         const v = LG_PARAMETERS.atmosphereEnabled
         _atmosphere.visible = v
-        break
-      }
-      case '_atmosphereDaylightHue': {
-        const v = LG_PARAMETERS.atmosphereDaylightHue
-        const mat = _atmosphere.material as CustomShaderMaterial
-        mat.uniforms.u_daylight_color = { value: v }
         break
       }
     }

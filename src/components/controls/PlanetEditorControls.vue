@@ -13,7 +13,7 @@
               type="range"
               :step="0.1"
               :min="0"
-              :max="16"
+              :max="50"
             >
               Intensity
             </ParameterField>

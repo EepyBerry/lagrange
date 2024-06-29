@@ -9,7 +9,20 @@ h1, h2, h3, h4, h5, h6 {
 }
 h3 { font-size: 1.125rem; }
 
-
 sup {
   font-family: monospace;
+}
+
+a {
+  color: var(--lg-link);
+}
+a:visited {
+  color: var(--lg-link-visited);
+}
+
+.highlight {
+  font-weight: 600;
+}
+.nowrap {
+  text-wrap: nowrap;
 }

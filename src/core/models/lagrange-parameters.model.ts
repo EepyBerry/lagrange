@@ -355,7 +355,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._id = generateUUID()
     this._planetName = 'New Planet'
     this._sunLightColor = new Color(0xfff6e8)
-    this._sunLightIntensity = 6
+    this._sunLightIntensity = 10
     this._ambLightColor = new Color(0xffffff)
     this._ambLightIntensity = 0.05
 
