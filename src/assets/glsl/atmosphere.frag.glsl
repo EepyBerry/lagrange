@@ -1,6 +1,7 @@
 // Sourced from Brian Jackson (@jaxzin), using code from GLtracy:
 // https://glitch.com/~polite-playful-wool
 // https://www.shadertoy.com/view/lslXDr
+// ------------------------------------------------------------------------------------------------
 
 #ifdef GL_ES
 precision highp float;

@@ -50,7 +50,6 @@ function toggleExpand() {
   border: 1px solid var(--lg-accent);
   border-radius: 4px;
   width: 100%;
-  padding: 0.75rem;
 
   display: flex;
   flex-direction: column;
@@ -70,8 +69,8 @@ function toggleExpand() {
     color: unset;
     font-size: 1rem;
     font-weight: 600;
+    padding: 0.75rem;
 
-    padding: 0;
     cursor: pointer;
     user-select: none;
 
@@ -86,6 +85,7 @@ function toggleExpand() {
   .section-content {
     font-size: 0.875rem;
     font-weight: 300;
+    padding: 0 0.75rem 0.75rem;
   }
   .section-content:has(.default) {
     text-align: center;

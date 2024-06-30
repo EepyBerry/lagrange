@@ -375,7 +375,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._sunLightColor = new Color(0xfff6e8)
     this._sunLightIntensity = 10.0
     this._ambLightColor = new Color(0xffffff)
-    this._ambLightIntensity = 0.05
+    this._ambLightIntensity = 0.02
 
     this._planetGeometryType = GeometryType.SPHERE
     this._planetMeshQuality = 48.0
@@ -420,8 +420,8 @@ export default class LagrangeParameters extends ChangeTracker {
 
     this._atmosphereEnabled = true
     this._atmosphereHeight = 8.0
-    this._atmosphereDensityScale = 1.75
-    this._atmosphereIntensity = 1.5
+    this._atmosphereDensityScale = 2.5
+    this._atmosphereIntensity = 1.0
     this._atmosphereHue = 0
   }
 

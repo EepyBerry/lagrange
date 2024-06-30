@@ -6,7 +6,7 @@ import App from './App.vue'
 import router from './router.config';
 import SidebarSection from '@/components/elements/SidebarSection.vue';
 import OverlaySpinner from '@/components/elements/OverlaySpinner.vue';
-import ParameterTable from '@/components/elements/ParameterTable.vue'
+import ParameterTable from '@/components/parameters/ParameterTable.vue'
 import ParameterField from '@/components/parameters/ParameterField.vue'
 import ParameterRadio from '@/components/parameters/ParameterRadio.vue';
 import ParameterRadioOption from '@/components/parameters/ParameterRadioOption.vue';

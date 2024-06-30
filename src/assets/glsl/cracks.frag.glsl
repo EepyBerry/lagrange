@@ -6,7 +6,7 @@ varying vec3 v_pos;
 @import functions/voronoise;
 
 void main() {
-    vec2 res = voronoi(v_pos*3., u_time*0.3);
+    vec2 res = voronoi(v_pos*3.0, u_time*0.3);
     // darken by pow
     vec3 mycolor = vec3(pow(res.x, 1.5));
     // emphasis on blue

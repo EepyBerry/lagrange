@@ -373,7 +373,7 @@ import ParameterField from '../parameters/ParameterField.vue';
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.375rem;
+    gap: 0.5rem;
 
     scrollbar-color: var(--lg-accent) transparent;
     scrollbar-width: thin;
@@ -385,7 +385,7 @@ import ParameterField from '../parameters/ParameterField.vue';
   #controls {
     .sidebar {
       padding: 0.5rem;
-      margin-top: 3.325rem;
+      margin-top: 3.375rem;
     }
   }
 }

@@ -1,5 +1,6 @@
 // Slightly ajusted from Daniel Greenheck (huge thanks!):
 // https://github.com/dgreenheck/threejs-procedural-planets
+// ------------------------------------------------------------------------------------------------
 
 // Perturbs a surface normal from computed heights
 vec3 perturbNormal(vec3 pos, vec3 dx, vec3 dy,

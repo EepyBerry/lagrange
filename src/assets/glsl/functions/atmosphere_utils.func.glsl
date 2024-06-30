@@ -1,6 +1,7 @@
 // Sourced from Brian Jackson (@jaxzin), using code from GLtracy:
 // https://glitch.com/~polite-playful-wool
 // https://www.shadertoy.com/view/lslXDr
+// ------------------------------------------------------------------------------------------------
 
 // Written by GLtracy
 // Credit: https://www.shadertoy.com/view/lslXDr

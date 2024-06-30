@@ -30,14 +30,14 @@ const showSpinner: Ref<boolean> = ref(true)
 
 // Main THREE objects
 let $se: SceneElements
-let _sun: THREE.DirectionalLight
 let _planetPivot: THREE.Group
 let _planet: THREE.Mesh
 let _clouds: THREE.Mesh
 let _atmosphere: THREE.Mesh
+let _sunLight: THREE.DirectionalLight
 let _ambLight: THREE.AmbientLight
 
-const VEC_Z = new THREE.Vector3(0, 0, 1)
+const VEC_TILT = new THREE.Vector3(-1, 0, 0)
 
 onMounted(() => init())
 watch(LG_PARAMETERS.changedProps, () => updatePlanet())
@@ -70,9 +70,11 @@ function initRendering(width: number, height: number) {
 }
 
 function initPlanet(): void {
+  const b = new THREE.BoxGeometry(1,1,1)
+  $se.scene.add(new THREE.Mesh(b))
   const planet = ThreeUtils.createPlanet(GeometryType.SPHERE)
   const clouds = ThreeUtils.createClouds(GeometryType.SPHERE)
-  const atmosphere = ThreeUtils.createAtmosphere(GeometryType.SPHERE, _sun.position)
+  const atmosphere = ThreeUtils.createAtmosphere(GeometryType.SPHERE, _sunLight.position)
   const pivot = new THREE.Group()
   pivot.add(planet)
   pivot.add(clouds)
@@ -89,9 +91,8 @@ function initPlanet(): void {
 
 function initLighting(): void {
   const sun = ThreeUtils.createSun()
-  sun.position.set(0, 5e3, 1e4)
   $se.scene.add(sun)
-  _sun = sun
+  _sunLight = sun
   _ambLight = $se.scene.getObjectByName(LG_NAME_AMBLIGHT) as THREE.AmbientLight
 }
 
@@ -112,11 +113,11 @@ function reloadMaterials() {
   LG_PARAMETERS.markAllForChange()
 }
 
-function setMaterialUniform(mat: CustomShaderMaterial, uname: string, uvalue: any): void {
+function setCSMMaterialUniform(mat: CustomShaderMaterial, uname: string, uvalue: any): void {
   mat.uniforms[uname] = { value: uvalue }
   mat.needsUpdate = true
 }
-function setMaterialUniforms(mat: CustomShaderMaterial, unames: string[], uvalues: any[]): void {
+function setCSMMaterialUniforms(mat: CustomShaderMaterial, unames: string[], uvalues: any[]): void {
   for (let i = 0; i < unames.length; i++) {
     mat.uniforms[unames[i]] = { value: uvalues[i] }
   }
@@ -131,11 +132,11 @@ function updatePlanet() {
       // |               Lighting settings                |
       // --------------------------------------------------
       case '_sunLightColor': {
-        _sun.color = LG_PARAMETERS.sunLightColor
+        _sunLight.color = LG_PARAMETERS.sunLightColor
         break
       }
       case '_sunLightIntensity': {
-        _sun.intensity = LG_PARAMETERS.sunLightIntensity
+        _sunLight.intensity = LG_PARAMETERS.sunLightIntensity
         break
       }
       case '_ambLightColor': {
@@ -152,7 +153,7 @@ function updatePlanet() {
       // --------------------------------------------------
       case '_planetAxialTilt': {
         const v = degToRad(isNaN(LG_PARAMETERS.planetAxialTilt) ? 0 : LG_PARAMETERS.planetAxialTilt)
-        _planetPivot.setRotationFromAxisAngle(VEC_Z, v)
+        _planetPivot.setRotationFromAxisAngle(VEC_TILT, v)
         break
       }
       case '_planetRotation': {
@@ -163,7 +164,7 @@ function updatePlanet() {
         break
       }
       case '_planetWaterRoughness': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_water_roughness',
           LG_PARAMETERS.planetWaterRoughness
@@ -171,7 +172,7 @@ function updatePlanet() {
         break
       }
       case '_planetWaterMetalness': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_water_metalness',
           LG_PARAMETERS.planetWaterMetalness
@@ -179,7 +180,7 @@ function updatePlanet() {
         break
       }
       case '_planetGroundRoughness': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_ground_roughness',
           LG_PARAMETERS.planetGroundRoughness
@@ -187,7 +188,7 @@ function updatePlanet() {
         break
       }
       case '_planetGroundMetalness': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_ground_metalness',
           LG_PARAMETERS.planetGroundMetalness
@@ -195,7 +196,7 @@ function updatePlanet() {
         break
       }
       case '_planetWaterLevel': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_water_level',
           LG_PARAMETERS.planetWaterLevel
@@ -207,7 +208,7 @@ function updatePlanet() {
       // |                Surface settings                |
       // --------------------------------------------------
       case '_planetSurfaceShowBumps': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_bump',
           LG_PARAMETERS.planetSurfaceShowBumps
@@ -215,7 +216,7 @@ function updatePlanet() {
         break
       }
       case '_planetSurfaceBumpStrength': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_bump_strength',
           LG_PARAMETERS.planetSurfaceBumpStrength
@@ -223,7 +224,7 @@ function updatePlanet() {
         break
       }
       case '_planetSurfaceNoise._frequency': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_frequency',
           LG_PARAMETERS.planetSurfaceNoise.frequency
@@ -231,7 +232,7 @@ function updatePlanet() {
         break
       }
       case '_planetSurfaceNoise._amplitude': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_amplitude',
           LG_PARAMETERS.planetSurfaceNoise.amplitude
@@ -239,7 +240,7 @@ function updatePlanet() {
         break
       }
       case '_planetSurfaceNoise._lacunarity': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_lacunarity',
           LG_PARAMETERS.planetSurfaceNoise.lacunarity
@@ -248,7 +249,7 @@ function updatePlanet() {
       }
       case '_planetSurfaceColorRamp': {
         const v = LG_PARAMETERS.planetSurfaceColorRamp
-        setMaterialUniforms(
+        setCSMMaterialUniforms(
           _planet.material as CustomShaderMaterial,
           ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
           [v.definedSteps.length, v.colors, v.factors]
@@ -260,7 +261,7 @@ function updatePlanet() {
       // |                 Biome settings                 |
       // --------------------------------------------------
       case '_biomesEnabled': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_show_poles',
           LG_PARAMETERS.biomesEnabled && LG_PARAMETERS.biomePolesEnabled
@@ -268,7 +269,7 @@ function updatePlanet() {
         break
       }
       case '_biomePolesEnabled': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_show_poles',
           LG_PARAMETERS.biomePolesEnabled
@@ -291,7 +292,7 @@ function updatePlanet() {
         break
       }
       case '_cloudsNoise._frequency': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _clouds.material as CustomShaderMaterial,
           'u_frequency',
           LG_PARAMETERS.cloudsNoise.frequency
@@ -299,7 +300,7 @@ function updatePlanet() {
         break
       }
       case '_cloudsNoise._amplitude': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _clouds.material as CustomShaderMaterial,
           'u_amplitude',
           LG_PARAMETERS.cloudsNoise.amplitude
@@ -307,7 +308,7 @@ function updatePlanet() {
         break
       }
       case '_cloudsNoise._lacunarity': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _clouds.material as CustomShaderMaterial,
           'u_lacunarity',
           LG_PARAMETERS.cloudsNoise.lacunarity
@@ -315,7 +316,7 @@ function updatePlanet() {
         break
       }
       case '_cloudsColor': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _clouds.material as CustomShaderMaterial,
           'u_color',
           LG_PARAMETERS.cloudsColor
@@ -324,7 +325,7 @@ function updatePlanet() {
       }
       case '_cloudsColorRamp': {
         const v = LG_PARAMETERS.cloudsColorRamp
-        setMaterialUniforms(
+        setCSMMaterialUniforms(
           _clouds.material as CustomShaderMaterial,
           ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
           [v.definedSteps.length, v.colors, v.factors]
@@ -342,7 +343,7 @@ function updatePlanet() {
       }
       case '_atmosphereHeight': {
         const atmosHeight = (LG_PARAMETERS.atmosphereHeight / LG_HEIGHT_DIVIDER)
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_radius',
           LG_PARAMETERS.initPlanetRadius + atmosHeight
@@ -350,7 +351,7 @@ function updatePlanet() {
         break
       }
       case '_atmosphereDensityScale': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_density',
           LG_PARAMETERS.atmosphereDensityScale / LG_HEIGHT_DIVIDER
@@ -358,7 +359,7 @@ function updatePlanet() {
         break
       }
       case '_atmosphereHue': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_hue',
           LG_PARAMETERS.atmosphereHue
@@ -366,7 +367,7 @@ function updatePlanet() {
         break
       }
       case '_atmosphereIntensity': {
-        setMaterialUniform(
+        setCSMMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_intensity',
           LG_PARAMETERS.atmosphereIntensity

@@ -10,10 +10,10 @@ import {
   LG_PARAMETERS,
   LG_NAME_CLOUDS,
   LG_NAME_PLANET,
-  LG_NAME_SUN,
   LG_HEIGHT_DIVIDER,
   LG_NAME_AMBLIGHT,
   LG_NAME_ATMOSPHERE,
+  LG_NAME_SUN,
 } from '@core/globals'
 import { GeometryType } from '@core/types'
 import { loadCubeTexture } from '@/core/three/external-data.loader'
@@ -39,7 +39,7 @@ export function createScene(width: number, height: number, pixelRatio: number): 
   // setup scene (renderer, cam, lighting)
   const renderer = createRenderer(width, height, pixelRatio)
   const camera = createPerspectiveCamera(
-    50, width / height, 0.1, 1e9,
+    50, width / height, 0.1, 1e6,
     new THREE.Spherical(
       LG_PARAMETERS.initCamDistance,
       Math.PI / 2.0,
@@ -56,7 +56,7 @@ export function createScene(width: number, height: number, pixelRatio: number): 
   return new SceneElements(scene, renderer, camera)
 }
 
-export function createSun(): THREE.DirectionalLight {
+export function createSun() {
   const geometry = new THREE.IcosahedronGeometry(50, 4)
   const material = new THREE.MeshStandardMaterial( { color: 0xffffff, emissive: new THREE.Color(100, 100, 100) } )
   const sun = new THREE.DirectionalLight(
@@ -64,6 +64,7 @@ export function createSun(): THREE.DirectionalLight {
     LG_PARAMETERS.sunLightIntensity
   )
   sun.add(new THREE.Mesh(geometry, material))
+  sun.position.set(0, 2e3, 4e3)
   sun.name = LG_NAME_SUN
   return sun
 }
@@ -119,7 +120,6 @@ export function createClouds(type: GeometryType): THREE.Mesh {
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.name = LG_NAME_CLOUDS
-  mesh.receiveShadow = true
   return mesh
 }
 

@@ -1,5 +1,6 @@
-// Sourced from franky-adl, using code from Inigo Quilez:
+// Sourced from franky-adl, using code from Iñigo Quilez:
 // https://github.com/franky-adl/voronoi-sphere/blob/main/src/shaders/voronoi3d_basic.glsl
+// ------------------------------------------------------------------------------------------------
 
 // hash function from https://github.com/MaxBittker/glsl-voronoi-noise
 vec3 hash3d(vec3 p) {
