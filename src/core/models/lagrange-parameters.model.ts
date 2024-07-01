@@ -468,7 +468,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._biomePolesEnabled = data._biomePolesEnabled
     this._biomesEnabled = data._biomesEnabled
 
-    this._cloudsEnabled = true
+    this._cloudsEnabled = data._cloudsEnabled
     this._cloudsRotation = data._cloudsRotation
     this._cloudsNoise.amplitude = data._cloudsNoise._amplitude
     this._cloudsNoise.frequency = data._cloudsNoise._frequency

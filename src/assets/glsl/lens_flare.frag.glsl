@@ -24,7 +24,7 @@ uniform bool enabled;
 uniform bool secondaryGhosts;
 uniform bool starBurst;
 uniform float ghostScale;
-uniform bool aditionalStreaks;
+uniform bool additionalStreaks;
 uniform sampler2D lensDirtTexture;
 
 in vec2 vUv;
@@ -346,7 +346,7 @@ void main()
     vec3 finalColor = LensFlare(myUV, mouse) * 20.0 * colorGain / 2.;
 
     //Aditional Streaks
-    if(aditionalStreaks){
+    if(additionalStreaks){
         vec3 circColor = vec3(0.9, 0.2, 0.1);
         vec3 circColor2 = vec3(0.3, 0.1, 0.9);
 
@@ -387,9 +387,7 @@ void main()
     }
 
     //Final composed output
-    if(enabled){
-        gl_FragColor = vec4(finalColor, mix(finalColor, vec3(1.0), 1.0) * opacity);
-        #include <tonemapping_fragment>
-        #include <colorspace_fragment>
-    }
+    gl_FragColor = vec4(finalColor, mix(finalColor, vec3(1.0), 1.0) * opacity);
+    #include <tonemapping_fragment>
+    #include <colorspace_fragment>
 }

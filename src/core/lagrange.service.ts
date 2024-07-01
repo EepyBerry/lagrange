@@ -19,7 +19,7 @@ import { GeometryType } from '@core/types'
 import { loadCubeTexture } from '@/core/three/external-data.loader'
 import { createAmbientight, createGeometry, createPerspectiveCamera, createRenderer, createShaderMaterial } from '@/core/three/component.builder'
 import { SceneElements } from './models/scene-elements.model'
-import { LensFlareEffect } from './ektogamat/lens-flare'
+import { LensFlareEffect } from './three/lens-flare.effect'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // SCENE FUNCTIONS
@@ -62,21 +62,18 @@ export function createSun() {
     LG_PARAMETERS.sunLightColor, 
     LG_PARAMETERS.sunLightIntensity
   )
-
-
   sun.position.set(0, 2e3, 4e3)
   sun.userData.lens = 'no-occlusion'
   sun.name = LG_NAME_SUN
+  return sun
+}
 
-  const lensFlareEffect = LensFlareEffect(
-    {
-      lensPosition: sun.position,
-      colorGain: sun.color,
-    },
-    { value: 1 }
-  );
-  sun.add(lensFlareEffect);
-  return { sun, lensFlareEffect }
+export function createLensFlare(sun: THREE.DirectionalLight) {
+  return new LensFlareEffect({
+    opacity: 0.8,
+    lensPosition: sun.position,
+    colorGain: sun.color,
+  })
 }
 
 export function createPlanet(type: GeometryType): THREE.Mesh {
@@ -98,6 +95,7 @@ export function createPlanet(type: GeometryType): THREE.Mesh {
     u_bump:                 { value: LG_PARAMETERS.planetSurfaceShowBumps },
     u_bump_strength:        { value: LG_PARAMETERS.planetSurfaceBumpStrength },
     u_bump_offset:          { value: 0.005 },
+    u_biomes:               { value: LG_PARAMETERS.biomesEnabled },
     u_show_poles:           { value: LG_PARAMETERS.biomePolesEnabled },
     u_pole_limit:           { value: 0.8 },
     u_cr_colors:            { value: LG_PARAMETERS.planetSurfaceColorRamp.colors },
@@ -157,43 +155,3 @@ export function createAtmosphere(type: GeometryType, sunPos: THREE.Vector3): THR
 
 // ----------------------------------------------------------------------------------------------------------------------
 // UPDATE FUNCTIONS
-
-export function switchMeshFor(
-  scene: THREE.Scene,
-  objName: string,
-  type: GeometryType,
-  force: boolean = false
-): THREE.Mesh {
-  const obj = scene.getObjectByName(objName) as THREE.Mesh
-  if (
-    !force && (
-    obj.geometry instanceof THREE.IcosahedronGeometry && type === GeometryType.SPHERE
-    || obj.geometry instanceof THREE.TorusGeometry && type === GeometryType.TORUS
-    || obj.geometry instanceof THREE.BoxGeometry && type === GeometryType.BOX
-  )) {
-    return obj
-  }
-
-  (obj.material as THREE.Material).dispose()
-  obj.geometry.dispose()
-  scene.remove(obj)
-
-  let newObj
-  switch(objName) {
-    case LG_NAME_PLANET:
-      newObj = createPlanet(type)
-      break
-    case LG_NAME_CLOUDS:
-      newObj = createClouds(type)
-      break
-    case LG_NAME_ATMOSPHERE: {
-      const sun = scene.getObjectByName(LG_NAME_SUN) as THREE.Mesh
-      newObj = createAtmosphere(type, sun.position)
-      break
-    }
-    default:
-      throw new Error('Cannot switch mesh for non-existent object name: ' + objName)
-  }
-  scene.add(newObj)
-  return newObj
-}

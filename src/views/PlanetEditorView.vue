@@ -11,7 +11,7 @@ import PlanetInfoControls from '@/components/controls/PlanetInfoControls.vue'
 import { onMounted, ref, watch, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
-import * as ThreeUtils from '@/core/lagrange.service';
+import * as Lagrange from '@/core/lagrange.service';
 import { LG_HEIGHT_DIVIDER, LG_NAME_AMBLIGHT, LG_PARAMETERS } from '@core/globals';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType } from '@core/types';
@@ -19,6 +19,7 @@ import type CustomShaderMaterial from 'three-custom-shader-material/dist/declara
 import { createControls } from '@/core/three/component.builder';
 import { useHead } from '@unhead/vue';
 import type { SceneElements } from '@/core/models/scene-elements.model';
+import type { LensFlareEffect } from '@/core/three/lens-flare.effect';
 
 useHead({ meta: [
   { name: 'description', content: 'A procedural planet building app' }
@@ -27,6 +28,7 @@ useHead({ meta: [
 // THREE canvas/scene root
 const sceneRoot: Ref<any> = ref(null)
 const showSpinner: Ref<boolean> = ref(true)
+const clock = new THREE.Clock()
 
 // Main THREE objects
 let $se: SceneElements
@@ -36,7 +38,7 @@ let _clouds: THREE.Mesh
 let _atmosphere: THREE.Mesh
 let _sunLight: THREE.DirectionalLight
 let _ambLight: THREE.AmbientLight
-let _lensFlare: THREE.Mesh
+let _lensFlare: LensFlareEffect
 
 const VEC_TILT = new THREE.Vector3(-1, 0, 0)
 
@@ -47,7 +49,7 @@ function init() {
   const width = window.innerWidth,
         height = window.innerHeight,
         pixelRatio = window.devicePixelRatio
-  $se = ThreeUtils.createScene(width, height, pixelRatio)
+  $se = Lagrange.createScene(width, height, pixelRatio)
 
   initLighting()
   initPlanet()
@@ -73,9 +75,9 @@ function initRendering(width: number, height: number) {
 function initPlanet(): void {
   const b = new THREE.BoxGeometry(1,1,1)
   $se.scene.add(new THREE.Mesh(b))
-  const planet = ThreeUtils.createPlanet(GeometryType.SPHERE)
-  const clouds = ThreeUtils.createClouds(GeometryType.SPHERE)
-  const atmosphere = ThreeUtils.createAtmosphere(GeometryType.SPHERE, _sunLight.position)
+  const planet = Lagrange.createPlanet(GeometryType.SPHERE)
+  const clouds = Lagrange.createClouds(GeometryType.SPHERE)
+  const atmosphere = Lagrange.createAtmosphere(GeometryType.SPHERE, _sunLight.position)
   const pivot = new THREE.Group()
   pivot.add(planet)
   pivot.add(clouds)
@@ -91,17 +93,20 @@ function initPlanet(): void {
 }
 
 function initLighting(): void {
-  const sun = ThreeUtils.createSun()
-  $se.scene.add(sun.sun)
-  _sunLight = sun.sun
+  const sun = Lagrange.createSun()
+  const lensFlare = Lagrange.createLensFlare(sun)
+  sun.add(lensFlare.mesh)
+  $se.scene.add(sun)
+  _sunLight = sun
   _ambLight = $se.scene.getObjectByName(LG_NAME_AMBLIGHT) as THREE.AmbientLight
-  _lensFlare = sun.lensFlareEffect
+  _lensFlare = lensFlare
 }
 
 // ------------------------------------------------------------------------------------------------
 
 function renderFrame(stats: Stats) {
   stats.update()
+  _lensFlare.update($se.renderer, $se.scene, $se.camera, clock)
   $se.renderer.render($se.scene, $se.camera)
 }
 
@@ -134,13 +139,13 @@ function updatePlanet() {
       // |               Lighting settings                |
       // --------------------------------------------------
       case '_lensFlareEnabled': {
-        _lensFlare.visible = LG_PARAMETERS.lensFlareEnabled
+        _lensFlare.mesh.visible = LG_PARAMETERS.lensFlareEnabled
         break
       }
       case '_sunLightColor': {
         _sunLight.color = LG_PARAMETERS.sunLightColor
         setShaderMaterialUniform(
-          _lensFlare.material as THREE.ShaderMaterial,
+          _lensFlare.material,
           'colorGain',
           LG_PARAMETERS.sunLightColor
         )
@@ -274,8 +279,8 @@ function updatePlanet() {
       case '_biomesEnabled': {
         setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
-          'u_show_poles',
-          LG_PARAMETERS.biomesEnabled && LG_PARAMETERS.biomePolesEnabled
+          'u_biomes',
+          LG_PARAMETERS.biomesEnabled
         )
         break
       }

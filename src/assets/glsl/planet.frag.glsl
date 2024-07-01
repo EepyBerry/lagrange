@@ -22,7 +22,8 @@ uniform float u_ground_roughness;
 uniform float u_water_metalness;
 uniform float u_ground_metalness;
 
-// Pole uniforms
+// Biome uniforms
+uniform bool u_biomes;
 uniform bool u_show_poles;
 uniform float u_pole_limit;
 
@@ -63,7 +64,7 @@ void main() {
     color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
 
     // Render poles
-    if (u_show_poles) {
+    if (u_biomes && u_show_poles) {
         float northBlendValue = (vPos.y - u_pole_limit) / (u_radius - u_pole_limit);
         color = vPos.y > u_pole_limit && height > u_water_level
             ? mix(color, vec3(1.0), northBlendValue)
