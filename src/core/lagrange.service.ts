@@ -19,6 +19,7 @@ import { GeometryType } from '@core/types'
 import { loadCubeTexture } from '@/core/three/external-data.loader'
 import { createAmbientight, createGeometry, createPerspectiveCamera, createRenderer, createShaderMaterial } from '@/core/three/component.builder'
 import { SceneElements } from './models/scene-elements.model'
+import { LensFlareEffect } from './ektogamat/lens-flare'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // SCENE FUNCTIONS
@@ -57,16 +58,25 @@ export function createScene(width: number, height: number, pixelRatio: number): 
 }
 
 export function createSun() {
-  const geometry = new THREE.IcosahedronGeometry(50, 4)
-  const material = new THREE.MeshStandardMaterial( { color: 0xffffff, emissive: new THREE.Color(100, 100, 100) } )
   const sun = new THREE.DirectionalLight(
     LG_PARAMETERS.sunLightColor, 
     LG_PARAMETERS.sunLightIntensity
   )
-  sun.add(new THREE.Mesh(geometry, material))
+
+
   sun.position.set(0, 2e3, 4e3)
+  sun.userData.lens = 'no-occlusion'
   sun.name = LG_NAME_SUN
-  return sun
+
+  const lensFlareEffect = LensFlareEffect(
+    {
+      lensPosition: sun.position,
+      colorGain: sun.color,
+    },
+    { value: 1 }
+  );
+  sun.add(lensFlareEffect);
+  return { sun, lensFlareEffect }
 }
 
 export function createPlanet(type: GeometryType): THREE.Mesh {
@@ -119,6 +129,7 @@ export function createClouds(type: GeometryType): THREE.Mesh {
   material.shadowSide = THREE.FrontSide
 
   const mesh = new THREE.Mesh(geometry, material)
+  mesh.userData.lens = 'no-occlusion';
   mesh.name = LG_NAME_CLOUDS
   return mesh
 }
@@ -139,6 +150,7 @@ export function createAtmosphere(type: GeometryType, sunPos: THREE.Vector3): THR
   material.transparent = true
 
   const mesh = new THREE.Mesh(geometry, material)
+  mesh.userData.lens = 'no-occlusion';
   mesh.name = LG_NAME_ATMOSPHERE
   return mesh
 }

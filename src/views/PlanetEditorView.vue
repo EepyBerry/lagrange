@@ -36,6 +36,7 @@ let _clouds: THREE.Mesh
 let _atmosphere: THREE.Mesh
 let _sunLight: THREE.DirectionalLight
 let _ambLight: THREE.AmbientLight
+let _lensFlare: THREE.Mesh
 
 const VEC_TILT = new THREE.Vector3(-1, 0, 0)
 
@@ -91,9 +92,10 @@ function initPlanet(): void {
 
 function initLighting(): void {
   const sun = ThreeUtils.createSun()
-  $se.scene.add(sun)
-  _sunLight = sun
+  $se.scene.add(sun.sun)
+  _sunLight = sun.sun
   _ambLight = $se.scene.getObjectByName(LG_NAME_AMBLIGHT) as THREE.AmbientLight
+  _lensFlare = sun.lensFlareEffect
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -113,11 +115,11 @@ function reloadMaterials() {
   LG_PARAMETERS.markAllForChange()
 }
 
-function setCSMMaterialUniform(mat: CustomShaderMaterial, uname: string, uvalue: any): void {
+function setShaderMaterialUniform(mat: CustomShaderMaterial | THREE.ShaderMaterial, uname: string, uvalue: any): void {
   mat.uniforms[uname] = { value: uvalue }
   mat.needsUpdate = true
 }
-function setCSMMaterialUniforms(mat: CustomShaderMaterial, unames: string[], uvalues: any[]): void {
+function setShaderMaterialUniforms(mat: CustomShaderMaterial, unames: string[], uvalues: any[]): void {
   for (let i = 0; i < unames.length; i++) {
     mat.uniforms[unames[i]] = { value: uvalues[i] }
   }
@@ -131,8 +133,17 @@ function updatePlanet() {
       // --------------------------------------------------
       // |               Lighting settings                |
       // --------------------------------------------------
+      case '_lensFlareEnabled': {
+        _lensFlare.visible = LG_PARAMETERS.lensFlareEnabled
+        break
+      }
       case '_sunLightColor': {
         _sunLight.color = LG_PARAMETERS.sunLightColor
+        setShaderMaterialUniform(
+          _lensFlare.material as THREE.ShaderMaterial,
+          'colorGain',
+          LG_PARAMETERS.sunLightColor
+        )
         break
       }
       case '_sunLightIntensity': {
@@ -164,7 +175,7 @@ function updatePlanet() {
         break
       }
       case '_planetWaterRoughness': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_water_roughness',
           LG_PARAMETERS.planetWaterRoughness
@@ -172,7 +183,7 @@ function updatePlanet() {
         break
       }
       case '_planetWaterMetalness': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_water_metalness',
           LG_PARAMETERS.planetWaterMetalness
@@ -180,7 +191,7 @@ function updatePlanet() {
         break
       }
       case '_planetGroundRoughness': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_ground_roughness',
           LG_PARAMETERS.planetGroundRoughness
@@ -188,7 +199,7 @@ function updatePlanet() {
         break
       }
       case '_planetGroundMetalness': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_ground_metalness',
           LG_PARAMETERS.planetGroundMetalness
@@ -196,7 +207,7 @@ function updatePlanet() {
         break
       }
       case '_planetWaterLevel': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_water_level',
           LG_PARAMETERS.planetWaterLevel
@@ -208,7 +219,7 @@ function updatePlanet() {
       // |                Surface settings                |
       // --------------------------------------------------
       case '_planetSurfaceShowBumps': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_bump',
           LG_PARAMETERS.planetSurfaceShowBumps
@@ -216,7 +227,7 @@ function updatePlanet() {
         break
       }
       case '_planetSurfaceBumpStrength': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_bump_strength',
           LG_PARAMETERS.planetSurfaceBumpStrength
@@ -224,7 +235,7 @@ function updatePlanet() {
         break
       }
       case '_planetSurfaceNoise._frequency': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_frequency',
           LG_PARAMETERS.planetSurfaceNoise.frequency
@@ -232,7 +243,7 @@ function updatePlanet() {
         break
       }
       case '_planetSurfaceNoise._amplitude': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_amplitude',
           LG_PARAMETERS.planetSurfaceNoise.amplitude
@@ -240,7 +251,7 @@ function updatePlanet() {
         break
       }
       case '_planetSurfaceNoise._lacunarity': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_lacunarity',
           LG_PARAMETERS.planetSurfaceNoise.lacunarity
@@ -249,7 +260,7 @@ function updatePlanet() {
       }
       case '_planetSurfaceColorRamp': {
         const v = LG_PARAMETERS.planetSurfaceColorRamp
-        setCSMMaterialUniforms(
+        setShaderMaterialUniforms(
           _planet.material as CustomShaderMaterial,
           ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
           [v.definedSteps.length, v.colors, v.factors]
@@ -261,7 +272,7 @@ function updatePlanet() {
       // |                 Biome settings                 |
       // --------------------------------------------------
       case '_biomesEnabled': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_show_poles',
           LG_PARAMETERS.biomesEnabled && LG_PARAMETERS.biomePolesEnabled
@@ -269,7 +280,7 @@ function updatePlanet() {
         break
       }
       case '_biomePolesEnabled': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_show_poles',
           LG_PARAMETERS.biomePolesEnabled
@@ -292,7 +303,7 @@ function updatePlanet() {
         break
       }
       case '_cloudsNoise._frequency': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _clouds.material as CustomShaderMaterial,
           'u_frequency',
           LG_PARAMETERS.cloudsNoise.frequency
@@ -300,7 +311,7 @@ function updatePlanet() {
         break
       }
       case '_cloudsNoise._amplitude': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _clouds.material as CustomShaderMaterial,
           'u_amplitude',
           LG_PARAMETERS.cloudsNoise.amplitude
@@ -308,7 +319,7 @@ function updatePlanet() {
         break
       }
       case '_cloudsNoise._lacunarity': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _clouds.material as CustomShaderMaterial,
           'u_lacunarity',
           LG_PARAMETERS.cloudsNoise.lacunarity
@@ -316,7 +327,7 @@ function updatePlanet() {
         break
       }
       case '_cloudsColor': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _clouds.material as CustomShaderMaterial,
           'u_color',
           LG_PARAMETERS.cloudsColor
@@ -325,7 +336,7 @@ function updatePlanet() {
       }
       case '_cloudsColorRamp': {
         const v = LG_PARAMETERS.cloudsColorRamp
-        setCSMMaterialUniforms(
+        setShaderMaterialUniforms(
           _clouds.material as CustomShaderMaterial,
           ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
           [v.definedSteps.length, v.colors, v.factors]
@@ -343,7 +354,7 @@ function updatePlanet() {
       }
       case '_atmosphereHeight': {
         const atmosHeight = (LG_PARAMETERS.atmosphereHeight / LG_HEIGHT_DIVIDER)
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_radius',
           LG_PARAMETERS.initPlanetRadius + atmosHeight
@@ -351,7 +362,7 @@ function updatePlanet() {
         break
       }
       case '_atmosphereDensityScale': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_density',
           LG_PARAMETERS.atmosphereDensityScale / LG_HEIGHT_DIVIDER
@@ -359,7 +370,7 @@ function updatePlanet() {
         break
       }
       case '_atmosphereHue': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_hue',
           LG_PARAMETERS.atmosphereHue
@@ -367,7 +378,7 @@ function updatePlanet() {
         break
       }
       case '_atmosphereIntensity': {
-        setCSMMaterialUniform(
+        setShaderMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_intensity',
           LG_PARAMETERS.atmosphereIntensity

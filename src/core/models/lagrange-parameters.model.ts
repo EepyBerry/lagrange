@@ -48,10 +48,21 @@ export default class LagrangeParameters extends ChangeTracker {
   // |               Lighting settings                |
   // --------------------------------------------------
 
+  private _lensFlareEnabled: boolean
   private _sunLightColor: Color
   private _sunLightIntensity: number
   private _ambLightColor: Color
   private _ambLightIntensity: number
+
+  // --------------------------------------------------
+
+  public get lensFlareEnabled(): boolean {
+    return this._lensFlareEnabled
+  }
+  public set lensFlareEnabled(value: boolean) {
+    this._lensFlareEnabled = value
+    this.markForChange('_lensFlareEnabled')
+  }
 
   public get sunLightColor(): Color {
     return this._sunLightColor
@@ -372,6 +383,8 @@ export default class LagrangeParameters extends ChangeTracker {
     super()
     this._id = generateUUID()
     this._planetName = 'New Planet'
+
+    this._lensFlareEnabled = true
     this._sunLightColor = new Color(0xfff6e8)
     this._sunLightIntensity = 10.0
     this._ambLightColor = new Color(0xffffff)
@@ -421,7 +434,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._atmosphereEnabled = true
     this._atmosphereHeight = 8.0
     this._atmosphereDensityScale = 2.5
-    this._atmosphereIntensity = 1.0
+    this._atmosphereIntensity = 1.3
     this._atmosphereHue = 0
   }
 
@@ -431,6 +444,7 @@ export default class LagrangeParameters extends ChangeTracker {
     }
     this._planetName = data._planetName.replaceAll('_', ' ')
 
+    this._lensFlareEnabled = data._lensFlareEnabled
     this._sunLightColor.set(numberToHex(data._sunLightColor))
     this._sunLightIntensity = data._sunLightIntensity
     this._ambLightColor.set(numberToHex(data._ambLightColor))

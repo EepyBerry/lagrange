@@ -7,6 +7,14 @@
         <template v-slot:content>
           <ParameterTable>
             <ParameterDivider />
+            <ParameterCategory>Lens Flare</ParameterCategory>
+            <ParameterField
+              v-model="LG_PARAMETERS.lensFlareEnabled"
+              id="f-toggle"
+              type="checkbox"
+            >
+              Show lens flare
+            </ParameterField>
             <ParameterCategory>Sunlight</ParameterCategory>
             <ParameterField v-model="LG_PARAMETERS.sunLightIntensity"
               id="l-int"
