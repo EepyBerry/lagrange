@@ -1,5 +1,4 @@
 import * as THREE from "three"
-import { easing } from 'maath'
 import { LG_NAME_PLANET } from "../globals"
 import vertexShader from "@assets/glsl/lens_flare.vert.glsl?raw"
 import fragmentShader from "@assets/glsl/lens_flare.frag.glsl?raw"
