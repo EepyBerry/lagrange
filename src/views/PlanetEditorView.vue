@@ -104,10 +104,10 @@ function initLighting(): void {
 // ------------------------------------------------------------------------------------------------
 
 function renderFrame(stats: Stats) {
-  updatePlanet()
   stats.update()
-  $se.renderer.render($se.scene, $se.camera)
+  updatePlanet()
   _lensFlare.update($se.renderer, $se.scene, $se.camera, clock)
+  $se.renderer.render($se.scene, $se.camera)
 }
 
 function onWindowResize() {
@@ -122,13 +122,11 @@ function reloadMaterials() {
 
 function setShaderMaterialUniform(mat: CustomShaderMaterial | THREE.ShaderMaterial, uname: string, uvalue: any): void {
   mat.uniforms[uname] = { value: uvalue }
-  mat.needsUpdate = true
 }
 function setShaderMaterialUniforms(mat: CustomShaderMaterial, unames: string[], uvalues: any[]): void {
   for (let i = 0; i < unames.length; i++) {
     mat.uniforms[unames[i]] = { value: uvalues[i] }
   }
-  mat.needsUpdate = true
 }
 
 function updatePlanet() {
