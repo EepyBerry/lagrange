@@ -70,7 +70,7 @@ export function createSun() {
 
 export function createLensFlare(sun: THREE.DirectionalLight) {
   return new LensFlareEffect({
-    opacity: 0.8,
+    opacity: 1,
     lensPosition: sun.position,
     colorGain: sun.color,
   })
