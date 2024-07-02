@@ -3,6 +3,7 @@ import { easing } from 'maath'
 import { LG_NAME_PLANET } from "../globals"
 import vertexShader from "@assets/glsl/lens_flare.vert.glsl?raw"
 import fragmentShader from "@assets/glsl/lens_flare.frag.glsl?raw"
+import { damp } from "three/src/math/MathUtils.js"
 
 export type LensFlareParams = {
   lensPosition: THREE.Vector3
@@ -58,7 +59,7 @@ export class LensFlareEffect {
       additionalStreaks: params.additionalStreaks ?? false,
       lensDirtTexture: params.lensDirtTexture ?? new THREE.TextureLoader().load("assets/img/lens-Dirt-Texture.jpg")
     }
-    this._internalOpacity = this._params.opacity
+    this._internalOpacity = Number(this._params.opacity)
     this._viewport = new THREE.Vector4()
     this._flarePosition = new THREE.Vector3()
     this._raycaster = new THREE.Raycaster()
@@ -109,25 +110,23 @@ export class LensFlareEffect {
       return
     }
 
-    for (const intersect of intersects) {
-      const iObject = intersect.object as THREE.Mesh
-      const iMaterial = iObject.material as THREE.Material
-      if (!iObject.visible) {
-        this._internalOpacity = this._params.opacity;
-      } else if (iMaterial instanceof THREE.MeshPhysicalMaterial) {
-        this._internalOpacity = this._params.opacity * (iMaterial.transmission * 0.5)
+    const iObject = intersects[0].object as THREE.Mesh
+    const iMaterial = iObject.material as THREE.Material
+    if (!iObject.visible) {
+      this._internalOpacity = this._params.opacity;
+    } else if (iMaterial instanceof THREE.MeshPhysicalMaterial) {
+      this._internalOpacity = this._params.opacity * (iMaterial.transmission * 0.5)
+    } else {
+      if (iMaterial.transparent && iMaterial.opacity < 0.98) {
+        this._internalOpacity = this._params.opacity / (iMaterial.opacity * 10)
       } else {
-        if (iMaterial.transparent && iMaterial.opacity < 0.98) {
-          this._internalOpacity = this._params.opacity / (iMaterial.opacity * 10)
-        } else {
-          this._internalOpacity = iObject.userData.lens === 'no-occlusion' ? this._params.opacity : 0
-        }
+        this._internalOpacity = iObject.userData.lens === 'no-occlusion' ? this._params.opacity : 0
       }
     }
   }
 
   public update(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, clock: THREE.Clock) {
-    const elapsedTime = clock.getElapsedTime();
+    const dt = clock.getDelta()
 
     renderer.getCurrentViewport(this._viewport);
     this._mesh.lookAt(camera.position);
@@ -145,8 +144,10 @@ export class LensFlareEffect {
     const intersects = this._raycaster.intersectObjects([scene.getObjectByName(LG_NAME_PLANET)!], true);
     this.checkTransparency(intersects);
 
-    this._material.uniforms.iTime.value = elapsedTime;
-    easing.damp(this._material.uniforms.opacity, "value", this._internalOpacity, 0.003, clock.getDelta());
+    this._material.uniforms.iTime.value += dt;
+    this._material.uniforms.opacity.value = damp(
+      this._material.uniforms.opacity.value, this._internalOpacity, 10, dt
+    )
   }
 
   public get mesh(): THREE.Mesh {

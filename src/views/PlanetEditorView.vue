@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import PlanetEditorControls from '@/components/controls/PlanetEditorControls.vue';
 import PlanetInfoControls from '@/components/controls/PlanetInfoControls.vue'
-import { onMounted, ref, watch, type Ref } from 'vue'
+import { onMounted, ref, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
 import * as Lagrange from '@/core/lagrange.service';
@@ -43,7 +43,6 @@ let _lensFlare: LensFlareEffect
 const VEC_TILT = new THREE.Vector3(-1, 0, 0)
 
 onMounted(() => init())
-watch(LG_PARAMETERS.changedProps, () => updatePlanet())
 
 function init() {
   const width = window.innerWidth,
@@ -105,9 +104,10 @@ function initLighting(): void {
 // ------------------------------------------------------------------------------------------------
 
 function renderFrame(stats: Stats) {
+  updatePlanet()
   stats.update()
-  _lensFlare.update($se.renderer, $se.scene, $se.camera, clock)
   $se.renderer.render($se.scene, $se.camera)
+  _lensFlare.update($se.renderer, $se.scene, $se.camera, clock)
 }
 
 function onWindowResize() {
