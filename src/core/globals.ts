@@ -6,7 +6,6 @@ export const SITE_NAME = 'Lagrange'
 export const LG_PARAMETERS = reactive(new LagrangeParameters())
 export const LG_DEFAULTS = new LagrangeParameters()
 
-export const LG_UPDATE_PARAMS = ['_planetGeometryType', '_planetMeshQuality']
 export const LG_CLOUDS_SHADOW_HEIGHT = 1e-4
 export const LG_HEIGHT_DIVIDER = 200.0
 

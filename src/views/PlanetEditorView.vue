@@ -1,5 +1,5 @@
 <template>
-  <PlanetInfoControls @data-load="reloadMaterials" />
+  <PlanetInfoControls />
   <PlanetEditorControls />
   <div ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
@@ -114,10 +114,6 @@ function onWindowResize() {
   $se.camera.aspect = window.innerWidth / window.innerHeight
   $se.camera.updateProjectionMatrix()
   $se.renderer.setSize(window.innerWidth, window.innerHeight)
-}
-
-function reloadMaterials() {
-  LG_PARAMETERS.markAllForChange()
 }
 
 function setShaderMaterialUniform(mat: CustomShaderMaterial | THREE.ShaderMaterial, uname: string, uvalue: any): void {

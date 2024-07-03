@@ -124,11 +124,13 @@ export function createClouds(type: GeometryType): THREE.Mesh {
     u_cr_size:        { value: LG_PARAMETERS.cloudsColorRampSize },
   }, THREE.MeshStandardMaterial)
   material.transparent = true
-  material.shadowSide = THREE.FrontSide
+  material.shadowSide = THREE.DoubleSide
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.userData.lens = 'no-occlusion';
   mesh.name = LG_NAME_CLOUDS
+  mesh.receiveShadow = true
+  mesh.castShadow = true
   return mesh
 }
 
@@ -152,6 +154,3 @@ export function createAtmosphere(type: GeometryType, sunPos: THREE.Vector3): THR
   mesh.name = LG_NAME_ATMOSPHERE
   return mesh
 }
-
-// ----------------------------------------------------------------------------------------------------------------------
-// UPDATE FUNCTIONS

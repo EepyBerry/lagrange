@@ -438,6 +438,64 @@ export default class LagrangeParameters extends ChangeTracker {
     this._atmosphereHue = 0
   }
 
+  public reset() {
+    this._planetName = 'New Planet'
+
+    this._lensFlareEnabled = true
+    this._sunLightColor.set(0xfff6e8)
+    this._sunLightIntensity = 10.0
+    this._ambLightColor.set(0xffffff)
+    this._ambLightIntensity = 0.02
+
+    this._planetGeometryType = GeometryType.SPHERE
+    this._planetMeshQuality = 48.0
+    this._planetAxialTilt = 0.0
+    this._planetRotation = 0.0
+    this._planetWaterRoughness = 0.55
+    this._planetWaterMetalness = 0.5
+    this._planetGroundRoughness = 0.8
+    this._planetGroundMetalness = 0.1
+    this._planetWaterLevel = 0.5
+
+    this._planetSurfaceShowBumps = true
+    this._planetSurfaceBumpStrength = 0.0875
+    this._planetSurfaceNoise.frequency = 3.0
+    this._planetSurfaceNoise.amplitude = 0.5
+    this._planetSurfaceNoise.lacunarity = 2.0
+    this._planetSurfaceColorRamp.loadFromSteps([
+      new ColorRampStep(0x061c3f, 0, true),
+      new ColorRampStep(0x0f2851, 0.4),
+      new ColorRampStep(0x1f4178, 0.495),
+      new ColorRampStep(0x2f2e10, 0.5),
+      new ColorRampStep(0x446611, 0.505),
+      new ColorRampStep(0x223b05, 0.65),
+      new ColorRampStep(0x223b05, 1, true),
+    ])
+
+    this._biomePolesEnabled = true
+    this._biomesEnabled = true
+
+    this._cloudsEnabled = true
+    this._cloudsRotation = 0.0
+    this._cloudsHeight = 1.0
+    this._cloudsColor.set(0xffffff)
+    this._cloudsNoise.frequency = 4.0
+    this._cloudsNoise.amplitude = 0.6
+    this._cloudsNoise.lacunarity = 1.75
+    this._cloudsColorRamp.loadFromSteps([
+      new ColorRampStep(0x000000, 0.0, true),
+      new ColorRampStep(0x000000, 0.6),
+      new ColorRampStep(0xbbbbbb, 1.0, true),
+    ])
+
+    this._atmosphereEnabled = true
+    this._atmosphereHeight = 8.0
+    this._atmosphereDensityScale = 2.5
+    this._atmosphereIntensity = 1.3
+    this._atmosphereHue = 0
+    this.markAllForChange()
+  }
+
   public loadData(data: any) {
     if (!data._id) {
       this._id = generateUUID()
@@ -479,5 +537,6 @@ export default class LagrangeParameters extends ChangeTracker {
     this._atmosphereEnabled = data._atmosphereEnabled
     this._atmosphereIntensity = data._atmosphereIntensity
     this._atmosphereHue = data._atmosphereHue
+    this.markAllForChange()
   }
 }

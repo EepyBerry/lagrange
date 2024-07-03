@@ -151,4 +151,9 @@ export class ColorRamp extends ChangeTracker {
       s._isBound
     )))
   }
+
+  public loadFromSteps(data: ColorRampStep[]) {
+    this._steps.splice(0)
+    this._steps.push(...data)
+  }
 }

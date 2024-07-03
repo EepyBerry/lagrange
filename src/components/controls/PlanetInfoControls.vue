@@ -19,6 +19,10 @@
       </button>
     </div>
     <hr>
+    <button class="lg dark" aria-label="Reset planet" @click="resetPlanet">
+      <iconify-icon icon="tabler:reload" width="1.5rem" aria-hidden="true" />
+    </button>
+    <hr>
     <input ref="fileInput" type="file" @change="importPlanetFile" hidden>
     <button class="lg dark" aria-label="Import planet data" @click="openFileDialog">
       <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
@@ -72,6 +76,11 @@ function exportPlanetFile() {
   const gzipParams = pako.deflate(jsonParams)
   const planetFilename = (LG_PARAMETERS.planetName?.replace(/\s/g, '_')) ?? 'Planet'
   saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
+}
+
+function resetPlanet() {
+  LG_PARAMETERS.reset()
+  $emit('dataLoad')
 }
 </script>
 
