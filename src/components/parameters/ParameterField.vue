@@ -12,7 +12,6 @@
         type="number"
         :min="min ?? 0"
         :step="step ?? 1"
-        aria-label="Parameter input"
         :disabled="disabled"
         v-model="lgParam">
       <input v-if="['text', 'checkbox'].includes(type)"
@@ -20,16 +19,14 @@
         :id="id"
         :type="type"
         :min="min ?? 0"
-        aria-label="Parameter input"
         :disabled="disabled"
         v-model="lgParam">
       <InputSliderElement v-if="type === 'range'"
         class="lg"
-        :id="id"
+        :iid="id"
         :min="min ?? 0"
         :max="max ?? 10"
         :step="step ?? 1"
-        aria-label="Parameter input"
         :disabled="disabled"
         v-model="(lgParam as number)" />
     </td>

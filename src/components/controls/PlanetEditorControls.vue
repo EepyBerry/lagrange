@@ -76,7 +76,7 @@
             <ParameterCategory>PBR parameters</ParameterCategory>
             <ParameterField
               v-model="LG_PARAMETERS.planetWaterLevel"
-              id="p-gmetal"
+              id="p-wlevel"
               type="range"
               :step="0.01"
               :min="0"
@@ -137,14 +137,14 @@
             <ParameterCategory>Bump-map</ParameterCategory>
             <ParameterField
               v-model="LG_PARAMETERS.planetSurfaceShowBumps"
-              id="s-bumps"
+              id="s-bump"
               type="checkbox"
             >
               Show bumps
             </ParameterField>
             <ParameterField
               v-model="LG_PARAMETERS.planetSurfaceBumpStrength"
-              id="s-bumps"
+              id="s-bumpstr"
               type="range"
               :step="0.0005"
               :min="0.02"

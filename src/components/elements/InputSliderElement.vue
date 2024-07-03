@@ -3,28 +3,26 @@
     <input
       type="range"
       class="lg"
-      :id="id ?? undefined"
+      :id="iid ?? undefined"
       :min="min ?? 0"
       :max="max ?? 100"
       :step="step ?? 1"
-      aria-label="Input slider"
       :value="vModel"
       @input="set($event)">
     <input
-      :id="id"
+      :aria-labelledby="iid"
       class="lg"
       type="number"
       :min="min ?? 0"
       :max="max ?? 100"
       :step="step ?? 1"
-      aria-label="Parameter input"
       v-model="vModel">
   </div>
 </template>
 
 <script setup lang="ts">
 const vModel = defineModel<number>()
-defineProps<{ id?: string, step?: number, min?: number, max?: number }>()
+defineProps<{ iid?: string, step?: number, min?: number, max?: number }>()
 function set(ev: Event) {
   vModel.value = (ev.target as HTMLInputElement).valueAsNumber
 }
