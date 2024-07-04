@@ -27,6 +27,7 @@
   "dependencies": {
     "@floating-ui/vue": "^1.0.6",
     "@unhead/vue": "^1.9.14",
+    "dexie": "^4.0.7",
     "file-saver": "^2.0.5",
     "iconify-icon": "^2.1.0",
     "pako": "^2.1.0",

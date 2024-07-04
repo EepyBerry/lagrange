@@ -1,10 +1,8 @@
 <template>
   <table>
-    <tbody>
-      <slot>
-        <tr><td>Add parameters here</td></tr>
-      </slot>
-    </tbody>
+    <slot>
+      <tr><td>Add parameters here</td></tr>
+    </slot>
   </table>
 </template>
 <style scoped lang="scss">

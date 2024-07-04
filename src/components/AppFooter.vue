@@ -6,7 +6,7 @@
         <iconify-icon class="link-icon" icon="mingcute:right-line" width="1.5rem" aria-hidden="true" />
       </a>
       <hr width="50%">
-      <button class="lg dark" aria-label="Settings">
+      <button class="lg dark" aria-label="Settings"  @click="settingsDialog!.open()">
         <iconify-icon icon="mingcute:settings-6-line" width="1.5rem" aria-hidden="true" />
       </button>
       <button class="lg dark" aria-label="About Lagrange" @click="infoDialog!.open()">
@@ -15,12 +15,15 @@
     </div>
   </footer>
   <AppInfoDialog ref="infoDialog" />
+  <AppSettingsDialog ref="settingsDialog" />
 </template>
 
 <script setup lang="ts">
 import { ref, type Ref } from 'vue';
 import AppInfoDialog from './AppInfoDialog.vue';
+import AppSettingsDialog from './AppSettingsDialog.vue';
 const infoDialog: Ref<{ open: Function }|null> = ref(null)
+const settingsDialog: Ref<{ open: Function }|null> = ref(null)
 </script>
 
 <style lang="scss">

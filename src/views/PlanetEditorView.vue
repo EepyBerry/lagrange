@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import PlanetEditorControls from '@/components/controls/PlanetEditorControls.vue';
 import PlanetInfoControls from '@/components/controls/PlanetInfoControls.vue'
-import { onMounted, ref, type Ref } from 'vue'
+import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js';
 import * as Lagrange from '@/core/lagrange.service';
@@ -20,6 +20,7 @@ import { createControls } from '@/core/three/component.builder';
 import { useHead } from '@unhead/vue';
 import type { SceneElements } from '@/core/models/scene-elements.model';
 import type { LensFlareEffect } from '@/core/three/lens-flare.effect';
+import { idb, KeyBindingAction } from '@/dexie';
 
 useHead({ meta: [
   { name: 'description', content: 'A procedural planet building app' }
@@ -43,6 +44,10 @@ let _lensFlare: LensFlareEffect
 const VEC_TILT = new THREE.Vector3(-1, 0, 0)
 
 onMounted(() => init())
+onUnmounted(() => {
+  window.removeEventListener('resize', onWindowResize)
+  window.removeEventListener('keydown', handleKeyboardEvent)
+})
 
 function init() {
   const width = window.innerWidth,
@@ -54,7 +59,8 @@ function init() {
   initPlanet()
   initRendering(width, height)
   createControls($se.camera, $se.renderer.domElement)
-  window.addEventListener('resize', onWindowResize);
+  window.addEventListener('resize', onWindowResize)
+  window.addEventListener('keydown', handleKeyboardEvent)
   showSpinner.value = false
 }
 
@@ -99,6 +105,30 @@ function initLighting(): void {
   _sunLight = sun
   _ambLight = $se.scene.getObjectByName(LG_NAME_AMBLIGHT) as THREE.AmbientLight
   _lensFlare = lensFlare
+}
+
+// ------------------------------------------------------------------------------------------------
+
+async function handleKeyboardEvent(event: KeyboardEvent) {
+  const keyBinds = await idb.keyBindings.toArray()
+
+  const kb = keyBinds.find(k => k.key === event.key.toUpperCase())
+  if (!kb) return
+
+  switch (kb.action) {
+    case KeyBindingAction.ToggleLensFlare:
+      LG_PARAMETERS.lensFlareEnabled = !LG_PARAMETERS.lensFlareEnabled
+      break
+    case KeyBindingAction.ToggleClouds:
+      LG_PARAMETERS.cloudsEnabled = !LG_PARAMETERS.cloudsEnabled
+      break
+    case KeyBindingAction.ToggleAtmosphere:
+      LG_PARAMETERS.atmosphereEnabled = !LG_PARAMETERS.atmosphereEnabled
+      break
+    case KeyBindingAction.ToggleBiomes:
+      LG_PARAMETERS.biomesEnabled = !LG_PARAMETERS.biomesEnabled
+      break
+  }
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -34,92 +34,90 @@
   <tr v-show="panelOpen">
     <td colspan="2">
       <table class="panel-table">
-        <tbody>
-          <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
-            <tr>
-              <td class="action">
+        <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
+          <tr>
+            <td class="action">
+              <button
+                v-if="!lgColorRamp?.isBoundStep(step.id) && mode !== 'opacity'"
+                class="lg warn"
+                aria-label="Open color panel"
+                @click="removeStep(step.id)"
+                :disabled="pickerIdOpen === step.id"
+              >
+                <iconify-icon class="icon" icon="mingcute:delete-line" width="1.25rem" aria-hidden="true" />
+              </button>
+            </td>
+            <td>
+              <div class="factor-wrapper">
+                <span></span>
+                <span v-if="lgColorRamp?.isBoundStep(step.id)">{{ step.factor }}</span>
+                <InputSliderElement v-else
+                  ref="htmlFactorInputs"
+                  class="lg fw"
+                  :id="step.id"
+                  :min="0.001"
+                  :max="0.999"
+                  :step="0.001"
+                  aria-label="Parameter input"
+                  v-model="step.factor"
+                  @input="updateStepFactor(step.id, $event)"
+                />
+                <!-- <input
+                  v-else
+                  ref="htmlFactorInputs"
+                  class="lg"
+                  type="number"
+                  min="0.001"
+                  max="0.999"
+                  step="0.001"
+                  :value="step.factor"
+                  @input="updateStepFactor(step.id, $event)"
+                > -->
+              </div>
+            </td>
+            <td>
+              <div class="color-wrapper">
+                <span class="current-color" :style="{ backgroundColor: `#${step.color.getHexString()}` }"></span>
                 <button
-                  v-if="!lgColorRamp?.isBoundStep(step.id) && mode !== 'opacity'"
-                  class="lg warn"
+                  class="lg edit"
+                  :class="{ 'menu-expanded': pickerIdOpen === step.id }"
                   aria-label="Open color panel"
-                  @click="removeStep(step.id)"
-                  :disabled="pickerIdOpen === step.id"
+                  @click="togglePicker(step.id)"
                 >
-                  <iconify-icon class="icon" icon="mingcute:delete-line" width="1.25rem" aria-hidden="true" />
-                </button>
-              </td>
-              <td>
-                <div class="factor-wrapper">
-                  <span></span>
-                  <span v-if="lgColorRamp?.isBoundStep(step.id)">{{ step.factor }}</span>
-                  <InputSliderElement v-else
-                    ref="htmlFactorInputs"
-                    class="lg fw"
-                    :id="step.id"
-                    :min="0.001"
-                    :max="0.999"
-                    :step="0.001"
-                    aria-label="Parameter input"
-                    v-model="step.factor"
-                    @input="updateStepFactor(step.id, $event)"
-                  />
-                  <!-- <input
-                    v-else
-                    ref="htmlFactorInputs"
-                    class="lg"
-                    type="number"
-                    min="0.001"
-                    max="0.999"
-                    step="0.001"
-                    :value="step.factor"
-                    @input="updateStepFactor(step.id, $event)"
-                  > -->
-                </div>
-              </td>
-              <td>
-                <div class="color-wrapper">
-                  <span class="current-color" :style="{ backgroundColor: `#${step.color.getHexString()}` }"></span>
-                  <button
-                    class="lg edit"
-                    :class="{ 'menu-expanded': pickerIdOpen === step.id }"
-                    aria-label="Open color panel"
-                    @click="togglePicker(step.id)"
-                  >
-                    <iconify-icon v-if="pickerIdOpen === step.id" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
-                    <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr v-show="pickerIdOpen === step.id">
-              <td colspan="4" class="picker-wrapper">
-                <ColorPicker
-                  alpha-channel="hide"
-                  default-format="hex"
-                  :color="'#'+step.color.getHexString()"
-                  @color-change="updateStepColor(step.id, $event.colors.hex)"
-                >
-                  <template #hue-range-input-label>
-                    <span class="visually-hidden">Hue</span>
-                  </template>
-                </ColorPicker>
-              </td>
-            </tr>
-          </template>
-          <tr v-if="mode === 'color' || !mode">
-            <td colspan="4">
-              <div class="add-step">
-                <button class="lg" @click="addStep()" aria-label="Add color step">
-                  <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
-                </button>
-                <iconify-icon class="icon" icon="ph:dot-outline-fill" width="1.25rem" aria-hidden="true" />
-                <button class="lg" @click="sortSteps()" aria-label="Sort color steps">
-                  <iconify-icon class="icon" icon="mingcute:numbers-09-sort-ascending-line" width="1.25rem" aria-hidden="true" />
+                  <iconify-icon v-if="pickerIdOpen === step.id" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+                  <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
                 </button>
               </div>
             </td>
           </tr>
-        </tbody>
+          <tr v-show="pickerIdOpen === step.id">
+            <td colspan="4" class="picker-wrapper">
+              <ColorPicker
+                alpha-channel="hide"
+                default-format="hex"
+                :color="'#'+step.color.getHexString()"
+                @color-change="updateStepColor(step.id, $event.colors.hex)"
+              >
+                <template #hue-range-input-label>
+                  <span class="visually-hidden">Hue</span>
+                </template>
+              </ColorPicker>
+            </td>
+          </tr>
+        </template>
+        <tr v-if="mode === 'color' || !mode">
+          <td colspan="4">
+            <div class="add-step">
+              <button class="lg" @click="addStep()" aria-label="Add color step">
+                <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
+              </button>
+              <iconify-icon class="icon" icon="ph:dot-outline-fill" width="1.25rem" aria-hidden="true" />
+              <button class="lg" @click="sortSteps()" aria-label="Sort color steps">
+                <iconify-icon class="icon" icon="mingcute:numbers-09-sort-ascending-line" width="1.25rem" aria-hidden="true" />
+              </button>
+            </div>
+          </td>
+        </tr>
       </table>
     </td>
   </tr>

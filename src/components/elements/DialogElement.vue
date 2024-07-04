@@ -1,16 +1,18 @@
 <template>
   <dialog ref="dialog" class="lg">
-    <div class="dialog-header">
-      <p class="dialog-title">
-        <slot name="title"></slot>
-      </p>
-      <button @click="close" class="lg icon-button dialog-close" aria-label="Close dialog">
-        <iconify-icon icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
-      </button>
-    </div>
-    <div class="dialog-content">
-      <slot name="content"></slot>
-    </div>
+    <section>
+      <header class="dialog-header">
+        <p class="dialog-title" role="heading">
+          <slot name="title"></slot>
+        </p>
+        <button @click="close" class="lg icon-button dialog-close" aria-label="Close dialog">
+          <iconify-icon icon="mingcute:close-line" width="1.5rem" aria-hidden="true" />
+        </button>
+      </header>
+      <div class="dialog-content">
+        <slot name="content"></slot>
+      </div>
+    </section>
   </dialog>
 </template>
 
@@ -26,7 +28,7 @@ function close() {
   dialog.value!.close()
 }
 
-defineExpose({ open })
+defineExpose({ open, close })
 </script>
 
 <style scoped lang="scss">

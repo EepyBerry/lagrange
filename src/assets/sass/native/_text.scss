@@ -1,3 +1,4 @@
+// headlines
 h1, h2, h3, h4, h5, h6 {
   line-height: 1;
   font-family: Poppins;
@@ -9,10 +10,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 h3 { font-size: 1.125rem; }
 
+// sup
 sup {
   font-family: monospace;
 }
 
+// links
 a:not(.dark) {
   color: var(--lg-link);
 }
@@ -20,6 +23,13 @@ a:not(.dark):visited {
   color: var(--lg-link-visited);
 }
 
+// lists
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+// custom classes
 .highlight {
   font-weight: 600;
 }

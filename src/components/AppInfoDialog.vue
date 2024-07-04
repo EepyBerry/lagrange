@@ -68,6 +68,7 @@ defineExpose({ open: () => dialogRef.value?.open() })
       align-items: flex-start;
       justify-content: flex-end;
       margin-top: 1rem;
+      font-size: 1rem;
     }
     .about-tech {
       grid-area: tech;
