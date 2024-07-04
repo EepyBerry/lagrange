@@ -4,11 +4,13 @@
       <div class="settings-grid">
         <div class="settings-theme">
           <h3>Theme</h3>
-          
+          <ParameterTable>
+          </ParameterTable>
         </div>
         <div class="settings-keybinds">
           <h3>Key bindings</h3>
-          <table>
+          <ParameterTable>
+            <ParameterCategory>Editor</ParameterCategory>
             <tr v-for="kb of keyBinds" :key="kb.action">
               <td>
                 <div class="keybinds-label">
@@ -25,7 +27,7 @@
                 </button>
               </td>
             </tr>
-          </table>
+          </ParameterTable>
         </div>
       </div>
     </template>
@@ -35,8 +37,10 @@
 <script setup lang="ts">
 import { KeyBindingAction, idb, type IDBKeyBinding } from '@/dexie';
 import DialogElement from './elements/DialogElement.vue';
-import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue';
+import { onMounted, onUnmounted, ref, type Ref } from 'vue';
 import { LG_EDITOR_INPUTS } from '@/core/globals';
+import ParameterCategory from './parameters/ParameterCategory.vue';
+import ParameterTable from './parameters/ParameterTable.vue';
 
 const dialogRef: Ref<{ open: Function, close: Function }|null> = ref(null)
 defineExpose({ open: () => dialogRef.value?.open() })
@@ -117,15 +121,22 @@ function getIcon(action: KeyBindingAction) {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.75rem;
-    }
-    .settings-keybinds {
+
       table {
         width: 100%;
+        height: 100%;
+        border-collapse: separate;
         border-spacing: 0.5rem 0.125rem;
-        padding: 0.375rem 0;
+        padding-bottom: 0.375rem;
         border-radius: 4px;
         border: 1px solid var(--lg-input);
       }
+    }
+    .settings-theme {
+      grid-area: theme;
+    }
+    .settings-keybinds {
+      grid-area: binds;
       .keybinds-label {
         display: flex;
         align-items: center;
@@ -149,7 +160,23 @@ function getIcon(action: KeyBindingAction) {
 
 @media screen and (max-width: 767px) {
   #dialog-settings {
+    .settings-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto;
+      grid-template-areas:
+        "theme"
+        "binds";
 
+      .settings-keybinds {
+        display: none;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 567px) {
+  #dialog-settings {
+    width: 100%;
   }
 }
 </style>
