@@ -15,7 +15,7 @@ defineProps<{ load: boolean }>()
     display: flex;
     justify-content: center;
     align-items: center;
-    //background-color: var(--lg-overlay);
+    //background: var(--lg-overlay);
     backdrop-filter: brightness(50%);
     z-index: 5;
 

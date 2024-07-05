@@ -104,7 +104,7 @@ function resetPlanet() {
     border-color: var(--lg-accent);
   }
   .name-wrapper {
-    background-color: var(--lg-primary);
+    background: var(--lg-primary);
     border: 1px solid var(--lg-accent);
     border-radius: 4px;
     height: 2.875rem;

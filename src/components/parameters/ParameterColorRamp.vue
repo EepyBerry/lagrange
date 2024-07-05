@@ -224,7 +224,7 @@ function removeStep(id: string) {
     bottom: 0;
     border-left: 1px solid var(--lg-accent);
     border-right: 1px solid var(--lg-accent);
-    background-color: white;
+    background: white;
     width: 4px;
   }
 }

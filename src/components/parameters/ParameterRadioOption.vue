@@ -28,7 +28,7 @@ function select() {
 
 <style scoped lang="scss">
 .radio-button {
-  background-color: var(--lg-button);
+  background: var(--lg-button);
   color: var(--lg-text);
   padding: 0 0.5rem;
   border: none;
@@ -39,10 +39,10 @@ function select() {
   cursor: pointer;
 }
 .radio-button.selected {
-  background-color: var(--lg-button-active);
+  background: var(--lg-button-active);
 }
 .radio-button:hover {
-  background-color: var(--lg-button-hover);
+  background: var(--lg-button-hover);
 }
 
 input.lg[type=radio] { display: none; }

@@ -1,5 +1,5 @@
 button.lg, a.lg {
-  background-color: var(--lg-button);
+  background: var(--lg-button);
   border: none;
   border-radius: 4px;
   color: white;
@@ -15,19 +15,19 @@ button.lg, a.lg {
 }
 button.lg:hover {
   cursor: pointer;
-  background-color: var(--lg-button-hover);
+  background: var(--lg-button-hover);
 }
 button.lg:active {
   cursor: pointer;
-  background-color: var(--lg-button-active);
+  background: var(--lg-button-active);
 }
 button.lg:disabled {
   cursor: not-allowed;
-  background-color: var(--lg-button-disabled);
+  background: var(--lg-button-disabled);
   color: var(--lg-text-disabled);
 }
 button.lg.menu-expanded {
-  background-color: var(--lg-button-menu-expanded);
+  background: var(--lg-button-menu-expanded);
 }
 
 button.lg.dark, a.lg.dark {
@@ -47,18 +47,18 @@ button.lg.dark, a.lg.dark {
   }
 }
 button.lg.dark:hover, a.lg.dark:hover {
-  background-color: var(--lg-button-active);
+  background: var(--lg-button-active);
 }
 
 button.lg.icon-button {
-  background-color: transparent;
+  background: transparent;
 }
 button.lg.icon-button:hover {
-  background-color: transparent;
+  background: transparent;
   filter: brightness(80%);
 }
 button.lg.icon-button:active {
-  background-color: transparent;
+  background: transparent;
   filter: brightness(60%);
 }
 button.lg.icon-button:disabled {

@@ -36,7 +36,7 @@ defineExpose({ open, close })
 dialog[open].lg {
   position: fixed;
 
-  background-color: var(--lg-primary);
+  background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
   border-radius: 4px;
   padding: 1rem;
@@ -70,7 +70,7 @@ dialog[open].lg {
   }
 }
 dialog[open].lg::backdrop {
-  background-color: rgb(0 0 0 / 37.5%);
+  background: rgb(0 0 0 / 37.5%);
 }
 
 @media screen and (max-width:767px) {

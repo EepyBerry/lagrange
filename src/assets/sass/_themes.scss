@@ -24,9 +24,9 @@
   --lg-warn-active: #912a0b;
 }
 :root[data-theme='supernova'] {
-  --lg-primary: #07060f;
+  --lg-primary: linear-gradient(to bottom, #0e081a 0%, #06030c 100%);
   --lg-panel: #0a050e;
-  --lg-accent: #2b2638;
+  --lg-accent: #302647;
   --lg-input: #1d1722;
   --lg-input-focus: #272230;
   --lg-overlay: #2f333e44;
@@ -47,9 +47,9 @@
   --lg-warn-active: #910b43;
 }
 :root[data-theme='voyager'] {
-  --lg-primary: #0c0a05;
+  --lg-primary: repeating-linear-gradient(to bottom, #0c0903, #0c0903 0.375rem, #140d02 0.5rem);
   --lg-panel: #0f0b05;
-  --lg-accent: #3a2c17;
+  --lg-accent: #3b2809;
   --lg-input: #181108;
   --lg-input-focus: #2c2415;
   --lg-overlay: #3e392f44;
@@ -75,13 +75,13 @@
 
 .lg.warn {
   background: var(--lg-warn);
-  background-color: var(--lg-warn);
+  background: var(--lg-warn);
 }
 .lg.warn:not(:disabled):hover {
   background: var(--lg-warn-hover);
-  background-color: var(--lg-warn-hover);
+  background: var(--lg-warn-hover);
 }
 .lg.warn:not(:disabled):active {
   background: var(--lg-warn-active);
-  background-color: var(--lg-warn-active);
+  background: var(--lg-warn-active);
 }
