@@ -14,14 +14,21 @@ interface IDBKeyBinding {
   key: string
 }
 
-const idb = new Dexie('LagrangeIDB') as Dexie & {
-  keyBindings: EntityTable<IDBKeyBinding, 'id'>
+interface IDBSettings {
+  id: number
+  theme: string
+}
+
+const idb = new Dexie('LagrangeIDB', { autoOpen: true }) as Dexie & {
+  keyBindings: EntityTable<IDBKeyBinding, 'id'>,
+  settings: EntityTable<IDBSettings, 'id'>
 };
 
 // Schema declaration:
 idb.version(1).stores({
-  keyBindings: '++id, action'
+  keyBindings: '++id, action',
+  settings: '++id'
 });
 
-export type { IDBKeyBinding };
+export type { IDBKeyBinding, IDBSettings };
 export { idb, KeyBindingAction };

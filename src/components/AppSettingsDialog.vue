@@ -8,7 +8,6 @@
         <div class="settings-theme">
           <h3>Graphics</h3>
           <ParameterTable>
-            <ParameterCategory>General</ParameterCategory>
             <ParameterRadio>
               <template v-slot:title>
                 Choose theme to use:
@@ -27,7 +26,7 @@
                 name="theme-select"
                 :id="'1'"
                 value="supernova"
-                icon="mingcute:boom-line"
+                icon="ph:star-four"
                 ariaLabel="OwO theme"
               >
                 Supernova
@@ -49,7 +48,6 @@
         <div class="settings-keybinds">
           <h3>Key bindings</h3>
           <ParameterTable>
-            <ParameterCategory>Editor</ParameterCategory>
             <tr v-for="kb of keyBinds" :key="kb.action">
               <td>
                 <div class="keybind">
@@ -72,65 +70,51 @@
 </template>
 
 <script setup lang="ts">
-import { KeyBindingAction, idb, type IDBKeyBinding } from '@/dexie';
+import { KeyBindingAction, idb, type IDBKeyBinding, type IDBSettings } from '@/dexie';
 import DialogElement from './elements/DialogElement.vue';
-import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue';
+import { onMounted, ref, watch, type Ref } from 'vue';
 import { LG_EDITOR_INPUTS } from '@/core/globals';
-import ParameterCategory from './parameters/ParameterCategory.vue';
 import ParameterTable from './parameters/ParameterTable.vue';
 import ParameterRadio from './parameters/ParameterRadio.vue';
 import ParameterRadioOption from './parameters/ParameterRadioOption.vue';
-import type { AppGraphicsSettings } from '@/core/types';
+import * as DexieUtils from '@/utils/dexie-utils';
 
 const dialogRef: Ref<{ open: Function, close: Function }|null> = ref(null)
 defineExpose({ open: () => dialogRef.value?.open() })
 
-const appGraphicsSettings: Ref<AppGraphicsSettings> = ref({
-  theme: 'default'
-})
+const appGraphicsSettings: Ref<IDBSettings> = ref({ id: 0, theme: '' })
 const keyBinds: Ref<IDBKeyBinding[]> = ref([])
 
 onMounted(async () => {
-  await idb.open()
-  const kb = await idb.keyBindings.toArray()
+  let settings = await idb.settings.limit(1).toArray()
+  if (settings?.length === 0) {
+    await DexieUtils.addDefaultSettings()
+    settings = await idb.settings.limit(1).toArray()
+  }
+  appGraphicsSettings.value = settings[0]
+  console.log(appGraphicsSettings.value)
+
+  let kb = await idb.keyBindings.limit(4).toArray()
   if (kb.length === 0) {
     console.warn('No keybinds found in IndexedDB, adding defaults')
-    await addDefaults()
-    const inserted = await idb.keyBindings.toArray()
-    keyBinds.value.push(...inserted)
-  } else {
+    await DexieUtils.addDefaultKeyBindings()
+    kb = await idb.keyBindings.toArray()
     keyBinds.value.push(...kb)
   }
+  keyBinds.value.push(...kb)
 })
-onUnmounted(async () => idb.close())
-watch(appGraphicsSettings.value, (a11y) => {
-  setTheme(a11y.theme)
-})
+watch(() => appGraphicsSettings.value, () => {
+  setTheme()
+}, { deep: true })
 
-async function addDefaults(): Promise<any> {
-  return idb.keyBindings.bulkAdd([
-    { action: KeyBindingAction.ToggleLensFlare,   key: 'L' },
-    { action: KeyBindingAction.ToggleBiomes,      key: 'B' },
-    { action: KeyBindingAction.ToggleClouds,      key: 'C' },
-    { action: KeyBindingAction.ToggleAtmosphere,  key: 'A' },
-  ]).then(
-    async () => {
-      console.debug('(LG:Dexie) Keybinds defaults inserted')
-      const binds = await idb.keyBindings.toArray()
-      LG_EDITOR_INPUTS.splice(0)
-      LG_EDITOR_INPUTS.push(...binds)
-    },
-    () => console.debug('(LG:Dexie) Keybinds defaults failed to insert')
-  ).catch((e) => console.error('(LG:Dexie) Keybinds defaults failed to insert', e));
-}
-
-function setTheme(theme: string) {
-  document.documentElement.setAttribute('data-theme', theme)
+async function setTheme() {
+  document.documentElement.setAttribute('data-theme', appGraphicsSettings.value!.theme)
+  await idb.settings.update(appGraphicsSettings.value!.id, { theme: appGraphicsSettings.value!.theme })
 }
 
 function saveInput(kb: IDBKeyBinding) {
   idb.keyBindings
-    .put(kb)
+    .update(kb.id, { key: kb.key })
     .then(async () => {
       const bind = await idb.keyBindings.get(kb.id)
       const index = LG_EDITOR_INPUTS.findIndex(kb => kb.id === bind!.id)

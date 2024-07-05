@@ -4,7 +4,3 @@ export enum GeometryType {
 export enum NoiseType {
   FBM, PERLIN
 }
-
-export interface AppGraphicsSettings {
-  theme: string
-}

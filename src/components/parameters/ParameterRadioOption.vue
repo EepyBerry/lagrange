@@ -5,9 +5,10 @@
     :id="`${name}-${id}`"
     :name="name"
     :value="value"
+    :checked="value === lgParam"
     v-model="lgParam">
   
-  <button class="lg radio-button" :class="{selected: htmlRadio?.checked }" @click="select()" :aria-label="ariaLabel">
+  <button class="lg radio-button" :class="{ selected: value === lgParam }" @click="select()" :aria-label="ariaLabel">
     <iconify-icon v-if="icon" :icon="icon" width="1.25rem" aria-hidden="true" />
     <slot></slot>
   </button>
