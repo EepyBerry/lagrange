@@ -1,5 +1,5 @@
 <template>
-  <DialogElement ref="dialogRef" id="dialog-about">
+  <DialogElement ref="dialogRef" id="dialog-about" :showTitle="false">
     <template v-slot:content>
       <div class="about-grid">
         <AppLogo />

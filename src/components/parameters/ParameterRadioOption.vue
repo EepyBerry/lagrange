@@ -8,7 +8,8 @@
     v-model="lgParam">
   
   <button class="lg radio-button" :class="{selected: htmlRadio?.checked }" @click="select()" :aria-label="ariaLabel">
-    <iconify-icon :icon="icon" width="1.25rem" aria-hidden="true" />
+    <iconify-icon v-if="icon" :icon="icon" width="1.25rem" aria-hidden="true" />
+    <slot></slot>
   </button>
 </template>
 
@@ -28,10 +29,12 @@ function select() {
 .radio-button {
   background-color: var(--lg-button);
   color: var(--lg-text);
+  padding: 0 0.5rem;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.25rem;
   cursor: pointer;
 }
 .radio-button.selected {

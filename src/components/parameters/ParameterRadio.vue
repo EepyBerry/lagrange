@@ -1,9 +1,9 @@
 <template>
   <tr class="field">
-    <td>
-      <slot name="title">ParameterName</slot>
-    </td>
-    <td>
+    <td colspan="2">
+      <div class="radio-label">
+        <slot name="title">ParameterName</slot>
+      </div>
       <div class="radio-options">
         <slot name="options"></slot>
       </div>
@@ -29,6 +29,7 @@ tr.field {
 
   :deep(.radio-button) {
     border-radius: 0;
+    flex-grow: 1;
   }
   & > :deep(.radio-button:first-of-type) {
     border-top-left-radius: 4px;

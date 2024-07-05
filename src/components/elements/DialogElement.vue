@@ -2,9 +2,9 @@
   <dialog ref="dialog" class="lg">
     <section>
       <header class="dialog-header">
-        <p class="dialog-title" role="heading">
+        <h2 v-if="showTitle" class="dialog-title">
           <slot name="title"></slot>
-        </p>
+        </h2>
         <button @click="close" class="lg icon-button dialog-close" aria-label="Close dialog">
           <iconify-icon icon="mingcute:close-line" width="1.5rem" aria-hidden="true" />
         </button>
@@ -20,6 +20,7 @@
 import { ref, type Ref } from 'vue';
 
 const dialog: Ref<HTMLDialogElement|null> = ref(null)
+defineProps<{ showTitle: boolean }>()
 
 function open() {
   dialog.value!.showModal()
@@ -55,7 +56,7 @@ dialog[open].lg {
 
     .dialog-title {
       font-weight: 600;
-      font-size: 1.125rem;
+      padding-bottom: 1rem;
     }
 
     button.dialog-close {

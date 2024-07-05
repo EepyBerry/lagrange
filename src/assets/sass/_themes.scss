@@ -23,6 +23,55 @@
   --lg-warn-hover: #a53614;
   --lg-warn-active: #912a0b;
 }
+:root[data-theme='supernova'] {
+  --lg-primary: #07060f;
+  --lg-panel: #0a050e;
+  --lg-accent: #2b2638;
+  --lg-input: #1d1722;
+  --lg-input-focus: #272230;
+  --lg-overlay: #2f333e44;
+  --lg-contrast: #427758;
+  --lg-contrast-focus: #64a17d;
+
+  --lg-button: #3f374e;
+  --lg-button-hover: #352d41;
+  --lg-button-active: var(--lg-accent);
+  --lg-button-disabled: #3b3b3b;
+  --lg-button-menu-expanded: var(--lg-contrast);
+
+  --lg-link: var(--lg-contrast-focus);
+  --lg-link-visited: var(--lg-contrast-focus);
+
+  --lg-warn: #b61a4e;
+  --lg-warn-hover: #a5144c;
+  --lg-warn-active: #910b43;
+}
+:root[data-theme='terminal'] {
+  --lg-primary: #000000;
+  --lg-panel: #050e06;
+  --lg-accent: #203a1b;
+  --lg-input: #172218;
+  --lg-input-focus: #223024;
+  --lg-overlay: #2f333e44;
+  --lg-contrast: #36792e;
+  --lg-contrast-focus: #46a03e;
+
+  --lg-button: #2c5224;
+  --lg-button-hover: #223f1b;
+  --lg-button-active: var(--lg-accent);
+  --lg-button-disabled: #313131;
+  --lg-button-menu-expanded: var(--lg-contrast);
+
+  --lg-link: var(--lg-contrast-focus);
+  --lg-link-visited: var(--lg-contrast-focus);
+
+  --lg-warn: #b61a4e;
+  --lg-warn-hover: #a5144c;
+  --lg-warn-active: #910b43;
+
+  // Special case for terminal theme
+  body * {font-family: Jetbrains Mono, monospace;}
+}
 
 .lg.warn {
   background: var(--lg-warn);
