@@ -46,18 +46,18 @@
   --lg-warn-hover: #a5144c;
   --lg-warn-active: #910b43;
 }
-:root[data-theme='terminal'] {
+:root[data-theme='voyager'] {
   --lg-primary: #000000;
-  --lg-panel: #050e06;
-  --lg-accent: #203a1b;
-  --lg-input: #172218;
-  --lg-input-focus: #223024;
-  --lg-overlay: #2f333e44;
-  --lg-contrast: #36792e;
-  --lg-contrast-focus: #46a03e;
+  --lg-panel: #0f0b05;
+  --lg-accent: #3b2d17;
+  --lg-input: #180f06;
+  --lg-input-focus: #2c2415;
+  --lg-overlay: #3e392f44;
+  --lg-contrast: #86672c;
+  --lg-contrast-focus: #b9913a;
 
-  --lg-button: #2c5224;
-  --lg-button-hover: #223f1b;
+  --lg-button: #4e3c1a;
+  --lg-button-hover: #463413;
   --lg-button-active: var(--lg-accent);
   --lg-button-disabled: #313131;
   --lg-button-menu-expanded: var(--lg-contrast);
@@ -68,9 +68,9 @@
   --lg-warn: #b82222;
   --lg-warn-hover: #a51414;
   --lg-warn-active: #910b0b;
-
-  // Special case for terminal theme
-  body * {font-family: Jetbrains Mono, monospace;}
+}
+:root[data-font='monospace'] {
+  body * { font-family: Jetbrains Mono, monospace; }
 }
 
 .lg.warn {

@@ -14,34 +14,42 @@
               </template>
               <template v-slot:options>
                 <ParameterRadioOption v-model="appGraphicsSettings.theme"
-                name="theme-select"
-                :id="'0'"
-                value="default"
-                icon="mingcute:planet-line"
-                ariaLabel="Default theme"
-              >
-                Default
-              </ParameterRadioOption>
-              <ParameterRadioOption v-model="appGraphicsSettings.theme"
-                name="theme-select"
-                :id="'1'"
-                value="supernova"
-                icon="ph:star-four"
-                ariaLabel="OwO theme"
-              >
-                Supernova
-              </ParameterRadioOption>
-              <ParameterRadioOption v-model="appGraphicsSettings.theme"
-                name="theme-select"
-                :id="'1'"
-                value="terminal"
-                icon="mingcute:terminal-line"
-                ariaLabel="OwO theme"
-              >
-                Terminal
-              </ParameterRadioOption>
+                  name="theme-select"
+                  :id="'0'"
+                  value="default"
+                  icon="mingcute:planet-line"
+                  ariaLabel="Default theme"
+                >
+                  Default
+                </ParameterRadioOption>
+                <ParameterRadioOption v-model="appGraphicsSettings.theme"
+                  name="theme-select"
+                  :id="'1'"
+                  value="supernova"
+                  icon="ph:star-four"
+                  ariaLabel="Supernova theme"
+                >
+                  Supernova
+                </ParameterRadioOption>
+                <ParameterRadioOption v-model="appGraphicsSettings.theme"
+                  name="theme-select"
+                  :id="'1'"
+                  value="voyager"
+                  icon="hugeicons:satellite-02"
+                  ariaLabel="Voyager theme"
+                >
+                  Voyager
+                </ParameterRadioOption>
               </template>
             </ParameterRadio>
+            <ParameterDivider />
+            <ParameterField
+              id="settings-font"
+              type="checkbox"
+              v-model="appGraphicsSettings.font"
+            >
+              Enable monospace font:
+            </ParameterField>
           </ParameterTable>
         </div>
         <hr>
@@ -78,11 +86,13 @@ import ParameterTable from './parameters/ParameterTable.vue';
 import ParameterRadio from './parameters/ParameterRadio.vue';
 import ParameterRadioOption from './parameters/ParameterRadioOption.vue';
 import * as DexieUtils from '@/utils/dexie-utils';
+import ParameterField from './parameters/ParameterField.vue';
+import ParameterDivider from './parameters/ParameterDivider.vue';
 
 const dialogRef: Ref<{ open: Function, close: Function }|null> = ref(null)
 defineExpose({ open: () => dialogRef.value?.open() })
 
-const appGraphicsSettings: Ref<IDBSettings> = ref({ id: 0, theme: '' })
+const appGraphicsSettings: Ref<IDBSettings> = ref({ id: 0, theme: '', font: '' })
 const keyBinds: Ref<IDBKeyBinding[]> = ref([])
 
 onMounted(async () => {
@@ -104,12 +114,16 @@ onMounted(async () => {
   keyBinds.value.push(...kb)
 })
 watch(() => appGraphicsSettings.value, () => {
-  setTheme()
+  updateSettings()
 }, { deep: true })
 
-async function setTheme() {
+async function updateSettings() {
   document.documentElement.setAttribute('data-theme', appGraphicsSettings.value!.theme)
-  await idb.settings.update(appGraphicsSettings.value!.id, { theme: appGraphicsSettings.value!.theme })
+  document.documentElement.setAttribute('data-font', appGraphicsSettings.value!.font ? 'monospace' : 'default')
+  await idb.settings.update(appGraphicsSettings.value!.id, {
+    theme: appGraphicsSettings.value!.theme,
+    font: appGraphicsSettings.value!.font
+  })
 }
 
 function saveInput(kb: IDBKeyBinding) {
