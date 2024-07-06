@@ -434,7 +434,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._atmosphereEnabled = true
     this._atmosphereHeight = 8.0
     this._atmosphereDensityScale = 2.5
-    this._atmosphereIntensity = 1.3
+    this._atmosphereIntensity = 1.15
     this._atmosphereHue = 0
   }
 
@@ -491,7 +491,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._atmosphereEnabled = true
     this._atmosphereHeight = 8.0
     this._atmosphereDensityScale = 2.5
-    this._atmosphereIntensity = 1.3
+    this._atmosphereIntensity = 1.15
     this._atmosphereHue = 0
     this.markAllForChange()
   }

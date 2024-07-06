@@ -102,7 +102,6 @@ onMounted(async () => {
     settings = await idb.settings.limit(1).toArray()
   }
   appGraphicsSettings.value = settings[0]
-  console.log(appGraphicsSettings.value)
 
   let kb = await idb.keyBindings.limit(4).toArray()
   if (kb.length === 0) {
@@ -201,6 +200,7 @@ function getIcon(action: KeyBindingAction) {
         justify-content: center;
         min-width: 4rem;
         min-height: 2rem;
+        background: var(--lg-panel);
         border: 1px solid var(--lg-accent);
         border-radius: 0.25rem;
         font-weight: 600;

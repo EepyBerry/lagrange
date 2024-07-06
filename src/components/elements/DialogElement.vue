@@ -17,15 +17,18 @@
 </template>
 
 <script setup lang="ts">
+import { EventBus } from '@/core/window-event-bus';
 import { ref, type Ref } from 'vue';
 
 const dialog: Ref<HTMLDialogElement|null> = ref(null)
 defineProps<{ showTitle: boolean }>()
 
 function open() {
+  EventBus.disableWindowEventListener('keydown')
   dialog.value!.showModal()
 }
 function close() {
+  EventBus.enableWindowEventListener('keydown')
   dialog.value!.close()
 }
 

@@ -24,6 +24,7 @@ import AppInfoDialog from './AppInfoDialog.vue';
 import AppSettingsDialog from './AppSettingsDialog.vue';
 const infoDialog: Ref<{ open: Function }|null> = ref(null)
 const settingsDialog: Ref<{ open: Function }|null> = ref(null)
+
 </script>
 
 <style lang="scss">

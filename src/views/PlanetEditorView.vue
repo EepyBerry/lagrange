@@ -21,6 +21,7 @@ import { useHead } from '@unhead/vue';
 import type { SceneElements } from '@/core/models/scene-elements.model';
 import type { LensFlareEffect } from '@/core/three/lens-flare.effect';
 import { idb, KeyBindingAction } from '@/dexie';
+import { EventBus } from '@/core/window-event-bus';
 
 useHead({ meta: [
   { name: 'description', content: 'A procedural planet building app' }
@@ -45,8 +46,8 @@ const VEC_TILT = new THREE.Vector3(-1, 0, 0)
 
 onMounted(() => init())
 onUnmounted(() => {
-  window.removeEventListener('resize', onWindowResize)
-  window.removeEventListener('keydown', handleKeyboardEvent)
+  EventBus.deregisterWindowEventListener('resize', onWindowResize)
+  EventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
 })
 
 function init() {
@@ -59,8 +60,8 @@ function init() {
   initPlanet()
   initRendering(width, height)
   createControls($se.camera, $se.renderer.domElement)
-  window.addEventListener('resize', onWindowResize)
-  window.addEventListener('keydown', handleKeyboardEvent)
+  EventBus.registerWindowEventListener('resize', onWindowResize)
+  EventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
   showSpinner.value = false
 }
 
@@ -111,7 +112,6 @@ function initLighting(): void {
 
 async function handleKeyboardEvent(event: KeyboardEvent) {
   const keyBinds = await idb.keyBindings.toArray()
-
   const kb = keyBinds.find(k => k.key === event.key.toUpperCase())
   if (!kb) return
 
