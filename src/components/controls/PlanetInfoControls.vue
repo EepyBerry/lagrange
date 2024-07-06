@@ -19,7 +19,7 @@
       </button>
     </div>
     <hr>
-    <button class="lg dark" aria-label="Reset planet" @click="resetPlanet">
+    <button class="lg dark" aria-label="Reset planet" @click="resetDialog?.open()">
       <iconify-icon icon="tabler:reload" width="1.5rem" aria-hidden="true" />
     </button>
     <hr>
@@ -30,21 +30,30 @@
     <button class="lg dark" aria-label="Export planet data" @click="exportPlanetFile">
       <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
     </button>
+    <AppResetConfirmDialog ref="resetDialog" @confirm="resetPlanet" />
   </div>
 </template>
 
 <script setup lang="ts">
+import AppResetConfirmDialog from '../dialogs/AppResetConfirmDialog.vue'
 import { LG_PARAMETERS } from '@core/globals'
 import pako from 'pako';
 import { saveAs } from 'file-saver';
 import { ref, type Ref } from 'vue';
+import { EventBus } from '@/core/window-event-bus';
 
+const resetDialog: Ref<{ open: Function }|null> = ref(null)
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const editMode: Ref<boolean> = ref(false)
 const $emit = defineEmits(['dataLoad'])
 
 function toggleEditMode()  {
   editMode.value = !editMode.value
+  if (editMode.value) {
+    EventBus.disableWindowEventListener('keydown')
+  } else {
+    EventBus.enableWindowEventListener('keydown')
+  }
 }
 
 function openFileDialog() {

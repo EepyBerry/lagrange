@@ -20,8 +20,8 @@
 
 <script setup lang="ts">
 import { ref, type Ref } from 'vue';
-import AppInfoDialog from './AppInfoDialog.vue';
-import AppSettingsDialog from './AppSettingsDialog.vue';
+import AppInfoDialog from './dialogs/AppInfoDialog.vue';
+import AppSettingsDialog from './dialogs/AppSettingsDialog.vue';
 const infoDialog: Ref<{ open: Function }|null> = ref(null)
 const settingsDialog: Ref<{ open: Function }|null> = ref(null)
 

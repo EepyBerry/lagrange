@@ -12,6 +12,9 @@
       <div class="dialog-content">
         <slot name="content"></slot>
       </div>
+      <div v-if="showActions" class="dialog-actions">
+        <slot name="actions"></slot>
+      </div>
     </section>
   </dialog>
 </template>
@@ -21,7 +24,7 @@ import { EventBus } from '@/core/window-event-bus';
 import { ref, type Ref } from 'vue';
 
 const dialog: Ref<HTMLDialogElement|null> = ref(null)
-defineProps<{ showTitle: boolean }>()
+defineProps<{ showTitle?: boolean, showActions?: boolean }>()
 
 function open() {
   EventBus.disableWindowEventListener('keydown')
@@ -70,6 +73,15 @@ dialog[open].lg {
   }
   .dialog-content {
     font-size: 0.875rem;
+  }
+  .dialog-actions {
+    padding-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    & > * {
+      flex-grow: 1;
+    }
   }
 }
 dialog[open].lg::backdrop {

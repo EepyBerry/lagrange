@@ -33,9 +33,9 @@
 </template>
 
 <script setup lang="ts">
-import AppLogo from './elements/AppLogo.vue';
-import DialogElement from './elements/DialogElement.vue';
-import ChipElement from './elements/ChipElement.vue';
+import AppLogo from '../elements/AppLogo.vue';
+import DialogElement from '../elements/DialogElement.vue';
+import ChipElement from '../elements/ChipElement.vue';
 import { ref, type Ref } from 'vue';
 
 const dialogRef: Ref<{ open: Function }|null> = ref(null)

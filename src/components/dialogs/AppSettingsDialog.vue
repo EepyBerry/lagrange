@@ -79,15 +79,15 @@
 
 <script setup lang="ts">
 import { KeyBindingAction, idb, type IDBKeyBinding, type IDBSettings } from '@/dexie';
-import DialogElement from './elements/DialogElement.vue';
+import DialogElement from '../elements/DialogElement.vue';
 import { onMounted, ref, watch, type Ref } from 'vue';
 import { LG_EDITOR_INPUTS } from '@/core/globals';
-import ParameterTable from './parameters/ParameterTable.vue';
-import ParameterRadio from './parameters/ParameterRadio.vue';
-import ParameterRadioOption from './parameters/ParameterRadioOption.vue';
+import ParameterTable from '../parameters/ParameterTable.vue';
+import ParameterRadio from '../parameters/ParameterRadio.vue';
+import ParameterRadioOption from '../parameters/ParameterRadioOption.vue';
 import * as DexieUtils from '@/utils/dexie-utils';
-import ParameterField from './parameters/ParameterField.vue';
-import ParameterDivider from './parameters/ParameterDivider.vue';
+import ParameterField from '../parameters/ParameterField.vue';
+import ParameterDivider from '../parameters/ParameterDivider.vue';
 
 const dialogRef: Ref<{ open: Function, close: Function }|null> = ref(null)
 defineExpose({ open: () => dialogRef.value?.open() })

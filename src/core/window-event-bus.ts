@@ -7,7 +7,7 @@ type WindowEventRegistryOptions = { autoEnable: boolean }
 
 export class EventBus {
 
-  private static windowEventRegistry: Map<any, any> = new Map()
+  private static windowEventRegistry: Map<keyof WindowEventMap, any> = new Map<keyof WindowEventMap, any>()
 
   /**
    * Registers a window event-listener
@@ -47,8 +47,8 @@ export class EventBus {
    * Removes the event-listener from the window context, but keeps the listener reference
    * @param type event-listener type (e.g. `keydown`)
    */
-  public static disableWindowEventListener<K extends keyof WindowEventMap>(name: K) {
-    const event = EventBus.windowEventRegistry.get(name)
-    window.removeEventListener(name, event)
+  public static disableWindowEventListener<K extends keyof WindowEventMap>(type: K) {
+    const event = EventBus.windowEventRegistry.get(type)
+    window.removeEventListener(type, event)
   }
 }
