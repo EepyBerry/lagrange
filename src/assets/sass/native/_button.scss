@@ -12,6 +12,7 @@ button.lg, a.lg {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.25rem;
 }
 button.lg:hover {
   cursor: pointer;
@@ -41,8 +42,8 @@ button.lg.dark, a.lg.dark {
 
   .link-icon {
     position: absolute;
-    top: -0.55rem;
-    right: -0.55rem;
+    top: -0.75rem;
+    right: -0.75rem;
     transform: rotate(-45deg);
   }
 }

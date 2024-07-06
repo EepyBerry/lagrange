@@ -3,31 +3,35 @@
     <div class="name-wrapper">
       <input v-if="editMode" class="lg" type="text" v-model="LG_PARAMETERS.planetName">
       <p v-else>{{ LG_PARAMETERS.planetName }}</p>
-      <button class="lg icon-button" aria-label="Edit planet name">
+      <button class="lg icon-button"
+              aria-label="Edit planet name"
+      >
         <iconify-icon v-if="editMode"
           icon="mingcute:check-line"
           width="1.25rem"
           aria-hidden="true"
+          title="Confirm planet name"
           @click="toggleEditMode"
         />
         <iconify-icon v-else
           icon="mingcute:edit-2-line"
           width="1.25rem"
           aria-hidden="true"
+          title="Edit planet name"
           @click="toggleEditMode"
         />
       </button>
     </div>
     <hr>
-    <button class="lg dark" aria-label="Reset planet" @click="resetDialog?.open()">
+    <button class="lg dark" aria-label="Reset planet" title="Reset planet" @click="resetDialog?.open()">
       <iconify-icon icon="tabler:reload" width="1.5rem" aria-hidden="true" />
     </button>
     <hr>
     <input ref="fileInput" type="file" @change="importPlanetFile" hidden>
-    <button class="lg dark" aria-label="Import planet data" @click="openFileDialog">
+    <button class="lg dark" aria-label="Import planet data" title="Import planet file" @click="openFileDialog">
       <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
     </button>
-    <button class="lg dark" aria-label="Export planet data" @click="exportPlanetFile">
+    <button class="lg dark" aria-label="Export planet data" title="Export planet file" @click="exportPlanetFile">
       <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
     </button>
     <AppResetConfirmDialog ref="resetDialog" @confirm="resetPlanet" />

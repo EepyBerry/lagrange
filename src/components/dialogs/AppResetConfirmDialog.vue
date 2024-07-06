@@ -11,10 +11,10 @@
     </template>
     <template v-slot:actions>
       <button class="lg" @click="dialogRef?.close()" autofocus>
-        Cancel
+        <iconify-icon icon="mingcute:close-line" width="1.25rem" /> Cancel
       </button>
       <button class="lg warn" @click="$emit('confirm'); dialogRef?.close()">
-        Confirm
+        <iconify-icon icon="mingcute:delete-line" width="1.25rem" /> Confirm
       </button>
     </template>
   </DialogElement>

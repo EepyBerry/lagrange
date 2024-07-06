@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="dialog" class="lg">
+  <dialog ref="dialog" class="lg" @abort="close">
     <section>
       <header class="dialog-header">
         <h2 v-if="showTitle" class="dialog-title">
@@ -24,6 +24,9 @@ import { EventBus } from '@/core/window-event-bus';
 import { ref, type Ref } from 'vue';
 
 const dialog: Ref<HTMLDialogElement|null> = ref(null)
+const ignoresNativeEvents = ref(false)
+const preventDefault = (evt: Event) => evt.preventDefault()
+
 defineProps<{ showTitle?: boolean, showActions?: boolean }>()
 
 function open() {
@@ -35,7 +38,18 @@ function close() {
   dialog.value!.close()
 }
 
-defineExpose({ open, close })
+function ignoreNativeEvents(enabled: boolean) {
+  if (ignoresNativeEvents.value === enabled) { return }
+  ignoresNativeEvents.value = enabled
+
+  if (enabled) {
+    dialog.value!.addEventListener('cancel', preventDefault)
+  } else {
+    dialog.value!.removeEventListener('cancel', preventDefault)
+  }
+}
+
+defineExpose({ open, close, ignoreNativeEvents })
 </script>
 
 <style scoped lang="scss">

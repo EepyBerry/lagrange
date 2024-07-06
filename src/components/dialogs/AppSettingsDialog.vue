@@ -63,9 +63,13 @@
                     <iconify-icon :icon="getIcon(kb.action)" width="1.5rem" aria-hidden="true" />
                     {{ getLabel(kb.action) }}
                   </div>
-                  <span class="keybinds-key">{{ kb.key }}</span>
-                <button class="lg" aria-label="Edit key binding">
-                  <iconify-icon icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
+                  <div class="keybinds-key" :class="{ unset: kb.key === '[unset]' }">
+                    <iconify-icon v-if="tryGetKeyRepresentation(kb.key)" :icon="tryGetKeyRepresentation(kb.key)" width="1.25rem" />
+                    <span v-else>{{ selectedAction === kb.action ? '.....' : kb.key }}</span>
+                  </div>
+                <button class="lg" aria-label="Edit key binding" @click="toggleAction(kb.action)">
+                  <iconify-icon v-if="selectedAction === kb.action" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+                  <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
                 </button>
                 </div>
               </td>
@@ -79,22 +83,23 @@
 
 <script setup lang="ts">
 import { KeyBindingAction, idb, type IDBKeyBinding, type IDBSettings } from '@/dexie';
-import DialogElement from '../elements/DialogElement.vue';
+import * as DexieUtils from '@/utils/dexie-utils';
 import { onMounted, ref, watch, type Ref } from 'vue';
-import { LG_EDITOR_INPUTS } from '@/core/globals';
+import DialogElement from '../elements/DialogElement.vue';
 import ParameterTable from '../parameters/ParameterTable.vue';
 import ParameterRadio from '../parameters/ParameterRadio.vue';
-import ParameterRadioOption from '../parameters/ParameterRadioOption.vue';
-import * as DexieUtils from '@/utils/dexie-utils';
 import ParameterField from '../parameters/ParameterField.vue';
 import ParameterDivider from '../parameters/ParameterDivider.vue';
-
-const dialogRef: Ref<{ open: Function, close: Function }|null> = ref(null)
-defineExpose({ open: () => dialogRef.value?.open() })
+import ParameterRadioOption from '../parameters/ParameterRadioOption.vue';
 
 const appGraphicsSettings: Ref<IDBSettings> = ref({ id: 0, theme: '', font: '' })
 const keyBinds: Ref<IDBKeyBinding[]> = ref([])
 
+const dialogRef: Ref<{ open: Function, close: Function, ignoreNativeEvents: Function }|null> = ref(null)
+const selectedAction: Ref<string | null> = ref(null)
+
+
+defineExpose({ open: () => dialogRef.value?.open() })
 onMounted(async () => {
   let settings = await idb.settings.limit(1).toArray()
   if (settings?.length === 0) {
@@ -116,6 +121,16 @@ watch(() => appGraphicsSettings.value, () => {
   updateSettings()
 }, { deep: true })
 
+function toggleAction(action: string): void {
+  if (selectedAction.value === action) {
+    window.removeEventListener('keydown', setSelectedActionKey)
+    selectedAction.value = null
+  } else {
+    selectedAction.value = action
+    window.addEventListener('keydown', setSelectedActionKey)
+  }
+}
+
 async function updateSettings() {
   document.documentElement.setAttribute('data-theme', appGraphicsSettings.value!.theme)
   document.documentElement.setAttribute('data-font', appGraphicsSettings.value!.font ? 'monospace' : 'default')
@@ -125,14 +140,25 @@ async function updateSettings() {
   })
 }
 
-function saveInput(kb: IDBKeyBinding) {
-  idb.keyBindings
-    .update(kb.id, { key: kb.key })
-    .then(async () => {
-      const bind = await idb.keyBindings.get(kb.id)
-      const index = LG_EDITOR_INPUTS.findIndex(kb => kb.id === bind!.id)
-      LG_EDITOR_INPUTS[index] = bind!
-  }).catch((e) => console.error('(LG:Dexie) Keybinds failed to update', e));
+async function setSelectedActionKey(event: KeyboardEvent) {
+  const kbidx = keyBinds.value.findIndex(k => k.action === selectedAction.value)
+  if (['Escape', 'Enter', ' '].includes(event.key)) {
+    return
+  }
+
+  const alreadyAssignedActions = keyBinds.value.filter(k => k.key === event.key.toUpperCase())
+  if (alreadyAssignedActions.length > 0) {
+    alreadyAssignedActions.forEach(k => k.key = '[unset]')
+  }
+
+  await idb.keyBindings
+    .bulkUpdate([
+      { key: keyBinds.value[kbidx].id, changes: { key: event.key.toUpperCase() } },
+      ...alreadyAssignedActions.map(k => ({ key: k.id, changes: { key: k.key } }))
+    ])
+    .then(() => keyBinds.value[kbidx].key = event.key.toUpperCase())
+    .catch((e) => console.error('(Dexie) Keybinds failed to update', e))
+  toggleAction(keyBinds.value[kbidx].action)
 }
 
 function getLabel(action: KeyBindingAction) {
@@ -149,6 +175,15 @@ function getIcon(action: KeyBindingAction) {
     case KeyBindingAction.ToggleBiomes:     return 'mingcute:mountain-2-line'
     case KeyBindingAction.ToggleClouds:     return 'mingcute:clouds-line'
     case KeyBindingAction.ToggleAtmosphere: return 'material-symbols:line-curve-rounded'
+  }
+}
+function tryGetKeyRepresentation(key: string) {
+  switch (key) {
+    case 'ARROWUP': return 'mingcute:arrow-up-line'
+    case 'ARROWRIGHT': return 'mingcute:arrow-right-line'
+    case 'ARROWDOWN': return 'mingcute:arrow-down-line'
+    case 'ARROWLEFT': return 'mingcute:arrow-left-line'
+    default: return undefined
   }
 }
 </script>
@@ -198,13 +233,16 @@ function getIcon(action: KeyBindingAction) {
         display: flex;
         align-items: center;
         justify-content: center;
-        min-width: 4rem;
+        min-width: 6rem;
         min-height: 2rem;
         background: var(--lg-panel);
         border: 1px solid var(--lg-accent);
         border-radius: 0.25rem;
         font-weight: 600;
         padding: 0 0.5rem;
+        &.unset {
+          border-color: var(--lg-warn-active);
+        }
       }
     }
     hr { border: 1px solid var(--lg-input); }
