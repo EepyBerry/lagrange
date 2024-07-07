@@ -95,11 +95,11 @@ import ParameterRadioOption from '../parameters/ParameterRadioOption.vue';
 const appGraphicsSettings: Ref<IDBSettings> = ref({ id: 0, theme: '', font: '' })
 const keyBinds: Ref<IDBKeyBinding[]> = ref([])
 
-const dialogRef: Ref<{ open: Function, close: Function, ignoreNativeEvents: Function }|null> = ref(null)
+const dialogRef: Ref<{ open: Function, close: Function, ignoreNativeEvents: Function, isOpen: boolean }|null> = ref(null)
 const selectedAction: Ref<string | null> = ref(null)
 
-
 defineExpose({ open: () => dialogRef.value?.open() })
+
 onMounted(async () => {
   let settings = await idb.settings.limit(1).toArray()
   if (settings?.length === 0) {
@@ -117,16 +117,23 @@ onMounted(async () => {
   }
   keyBinds.value.push(...kb)
 })
-watch(() => appGraphicsSettings.value, () => {
-  updateSettings()
+watch(() => appGraphicsSettings.value, () => updateSettings(), { deep: true })
+watch(() => dialogRef.value, (v) => {
+  if (!v?.isOpen && selectedAction.value) {
+    const kbidx = keyBinds.value.findIndex(k => k.action === selectedAction.value)
+    keyBinds.value[kbidx].key = '[unset]'
+    toggleAction(selectedAction.value)
+  }
 }, { deep: true })
 
 function toggleAction(action: string): void {
   if (selectedAction.value === action) {
     window.removeEventListener('keydown', setSelectedActionKey)
+    dialogRef.value?.ignoreNativeEvents(false)
     selectedAction.value = null
   } else {
     selectedAction.value = action
+    dialogRef.value?.ignoreNativeEvents(true)
     window.addEventListener('keydown', setSelectedActionKey)
   }
 }
@@ -142,7 +149,8 @@ async function updateSettings() {
 
 async function setSelectedActionKey(event: KeyboardEvent) {
   const kbidx = keyBinds.value.findIndex(k => k.action === selectedAction.value)
-  if (['Escape', 'Enter', ' '].includes(event.key)) {
+  if (['Escape', 'Enter'].includes(event.key)) {
+    toggleAction(keyBinds.value[kbidx].action)
     return
   }
 

@@ -21,13 +21,22 @@
 
 <script setup lang="ts">
 import { EventBus } from '@/core/window-event-bus';
-import { ref, type Ref } from 'vue';
+import { onMounted, onUnmounted, ref, type Ref } from 'vue';
 
 const dialog: Ref<HTMLDialogElement|null> = ref(null)
 const ignoresNativeEvents = ref(false)
-const preventDefault = (evt: Event) => evt.preventDefault()
+const handleCancel = (evt: Event) => {
+  if (ignoresNativeEvents.value) {
+    evt.preventDefault()
+  } else {
+    evt.preventDefault()
+    close()
+  }
+}
 
 defineProps<{ showTitle?: boolean, showActions?: boolean }>()
+onMounted(() => dialog.value!.addEventListener('cancel', handleCancel))
+onUnmounted(() => dialog.value!.removeEventListener('cancel', handleCancel))
 
 function open() {
   EventBus.disableWindowEventListener('keydown')
@@ -39,17 +48,10 @@ function close() {
 }
 
 function ignoreNativeEvents(enabled: boolean) {
-  if (ignoresNativeEvents.value === enabled) { return }
   ignoresNativeEvents.value = enabled
-
-  if (enabled) {
-    dialog.value!.addEventListener('cancel', preventDefault)
-  } else {
-    dialog.value!.removeEventListener('cancel', preventDefault)
-  }
 }
 
-defineExpose({ open, close, ignoreNativeEvents })
+defineExpose({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open })
 </script>
 
 <style scoped lang="scss">
