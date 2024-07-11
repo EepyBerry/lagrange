@@ -1,7 +1,7 @@
 import { idb, KeyBindingAction } from "@/dexie";
 
 export async function addDefaultSettings(): Promise<any> {
-  return idb.settings.put({ theme: 'default', font: 'default' })
+  return idb.settings.put({ theme: 'default', font: 'default', showInitDialog:true })
 }
 
 export async function addDefaultKeyBindings(): Promise<any> {

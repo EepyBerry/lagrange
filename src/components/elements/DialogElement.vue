@@ -21,30 +21,27 @@
 
 <script setup lang="ts">
 import { EventBus } from '@/core/window-event-bus';
-import { onMounted, onUnmounted, ref, type Ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
 
 const dialog: Ref<HTMLDialogElement|null> = ref(null)
 const ignoresNativeEvents = ref(false)
 const handleCancel = (evt: Event) => {
-  if (ignoresNativeEvents.value) {
-    evt.preventDefault()
-  } else {
-    evt.preventDefault()
-    close()
-  }
+  evt.preventDefault()
+  if (ignoresNativeEvents.value) { return }
+  close()
 }
 
 defineProps<{ showTitle?: boolean, showActions?: boolean }>()
 onMounted(() => dialog.value!.addEventListener('cancel', handleCancel))
-onUnmounted(() => dialog.value!.removeEventListener('cancel', handleCancel))
+onBeforeUnmount(() => dialog.value?.removeEventListener('cancel', handleCancel))
 
 function open() {
   EventBus.disableWindowEventListener('keydown')
-  dialog.value!.showModal()
+  dialog.value?.showModal()
 }
 function close() {
   EventBus.enableWindowEventListener('keydown')
-  dialog.value!.close()
+  dialog.value?.close()
 }
 
 function ignoreNativeEvents(enabled: boolean) {
@@ -108,6 +105,11 @@ dialog[open].lg::backdrop {
   dialog[open].lg {
     max-width: calc(100% - 1rem);
     padding: 0.75rem;
+  }
+}
+@media screen and (max-width:567px) {
+  dialog[open].lg {
+    width: 100%;
   }
 }
 </style>

@@ -18,6 +18,7 @@ interface IDBSettings {
   id: number
   theme: string
   font: string
+  showInitDialog?: boolean
 }
 
 const idb = new Dexie('LagrangeIDB', { autoOpen: true }) as Dexie & {

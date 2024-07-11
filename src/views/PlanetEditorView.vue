@@ -7,9 +7,9 @@
 
 <script setup lang="ts">
 import PlanetEditorControls from '@/components/controls/PlanetEditorControls.vue';
-import PlanetInfoControls from '@/components/controls/PlanetInfoControls.vue'
-import { onMounted, onUnmounted, ref, type Ref } from 'vue'
-import * as THREE from 'three'
+import PlanetInfoControls from '@/components/controls/PlanetInfoControls.vue';
+import { onMounted, onUnmounted, ref, type Ref } from 'vue';
+import * as THREE from 'three';
 import Stats from 'three/addons/libs/stats.module.js';
 import * as Lagrange from '@/core/lagrange.service';
 import { LG_HEIGHT_DIVIDER, LG_NAME_AMBLIGHT, LG_PARAMETERS } from '@core/globals';
@@ -164,6 +164,14 @@ function updatePlanet() {
       // --------------------------------------------------
       case '_lensFlareEnabled': {
         _lensFlare.mesh.visible = LG_PARAMETERS.lensFlareEnabled
+        break
+      }
+      case '_lensFlareGlareIntensity': {
+        setShaderMaterialUniform(
+          _lensFlare.material,
+          'glareIntensity',
+          LG_PARAMETERS.lensFlareGlareIntensity
+        )
         break
       }
       case '_sunLightColor': {

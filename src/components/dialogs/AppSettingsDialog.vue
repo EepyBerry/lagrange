@@ -46,7 +46,7 @@
             <ParameterField
               id="settings-font"
               type="checkbox"
-              v-model="appGraphicsSettings.font"
+              v-model="enableMonospaceFont"
             >
               Enable monospace font:
             </ParameterField>
@@ -83,8 +83,7 @@
 
 <script setup lang="ts">
 import { KeyBindingAction, idb, type IDBKeyBinding, type IDBSettings } from '@/dexie';
-import * as DexieUtils from '@/utils/dexie-utils';
-import { onMounted, ref, watch, type Ref } from 'vue';
+import { ref, watch, type Ref } from 'vue';
 import DialogElement from '../elements/DialogElement.vue';
 import ParameterTable from '../parameters/ParameterTable.vue';
 import ParameterRadio from '../parameters/ParameterRadio.vue';
@@ -94,29 +93,28 @@ import ParameterRadioOption from '../parameters/ParameterRadioOption.vue';
 
 const appGraphicsSettings: Ref<IDBSettings> = ref({ id: 0, theme: '', font: '' })
 const keyBinds: Ref<IDBKeyBinding[]> = ref([])
+let dataLoaded = false
 
 const dialogRef: Ref<{ open: Function, close: Function, ignoreNativeEvents: Function, isOpen: boolean }|null> = ref(null)
 const selectedAction: Ref<string | null> = ref(null)
+const enableMonospaceFont: Ref<boolean> = ref(false)
 
-defineExpose({ open: () => dialogRef.value?.open() })
+defineExpose({ open: async () => {
+  await loadData()
+  dialogRef.value?.open()
+}})
 
-onMounted(async () => {
-  let settings = await idb.settings.limit(1).toArray()
-  if (settings?.length === 0) {
-    await DexieUtils.addDefaultSettings()
-    settings = await idb.settings.limit(1).toArray()
-  }
-  appGraphicsSettings.value = settings[0]
-
+async function loadData() {
+  if (dataLoaded) { return }
+  let settings = await idb.settings.limit(1).first()
   let kb = await idb.keyBindings.limit(4).toArray()
-  if (kb.length === 0) {
-    console.warn('No keybinds found in IndexedDB, adding defaults')
-    await DexieUtils.addDefaultKeyBindings()
-    kb = await idb.keyBindings.toArray()
-    keyBinds.value.push(...kb)
-  }
+  appGraphicsSettings.value = settings!
+  enableMonospaceFont.value = settings!.font === 'monospace'
   keyBinds.value.push(...kb)
-})
+  dataLoaded = true
+}
+
+watch(enableMonospaceFont, (enable) => appGraphicsSettings.value.font = enable ? 'monospace' : 'default')
 watch(() => appGraphicsSettings.value, () => updateSettings(), { deep: true })
 watch(() => dialogRef.value, (v) => {
   if (!v?.isOpen && selectedAction.value) {
@@ -140,7 +138,7 @@ function toggleAction(action: string): void {
 
 async function updateSettings() {
   document.documentElement.setAttribute('data-theme', appGraphicsSettings.value!.theme)
-  document.documentElement.setAttribute('data-font', appGraphicsSettings.value!.font ? 'monospace' : 'default')
+  document.documentElement.setAttribute('data-font', appGraphicsSettings.value!.font)
   await idb.settings.update(appGraphicsSettings.value!.id, {
     theme: appGraphicsSettings.value!.theme,
     font: appGraphicsSettings.value!.font
@@ -253,7 +251,6 @@ function tryGetKeyRepresentation(key: string) {
         }
       }
     }
-    hr { border: 1px solid var(--lg-input); }
   }
 }
 

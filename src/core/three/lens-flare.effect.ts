@@ -10,6 +10,7 @@ export type LensFlareParams = {
   colorGain: THREE.Color
   starPoints: number
   glareSize: number
+  glareIntensity: number
   flareSize: number
   flareSpeed: number
   flareShape: number
@@ -46,6 +47,7 @@ export class LensFlareEffect {
       colorGain: params.colorGain ?? new THREE.Color(95, 12, 10),
       starPoints: params.starPoints ?? 2,
       glareSize: params.glareSize ?? 0.025,
+      glareIntensity: params.glareIntensity ?? 0.5,
       flareSize: params.flareSize ?? 0.001,
       flareSpeed: params.flareSpeed ?? 0,
       flareShape: params.flareShape ?? 0.25,
@@ -80,6 +82,7 @@ export class LensFlareEffect {
         colorGain: { value: this._params.colorGain },
         starPoints: { value: this._params.starPoints },
         glareSize: { value: this._params.glareSize },
+        glareIntensity: { value: this._params.glareIntensity },
         flareSize: { value: this._params.flareSize },
         flareSpeed: { value: this._params.flareSpeed },
         flareShape: { value: this._params.flareShape },

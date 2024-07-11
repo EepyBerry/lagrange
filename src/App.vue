@@ -3,10 +3,48 @@
     <RouterView></RouterView>
   </main>
   <AppFooter />
+  <AppInitDialog ref="dialogInit" @hide-on-next-visits="hideInitDialog" />
 </template>
 
 <script setup lang="ts">
 import AppFooter from './components/AppFooter.vue';
+import * as DexieUtils from '@/utils/dexie-utils';
+import { idb, type IDBSettings } from '@/dexie';
+import { onMounted, ref, type Ref } from 'vue';
+import AppInitDialog from './components/dialogs/AppInitDialog.vue';
+
+const dialogInit: Ref<{ open: Function, close: Function }|null> = ref(null)
+const settings: Ref<IDBSettings|undefined> = ref(undefined)
+
+onMounted(async () => {
+  await initDexie()
+  settings.value = await idb.settings.limit(1).first()
+  if (settings.value?.showInitDialog) {
+    dialogInit.value?.open()
+  }
+})
+
+async function initDexie() {
+  let settings = await idb.settings.limit(1).first()
+  if (!settings) {
+    console.debug('No settings found in IndexedDB, adding defaults')
+    await DexieUtils.addDefaultSettings()
+  }
+
+  let kb = await idb.keyBindings.limit(4).toArray()
+  if (kb.length === 0) {
+    console.debug('No keybinds found in IndexedDB, adding defaults')
+    await DexieUtils.addDefaultKeyBindings()
+  }
+  document.documentElement.setAttribute('data-theme', settings?.theme ?? 'default')
+  document.documentElement.setAttribute('data-font', settings?.font ?? 'default')
+}
+
+async function hideInitDialog() {
+  await idb.settings
+    .update(settings.value!.id, { showInitDialog: false })
+    .catch(err => console.error(err))
+}
 </script>
 
 <style scoped lang="scss">

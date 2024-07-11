@@ -13,6 +13,7 @@ uniform vec2 iResolution;
 uniform vec3 colorGain;
 uniform float starPoints;
 uniform float glareSize;
+uniform float glareIntensity;
 uniform float flareSize;
 uniform float flareSpeed;
 uniform float flareShape;
@@ -184,9 +185,9 @@ vec3 LensFlare(vec2 uv, vec2 pos)
 
     c += drawflare(prot, (anamorphic ? flareSize * 10. : flareSize), 0.1, iTime, 1);
     
-    c.r+=f1+f2+f4+f5+f6;
-    c.g+=f1+f22+f42+f52+f62;
-    c.b+=f1+f23+f43+f53+f63;
+    c.r+=(f1+f2+f4+f5+f6) * glareIntensity;
+    c.g+=(f1+f22+f42+f52+f62) * glareIntensity;
+    c.b+=(f1+f23+f43+f53+f63) * glareIntensity;
     c = c*1.3 * vec3(length(uvd)+.09); // Vignette
     c+=vec3(f0 / 4.0);
     

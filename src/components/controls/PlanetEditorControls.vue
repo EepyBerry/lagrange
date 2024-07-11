@@ -15,6 +15,16 @@
             >
               Show lens flare
             </ParameterField>
+            <ParameterField
+              v-model="LG_PARAMETERS.lensFlareGlareIntensity"
+              id="f-glareint"
+              type="range"
+              :step="0.01"
+              :min="0"
+              :max="1"
+            >
+              Glare intensity
+            </ParameterField>
             <ParameterCategory>Sunlight</ParameterCategory>
             <ParameterField v-model="LG_PARAMETERS.sunLightIntensity"
               id="l-int"

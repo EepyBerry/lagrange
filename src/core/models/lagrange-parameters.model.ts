@@ -49,6 +49,7 @@ export default class LagrangeParameters extends ChangeTracker {
   // --------------------------------------------------
 
   private _lensFlareEnabled: boolean
+  private _lensFlareGlareIntensity: number
   private _sunLightColor: Color
   private _sunLightIntensity: number
   private _ambLightColor: Color
@@ -62,6 +63,13 @@ export default class LagrangeParameters extends ChangeTracker {
   public set lensFlareEnabled(value: boolean) {
     this._lensFlareEnabled = value
     this.markForChange('_lensFlareEnabled')
+  }
+  public get lensFlareGlareIntensity(): number {
+    return this._lensFlareGlareIntensity
+  }
+  public set lensFlareGlareIntensity(value: number) {
+    this._lensFlareGlareIntensity = clamp(value, 0, 1)
+    this.markForChange('_lensFlareGlareIntensity')
   }
 
   public get sunLightColor(): Color {
@@ -385,6 +393,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetName = 'New Planet'
 
     this._lensFlareEnabled = true
+    this._lensFlareGlareIntensity = 0.25
     this._sunLightColor = new Color(0xfff6e8)
     this._sunLightIntensity = 10.0
     this._ambLightColor = new Color(0xffffff)
@@ -442,6 +451,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetName = 'New Planet'
 
     this._lensFlareEnabled = true
+    this._lensFlareGlareIntensity = 0.25
     this._sunLightColor.set(0xfff6e8)
     this._sunLightIntensity = 10.0
     this._ambLightColor.set(0xffffff)
@@ -503,6 +513,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetName = data._planetName.replaceAll('_', ' ')
 
     this._lensFlareEnabled = data._lensFlareEnabled
+    this._lensFlareGlareIntensity = data._lensFlareGlareIntensity
     this._sunLightColor.set(numberToHex(data._sunLightColor))
     this._sunLightIntensity = data._sunLightIntensity
     this._ambLightColor.set(numberToHex(data._ambLightColor))

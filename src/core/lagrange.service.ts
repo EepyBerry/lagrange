@@ -73,6 +73,7 @@ export function createLensFlare(sun: THREE.DirectionalLight) {
     opacity: 1,
     lensPosition: sun.position,
     colorGain: sun.color,
+    glareIntensity: LG_PARAMETERS.lensFlareGlareIntensity
   })
 }
 
