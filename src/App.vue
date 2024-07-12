@@ -3,21 +3,23 @@
     <RouterView></RouterView>
   </main>
   <AppFooter />
-  <AppInitDialog ref="dialogInit" @hide-on-next-visits="hideInitDialog" />
+  <AppInitDialog ref="dialogInit" :keybinds="keybinds" @disable-init-dialog="disableInitDialog" />
 </template>
 
 <script setup lang="ts">
 import AppFooter from './components/AppFooter.vue';
 import * as DexieUtils from '@/utils/dexie-utils';
-import { idb, type IDBSettings } from '@/dexie';
+import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie';
 import { onMounted, ref, type Ref } from 'vue';
 import AppInitDialog from './components/dialogs/AppInitDialog.vue';
 
 const dialogInit: Ref<{ open: Function, close: Function }|null> = ref(null)
+const keybinds: Ref<IDBKeyBinding[]> = ref([])
 const settings: Ref<IDBSettings|undefined> = ref(undefined)
 
 onMounted(async () => {
   await initDexie()
+  keybinds.value = await idb.keyBindings.limit(4).toArray()
   settings.value = await idb.settings.limit(1).first()
   if (settings.value?.showInitDialog) {
     dialogInit.value?.open()
@@ -40,7 +42,7 @@ async function initDexie() {
   document.documentElement.setAttribute('data-font', settings?.font ?? 'default')
 }
 
-async function hideInitDialog() {
+async function disableInitDialog() {
   await idb.settings
     .update(settings.value!.id, { showInitDialog: false })
     .catch(err => console.error(err))

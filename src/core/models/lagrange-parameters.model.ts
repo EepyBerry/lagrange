@@ -393,7 +393,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetName = 'New Planet'
 
     this._lensFlareEnabled = true
-    this._lensFlareGlareIntensity = 0.25
+    this._lensFlareGlareIntensity = 0.75
     this._sunLightColor = new Color(0xfff6e8)
     this._sunLightIntensity = 10.0
     this._ambLightColor = new Color(0xffffff)
@@ -451,7 +451,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetName = 'New Planet'
 
     this._lensFlareEnabled = true
-    this._lensFlareGlareIntensity = 0.25
+    this._lensFlareGlareIntensity = 0.75
     this._sunLightColor.set(0xfff6e8)
     this._sunLightIntensity = 10.0
     this._ambLightColor.set(0xffffff)

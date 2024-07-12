@@ -1,5 +1,5 @@
 <template>
-  <DialogElement ref="dialogRef" id="dialog-reset-confirm" :showTitle="true" :showActions="true">
+  <DialogElement ref="dialogRef" id="dialog-reset-confirm" :showTitle="true" :showActions="true" aria-label="Confirm reset dialog">
     <template v-slot:title>
       <iconify-icon icon="mingcute:warning-line" width="1.5rem" /> Confirm reset
     </template>

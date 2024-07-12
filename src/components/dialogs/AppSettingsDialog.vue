@@ -1,5 +1,5 @@
 <template>
-  <DialogElement ref="dialogRef" id="dialog-settings" :showTitle="true">
+  <DialogElement ref="dialogRef" id="dialog-settings" :showTitle="true" aria-label="Settings dialog">
     <template v-slot:title>
       <iconify-icon icon="mingcute:settings-3-line" width="1.5rem" /> Settings
     </template>
@@ -67,10 +67,10 @@
                     <iconify-icon v-if="tryGetKeyRepresentation(kb.key)" :icon="tryGetKeyRepresentation(kb.key)" width="1.25rem" />
                     <span v-else>{{ selectedAction === kb.action ? '.....' : kb.key }}</span>
                   </div>
-                <button class="lg" aria-label="Edit key binding" @click="toggleAction(kb.action)">
-                  <iconify-icon v-if="selectedAction === kb.action" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
-                  <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-                </button>
+                  <button class="lg" aria-label="Edit key binding" @click="toggleAction(kb.action)">
+                    <iconify-icon v-if="selectedAction === kb.action" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+                    <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
+                  </button>
                 </div>
               </td>
             </tr>

@@ -1,5 +1,5 @@
 <template>
-  <DialogElement ref="dialogRef" id="dialog-about" :showTitle="false">
+  <DialogElement ref="dialogRef" id="dialog-about" :showTitle="false" aria-label="About Lagrange dialog">
     <template v-slot:content>
       <div class="about-grid">
         <AppLogo />

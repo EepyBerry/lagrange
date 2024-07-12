@@ -19,6 +19,9 @@
   --lg-link: var(--lg-contrast-focus);
   --lg-link-visited: var(--lg-contrast-focus);
 
+  --lg-info: #0b6449;
+  --lg-info-hover: #06533c;
+  --lg-info-active: #043d2c;
   --lg-warn: #b63f1a;
   --lg-warn-hover: #a53614;
   --lg-warn-active: #912a0b;
@@ -42,6 +45,9 @@
   --lg-link: var(--lg-contrast-focus);
   --lg-link-visited: var(--lg-contrast-focus);
 
+  --lg-info: #0b6449;
+  --lg-info-hover: #06533c;
+  --lg-info-active: #043d2c;
   --lg-warn: #b61a4e;
   --lg-warn-hover: #a5144c;
   --lg-warn-active: #910b43;
@@ -65,9 +71,12 @@
   --lg-link: var(--lg-contrast-focus);
   --lg-link-visited: var(--lg-contrast-focus);
 
-  --lg-warn: #b82222;
-  --lg-warn-hover: #a51414;
-  --lg-warn-active: #910b0b;
+  --lg-info: #0b2f64;
+  --lg-info-hover: #062153;
+  --lg-info-active: #04183d;
+  --lg-warn: #a81f1f;
+  --lg-warn-hover: #911111;
+  --lg-warn-active: #7e0a0a;
 }
 :root[data-font='monospace'] {
   body * { font-family: Jetbrains Mono, monospace; }
