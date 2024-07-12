@@ -66,6 +66,6 @@ input.lg {
   text-align: end;
 }
 input.lg:not([type=checkbox],[type=radio], [type=range]) {
-  max-width: 3rem;
+  width: 3rem;
 }
 </style>

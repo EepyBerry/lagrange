@@ -239,6 +239,7 @@ function removeStep(id: string) {
 
   border-radius: 4px;
   border: 1px solid var(--lg-input);
+  background: var(--lg-panel);
 
   td {
     text-align: end;
@@ -291,6 +292,6 @@ input.lg {
   text-align: end;
 }
 input.lg:not([type=checkbox],[type=radio]) {
-  max-width: 3rem;
+  width: 3rem;
 }
 </style>

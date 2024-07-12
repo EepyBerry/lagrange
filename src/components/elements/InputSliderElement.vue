@@ -50,7 +50,7 @@ function set(ev: Event) {
 }
 
 input.lg[type=number] {
-  max-width: 3rem;
+  width: 3rem;
   text-align: end;
 }
 input.lg[type=range] {

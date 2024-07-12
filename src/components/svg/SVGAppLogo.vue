@@ -91,7 +91,7 @@
 
 .cls-1,
 .cls-3 {
-  fill: var(--lg-accent);
+  fill: var(--lg-logo);
 }
 
 .cls-3,
@@ -101,7 +101,7 @@
 
 .cls-4 {
   fill: none;
-  stroke: var(--lg-accent);
+  stroke: var(--lg-logo);
   stroke-miterlimit: 10;
   stroke-width: 2px;
 }

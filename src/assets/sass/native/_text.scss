@@ -31,8 +31,8 @@ ul {
 }
 li.lg {
   padding: 0.25rem;
-  background: var(--lg-primary);
-  border: 1px dashed var(--lg-accent);
+  background: var(--lg-panel);
+  border: 1px solid var(--lg-input);
   border-radius: 4px;
   color: var(--lg-text);
   min-height: 1.5rem;

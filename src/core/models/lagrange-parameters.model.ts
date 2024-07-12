@@ -1,6 +1,6 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
 import { GeometryType, NoiseType } from '@core/types'
-import { clamp, epsilonClamp, isNumeric } from '@/utils/math-utils'
+import { clamp, isNumeric } from '@/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeTracker } from './change-tracker.model'
@@ -279,7 +279,7 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._cloudsRotation
   }
   public set cloudsRotation(rot: number) {
-    this._cloudsRotation = isNumeric(rot) ? epsilonClamp(rot, 0, 360) : 0
+    this._cloudsRotation = isNumeric(rot) ? clamp(rot, 0, 360) : 0
     this.markForChange('_cloudsRotation')
   }
 
@@ -401,7 +401,7 @@ export default class LagrangeParameters extends ChangeTracker {
 
     this._planetGeometryType = GeometryType.SPHERE
     this._planetMeshQuality = 48.0
-    this._planetAxialTilt = 0.0
+    this._planetAxialTilt = 15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
     this._planetWaterMetalness = 0.5
@@ -459,7 +459,7 @@ export default class LagrangeParameters extends ChangeTracker {
 
     this._planetGeometryType = GeometryType.SPHERE
     this._planetMeshQuality = 48.0
-    this._planetAxialTilt = 0.0
+    this._planetAxialTilt = 15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
     this._planetWaterMetalness = 0.5

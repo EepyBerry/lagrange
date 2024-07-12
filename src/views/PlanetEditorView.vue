@@ -93,6 +93,11 @@ function initPlanet(): void {
   _clouds = clouds
   _atmosphere = atmosphere
   _planetPivot = pivot
+
+  // Set initial rotations
+  _planetPivot.setRotationFromAxisAngle(VEC_TILT, degToRad(LG_PARAMETERS.planetAxialTilt))
+  _planet.setRotationFromAxisAngle(_planet.up, degToRad(LG_PARAMETERS.planetRotation))
+  _clouds.setRotationFromAxisAngle(_clouds.up, degToRad(LG_PARAMETERS.planetRotation + LG_PARAMETERS.cloudsRotation))
   
   //const helper = new VertexNormalsHelper( planet, 0.1, 0xff0000 );
   //$se.scene.add( helper );

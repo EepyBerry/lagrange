@@ -14,14 +14,18 @@
               solar system or even an entire galaxy!
             </p>
             <br>
-            <NotificationElement type="info">
-              Currently a work-in-progress. More features are planned for the next versions!
+            <NotificationElement type="wip">
+              Currently work-in-progress. More features are planned for the next versions!
             </NotificationElement>
           </div>
         </section>
-        <CollapsibleSection icon="oui:keyboard-shortcut" :expand="true">
+        <CollapsibleSection icon="oui:keyboard-shortcut">
           <template v-slot:title>Shortcuts</template>
           <template v-slot:content>
+            <p>
+              Key bindings can be reassigned in the app settings!
+              (<iconify-icon icon="mingcute:settings-6-line" width="1rem" aria-hidden="true" />)
+            </p>
             <ul class="controls">
               <li class="lg">
                 <span class="keybind">{{ keybinds[0]?.key }}</span>
@@ -43,21 +47,21 @@
           </template>
         </CollapsibleSection>
         <CollapsibleSection icon="mingcute:settings-1-line">
-          <template v-slot:title>Top bar - Planet information</template>
+          <template v-slot:title>Top bar - Naming & data</template>
           <template v-slot:content>
             <ul class="controls">
-            <li class="lg"><iconify-icon icon="mingcute:edit-2-line"   width="1.5rem" aria-hidden="true" />: Rename planet</li>
-            <li class="lg"><iconify-icon icon="tabler:reload"          width="1.5rem" aria-hidden="true" />: Reset to defaults</li>
-            <li class="lg"><iconify-icon icon="mingcute:upload-line"   width="1.5rem" aria-hidden="true" />: Import planet</li>
-            <li class="lg"><iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />: Export planet</li>
-          </ul>
+              <li class="lg"><iconify-icon icon="mingcute:edit-2-line"   width="1.5rem" aria-hidden="true" />: Rename planet</li>
+              <li class="lg"><iconify-icon icon="tabler:reload"          width="1.5rem" aria-hidden="true" />: Reset to defaults</li>
+              <li class="lg"><iconify-icon icon="mingcute:upload-line"   width="1.5rem" aria-hidden="true" />: Import planet</li>
+              <li class="lg"><iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />: Export planet</li>
+            </ul>
           </template>
         </CollapsibleSection>
         <CollapsibleSection icon="mingcute:layout-bottom-close-line">
           <template v-slot:title>Footer - Miscellaneous</template>
           <template v-slot:content>
             <ul class="controls">
-              <li class="lg"><iconify-icon icon="mingcute:github-line"      width="1.5rem" aria-hidden="true" />: Open Github page</li>
+              <li class="lg"><iconify-icon icon="mingcute:github-line"      width="1.5rem" aria-hidden="true" />: Github page</li>
               <li class="lg"><iconify-icon icon="mingcute:settings-6-line"  width="1.5rem" aria-hidden="true" />: App settings</li>
               <li class="lg"><iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true"/>: About Lagrange</li>
             </ul>
@@ -82,7 +86,6 @@ import AppLogo from '../elements/AppLogo.vue';
 import DialogElement from '../elements/DialogElement.vue';
 import NotificationElement from '../elements/NotificationElement.vue'
 import { ref, type Ref } from 'vue';
-import SidebarSection from '../elements/SidebarSection.vue';
 import CollapsibleSection from '../elements/CollapsibleSection.vue';
 
 const dialogRef: Ref<{ open: Function, close: Function }|null> = ref(null)
@@ -106,7 +109,6 @@ function doClose() {
 
   .init-container {
     max-width: 48rem;
-    padding-top: 1rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -124,6 +126,7 @@ function doClose() {
     }
   }
   .intro {
+    padding: 1rem 0;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -147,7 +150,7 @@ function doClose() {
       align-items: center;
       gap: 0.25rem;
       flex-wrap: nowrap;
-      text-wrap: nowrap;
+      text-overflow: ellipsis;
 
       .keybind {
         display: flex;
@@ -188,9 +191,13 @@ function doClose() {
         display: none;
       }
 
-      section.intro h2 {
-        justify-content: center;
-      }
+      section.intro {
+        font-size: 0.875rem;
+        h2 {
+          justify-content: center;
+          font-size: 1.375rem;
+        }
+      } 
 
       .init-checkbox {
         text-align: start;
@@ -200,6 +207,13 @@ function doClose() {
     }
     .controls {
       align-items: center;
+    }
+  }
+}
+@media screen and (max-width:567px) {
+  #dialog-editor-init {
+    .controls {
+      grid-template-columns: 1fr;
     }
   }
 }
