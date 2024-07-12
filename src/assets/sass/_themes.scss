@@ -16,6 +16,8 @@
   --lg-button-active: var(--lg-accent);
   --lg-button-disabled: #535353;
   --lg-button-menu-expanded: var(--lg-contrast);
+  --lg-button-menu-expanded-hover: #336662;
+  --lg-button-menu-expanded-active: #295753;
 
   --lg-link: var(--lg-contrast-focus);
   --lg-link-visited: var(--lg-contrast-focus);
@@ -32,19 +34,21 @@
 :root[data-theme='supernova'] {
   --lg-primary: linear-gradient(to bottom, #0e081a 0%, #06030c 100%);
   --lg-panel: #0a050f;
-  --lg-accent: #291d38;
+  --lg-accent: #27153b;
   --lg-logo: #412c5a;
   --lg-input: #1d1027;
   --lg-input-focus: #311e42;
   --lg-overlay: #2f333e44;
-  --lg-contrast: #427758;
-  --lg-contrast-focus: #64a17d;
+  --lg-contrast: #378055;
+  --lg-contrast-focus: #49aa73;
 
-  --lg-button: #3e2f4d;
-  --lg-button-hover: #362847;
+  --lg-button: #38254b;
+  --lg-button-hover: #2f1c42;
   --lg-button-active: var(--lg-accent);
   --lg-button-disabled: #3b3b3b;
   --lg-button-menu-expanded: var(--lg-contrast);
+  --lg-button-menu-expanded-hover: #2f724b;
+  --lg-button-menu-expanded-active: #215a39;
 
   --lg-link: var(--lg-contrast-focus);
   --lg-link-visited: var(--lg-contrast-focus);
@@ -61,19 +65,21 @@
 :root[data-theme='voyager'] {
   --lg-primary: repeating-linear-gradient(to bottom, #0c0903, #0c0903 0.375rem, #1a1102 0.5rem);
   --lg-panel: #070502;
-  --lg-accent: #3a290e;
+  --lg-accent: #3b2809;
   --lg-logo: #573a0b;
   --lg-input: #181108;
   --lg-input-focus: #2c2415;
   --lg-overlay: #3e392f44;
-  --lg-contrast: #86672c;
-  --lg-contrast-focus: #b9913a;
+  --lg-contrast: #7e6100;
+  --lg-contrast-focus: #b68c00;
 
-  --lg-button: #4e3c1a;
-  --lg-button-hover: #463413;
+  --lg-button: #4d3710;
+  --lg-button-hover: #46310a;
   --lg-button-active: var(--lg-accent);
   --lg-button-disabled: #313131;
   --lg-button-menu-expanded: var(--lg-contrast);
+  --lg-button-menu-expanded-hover: #6d5300;
+  --lg-button-menu-expanded-active: #5e4800;
 
   --lg-link: var(--lg-contrast-focus);
   --lg-link-visited: var(--lg-contrast-focus);

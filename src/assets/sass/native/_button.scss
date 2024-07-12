@@ -30,6 +30,12 @@ button.lg:disabled {
 button.lg.menu-expanded {
   background: var(--lg-button-menu-expanded);
 }
+button.lg.menu-expanded:hover {
+  background: var(--lg-button-menu-expanded-hover);
+}
+button.lg.menu-expanded:active {
+  background: var(--lg-button-menu-expanded-active);
+}
 
 button.lg.dark, a.lg.dark {
   position: relative;

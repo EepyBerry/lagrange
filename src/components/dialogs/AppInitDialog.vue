@@ -69,7 +69,7 @@
         </CollapsibleSection>
         <div class="init-checkbox">
           <label for="show-on-next-visits">Show this introduction next time?</label>
-          <input id="show-on-next-visits" type="checkbox" v-model="shouldShowOnNextVisits">
+          <input id="show-on-next-visits" class="lg" type="checkbox" v-model="shouldShowOnNextVisits">
         </div>
       </div>
     </template>

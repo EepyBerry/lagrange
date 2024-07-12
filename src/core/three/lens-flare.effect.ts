@@ -25,7 +25,7 @@ export type LensFlareParams = {
 }
 
 /**
- * Custom class that contains all the procesing required to create lens flares.
+ * Custom class that contains all the processing required to create lens flares.
  * 
  * Based on Anderson Mancini's code: https://github.com/ektogamat/lensflare-threejs-vanilla
  */
