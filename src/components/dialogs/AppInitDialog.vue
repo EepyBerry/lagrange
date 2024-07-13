@@ -24,7 +24,9 @@
           <template v-slot:content>
             <p>
               Key bindings can be reassigned in the app settings!
-              (<iconify-icon icon="mingcute:settings-6-line" width="1rem" aria-hidden="true" />)
+              <span class=nowrap>
+                (<iconify-icon style="transform: translateY(0.125rem);" icon="mingcute:settings-6-line" width="1rem" aria-hidden="true" />)
+              </span>
             </p>
             <ul class="controls">
               <li class="lg">

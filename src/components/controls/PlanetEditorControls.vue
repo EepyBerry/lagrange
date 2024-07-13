@@ -3,11 +3,10 @@
     <aside class="sidebar">
       <!-- Lighting Settings -->
       <SidebarSection icon="mingcute:sun-line" :expand="false">
-        <template v-slot:title>Lighting Settings</template>
+        <template v-slot:title>Lighting</template>
         <template v-slot:content>
           <ParameterTable>
-            <ParameterDivider />
-            <ParameterCategory>Lens Flare</ParameterCategory>
+            <ParameterCategory top>Lens Flare</ParameterCategory>
             <ParameterField
               v-model="LG_PARAMETERS.lensFlareEnabled"
               id="f-toggle"
@@ -58,10 +57,10 @@
 
       <!-- Planet Settings -->
       <SidebarSection icon="tabler:gizmo" :expand="false">
-        <template v-slot:title>Planet Settings</template>
+        <template v-slot:title>Planet & Material</template>
         <template v-slot:content>
           <ParameterTable>
-            <ParameterCategory>Transform</ParameterCategory>
+            <ParameterCategory top>Transform</ParameterCategory>
             <ParameterField
               v-model="LG_PARAMETERS.planetAxialTilt"
               id="p-tilt"
@@ -144,7 +143,7 @@
         <template v-slot:title>Surface</template>
         <template v-slot:content>
           <ParameterTable>
-            <ParameterCategory>Bump-map</ParameterCategory>
+            <ParameterCategory top>Bump-map</ParameterCategory>
             <ParameterField
               v-model="LG_PARAMETERS.planetSurfaceShowBumps"
               id="s-bump"
@@ -234,7 +233,6 @@
         <template v-slot:title>Clouds</template>
         <template v-slot:content>
           <ParameterTable>
-            <ParameterDivider />
             <ParameterField
               v-model="LG_PARAMETERS.cloudsEnabled"
               id="c-toggle"
@@ -304,7 +302,6 @@
         <template v-slot:title>Atmosphere</template>
         <template v-slot:content>
           <ParameterTable>
-            <ParameterDivider />
             <ParameterField
               v-model="LG_PARAMETERS.atmosphereEnabled"
               id="a-toggle"
