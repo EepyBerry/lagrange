@@ -8,7 +8,7 @@
         <span class="current-color" :style="{ backgroundColor: `#${lgColor?.getHexString()}` }"></span>
         <button
           class="lg edit"
-          aria-label="Open color panel"
+          :aria-label="$t('a11y.action_open_colorpanel')"
           :class="{ 'menu-expanded': pickerOpen }"
           @click="togglePanel()"
         >

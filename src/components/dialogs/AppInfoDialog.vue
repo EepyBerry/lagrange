@@ -1,31 +1,40 @@
 <template>
-  <DialogElement ref="dialogRef" id="dialog-about" :showTitle="false" aria-label="About Lagrange dialog">
+  <DialogElement ref="dialogRef"
+    id="dialog-about"
+    :showTitle="false"
+    :aria-label="$t('a11y.dialog_about')"
+  >
     <template v-slot:content>
       <div class="about-grid">
         <AppLogo />
         <div class="about-text">
-          <p class="highlight">A procedural planet-building application.</p>
-          <p>Made as a pet project to materialize my fascination with space & planets!</p>
+          <p class="highlight">{{ $t('dialog.about.description') }}</p>
+          <p>{{ $t('dialog.about.motivation') }}</p>
         </div>
         <div class="about-tech">
           <div class="tech-block">
             <iconify-icon mode="svg" icon="logos:threejs" width="3rem" style="fill: var(--lg-text)" />
             <div>
-              <p>3D using <span class="highlight">three.js</span></p>
+              <p>{{ $t('dialog.about.prefix_engine') }} <span class="highlight">three.js</span></p>
               <ChipElement>r166</ChipElement>
             </div>
           </div>
           <div class="tech-block">
             <iconify-icon mode="svg" icon="simple-icons:vuedotjs" width="3rem" style="fill: var(--lg-text)" />
             <div>
-              <p>Powered by <span class="highlight nowrap">Vue + Vite</span></p>
+              <p>{{ $t('dialog.about.prefix_framework') }} <span class="highlight nowrap">Vue + Vite</span></p>
               <ChipElement>3.4.21</ChipElement> <ChipElement>5.2.8</ChipElement>
             </div>
           </div>
         </div>
         <div class="about-copyright">
-          <p>Built with <iconify-icon icon="noto:rainbow-flag" width="0.875rem" /> & ❤️</p>
-          <p>© 2024 EepyBerry, <a href="https://github.com/EepyBerry/lagrange/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">BSD 3-Clause License</a></p>
+          <p>{{ $t('dialog.about.built_with_love') }}</p>
+          <p>
+            © 2024 EepyBerry, 
+            <a href="https://github.com/EepyBerry/lagrange/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
+              {{ $t('dialog.about.license') }}
+            </a>
+          </p>
         </div>
       </div>
     </template>

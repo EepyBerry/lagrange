@@ -1,20 +1,28 @@
 <template>
-  <DialogElement ref="dialogRef" id="dialog-reset-confirm" :showTitle="true" :showActions="true" aria-label="Confirm reset dialog">
+  <DialogElement ref="dialogRef"
+    id="dialog-reset-confirm"
+    :showTitle="true"
+    :showActions="true"
+    :aria-label="$t('a11y.dialog_reset')"
+  >
     <template v-slot:title>
-      <iconify-icon icon="mingcute:warning-line" width="1.5rem" /> Confirm reset
+      <iconify-icon icon="mingcute:warning-line" width="1.5rem" />
+      {{ $t('dialog.reset.$title') }}
     </template>
     <template v-slot:content>
       <div class="reset-text">
-        <p>Discard the current planet?</p>
-        <p><b>All unsaved data will be lost!</b></p>
+        <p>{{ $t('dialog.reset.message') }}</p>
+        <p><b>{{ $t('dialog.reset.warning') }}</b></p>
       </div>
     </template>
     <template v-slot:actions>
       <button class="lg" @click="dialogRef?.close()" autofocus>
-        <iconify-icon icon="mingcute:close-line" width="1.25rem" /> Cancel
+        <iconify-icon icon="mingcute:close-line" width="1.25rem" />
+        {{ $t('dialog.reset.$action_cancel') }}
       </button>
       <button class="lg warn" @click="$emit('confirm'); dialogRef?.close()">
-        <iconify-icon icon="mingcute:delete-line" width="1.25rem" /> Confirm
+        <iconify-icon icon="mingcute:delete-line" width="1.25rem" />
+        {{ $t('dialog.reset.$action_confirm') }}
       </button>
     </template>
   </DialogElement>

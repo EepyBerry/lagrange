@@ -21,7 +21,7 @@
         <button
           class="lg edit"
           :class="{ 'menu-expanded': panelOpen }"
-          aria-label="Edit ramp"
+          :aria-label="$t('a11y.action_edit_ramp')"
           @click="togglePanel()"
         >
           <iconify-icon v-if="panelOpen" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
@@ -40,7 +40,7 @@
               <button
                 v-if="!lgColorRamp?.isBoundStep(step.id) && mode !== 'opacity'"
                 class="lg warn"
-                aria-label="Open color panel"
+                :aria-label="$t('a11y.action_open_colorpanel')"
                 @click="removeStep(step.id)"
                 :disabled="pickerIdOpen === step.id"
               >
@@ -58,7 +58,7 @@
                   :min="0.001"
                   :max="0.999"
                   :step="0.001"
-                  aria-label="Parameter input"
+                  :aria-label="$t('a11y.editor_generic_input')"
                   v-model="step.factor"
                   @input="updateStepFactor(step.id, $event)"
                 />
@@ -81,7 +81,7 @@
                 <button
                   class="lg edit"
                   :class="{ 'menu-expanded': pickerIdOpen === step.id }"
-                  aria-label="Open color panel"
+                  :aria-label="$t('a11y.action_open_colorpanel')"
                   @click="togglePicker(step.id)"
                 >
                   <iconify-icon v-if="pickerIdOpen === step.id" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
@@ -108,11 +108,11 @@
         <tr v-if="mode === 'color' || !mode">
           <td colspan="4">
             <div class="add-step">
-              <button class="lg" @click="addStep()" aria-label="Add color step">
+              <button class="lg" @click="addStep()" :aria-label="$t('a11y.action_add_colorstep')">
                 <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
               </button>
               <iconify-icon class="icon" icon="ph:dot-outline-fill" width="1.25rem" aria-hidden="true" />
-              <button class="lg" @click="sortSteps()" aria-label="Sort color steps">
+              <button class="lg" @click="sortSteps()" :aria-label="$t('a11y.action_sort_colorsteps')">
                 <iconify-icon class="icon" icon="mingcute:numbers-09-sort-ascending-line" width="1.25rem" aria-hidden="true" />
               </button>
             </div>

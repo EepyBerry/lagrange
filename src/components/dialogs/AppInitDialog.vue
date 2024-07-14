@@ -1,29 +1,33 @@
 <template>
-  <DialogElement ref="dialogRef" id="dialog-editor-init" :showActions="true" aria-label="Introduction dialog">
+  <DialogElement ref="dialogRef"
+    id="dialog-editor-init"
+    :showActions="true"
+    :aria-label="$t('a11y.dialog_init')"
+  >
     <template v-slot:content>
       <div class="init-container">
         <section class="intro">
           <AppLogo />
           <div>
             <h2>
-              <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" /> Welcome to Lagrange!
+              <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
+              {{ $t('dialog.init.$title') }}!
             </h2>
             <p>
-              Lagrange is a fully procedural planet builder, perfect for
-              worldbuilding and tying your lore to a proper planet,
-              solar system or even an entire galaxy!
+              {{ $t('dialog.init.introduction') }}
             </p>
             <br>
             <NotificationElement type="wip">
-              Currently work-in-progress. More features are planned for the next versions!
+              {{ $t('dialog.init.$tmp_wip') }}
             </NotificationElement>
           </div>
         </section>
+
         <CollapsibleSection icon="oui:keyboard-shortcut">
-          <template v-slot:title>Shortcuts</template>
+          <template v-slot:title>{{ $t('dialog.init.shortcuts') }}</template>
           <template v-slot:content>
             <p>
-              Key bindings can be reassigned in the app settings!
+              {{ $t('dialog.init.shortcuts_note') }}
               <span class=nowrap>
                 (<iconify-icon style="transform: translateY(0.125rem);" icon="mingcute:settings-6-line" width="1rem" aria-hidden="true" />)
               </span>
@@ -31,57 +35,76 @@
             <ul class="controls">
               <li class="lg">
                 <span class="keybind">{{ keybinds[0]?.key }}</span>
-                <span>Toggle lens flare</span>
+                <span>{{ $t('dialog.init.shortcuts_lensflare') }}</span>
               </li>
               <li class="lg">
                 <span class="keybind">{{ keybinds[1]?.key }}</span>
-                <span>Toggle biomes</span>
+                <span>{{ $t('dialog.init.shortcuts_biomes') }}</span>
               </li>
               <li class="lg">
                 <span class="keybind">{{ keybinds[2]?.key }}</span>
-                <span>Toggle clouds</span>
+                <span>{{ $t('dialog.init.shortcuts_clouds') }}</span>
               </li>
               <li class="lg">
                 <span class="keybind">{{ keybinds[3]?.key }}</span>
-                <span>Toggle atmosphere</span>
+                <span>{{ $t('dialog.init.shortcuts_atmosphere') }}</span>
               </li>
             </ul>
           </template>
         </CollapsibleSection>
+
         <CollapsibleSection icon="mingcute:settings-1-line">
-          <template v-slot:title>Top bar - Naming & data</template>
+          <template v-slot:title>{{ $t('dialog.init.topbar') }}</template>
           <template v-slot:content>
             <ul class="controls">
-              <li class="lg"><iconify-icon icon="mingcute:edit-2-line"   width="1.5rem" aria-hidden="true" />: Rename planet</li>
-              <li class="lg"><iconify-icon icon="tabler:reload"          width="1.5rem" aria-hidden="true" />: Reset to defaults</li>
-              <li class="lg"><iconify-icon icon="mingcute:upload-line"   width="1.5rem" aria-hidden="true" />: Import planet</li>
-              <li class="lg"><iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />: Export planet</li>
+              <li class="lg"><iconify-icon icon="mingcute:edit-2-line"   width="1.5rem" aria-hidden="true" />
+                : {{ $t('dialog.init.topbar_rename') }}
+              </li>
+              <li class="lg"><iconify-icon icon="tabler:reload"          width="1.5rem" aria-hidden="true" />
+                : {{ $t('dialog.init.topbar_reset') }}
+              </li>
+              <li class="lg"><iconify-icon icon="mingcute:upload-line"   width="1.5rem" aria-hidden="true" />
+                : {{ $t('dialog.init.topbar_import') }}
+              </li>
+              <li class="lg"><iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
+                : {{ $t('dialog.init.topbar_export') }}
+              </li>
             </ul>
           </template>
         </CollapsibleSection>
+
         <CollapsibleSection icon="mingcute:layout-bottom-close-line">
-          <template v-slot:title>Footer - Miscellaneous</template>
+          <template v-slot:title>{{ $t('dialog.init.footer') }}</template>
           <template v-slot:content>
             <ul class="controls">
-              <li class="lg"><iconify-icon icon="mingcute:github-line"      width="1.5rem" aria-hidden="true" />: Github page</li>
-              <li class="lg"><iconify-icon icon="mingcute:settings-6-line"  width="1.5rem" aria-hidden="true" />: App settings</li>
-              <li class="lg"><iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true"/>: About Lagrange</li>
+              <li class="lg"><iconify-icon icon="mingcute:github-line"      width="1.5rem" aria-hidden="true" />
+                : {{ $t('dialog.init.footer_github') }}
+              </li>
+              <li class="lg"><iconify-icon icon="mingcute:settings-6-line"  width="1.5rem" aria-hidden="true" />
+                : {{ $t('dialog.init.footer_settings') }}
+              </li>
+              <li class="lg"><iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true"/>
+                : {{ $t('dialog.init.footer_about') }}
+              </li>
             </ul>
           </template>
         </CollapsibleSection>
+
         <div class="init-checkbox">
-          <label for="show-on-next-visits">Show this introduction next time?</label>
+          <label for="show-on-next-visits">{{ $t('dialog.init.show_next_time') }}</label>
           <input id="show-on-next-visits" class="lg" type="checkbox" v-model="shouldShowOnNextVisits">
         </div>
       </div>
     </template>
     <template v-slot:actions>
       <button class="lg" @click="doClose" autofocus>
-        <iconify-icon icon="mingcute:check-line" width="1.25rem" aria-hidden="true" /> Get started!
+        <iconify-icon icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
+        {{ $t('dialog.init.$action_confirm') }}
       </button>
     </template>
   </DialogElement>
 </template>
+
 <script setup lang="ts">
 import type { IDBKeyBinding } from '@/dexie';
 import AppLogo from '../elements/AppLogo.vue';

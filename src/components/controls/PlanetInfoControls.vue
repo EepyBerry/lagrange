@@ -4,34 +4,46 @@
       <input v-if="editMode" class="lg" type="text" v-model="LG_PARAMETERS.planetName">
       <p v-else>{{ LG_PARAMETERS.planetName }}</p>
       <button class="lg icon-button"
-              aria-label="Edit planet name"
+              :aria-label="$t(editMode ? 'a11y.topbar_rename_confirm' : 'a11y.topbar_rename')"
       >
         <iconify-icon v-if="editMode"
           icon="mingcute:check-line"
           width="1.25rem"
           aria-hidden="true"
-          title="Confirm planet name"
+          :title="$t('tooltips.topbar_rename_confirm')"
           @click="toggleEditMode"
         />
         <iconify-icon v-else
           icon="mingcute:edit-2-line"
           width="1.25rem"
           aria-hidden="true"
-          title="Edit planet name"
+          :title="$t('tooltips.topbar_rename')"
           @click="toggleEditMode"
         />
       </button>
     </div>
     <hr>
-    <button class="lg dark" aria-label="Reset planet" title="Reset planet" @click="resetDialog?.open()">
+    <button class="lg dark"
+      :aria-label="$t('a11y.topbar_reset')"
+      :title="$t('tooltips.topbar_reset')"
+      @click="resetDialog?.open()"
+    >
       <iconify-icon icon="tabler:reload" width="1.5rem" aria-hidden="true" />
     </button>
     <hr>
     <input ref="fileInput" type="file" @change="importPlanetFile" hidden>
-    <button class="lg dark" aria-label="Import planet data" title="Import planet file" @click="openFileDialog">
+    <button class="lg dark"
+      :aria-label="$t('a11y.topbar_import')"
+      :title="$t('tooltips.topbar_import')"
+      @click="openFileDialog"
+    >
       <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
     </button>
-    <button class="lg dark" aria-label="Export planet data" title="Export planet file" @click="exportPlanetFile">
+    <button class="lg dark"
+      :aria-label="$t('a11y.topbar_export')"
+      :title="$t('tooltips.topbar_export')"
+      @click="exportPlanetFile"
+    >
       <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
     </button>
     <AppResetConfirmDialog ref="resetDialog" @confirm="resetPlanet" />

@@ -1,16 +1,20 @@
 <template>
-  <DialogElement ref="dialogRef" id="dialog-settings" :showTitle="true" aria-label="Settings dialog">
+  <DialogElement ref="dialogRef"
+    id="dialog-settings"
+    :showTitle="true"
+    :aria-label="$t('a11y.dialog_settings')"
+  >
     <template v-slot:title>
       <iconify-icon icon="mingcute:settings-3-line" width="1.5rem" /> Settings
     </template>
     <template v-slot:content>
       <div class="settings-grid">
         <div class="settings-theme">
-          <h3>Graphics</h3>
+          <h3>{{ $t('dialog.settings.graphics') }}</h3>
           <ParameterTable>
             <ParameterRadio>
               <template v-slot:title>
-                Choose theme to use:
+                {{ $t('dialog.settings.graphics_theme') }}
               </template>
               <template v-slot:options>
                 <ParameterRadioOption v-model="appGraphicsSettings.theme"
@@ -18,27 +22,27 @@
                   :id="'0'"
                   value="default"
                   icon="mingcute:planet-line"
-                  ariaLabel="Default theme"
+                  :ariaLabel="$t('a11y.graphics_theme_default')"
                 >
-                  Default
+                  {{ $t('dialog.settings.graphics_theme_default') }}
                 </ParameterRadioOption>
                 <ParameterRadioOption v-model="appGraphicsSettings.theme"
                   name="theme-select"
                   :id="'1'"
                   value="supernova"
                   icon="ph:star-four"
-                  ariaLabel="Supernova theme"
+                  :ariaLabel="$t('a11y.graphics_theme_supernova')"
                 >
-                  Supernova
+                  {{ $t('dialog.settings.graphics_theme_supernova') }}
                 </ParameterRadioOption>
                 <ParameterRadioOption v-model="appGraphicsSettings.theme"
                   name="theme-select"
                   :id="'1'"
                   value="voyager"
                   icon="hugeicons:satellite-02"
-                  ariaLabel="Voyager theme"
+                  :ariaLabel="$t('a11y.graphics_theme_voyager')"
                 >
-                  Voyager
+                  {{ $t('dialog.settings.graphics_theme_voyager') }}
                 </ParameterRadioOption>
               </template>
             </ParameterRadio>
@@ -48,26 +52,26 @@
               type="checkbox"
               v-model="enableMonospaceFont"
             >
-              Enable monospace font:
+              {{ $t('dialog.settings.graphics_monospace') }}
             </ParameterField>
           </ParameterTable>
         </div>
         <hr>
         <div class="settings-keybinds">
-          <h3>Key bindings</h3>
+          <h3>{{ $t('dialog.settings.keybinds') }}</h3>
           <ParameterTable>
             <tr v-for="kb of keyBinds" :key="kb.action">
               <td>
                 <div class="keybind">
                   <div class="keybinds-label">
                     <iconify-icon :icon="getIcon(kb.action)" width="1.5rem" aria-hidden="true" />
-                    {{ getLabel(kb.action) }}
+                    {{ $t('dialog.settings.keybinds_' + getTranslationKey(kb.action)) }}
                   </div>
                   <div class="keybinds-key" :class="{ unset: kb.key === '[unset]' }">
                     <iconify-icon v-if="tryGetKeyRepresentation(kb.key)" :icon="tryGetKeyRepresentation(kb.key)" width="1.25rem" />
                     <span v-else>{{ selectedAction === kb.action ? '.....' : kb.key }}</span>
                   </div>
-                  <button class="lg" aria-label="Edit key binding" @click="toggleAction(kb.action)">
+                  <button class="lg" :aria-label="$t('a11y.action_edit_keybind')" @click="toggleAction(kb.action)">
                     <iconify-icon v-if="selectedAction === kb.action" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
                     <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
                   </button>
@@ -167,12 +171,12 @@ async function setSelectedActionKey(event: KeyboardEvent) {
   toggleAction(keyBinds.value[kbidx].action)
 }
 
-function getLabel(action: KeyBindingAction) {
+function getTranslationKey(action: KeyBindingAction) {
   switch (action) {
-    case KeyBindingAction.ToggleLensFlare:  return 'Toggle lens-flare'
-    case KeyBindingAction.ToggleBiomes:     return 'Toggle biomes'
-    case KeyBindingAction.ToggleClouds:     return 'Toggle clouds'
-    case KeyBindingAction.ToggleAtmosphere: return 'Toggle atmosphere'
+    case KeyBindingAction.ToggleLensFlare:  return 'lensflare'
+    case KeyBindingAction.ToggleBiomes:     return 'biomes'
+    case KeyBindingAction.ToggleClouds:     return 'clouds'
+    case KeyBindingAction.ToggleAtmosphere: return 'atmosphere'
   }
 }
 function getIcon(action: KeyBindingAction) {

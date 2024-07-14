@@ -1,6 +1,6 @@
 <template>
-  <SVGAppLogoUwU v-if="$route.query.uwu !== undefined" aria-label="OwO Lagrange logo!" />
-  <SVGAppLogo v-else aria-label="Lagrange logo" />
+  <SVGAppLogoUwU v-if="$route.query.uwu !== undefined" :aria-label="$t('a11y.logo_alt')" />
+  <SVGAppLogo v-else :aria-label="$t('a11y.logo')" />
 </template>
 
 <script setup lang="ts">

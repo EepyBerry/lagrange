@@ -1,0 +1,194 @@
+{
+  "main": {
+    "$title": "Lagrange"
+  },
+  "dialog": {
+    "init": {
+      "$title": "Welcome to @:main.$title",
+      "introduction": "Lagrange is a fully procedural planet builder, perfect for worldbuilding and tying your lore to a proper planet, solar system or even an entire galaxy!",
+      "$tmp_wip": "Currently work-in-progress. More features are planned for the next versions!",
+
+      "shortcuts": "Shortcuts",
+      "shortcuts_note": "Key bindings can be reassigned in the app settings!",
+      "shortcuts_lensflare": "Toggle lens flare",
+      "shortcuts_biomes": "Toggle biomes",
+      "shortcuts_clouds": "Toggle clouds",
+      "shortcuts_atmosphere": "Toggle atmosphere",
+
+      "topbar": "Top bar - Naming & data",
+      "topbar_rename": "Rename planet",
+      "topbar_reset": "Reset to defaults",
+      "topbar_import": "Import planet",
+      "topbar_export": "Export planet",
+
+      "footer": "Footer - Miscellaneous",
+      "footer_github": "GitHub page",
+      "footer_settings": "App settings",
+      "footer_about": "About @:main.$title",
+
+      "show_next_time": "Show this introduction next time?",
+
+      "$action_confirm": "Get started!"
+    },
+    "settings": {
+      "$title": "Settings",
+
+      "graphics": "Graphics",
+      "graphics_theme": "Choose theme to use:",
+      "graphics_theme_default": "Default",
+      "graphics_theme_supernova": "Supernova",
+      "graphics_theme_voyager": "Voyager",
+      "graphics_monospace": "Enable monospace font",
+
+      "keybinds": "Key bindings",
+      "keybinds_lensflare": "@:dialog.init.shortcuts_lensflare",
+      "keybinds_biomes": "@:dialog.init.shortcuts_biomes",
+      "keybinds_clouds": "@:dialog.init.shortcuts_clouds",
+      "keybinds_atmosphere": "@:dialog.init.shortcuts_atmosphere"
+    },
+    "about": {
+      "description": "A procedural planet-building application.",
+      "motivation": "Made as a pet project to materialize my fascination with space & planets!",
+
+      "prefix_engine": "3D using",
+      "prefix_framework": "Powered by",
+      
+      "built_with_love": "Built with 🏳️‍🌈 & ❤️",
+      "license": "BSD 3-Clause License"
+    },
+    "reset": {
+      "$title": "Confirm reset",
+      "message": "Discard the current planet?",
+      "warning": "All unsaved data will be lost!",
+      "$action_cancel": "Cancel",
+      "$action_confirm": "Confirm"
+    }
+  },
+  "editor": {
+    "controls": {
+      "lighting": {
+        "$title": "Lighting",
+
+        "lensflare": "Lens Flare",
+        "lensflare_show": "Show lens flare",
+        "lensflare_points_intensity": "Points intensity",
+        "lensflare_glare_intensity": "Glare intensity",
+
+        "sunlight": "Sunlight",
+        "sunlight_angle": "Angle",
+        "sunlight_intensity": "Intensity",
+        "sunlight_color": "Color",
+
+        "amblight": "Ambient light",
+        "amblight_intensity": "Intensity",
+        "amblight_color": "Color"
+      },
+      "planet_rendering": {
+        "$title": "Planet & Rendering",
+
+        "transform": "Transform",
+        "transform_axialtilt": "Axial tilt",
+        "transform_rotation": "Rotation",
+
+        "pbr": "PBR parameters",
+        "pbr_waterlevel": "Water level",
+        "pbr_waterroughness": "Water roughness",
+        "pbr_watermetalness": "Water metalness",
+        "pbr_groundroughness": "Ground roughness",
+        "pbr_groundmetalness": "Ground metalness"
+      },
+      "surface": {
+        "$title": "Surface",
+
+        "bumpmap": "Bump map",
+        "bumpmap_show": "Show bumps",
+        "bumpmap_strength": "Bump strength",
+
+        "noise": "Noise parameters",
+        "noise_fbm_frequency": "Frequency",
+        "noise_fbm_amplitude": "Amplitude",
+        "noise_fbm_lacunarity": "Lacunarity",
+        "noise_colorramp": "Color ramp"
+      },
+      "biomes": {
+        "$title": "Biomes",
+        "biomes_show": "Show biomes",
+        "poles_show": "Show poles"
+      },
+      "clouds": {
+        "$title": "Clouds",
+        "clouds_show": "Show clouds",
+
+        "transform": "Transform",
+        "transform_rotation": "Rotation",
+
+        "noise": "Noise parameters",
+        "noise_fbm_frequency": "Frequency",
+        "noise_fbm_amplitude": "Amplitude",
+        "noise_fbm_lacunarity": "Lacunarity",
+
+        "rgba": "Color & opacity",
+        "rgba_color": "Color",
+        "rgba_opacityramp": "Color"
+      },
+      "atmosphere": {
+        "$title": "Atmosphere",
+        "atmosphere_show": "Show atmosphere",
+
+        "transform": "Transform",
+        "transform_height": "Height",
+        "transform_density": "Density",
+
+        "rgba": "Color & intensity",
+        "rgba_hue": "Hue",
+        "rgba_intensity": "Intensity"
+      }
+    }
+  },
+  "tooltips": {
+    "topbar_rename": "Rename planet",
+    "topbar_rename_confirm": "Confirm planet name",
+    "topbar_reset": "Reset to defaults",
+    "topbar_import": "Import planet file",
+    "topbar_export": "Export planet file",
+
+    "footer_github": "GitHub repository (opens in new tab)",
+    "footer_settings": "Settings",
+    "footer_about": "About @:main.$title"
+  },
+  "a11y": {
+    "logo": "Lagrange logo",
+    "logo_alt": "Secret Lagrange logo!",
+
+    "dialog_init": "Introduction dialog",
+    "dialog_settings": "Settings dialog",
+    "dialog_about": "About @:main.$title dialog",
+    "dialog_reset": "Confirm reset dialog",
+
+    "topbar_rename": "@:tooltips.topbar_rename",
+    "topbar_rename_confirm": "@:tooltips.topbar_rename_confirm",
+    "topbar_reset": "@:tooltips.topbar_reset",
+    "topbar_import": "@:tooltips.topbar_import",
+    "topbar_export": "@:tooltips.topbar_export",
+
+    "footer_github": "@:tooltips.footer_github",
+    "footer_settings": "@:tooltips.footer_settings",
+    "footer_about": "@:tooltips.footer_about",
+
+    "graphics_theme_default": "Set default theme (blue)",
+    "graphics_theme_supernova": "Set Supernova theme (purple)",
+    "graphics_theme_voyager": "Set Voyager theme (orange)",
+    
+    "editor_generic_input": "Parameter value",
+
+    "action_edit_keybind": "Edit key binding",
+    "action_edit_ramp": "Edit ramp",
+
+    "action_open_colorpanel": "Open color panel",
+
+    "action_add_colorstep": "Add color step",
+    "action_sort_colorsteps": "Sort color steps",
+
+    "action_close_dialog": "Close dialog"
+  }
+}

@@ -3,23 +3,23 @@
     <div id="footer-nav">
       <a class="lg dark"
          href="https://github.com/EepyBerry/lagrange" target="_blank" rel="noopener"
-         title="GitHub repository (opens in new tab)"
-         aria-label="GitHub page"
+         :title="$t('tooltips.footer_github')"
+         :aria-label="$t('a11y.footer_github')"
       >
         <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" />
         <iconify-icon class="link-icon" icon="mingcute:right-small-fill" width="2rem" aria-hidden="true" />
       </a>
       <hr width="50%">
       <button class="lg dark"
-              title="Settings"
-              aria-label="Settings"  
+              :title="$t('tooltips.footer_settings')"
+              :aria-label="$t('a11y.footer_settings')"
               @click="settingsDialog!.open()"
       >
         <iconify-icon icon="mingcute:settings-6-line" width="1.5rem" aria-hidden="true" />
       </button>
       <button class="lg dark"
-              title="About Lagrange"
-              aria-label="About Lagrange"
+              :title="$t('tooltips.footer_about')"
+              :aria-label="$t('a11y.footer_about')"
               @click="infoDialog!.open()"
       >
         <iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true" />

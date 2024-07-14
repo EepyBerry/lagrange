@@ -5,7 +5,7 @@
         <h2 v-if="showTitle" class="dialog-title">
           <slot name="title"></slot>
         </h2>
-        <button @click="close" class="lg icon-button dialog-close" aria-label="Close dialog">
+        <button @click="close" class="lg icon-button dialog-close" :aria-label="$t('a11y.action_close_dialog')">
           <iconify-icon icon="mingcute:close-line" width="1.5rem" aria-hidden="true" />
         </button>
       </header>
