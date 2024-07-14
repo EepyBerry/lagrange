@@ -12,7 +12,7 @@ import { onMounted, onUnmounted, ref, type Ref } from 'vue';
 import * as THREE from 'three';
 import Stats from 'three/addons/libs/stats.module.js';
 import * as Lagrange from '@/core/lagrange.service';
-import { LG_HEIGHT_DIVIDER, LG_NAME_AMBLIGHT, LG_PARAMETERS } from '@core/globals';
+import { AXIS_NX, AXIS_X, LG_HEIGHT_DIVIDER, LG_NAME_AMBLIGHT, LG_PARAMETERS, SUN_INIT_POS } from '@core/globals';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { GeometryType } from '@core/types';
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla';
@@ -41,8 +41,6 @@ let _atmosphere: THREE.Mesh
 let _sunLight: THREE.DirectionalLight
 let _ambLight: THREE.AmbientLight
 let _lensFlare: LensFlareEffect
-
-const VEC_TILT = new THREE.Vector3(-1, 0, 0)
 
 onMounted(() => init())
 onUnmounted(() => {
@@ -95,7 +93,7 @@ function initPlanet(): void {
   _planetPivot = pivot
 
   // Set initial rotations
-  _planetPivot.setRotationFromAxisAngle(VEC_TILT, degToRad(LG_PARAMETERS.planetAxialTilt))
+  _planetPivot.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PARAMETERS.planetAxialTilt))
   _planet.setRotationFromAxisAngle(_planet.up, degToRad(LG_PARAMETERS.planetRotation))
   _clouds.setRotationFromAxisAngle(_clouds.up, degToRad(LG_PARAMETERS.planetRotation + LG_PARAMETERS.cloudsRotation))
   
@@ -105,7 +103,7 @@ function initPlanet(): void {
 
 function initLighting(): void {
   const sun = Lagrange.createSun()
-  const lensFlare = Lagrange.createLensFlare(sun)
+  const lensFlare = Lagrange.createLensFlare(sun.position, sun.color)
   sun.add(lensFlare.mesh)
   $se.scene.add(sun)
   _sunLight = sun
@@ -171,12 +169,26 @@ function updatePlanet() {
         _lensFlare.mesh.visible = LG_PARAMETERS.lensFlareEnabled
         break
       }
+      case '_lensFlarePointsIntensity': {
+        setShaderMaterialUniform(
+          _lensFlare.material,
+          'starPointsIntensity',
+          LG_PARAMETERS.lensFlarePointsIntensity
+        )
+        break
+      }
       case '_lensFlareGlareIntensity': {
         setShaderMaterialUniform(
           _lensFlare.material,
           'glareIntensity',
           LG_PARAMETERS.lensFlareGlareIntensity
         )
+        break
+      }
+      case '_sunLightAngle': {
+        const v = degToRad(isNaN(LG_PARAMETERS.sunLightAngle) ? 0 : LG_PARAMETERS.sunLightAngle)
+        const newPos = SUN_INIT_POS.clone().applyAxisAngle(AXIS_X, v)
+        _sunLight.position.set(newPos.x, newPos.y, newPos.z)
         break
       }
       case '_sunLightColor': {
@@ -206,7 +218,7 @@ function updatePlanet() {
       // --------------------------------------------------
       case '_planetAxialTilt': {
         const v = degToRad(isNaN(LG_PARAMETERS.planetAxialTilt) ? 0 : LG_PARAMETERS.planetAxialTilt)
-        _planetPivot.setRotationFromAxisAngle(VEC_TILT, v)
+        _planetPivot.setRotationFromAxisAngle(AXIS_NX, v)
         break
       }
       case '_planetRotation': {

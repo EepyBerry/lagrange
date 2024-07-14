@@ -14,17 +14,38 @@
             >
               Show lens flare
             </ParameterField>
-            <ParameterField
-              v-model="LG_PARAMETERS.lensFlareGlareIntensity"
-              id="f-glareint"
-              type="range"
-              :step="0.01"
-              :min="0"
-              :max="1"
-            >
-              Glare intensity
-            </ParameterField>
+            <template v-if="LG_PARAMETERS.lensFlareEnabled">
+              <ParameterField
+                v-model="LG_PARAMETERS.lensFlarePointsIntensity"
+                id="f-pointsint"
+                type="range"
+                :step="0.01"
+                :min="0"
+                :max="1"
+              >
+                Points intensity
+              </ParameterField>
+              <ParameterField
+                v-model="LG_PARAMETERS.lensFlareGlareIntensity"
+                id="f-glareint"
+                type="range"
+                :step="0.01"
+                :min="0"
+                :max="1"
+              >
+                Glare intensity
+              </ParameterField>
+            </template>
             <ParameterCategory>Sunlight</ParameterCategory>
+            <ParameterField v-model="LG_PARAMETERS.sunLightAngle"
+              id="l-angle"
+              type="range"
+              :step="0.1"
+              :min="-90"
+              :max="90"
+            >
+              Angle
+            </ParameterField>
             <ParameterField v-model="LG_PARAMETERS.sunLightIntensity"
               id="l-int"
               type="range"
@@ -37,7 +58,6 @@
             <ParameterColor v-model="LG_PARAMETERS.sunLightColor">
               Color
             </ParameterColor>
-            <ParameterDivider />
             <ParameterCategory>Ambient light</ParameterCategory>
             <ParameterField v-model="LG_PARAMETERS.ambLightIntensity"
               id="m-int"
@@ -81,7 +101,6 @@
             >
               Rotation <sup>(°)</sup>
             </ParameterField>
-            <ParameterDivider />
             <ParameterCategory>PBR parameters</ParameterCategory>
             <ParameterField
               v-model="LG_PARAMETERS.planetWaterLevel"
@@ -114,6 +133,7 @@
             >
               Water metalness
             </ParameterField>
+            <ParameterDivider />
             <ParameterField
               v-model="LG_PARAMETERS.planetGroundRoughness"
               id="p-grough"
@@ -151,17 +171,18 @@
             >
               Show bumps
             </ParameterField>
-            <ParameterField
-              v-model="LG_PARAMETERS.planetSurfaceBumpStrength"
-              id="s-bumpstr"
-              type="range"
-              :step="0.0005"
-              :min="0.02"
-              :max="0.2"
-            >
-              Bump strength
-            </ParameterField>
-            <ParameterDivider />
+            <template v-if="LG_PARAMETERS.planetSurfaceShowBumps">
+              <ParameterField
+                v-model="LG_PARAMETERS.planetSurfaceBumpStrength"
+                id="s-bumpstr"
+                type="range"
+                :step="0.0005"
+                :min="0.02"
+                :max="0.2"
+              >
+                Bump strength
+              </ParameterField>
+            </template>
             <ParameterCategory>Noise parameters</ParameterCategory>
             <ParameterField
               v-model="LG_PARAMETERS.planetSurfaceNoise.frequency"
@@ -252,7 +273,6 @@
               >
                 Rotation <sup>(°)</sup>
               </ParameterField>
-              <ParameterDivider />
               <ParameterCategory>Noise parameters</ParameterCategory>
               <ParameterField
                 v-model="LG_PARAMETERS.cloudsNoise.frequency"
@@ -284,7 +304,6 @@
               >
                 Lacunarity
               </ParameterField>
-              <ParameterDivider />
               <ParameterCategory>Color & opacity</ParameterCategory>
               <ParameterColor v-model="LG_PARAMETERS.cloudsColor">Color</ParameterColor>
               <ParameterColorRamp

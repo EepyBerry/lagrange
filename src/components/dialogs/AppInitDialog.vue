@@ -107,10 +107,8 @@ function doClose() {
 
 <style scoped lang="scss">
 #dialog-editor-init {
-  min-width: 24rem;
-
   .init-container {
-    max-width: 48rem;
+    max-width: 56rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;

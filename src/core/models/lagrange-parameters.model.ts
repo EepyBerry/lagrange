@@ -49,7 +49,9 @@ export default class LagrangeParameters extends ChangeTracker {
   // --------------------------------------------------
 
   private _lensFlareEnabled: boolean
+  private _lensFlarePointsIntensity: number
   private _lensFlareGlareIntensity: number
+  private _sunLightAngle: number
   private _sunLightColor: Color
   private _sunLightIntensity: number
   private _ambLightColor: Color
@@ -64,6 +66,13 @@ export default class LagrangeParameters extends ChangeTracker {
     this._lensFlareEnabled = value
     this.markForChange('_lensFlareEnabled')
   }
+  public get lensFlarePointsIntensity(): number {
+    return this._lensFlarePointsIntensity
+  }
+  public set lensFlarePointsIntensity(value: number) {
+    this._lensFlarePointsIntensity = clamp(value, 0, 1)
+    this.markForChange('_lensFlarePointsIntensity')
+  }
   public get lensFlareGlareIntensity(): number {
     return this._lensFlareGlareIntensity
   }
@@ -72,6 +81,13 @@ export default class LagrangeParameters extends ChangeTracker {
     this.markForChange('_lensFlareGlareIntensity')
   }
 
+  public get sunLightAngle(): number {
+    return this._sunLightAngle
+  }
+  public set sunLightAngle(value: number) {
+    this._sunLightAngle = clamp(value, -180, 180)
+    this.markForChange('_sunLightAngle')
+  }
   public get sunLightColor(): Color {
     return this._sunLightColor
   }
@@ -393,7 +409,9 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetName = 'New Planet'
 
     this._lensFlareEnabled = true
-    this._lensFlareGlareIntensity = 0.75
+    this._lensFlarePointsIntensity = 0.25
+    this._lensFlareGlareIntensity = 0.4
+    this._sunLightAngle = 15
     this._sunLightColor = new Color(0xfff6e8)
     this._sunLightIntensity = 10.0
     this._ambLightColor = new Color(0xffffff)
@@ -401,7 +419,7 @@ export default class LagrangeParameters extends ChangeTracker {
 
     this._planetGeometryType = GeometryType.SPHERE
     this._planetMeshQuality = 48.0
-    this._planetAxialTilt = 15.0
+    this._planetAxialTilt = -15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
     this._planetWaterMetalness = 0.5
@@ -451,7 +469,8 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetName = 'New Planet'
 
     this._lensFlareEnabled = true
-    this._lensFlareGlareIntensity = 0.75
+    this._lensFlarePointsIntensity = 0.25
+    this._lensFlareGlareIntensity = 0.4
     this._sunLightColor.set(0xfff6e8)
     this._sunLightIntensity = 10.0
     this._ambLightColor.set(0xffffff)
@@ -459,7 +478,7 @@ export default class LagrangeParameters extends ChangeTracker {
 
     this._planetGeometryType = GeometryType.SPHERE
     this._planetMeshQuality = 48.0
-    this._planetAxialTilt = 15.0
+    this._planetAxialTilt = -15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
     this._planetWaterMetalness = 0.5
@@ -514,6 +533,7 @@ export default class LagrangeParameters extends ChangeTracker {
 
     this._lensFlareEnabled = data._lensFlareEnabled
     this._lensFlareGlareIntensity = data._lensFlareGlareIntensity
+    this._sunLightAngle = data._sunLightAngle
     this._sunLightColor.set(numberToHex(data._sunLightColor))
     this._sunLightIntensity = data._sunLightIntensity
     this._ambLightColor.set(numberToHex(data._ambLightColor))

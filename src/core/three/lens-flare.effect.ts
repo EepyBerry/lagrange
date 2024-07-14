@@ -9,6 +9,7 @@ export type LensFlareParams = {
   opacity: number
   colorGain: THREE.Color
   starPoints: number
+  starPointsIntensity: number
   glareSize: number
   glareIntensity: number
   flareSize: number
@@ -45,12 +46,13 @@ export class LensFlareEffect {
       lensPosition: params.lensPosition ?? new THREE.Vector3(0),
       opacity: params.opacity ?? 1,
       colorGain: params.colorGain ?? new THREE.Color(95, 12, 10),
+      starPointsIntensity: params.starPointsIntensity ?? 0.25,
       starPoints: params.starPoints ?? 2,
       glareSize: params.glareSize ?? 0.025,
       glareIntensity: params.glareIntensity ?? 0.5,
       flareSize: params.flareSize ?? 0.001,
       flareSpeed: params.flareSpeed ?? 0,
-      flareShape: params.flareShape ?? 0.25,
+      flareShape: params.flareShape ?? 0.375,
       haloScale: params.haloScale ?? 0,
       animated: params.animated ?? false,
       anamorphic: params.anamorphic ?? false,
@@ -81,6 +83,7 @@ export class LensFlareEffect {
         opacity: { value: this._internalOpacity },
         colorGain: { value: this._params.colorGain },
         starPoints: { value: this._params.starPoints },
+        starPointsIntensity: { value: this._params.starPointsIntensity },
         glareSize: { value: this._params.glareSize },
         glareIntensity: { value: this._params.glareIntensity },
         flareSize: { value: this._params.flareSize },
@@ -143,7 +146,7 @@ export class LensFlareEffect {
     }
 
     this._raycaster.setFromCamera(new THREE.Vector2(projectedPosition.x, projectedPosition.y), camera);
-    const intersects = this._raycaster.intersectObjects([scene.getObjectByName(LG_NAME_PLANET)!], true);
+    const intersects = this._raycaster.intersectObjects([scene.getObjectByName(LG_NAME_PLANET)!], false);
     this.checkTransparency(intersects);
 
     this._material.uniforms.iTime.value += dt;

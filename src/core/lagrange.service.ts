@@ -14,6 +14,8 @@ import {
   LG_NAME_AMBLIGHT,
   LG_NAME_ATMOSPHERE,
   LG_NAME_SUN,
+  AXIS_X,
+  SUN_INIT_POS,
 } from '@core/globals'
 import { GeometryType } from '@core/types'
 import { loadCubeTexture } from '@/core/three/external-data.loader'
@@ -62,17 +64,23 @@ export function createSun() {
     LG_PARAMETERS.sunLightColor, 
     LG_PARAMETERS.sunLightIntensity
   )
-  sun.position.set(0, 2e3, 4e3)
+  
+  const pos = SUN_INIT_POS.clone()
+  pos.applyAxisAngle(AXIS_X, degToRad(-15))
+  sun.position.set(pos.x, pos.y, pos.z)
+
+  sun.frustumCulled = false
   sun.userData.lens = 'no-occlusion'
   sun.name = LG_NAME_SUN
   return sun
 }
 
-export function createLensFlare(sun: THREE.DirectionalLight) {
+export function createLensFlare(pos: THREE.Vector3, color: THREE.Color) {
   return new LensFlareEffect({
     opacity: 1,
-    lensPosition: sun.position,
-    colorGain: sun.color,
+    lensPosition: pos,
+    colorGain: color,
+    starPointsIntensity: LG_PARAMETERS.lensFlarePointsIntensity,
     glareIntensity: LG_PARAMETERS.lensFlareGlareIntensity
   })
 }
@@ -128,7 +136,6 @@ export function createClouds(type: GeometryType): THREE.Mesh {
   material.shadowSide = THREE.DoubleSide
 
   const mesh = new THREE.Mesh(geometry, material)
-  mesh.userData.lens = 'no-occlusion';
   mesh.name = LG_NAME_CLOUDS
   mesh.receiveShadow = true
   mesh.castShadow = true

@@ -25,7 +25,7 @@
         </div>
         <div class="about-copyright">
           <p>Built with <iconify-icon icon="noto:rainbow-flag" width="0.875rem" /> & ❤️</p>
-          <p>© 2024 EepyBerry, <a href="https://opensource.org/license/bsd-3-clause" target="_blank" rel="noopener noreferrer">BSD 3-Clause License</a></p>
+          <p>© 2024 EepyBerry, <a href="https://github.com/EepyBerry/lagrange/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">BSD 3-Clause License</a></p>
         </div>
       </div>
     </template>

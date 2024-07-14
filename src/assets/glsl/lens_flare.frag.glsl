@@ -12,6 +12,7 @@ uniform vec2 lensPosition;
 uniform vec2 iResolution;
 uniform vec3 colorGain;
 uniform float starPoints;
+uniform float starPointsIntensity;
 uniform float glareSize;
 uniform float glareIntensity;
 uniform float flareSize;
@@ -84,7 +85,7 @@ vec3 drawflare(vec2 p, float intensity, float rnd, float speed, int id)
     
     float blades = length(p * flareShape * sin(internalStarPoints * atan(p.x, p.y))); //draw 6 blades
     
-    float comp = pow(1.-saturate2(blades), ( anamorphic ? 100. : 12.));
+    float comp = pow(1.-saturate2(blades), ( anamorphic ? 100. : 24.));
     comp += saturate2(expgrad-0.9) * 3.;
     comp = pow(comp * expgrad, 8. + (1.-intensity) * 5.);
     
@@ -189,7 +190,7 @@ vec3 LensFlare(vec2 uv, vec2 pos)
     c.g+=(f1+f22+f42+f52+f62) * glareIntensity;
     c.b+=(f1+f23+f43+f53+f63) * glareIntensity;
     c = c*1.3 * vec3(length(uvd)+.09); // Vignette
-    c+=vec3(f0 / 4.0);
+    c += vec3((f0 * starPointsIntensity) / 4.0);
     
     return c;
 }
@@ -390,7 +391,7 @@ void main()
     }
 
     //Final composed output
-    gl_FragColor = vec4(finalColor, mix(finalColor, vec3(1.0), 1.0) * opacity);
+    gl_FragColor = vec4(finalColor, opacity);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
 }
