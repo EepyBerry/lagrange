@@ -44,7 +44,7 @@
               :min="-90"
               :max="90"
             >
-              Angle
+              Angle <sup>(°)</sup>
             </ParameterField>
             <ParameterField v-model="LG_PARAMETERS.sunLightIntensity"
               id="l-int"
