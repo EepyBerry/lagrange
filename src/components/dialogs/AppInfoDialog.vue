@@ -37,6 +37,7 @@
           </p>
         </div>
       </div>
+      <span id="app-version">0.1.0</span>
     </template>
   </DialogElement>
 </template>
@@ -113,6 +114,12 @@ defineExpose({ open: () => dialogRef.value?.open() })
       }
     }
   }
+}
+#app-version {
+  position: absolute;
+  opacity: 0.5;
+  bottom: 0.25rem;
+  left: 0.5rem;
 }
 
 @media screen and (max-width: 767px) {
