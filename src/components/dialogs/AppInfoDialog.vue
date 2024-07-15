@@ -120,6 +120,7 @@ defineExpose({ open: () => dialogRef.value?.open() })
   opacity: 0.5;
   bottom: 0.25rem;
   left: 0.5rem;
+  user-select: none;
 }
 
 @media screen and (max-width: 767px) {
