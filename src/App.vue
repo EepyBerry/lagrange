@@ -12,6 +12,9 @@ import * as DexieUtils from '@/utils/dexie-utils';
 import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie';
 import { onMounted, ref, type Ref } from 'vue';
 import AppInitDialog from './components/dialogs/AppInitDialog.vue';
+import { useI18n } from 'vue-i18n';
+
+const i18n = useI18n()
 
 const dialogInit: Ref<{ open: Function, close: Function }|null> = ref(null)
 const keybinds: Ref<IDBKeyBinding[]> = ref([])
@@ -21,6 +24,17 @@ onMounted(async () => {
   await initDexie()
   keybinds.value = await idb.keyBindings.limit(4).toArray()
   settings.value = await idb.settings.limit(1).first()
+
+  // Set locale
+  const url = new URL(window.location.href)
+  const params = new URLSearchParams(url.search)
+  const queryParams = Object.fromEntries(params)
+  if(queryParams.uwu !== undefined) {
+    i18n.locale.value = 'en-UwU'
+  } else {
+    i18n.locale.value = settings.value?.locale ?? 'en-US'
+  }
+
   if (settings.value?.showInitDialog) {
     dialogInit.value?.open()
   }

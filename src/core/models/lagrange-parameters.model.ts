@@ -30,7 +30,7 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._planetName
   }
   public set planetName(value: string) {
-    this._planetName = value ?? 'New Planet'
+    this._planetName = value
   }
 
   public get initCamDistance() {
@@ -406,7 +406,7 @@ export default class LagrangeParameters extends ChangeTracker {
   constructor() {
     super()
     this._id = generateUUID()
-    this._planetName = 'New Planet'
+    this._planetName = ''
 
     this._lensFlareEnabled = true
     this._lensFlarePointsIntensity = 0.25
@@ -466,7 +466,7 @@ export default class LagrangeParameters extends ChangeTracker {
   }
 
   public reset() {
-    this._planetName = 'New Planet'
+    this._planetName = ''
 
     this._lensFlareEnabled = true
     this._lensFlarePointsIntensity = 0.25

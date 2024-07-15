@@ -394,7 +394,7 @@ import ParameterCheckbox from '../parameters/ParameterCheckbox.vue';
 
   .sidebar {
     width: 100%;
-    max-width: 24rem;
+    max-width: 26rem;
     padding: 1rem;
     display: flex;
     flex-direction: column;
@@ -407,6 +407,13 @@ import ParameterCheckbox from '../parameters/ParameterCheckbox.vue';
   }
 }
 
+@media screen and (max-width:1365px) {
+  #controls {
+    .sidebar {
+      margin-top: 4.375rem;
+    }
+  }
+}
 @media screen and (max-width:1199px) {
   #controls {
     .sidebar {

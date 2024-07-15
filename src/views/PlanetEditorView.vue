@@ -22,10 +22,13 @@ import type { SceneElements } from '@/core/models/scene-elements.model';
 import type { LensFlareEffect } from '@/core/three/lens-flare.effect';
 import { idb, KeyBindingAction } from '@/dexie';
 import { EventBus } from '@/core/window-event-bus';
+import { useI18n } from 'vue-i18n';
 
 useHead({ meta: [
   { name: 'description', content: 'A procedural planet building app' }
 ]})
+
+const i18n = useI18n()
 
 // THREE canvas/scene root
 const sceneRoot: Ref<any> = ref(null)
@@ -99,6 +102,9 @@ function initPlanet(): void {
   
   //const helper = new VertexNormalsHelper( planet, 0.1, 0xff0000 );
   //$se.scene.add( helper );
+
+  // Set initial name
+  LG_PARAMETERS.planetName = i18n.t('editor.default_planet_name')
 }
 
 function initLighting(): void {

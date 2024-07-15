@@ -3,6 +3,7 @@
     id="dialog-settings"
     :showTitle="true"
     :aria-label="$t('a11y.dialog_settings')"
+    style="height: 80%"
   >
     <template v-slot:title>
       <iconify-icon icon="mingcute:settings-3-line" width="1.5rem" aria-hidden="true" />
@@ -10,78 +11,98 @@
     </template>
     <template v-slot:content>
       <div class="settings-grid">
-        <div class="settings-theme">
-          <h3>{{ $t('dialog.settings.general') }}</h3>
-          <ParameterTable>
-            <ParameterRadio>
-              <template v-slot:title>
-                {{ $t('dialog.settings.general_theme') }}
-              </template>
-              <template v-slot:options>
-                <ParameterRadioOption v-model="appGraphicsSettings.theme"
-                  name="theme-select"
-                  :id="'0'"
-                  value="default"
-                  icon="mingcute:planet-line"
-                  :ariaLabel="$t('a11y.general_theme_default')"
-                >
-                  {{ $t('dialog.settings.general_theme_default') }}
-                </ParameterRadioOption>
-                <ParameterRadioOption v-model="appGraphicsSettings.theme"
-                  name="theme-select"
-                  :id="'1'"
-                  value="supernova"
-                  icon="ph:star-four"
-                  :ariaLabel="$t('a11y.general_theme_supernova')"
-                >
-                  {{ $t('dialog.settings.general_theme_supernova') }}
-                </ParameterRadioOption>
-                <ParameterRadioOption v-model="appGraphicsSettings.theme"
-                  name="theme-select"
-                  :id="'1'"
-                  value="voyager"
-                  icon="hugeicons:satellite-02"
-                  :ariaLabel="$t('a11y.general_theme_voyager')"
-                >
-                  {{ $t('dialog.settings.general_theme_voyager') }}
-                </ParameterRadioOption>
-              </template>
-            </ParameterRadio>
-            <ParameterDivider />
-            <ParameterCheckbox
-              id="settings-font"
-              :true-value="'monospace'"
-              :false-value="'default'"
-              v-model="appGraphicsSettings.font"
-            >
-              {{ $t('dialog.settings.general_monospace') }}:
-            </ParameterCheckbox>
-          </ParameterTable>
-        </div>
-        <hr>
-        <div class="settings-keybinds">
-          <h3>{{ $t('dialog.settings.keybinds') }}</h3>
-          <ParameterTable>
-            <tr v-for="kb of keyBinds" :key="kb.action">
-              <td>
-                <div class="keybind">
-                  <div class="keybinds-label">
-                    <iconify-icon :icon="getIcon(kb.action)" width="1.5rem" aria-hidden="true" />
-                    {{ $t('dialog.settings.keybinds_' + getTranslationKey(kb.action)) }}
-                  </div>
-                  <div class="keybinds-key" :class="{ unset: kb.key === '[unset]' }">
-                    <iconify-icon v-if="tryGetKeyRepresentation(kb.key)" :icon="tryGetKeyRepresentation(kb.key)" width="1.25rem" />
-                    <span v-else>{{ selectedAction === kb.action ? '.....' : kb.key }}</span>
-                  </div>
-                  <button class="lg" :aria-label="$t('a11y.action_edit_keybind')" @click="toggleAction(kb.action)">
-                    <iconify-icon v-if="selectedAction === kb.action" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
-                    <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </ParameterTable>
-        </div>
+        <CollapsibleSection expand>
+          <template v-slot:title>{{ $t('dialog.settings.general') }}</template>
+          <template v-slot:content>
+            <ParameterTable>
+              <ParameterDivider />
+              <ParameterSelect id="language" v-model="appSettings.locale">
+                Language
+                <template v-slot:options>
+                  <option value="en-US">English [en-US]</option>
+                  <option value="en-UwU">Uwuish [en-UwU]</option>
+                  <option value="_" disabled>{{ $t('main.more_coming_soon') }}</option>
+                </template>
+              </ParameterSelect>
+              <ParameterDivider />
+              <ParameterRadio>
+                <template v-slot:title>
+                  {{ $t('dialog.settings.general_theme') }}:
+                </template>
+                <template v-slot:options>
+                  <ParameterRadioOption v-model="appSettings.theme"
+                    name="theme-select"
+                    :id="'0'"
+                    value="default"
+                    icon="mingcute:planet-line"
+                    :ariaLabel="$t('a11y.general_theme_default')"
+                  >
+                    {{ $t('dialog.settings.general_theme_default') }}
+                  </ParameterRadioOption>
+                  <ParameterRadioOption v-model="appSettings.theme"
+                    name="theme-select"
+                    :id="'1'"
+                    value="supernova"
+                    icon="ph:star-four"
+                    :ariaLabel="$t('a11y.general_theme_supernova')"
+                  >
+                    {{ $t('dialog.settings.general_theme_supernova') }}
+                  </ParameterRadioOption>
+                  <ParameterRadioOption v-model="appSettings.theme"
+                    name="theme-select"
+                    :id="'1'"
+                    value="voyager"
+                    icon="hugeicons:satellite-02"
+                    :ariaLabel="$t('a11y.general_theme_voyager')"
+                  >
+                    {{ $t('dialog.settings.general_theme_voyager') }}
+                  </ParameterRadioOption>
+                </template>
+              </ParameterRadio>
+              <ParameterDivider />
+              <ParameterCheckbox
+                id="settings-font"
+                :true-value="'monospace'"
+                :false-value="'default'"
+                v-model="appSettings.font"
+              >
+                {{ $t('dialog.settings.general_monospace') }}:
+              </ParameterCheckbox>
+            </ParameterTable>
+          </template>
+        </CollapsibleSection>
+        
+        <CollapsibleSection class="section-keybinds">
+          <template v-slot:title>
+            {{ $t('dialog.settings.keybinds') }}
+          </template>
+          <template v-slot:content>
+            <div class="settings-keybinds">
+              <ParameterTable>
+                <ParameterDivider />
+                <tr v-for="kb of keyBinds" :key="kb.action">
+                  <td>
+                    <div class="keybind">
+                      <div class="keybinds-label">
+                        <iconify-icon :icon="getIcon(kb.action)" width="1.5rem" aria-hidden="true" />
+                        {{ $t('dialog.settings.keybinds_' + getTranslationKey(kb.action)) }}
+                      </div>
+                      <div class="keybinds-key" :class="{ unset: kb.key === '[unset]' }">
+                        <iconify-icon v-if="tryGetKeyRepresentation(kb.key)" :icon="tryGetKeyRepresentation(kb.key)" width="1.25rem" />
+                        <span v-else>{{ selectedAction === kb.action ? '.....' : kb.key }}</span>
+                      </div>
+                      <button class="lg" :aria-label="$t('a11y.action_edit_keybind')" @click="toggleAction(kb.action)">
+                        <iconify-icon v-if="selectedAction === kb.action" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+                        <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </ParameterTable>
+            </div>
+          </template>
+        </CollapsibleSection>
+        
       </div>
     </template>
   </DialogElement>
@@ -96,33 +117,28 @@ import ParameterCheckbox from '../parameters/ParameterCheckbox.vue';
 import ParameterRadio from '../parameters/ParameterRadio.vue';
 import ParameterDivider from '../parameters/ParameterDivider.vue';
 import ParameterRadioOption from '../parameters/ParameterRadioOption.vue';
+import ParameterSelect from '../parameters/ParameterSelect.vue';
+import { useI18n } from 'vue-i18n';
+import CollapsibleSection from '../elements/CollapsibleSection.vue';
 
-const appGraphicsSettings: Ref<IDBSettings> = ref({ id: 0, language: '', theme: '', font: '' })
+const i18n = useI18n()
+
+const appSettings: Ref<IDBSettings> = ref({ id: 0, locale: 'en-US', theme: '', font: '' })
 const keyBinds: Ref<IDBKeyBinding[]> = ref([])
 let dataLoaded = false
 
 const dialogRef: Ref<{ open: Function, close: Function, ignoreNativeEvents: Function, isOpen: boolean }|null> = ref(null)
 const selectedAction: Ref<string | null> = ref(null)
-const enableMonospaceFont: Ref<boolean> = ref(false)
 
 defineExpose({ open: async () => {
-  if (dataLoaded) {
-    return
+  if (!dataLoaded) {
+    await loadData()
+    dataLoaded = true
   }
-  await loadData()
-  dataLoaded = true
   dialogRef.value?.open()
 }})
 
-async function loadData() {
-  let settings = await idb.settings.limit(1).first()
-  let kb = await idb.keyBindings.limit(4).toArray()
-  appGraphicsSettings.value = settings!
-  enableMonospaceFont.value = settings!.font === 'monospace'
-  keyBinds.value.push(...kb)
-}
-
-watch(() => appGraphicsSettings.value, () => updateSettings(), { deep: true })
+watch(() => appSettings.value, () => updateSettings(), { deep: true })
 watch(() => dialogRef.value, (v) => {
   if (!v?.isOpen && selectedAction.value) {
     const kbidx = keyBinds.value.findIndex(k => k.action === selectedAction.value)
@@ -130,6 +146,14 @@ watch(() => dialogRef.value, (v) => {
     toggleAction(selectedAction.value)
   }
 }, { deep: true })
+
+async function loadData() {
+  let settings = await idb.settings.limit(1).first()
+  let kb = await idb.keyBindings.limit(4).toArray()
+  appSettings.value!.locale = i18n.locale.value
+  appSettings.value = settings!
+  keyBinds.value.push(...kb)
+}
 
 function toggleAction(action: string): void {
   if (selectedAction.value === action) {
@@ -144,11 +168,13 @@ function toggleAction(action: string): void {
 }
 
 async function updateSettings() {
-  document.documentElement.setAttribute('data-theme', appGraphicsSettings.value!.theme)
-  document.documentElement.setAttribute('data-font', appGraphicsSettings.value!.font)
-  await idb.settings.update(appGraphicsSettings.value!.id, {
-    theme: appGraphicsSettings.value!.theme,
-    font: appGraphicsSettings.value!.font
+  i18n.locale.value = appSettings.value!.locale
+  document.documentElement.setAttribute('data-theme', appSettings.value!.theme)
+  document.documentElement.setAttribute('data-font', appSettings.value!.font)
+  await idb.settings.update(appSettings.value!.id, {
+    locale: appSettings.value!.locale,
+    theme: appSettings.value!.theme,
+    font: appSettings.value!.font
   })
 }
 
@@ -203,15 +229,13 @@ function tryGetKeyRepresentation(key: string) {
 
 <style scoped lang="scss">
 #dialog-settings {
+  min-width: 32rem;
   .settings-grid {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    grid-template-rows: 1fr;
-    grid-template-areas:
-      "theme hr binds";
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
 
-    .settings-theme, .settings-keybinds {
+    .settings-general, .settings-keybinds {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -223,12 +247,7 @@ function tryGetKeyRepresentation(key: string) {
         border-spacing: 0 0.125rem;
       }
     }
-    .settings-theme {
-      grid-area: theme;
-    }
     .settings-keybinds {
-      grid-area: binds;
-
       .keybind {
         display: flex;
         align-items: center;
@@ -263,22 +282,14 @@ function tryGetKeyRepresentation(key: string) {
 
 @media screen and (max-width: 767px) {
   #dialog-settings {
-    .settings-grid {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto auto;
-      grid-template-areas:
-        "theme";
-      gap: 0;
-
-      .settings-keybinds, hr {
-        display: none;
-      }
-    }
+    min-width: 0;
+    width: 100%;
   }
 }
 
 @media screen and (max-width: 567px) {
   #dialog-settings {
+    min-width: 0;
     width: 100%;
   }
 }

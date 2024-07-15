@@ -13,9 +13,7 @@ import {
   LG_HEIGHT_DIVIDER,
   LG_NAME_AMBLIGHT,
   LG_NAME_ATMOSPHERE,
-  LG_NAME_SUN,
-  AXIS_X,
-  SUN_INIT_POS,
+  LG_NAME_SUN
 } from '@core/globals'
 import { GeometryType } from '@core/types'
 import { loadCubeTexture } from '@/core/three/external-data.loader'

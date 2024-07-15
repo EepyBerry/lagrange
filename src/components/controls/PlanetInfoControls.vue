@@ -57,6 +57,9 @@ import pako from 'pako';
 import { saveAs } from 'file-saver';
 import { ref, type Ref } from 'vue';
 import { EventBus } from '@/core/window-event-bus';
+import { useI18n } from 'vue-i18n';
+
+const i18n = useI18n()
 
 const resetDialog: Ref<{ open: Function }|null> = ref(null)
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
@@ -105,6 +108,7 @@ function exportPlanetFile() {
 
 function resetPlanet() {
   LG_PARAMETERS.reset()
+  LG_PARAMETERS.planetName = i18n.t('editor.default_planet_name')
   $emit('dataLoad')
 }
 </script>
@@ -140,13 +144,14 @@ function resetPlanet() {
     gap: 0.5rem;
 
     input {
-      width: 32ch;
+      width: 24ch;
+      font-family: Poppins, Inter;
     }
     p {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 32ch;
+      max-width: 24ch;
     }
   }
 }
@@ -172,19 +177,14 @@ function resetPlanet() {
       flex: 1;
       font-size: 1em;
       justify-content: space-between;
+      width: 100%;
+      min-width: 0;
+    }
+    .name-wrapper > p {
+      max-width: 100%;
     }
     .name-wrapper > input {
       width: 100%;
-    }
-  }
-}
-@media screen and (max-width:567px) {
-  #planet-info {
-    .name-wrapper > p {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 20ch;
     }
   }
 }

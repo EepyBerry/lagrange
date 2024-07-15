@@ -1,6 +1,9 @@
 {
   "main": {
-    "$title": "Lagrange"
+    "$title": "Lagrange",
+    "locale": "en-US",
+    "language": "English",
+    "more_coming_soon": "More coming soon!"
   },
   "dialog": {
     "init": {
@@ -34,7 +37,7 @@
       "$title": "Settings",
 
       "general": "General",
-      "general_theme": "Choose theme to use:",
+      "general_theme": "Choose theme to use",
       "general_theme_default": "Default",
       "general_theme_supernova": "Supernova",
       "general_theme_voyager": "Voyager",
@@ -65,6 +68,7 @@
     }
   },
   "editor": {
+    "default_planet_name": "New planet",
     "controls": {
       "lighting": {
         "$title": "Lighting",
@@ -129,7 +133,7 @@
 
         "rgba": "Color & opacity",
         "rgba_color": "Color",
-        "rgba_opacityramp": "Color"
+        "rgba_opacityramp": "Opacity ramp"
       },
       "atmosphere": {
         "$title": "Atmosphere",

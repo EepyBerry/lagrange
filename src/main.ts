@@ -15,11 +15,11 @@ import ParameterColorRamp from './components/parameters/ParameterColorRamp.vue';
 import ParameterColor from './components/parameters/ParameterColor.vue';
 import { createHead } from '@unhead/vue';
 import ParameterCategory from './components/parameters/ParameterCategory.vue';
-import i18n from './i18n.config';
+import * as i18nConfig from './i18n.config';
 
 createApp(App)
   .use(router)
-  .use(i18n)
+  .use(i18nConfig.i18n)
   .use(createHead())
   .component('SidebarSection', SidebarSection)
   .component('ParameterTable', ParameterTable)
