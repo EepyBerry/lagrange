@@ -419,7 +419,7 @@ export default class LagrangeParameters extends ChangeTracker {
 
     this._planetGeometryType = GeometryType.SPHERE
     this._planetMeshQuality = 48.0
-    this._planetAxialTilt = -15.0
+    this._planetAxialTilt = 15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
     this._planetWaterMetalness = 0.5
@@ -478,7 +478,7 @@ export default class LagrangeParameters extends ChangeTracker {
 
     this._planetGeometryType = GeometryType.SPHERE
     this._planetMeshQuality = 48.0
-    this._planetAxialTilt = -15.0
+    this._planetAxialTilt = 15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
     this._planetWaterMetalness = 0.5

@@ -16,6 +16,7 @@ interface IDBKeyBinding {
 
 interface IDBSettings {
   id: number
+  language: string
   theme: string
   font: string
   showInitDialog?: boolean

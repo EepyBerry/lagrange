@@ -133,26 +133,30 @@ export class LensFlareEffect {
   public update(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, clock: THREE.Clock) {
     const dt = clock.getDelta()
 
-    renderer.getCurrentViewport(this._viewport);
-    this._mesh.lookAt(camera.position);
+    renderer.getCurrentViewport(this._viewport)
+    this._mesh.lookAt(camera.position)
     this._material.uniforms.iResolution.value.set(this._viewport.z, this._viewport.w);
 
-    const projectedPosition = this._params.lensPosition.clone();
-    projectedPosition.project(camera);
+    const projectedPosition = this._params.lensPosition.clone()
+    projectedPosition.project(camera)
 
-    this._flarePosition.set(projectedPosition.x, projectedPosition.y, projectedPosition.z);
+    this._flarePosition.set(projectedPosition.x, projectedPosition.y, projectedPosition.z)
     if (this._flarePosition.z < 1) {
-      this._material.uniforms.lensPosition.value.set(this._flarePosition.x, this._flarePosition.y);
+      this._material.uniforms.lensPosition.value.set(this._flarePosition.x, this._flarePosition.y)
     }
 
-    this._raycaster.setFromCamera(new THREE.Vector2(projectedPosition.x, projectedPosition.y), camera);
-    const intersects = this._raycaster.intersectObjects([scene.getObjectByName(LG_NAME_PLANET)!], false);
-    this.checkTransparency(intersects);
+    this._raycaster.setFromCamera(new THREE.Vector2(projectedPosition.x, projectedPosition.y), camera)
+    const intersects = this._raycaster.intersectObjects([scene.getObjectByName(LG_NAME_PLANET)!], false)
+    this.checkTransparency(intersects)
 
-    this._material.uniforms.iTime.value += dt;
+    this._material.uniforms.iTime.value += dt
     this._material.uniforms.opacity.value = damp(
       this._material.uniforms.opacity.value, this._internalOpacity, 10, dt
     )
+  }
+
+  public updatePosition(lensPosition: THREE.Vector3) {
+    this.material.uniforms['lensPosition'].value.set(lensPosition.x, lensPosition.y, lensPosition.z)
   }
 
   public get mesh(): THREE.Mesh {

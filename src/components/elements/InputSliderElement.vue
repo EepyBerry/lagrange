@@ -1,8 +1,8 @@
 <template>
   <div class="lg-input-wrapper">
     <input
-      type="range"
       class="lg"
+      type="range"
       :id="iid ?? undefined"
       :min="min ?? 0"
       :max="max ?? 100"

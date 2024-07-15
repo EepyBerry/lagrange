@@ -5,16 +5,17 @@
     :aria-label="$t('a11y.dialog_settings')"
   >
     <template v-slot:title>
-      <iconify-icon icon="mingcute:settings-3-line" width="1.5rem" /> Settings
+      <iconify-icon icon="mingcute:settings-3-line" width="1.5rem" aria-hidden="true" />
+      {{ $t('dialog.settings.$title') }}
     </template>
     <template v-slot:content>
       <div class="settings-grid">
         <div class="settings-theme">
-          <h3>{{ $t('dialog.settings.graphics') }}</h3>
+          <h3>{{ $t('dialog.settings.general') }}</h3>
           <ParameterTable>
             <ParameterRadio>
               <template v-slot:title>
-                {{ $t('dialog.settings.graphics_theme') }}
+                {{ $t('dialog.settings.general_theme') }}
               </template>
               <template v-slot:options>
                 <ParameterRadioOption v-model="appGraphicsSettings.theme"
@@ -22,38 +23,39 @@
                   :id="'0'"
                   value="default"
                   icon="mingcute:planet-line"
-                  :ariaLabel="$t('a11y.graphics_theme_default')"
+                  :ariaLabel="$t('a11y.general_theme_default')"
                 >
-                  {{ $t('dialog.settings.graphics_theme_default') }}
+                  {{ $t('dialog.settings.general_theme_default') }}
                 </ParameterRadioOption>
                 <ParameterRadioOption v-model="appGraphicsSettings.theme"
                   name="theme-select"
                   :id="'1'"
                   value="supernova"
                   icon="ph:star-four"
-                  :ariaLabel="$t('a11y.graphics_theme_supernova')"
+                  :ariaLabel="$t('a11y.general_theme_supernova')"
                 >
-                  {{ $t('dialog.settings.graphics_theme_supernova') }}
+                  {{ $t('dialog.settings.general_theme_supernova') }}
                 </ParameterRadioOption>
                 <ParameterRadioOption v-model="appGraphicsSettings.theme"
                   name="theme-select"
                   :id="'1'"
                   value="voyager"
                   icon="hugeicons:satellite-02"
-                  :ariaLabel="$t('a11y.graphics_theme_voyager')"
+                  :ariaLabel="$t('a11y.general_theme_voyager')"
                 >
-                  {{ $t('dialog.settings.graphics_theme_voyager') }}
+                  {{ $t('dialog.settings.general_theme_voyager') }}
                 </ParameterRadioOption>
               </template>
             </ParameterRadio>
             <ParameterDivider />
-            <ParameterField
+            <ParameterCheckbox
               id="settings-font"
-              type="checkbox"
-              v-model="enableMonospaceFont"
+              :true-value="'monospace'"
+              :false-value="'default'"
+              v-model="appGraphicsSettings.font"
             >
-              {{ $t('dialog.settings.graphics_monospace') }}
-            </ParameterField>
+              {{ $t('dialog.settings.general_monospace') }}:
+            </ParameterCheckbox>
           </ParameterTable>
         </div>
         <hr>
@@ -90,12 +92,12 @@ import { KeyBindingAction, idb, type IDBKeyBinding, type IDBSettings } from '@/d
 import { ref, watch, type Ref } from 'vue';
 import DialogElement from '../elements/DialogElement.vue';
 import ParameterTable from '../parameters/ParameterTable.vue';
+import ParameterCheckbox from '../parameters/ParameterCheckbox.vue';
 import ParameterRadio from '../parameters/ParameterRadio.vue';
-import ParameterField from '../parameters/ParameterField.vue';
 import ParameterDivider from '../parameters/ParameterDivider.vue';
 import ParameterRadioOption from '../parameters/ParameterRadioOption.vue';
 
-const appGraphicsSettings: Ref<IDBSettings> = ref({ id: 0, theme: '', font: '' })
+const appGraphicsSettings: Ref<IDBSettings> = ref({ id: 0, language: '', theme: '', font: '' })
 const keyBinds: Ref<IDBKeyBinding[]> = ref([])
 let dataLoaded = false
 
@@ -104,21 +106,22 @@ const selectedAction: Ref<string | null> = ref(null)
 const enableMonospaceFont: Ref<boolean> = ref(false)
 
 defineExpose({ open: async () => {
+  if (dataLoaded) {
+    return
+  }
   await loadData()
+  dataLoaded = true
   dialogRef.value?.open()
 }})
 
 async function loadData() {
-  if (dataLoaded) { return }
   let settings = await idb.settings.limit(1).first()
   let kb = await idb.keyBindings.limit(4).toArray()
   appGraphicsSettings.value = settings!
   enableMonospaceFont.value = settings!.font === 'monospace'
   keyBinds.value.push(...kb)
-  dataLoaded = true
 }
 
-watch(enableMonospaceFont, (enable) => appGraphicsSettings.value.font = enable ? 'monospace' : 'default')
 watch(() => appGraphicsSettings.value, () => updateSettings(), { deep: true })
 watch(() => dialogRef.value, (v) => {
   if (!v?.isOpen && selectedAction.value) {

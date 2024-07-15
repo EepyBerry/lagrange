@@ -7,7 +7,7 @@ import router from './router.config';
 import SidebarSection from '@/components/elements/SidebarSection.vue';
 import OverlaySpinner from '@/components/elements/OverlaySpinner.vue';
 import ParameterTable from '@/components/parameters/ParameterTable.vue'
-import ParameterField from '@/components/parameters/ParameterField.vue'
+import ParameterSlider from '@/components/parameters/ParameterSlider.vue'
 import ParameterRadio from '@/components/parameters/ParameterRadio.vue';
 import ParameterRadioOption from '@/components/parameters/ParameterRadioOption.vue';
 import ParameterDivider from '@/components/parameters/ParameterDivider.vue'
@@ -23,7 +23,7 @@ createApp(App)
   .use(createHead())
   .component('SidebarSection', SidebarSection)
   .component('ParameterTable', ParameterTable)
-  .component('ParameterField', ParameterField)
+  .component('ParameterSlider', ParameterSlider)
   .component('ParameterRadio', ParameterRadio)
   .component('ParameterRadioOption', ParameterRadioOption)
   .component('ParameterColor', ParameterColor)

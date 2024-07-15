@@ -62,17 +62,6 @@
                   v-model="step.factor"
                   @input="updateStepFactor(step.id, $event)"
                 />
-                <!-- <input
-                  v-else
-                  ref="htmlFactorInputs"
-                  class="lg"
-                  type="number"
-                  min="0.001"
-                  max="0.999"
-                  step="0.001"
-                  :value="step.factor"
-                  @input="updateStepFactor(step.id, $event)"
-                > -->
               </div>
             </td>
             <td>

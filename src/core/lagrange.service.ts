@@ -64,11 +64,6 @@ export function createSun() {
     LG_PARAMETERS.sunLightColor, 
     LG_PARAMETERS.sunLightIntensity
   )
-  
-  const pos = SUN_INIT_POS.clone()
-  pos.applyAxisAngle(AXIS_X, degToRad(-15))
-  sun.position.set(pos.x, pos.y, pos.z)
-
   sun.frustumCulled = false
   sun.userData.lens = 'no-occlusion'
   sun.name = LG_NAME_SUN

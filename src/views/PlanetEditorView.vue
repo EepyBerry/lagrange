@@ -109,6 +109,12 @@ function initLighting(): void {
   _sunLight = sun
   _ambLight = $se.scene.getObjectByName(LG_NAME_AMBLIGHT) as THREE.AmbientLight
   _lensFlare = lensFlare
+
+  // Set initial rotations
+  const pos = SUN_INIT_POS.clone()
+  pos.applyAxisAngle(AXIS_X, degToRad(-15))
+  _sunLight.position.set(pos.x, pos.y, pos.z)
+  _lensFlare.updatePosition(_sunLight.position)
 }
 
 // ------------------------------------------------------------------------------------------------

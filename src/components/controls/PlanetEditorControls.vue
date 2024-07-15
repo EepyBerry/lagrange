@@ -7,67 +7,63 @@
         <template v-slot:content>
           <ParameterTable>
             <ParameterCategory top>{{ $t('editor.controls.lighting.lensflare') }}</ParameterCategory>
-            <ParameterField
+            <ParameterCheckbox
               v-model="LG_PARAMETERS.lensFlareEnabled"
               id="f-toggle"
-              type="checkbox"
+              :true-value="true"
+              :false-value="false"
             >
               {{ $t('editor.controls.lighting.lensflare_show') }}
-            </ParameterField>
+            </ParameterCheckbox>
             <template v-if="LG_PARAMETERS.lensFlareEnabled">
-              <ParameterField
+              <ParameterSlider
                 v-model="LG_PARAMETERS.lensFlarePointsIntensity"
                 id="f-pointsint"
-                type="range"
                 :step="0.01"
                 :min="0"
                 :max="1"
               >
                 {{ $t('editor.controls.lighting.lensflare_points_intensity') }}
-              </ParameterField>
-              <ParameterField
+              </ParameterSlider>
+              <ParameterSlider
                 v-model="LG_PARAMETERS.lensFlareGlareIntensity"
                 id="f-glareint"
-                type="range"
                 :step="0.01"
                 :min="0"
                 :max="1"
               >
                 {{ $t('editor.controls.lighting.lensflare_glare_intensity') }}
-              </ParameterField>
+              </ParameterSlider>
             </template>
             <ParameterCategory>{{ $t('editor.controls.lighting.sunlight') }}</ParameterCategory>
-            <ParameterField v-model="LG_PARAMETERS.sunLightAngle"
+            <ParameterSlider v-model="LG_PARAMETERS.sunLightAngle"
               id="l-angle"
-              type="range"
               :step="0.1"
               :min="-90"
               :max="90"
             >
             {{ $t('editor.controls.lighting.sunlight_angle') }} <sup>(°)</sup>
-            </ParameterField>
-            <ParameterField v-model="LG_PARAMETERS.sunLightIntensity"
+            </ParameterSlider>
+            <ParameterSlider v-model="LG_PARAMETERS.sunLightIntensity"
               id="l-int"
-              type="range"
               :step="0.1"
               :min="0"
               :max="50"
             >
              {{ $t('editor.controls.lighting.sunlight_intensity') }}
-            </ParameterField>
+            </ParameterSlider>
             <ParameterColor v-model="LG_PARAMETERS.sunLightColor">
               {{ $t('editor.controls.lighting.sunlight_color') }}
             </ParameterColor>
             <ParameterCategory>{{ $t('editor.controls.lighting.amblight') }}</ParameterCategory>
-            <ParameterField v-model="LG_PARAMETERS.ambLightIntensity"
+            <ParameterSlider v-model="LG_PARAMETERS.ambLightIntensity"
               id="m-int"
-              type="range"
               :step="0.01"
               :min="0"
               :max="1"
             >
             {{ $t('editor.controls.lighting.amblight_intensity') }}
-            </ParameterField>
+            </ParameterSlider>
             <ParameterColor v-model="LG_PARAMETERS.ambLightColor">
               {{ $t('editor.controls.lighting.amblight_color') }}
             </ParameterColor>
@@ -81,79 +77,79 @@
         <template v-slot:content>
           <ParameterTable>
             <ParameterCategory top>{{ $t('editor.controls.planet_rendering.transform') }}</ParameterCategory>
-            <ParameterField
+            <ParameterSlider
               v-model="LG_PARAMETERS.planetAxialTilt"
               id="p-tilt"
-              type="range"
+              
               :step="1"
               :min="0"
               :max="180"
             >
               {{ $t('editor.controls.planet_rendering.transform_axialtilt') }} <sup>(°)</sup>
-            </ParameterField>
-            <ParameterField
+            </ParameterSlider>
+            <ParameterSlider
               v-model="LG_PARAMETERS.planetRotation"
               id="p-rot"
-              type="range"
+              
               :step="1"
               :min="0"
               :max="360"
             >
               {{ $t('editor.controls.planet_rendering.transform_rotation') }} <sup>(°)</sup>
-            </ParameterField>
+            </ParameterSlider>
             <ParameterCategory>PBR parameters</ParameterCategory>
-            <ParameterField
+            <ParameterSlider
               v-model="LG_PARAMETERS.planetWaterLevel"
               id="p-wlevel"
-              type="range"
+              
               :step="0.01"
               :min="0"
               :max="1"
             >
               {{ $t('editor.controls.planet_rendering.pbr_waterlevel') }}
-            </ParameterField>
+            </ParameterSlider>
             <ParameterDivider />
-            <ParameterField
+            <ParameterSlider
               v-model="LG_PARAMETERS.planetWaterRoughness"
               id="p-wrough"
-              type="range"
+              
               :step="0.01"
               :min="0"
               :max="1"
             >
               {{ $t('editor.controls.planet_rendering.pbr_waterroughness') }}
-            </ParameterField>
-            <ParameterField
+            </ParameterSlider>
+            <ParameterSlider
               v-model="LG_PARAMETERS.planetWaterMetalness"
               id="p-wmetal"
-              type="range"
+              
               :step="0.01"
               :min="0"
               :max="1"
             >
               {{ $t('editor.controls.planet_rendering.pbr_watermetalness') }}
-            </ParameterField>
+            </ParameterSlider>
             <ParameterDivider />
-            <ParameterField
+            <ParameterSlider
               v-model="LG_PARAMETERS.planetGroundRoughness"
               id="p-grough"
-              type="range"
+              
               :step="0.01"
               :min="0"
               :max="1"
             >
               {{ $t('editor.controls.planet_rendering.pbr_groundroughness') }}
-            </ParameterField>
-            <ParameterField
+            </ParameterSlider>
+            <ParameterSlider
               v-model="LG_PARAMETERS.planetGroundMetalness"
               id="p-gmetal"
-              type="range"
+              
               :step="0.01"
               :min="0"
               :max="1"
             >
               {{ $t('editor.controls.planet_rendering.pbr_groundmetalness') }}
-            </ParameterField>
+            </ParameterSlider>
           </ParameterTable>
         </template>
       </SidebarSection>
@@ -164,54 +160,51 @@
         <template v-slot:content>
           <ParameterTable>
             <ParameterCategory top>{{ $t('editor.controls.surface.bumpmap') }}</ParameterCategory>
-            <ParameterField
+            <ParameterCheckbox
               v-model="LG_PARAMETERS.planetSurfaceShowBumps"
               id="s-bump"
-              type="checkbox"
+              :true-value="true"
+              :false-value="false"
             >
               {{ $t('editor.controls.surface.bumpmap_show') }}
-            </ParameterField>
+            </ParameterCheckbox>
             <template v-if="LG_PARAMETERS.planetSurfaceShowBumps">
-              <ParameterField
+              <ParameterSlider
                 v-model="LG_PARAMETERS.planetSurfaceBumpStrength"
                 id="s-bumpstr"
-                type="range"
                 :step="0.0005"
                 :min="0.02"
                 :max="0.2"
               >
                 {{ $t('editor.controls.surface.bumpmap_strength') }}
-              </ParameterField>
+              </ParameterSlider>
             </template>
             <ParameterCategory>{{ $t('editor.controls.surface.noise') }}</ParameterCategory>
-            <ParameterField
+            <ParameterSlider
               v-model="LG_PARAMETERS.planetSurfaceNoise.frequency"
               id="s-freq"
-              type="range"
               :step="0.01"
               :max="10"
             >
               {{ $t('editor.controls.surface.noise_fbm_frequency') }}
-            </ParameterField>
-            <ParameterField
+            </ParameterSlider>
+            <ParameterSlider
               v-model="LG_PARAMETERS.planetSurfaceNoise.amplitude"
               id="s-amp"
-              type="range"
               :step="0.01"
               :max="1.25"
             >
               {{ $t('editor.controls.surface.noise_fbm_amplitude') }}
-            </ParameterField>
-            <ParameterField
+            </ParameterSlider>
+            <ParameterSlider
               v-model="LG_PARAMETERS.planetSurfaceNoise.lacunarity"
               id="s-lac"
-              type="range"
               :step="0.01"
               :min="1"
               :max="2.5"
             >
               {{ $t('editor.controls.surface.noise_fbm_lacunarity') }}
-            </ParameterField>
+            </ParameterSlider>
             <ParameterDivider />
             <ParameterColorRamp
               mode="color"
@@ -229,21 +222,23 @@
         <template v-slot:title>{{ $t('editor.controls.biomes.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
-            <ParameterField
+            <ParameterCheckbox
               v-model="LG_PARAMETERS.biomesEnabled"
               id="b-biomes"
-              type="checkbox"
+              :true-value="true"
+              :false-value="false"
             >
               {{ $t('editor.controls.biomes.biomes_show') }}
-            </ParameterField>
+            </ParameterCheckbox>
             <template v-if="LG_PARAMETERS.biomesEnabled">
-              <ParameterField
+              <ParameterCheckbox
                 v-model="LG_PARAMETERS.biomePolesEnabled"
                 id="b-poles"
-                type="checkbox"
+                :true-value="true"
+                :false-value="false"
               >
                 {{ $t('editor.controls.biomes.poles_show') }}
-              </ParameterField>
+              </ParameterCheckbox>
             </template>
           </ParameterTable>
         </template>
@@ -254,56 +249,53 @@
         <template v-slot:title>{{ $t('editor.controls.clouds.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
-            <ParameterField
+            <ParameterCheckbox
               v-model="LG_PARAMETERS.cloudsEnabled"
               id="c-toggle"
-              type="checkbox"
+              :true-value="true"
+              :false-value="false"
             >
               {{ $t('editor.controls.clouds.clouds_show') }}
-            </ParameterField>
+            </ParameterCheckbox>
             <template v-if="LG_PARAMETERS.cloudsEnabled">
               <ParameterCategory>{{ $t('editor.controls.clouds.transform') }}</ParameterCategory>
-              <ParameterField
+              <ParameterSlider
                 v-model="LG_PARAMETERS.cloudsRotation"
                 id="c-rot"
-                type="range"
                 :step="1"
                 :min="0"
                 :max="360"
               >
                 {{ $t('editor.controls.clouds.transform_rotation') }} <sup>(°)</sup>
-              </ParameterField>
+              </ParameterSlider>
               <ParameterCategory>{{ $t('editor.controls.clouds.noise') }}</ParameterCategory>
-              <ParameterField
+              <ParameterSlider
                 v-model="LG_PARAMETERS.cloudsNoise.frequency"
                 id="c-freq"
-                type="range"
                 :step="0.01"
                 :min="0"
                 :max="5"
               >
                 {{ $t('editor.controls.clouds.noise_fbm_frequency') }}
-              </ParameterField>
-              <ParameterField
+              </ParameterSlider>
+              <ParameterSlider
                 v-model="LG_PARAMETERS.cloudsNoise.amplitude"
                 id="c-amp"
-                type="range"
                 :step="0.01"
                 :min="0"
                 :max="1.25"
               >
                 {{ $t('editor.controls.clouds.noise_fbm_amplitude') }}
-              </ParameterField>
-              <ParameterField
+              </ParameterSlider>
+              <ParameterSlider
                 v-model="LG_PARAMETERS.cloudsNoise.lacunarity"
                 id="c-lac"
-                type="range"
                 :step="0.01"
                 :min="0"
                 :max="2.5"
               >
                 {{ $t('editor.controls.clouds.noise_fbm_lacunarity') }}
-              </ParameterField>
+              </ParameterSlider>
               <ParameterCategory>{{ $t('editor.controls.clouds.rgba') }}</ParameterCategory>
               <ParameterColor v-model="LG_PARAMETERS.cloudsColor">
                 {{ $t('editor.controls.clouds.rgba_color') }}
@@ -323,56 +315,53 @@
         <template v-slot:title>{{ $t('editor.controls.atmosphere.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
-            <ParameterField
+            <ParameterCheckbox
               v-model="LG_PARAMETERS.atmosphereEnabled"
               id="a-toggle"
-              type="checkbox"
+              :true-value="true"
+              :false-value="false"
             >
             {{ $t('editor.controls.atmosphere.atmosphere_show') }}
-            </ParameterField>
+            </ParameterCheckbox>
             <template v-if="LG_PARAMETERS.atmosphereEnabled">
               <ParameterCategory>{{ $t('editor.controls.atmosphere.transform') }}</ParameterCategory>
-              <ParameterField
+              <ParameterSlider
                 v-model="LG_PARAMETERS.atmosphereHeight"
                 id="a-height"
-                type="range"
                 :step="0.1"
                 :min="1"
                 :max="8"
               >
                 {{ $t('editor.controls.atmosphere.transform_height') }}
-              </ParameterField>
-              <ParameterField
+              </ParameterSlider>
+              <ParameterSlider
                 v-model="LG_PARAMETERS.atmosphereDensityScale"
                 id="a-density"
-                type="range"
                 :step="0.01"
                 :min="1"
                 :max="10"
               >
                 {{ $t('editor.controls.atmosphere.transform_density') }}
-              </ParameterField>
+              </ParameterSlider>
               <ParameterCategory>{{ $t('editor.controls.atmosphere.rgba') }}</ParameterCategory>
-              <ParameterField
+              <ParameterSlider
                 v-model="LG_PARAMETERS.atmosphereHue"
                 id="a-hue"
-                type="range"
                 :step="0.01"
                 :min="0"
                 :max="2"
               >
                 {{ $t('editor.controls.atmosphere.rgba_hue') }}
-              </ParameterField>
-              <ParameterField
+              </ParameterSlider>
+              <ParameterSlider
                 v-model="LG_PARAMETERS.atmosphereIntensity"
                 id="a-int"
-                type="range"
                 :step="0.01"
                 :min="0"
                 :max="2"
               >
                 {{ $t('editor.controls.atmosphere.rgba_intensity') }}
-              </ParameterField>
+              </ParameterSlider>
             </template>
           </ParameterTable>
         </template>
@@ -387,7 +376,8 @@ import ParameterColorRamp from '../parameters/ParameterColorRamp.vue'
 import ParameterDivider from '../parameters/ParameterDivider.vue'
 import type { ColorRamp } from '@/core/models/color-ramp.model'
 import SidebarSection from '../elements/SidebarSection.vue';
-import ParameterField from '../parameters/ParameterField.vue';
+import ParameterSlider from '../parameters/ParameterSlider.vue';
+import ParameterCheckbox from '../parameters/ParameterCheckbox.vue';
 </script>
 
 <style scoped lang="scss">
