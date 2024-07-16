@@ -120,6 +120,7 @@ import ParameterRadioOption from '../parameters/ParameterRadioOption.vue';
 import ParameterSelect from '../parameters/ParameterSelect.vue';
 import { useI18n } from 'vue-i18n';
 import CollapsibleSection from '../elements/CollapsibleSection.vue';
+import { mapLocale } from '@/utils/utils';
 
 const i18n = useI18n()
 
@@ -172,7 +173,7 @@ async function updateSettings() {
   document.documentElement.setAttribute('data-theme', appSettings.value!.theme)
   document.documentElement.setAttribute('data-font', appSettings.value!.font)
   await idb.settings.update(appSettings.value!.id, {
-    locale: appSettings.value!.locale,
+    locale: mapLocale(appSettings.value!.locale),
     theme: appSettings.value!.theme,
     font: appSettings.value!.font
   })

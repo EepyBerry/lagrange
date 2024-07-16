@@ -13,6 +13,7 @@ import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie';
 import { onMounted, ref, type Ref } from 'vue';
 import AppInitDialog from './components/dialogs/AppInitDialog.vue';
 import { useI18n } from 'vue-i18n';
+import { mapLocale } from './utils/utils';
 
 const i18n = useI18n()
 
@@ -31,9 +32,12 @@ onMounted(async () => {
   const queryParams = Object.fromEntries(params)
   if(queryParams.uwu !== undefined) {
     i18n.locale.value = 'en-UwU'
+  } else if (i18n.availableLocales.includes(settings.value?.locale!)) {
+    i18n.locale.value = settings.value?.locale!
   } else {
-    i18n.locale.value = settings.value?.locale ?? 'en-US'
+    i18n.locale.value = 'en-US' // fallback
   }
+  await idb.settings.update(settings.value!.id, { locale: mapLocale(i18n.locale.value) })
 
   if (settings.value?.showInitDialog) {
     dialogInit.value?.open()

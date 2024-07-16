@@ -1,3 +1,5 @@
+import { LOCALE_MAP } from "@/core/globals";
+
 // https://stackoverflow.com/questions/72557387/rgb-to-greyscale-converter
 export function rgbToGrayscale(hex: string) {
   return '#' + Array(4).join(
@@ -15,4 +17,8 @@ export function numberToHex(n: number): string {
 
 export function numberEquals(na: number, nb: number) {
   return Math.abs(na - nb) < Number.EPSILON;
+}
+
+export function mapLocale(locale: string): string {
+  return locale.length > 2 ? locale : LOCALE_MAP[locale] ?? 'en-US'
 }

@@ -4,6 +4,10 @@ import type { IDBKeyBinding } from "@/dexie";
 import { Vector3 } from "three";
 
 export const SITE_NAME = 'Lagrange'
+export const LOCALE_MAP: { [k: string]: string } = {
+  en: 'en-US',
+  fr: 'fr-FR'
+}
 
 export const LG_PARAMETERS = reactive(new LagrangeParameters())
 export const LG_DEFAULTS = new LagrangeParameters()
