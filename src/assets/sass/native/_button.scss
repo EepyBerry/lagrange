@@ -1,0 +1,74 @@
+button.lg, a.lg {
+  background: var(--lg-button);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  padding: 0;
+  min-width: 2rem;
+  min-height: 2rem;
+  font-family: Poppins;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+button.lg:hover {
+  cursor: pointer;
+  background: var(--lg-button-hover);
+}
+button.lg:active {
+  cursor: pointer;
+  background: var(--lg-button-active);
+}
+button.lg:disabled {
+  cursor: not-allowed;
+  background: var(--lg-button-disabled);
+  color: var(--lg-text-disabled);
+}
+button.lg.menu-expanded {
+  background: var(--lg-button-menu-expanded);
+}
+button.lg.menu-expanded:hover {
+  background: var(--lg-button-menu-expanded-hover);
+}
+button.lg.menu-expanded:active {
+  background: var(--lg-button-menu-expanded-active);
+}
+
+button.lg.dark, a.lg.dark {
+  position: relative;
+  background: var(--lg-primary);
+  border: 1px solid var(--lg-accent);
+  padding: 0.5rem;
+  min-width: 2.875rem;
+  min-height: 2.875rem;
+  overflow: hidden;
+
+  .link-icon {
+    position: absolute;
+    top: -0.75rem;
+    right: -0.75rem;
+    transform: rotate(-45deg);
+  }
+}
+button.lg.dark:hover, a.lg.dark:hover {
+  background: var(--lg-button-active);
+}
+
+button.lg.icon-button {
+  background: transparent;
+}
+button.lg.icon-button:hover {
+  background: transparent;
+  filter: brightness(80%);
+}
+button.lg.icon-button:active {
+  background: transparent;
+  filter: brightness(60%);
+}
+button.lg.icon-button:disabled {
+  filter: brightness(40%);
+  pointer-events: none;
+}

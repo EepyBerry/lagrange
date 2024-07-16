@@ -1,0 +1,204 @@
+{
+  "main": {
+    "$title": "Wagwange",
+    "locale": "en-UwU",
+    "language": "Uwuish",
+    "more_coming_soon": "Mowe coming s-soon!",
+    
+    "404_01": "Nyothing uvw hewe, sowwyyyy...",
+    "404_02": "\"This sectow is c-compwetewy empty, Captain! :O\"",
+    "404_03": "Oh nyooo ;;w;; Took a wwong tuwn sumwhewe x3",
+    "404_04": "PAGE\u00A0IS\u00A0MISSING! STATUS\u00A0IS\u00A0404!! SPACE\u00A0IS\u00A0VOID!!! >:3",
+    "404_subtitle": "The wequested page c-couwd nyot be found :c"
+  },
+  "dialog": {
+    "init": {
+      "$title": "Wewcome :3 t-to @:main.$title",
+      "introduction": "Wagwange is a fuwwy pwoceduwaw pwanyet buiwdew, pewfect fow wowwdbuiwding and tying youw wowe t-to a pwopew pwanyet, sowaw system o-ow even an entiwe gawaxy! (・`ω´・)",
+      "$tmp_wip": "Cuwwentwy wowk-in-pwogwess. M-Mowe featuwes awe pwannyed fow the nyext vewsions! x3",
+
+      "shortcuts": "Showtcuts",
+      "shortcuts_note": "Key bindings c-can be weassignyed in the app s-settings!",
+      "shortcuts_lensflare": "Toggwe wens fwawe",
+      "shortcuts_biomes": "Toggwe biomes",
+      "shortcuts_clouds": "Toggwe cwouds",
+      "shortcuts_atmosphere": "Toggwe atmosphewe",
+
+      "topbar": "Top baw - Nyaming & data",
+      "topbar_rename": "Wenyame pwanyet",
+      "topbar_reset": "Weset t-to defauwts",
+      "topbar_import": "Impowt pwanyet",
+      "topbar_export": "Expowt pwanyet",
+
+      "footer": "Footew - Miscewwanyeous",
+      "footer_github": "GitHub p-p-page",
+      "footer_settings": "App settings :3",
+      "footer_about": "About @:main.$title",
+
+      "show_next_time": "Show this intwoduction nyext time?",
+
+      "$action_confirm": "Get s-stawted!"
+    },
+    "settings": {
+      "$title": "Settings",
+
+      "general": "Genyewaw >:3",
+      "general_theme": "Choose theme t-to use",
+      "general_theme_default": "Defauwt",
+      "general_theme_supernova": "Supewnyova",
+      "general_theme_voyager": "Voyagew",
+      "general_monospace": "Enyabwe monyospace font",
+
+      "keybinds": "Key bindings ^w^",
+      "keybinds_lensflare": "@:dialog.init.shortcuts_lensflare",
+      "keybinds_biomes": "@:dialog.init.shortcuts_biomes",
+      "keybinds_clouds": "@:dialog.init.shortcuts_clouds",
+      "keybinds_atmosphere": "@:dialog.init.shortcuts_atmosphere"
+    },
+    "about": {
+      "description": "A pwoceduwaw pwanyet-buiwding appwication!!! >w<",
+      "motivation": "Made as a p-pet pwoject *blushes* t-to matewiawize my fascinyation with space & pwanyets!",
+
+      "prefix_engine": "3D u-using",
+      "prefix_framework": "Powewed by",
+      
+      "built_with_love": "Buiwt with 🏳️‍🌈 & ❤️",
+      "license": "BSD 3-Cwause Wicense"
+    },
+    "reset": {
+      "$title": "Confiwm weset",
+      "message": "Discawd the cuwwent p-pwanyet? :O",
+      "warning": "Aww unsaved data wiww be wost!",
+      "$action_cancel": "Cancew",
+      "$action_confirm": "Confiwm"
+    }
+  },
+  "editor": {
+    "default_planet_name": "New pwanyet ÒwÓ",
+    "controls": {
+      "lighting": {
+        "$title": "Wighting",
+
+        "lensflare": "Wens Fwawe",
+        "lensflare_show": "Show wens fwawe :3",
+        "lensflare_points_intensity": "Points intensity",
+        "lensflare_glare_intensity": "Gwawe intensity",
+
+        "sunlight": "Sunwight",
+        "sunlight_angle": "Angwe",
+        "sunlight_intensity": "Intensity",
+        "sunlight_color": "Cowow",
+
+        "amblight": "Ambient wight",
+        "amblight_intensity": "Intensity",
+        "amblight_color": "Cowow"
+      },
+      "planet_rendering": {
+        "$title": "Pwanyet & Wendewing",
+
+        "transform": "Twansfowm",
+        "transform_axialtilt": "Axiaw tiwt",
+        "transform_rotation": "Wotation",
+
+        "pbr": "PBR p-pawametews",
+        "pbr_waterlevel": "Watew wevew",
+        "pbr_waterroughness": "Watew woughnyess",
+        "pbr_watermetalness": "Watew metawnyess",
+        "pbr_groundroughness": "Gwound woughnyess",
+        "pbr_groundmetalness": "Gwound metawnyess"
+      },
+      "surface": {
+        "$title": "Suwface",
+
+        "bumpmap": "Bump map",
+        "bumpmap_show": "Show bumps :3",
+        "bumpmap_strength": "Bump stwength",
+
+        "noise": "Nyoise p-pawametews",
+        "noise_fbm_frequency": "Fwequency",
+        "noise_fbm_amplitude": "Ampwitude",
+        "noise_fbm_lacunarity": "Wacunyawity",
+        "noise_colorramp": "Cowow wamp"
+      },
+      "biomes": {
+        "$title": "Biomes",
+        "biomes_show": "Show biomes :3",
+        "poles_show": "Show powes :3"
+      },
+      "clouds": {
+        "$title": "Cwouds",
+        "clouds_show": "Show cwouds :3",
+
+        "transform": "Twansfowm",
+        "transform_rotation": "Wotation",
+
+        "noise": "Nyoise p-pawametews",
+        "noise_fbm_frequency": "Fwequency",
+        "noise_fbm_amplitude": "Ampwitude",
+        "noise_fbm_lacunarity": "Wacunyawity",
+
+        "rgba": "Cowow & opacity",
+        "rgba_color": "Cowow",
+        "rgba_opacityramp": "Opacity wamp"
+      },
+      "atmosphere": {
+        "$title": "Atmosphewe",
+        "atmosphere_show": "Show atmosphewe :3",
+
+        "transform": "Twansfowm",
+        "transform_height": "Height",
+        "transform_density": "Density",
+
+        "rgba": "Cowow  & intensity",
+        "rgba_hue": "Hue >w<",
+        "rgba_intensity": "Intensity"
+      }
+    }
+  },
+  "tooltips": {
+    "topbar_rename": "Wenyame pwanyet",
+    "topbar_rename_confirm": "Confiwm pwanyet nyame",
+    "topbar_reset": "Weset t-to defauwts",
+    "topbar_import": "Impowt pwanyet fiwe",
+    "topbar_export": "Expowt pwanyet fiwe",
+
+    "footer_github": "GitHub wepositowy!!! (opens in nyew tab OwO)",
+    "footer_settings": "Settings",
+    "footer_about": "About @:main.$title"
+  },
+  "a11y": {
+    "logo": "Wagwange wogo",
+    "logo_alt": "Secwet Wagwange wogo!",
+
+    "dialog_init": "Intwoduction diawog",
+    "dialog_settings": "Settings diawog",
+    "dialog_about": "About @:main.$title diawog",
+    "dialog_reset": "Confiwm weset diawog",
+
+    "topbar_rename": "@:tooltips.topbar_rename",
+    "topbar_rename_confirm": "@:tooltips.topbar_rename_confirm",
+    "topbar_reset": "@:tooltips.topbar_reset",
+    "topbar_import": "@:tooltips.topbar_import",
+    "topbar_export": "@:tooltips.topbar_export",
+
+    "footer_github": "@:tooltips.footer_github",
+    "footer_settings": "@:tooltips.footer_settings",
+    "footer_about": "@:tooltips.footer_about",
+
+    "general_theme_default": "Set defauwt theme (bwue)",
+    "general_theme_supernova": "Set Supewnyova theme (puwple)",
+    "general_theme_voyager": "Set Voyagew theme (owange)",
+    
+    "editor_generic_input": "Pawametew vawue",
+
+    "action_edit_keybind": "Edit key binding",
+    "action_edit_ramp": "Edit wamp",
+
+    "action_open_colorpanel": "Open cowow panyew",
+
+    "action_add_colorstep": "Add cowow step",
+    "action_sort_colorsteps": "Sort cowow steps",
+
+    "action_close_dialog": "Cwose diawog"
+  }
+}

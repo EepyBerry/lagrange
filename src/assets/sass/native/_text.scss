@@ -1,0 +1,47 @@
+// headlines
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1;
+  font-family: Poppins;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.375rem; }
+h3 { font-size: 1.125rem; }
+
+// sup
+sup {
+  font-size: 0.75rem;
+}
+
+// links
+a:not(.dark) {
+  color: var(--lg-link);
+}
+a:not(.dark):visited {
+  color: var(--lg-link-visited);
+}
+
+// lists
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+li.lg {
+  padding: 0.25rem;
+  background: var(--lg-panel);
+  border: 1px solid var(--lg-input);
+  border-radius: 4px;
+  color: var(--lg-text);
+  min-height: 1.5rem;
+}
+
+// custom classes
+.highlight {
+  font-weight: 600;
+}
+.nowrap {
+  text-wrap: nowrap;
+}

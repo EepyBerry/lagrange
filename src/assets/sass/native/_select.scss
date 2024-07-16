@@ -1,0 +1,10 @@
+select.lg {
+  background: var(--lg-input);
+  border: 1px solid var(--lg-accent);
+  border-radius: 4px;
+  padding: 0 0.75rem;
+  color: var(--lg-text);
+  min-height: 2rem;
+  font-family: Poppins, Inter;
+  text-overflow: ellipsis;
+}

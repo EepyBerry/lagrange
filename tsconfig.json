@@ -1,0 +1,33 @@
+{
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "exclude": ["src/**/__tests__/*"],
+  "compilerOptions": {
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "noImplicitThis": true,
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "removeComments": false,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@core/*": ["./src/core/*"],
+      "@assets/*": ["./src/assets/*"]
+    },
+
+    "types": [
+      "vite-plugin-glsl/ext"
+    ]
+  }
+} 
