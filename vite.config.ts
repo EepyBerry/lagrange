@@ -2,7 +2,6 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue, { Options } from '@vitejs/plugin-vue'
-import VueDevTools from 'vite-plugin-vue-devtools'
 import glsl from 'vite-plugin-glsl';
 
 const vuePluginConfig: Options = {
@@ -15,6 +14,7 @@ const vuePluginConfig: Options = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  assetsInclude: ['**/*.glsl', '**/*.jpg', '**/*.ico', '**/*.ttf'],
   plugins: [
     vue(vuePluginConfig),
     //VueDevTools(),

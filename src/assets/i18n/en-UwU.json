@@ -3,7 +3,13 @@
     "$title": "Wagwange",
     "locale": "en-UwU",
     "language": "Uwuish",
-    "more_coming_soon": "Mowe coming s-soon!"
+    "more_coming_soon": "Mowe coming s-soon!",
+    
+    "404_01": "Nyothing uvw hewe, sowwyyyy...",
+    "404_02": "\"This sectow is c-compwetewy empty, Captain! :O\"",
+    "404_03": "Oh nyooo ;;w;; Took a wwong tuwn sumwhewe x3",
+    "404_04": "PAGE\u00A0IS\u00A0MISSING! STATUS\u00A0IS\u00A0404!! SPACE\u00A0IS\u00A0VOID!!! >:3",
+    "404_subtitle": "The wequested page c-couwd nyot be found :c"
   },
   "dialog": {
     "init": {

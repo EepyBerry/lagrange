@@ -30,10 +30,21 @@ const handleCancel = (evt: Event) => {
   if (ignoresNativeEvents.value) { return }
   close()
 }
+const handleClick = (evt: Event) => {
+  if (evt.target === dialog.value) {
+    close()
+  }
+}
 
 defineProps<{ showTitle?: boolean, showActions?: boolean }>()
-onMounted(() => dialog.value!.addEventListener('cancel', handleCancel))
-onBeforeUnmount(() => dialog.value?.removeEventListener('cancel', handleCancel))
+onMounted(() => {
+  dialog.value?.addEventListener('click', handleClick)
+  dialog.value?.addEventListener('cancel', handleCancel)
+})
+onBeforeUnmount(() => {
+  dialog.value?.removeEventListener('click', handleClick)
+  dialog.value?.removeEventListener('cancel', handleCancel)
+})
 
 function open() {
   EventBus.disableWindowEventListener('keydown')
@@ -54,6 +65,8 @@ defineExpose({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open })
 <style scoped lang="scss">
 dialog[open].lg {
   position: fixed;
+  scrollbar-color: var(--lg-accent) transparent;
+  scrollbar-width: thin;
 
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);

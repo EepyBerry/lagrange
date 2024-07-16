@@ -3,7 +3,13 @@
     "$title": "Lagrange",
     "locale": "en-US",
     "language": "English",
-    "more_coming_soon": "More coming soon!"
+    "more_coming_soon": "More coming soon!",
+
+    "404_01": "Nothing over here, sorry!",
+    "404_02": "\"This sector is completely empty, Captain!\"",
+    "404_03": "Huh. Must've taken a wrong turn somewhere...",
+    "404_04": "PAGE\u00A0IS\u00A0MISSING. STATUS\u00A0IS\u00A0404. SPACE\u00A0IS\u00A0VOID.",
+    "404_subtitle": "The requested page could not be found :c"
   },
   "dialog": {
     "init": {
