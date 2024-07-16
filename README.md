@@ -12,7 +12,7 @@ Lagrange is a browser application to help you create your own planets, using pro
 
 | Category              | Subcategory      | Available functions                                                 | Notes                |
 |-----------------------|------------------|---------------------------------------------------------------------|----------------------|
-| **Lighting Settings** | Sunlight         | color, intensity                                                    |                      |
+| **Lighting Settings** | Sunlight         | angle, color, intensity                                             |                      |
 |                       | Ambient light    | color, intensity                                                    |                      |
 | **Planet Settings**   | Transform        | axial tilt, rotation                                                |                      |
 |                       | PBR Parameters   | water level, water roughness/metalness, surface roughness/metalness |                      |
