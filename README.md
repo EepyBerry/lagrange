@@ -8,6 +8,8 @@
 A WebGL project using VueJS and ThreeJS! <br>
 Lagrange is a browser application to help you create your own planets, using procedural noise as a foundation to build upon.
 
+**🪐✨ [Check out the app here!](https://lagrange.eepyberry.me) ✨🪐**
+
 ## ⚙️ Installation & building
 
 For more details on the commands themselves, check the [package.json](https://github.com/EepyBerry/lagrange/blob/main/package.json) file.
