@@ -6,7 +6,7 @@
         href="https://github.com/EepyBerry/lagrange"
         target="_blank"
         rel="noopener"
-        :title="$t('tooltips.footer_github')"
+        :title="$t('tooltip.footer_github')"
         :aria-label="$t('a11y.footer_github')"
       >
         <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" />
@@ -15,7 +15,7 @@
       <hr width="50%" />
       <button
         class="lg dark"
-        :title="$t('tooltips.footer_settings')"
+        :title="$t('tooltip.footer_settings')"
         :aria-label="$t('a11y.footer_settings')"
         @click="settingsDialog!.open()"
       >
@@ -23,7 +23,7 @@
       </button>
       <button
         class="lg dark"
-        :title="$t('tooltips.footer_about')"
+        :title="$t('tooltip.footer_about')"
         :aria-label="$t('a11y.footer_about')"
         @click="infoDialog!.open()"
       >

@@ -13,14 +13,14 @@
           icon="mingcute:check-line"
           width="1.25rem"
           aria-hidden="true"
-          :title="$t('tooltips.topbar_rename_confirm')"
+          :title="$t('tooltip.topbar_rename_confirm')"
         />
         <iconify-icon
           v-else
           icon="mingcute:edit-2-line"
           width="1.25rem"
           aria-hidden="true"
-          :title="$t('tooltips.topbar_rename')"
+          :title="$t('tooltip.topbar_rename')"
         />
       </button>
     </div>
@@ -28,7 +28,7 @@
     <button
       class="lg dark"
       :aria-label="$t('a11y.topbar_reset')"
-      :title="$t('tooltips.topbar_reset')"
+      :title="$t('tooltip.topbar_reset')"
       @click="resetDialog?.open()"
     >
       <iconify-icon icon="tabler:reload" width="1.5rem" aria-hidden="true" />
@@ -38,7 +38,7 @@
     <button
       class="lg dark"
       :aria-label="$t('a11y.topbar_import')"
-      :title="$t('tooltips.topbar_import')"
+      :title="$t('tooltip.topbar_import')"
       @click="openFileDialog"
     >
       <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
@@ -46,7 +46,7 @@
     <button
       class="lg dark"
       :aria-label="$t('a11y.topbar_export')"
-      :title="$t('tooltips.topbar_export')"
+      :title="$t('tooltip.topbar_export')"
       @click="exportPlanetFile"
     >
       <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />

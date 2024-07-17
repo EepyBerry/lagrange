@@ -3,7 +3,6 @@ import LagrangeParameters from '@core/models/lagrange-parameters.model'
 import type { IDBKeyBinding } from '@/dexie'
 import { Vector3 } from 'three'
 
-export const SITE_NAME = 'Lagrange'
 export const LOCALE_MAP: { [k: string]: string } = {
   en: 'en-US',
   fr: 'fr-FR',

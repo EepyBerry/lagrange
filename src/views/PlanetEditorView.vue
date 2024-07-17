@@ -24,9 +24,11 @@ import { idb, KeyBindingAction } from '@/dexie'
 import { EventBus } from '@core/window-event-bus'
 import { useI18n } from 'vue-i18n'
 
-useHead({ meta: [{ name: 'description', content: 'A procedural planet building app' }] })
-
 const i18n = useI18n()
+useHead({
+  title: i18n.t('editor.$title') + ' · ' + i18n.t('main.$title'),
+  meta: [{ name: 'description', content: 'Planet editor' }]
+})
 
 // THREE canvas/scene root
 const sceneRoot: Ref<any> = ref(null)
