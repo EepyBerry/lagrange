@@ -26,14 +26,14 @@
         <div class="about-copyright">
           <p>{{ $t('dialog.about.built_with_love') }}</p>
           <p>
-            © 2024 EepyBerry,
+            © {{ new Date().getFullYear() }} EepyBerry,
             <a href="https://github.com/EepyBerry/lagrange/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
               {{ $t('dialog.about.license') }}
             </a>
           </p>
         </div>
       </div>
-      <span id="app-version">0.1.0</span>
+      <span id="app-version">{{ version }}</span>
     </template>
   </DialogElement>
 </template>
@@ -42,10 +42,13 @@
 import AppLogo from '../elements/AppLogo.vue'
 import DialogElement from '../elements/DialogElement.vue'
 import ChipElement from '../elements/ChipElement.vue'
-import { ref, type Ref } from 'vue'
+import { onMounted, ref, type Ref } from 'vue'
 
+const version = ref('UNKNOWN_VERSION')
 const dialogRef: Ref<{ open: Function } | null> = ref(null)
 defineExpose({ open: () => dialogRef.value?.open() })
+
+onMounted(() => (version.value = import.meta.env.APP_VERSION))
 </script>
 
 <style scoped lang="scss">

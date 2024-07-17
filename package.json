@@ -1,6 +1,6 @@
 {
   "name": "lagrange",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -42,7 +42,7 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
     "@types/file-saver": "^2.0.7",
-    "@types/node": "^20.12.5",
+    "@types/node": "^20.14.11",
     "@types/pako": "^2.0.3",
     "@types/three": "^0.165.0",
     "@vitejs/plugin-vue": "^5.0.4",

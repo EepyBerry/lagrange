@@ -17,9 +17,11 @@ export default defineConfig({
   assetsInclude: ['**/*.glsl', '**/*.ico', '**/*.ttf'],
   plugins: [
     vue(vuePluginConfig),
-    //VueDevTools(),
     glsl(),
   ],
+  define: {
+    'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
