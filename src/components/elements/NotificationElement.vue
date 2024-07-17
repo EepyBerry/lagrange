@@ -3,7 +3,7 @@
     <div class="notification-icon">
       <iconify-icon v-if="type === 'info'" icon="mingcute:information-line" width="1.25rem" aria-hidden="true" />
       <iconify-icon v-if="type === 'warn'" icon="mingcute:alert-line" width="1.25rem" aria-hidden="true" />
-      <iconify-icon v-if="type === 'wip'"  icon="mingcute:traffic-cone-line" width="1.25rem" aria-hidden="true" />
+      <iconify-icon v-if="type === 'wip'" icon="mingcute:traffic-cone-line" width="1.25rem" aria-hidden="true" />
     </div>
     <div class="notification-content">
       <slot></slot>
@@ -28,7 +28,8 @@ defineProps<{ type: 'info' | 'warn' | 'wip' }>()
     background: var(--lg-info-panel);
     border: 1px solid var(--lg-info);
   }
-  &.warn, &.wip {
+  &.warn,
+  &.wip {
     background: var(--lg-warn-panel);
     border: 1px solid var(--lg-warn);
   }

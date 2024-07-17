@@ -4,7 +4,7 @@
  * @returns `true` if `n` is a number or can be interpreted as a number (excluding empty values), `false` otherwise
  */
 export function isNumeric(n: string | number | boolean) {
-  if (['number'].includes(typeof(n))) {
+  if (['number'].includes(typeof n)) {
     return true
   } else if (!n) {
     return false

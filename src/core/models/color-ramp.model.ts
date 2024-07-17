@@ -43,7 +43,7 @@ export class ColorRamp extends ChangeTracker {
   static EMPTY = new ColorRamp([], '', [])
 
   private _steps: ColorRampStep[] = []
-  private  _maxSize: number = 16
+  private _maxSize: number = 16
 
   constructor(changedPropsRef: string[], changePrefix: string, steps: ColorRampStep[], maxSize: number = 16) {
     super(changedPropsRef, changePrefix)
@@ -65,11 +65,11 @@ export class ColorRamp extends ChangeTracker {
   }
 
   public get colors() {
-    return this.computeSteps().map(s => s.color)
+    return this.computeSteps().map((s) => s.color)
   }
-  
+
   public get factors() {
-    return this.computeSteps().map(s => s.factor)
+    return this.computeSteps().map((s) => s.factor)
   }
 
   public get definedSteps() {
@@ -77,19 +77,18 @@ export class ColorRamp extends ChangeTracker {
   }
 
   public get definedColors() {
-    return this._steps.map(s => s.color)
+    return this._steps.map((s) => s.color)
   }
-  
+
   public get definedFactors() {
-    return this._steps.map(s => s.factor)
+    return this._steps.map((s) => s.factor)
   }
 
   // Utility functions
 
   private computeSteps() {
-    const maxStep = this._steps.find(s => numberEquals(s.factor, 1))
-    const computed = Array.from(this._steps)
-      .sort((a, b) => a.factor - b.factor)
+    const maxStep = this._steps.find((s) => numberEquals(s.factor, 1))
+    const computed = Array.from(this._steps).sort((a, b) => a.factor - b.factor)
     computed.push(...Array(this._maxSize - this._steps.length).fill(maxStep))
     return computed
   }
@@ -102,23 +101,23 @@ export class ColorRamp extends ChangeTracker {
     if (this._steps.length >= this._maxSize - 1) {
       throw new Error('(ColorRamp) Maximum size reached')
     }
-    this._steps.push(new ColorRampStep('black', this._steps[this._steps.length-2].factor + 0.01))
+    this._steps.push(new ColorRampStep('black', this._steps[this._steps.length - 2].factor + 0.01))
     this.sortSteps()
     this.markForChange(this._changePrefix)
   }
 
   public getStep(stepId: string) {
-    const index = this._steps.findIndex(s => s.id === stepId)
+    const index = this._steps.findIndex((s) => s.id === stepId)
     if (index === -1) {
-      throw new Error('Cannot find step with ID '+stepId)
+      throw new Error('Cannot find step with ID ' + stepId)
     }
     return this._steps[index]
   }
 
   public setStep(stepId: string, color?: string, factor?: number) {
-    const index = this._steps.findIndex(s => s.id === stepId)
+    const index = this._steps.findIndex((s) => s.id === stepId)
     if (index === -1) {
-      throw new Error('Cannot find step with ID '+stepId)
+      throw new Error('Cannot find step with ID ' + stepId)
     }
 
     this._steps[index].color = color ? new THREE.Color(color) : this._steps[index].color
@@ -131,25 +130,23 @@ export class ColorRamp extends ChangeTracker {
       console.warn('(ColorRamp) Cannot delete ramp bounds! (factor=0|1)')
       return
     }
-    const index = this._steps.findIndex(s => s.id === stepId)
+    const index = this._steps.findIndex((s) => s.id === stepId)
     if (index === -1) {
-      throw new Error('Cannot find step with ID '+stepId)
+      throw new Error('Cannot find step with ID ' + stepId)
     }
     this._steps.splice(index, 1)
     this.markForChange(this._changePrefix)
   }
-  
+
   public isBoundStep(stepId: string) {
-    return this._steps.find(s => s.id === stepId)?.isBound
+    return this._steps.find((s) => s.id === stepId)?.isBound
   }
 
   public load(data: any) {
     this._steps.splice(0)
-    this._steps.push(...data._steps.map((s: any) => new ColorRampStep(
-      new THREE.Color(numberToHex(s._color)),
-      s._factor,
-      s._isBound
-    )))
+    this._steps.push(
+      ...data._steps.map((s: any) => new ColorRampStep(new THREE.Color(numberToHex(s._color)), s._factor, s._isBound)),
+    )
   }
 
   public loadFromSteps(data: ColorRampStep[]) {

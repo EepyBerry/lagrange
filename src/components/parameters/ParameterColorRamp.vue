@@ -9,12 +9,14 @@
       <div class="container">
         <div class="color-ramp" ref="htmlColorRamp">
           <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
-            <span ref="htmlColorSteps"
+            <span
+              ref="htmlColorSteps"
               class="color-step"
               :style="{
                 left: `${step.factor * 100}%`,
-                display: step.isBound ? 'none' : 'initial'
-              }">
+                display: step.isBound ? 'none' : 'initial',
+              }"
+            >
             </span>
           </template>
         </div>
@@ -30,7 +32,7 @@
       </div>
     </td>
   </tr>
-  
+
   <tr v-show="panelOpen">
     <td colspan="2">
       <table class="panel-table">
@@ -51,7 +53,8 @@
               <div class="factor-wrapper">
                 <span></span>
                 <span v-if="lgColorRamp?.isBoundStep(step.id)">{{ step.factor }}</span>
-                <InputSliderElement v-else
+                <InputSliderElement
+                  v-else
                   ref="htmlFactorInputs"
                   class="lg fw"
                   :id="step.id"
@@ -73,7 +76,13 @@
                   :aria-label="$t('a11y.action_open_colorpanel')"
                   @click="togglePicker(step.id)"
                 >
-                  <iconify-icon v-if="pickerIdOpen === step.id" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+                  <iconify-icon
+                    v-if="pickerIdOpen === step.id"
+                    class="icon"
+                    icon="mingcute:close-line"
+                    width="1.25rem"
+                    aria-hidden="true"
+                  />
                   <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
                 </button>
               </div>
@@ -84,7 +93,7 @@
               <ColorPicker
                 alpha-channel="hide"
                 default-format="hex"
-                :color="'#'+step.color.getHexString()"
+                :color="'#' + step.color.getHexString()"
                 @color-change="updateStepColor(step.id, $event.colors.hex)"
               >
                 <template #hue-range-input-label>
@@ -102,7 +111,12 @@
               </button>
               <iconify-icon class="icon" icon="ph:dot-outline-fill" width="1.25rem" aria-hidden="true" />
               <button class="lg" @click="sortSteps()" :aria-label="$t('a11y.action_sort_colorsteps')">
-                <iconify-icon class="icon" icon="mingcute:numbers-09-sort-ascending-line" width="1.25rem" aria-hidden="true" />
+                <iconify-icon
+                  class="icon"
+                  icon="mingcute:numbers-09-sort-ascending-line"
+                  width="1.25rem"
+                  aria-hidden="true"
+                />
               </button>
             </div>
           </td>
@@ -113,13 +127,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, type Ref } from 'vue';
-import { ColorRamp } from '@/core/models/color-ramp.model';
+import { ref, watch, type Ref } from 'vue'
+import { ColorRamp } from '@core/models/color-ramp.model'
 import { ColorPicker } from 'vue-accessible-color-picker'
-import InputSliderElement from '../elements/InputSliderElement.vue';
+import InputSliderElement from '../elements/InputSliderElement.vue'
 
 const lgColorRamp = defineModel<ColorRamp>()
-const htmlColorRamp: Ref<HTMLElement|null> = ref(null)
+const htmlColorRamp: Ref<HTMLElement | null> = ref(null)
 const htmlColorSteps: Ref<HTMLElement[]> = ref([])
 const htmlFactorInputs: Ref<HTMLInputElement[]> = ref([])
 
@@ -127,9 +141,12 @@ const panelOpen = ref(false)
 const pickerIdOpen: Ref<string | null> = ref(null)
 
 defineProps<{ mode?: 'color' | 'opacity' }>()
-watch(() => lgColorRamp.value?.definedSteps, () => {
-  updateRamp()
-})
+watch(
+  () => lgColorRamp.value?.definedSteps,
+  () => {
+    updateRamp()
+  },
+)
 
 function updateRamp() {
   const gradient: string[] = []
@@ -187,7 +204,6 @@ function removeStep(id: string) {
   lgColorRamp.value?.removeStep(id)
   updateRamp()
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -235,7 +251,7 @@ function removeStep(id: string) {
   }
   .factor-wrapper {
     display: flex;
-    justify-content: space-between
+    justify-content: space-between;
   }
   .color-wrapper {
     display: flex;
@@ -271,7 +287,7 @@ button.edit {
   align-items: center;
   justify-content: center;
   height: 2rem;
-  
+
   .icon {
     color: white;
     padding: 4px;
@@ -280,7 +296,7 @@ button.edit {
 input.lg {
   text-align: end;
 }
-input.lg:not([type=checkbox],[type=radio]) {
+input.lg:not([type='checkbox'], [type='radio']) {
   width: 3rem;
 }
 </style>

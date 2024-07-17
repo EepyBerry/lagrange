@@ -1,39 +1,39 @@
-
 .vacp-color-picker {
-
   display: grid;
   grid-gap: 6px;
   grid-template-columns: 1fr min-content;
-  font-size: .8rem;
+  font-size: 0.8rem;
   width: 100%;
   max-width: 100%;
   padding: 0.5rem;
   //font-family: var(--vacp-font-family, -apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif);
   color: var(--lg-text);
   background: transparent;
-  border-radius: 4px; 
+  border-radius: 4px;
   border: 1px solid var(--lg-input);
 
-  div.vacp-color-space { aspect-ratio: 1/.4; }
-  
+  div.vacp-color-space {
+    aspect-ratio: 1/0.4;
+  }
+
   button.vacp-copy-button,
   button.vacp-format-switch-button {
     background: transparent;
     cursor: pointer;
   }
-  input[id^=color-picker-color-] {
+  input[id^='color-picker-color-'] {
     background: var(--lg-input);
     border-radius: 4px;
   }
 }
 .visually-hidden {
-	position: absolute;
-	overflow: hidden;
-	clip: rect(0 0 0 0);
-	width: 1px;
-	height: 1px;
-	margin: -1px;
-	padding: 0;
-	border: 0;
-	white-space: nowrap;
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  white-space: nowrap;
 }

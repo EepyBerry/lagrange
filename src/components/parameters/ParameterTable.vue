@@ -1,7 +1,9 @@
 <template>
   <table>
     <slot>
-      <tr><td>Add parameters here</td></tr>
+      <tr>
+        <td>Add parameters here</td>
+      </tr>
     </slot>
   </table>
 </template>

@@ -4,7 +4,7 @@
     "locale": "en-UwU",
     "language": "Uwuish",
     "more_coming_soon": "Mowe coming s-soon!",
-    
+
     "404_01": "Nyothing uvw hewe, sowwyyyy...",
     "404_02": "\"This sectow is c-compwetewy empty, Captain! :O\"",
     "404_03": "Oh nyooo ;;w;; Took a wwong tuwn sumwhewe x3",
@@ -43,6 +43,7 @@
       "$title": "Settings",
 
       "general": "Genyewaw >:3",
+      "general_language": "Wanguage",
       "general_theme": "Choose theme t-to use",
       "general_theme_default": "Defauwt",
       "general_theme_supernova": "Supewnyova",
@@ -61,7 +62,7 @@
 
       "prefix_engine": "3D u-using",
       "prefix_framework": "Powewed by",
-      
+
       "built_with_love": "Buiwt with 🏳️‍🌈 & ❤️",
       "license": "BSD 3-Cwause Wicense"
     },
@@ -188,7 +189,7 @@
     "general_theme_default": "Set defauwt theme (bwue)",
     "general_theme_supernova": "Set Supewnyova theme (puwple)",
     "general_theme_voyager": "Set Voyagew theme (owange)",
-    
+
     "editor_generic_input": "Pawametew vawue",
 
     "action_edit_keybind": "Edit key binding",

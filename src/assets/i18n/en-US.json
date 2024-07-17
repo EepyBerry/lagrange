@@ -43,6 +43,7 @@
       "$title": "Settings",
 
       "general": "General",
+      "general_language": "Language",
       "general_theme": "Choose theme to use",
       "general_theme_default": "Default",
       "general_theme_supernova": "Supernova",
@@ -61,7 +62,7 @@
 
       "prefix_engine": "3D using",
       "prefix_framework": "Powered by",
-      
+
       "built_with_love": "Built with 🏳️‍🌈 & ❤️",
       "license": "BSD 3-Clause License"
     },
@@ -188,7 +189,7 @@
     "general_theme_default": "Set default theme (blue)",
     "general_theme_supernova": "Set Supernova theme (purple)",
     "general_theme_voyager": "Set Voyager theme (orange)",
-    
+
     "editor_generic_input": "Parameter value",
 
     "action_edit_keybind": "Edit key binding",

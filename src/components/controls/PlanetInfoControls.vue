@@ -1,45 +1,50 @@
 <template>
   <div id="planet-info">
     <div class="name-wrapper">
-      <input v-if="editMode" class="lg" type="text" v-model="LG_PARAMETERS.planetName">
+      <input v-if="editMode" class="lg" type="text" v-model="LG_PARAMETERS.planetName" />
       <p v-else>{{ LG_PARAMETERS.planetName }}</p>
-      <button class="lg icon-button"
-              :aria-label="$t(editMode ? 'a11y.topbar_rename_confirm' : 'a11y.topbar_rename')"
+      <button
+        class="lg icon-button"
+        :aria-label="$t(editMode ? 'a11y.topbar_rename_confirm' : 'a11y.topbar_rename')"
+        @click="toggleEditMode"
       >
-        <iconify-icon v-if="editMode"
+        <iconify-icon
+          v-if="editMode"
           icon="mingcute:check-line"
           width="1.25rem"
           aria-hidden="true"
           :title="$t('tooltips.topbar_rename_confirm')"
-          @click="toggleEditMode"
         />
-        <iconify-icon v-else
+        <iconify-icon
+          v-else
           icon="mingcute:edit-2-line"
           width="1.25rem"
           aria-hidden="true"
           :title="$t('tooltips.topbar_rename')"
-          @click="toggleEditMode"
         />
       </button>
     </div>
-    <hr>
-    <button class="lg dark"
+    <hr />
+    <button
+      class="lg dark"
       :aria-label="$t('a11y.topbar_reset')"
       :title="$t('tooltips.topbar_reset')"
       @click="resetDialog?.open()"
     >
       <iconify-icon icon="tabler:reload" width="1.5rem" aria-hidden="true" />
     </button>
-    <hr>
-    <input ref="fileInput" type="file" @change="importPlanetFile" hidden>
-    <button class="lg dark"
+    <hr />
+    <input ref="fileInput" type="file" @change="importPlanetFile" hidden />
+    <button
+      class="lg dark"
       :aria-label="$t('a11y.topbar_import')"
       :title="$t('tooltips.topbar_import')"
       @click="openFileDialog"
     >
       <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
     </button>
-    <button class="lg dark"
+    <button
+      class="lg dark"
       :aria-label="$t('a11y.topbar_export')"
       :title="$t('tooltips.topbar_export')"
       @click="exportPlanetFile"
@@ -53,20 +58,20 @@
 <script setup lang="ts">
 import AppResetConfirmDialog from '../dialogs/AppResetConfirmDialog.vue'
 import { LG_PARAMETERS } from '@core/globals'
-import pako from 'pako';
-import { saveAs } from 'file-saver';
-import { ref, type Ref } from 'vue';
-import { EventBus } from '@/core/window-event-bus';
-import { useI18n } from 'vue-i18n';
+import pako from 'pako'
+import { saveAs } from 'file-saver'
+import { ref, type Ref } from 'vue'
+import { EventBus } from '@core/window-event-bus'
+import { useI18n } from 'vue-i18n'
 
 const i18n = useI18n()
 
-const resetDialog: Ref<{ open: Function }|null> = ref(null)
+const resetDialog: Ref<{ open: Function } | null> = ref(null)
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const editMode: Ref<boolean> = ref(false)
 const $emit = defineEmits(['dataLoad'])
 
-function toggleEditMode()  {
+function toggleEditMode() {
   editMode.value = !editMode.value
   if (editMode.value) {
     EventBus.disableWindowEventListener('keydown')
@@ -87,7 +92,7 @@ function importPlanetFile(event: Event) {
   }
 
   const reader = new FileReader()
-  reader.onload = e => {
+  reader.onload = (e) => {
     try {
       const data = JSON.parse(pako.inflate(e.target?.result as ArrayBuffer, { to: 'string' }))
       LG_PARAMETERS.loadData(data)
@@ -102,7 +107,7 @@ function importPlanetFile(event: Event) {
 function exportPlanetFile() {
   const jsonParams = JSON.stringify(LG_PARAMETERS)
   const gzipParams = pako.deflate(jsonParams)
-  const planetFilename = (LG_PARAMETERS.planetName?.replace(/\s/g, '_')) ?? 'Planet'
+  const planetFilename = LG_PARAMETERS.planetName?.replace(/\s/g, '_') ?? 'Planet'
   saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
 }
 
@@ -125,7 +130,7 @@ function resetPlanet() {
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  
+
   align-self: center;
 
   hr {
@@ -156,12 +161,12 @@ function resetPlanet() {
   }
 }
 
-@media screen and (max-width:1199px) {
+@media screen and (max-width: 1199px) {
   #planet-info {
     margin-top: 0.5rem;
   }
 }
-@media screen and (max-width:767px) {
+@media screen and (max-width: 767px) {
   #planet-info {
     width: 100%;
     border-radius: 0;

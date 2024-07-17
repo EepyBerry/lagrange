@@ -6,12 +6,7 @@
       </label>
     </td>
     <td>
-      <select class="lg"
-        :id="id"
-        :disabled="disabled"
-        v-model="lgParam"
-        @change="$emit('change')"
-      >
+      <select class="lg" :id="id" :disabled="disabled" v-model="lgParam" @change="$emit('change')">
         <slot name="options"></slot>
       </select>
     </td>
@@ -21,7 +16,7 @@
 <script setup lang="ts">
 type AcceptedType = string | number | boolean
 const lgParam = defineModel<AcceptedType>()
-defineProps<{ id: string, disabled?: boolean }>()
+defineProps<{ id: string; disabled?: boolean }>()
 const $emit = defineEmits(['change'])
 </script>
 
