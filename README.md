@@ -8,6 +8,24 @@
 A WebGL project using VueJS and ThreeJS! <br>
 Lagrange is a browser application to help you create your own planets, using procedural noise as a foundation to build upon.
 
+## ⚙️ Installation & building
+
+For more details on the commands themselves, check the [package.json](https://github.com/EepyBerry/lagrange/blob/main/package.json) file.
+
+### Run locally
+Clone the repository then use the following commands:
+- Install dependencies: `npm install`
+- Run the application locally: `npm run dev` / `npm run dev-host`
+
+Lagrange runs on port 5173 by default; `dev-host` exposes the application to the local network.
+
+### Build project
+Building is done with the following command:
+- `npm run build`
+
+Vite copies the output to the `dist` folder, creating it first if need be.
+
+
 ## 📋 Current Features
 
 | Category              | Subcategory      | Available functions                                                 | Notes                |
