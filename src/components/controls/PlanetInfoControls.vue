@@ -1,7 +1,7 @@
 <template>
   <div id="planet-info">
     <div class="name-wrapper">
-      <input v-if="editMode" class="lg" type="text" v-model="LG_PARAMETERS.planetName" />
+      <input v-if="editMode" class="lg" type="text" v-model="LG_PARAMETERS.planetName" @keyup.enter="toggleEditMode"/>
       <p v-else>{{ LG_PARAMETERS.planetName }}</p>
       <button
         class="lg icon-button"
