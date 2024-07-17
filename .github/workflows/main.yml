@@ -1,0 +1,25 @@
+name: Lagrange Deployment
+
+on:
+  push:
+    tags:        
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Use Node.js v20.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.3.4
+      with:
+        name: lagrange-dist
+        path: dist
