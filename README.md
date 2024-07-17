@@ -5,8 +5,10 @@
   <img src="https://img.shields.io/badge/ThreeJS-r166-%23049EF4?logo=threedotjs&labelColor=%2335495E&logoColor=white">
 </p>
 
-A WebGL project using VueJS and ThreeJS! <br>
+A WebGL side-project using VueJS and ThreeJS! <br>
 Lagrange is a browser application to help you create your own planets, using procedural noise as a foundation to build upon.
+
+_(**important note:** this is something I am working on during my free time, which means that update frequency will vary!)_
 
 **🪐✨ [Check out the app here!](https://lagrange.eepyberry.me) ✨🪐**
 
