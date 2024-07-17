@@ -56,7 +56,6 @@
     "sass": "^1.75.0",
     "typescript": "~5.4.0",
     "vite": "^5.2.8",
-    "vite-plugin-glsl": "^1.3.0",
     "vite-plugin-vue-devtools": "^7.0.25",
     "vue-tsc": "^2.0.11"
   }
