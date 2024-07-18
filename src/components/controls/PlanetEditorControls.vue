@@ -301,6 +301,13 @@ import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
     scrollbar-color: var(--lg-accent) transparent;
     scrollbar-width: thin;
     overflow: auto;
+
+    direction: rtl;
+
+    & > section {
+      direction: ltr;
+      align-self: flex-end;
+    }
   }
 }
 
