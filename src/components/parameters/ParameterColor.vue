@@ -5,7 +5,7 @@
     </td>
     <td class="color">
       <div class="color-wrapper">
-        <span class="current-color" :style="{ backgroundColor: `#${lgColor?.getHexString()}` }"></span>
+        <span class="current-color" :style="{ backgroundColor: `#${lgColor?.getHexString()}` }" @click="togglePanel()"></span>
         <button
           class="lg edit"
           :aria-label="$t('a11y.action_open_colorpanel')"
@@ -96,6 +96,7 @@ tr.field {
   height: 2rem;
   border-radius: 4px;
   border: 1px solid var(--lg-accent);
+  cursor: pointer;
 }
 .panel {
   display: none;

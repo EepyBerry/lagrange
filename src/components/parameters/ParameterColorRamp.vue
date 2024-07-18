@@ -7,7 +7,7 @@
   <tr class="field">
     <td colspan="2">
       <div class="container">
-        <div class="color-ramp" ref="htmlColorRamp">
+        <div class="color-ramp" ref="htmlColorRamp" @click="togglePanel()">
           <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
             <span
               ref="htmlColorSteps"
@@ -222,6 +222,7 @@ function removeStep(id: string) {
   border-radius: 4px;
   border: 1px solid var(--lg-accent);
   width: 100%;
+  cursor: pointer;
 
   .color-step {
     position: absolute;
