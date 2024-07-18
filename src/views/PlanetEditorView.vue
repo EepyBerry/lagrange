@@ -20,7 +20,7 @@ import { createControls } from '@core/three/component.builder'
 import { useHead } from '@unhead/vue'
 import type { SceneElements } from '@core/models/scene-elements.model'
 import type { LensFlareEffect } from '@core/three/lens-flare.effect'
-import { idb, KeyBindingAction } from '@/dexie'
+import { idb, KeyBindingAction } from '@/dexie.config'
 import { EventBus } from '@core/window-event-bus'
 import { useI18n } from 'vue-i18n'
 

@@ -4,7 +4,6 @@ precision highp float;
 
 // Main uniforms
 uniform int u_octaves;
-uniform vec2 u_resolution;
 uniform float u_frequency;
 uniform float u_amplitude;
 uniform float u_lacunarity;

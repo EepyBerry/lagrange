@@ -84,7 +84,6 @@ export function createPlanet(type: GeometryType): THREE.Mesh {
     planetVertShader,
     planetFragShader,
     {
-      u_resolution: { value: new THREE.Vector2(256, 256) },
       u_radius: { value: LG_PARAMETERS.initPlanetRadius },
       u_octaves: { value: 6 },
       u_frequency: { value: LG_PARAMETERS.planetSurfaceNoise.frequency },
@@ -121,7 +120,6 @@ export function createClouds(type: GeometryType): THREE.Mesh {
     cloudsVertShader,
     cloudsFragShader,
     {
-      u_resolution: { value: new THREE.Vector2(256, 256) },
       u_octaves: { value: 4 },
       u_frequency: { value: LG_PARAMETERS.cloudsNoise.frequency },
       u_amplitude: { value: LG_PARAMETERS.cloudsNoise.amplitude },

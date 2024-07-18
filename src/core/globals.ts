@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import LagrangeParameters from '@core/models/lagrange-parameters.model'
-import type { IDBKeyBinding } from '@/dexie'
+import type { IDBKeyBinding } from '@/dexie.config'
 import { Vector3 } from 'three'
 
 export const LOCALE_MAP: { [k: string]: string } = {

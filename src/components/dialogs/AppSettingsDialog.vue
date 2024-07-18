@@ -126,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-import { KeyBindingAction, idb, type IDBKeyBinding, type IDBSettings } from '@/dexie'
+import { KeyBindingAction, idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
 import { ref, watch, type Ref } from 'vue'
 import DialogElement from '../elements/DialogElement.vue'
 import ParameterTable from '../parameters/ParameterTable.vue'

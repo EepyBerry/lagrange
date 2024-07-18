@@ -114,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-import type { IDBKeyBinding } from '@/dexie'
+import type { IDBKeyBinding } from '@/dexie.config'
 import AppLogo from '../elements/AppLogo.vue'
 import DialogElement from '../elements/DialogElement.vue'
 import NotificationElement from '../elements/NotificationElement.vue'

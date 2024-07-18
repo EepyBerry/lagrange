@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import AppFooter from '@components/main/AppFooter.vue'
 import * as DexieUtils from '@/utils/dexie-utils'
-import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie'
+import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
 import { onMounted, ref, type Ref } from 'vue'
 import AppInitDialog from '@components/dialogs/AppInitDialog.vue'
 import { useI18n } from 'vue-i18n'
