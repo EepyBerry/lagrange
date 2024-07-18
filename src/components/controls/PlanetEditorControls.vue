@@ -329,6 +329,7 @@ import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
 @media screen and (max-width: 767px) {
   #controls {
     min-width: 2rem;
+    margin-bottom: 3.875rem;
 
     .sidebar {
       padding: 0.5rem;

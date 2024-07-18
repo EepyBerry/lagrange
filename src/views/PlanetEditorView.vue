@@ -71,7 +71,7 @@ function initRendering(width: number, height: number) {
   stats.dom.style.right = '0'
   stats.dom.style.left = 'auto'
   stats.dom.ariaHidden = 'true'
-  document.body.appendChild(stats.dom)
+  // document.body.appendChild(stats.dom)
 
   $se.renderer.setSize(width, height)
   $se.renderer.setAnimationLoop(() => renderFrame(stats))

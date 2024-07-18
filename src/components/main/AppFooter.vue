@@ -12,7 +12,7 @@
         <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" />
         <iconify-icon class="link-icon" icon="mingcute:right-small-fill" width="2rem" aria-hidden="true" />
       </a>
-      <hr width="50%" />
+      <hr />
       <button
         class="lg dark"
         :title="$t('tooltip.footer_settings')"
@@ -61,6 +61,7 @@ footer {
     gap: 0.5rem;
 
     hr {
+      width: 1.5rem;
       border-color: var(--lg-accent);
     }
   }
@@ -68,7 +69,18 @@ footer {
 
 @media screen and (max-width: 767px) {
   footer {
+    inset: auto 0 0;
     padding: 0.5rem;
+    justify-content: flex-end;
+
+    #footer-nav {
+      flex-direction: row-reverse;
+
+      hr {
+        width: auto;
+        height: 1.5rem;
+      }
+    }
   }
 }
 </style>
