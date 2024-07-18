@@ -69,6 +69,7 @@
     }
   },
   "editor": {
+    "$title": "Pwanyet Editow",
     "default_planet_name": "New pwanyet ÒwÓ",
     "controls": {
       "lighting": {
