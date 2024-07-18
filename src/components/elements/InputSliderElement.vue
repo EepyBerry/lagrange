@@ -8,7 +8,8 @@
       :max="max ?? 100"
       :step="step ?? 1"
       :value="vModel"
-      @input="set($event)">
+      @input="set($event)"
+    />
     <input
       :aria-labelledby="iid"
       class="lg"
@@ -16,13 +17,14 @@
       :min="min ?? 0"
       :max="max ?? 100"
       :step="step ?? 1"
-      v-model="vModel">
+      v-model="vModel"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 const vModel = defineModel<number>()
-defineProps<{ iid?: string, step?: number, min?: number, max?: number }>()
+defineProps<{ iid?: string; step?: number; min?: number; max?: number }>()
 function set(ev: Event) {
   vModel.value = (ev.target as HTMLInputElement).valueAsNumber
 }
@@ -35,25 +37,25 @@ function set(ev: Event) {
   gap: 0.5rem;
   font-family: monospace;
 
-  &.xs input.lg[type=range] {
+  &.xs input.lg[type='range'] {
     width: 4rem;
   }
-  &.sm input.lg[type=range] {
+  &.sm input.lg[type='range'] {
     width: 6rem;
   }
-  &.md input.lg[type=range] {
+  &.md input.lg[type='range'] {
     width: 8rem;
   }
-  &.fw input.lg[type=range] {
+  &.fw input.lg[type='range'] {
     width: 100%;
   }
 }
 
-input.lg[type=number] {
+input.lg[type='number'] {
   width: 3rem;
   text-align: end;
 }
-input.lg[type=range] {
+input.lg[type='range'] {
   -webkit-appearance: none;
   width: 8rem;
   appearance: none;

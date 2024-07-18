@@ -7,19 +7,26 @@
 </template>
 
 <script setup lang="ts">
-import AppFooter from './components/AppFooter.vue';
-import * as DexieUtils from '@/utils/dexie-utils';
-import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie';
-import { onMounted, ref, type Ref } from 'vue';
-import AppInitDialog from './components/dialogs/AppInitDialog.vue';
-import { useI18n } from 'vue-i18n';
-import { mapLocale } from './utils/utils';
+import AppFooter from '@components/main/AppFooter.vue'
+import * as DexieUtils from '@/utils/dexie-utils'
+import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie'
+import { onMounted, ref, type Ref } from 'vue'
+import AppInitDialog from '@components/dialogs/AppInitDialog.vue'
+import { useI18n } from 'vue-i18n'
+import { mapLocale } from './utils/utils'
+import { useHead } from '@unhead/vue'
 
 const i18n = useI18n()
+useHead({
+  title: i18n.t('main.$title'),
+  meta: [
+    { name: 'description', content: 'A procedural planet-building application!' },
+  ],
+})
 
-const dialogInit: Ref<{ open: Function, close: Function }|null> = ref(null)
+const dialogInit: Ref<{ open: Function; close: Function } | null> = ref(null)
 const keybinds: Ref<IDBKeyBinding[]> = ref([])
-const settings: Ref<IDBSettings|undefined> = ref(undefined)
+const settings: Ref<IDBSettings | undefined> = ref(undefined)
 
 onMounted(async () => {
   await initDexie()
@@ -30,7 +37,7 @@ onMounted(async () => {
   const url = new URL(window.location.href)
   const params = new URLSearchParams(url.search)
   const queryParams = Object.fromEntries(params)
-  if(queryParams.uwu !== undefined) {
+  if (queryParams.uwu !== undefined) {
     i18n.locale.value = 'en-UwU'
   } else if (i18n.availableLocales.includes(settings.value?.locale!)) {
     i18n.locale.value = settings.value?.locale!
@@ -61,9 +68,7 @@ async function initDexie() {
 }
 
 async function disableInitDialog() {
-  await idb.settings
-    .update(settings.value!.id, { showInitDialog: false })
-    .catch(err => console.error(err))
+  await idb.settings.update(settings.value!.id, { showInitDialog: false }).catch((err) => console.error(err))
 }
 </script>
 

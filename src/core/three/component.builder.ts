@@ -1,9 +1,9 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
-import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-shader-material/vanilla';
-import { GeometryType } from '../types';
-import { LG_PARAMETERS } from '../globals';
-import { resolveImports } from './shader-imports.loader';
+import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-shader-material/vanilla'
+import { GeometryType } from '../types'
+import { LG_PARAMETERS } from '../globals'
+import { resolveImports } from './shader-imports.loader'
 
 /**
  * Creates a WebGL-based renderer
@@ -12,7 +12,7 @@ import { resolveImports } from './shader-imports.loader';
  * @returns the renderer
  */
 export function createRenderer(width: number, height: number, pixelRatio?: number) {
-  const renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } )
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
   if (pixelRatio) {
     renderer.setPixelRatio(pixelRatio)
   }
@@ -21,7 +21,7 @@ export function createRenderer(width: number, height: number, pixelRatio?: numbe
   renderer.setClearAlpha(0)
   renderer.shadowMap.enabled = true
   renderer.shadowMap.autoUpdate = true
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap
   return renderer
 }
 
@@ -35,11 +35,15 @@ export function createRenderer(width: number, height: number, pixelRatio?: numbe
  * @returns the configured camera
  */
 export function createPerspectiveCamera(
-  fov: number, ratio: number, near: number, far: number, initialOrbit?: THREE.Spherical
+  fov: number,
+  ratio: number,
+  near: number,
+  far: number,
+  initialOrbit?: THREE.Spherical,
 ): THREE.PerspectiveCamera {
   const camera = new THREE.PerspectiveCamera(fov, ratio, near, far)
   if (initialOrbit) {
-    initialOrbit.makeSafe();
+    initialOrbit.makeSafe()
     camera.position.setFromSpherical(initialOrbit)
   }
   return camera
@@ -52,7 +56,7 @@ export function createPerspectiveCamera(
  * @returns the AmbientLight instance
  */
 export function createAmbientight(color: THREE.ColorRepresentation, intensity: number) {
-  const light = new THREE.AmbientLight(color);
+  const light = new THREE.AmbientLight(color)
   light.intensity = intensity
   return light
 }
@@ -73,8 +77,8 @@ export function createGeometry(type: GeometryType, addtlRadius: number = 0): THR
       )
     case GeometryType.TORUS:
       return new THREE.TorusGeometry(
-        LG_PARAMETERS.initPlanetRadius + (addtlRadius / 4.0),
-        (LG_PARAMETERS.initPlanetRadius / 2.0) + (addtlRadius * 2.0),
+        LG_PARAMETERS.initPlanetRadius + addtlRadius / 4.0,
+        LG_PARAMETERS.initPlanetRadius / 2.0 + addtlRadius * 2.0,
         LG_PARAMETERS.planetMeshQuality * 2.0,
         LG_PARAMETERS.planetMeshQuality * 4.0,
       )
@@ -99,15 +103,15 @@ export function createGeometry(type: GeometryType, addtlRadius: number = 0): THR
 export function createShaderMaterial<T extends MaterialConstructor>(
   vertexShader: string,
   fragmentShader?: string,
-  uniforms?: { [uniform: string]: THREE.IUniform<any>; },
-  baseMaterial?: T
+  uniforms?: { [uniform: string]: THREE.IUniform<any> },
+  baseMaterial?: T,
 ): CustomShaderMaterial<T> {
   const mat = new CustomShaderMaterial({
     baseMaterial: baseMaterial ?? THREE.MeshStandardMaterial,
     vertexShader: vertexShader,
     fragmentShader: fragmentShader ? resolveImports(fragmentShader) : undefined,
     uniforms,
-    silent: true
+    silent: true,
   })
   return mat
 }
@@ -119,7 +123,7 @@ export function createShaderMaterial<T extends MaterialConstructor>(
  * @returns an instance of OrbitControls
  */
 export function createControls(camera: THREE.Camera, canvas: HTMLCanvasElement): OrbitControls {
-  const controls = new OrbitControls(camera, canvas);
+  const controls = new OrbitControls(camera, canvas)
   controls.enablePan = false
   controls.enableDamping = false
   controls.dampingFactor = 0.05
@@ -132,7 +136,7 @@ export function createControls(camera: THREE.Camera, canvas: HTMLCanvasElement):
   controls.mouseButtons = {
     LEFT: THREE.MOUSE.ROTATE,
     MIDDLE: THREE.MOUSE.DOLLY,
-    RIGHT: THREE.MOUSE.DOLLY
+    RIGHT: THREE.MOUSE.DOLLY,
   }
   return controls
 }

@@ -20,14 +20,16 @@
 </template>
 
 <script setup lang="ts">
-import { EventBus } from '@/core/window-event-bus';
-import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
+import { EventBus } from '@core/window-event-bus'
+import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue'
 
-const dialog: Ref<HTMLDialogElement|null> = ref(null)
+const dialog: Ref<HTMLDialogElement | null> = ref(null)
 const ignoresNativeEvents = ref(false)
 const handleCancel = (evt: Event) => {
   evt.preventDefault()
-  if (ignoresNativeEvents.value) { return }
+  if (ignoresNativeEvents.value) {
+    return
+  }
   close()
 }
 const handleClick = (evt: Event) => {
@@ -36,7 +38,7 @@ const handleClick = (evt: Event) => {
   }
 }
 
-defineProps<{ showTitle?: boolean, showActions?: boolean }>()
+defineProps<{ showTitle?: boolean; showActions?: boolean }>()
 onMounted(() => {
   dialog.value?.addEventListener('click', handleClick)
   dialog.value?.addEventListener('cancel', handleCancel)
@@ -114,13 +116,13 @@ dialog[open].lg::backdrop {
   background: rgb(0 0 0 / 37.5%);
 }
 
-@media screen and (max-width:767px) {
+@media screen and (max-width: 767px) {
   dialog[open].lg {
     max-width: calc(100% - 1rem);
     padding: 0.75rem;
   }
 }
-@media screen and (max-width:567px) {
+@media screen and (max-width: 567px) {
   dialog[open].lg {
     width: 100%;
   }

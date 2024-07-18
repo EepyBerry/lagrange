@@ -4,14 +4,19 @@ import colorUtils from '@assets/glsl/functions/color_utils.func.glsl?raw'
 import normalUtils from '@assets/glsl/functions/normal_utils.func.glsl?raw'
 import atmosphereUtils from '@assets/glsl/functions/atmosphere_utils.func.glsl?raw'
 
-const IMPORT_TOKEN = "@import"
-const NEW_LINE = '\r\n'
+const IMPORT_TOKEN = '@import'
+
+const IMPORT_MAP: { [k: string]: string } = {
+  'functions/fbm': fbm,
+  'functions/voronoise': voronoise,
+  'functions/color_utils': colorUtils,
+  'functions/normal_utils': normalUtils,
+  'functions/atmosphere_utils': atmosphereUtils
+}
 
 export function resolveImports(shader: string): string {
-    return shader
-        .replace(`${IMPORT_TOKEN} functions/fbm;`,                  fbm + NEW_LINE)
-        .replace(`${IMPORT_TOKEN} functions/voronoise;`,            voronoise + NEW_LINE)
-        .replace(`${IMPORT_TOKEN} functions/color_utils;`,          colorUtils + NEW_LINE)
-        .replace(`${IMPORT_TOKEN} functions/normal_utils;`,         normalUtils + NEW_LINE)
-        .replace(`${IMPORT_TOKEN} functions/atmosphere_utils;`,     atmosphereUtils + NEW_LINE)
+  for (const key of Object.keys(IMPORT_MAP)) {
+    shader = shader.replace(`${IMPORT_TOKEN} ${key};`, IMPORT_MAP[key])
+  }
+  return shader
 }
