@@ -235,7 +235,7 @@ function doClose() {
       .init-checkbox {
         text-align: start;
         justify-content: space-between;
-        gap: 0;
+        gap: 1rem;
       }
     }
     .controls {
