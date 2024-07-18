@@ -1,11 +1,11 @@
 // db.ts
-import Dexie, { type EntityTable } from 'dexie';
+import Dexie, { type EntityTable } from 'dexie'
 
 enum KeyBindingAction {
   ToggleLensFlare = 'toggle-lens-flare',
   ToggleClouds = 'toggle-clouds',
   ToggleAtmosphere = 'toggle-atmosphere',
-  ToggleBiomes = 'toggle-biomes'
+  ToggleBiomes = 'toggle-biomes',
 }
 
 interface IDBKeyBinding {
@@ -23,15 +23,15 @@ interface IDBSettings {
 }
 
 const idb = new Dexie('LagrangeIDB', { autoOpen: true }) as Dexie & {
-  keyBindings: EntityTable<IDBKeyBinding, 'id'>,
+  keyBindings: EntityTable<IDBKeyBinding, 'id'>
   settings: EntityTable<IDBSettings, 'id'>
-};
+}
 
 // Schema declaration:
 idb.version(1).stores({
   keyBindings: '++id, action',
-  settings: '++id'
-});
+  settings: '++id',
+})
 
-export type { IDBKeyBinding, IDBSettings };
-export { idb, KeyBindingAction };
+export type { IDBKeyBinding, IDBSettings }
+export { idb, KeyBindingAction }

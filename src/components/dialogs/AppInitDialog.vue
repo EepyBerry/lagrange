@@ -1,9 +1,5 @@
 <template>
-  <DialogElement ref="dialogRef"
-    id="dialog-editor-init"
-    :showActions="true"
-    :aria-label="$t('a11y.dialog_init')"
-  >
+  <DialogElement ref="dialogRef" id="dialog-editor-init" :showActions="true" :aria-label="$t('a11y.dialog_init')">
     <template v-slot:content>
       <div class="init-container">
         <section class="intro">
@@ -16,7 +12,7 @@
             <p>
               {{ $t('dialog.init.introduction') }}
             </p>
-            <br>
+            <br />
             <NotificationElement type="wip">
               {{ $t('dialog.init.$tmp_wip') }}
             </NotificationElement>
@@ -28,8 +24,13 @@
           <template v-slot:content>
             <p>
               {{ $t('dialog.init.shortcuts_note') }}
-              <span class=nowrap>
-                (<iconify-icon style="transform: translateY(0.125rem);" icon="mingcute:settings-6-line" width="1rem" aria-hidden="true" />)
+              <span class="nowrap">
+                (<iconify-icon
+                  style="transform: translateY(0.125rem)"
+                  icon="mingcute:settings-6-line"
+                  width="1rem"
+                  aria-hidden="true"
+                />)
               </span>
             </p>
             <ul class="controls">
@@ -57,17 +58,21 @@
           <template v-slot:title>{{ $t('dialog.init.topbar') }}</template>
           <template v-slot:content>
             <ul class="controls">
-              <li class="lg"><iconify-icon icon="mingcute:edit-2-line"   width="1.5rem" aria-hidden="true" />
-                : {{ $t('dialog.init.topbar_rename') }}
+              <li class="lg">
+                <iconify-icon icon="mingcute:edit-2-line" width="1.5rem" aria-hidden="true" /> :
+                {{ $t('dialog.init.topbar_rename') }}
               </li>
-              <li class="lg"><iconify-icon icon="tabler:reload"          width="1.5rem" aria-hidden="true" />
-                : {{ $t('dialog.init.topbar_reset') }}
+              <li class="lg">
+                <iconify-icon icon="tabler:reload" width="1.5rem" aria-hidden="true" /> :
+                {{ $t('dialog.init.topbar_reset') }}
               </li>
-              <li class="lg"><iconify-icon icon="mingcute:upload-line"   width="1.5rem" aria-hidden="true" />
-                : {{ $t('dialog.init.topbar_import') }}
+              <li class="lg">
+                <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" /> :
+                {{ $t('dialog.init.topbar_import') }}
               </li>
-              <li class="lg"><iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
-                : {{ $t('dialog.init.topbar_export') }}
+              <li class="lg">
+                <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" /> :
+                {{ $t('dialog.init.topbar_export') }}
               </li>
             </ul>
           </template>
@@ -77,14 +82,17 @@
           <template v-slot:title>{{ $t('dialog.init.footer') }}</template>
           <template v-slot:content>
             <ul class="controls">
-              <li class="lg"><iconify-icon icon="mingcute:github-line"      width="1.5rem" aria-hidden="true" />
-                : {{ $t('dialog.init.footer_github') }}
+              <li class="lg">
+                <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" /> :
+                {{ $t('dialog.init.footer_github') }}
               </li>
-              <li class="lg"><iconify-icon icon="mingcute:settings-6-line"  width="1.5rem" aria-hidden="true" />
-                : {{ $t('dialog.init.footer_settings') }}
+              <li class="lg">
+                <iconify-icon icon="mingcute:settings-6-line" width="1.5rem" aria-hidden="true" /> :
+                {{ $t('dialog.init.footer_settings') }}
               </li>
-              <li class="lg"><iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true"/>
-                : {{ $t('dialog.init.footer_about') }}
+              <li class="lg">
+                <iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true" /> :
+                {{ $t('dialog.init.footer_about') }}
               </li>
             </ul>
           </template>
@@ -92,7 +100,7 @@
 
         <div class="init-checkbox">
           <label for="show-on-next-visits">{{ $t('dialog.init.show_next_time') }}</label>
-          <input id="show-on-next-visits" class="lg" type="checkbox" v-model="shouldShowOnNextVisits">
+          <input id="show-on-next-visits" class="lg" type="checkbox" v-model="shouldShowOnNextVisits" />
         </div>
       </div>
     </template>
@@ -106,14 +114,14 @@
 </template>
 
 <script setup lang="ts">
-import type { IDBKeyBinding } from '@/dexie';
-import AppLogo from '../elements/AppLogo.vue';
-import DialogElement from '../elements/DialogElement.vue';
+import type { IDBKeyBinding } from '@/dexie'
+import AppLogo from '../elements/AppLogo.vue'
+import DialogElement from '../elements/DialogElement.vue'
 import NotificationElement from '../elements/NotificationElement.vue'
-import { ref, type Ref } from 'vue';
-import CollapsibleSection from '../elements/CollapsibleSection.vue';
+import { ref, type Ref } from 'vue'
+import CollapsibleSection from '../elements/CollapsibleSection.vue'
 
-const dialogRef: Ref<{ open: Function, close: Function }|null> = ref(null)
+const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
 const shouldShowOnNextVisits = ref(true)
 
 const $emit = defineEmits(['disableInitDialog'])
@@ -136,7 +144,8 @@ function doClose() {
     flex-direction: column;
     gap: 1rem;
 
-    #app-logo, #app-logo-uwu {
+    #app-logo,
+    #app-logo-uwu {
       width: clamp(160px, 1rem + 10vw, 200px);
       align-self: center;
       justify-self: center;
@@ -193,14 +202,14 @@ function doClose() {
     }
   }
 }
-@media screen and (max-width:1023px) {
+@media screen and (max-width: 1023px) {
   #dialog-editor-init {
     .controls {
       grid-template-columns: 1fr 1fr;
     }
   }
 }
-@media screen and (max-width:767px) {
+@media screen and (max-width: 767px) {
   #dialog-editor-init {
     min-width: 0;
 
@@ -210,7 +219,8 @@ function doClose() {
       grid-template-rows: auto auto;
       grid-template-columns: 1fr;
 
-      #app-logo, #app-logo-uwu {
+      #app-logo,
+      #app-logo-uwu {
         display: none;
       }
 
@@ -220,7 +230,7 @@ function doClose() {
           justify-content: center;
           font-size: 1.375rem;
         }
-      } 
+      }
 
       .init-checkbox {
         text-align: start;
@@ -233,7 +243,7 @@ function doClose() {
     }
   }
 }
-@media screen and (max-width:567px) {
+@media screen and (max-width: 567px) {
   #dialog-editor-init {
     .controls {
       grid-template-columns: 1fr;

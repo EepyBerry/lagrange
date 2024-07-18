@@ -23,11 +23,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@core/*": ["./src/core/*"],
-      "@assets/*": ["./src/assets/*"]
-    },
-
-    "types": [
-      "vite-plugin-glsl/ext"
-    ]
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"]
+    }
   }
-} 
+}

@@ -6,13 +6,15 @@
       </label>
     </td>
     <td>
-      <input type="checkbox"
+      <input
+        type="checkbox"
         class="lg"
         :id="id"
         :true-value="trueValue"
         :false-value="falseValue"
         :disabled="disabled"
-        v-model="lgParam">
+        v-model="lgParam"
+      />
     </td>
   </tr>
 </template>
@@ -20,7 +22,7 @@
 <script setup lang="ts">
 type AcceptedType = string | number | boolean
 const lgParam = defineModel<AcceptedType>()
-defineProps<{ id: string, trueValue: AcceptedType, falseValue: AcceptedType, disabled?: boolean }>()
+defineProps<{ id: string; trueValue: AcceptedType; falseValue: AcceptedType; disabled?: boolean }>()
 </script>
 
 <style scoped lang="scss">

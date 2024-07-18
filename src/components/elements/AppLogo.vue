@@ -4,8 +4,8 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
-import SVGAppLogo from '../svg/SVGAppLogo.vue';
-import SVGAppLogoUwU from '../svg/SVGAppLogoUwU.vue';
+import { useRoute } from 'vue-router'
+import SVGAppLogo from '../svg/SVGAppLogo.vue'
+import SVGAppLogoUwU from '../svg/SVGAppLogoUwU.vue'
 const $route = useRoute()
 </script>

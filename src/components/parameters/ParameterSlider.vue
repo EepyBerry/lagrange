@@ -13,15 +13,16 @@
         :max="max ?? 10"
         :step="step ?? 1"
         :disabled="disabled"
-        v-model="(lgParam as number)" />
+        v-model="lgParam as number"
+      />
     </td>
   </tr>
 </template>
 
 <script setup lang="ts">
-import InputSliderElement from '../elements/InputSliderElement.vue';
+import InputSliderElement from '../elements/InputSliderElement.vue'
 const lgParam = defineModel<string | number | boolean>()
-defineProps<{ id: string, step?: number, min ?: number, max?: number, disabled?: boolean }>()
+defineProps<{ id: string; step?: number; min?: number; max?: number; disabled?: boolean }>()
 </script>
 
 <style scoped lang="scss">
@@ -50,7 +51,7 @@ tr.field {
 input.lg {
   text-align: end;
 }
-input.lg:not([type=checkbox],[type=radio], [type=range]) {
+input.lg:not([type='checkbox'], [type='radio'], [type='range']) {
   width: 3rem;
 }
 </style>

@@ -3,13 +3,7 @@
     "$title": "Lagrange",
     "locale": "en-US",
     "language": "English",
-    "more_coming_soon": "More coming soon!",
-
-    "404_01": "Nothing over here, sorry!",
-    "404_02": "\"This sector is completely empty, Captain!\"",
-    "404_03": "Huh. Must've taken a wrong turn somewhere...",
-    "404_04": "PAGE\u00A0IS\u00A0MISSING. STATUS\u00A0IS\u00A0404. SPACE\u00A0IS\u00A0VOID.",
-    "404_subtitle": "The requested page could not be found :c"
+    "more_coming_soon": "More coming soon!"
   },
   "dialog": {
     "init": {
@@ -43,6 +37,7 @@
       "$title": "Settings",
 
       "general": "General",
+      "general_language": "Language",
       "general_theme": "Choose theme to use",
       "general_theme_default": "Default",
       "general_theme_supernova": "Supernova",
@@ -61,7 +56,7 @@
 
       "prefix_engine": "3D using",
       "prefix_framework": "Powered by",
-      
+
       "built_with_love": "Built with 🏳️‍🌈 & ❤️",
       "license": "BSD 3-Clause License"
     },
@@ -74,6 +69,7 @@
     }
   },
   "editor": {
+    "$title": "Planet Editor",
     "default_planet_name": "New planet",
     "controls": {
       "lighting": {
@@ -155,7 +151,15 @@
       }
     }
   },
-  "tooltips": {
+  "404": {
+    "$title": "Page Not Found",
+    "text_01": "Nothing over here, sorry!",
+    "text_02": "\"This sector is completely empty, Captain!\"",
+    "text_03": "Huh. Must've taken a wrong turn somewhere...",
+    "text_04": "PAGE\u00A0IS\u00A0MISSING. STATUS\u00A0IS\u00A0404. SPACE\u00A0IS\u00A0VOID.",
+    "subtext": "The requested page could not be found :c"
+  },
+  "tooltip": {
     "topbar_rename": "Rename planet",
     "topbar_rename_confirm": "Confirm planet name",
     "topbar_reset": "Reset to defaults",
@@ -175,20 +179,20 @@
     "dialog_about": "About @:main.$title dialog",
     "dialog_reset": "Confirm reset dialog",
 
-    "topbar_rename": "@:tooltips.topbar_rename",
-    "topbar_rename_confirm": "@:tooltips.topbar_rename_confirm",
-    "topbar_reset": "@:tooltips.topbar_reset",
-    "topbar_import": "@:tooltips.topbar_import",
-    "topbar_export": "@:tooltips.topbar_export",
+    "topbar_rename": "@:tooltip.topbar_rename",
+    "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
+    "topbar_reset": "@:tooltip.topbar_reset",
+    "topbar_import": "@:tooltip.topbar_import",
+    "topbar_export": "@:tooltip.topbar_export",
 
-    "footer_github": "@:tooltips.footer_github",
-    "footer_settings": "@:tooltips.footer_settings",
-    "footer_about": "@:tooltips.footer_about",
+    "footer_github": "@:tooltip.footer_github",
+    "footer_settings": "@:tooltip.footer_settings",
+    "footer_about": "@:tooltip.footer_about",
 
     "general_theme_default": "Set default theme (blue)",
     "general_theme_supernova": "Set Supernova theme (purple)",
     "general_theme_voyager": "Set Voyager theme (orange)",
-    
+
     "editor_generic_input": "Parameter value",
 
     "action_edit_keybind": "Edit key binding",

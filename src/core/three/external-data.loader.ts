@@ -6,7 +6,7 @@ const TEXTURE_LOADER = new THREE.TextureLoader()
 const TGA_LOADER = new TGALoader()
 
 /**
- * 
+ *
  * @param path Loads a THREE.CubeTexture from the given path and faces
  * @param faces the faces of the cubemap
  */
@@ -26,10 +26,10 @@ export function loadCubeTexture(path: string, faces: string[], filter?: THREE.Mi
 export function loadTextureFromUrl(url: string, colorSpace: THREE.ColorSpace) {
   let texture
   if (url.endsWith('.tga')) {
-    texture = TGA_LOADER.load(url); 
+    texture = TGA_LOADER.load(url)
     texture.colorSpace = colorSpace
   } else {
-    texture = TEXTURE_LOADER.load(url, undefined, undefined, (err) => console.error(err)); 
+    texture = TEXTURE_LOADER.load(url, undefined, undefined, (err) => console.error(err))
     texture.colorSpace = colorSpace
   }
   return texture

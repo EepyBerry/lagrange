@@ -8,7 +8,6 @@ import { numberToHex } from '@/utils/utils'
 import { generateUUID } from 'three/src/math/MathUtils.js'
 
 export default class LagrangeParameters extends ChangeTracker {
-
   // --------------------------------------------------
   // |                      Init                      |
   // --------------------------------------------------
@@ -43,7 +42,6 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._initPlanetRadius
   }
 
-  
   // --------------------------------------------------
   // |               Lighting settings                |
   // --------------------------------------------------
@@ -102,7 +100,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._sunLightIntensity = value
     this.markForChange('_sunLightIntensity')
   }
-  
+
   public get ambLightColor(): Color {
     return this._ambLightColor
   }
@@ -131,7 +129,7 @@ export default class LagrangeParameters extends ChangeTracker {
   private _planetGroundRoughness: number
   private _planetGroundMetalness: number
   private _planetWaterLevel: number
-  
+
   // --------------------------------------------------
 
   public get planetGeometryType() {
@@ -179,7 +177,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetWaterRoughness = clamp(value, 0, 1)
     this.markForChange('_planetWaterRoughness')
   }
-  
+
   public get planetGroundMetalness(): number {
     return this._planetGroundMetalness
   }
@@ -194,7 +192,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._planetGroundRoughness = clamp(value, 0, 1)
     this.markForChange('_planetGroundRoughness')
   }
-  
+
   public get planetWaterLevel(): number {
     return this._planetWaterLevel
   }
@@ -244,14 +242,13 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._planetSurfaceColorRamp.definedSteps.length
   }
 
-
   // --------------------------------------------------
   // |                 Biome settings                 |
   // --------------------------------------------------
 
   private _biomesEnabled: boolean
   private _biomePolesEnabled: boolean
-  
+
   // --------------------------------------------------
 
   public get biomesEnabled(): boolean {
@@ -306,7 +303,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._cloudsHeight = clamp(height, 0, 10)
     this.markForChange('_cloudsHeight')
   }
-  
+
   public get cloudsNoise(): NoiseParameters {
     return this._cloudsNoise
   }
@@ -333,7 +330,7 @@ export default class LagrangeParameters extends ChangeTracker {
   // --------------------------------------------------
   // |               Atmosphere settings              |
   // --------------------------------------------------
-  
+
   private _atmosphereEnabled: boolean
   private _atmosphereHeight: number
   private _atmosphereDensityScale: number
@@ -385,7 +382,7 @@ export default class LagrangeParameters extends ChangeTracker {
   // --------------------------------------------------
   // |                  Utils & misc                  |
   // --------------------------------------------------
-  
+
   public get changedProps() {
     return this._changedProps
   }
@@ -429,9 +426,7 @@ export default class LagrangeParameters extends ChangeTracker {
 
     this._planetSurfaceShowBumps = true
     this._planetSurfaceBumpStrength = 0.0875
-    this._planetSurfaceNoise = new NoiseParameters(
-      this._changedProps, '_planetSurfaceNoise', NoiseType.FBM
-    )
+    this._planetSurfaceNoise = new NoiseParameters(this._changedProps, '_planetSurfaceNoise', NoiseType.FBM)
     this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
       new ColorRampStep(0x061c3f, 0, true),
       new ColorRampStep(0x0f2851, 0.4),
@@ -448,9 +443,7 @@ export default class LagrangeParameters extends ChangeTracker {
     this._cloudsEnabled = true
     this._cloudsRotation = 0.0
     this._cloudsHeight = 1.0
-    this._cloudsNoise = new NoiseParameters(
-      this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 1.75
-    )
+    this._cloudsNoise = new NoiseParameters(this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 1.75)
     this._cloudsColor = new Color(0xffffff)
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
       new ColorRampStep(0x000000, 0.0, true),

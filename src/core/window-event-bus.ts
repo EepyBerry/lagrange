@@ -1,4 +1,3 @@
-
 /**
  * Defines options to pass when registering a window event-listener:
  * - `autoEnable`: if the listener should also be added to the window (default: `true`)
@@ -6,7 +5,6 @@
 type WindowEventRegistryOptions = { autoEnable: boolean }
 
 export class EventBus {
-
   private static windowEventRegistry: Map<keyof WindowEventMap, any> = new Map<keyof WindowEventMap, any>()
 
   /**
@@ -18,7 +16,7 @@ export class EventBus {
   public static registerWindowEventListener<K extends keyof WindowEventMap>(
     type: K,
     listener: (this: Window, ev: WindowEventMap[K]) => any,
-    options?: WindowEventRegistryOptions
+    options?: WindowEventRegistryOptions,
   ) {
     EventBus.windowEventRegistry.set(type, listener)
     if (!options || options.autoEnable) {
@@ -28,7 +26,7 @@ export class EventBus {
 
   public static deregisterWindowEventListener<K extends keyof WindowEventMap>(
     type: K,
-    listener: (this: Window, ev: WindowEventMap[K]) => any
+    listener: (this: Window, ev: WindowEventMap[K]) => any,
   ) {
     EventBus.windowEventRegistry.delete(type)
     window.removeEventListener(type, listener)
@@ -43,7 +41,7 @@ export class EventBus {
     window.addEventListener(type, event)
   }
 
-    /**
+  /**
    * Removes the event-listener from the window context, but keeps the listener reference
    * @param type event-listener type (e.g. `keydown`)
    */

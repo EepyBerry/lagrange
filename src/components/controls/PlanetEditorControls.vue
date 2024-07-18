@@ -36,33 +36,18 @@
               </ParameterSlider>
             </template>
             <ParameterCategory>{{ $t('editor.controls.lighting.sunlight') }}</ParameterCategory>
-            <ParameterSlider v-model="LG_PARAMETERS.sunLightAngle"
-              id="l-angle"
-              :step="0.1"
-              :min="-90"
-              :max="90"
-            >
-            {{ $t('editor.controls.lighting.sunlight_angle') }} <sup>(°)</sup>
+            <ParameterSlider v-model="LG_PARAMETERS.sunLightAngle" id="l-angle" :step="0.1" :min="-90" :max="90">
+              {{ $t('editor.controls.lighting.sunlight_angle') }} <sup>(°)</sup>
             </ParameterSlider>
-            <ParameterSlider v-model="LG_PARAMETERS.sunLightIntensity"
-              id="l-int"
-              :step="0.1"
-              :min="0"
-              :max="50"
-            >
-             {{ $t('editor.controls.lighting.sunlight_intensity') }}
+            <ParameterSlider v-model="LG_PARAMETERS.sunLightIntensity" id="l-int" :step="0.1" :min="0" :max="50">
+              {{ $t('editor.controls.lighting.sunlight_intensity') }}
             </ParameterSlider>
             <ParameterColor v-model="LG_PARAMETERS.sunLightColor">
               {{ $t('editor.controls.lighting.sunlight_color') }}
             </ParameterColor>
             <ParameterCategory>{{ $t('editor.controls.lighting.amblight') }}</ParameterCategory>
-            <ParameterSlider v-model="LG_PARAMETERS.ambLightIntensity"
-              id="m-int"
-              :step="0.01"
-              :min="0"
-              :max="1"
-            >
-            {{ $t('editor.controls.lighting.amblight_intensity') }}
+            <ParameterSlider v-model="LG_PARAMETERS.ambLightIntensity" id="m-int" :step="0.01" :min="0" :max="1">
+              {{ $t('editor.controls.lighting.amblight_intensity') }}
             </ParameterSlider>
             <ParameterColor v-model="LG_PARAMETERS.ambLightColor">
               {{ $t('editor.controls.lighting.amblight_color') }}
@@ -77,77 +62,28 @@
         <template v-slot:content>
           <ParameterTable>
             <ParameterCategory top>{{ $t('editor.controls.planet_rendering.transform') }}</ParameterCategory>
-            <ParameterSlider
-              v-model="LG_PARAMETERS.planetAxialTilt"
-              id="p-tilt"
-              
-              :step="1"
-              :min="0"
-              :max="180"
-            >
+            <ParameterSlider v-model="LG_PARAMETERS.planetAxialTilt" id="p-tilt" :step="1" :min="0" :max="180">
               {{ $t('editor.controls.planet_rendering.transform_axialtilt') }} <sup>(°)</sup>
             </ParameterSlider>
-            <ParameterSlider
-              v-model="LG_PARAMETERS.planetRotation"
-              id="p-rot"
-              
-              :step="1"
-              :min="0"
-              :max="360"
-            >
+            <ParameterSlider v-model="LG_PARAMETERS.planetRotation" id="p-rot" :step="1" :min="0" :max="360">
               {{ $t('editor.controls.planet_rendering.transform_rotation') }} <sup>(°)</sup>
             </ParameterSlider>
-            <ParameterCategory>PBR parameters</ParameterCategory>
-            <ParameterSlider
-              v-model="LG_PARAMETERS.planetWaterLevel"
-              id="p-wlevel"
-              
-              :step="0.01"
-              :min="0"
-              :max="1"
-            >
+            <ParameterCategory>{{ $t('editor.controls.planet_rendering.pbr') }}</ParameterCategory>
+            <ParameterSlider v-model="LG_PARAMETERS.planetWaterLevel" id="p-wlevel" :step="0.01" :min="0" :max="1">
               {{ $t('editor.controls.planet_rendering.pbr_waterlevel') }}
             </ParameterSlider>
             <ParameterDivider />
-            <ParameterSlider
-              v-model="LG_PARAMETERS.planetWaterRoughness"
-              id="p-wrough"
-              
-              :step="0.01"
-              :min="0"
-              :max="1"
-            >
+            <ParameterSlider v-model="LG_PARAMETERS.planetWaterRoughness" id="p-wrough" :step="0.01" :min="0" :max="1">
               {{ $t('editor.controls.planet_rendering.pbr_waterroughness') }}
             </ParameterSlider>
-            <ParameterSlider
-              v-model="LG_PARAMETERS.planetWaterMetalness"
-              id="p-wmetal"
-              
-              :step="0.01"
-              :min="0"
-              :max="1"
-            >
+            <ParameterSlider v-model="LG_PARAMETERS.planetWaterMetalness" id="p-wmetal" :step="0.01" :min="0" :max="1">
               {{ $t('editor.controls.planet_rendering.pbr_watermetalness') }}
             </ParameterSlider>
             <ParameterDivider />
-            <ParameterSlider
-              v-model="LG_PARAMETERS.planetGroundRoughness"
-              id="p-grough"
-              
-              :step="0.01"
-              :min="0"
-              :max="1"
-            >
+            <ParameterSlider v-model="LG_PARAMETERS.planetGroundRoughness" id="p-grough" :step="0.01" :min="0" :max="1">
               {{ $t('editor.controls.planet_rendering.pbr_groundroughness') }}
             </ParameterSlider>
-            <ParameterSlider
-              v-model="LG_PARAMETERS.planetGroundMetalness"
-              id="p-gmetal"
-              
-              :step="0.01"
-              :min="0"
-              :max="1"
-            >
+            <ParameterSlider v-model="LG_PARAMETERS.planetGroundMetalness" id="p-gmetal" :step="0.01" :min="0" :max="1">
               {{ $t('editor.controls.planet_rendering.pbr_groundmetalness') }}
             </ParameterSlider>
           </ParameterTable>
@@ -180,20 +116,10 @@
               </ParameterSlider>
             </template>
             <ParameterCategory>{{ $t('editor.controls.surface.noise') }}</ParameterCategory>
-            <ParameterSlider
-              v-model="LG_PARAMETERS.planetSurfaceNoise.frequency"
-              id="s-freq"
-              :step="0.01"
-              :max="10"
-            >
+            <ParameterSlider v-model="LG_PARAMETERS.planetSurfaceNoise.frequency" id="s-freq" :step="0.01" :max="10">
               {{ $t('editor.controls.surface.noise_fbm_frequency') }}
             </ParameterSlider>
-            <ParameterSlider
-              v-model="LG_PARAMETERS.planetSurfaceNoise.amplitude"
-              id="s-amp"
-              :step="0.01"
-              :max="1.25"
-            >
+            <ParameterSlider v-model="LG_PARAMETERS.planetSurfaceNoise.amplitude" id="s-amp" :step="0.01" :max="1.25">
               {{ $t('editor.controls.surface.noise_fbm_amplitude') }}
             </ParameterSlider>
             <ParameterSlider
@@ -208,7 +134,7 @@
             <ParameterDivider />
             <ParameterColorRamp
               mode="color"
-              v-model="(LG_PARAMETERS.planetSurfaceColorRamp as ColorRamp)"
+              v-model="LG_PARAMETERS.planetSurfaceColorRamp as ColorRamp"
               :key="LG_PARAMETERS.id"
             >
               {{ $t('editor.controls.surface.noise_colorramp') }}
@@ -218,7 +144,7 @@
       </SidebarSection>
 
       <!-- Biomes -->
-       <SidebarSection icon="mingcute:mountain-2-line" :expand="false">
+      <SidebarSection icon="mingcute:mountain-2-line" :expand="false">
         <template v-slot:title>{{ $t('editor.controls.biomes.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
@@ -242,7 +168,7 @@
             </template>
           </ParameterTable>
         </template>
-       </SidebarSection>
+      </SidebarSection>
 
       <!-- Clouds -->
       <SidebarSection icon="mingcute:clouds-line" :expand="false">
@@ -259,23 +185,11 @@
             </ParameterCheckbox>
             <template v-if="LG_PARAMETERS.cloudsEnabled">
               <ParameterCategory>{{ $t('editor.controls.clouds.transform') }}</ParameterCategory>
-              <ParameterSlider
-                v-model="LG_PARAMETERS.cloudsRotation"
-                id="c-rot"
-                :step="1"
-                :min="0"
-                :max="360"
-              >
+              <ParameterSlider v-model="LG_PARAMETERS.cloudsRotation" id="c-rot" :step="1" :min="0" :max="360">
                 {{ $t('editor.controls.clouds.transform_rotation') }} <sup>(°)</sup>
               </ParameterSlider>
               <ParameterCategory>{{ $t('editor.controls.clouds.noise') }}</ParameterCategory>
-              <ParameterSlider
-                v-model="LG_PARAMETERS.cloudsNoise.frequency"
-                id="c-freq"
-                :step="0.01"
-                :min="0"
-                :max="5"
-              >
+              <ParameterSlider v-model="LG_PARAMETERS.cloudsNoise.frequency" id="c-freq" :step="0.01" :min="0" :max="5">
                 {{ $t('editor.controls.clouds.noise_fbm_frequency') }}
               </ParameterSlider>
               <ParameterSlider
@@ -302,16 +216,17 @@
               </ParameterColor>
               <ParameterColorRamp
                 mode="opacity"
-                v-model="(LG_PARAMETERS.cloudsColorRamp as ColorRamp)"
+                v-model="LG_PARAMETERS.cloudsColorRamp as ColorRamp"
                 :key="LG_PARAMETERS.id"
-              >{{ $t('editor.controls.clouds.rgba_opacityramp') }}</ParameterColorRamp>
+                >{{ $t('editor.controls.clouds.rgba_opacityramp') }}</ParameterColorRamp
+              >
             </template>
           </ParameterTable>
         </template>
       </SidebarSection>
 
       <!-- Atmosphere -->
-      <SidebarSection icon="material-symbols:line-curve-rounded" :expand=false>
+      <SidebarSection icon="material-symbols:line-curve-rounded" :expand="false">
         <template v-slot:title>{{ $t('editor.controls.atmosphere.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
@@ -321,17 +236,11 @@
               :true-value="true"
               :false-value="false"
             >
-            {{ $t('editor.controls.atmosphere.atmosphere_show') }}
+              {{ $t('editor.controls.atmosphere.atmosphere_show') }}
             </ParameterCheckbox>
             <template v-if="LG_PARAMETERS.atmosphereEnabled">
               <ParameterCategory>{{ $t('editor.controls.atmosphere.transform') }}</ParameterCategory>
-              <ParameterSlider
-                v-model="LG_PARAMETERS.atmosphereHeight"
-                id="a-height"
-                :step="0.1"
-                :min="1"
-                :max="8"
-              >
+              <ParameterSlider v-model="LG_PARAMETERS.atmosphereHeight" id="a-height" :step="0.1" :min="1" :max="8">
                 {{ $t('editor.controls.atmosphere.transform_height') }}
               </ParameterSlider>
               <ParameterSlider
@@ -344,22 +253,10 @@
                 {{ $t('editor.controls.atmosphere.transform_density') }}
               </ParameterSlider>
               <ParameterCategory>{{ $t('editor.controls.atmosphere.rgba') }}</ParameterCategory>
-              <ParameterSlider
-                v-model="LG_PARAMETERS.atmosphereHue"
-                id="a-hue"
-                :step="0.01"
-                :min="0"
-                :max="2"
-              >
+              <ParameterSlider v-model="LG_PARAMETERS.atmosphereHue" id="a-hue" :step="0.01" :min="0" :max="2">
                 {{ $t('editor.controls.atmosphere.rgba_hue') }}
               </ParameterSlider>
-              <ParameterSlider
-                v-model="LG_PARAMETERS.atmosphereIntensity"
-                id="a-int"
-                :step="0.01"
-                :min="0"
-                :max="2"
-              >
+              <ParameterSlider v-model="LG_PARAMETERS.atmosphereIntensity" id="a-int" :step="0.01" :min="0" :max="2">
                 {{ $t('editor.controls.atmosphere.rgba_intensity') }}
               </ParameterSlider>
             </template>
@@ -372,12 +269,12 @@
 
 <script setup lang="ts">
 import { LG_PARAMETERS } from '@core/globals'
-import ParameterColorRamp from '../parameters/ParameterColorRamp.vue'
-import ParameterDivider from '../parameters/ParameterDivider.vue'
-import type { ColorRamp } from '@/core/models/color-ramp.model'
-import SidebarSection from '../elements/SidebarSection.vue';
-import ParameterSlider from '../parameters/ParameterSlider.vue';
-import ParameterCheckbox from '../parameters/ParameterCheckbox.vue';
+import ParameterColorRamp from '@components/parameters/ParameterColorRamp.vue'
+import ParameterDivider from '@components/parameters/ParameterDivider.vue'
+import type { ColorRamp } from '@core/models/color-ramp.model'
+import SidebarSection from '@components/elements/SidebarSection.vue'
+import ParameterSlider from '@components/parameters/ParameterSlider.vue'
+import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
 </script>
 
 <style scoped lang="scss">
@@ -404,17 +301,24 @@ import ParameterCheckbox from '../parameters/ParameterCheckbox.vue';
     scrollbar-color: var(--lg-accent) transparent;
     scrollbar-width: thin;
     overflow: auto;
+
+    direction: rtl;
+
+    & > section {
+      direction: ltr;
+      align-self: flex-end;
+    }
   }
 }
 
-@media screen and (max-width:1365px) {
+@media screen and (max-width: 1365px) {
   #controls {
     .sidebar {
       margin-top: 4.375rem;
     }
   }
 }
-@media screen and (max-width:1199px) {
+@media screen and (max-width: 1199px) {
   #controls {
     .sidebar {
       padding: 0.5rem;
@@ -422,7 +326,7 @@ import ParameterCheckbox from '../parameters/ParameterCheckbox.vue';
     }
   }
 }
-@media screen and (max-width:767px) {
+@media screen and (max-width: 767px) {
   #controls {
     min-width: 2rem;
 
@@ -431,7 +335,7 @@ import ParameterCheckbox from '../parameters/ParameterCheckbox.vue';
     }
   }
 }
-@media screen and (max-width:567px) {
+@media screen and (max-width: 567px) {
   #controls {
     .sidebar {
       padding: 0.5rem;

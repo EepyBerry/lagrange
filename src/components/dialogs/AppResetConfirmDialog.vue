@@ -1,5 +1,6 @@
 <template>
-  <DialogElement ref="dialogRef"
+  <DialogElement
+    ref="dialogRef"
     id="dialog-reset-confirm"
     :showTitle="true"
     :showActions="true"
@@ -12,7 +13,9 @@
     <template v-slot:content>
       <div class="reset-text">
         <p>{{ $t('dialog.reset.message') }}</p>
-        <p><b>{{ $t('dialog.reset.warning') }}</b></p>
+        <p>
+          <b>{{ $t('dialog.reset.warning') }}</b>
+        </p>
       </div>
     </template>
     <template v-slot:actions>
@@ -20,7 +23,7 @@
         <iconify-icon icon="mingcute:close-line" width="1.25rem" />
         {{ $t('dialog.reset.$action_cancel') }}
       </button>
-      <button class="lg warn" @click="$emit('confirm'); dialogRef?.close()">
+      <button class="lg warn" @click="confirmAndClose">
         <iconify-icon icon="mingcute:delete-line" width="1.25rem" />
         {{ $t('dialog.reset.$action_confirm') }}
       </button>
@@ -28,12 +31,17 @@
   </DialogElement>
 </template>
 <script setup lang="ts">
-import DialogElement from '../elements/DialogElement.vue';
-import { ref, type Ref } from 'vue';
+import DialogElement from '../elements/DialogElement.vue'
+import { ref, type Ref } from 'vue'
 
-const dialogRef: Ref<{ open: Function, close: Function }|null> = ref(null)
+const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
 const $emit = defineEmits(['confirm'])
 defineExpose({ open: () => dialogRef.value?.open() })
+
+function confirmAndClose() {
+  $emit('confirm')
+  dialogRef.value?.close()
+}
 </script>
 
 <style scoped lang="scss">
@@ -44,8 +52,7 @@ defineExpose({ open: () => dialogRef.value?.open() })
     font-size: 1rem;
   }
 }
-@media 
-screen and (max-width: 567px) {
+@media screen and (max-width: 567px) {
   #dialog-reset-confirm {
     width: 100%;
   }

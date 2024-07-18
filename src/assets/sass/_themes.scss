@@ -94,7 +94,11 @@
   --lg-warn-panel: #a81f1f44;
 }
 :root[data-font='monospace'] {
-  body * { font-family: Jetbrains Mono, monospace; }
+  body * {
+    font-family:
+      Jetbrains Mono,
+      monospace;
+  }
 }
 
 .lg.warn {

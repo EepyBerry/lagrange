@@ -5,7 +5,7 @@
     </td>
     <td class="color">
       <div class="color-wrapper">
-        <span class="current-color" :style="{ backgroundColor: `#${lgColor?.getHexString()}` }"></span>
+        <span class="current-color" :style="{ backgroundColor: `#${lgColor?.getHexString()}` }" @click="togglePanel()"></span>
         <button
           class="lg edit"
           :aria-label="$t('a11y.action_open_colorpanel')"
@@ -36,9 +36,8 @@
 </template>
 
 <script setup lang="ts">
-import { LG_PARAMETERS } from '@/core/globals';
-import { Color } from 'three';
-import { onMounted, ref, watch } from 'vue';
+import { Color } from 'three'
+import { onMounted, ref, watch } from 'vue'
 import { ColorPicker } from 'vue-accessible-color-picker'
 
 const lgColor = defineModel<Color>()
@@ -46,7 +45,10 @@ const pickerInitColor = ref('')
 const pickerOpen = ref(false)
 
 onMounted(() => initPickerColor())
-watch(() => lgColor.value?.getHexString(), () => initPickerColor())
+watch(
+  () => lgColor.value?.getHexString(),
+  () => initPickerColor(),
+)
 
 function initPickerColor() {
   pickerInitColor.value = '#' + lgColor.value?.getHexString()
@@ -59,7 +61,6 @@ function setColor(hex: string): void {
 function togglePanel(): void {
   pickerOpen.value = !pickerOpen.value
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -71,8 +72,8 @@ tr.field {
     height: 100%;
   }
   & > td.color:first-of-type {
-      width: 100%;
-      white-space: nowrap;
+    width: 100%;
+    white-space: nowrap;
   }
   & > td.color:last-of-type {
     width: auto;
@@ -95,6 +96,7 @@ tr.field {
   height: 2rem;
   border-radius: 4px;
   border: 1px solid var(--lg-accent);
+  cursor: pointer;
 }
 .panel {
   display: none;

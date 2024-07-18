@@ -2,37 +2,43 @@
   <div id="container">
     <AppLogo />
     <div class="text">
-      <h1 v-if="msgVariant === 1" class="title">{{ $t('main.404_01') }}</h1>
-      <h1 v-if="msgVariant === 2" class="title"><i>{{ $t('main.404_02') }}</i></h1>
-      <h1 v-if="msgVariant === 3" class="title">{{ $t('main.404_03') }}</h1>
-      <h1 class="title ultra" v-if="msgVariant === 4">{{ $t('main.404_04') }}</h1>
-      <p class="subtitle">{{ $t('main.404_subtitle') }}</p>
+      <h1 v-if="msgVariant === 1" class="title">{{ $t('404.text_01') }}</h1>
+      <h1 v-if="msgVariant === 2" class="title">
+        <i>{{ $t('404.text_02') }}</i>
+      </h1>
+      <h1 v-if="msgVariant === 3" class="title">{{ $t('404.text_03') }}</h1>
+      <h1 class="title ultra" v-if="msgVariant === 4">{{ $t('404.text_04') }}</h1>
+      <p class="subtitle">{{ $t('404.subtext') }}</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import AppLogo from '@/components/elements/AppLogo.vue';
-import { useHead } from '@unhead/vue';
-import { onMounted, ref } from 'vue';
-useHead({ meta: [
-  { name: 'robots', content: 'noindex' },
-  { name: 'description', content: 'Default error page' }
-]})
+import AppLogo from '@components/elements/AppLogo.vue'
+import { useHead } from '@unhead/vue'
+import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n';
+
+const i18n = useI18n()
+useHead({
+  title: i18n.t('404.$title') + ' · ' + i18n.t('main.$title'),
+  meta: [
+    { name: 'robots', content: 'noindex' },
+    { name: 'description', content: 'Page not found' },
+  ],
+})
 
 const msgVariant = ref(0)
 
 onMounted(() => {
   msgVariant.value = Math.floor(Math.random() * 4) + 1
-
 })
-
 </script>
 
 <style scoped lang="scss">
 #container {
   flex: 1;
-  background: url('skybox/space_up.png');
+  background: var(--lg-panel);
   background-size: cover;
 
   display: flex;
@@ -42,7 +48,8 @@ onMounted(() => {
   gap: 2rem;
   padding: 1rem;
 
-  #app-logo, #app-logo-uwu {
+  #app-logo,
+  #app-logo-uwu {
     width: clamp(200px, 37.5vw, 300px);
     align-self: center;
     justify-self: center;

@@ -1,4 +1,5 @@
 # Lagrange - Procedural Planet Builder 🪐
+
 <p>
   <img src="https://img.shields.io/badge/VueJS-3.4-%2342B883?logo=vuedotjs&labelColor=%2335495E&logoColor=white">
   <img src="https://img.shields.io/badge/Vite-5.2-%23BD34FE?logo=vite&labelColor=%2335495E&logoColor=white">
@@ -57,8 +58,9 @@ Vite copies the output to the `dist` folder, creating it first if need be.
 ## ✨ Inspirations
 
 This project is heavily inspired by the awesome projects below:
- - [PlanetMaker Chrome Experiment](https://planetmaker.apoapsys.com) (2013, Kevin M. Gill)
- - [NASA's Eye on Exoplanets](https://eyes.nasa.gov/apps/exo/#/) (Unknown date, NASA)
+
+- [PlanetMaker Chrome Experiment](https://planetmaker.apoapsys.com) (2013, Kevin M. Gill)
+- [NASA's Eye on Exoplanets](https://eyes.nasa.gov/apps/exo/#/) (Unknown date, NASA)
 
 ## 📓 Licensing
 

@@ -3,13 +3,7 @@
     "$title": "Wagwange",
     "locale": "en-UwU",
     "language": "Uwuish",
-    "more_coming_soon": "Mowe coming s-soon!",
-    
-    "404_01": "Nyothing uvw hewe, sowwyyyy...",
-    "404_02": "\"This sectow is c-compwetewy empty, Captain! :O\"",
-    "404_03": "Oh nyooo ;;w;; Took a wwong tuwn sumwhewe x3",
-    "404_04": "PAGE\u00A0IS\u00A0MISSING! STATUS\u00A0IS\u00A0404!! SPACE\u00A0IS\u00A0VOID!!! >:3",
-    "404_subtitle": "The wequested page c-couwd nyot be found :c"
+    "more_coming_soon": "Mowe coming s-soon!"
   },
   "dialog": {
     "init": {
@@ -43,6 +37,7 @@
       "$title": "Settings",
 
       "general": "Genyewaw >:3",
+      "general_language": "Wanguage",
       "general_theme": "Choose theme t-to use",
       "general_theme_default": "Defauwt",
       "general_theme_supernova": "Supewnyova",
@@ -61,7 +56,7 @@
 
       "prefix_engine": "3D u-using",
       "prefix_framework": "Powewed by",
-      
+
       "built_with_love": "Buiwt with 🏳️‍🌈 & ❤️",
       "license": "BSD 3-Cwause Wicense"
     },
@@ -155,7 +150,15 @@
       }
     }
   },
-  "tooltips": {
+  "404": {
+    "$title": "Page Not Found",
+    "text_01": "Nyothing uvw hewe, sowwyyyy...",
+    "text_02": "\"This sectow is c-compwetewy empty, Captain! :O\"",
+    "text_03": "Oh nyooo ;;w;; Took a wwong tuwn sumwhewe x3",
+    "text_04": "PAGE\u00A0IS\u00A0MISSING! STATUS\u00A0IS\u00A0404!! SPACE\u00A0IS\u00A0VOID!!! >:3",
+    "subtext": "The wequested page c-couwd nyot be found :c"
+  },
+  "tooltip": {
     "topbar_rename": "Wenyame pwanyet",
     "topbar_rename_confirm": "Confiwm pwanyet nyame",
     "topbar_reset": "Weset t-to defauwts",
@@ -175,20 +178,20 @@
     "dialog_about": "About @:main.$title diawog",
     "dialog_reset": "Confiwm weset diawog",
 
-    "topbar_rename": "@:tooltips.topbar_rename",
-    "topbar_rename_confirm": "@:tooltips.topbar_rename_confirm",
-    "topbar_reset": "@:tooltips.topbar_reset",
-    "topbar_import": "@:tooltips.topbar_import",
-    "topbar_export": "@:tooltips.topbar_export",
+    "topbar_rename": "@:tooltip.topbar_rename",
+    "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
+    "topbar_reset": "@:tooltip.topbar_reset",
+    "topbar_import": "@:tooltip.topbar_import",
+    "topbar_export": "@:tooltip.topbar_export",
 
-    "footer_github": "@:tooltips.footer_github",
-    "footer_settings": "@:tooltips.footer_settings",
-    "footer_about": "@:tooltips.footer_about",
+    "footer_github": "@:tooltip.footer_github",
+    "footer_settings": "@:tooltip.footer_settings",
+    "footer_about": "@:tooltip.footer_about",
 
     "general_theme_default": "Set defauwt theme (bwue)",
     "general_theme_supernova": "Set Supewnyova theme (puwple)",
     "general_theme_voyager": "Set Voyagew theme (owange)",
-    
+
     "editor_generic_input": "Pawametew vawue",
 
     "action_edit_keybind": "Edit key binding",

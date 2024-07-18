@@ -1,8 +1,8 @@
-import * as THREE from "three"
-import { LG_NAME_PLANET } from "../globals"
-import vertexShader from "@assets/glsl/lens_flare.vert.glsl?raw"
-import fragmentShader from "@assets/glsl/lens_flare.frag.glsl?raw"
-import { damp } from "three/src/math/MathUtils.js"
+import * as THREE from 'three'
+import { LG_NAME_PLANET } from '../globals'
+import vertexShader from '@assets/glsl/lens_flare.vert.glsl?raw'
+import fragmentShader from '@assets/glsl/lens_flare.frag.glsl?raw'
+import { damp } from 'three/src/math/MathUtils.js'
 
 export type LensFlareParams = {
   lensPosition: THREE.Vector3
@@ -27,11 +27,10 @@ export type LensFlareParams = {
 
 /**
  * Custom class that contains all the processing required to create lens flares.
- * 
+ *
  * Based on Anderson Mancini's code: https://github.com/ektogamat/lensflare-threejs-vanilla
  */
 export class LensFlareEffect {
-
   private _params: LensFlareParams
   private _material: THREE.ShaderMaterial
   private _mesh: THREE.Mesh
@@ -60,7 +59,7 @@ export class LensFlareEffect {
       starBurst: params.starBurst ?? false,
       ghostScale: params.ghostScale ?? 0.15,
       additionalStreaks: params.additionalStreaks ?? false,
-      lensDirtTexture: params.lensDirtTexture ?? new THREE.TextureLoader().load("assets/img/lens-Dirt-Texture.jpg")
+      lensDirtTexture: params.lensDirtTexture ?? new THREE.TextureLoader().load('/glsl/lens-Dirt-Texture.jpg'),
     }
     this._internalOpacity = Number(this._params.opacity)
     this._viewport = new THREE.Vector4()
@@ -77,7 +76,7 @@ export class LensFlareEffect {
       uniforms: {
         iTime: { value: 0 },
         iResolution: {
-          value: new THREE.Vector2(window.innerWidth, window.innerHeight)
+          value: new THREE.Vector2(window.innerWidth, window.innerHeight),
         },
         lensPosition: { value: this._params.lensPosition.clone() },
         opacity: { value: this._internalOpacity },
@@ -96,7 +95,7 @@ export class LensFlareEffect {
         starBurst: { value: this._params.starBurst },
         ghostScale: { value: this._params.ghostScale },
         additionalStreaks: { value: this._params.additionalStreaks },
-        lensDirtTexture: { value: this._params.lensDirtTexture }
+        lensDirtTexture: { value: this._params.lensDirtTexture },
       },
       fragmentShader,
       vertexShader,
@@ -104,21 +103,21 @@ export class LensFlareEffect {
       depthWrite: false,
       depthTest: false,
       blending: THREE.AdditiveBlending,
-      name: "LensFlareShader"
-    });
+      name: 'LensFlareShader',
+    })
     return lensFlareMaterial
   }
 
   private checkTransparency(intersects: THREE.Intersection[]) {
     if (intersects?.length === 0) {
-      this._internalOpacity = this._params.opacity;
+      this._internalOpacity = this._params.opacity
       return
     }
 
     const iObject = intersects[0].object as THREE.Mesh
     const iMaterial = iObject.material as THREE.Material
     if (!iObject.visible) {
-      this._internalOpacity = this._params.opacity;
+      this._internalOpacity = this._params.opacity
     } else if (iMaterial instanceof THREE.MeshPhysicalMaterial) {
       this._internalOpacity = this._params.opacity * (iMaterial.transmission * 0.5)
     } else {
@@ -135,7 +134,7 @@ export class LensFlareEffect {
 
     renderer.getCurrentViewport(this._viewport)
     this._mesh.lookAt(camera.position)
-    this._material.uniforms.iResolution.value.set(this._viewport.z, this._viewport.w);
+    this._material.uniforms.iResolution.value.set(this._viewport.z, this._viewport.w)
 
     const projectedPosition = this._params.lensPosition.clone()
     projectedPosition.project(camera)
@@ -150,9 +149,7 @@ export class LensFlareEffect {
     this.checkTransparency(intersects)
 
     this._material.uniforms.iTime.value += dt
-    this._material.uniforms.opacity.value = damp(
-      this._material.uniforms.opacity.value, this._internalOpacity, 10, dt
-    )
+    this._material.uniforms.opacity.value = damp(this._material.uniforms.opacity.value, this._internalOpacity, 10, dt)
   }
 
   public updatePosition(lensPosition: THREE.Vector3) {
