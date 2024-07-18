@@ -20,15 +20,20 @@ in vec3 vPos;
 @import functions/fbm;
 @import functions/color_utils;
 
+// Constants
+const vec3 DVEC_A = vec3(0.1, 0.1, 0.0);
+const vec3 DVEC_B = vec3(0.2, 0.2, 0.0);
+
 void main() {
     vec3 opacity = vec3(0.0);
-    vec3 da = vec3(0.1, 0.1, 0.0);
-    vec3 db = vec3(0.2, 0.2, 0.0);
     vec3 wOpacity = vec3(
-        fbm3(vPos + opacity, u_frequency, u_amplitude, u_lacunarity, u_octaves),
-        fbm3(vPos + da,      u_frequency, u_amplitude, u_lacunarity, u_octaves),
-        fbm3(vPos + db,      u_frequency, u_amplitude, u_lacunarity, u_octaves)
+        fbm3(vPos, u_frequency,  u_amplitude, u_lacunarity, u_octaves),
+        fbm3(vPos + DVEC_A,      u_frequency, u_amplitude, u_lacunarity, u_octaves),
+        fbm3(vPos + DVEC_B,      u_frequency, u_amplitude, u_lacunarity, u_octaves)
     );
+    if (wOpacity.x < 0.1) {
+        discard;
+    }
     opacity += fbm3(vPos + wOpacity, u_frequency, u_amplitude, u_lacunarity, u_octaves);
 
     opacity = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, opacity.x);

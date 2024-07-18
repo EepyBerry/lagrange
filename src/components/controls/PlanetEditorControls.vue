@@ -127,7 +127,7 @@
               id="s-lac"
               :step="0.01"
               :min="1"
-              :max="2.5"
+              :max="3"
             >
               {{ $t('editor.controls.surface.noise_fbm_lacunarity') }}
             </ParameterSlider>
@@ -189,7 +189,7 @@
                 {{ $t('editor.controls.clouds.transform_rotation') }} <sup>(°)</sup>
               </ParameterSlider>
               <ParameterCategory>{{ $t('editor.controls.clouds.noise') }}</ParameterCategory>
-              <ParameterSlider v-model="LG_PARAMETERS.cloudsNoise.frequency" id="c-freq" :step="0.01" :min="0" :max="5">
+              <ParameterSlider v-model="LG_PARAMETERS.cloudsNoise.frequency" id="c-freq" :step="0.01" :max="5">
                 {{ $t('editor.controls.clouds.noise_fbm_frequency') }}
               </ParameterSlider>
               <ParameterSlider
@@ -205,8 +205,8 @@
                 v-model="LG_PARAMETERS.cloudsNoise.lacunarity"
                 id="c-lac"
                 :step="0.01"
-                :min="0"
-                :max="2.5"
+                :min="1"
+                :max="3"
               >
                 {{ $t('editor.controls.clouds.noise_fbm_lacunarity') }}
               </ParameterSlider>
