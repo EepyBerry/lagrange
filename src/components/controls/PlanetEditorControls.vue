@@ -297,9 +297,6 @@ import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-
-    scrollbar-color: var(--lg-accent) transparent;
-    scrollbar-width: thin;
     overflow: auto;
 
     direction: rtl;

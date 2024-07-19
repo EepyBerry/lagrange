@@ -43,6 +43,9 @@ body {
 
   display: flex;
   flex-direction: column;
+
+  scrollbar-color: var(--lg-accent) transparent;
+  scrollbar-width: thin;
 }
 
 hr {

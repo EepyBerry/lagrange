@@ -72,11 +72,10 @@ tr.field {
     height: 100%;
   }
   & > td.color:first-of-type {
-    width: 100%;
     white-space: nowrap;
   }
   & > td.color:last-of-type {
-    width: auto;
+    width: 100%;
     min-width: 10px;
     padding-left: 4px;
     text-align: end;

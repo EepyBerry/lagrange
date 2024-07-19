@@ -28,7 +28,6 @@ tr.field {
     text-wrap: nowrap;
   }
   td:first-of-type {
-    width: auto;
     white-space: nowrap;
   }
   td:last-of-type {
