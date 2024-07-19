@@ -68,3 +68,12 @@ Original assets and source code from this project are provided under a BSD 3-Cla
 Please consult the [license file](LICENSE) for full information.
 
 Content from other parties is provided under their respective license, and attribution is given at the top of the aforementioned content.
+
+## 🤝 Contributing
+
+If you want to contribute code, feel free to submit your PRs!
+
+Please make sure to respect the following:
+1. [fork the project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project)
+2. create a branch from `develop`
+3. request your branch to be merged into `develop`
