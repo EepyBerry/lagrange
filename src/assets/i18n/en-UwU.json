@@ -71,6 +71,9 @@
   "editor": {
     "$title": "Pwanyet Editow",
     "default_planet_name": "New pwanyet ÒwÓ",
+    "$action_sort": "Sowt",
+    "$action_add": "Add",
+
     "controls": {
       "lighting": {
         "$title": "Wighting",

@@ -122,6 +122,7 @@ function resetPlanet() {
 
 <style scoped lang="scss">
 #planet-info {
+  z-index: 10;
   pointer-events: all;
   position: absolute;
   inset: 0 0 auto;

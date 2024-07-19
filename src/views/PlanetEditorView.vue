@@ -3,7 +3,7 @@
   <CompactPlanetEditorControls v-if="showCompactUI" />
   <PlanetEditorControls v-else />
 
-  <div ref="sceneRoot"></div>
+  <div ref="sceneRoot" id="scene-root"></div>
   <OverlaySpinner :load="showSpinner" />
 </template>
 
@@ -454,3 +454,9 @@ function updatePlanet() {
   LG_PARAMETERS.clearChangedProps()
 }
 </script>
+<style scoped lang="scss">
+#scene-root {
+  box-shadow: black 5px 10px 10px;
+  z-index: 5;
+}
+</style>

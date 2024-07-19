@@ -26,7 +26,7 @@
           :aria-label="$t('a11y.action_edit_ramp')"
           @click="togglePanel()"
         >
-          <iconify-icon v-if="panelOpen" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+          <iconify-icon v-if="panelOpen" class="icon" icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
           <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
         </button>
       </div>
@@ -79,7 +79,7 @@
                   <iconify-icon
                     v-if="pickerIdOpen === step.id"
                     class="icon"
-                    icon="mingcute:close-line"
+                    icon="mingcute:check-line"
                     width="1.25rem"
                     aria-hidden="true"
                   />
@@ -108,6 +108,7 @@
             <div class="add-step">
               <button class="lg" @click="addStep()" :aria-label="$t('a11y.action_add_colorstep')">
                 <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
+                {{ $t('editor.$action_add') }}
               </button>
               <iconify-icon class="icon" icon="ph:dot-outline-fill" width="1.25rem" aria-hidden="true" />
               <button class="lg" @click="sortSteps()" :aria-label="$t('a11y.action_sort_colorsteps')">
@@ -117,6 +118,7 @@
                   width="1.25rem"
                   aria-hidden="true"
                 />
+                {{ $t('editor.$action_sort') }}
               </button>
             </div>
           </td>

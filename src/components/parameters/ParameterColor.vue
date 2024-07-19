@@ -12,7 +12,7 @@
           :class="{ 'menu-expanded': pickerOpen }"
           @click="togglePanel()"
         >
-          <iconify-icon v-if="pickerOpen" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+          <iconify-icon v-if="pickerOpen" class="icon" icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
           <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
         </button>
       </div>

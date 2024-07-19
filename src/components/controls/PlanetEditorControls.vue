@@ -279,7 +279,7 @@ import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
 
 <style scoped lang="scss">
 #controls {
-  z-index: 5;
+  z-index: 10;
   position: absolute;
   inset: 0 auto 0;
 
