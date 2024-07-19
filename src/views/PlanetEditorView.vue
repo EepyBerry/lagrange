@@ -59,19 +59,20 @@ function init() {
   const width = window.innerWidth,
     height = window.innerHeight,
     pixelRatio = window.devicePixelRatio
-  let effectiveHeight = height
+  let effectiveWidth = width, effectiveHeight = height
 
   // Determine UI mode on start
   showCompactUI.value = width < COMPACT_UI_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
   if (showCompactUI.value) {
-    effectiveHeight = height * 0.6
+    effectiveWidth = window.outerWidth
+    effectiveHeight = window.outerHeight * 0.6
   }
 
   // Init scene
-  $se = Lagrange.createScene(width, effectiveHeight, pixelRatio)
+  $se = Lagrange.createScene(effectiveWidth, effectiveHeight, pixelRatio)
   initLighting()
   initPlanet()
-  initRendering(width, effectiveHeight)
+  initRendering(effectiveWidth, effectiveHeight)
   createControls($se.camera, $se.renderer.domElement)
   EventBus.registerWindowEventListener('resize', onWindowResize)
   EventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
@@ -168,15 +169,16 @@ function renderFrame(stats: Stats) {
 }
 
 function onWindowResize() {
-  let effectiveHeight = window.innerHeight
+  let effectiveWidth = window.innerWidth, effectiveHeight = window.innerHeight
   showCompactUI.value = window.innerWidth < COMPACT_UI_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
   if (showCompactUI.value) {
-    effectiveHeight = window.innerHeight * 0.6
+    effectiveWidth = window.outerWidth
+    effectiveHeight = window.outerHeight * 0.6
   }
 
-  $se.camera.aspect = window.innerWidth / effectiveHeight
+  $se.camera.aspect = effectiveWidth / effectiveHeight
   $se.camera.updateProjectionMatrix()
-  $se.renderer.setSize(window.innerWidth, effectiveHeight)
+  $se.renderer.setSize(effectiveWidth, effectiveHeight)
 }
 
 function setShaderMaterialUniform(mat: CustomShaderMaterial | THREE.ShaderMaterial, uname: string, uvalue: any): void {
