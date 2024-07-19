@@ -1,8 +1,8 @@
 <template>
   <div id="planet-info">
     <div class="name-wrapper">
-      <input v-if="editMode" class="lg" type="text" v-model="LG_PARAMETERS.planetName" @keyup.enter="toggleEditMode"/>
-      <p v-else>{{ LG_PARAMETERS.planetName }}</p>
+      <input v-if="editMode" ref="planetNameInput" class="lg" type="text" v-model="LG_PARAMETERS.planetName" @keyup.enter="toggleEditMode"/>
+      <p v-else @click="toggleEditMode">{{ LG_PARAMETERS.planetName }}</p>
       <button
         class="lg icon-button"
         :aria-label="$t(editMode ? 'a11y.topbar_rename_confirm' : 'a11y.topbar_rename')"
@@ -69,12 +69,14 @@ const i18n = useI18n()
 const resetDialog: Ref<{ open: Function } | null> = ref(null)
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const editMode: Ref<boolean> = ref(false)
+const planetNameInput: Ref<HTMLInputElement | null> = ref(null)
 const $emit = defineEmits(['dataLoad'])
 
 function toggleEditMode() {
   editMode.value = !editMode.value
   if (editMode.value) {
     EventBus.disableWindowEventListener('keydown')
+    setTimeout(() => planetNameInput.value?.focus());
   } else {
     EventBus.enableWindowEventListener('keydown')
   }
