@@ -1,6 +1,8 @@
 <template>
   <PlanetInfoControls />
-  <PlanetEditorControls />
+  <CompactPlanetEditorControls v-if="showCompactUI" />
+  <PlanetEditorControls v-else />
+
   <div ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
 </template>
@@ -12,7 +14,7 @@ import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js'
 import * as Lagrange from '@core/lagrange.service'
-import { AXIS_NX, AXIS_X, LG_HEIGHT_DIVIDER, LG_NAME_AMBLIGHT, LG_PARAMETERS, SUN_INIT_POS } from '@core/globals'
+import { AXIS_NX, AXIS_X, COMPACT_UI_WIDTH_THRESHOLD, LG_HEIGHT_DIVIDER, LG_NAME_AMBLIGHT, LG_PARAMETERS, SUN_INIT_POS } from '@core/globals'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { GeometryType } from '@core/types'
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla'
@@ -23,6 +25,7 @@ import type { LensFlareEffect } from '@core/three/lens-flare.effect'
 import { idb, KeyBindingAction } from '@/dexie.config'
 import { EventBus } from '@core/window-event-bus'
 import { useI18n } from 'vue-i18n'
+import CompactPlanetEditorControls from '@/components/controls/CompactPlanetEditorControls.vue'
 
 const i18n = useI18n()
 useHead({
@@ -34,6 +37,7 @@ useHead({
 const sceneRoot: Ref<any> = ref(null)
 const showSpinner: Ref<boolean> = ref(true)
 const clock = new THREE.Clock()
+const showCompactUI: Ref<boolean> = ref(false)
 
 // Main THREE objects
 let $se: SceneElements
@@ -55,11 +59,19 @@ function init() {
   const width = window.innerWidth,
     height = window.innerHeight,
     pixelRatio = window.devicePixelRatio
-  $se = Lagrange.createScene(width, height, pixelRatio)
+  let effectiveHeight = height
 
+  // Determine UI mode on start
+  showCompactUI.value = width < COMPACT_UI_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
+  if (showCompactUI.value) {
+    effectiveHeight = height * 0.6
+  }
+
+  // Init scene
+  $se = Lagrange.createScene(width, effectiveHeight, pixelRatio)
   initLighting()
   initPlanet()
-  initRendering(width, height)
+  initRendering(width, effectiveHeight)
   createControls($se.camera, $se.renderer.domElement)
   EventBus.registerWindowEventListener('resize', onWindowResize)
   EventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
@@ -156,9 +168,15 @@ function renderFrame(stats: Stats) {
 }
 
 function onWindowResize() {
-  $se.camera.aspect = window.innerWidth / window.innerHeight
+  let effectiveHeight = window.innerHeight
+  showCompactUI.value = window.innerWidth < COMPACT_UI_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
+  if (showCompactUI.value) {
+    effectiveHeight = window.innerHeight * 0.6
+  }
+
+  $se.camera.aspect = window.innerWidth / effectiveHeight
   $se.camera.updateProjectionMatrix()
-  $se.renderer.setSize(window.innerWidth, window.innerHeight)
+  $se.renderer.setSize(window.innerWidth, effectiveHeight)
 }
 
 function setShaderMaterialUniform(mat: CustomShaderMaterial | THREE.ShaderMaterial, uname: string, uvalue: any): void {

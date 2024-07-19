@@ -69,18 +69,7 @@ footer {
 
 @media screen and (max-width: 767px) {
   footer {
-    inset: auto 0 0;
-    padding: 0.5rem;
-    justify-content: flex-end;
-
-    #footer-nav {
-      flex-direction: row-reverse;
-
-      hr {
-        width: auto;
-        height: 1.5rem;
-      }
-    }
+    display: none;
   }
 }
 </style>
