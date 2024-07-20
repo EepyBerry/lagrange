@@ -5,12 +5,12 @@
     </td>
     <td class="color">
       <div class="color-wrapper">
-        <span class="current-color" :style="{ backgroundColor: `#${lgColor?.getHexString()}` }" @click="togglePanel()"></span>
+        <span class="current-color" :style="{ backgroundColor: `#${lgColor?.getHexString()}` }" @click="togglePanel"></span>
         <button
           class="lg edit"
           :aria-label="$t('a11y.action_open_colorpanel')"
           :class="{ 'menu-expanded': pickerOpen }"
-          @click="togglePanel()"
+          @click="togglePanel"
         >
           <iconify-icon v-if="pickerOpen" class="icon" icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
           <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
