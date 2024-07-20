@@ -7,12 +7,11 @@ import { ChangeTracker } from './change-tracker.model'
 import { numberToHex } from '@/utils/utils'
 import { generateUUID } from 'three/src/math/MathUtils.js'
 
-export default class LagrangeParameters extends ChangeTracker {
+export default class PlanetData extends ChangeTracker {
   // --------------------------------------------------
   // |                      Init                      |
   // --------------------------------------------------
 
-  private _id: string
   private _planetName: string
 
   private _initCamDistance: number = 4
@@ -20,10 +19,6 @@ export default class LagrangeParameters extends ChangeTracker {
   private _initPlanetRadius: number = 1
 
   // --------------------------------------------------
-
-  public get id() {
-    return this._id
-  }
 
   public get planetName(): string {
     return this._planetName
@@ -402,7 +397,6 @@ export default class LagrangeParameters extends ChangeTracker {
 
   constructor() {
     super()
-    this._id = generateUUID()
     this._planetName = ''
 
     this._lensFlareEnabled = true
@@ -527,9 +521,6 @@ export default class LagrangeParameters extends ChangeTracker {
   }
 
   public loadData(data: any) {
-    if (!data._id) {
-      this._id = generateUUID()
-    }
     this._planetName = data._planetName.replaceAll('_', ' ')
 
     this._lensFlareEnabled = data._lensFlareEnabled

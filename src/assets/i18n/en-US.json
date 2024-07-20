@@ -3,7 +3,12 @@
     "$title": "Lagrange",
     "locale": "en-US",
     "language": "English",
-    "more_coming_soon": "More coming soon!"
+    "more_coming_soon": "More coming soon!",
+
+    "nav": {
+      "codex": "Planetary Codex",
+      "editor": "Create new planet"
+    }
   },
   "dialog": {
     "init": {
@@ -39,7 +44,7 @@
       "general": "General",
       "general_language": "Language",
       "general_theme": "Choose theme to use",
-      "general_theme_default": "Default",
+      "general_theme_default": "Comet",
       "general_theme_supernova": "Supernova",
       "general_theme_voyager": "Voyager",
       "general_monospace": "Enable monospace font",
@@ -67,6 +72,10 @@
       "$action_cancel": "Cancel",
       "$action_confirm": "Confirm"
     }
+  },
+  "codex": {
+    "$title": "Planetary Codex",
+    "$action_add": "New planet"
   },
   "editor": {
     "$title": "Planet Editor",
@@ -191,7 +200,7 @@
     "footer_settings": "@:tooltip.footer_settings",
     "footer_about": "@:tooltip.footer_about",
 
-    "general_theme_default": "Set default theme (blue)",
+    "general_theme_default": "Set Comet theme (blue)",
     "general_theme_supernova": "Set Supernova theme (purple)",
     "general_theme_voyager": "Set Voyager theme (orange)",
 

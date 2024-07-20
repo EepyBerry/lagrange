@@ -1,5 +1,9 @@
 <template>
-  <PlanetInfoControls />
+  <div id="editor-header">
+    <AppSidebarButton />
+    <PlanetInfoControls :compact-mode="compactInfoControls" />
+    <span v-if="centerInfoControls" style="width:2.875rem"></span>
+  </div>
   <CompactPlanetEditorControls v-if="showCompactUI" />
   <PlanetEditorControls v-else />
 
@@ -17,6 +21,8 @@ import * as Lagrange from '@core/lagrange.service'
 import {
   AXIS_NX,
   AXIS_X,
+  CENTER_INFO_CONTROLS_WIDTH_THRESHOLD,
+  COMPACT_INFO_CONTROLS_WIDTH_THRESHOLD,
   COMPACT_UI_WIDTH_THRESHOLD,
   LG_HEIGHT_DIVIDER,
   LG_NAME_AMBLIGHT,
@@ -34,6 +40,7 @@ import { idb, KeyBindingAction } from '@/dexie.config'
 import { EventBus } from '@core/window-event-bus'
 import { useI18n } from 'vue-i18n'
 import CompactPlanetEditorControls from '@/components/controls/CompactPlanetEditorControls.vue'
+import AppSidebarButton from '@/components/main/AppSidebarButton.vue'
 
 const i18n = useI18n()
 useHead({
@@ -45,6 +52,8 @@ useHead({
 const sceneRoot: Ref<any> = ref(null)
 const showSpinner: Ref<boolean> = ref(true)
 const clock = new THREE.Clock()
+const centerInfoControls = ref(true)
+const compactInfoControls = ref(false)
 const showCompactUI: Ref<boolean> = ref(false)
 
 // Main THREE objects
@@ -72,6 +81,9 @@ function init() {
 
   // Determine UI mode on start
   showCompactUI.value = width < COMPACT_UI_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
+  centerInfoControls.value = window.innerWidth > CENTER_INFO_CONTROLS_WIDTH_THRESHOLD
+  compactInfoControls.value = window.innerWidth <= COMPACT_INFO_CONTROLS_WIDTH_THRESHOLD
+  
   if (showCompactUI.value) {
     effectiveWidth = window.outerWidth
     effectiveHeight = window.outerHeight * 0.6
@@ -180,7 +192,11 @@ function renderFrame(stats: Stats) {
 function onWindowResize() {
   let effectiveWidth = window.innerWidth,
     effectiveHeight = window.innerHeight
-  showCompactUI.value = window.innerWidth < COMPACT_UI_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
+
+  showCompactUI.value = window.innerWidth <= COMPACT_UI_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
+  centerInfoControls.value = window.innerWidth > CENTER_INFO_CONTROLS_WIDTH_THRESHOLD
+  compactInfoControls.value = window.innerWidth <= COMPACT_INFO_CONTROLS_WIDTH_THRESHOLD
+
   if (showCompactUI.value) {
     effectiveWidth = window.outerWidth
     effectiveHeight = window.outerHeight * 0.6
@@ -190,6 +206,8 @@ function onWindowResize() {
   $se.camera.updateProjectionMatrix()
   $se.renderer.setSize(effectiveWidth, effectiveHeight)
 }
+
+// ------------------------------------------------------------------------------------------------
 
 function setShaderMaterialUniform(mat: CustomShaderMaterial | THREE.ShaderMaterial, uname: string, uvalue: any): void {
   mat.uniforms[uname] = { value: uvalue }
@@ -464,9 +482,27 @@ function updatePlanet() {
   LG_PARAMETERS.clearChangedProps()
 }
 </script>
+
 <style scoped lang="scss">
+#editor-header {
+  z-index: 15;
+  position: absolute;
+  inset: 0 0 auto 0;
+  margin: 1rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
 #scene-root {
   box-shadow: black 5px 10px 10px;
   z-index: 5;
+}
+
+@media screen and (max-width: 1199px) {
+  #editor-header {
+    margin: 0.5rem;
+  }
 }
 </style>

@@ -40,24 +40,27 @@
     >
       <iconify-icon icon="tabler:reload" width="1.5rem" aria-hidden="true" />
     </button>
-    <hr />
-    <input ref="fileInput" type="file" @change="importPlanetFile" hidden />
-    <button
-      class="lg dark"
-      :aria-label="$t('a11y.topbar_import')"
-      :title="$t('tooltip.topbar_import')"
-      @click="openFileDialog"
-    >
-      <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
-    </button>
-    <button
-      class="lg dark"
-      :aria-label="$t('a11y.topbar_export')"
-      :title="$t('tooltip.topbar_export')"
-      @click="exportPlanetFile"
-    >
-      <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
-    </button>
+    <template v-if="!compactMode">
+      <hr />
+      <input ref="fileInput" type="file" @change="importPlanetFile" hidden />
+      <button
+        class="lg dark"
+        :aria-label="$t('a11y.topbar_import')"
+        :title="$t('tooltip.topbar_import')"
+        @click="openFileDialog"
+      >
+        <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
+      </button>
+      <button
+        class="lg dark"
+        :aria-label="$t('a11y.topbar_export')"
+        :title="$t('tooltip.topbar_export')"
+        @click="exportPlanetFile"
+      >
+        <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
+      </button>
+    </template>
+    
     <AppResetConfirmDialog ref="resetDialog" @confirm="resetPlanet" />
   </div>
 </template>
@@ -72,11 +75,13 @@ import { EventBus } from '@core/window-event-bus'
 import { useI18n } from 'vue-i18n'
 
 const i18n = useI18n()
-
-const resetDialog: Ref<{ open: Function } | null> = ref(null)
-const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const editMode: Ref<boolean> = ref(false)
+
+const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const planetNameInput: Ref<HTMLInputElement | null> = ref(null)
+const resetDialog: Ref<{ open: Function } | null> = ref(null)
+
+defineProps<{ compactMode: boolean }>()
 const $emit = defineEmits(['dataLoad'])
 
 function toggleEditMode() {
@@ -131,10 +136,7 @@ function resetPlanet() {
 #planet-info {
   z-index: 10;
   pointer-events: all;
-  position: absolute;
-  inset: 0 0 auto;
   height: 2.875rem;
-  margin-top: 1rem;
 
   display: flex;
   justify-content: center;
@@ -171,11 +173,6 @@ function resetPlanet() {
   }
 }
 
-@media screen and (max-width: 1199px) {
-  #planet-info {
-    margin-top: 0.5rem;
-  }
-}
 @media screen and (max-width: 767px) {
   #planet-info {
     width: 100%;
@@ -185,8 +182,7 @@ function resetPlanet() {
     border-right: none;
 
     height: 2.875rem;
-    padding: 0 0.5rem;
-    margin-top: 0.5rem;
+    flex: 1;
 
     .name-wrapper {
       flex: 1;

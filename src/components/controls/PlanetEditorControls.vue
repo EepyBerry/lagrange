@@ -132,7 +132,7 @@
               {{ $t('editor.controls.surface.noise_fbm_lacunarity') }}
             </ParameterSlider>
             <ParameterDivider />
-            <ParameterColorRamp mode="color" v-model="LG_PARAMETERS.planetSurfaceColorRamp" :key="LG_PARAMETERS.id">
+            <ParameterColorRamp mode="color" v-model="LG_PARAMETERS.planetSurfaceColorRamp" :key="LG_PARAMETERS.planetName">
               {{ $t('editor.controls.surface.noise_colorramp') }}
             </ParameterColorRamp>
           </ParameterTable>
@@ -204,7 +204,7 @@
               <ParameterColor v-model="LG_PARAMETERS.cloudsColor">
                 {{ $t('editor.controls.clouds.rgba_color') }}
               </ParameterColor>
-              <ParameterColorRamp mode="opacity" v-model="LG_PARAMETERS.cloudsColorRamp" :key="LG_PARAMETERS.id">
+              <ParameterColorRamp mode="opacity" v-model="LG_PARAMETERS.cloudsColorRamp" :key="LG_PARAMETERS.planetName">
                 {{ $t('editor.controls.clouds.rgba_opacityramp') }}
               </ParameterColorRamp>
             </template>
@@ -277,6 +277,7 @@ import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
   .sidebar {
     width: 100%;
     padding: 1rem;
+    margin-top: 3.875rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -290,14 +291,6 @@ import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
       direction: ltr;
       align-self: flex-end;
       min-width: 26rem;
-    }
-  }
-}
-
-@media screen and (max-width: 1365px) {
-  #controls {
-    .sidebar {
-      margin-top: 4.375rem;
     }
   }
 }

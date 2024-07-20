@@ -3,7 +3,12 @@
     "$title": "Wagwange",
     "locale": "en-UwU",
     "language": "Uwuish",
-    "more_coming_soon": "Mowe coming s-soon!"
+    "more_coming_soon": "Mowe coming s-soon!",
+
+    "nav": {
+      "codex": "Pwanyetawy Codex",
+      "editor": "Cweate n-new pwanyet"
+    }
   },
   "dialog": {
     "init": {
@@ -39,7 +44,7 @@
       "general": "Genyewaw >:3",
       "general_language": "Wanguage",
       "general_theme": "Choose theme t-to use",
-      "general_theme_default": "Defauwt",
+      "general_theme_default": "Comet",
       "general_theme_supernova": "Supewnyova",
       "general_theme_voyager": "Voyagew",
       "general_monospace": "Enyabwe monyospace font",
@@ -67,6 +72,10 @@
       "$action_cancel": "Cancew",
       "$action_confirm": "Confiwm"
     }
+  },
+  "codex": {
+    "$title": "Pwanyetawy Codex >:3",
+    "$action_add": "Nyew pwanyet !!!"
   },
   "editor": {
     "$title": "Pwanyet Editow",
@@ -192,7 +201,7 @@
     "footer_settings": "@:tooltip.footer_settings",
     "footer_about": "@:tooltip.footer_about",
 
-    "general_theme_default": "Set defauwt theme (bwue)",
+    "general_theme_default": "Set Comet theme (bwue)",
     "general_theme_supernova": "Set Supewnyova theme (puwple)",
     "general_theme_voyager": "Set Voyagew theme (owange)",
 

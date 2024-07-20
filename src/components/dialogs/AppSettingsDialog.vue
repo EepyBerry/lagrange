@@ -34,7 +34,7 @@
                     name="theme-select"
                     :id="'0'"
                     value="default"
-                    icon="mingcute:planet-line"
+                    icon="majesticons:comet"
                     :ariaLabel="$t('a11y.general_theme_default')"
                   >
                     {{ $t('dialog.settings.general_theme_default') }}

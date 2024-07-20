@@ -8,6 +8,12 @@ const router = createRouter({
       redirect: '/planet-editor',
     },
     {
+      path: '/codex',
+      name: 'codex',
+      component: () => import('./views/CodexView.vue'),
+      meta: { title: 'Codex' },
+    },
+    {
       path: '/planet-editor',
       name: 'planet-editor',
       component: () => import('./views/PlanetEditorView.vue'),

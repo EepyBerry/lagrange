@@ -1,5 +1,6 @@
 // db.ts
 import Dexie, { type EntityTable } from 'dexie'
+import type PlanetData from './core/models/planet-data.model'
 
 enum KeyBindingAction {
   ToggleLensFlare = 'toggle-lens-flare',
@@ -22,16 +23,24 @@ interface IDBSettings {
   showInitDialog?: boolean
 }
 
+interface IDBPlanet {
+  id: string
+  preview: Blob
+  data: PlanetData
+}
+
 const idb = new Dexie('LagrangeIDB', { autoOpen: true }) as Dexie & {
   keyBindings: EntityTable<IDBKeyBinding, 'id'>
   settings: EntityTable<IDBSettings, 'id'>
+  planets: EntityTable<IDBPlanet, 'id'>
 }
 
 // Schema declaration:
 idb.version(1).stores({
   keyBindings: '++id, action',
   settings: '++id',
+  planets: '++id',
 })
 
-export type { IDBKeyBinding, IDBSettings }
+export type { IDBKeyBinding, IDBSettings, IDBPlanet }
 export { idb, KeyBindingAction }
