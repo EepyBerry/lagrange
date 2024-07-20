@@ -69,7 +69,11 @@
             </td>
             <td>
               <div class="color-wrapper">
-                <span class="current-color" :style="{ backgroundColor: `#${step.color.getHexString()}` }" @click="togglePicker(step.id)"></span>
+                <span
+                  class="current-color"
+                  :style="{ backgroundColor: `#${step.color.getHexString()}` }"
+                  @click="togglePicker(step.id)"
+                ></span>
                 <button
                   class="lg edit"
                   :class="{ 'menu-expanded': pickerIdOpen === step.id }"

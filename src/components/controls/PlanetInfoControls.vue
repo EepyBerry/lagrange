@@ -1,7 +1,14 @@
 <template>
   <div id="planet-info">
     <div class="name-wrapper">
-      <input v-if="editMode" ref="planetNameInput" class="lg" type="text" v-model="LG_PARAMETERS.planetName" @keyup.enter="toggleEditMode"/>
+      <input
+        v-if="editMode"
+        ref="planetNameInput"
+        class="lg"
+        type="text"
+        v-model="LG_PARAMETERS.planetName"
+        @keyup.enter="toggleEditMode"
+      />
       <p v-else @click="toggleEditMode">{{ LG_PARAMETERS.planetName }}</p>
       <button
         class="lg icon-button"
@@ -76,7 +83,7 @@ function toggleEditMode() {
   editMode.value = !editMode.value
   if (editMode.value) {
     EventBus.disableWindowEventListener('keydown')
-    setTimeout(() => planetNameInput.value?.focus());
+    setTimeout(() => planetNameInput.value?.focus())
   } else {
     EventBus.enableWindowEventListener('keydown')
   }

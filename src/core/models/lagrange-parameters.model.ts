@@ -426,7 +426,14 @@ export default class LagrangeParameters extends ChangeTracker {
 
     this._planetSurfaceShowBumps = true
     this._planetSurfaceBumpStrength = 0.0875
-    this._planetSurfaceNoise = new NoiseParameters(this._changedProps, '_planetSurfaceNoise', NoiseType.FBM, 3.41, 0.5, 2.16)
+    this._planetSurfaceNoise = new NoiseParameters(
+      this._changedProps,
+      '_planetSurfaceNoise',
+      NoiseType.FBM,
+      3.41,
+      0.5,
+      2.16,
+    )
     this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
       new ColorRampStep(0x061c3f, 0, true),
       new ColorRampStep(0x0f2851, 0.4),

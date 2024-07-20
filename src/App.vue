@@ -19,9 +19,7 @@ import { useHead } from '@unhead/vue'
 const i18n = useI18n()
 useHead({
   title: i18n.t('main.$title'),
-  meta: [
-    { name: 'description', content: 'A procedural planet-building application!' },
-  ],
+  meta: [{ name: 'description', content: 'A procedural planet-building application!' }],
 })
 
 const dialogInit: Ref<{ open: Function; close: Function } | null> = ref(null)

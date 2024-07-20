@@ -1,5 +1,5 @@
 <template>
-  <hr>
+  <hr />
   <div id="footer-nav">
     <a
       class="lg dark"
@@ -54,7 +54,8 @@ hr {
   justify-content: space-between;
   gap: 0.5rem;
 
-  & > button, & > a {
+  & > button,
+  & > a {
     flex: 1;
   }
 }

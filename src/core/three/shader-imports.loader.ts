@@ -11,7 +11,7 @@ const IMPORT_MAP: { [k: string]: string } = {
   'functions/voronoise': voronoise,
   'functions/color_utils': colorUtils,
   'functions/normal_utils': normalUtils,
-  'functions/atmosphere_utils': atmosphereUtils
+  'functions/atmosphere_utils': atmosphereUtils,
 }
 
 export function resolveImports(shader: string): string {

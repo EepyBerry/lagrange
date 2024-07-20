@@ -53,7 +53,6 @@ function toggleExpand() {
   align-items: space-between;
   gap: 4px;
 
-
   &.static {
     margin-bottom: 0.75rem;
   }

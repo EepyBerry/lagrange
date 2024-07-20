@@ -18,23 +18,26 @@ _(**important note:** this is something I am working on during my free time, whi
 For more details on the commands themselves, check the [package.json](https://github.com/EepyBerry/lagrange/blob/main/package.json) file.
 
 ### Run locally
+
 Clone the repository then use the following commands:
+
 - Install dependencies: `npm install`
 - Run the application locally: `npm run dev` / `npm run dev-host`
 
 Lagrange runs on port 5173 by default; `dev-host` exposes the application to the local network.
 
 ### Build project
+
 Building is done with the following command:
+
 - `npm run build`
 
 Vite copies the output to the `dist` folder, creating it first if need be.
 
-
 ## 📋 Current Features
 
 | Category              | Subcategory      | Available functions                                                 | Notes                |
-|-----------------------|------------------|---------------------------------------------------------------------|----------------------|
+| --------------------- | ---------------- | ------------------------------------------------------------------- | -------------------- |
 | **Lighting Settings** | Sunlight         | angle, color, intensity                                             |                      |
 |                       | Ambient light    | color, intensity                                                    |                      |
 | **Planet Settings**   | Transform        | axial tilt, rotation                                                |                      |
@@ -74,6 +77,7 @@ Content from other parties is provided under their respective license, and attri
 If you want to contribute code, feel free to submit your PRs!
 
 Please make sure to respect the following:
+
 1. [fork the project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project)
 2. create a branch from `develop`
 3. request your branch to be merged into `develop`
