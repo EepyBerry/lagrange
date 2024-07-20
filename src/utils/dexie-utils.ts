@@ -1,4 +1,4 @@
-import { idb, KeyBindingAction } from '@/dexie'
+import { idb, KeyBindingAction } from '@/dexie.config'
 
 export async function addDefaultSettings(): Promise<any> {
   return idb.settings.put({

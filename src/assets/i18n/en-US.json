@@ -71,6 +71,8 @@
   "editor": {
     "$title": "Planet Editor",
     "default_planet_name": "New planet",
+    "$action_sort": "Sort",
+    "$action_add": "Add",
     "controls": {
       "lighting": {
         "$title": "Lighting",

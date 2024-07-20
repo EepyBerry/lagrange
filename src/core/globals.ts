@@ -1,7 +1,9 @@
 import { reactive } from 'vue'
 import LagrangeParameters from '@core/models/lagrange-parameters.model'
-import type { IDBKeyBinding } from '@/dexie'
+import type { IDBKeyBinding } from '@/dexie.config'
 import { Vector3 } from 'three'
+
+export const COMPACT_UI_WIDTH_THRESHOLD = 768
 
 export const LOCALE_MAP: { [k: string]: string } = {
   en: 'en-US',

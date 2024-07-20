@@ -122,6 +122,7 @@ function resetPlanet() {
 
 <style scoped lang="scss">
 #planet-info {
+  z-index: 10;
   pointer-events: all;
   position: absolute;
   inset: 0 0 auto;
@@ -136,7 +137,7 @@ function resetPlanet() {
   align-self: center;
 
   hr {
-    height: 50%;
+    height: 1.5rem;
     border-color: var(--lg-accent);
   }
   .name-wrapper {
@@ -177,7 +178,7 @@ function resetPlanet() {
     border-right: none;
 
     height: 2.875rem;
-    padding: 0 0.25rem 0 0.5rem;
+    padding: 0 0.5rem;
     margin-top: 0.5rem;
 
     .name-wrapper {

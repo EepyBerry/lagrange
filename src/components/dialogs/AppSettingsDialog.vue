@@ -126,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-import { KeyBindingAction, idb, type IDBKeyBinding, type IDBSettings } from '@/dexie'
+import { KeyBindingAction, idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
 import { ref, watch, type Ref } from 'vue'
 import DialogElement from '../elements/DialogElement.vue'
 import ParameterTable from '../parameters/ParameterTable.vue'
@@ -332,7 +332,7 @@ function tryGetKeyRepresentation(key: string) {
 
 @media screen and (max-width: 567px) {
   #dialog-settings {
-    min-width: 0;
+    min-width: 6rem;
     width: 100%;
   }
 }

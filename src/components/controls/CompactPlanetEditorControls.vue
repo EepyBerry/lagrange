@@ -1,8 +1,7 @@
 <template>
   <div id="controls">
-    <aside class="sidebar">
       <!-- Lighting -->
-      <SidebarSection icon="mingcute:sun-line" :expand="false">
+      <CollapsibleSection icon="mingcute:sun-line" :expand="false">
         <template v-slot:title>{{ $t('editor.controls.lighting.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
@@ -54,10 +53,10 @@
             </ParameterColor>
           </ParameterTable>
         </template>
-      </SidebarSection>
+      </CollapsibleSection>
 
       <!-- Planet & Rendering -->
-      <SidebarSection icon="tabler:gizmo" :expand="false">
+      <CollapsibleSection icon="tabler:gizmo" :expand="false">
         <template v-slot:title>{{ $t('editor.controls.planet_rendering.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
@@ -88,10 +87,10 @@
             </ParameterSlider>
           </ParameterTable>
         </template>
-      </SidebarSection>
+      </CollapsibleSection>
 
       <!-- Surface -->
-      <SidebarSection icon="mingcute:planet-line" :expand="false">
+      <CollapsibleSection icon="mingcute:planet-line" :expand="false">
         <template v-slot:title>{{ $t('editor.controls.surface.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
@@ -141,10 +140,10 @@
             </ParameterColorRamp>
           </ParameterTable>
         </template>
-      </SidebarSection>
+      </CollapsibleSection>
 
       <!-- Biomes -->
-      <SidebarSection icon="mingcute:mountain-2-line" :expand="false">
+      <CollapsibleSection icon="mingcute:mountain-2-line" :expand="false">
         <template v-slot:title>{{ $t('editor.controls.biomes.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
@@ -168,10 +167,10 @@
             </template>
           </ParameterTable>
         </template>
-      </SidebarSection>
+      </CollapsibleSection>
 
       <!-- Clouds -->
-      <SidebarSection icon="mingcute:clouds-line" :expand="false">
+      <CollapsibleSection icon="mingcute:clouds-line" :expand="false">
         <template v-slot:title>{{ $t('editor.controls.clouds.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
@@ -218,16 +217,15 @@
                 mode="opacity"
                 v-model="LG_PARAMETERS.cloudsColorRamp"
                 :key="LG_PARAMETERS.id"
+                >{{ $t('editor.controls.clouds.rgba_opacityramp') }}</ParameterColorRamp
               >
-                {{ $t('editor.controls.clouds.rgba_opacityramp') }}
-              </ParameterColorRamp>
             </template>
           </ParameterTable>
         </template>
-      </SidebarSection>
+      </CollapsibleSection>
 
       <!-- Atmosphere -->
-      <SidebarSection icon="material-symbols:line-curve-rounded" :expand="false">
+      <CollapsibleSection icon="material-symbols:line-curve-rounded" :expand="false">
         <template v-slot:title>{{ $t('editor.controls.atmosphere.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
@@ -263,8 +261,8 @@
             </template>
           </ParameterTable>
         </template>
-      </SidebarSection>
-    </aside>
+      </CollapsibleSection>
+      <InlineFooter />
   </div>
 </template>
 
@@ -272,81 +270,23 @@
 import { LG_PARAMETERS } from '@core/globals'
 import ParameterColorRamp from '@components/parameters/ParameterColorRamp.vue'
 import ParameterDivider from '@components/parameters/ParameterDivider.vue'
-import SidebarSection from '@components/elements/SidebarSection.vue'
+import type { ColorRamp } from '@core/models/color-ramp.model'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'
 import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
+import CollapsibleSection from '../elements/CollapsibleSection.vue'
+import InlineFooter from '../main/InlineFooter.vue'
 </script>
 
 <style scoped lang="scss">
 #controls {
-  z-index: 10;
+  z-index: 5;
   position: absolute;
-  inset: 0 auto 0;
-
+  inset: 60% 0 0;
+  padding: 0.75rem 0.5rem 0.5rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  overflow: hidden;
-
-  .sidebar {
-    width: 100%;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    overflow: auto;
-
-    user-select: none;
-    direction: rtl;
-
-    & > section {
-      direction: ltr;
-      align-self: flex-end;
-      min-width: 26rem;
-    }
-  }
-}
-
-@media screen and (max-width: 1365px) {
-  #controls {
-    .sidebar {
-      margin-top: 4.375rem;
-    }
-  }
-}
-@media screen and (max-width: 1199px) {
-  #controls {
-    .sidebar {
-      padding: 0.5rem;
-      margin-top: 3.375rem;
-
-      & > section {
-        min-width: 0;
-      }
-      & > section.expanded {
-        min-width: 26rem;
-      }
-    }
-  }
-}
-@media screen and (max-width: 767px) {
-  #controls {
-    min-width: 2rem;
-    margin-bottom: 3.875rem;
-
-    .sidebar {
-      padding: 0.5rem;
-    }
-  }
-}
-@media screen and (max-width: 567px) {
-  #controls {
-    .sidebar {
-      padding: 0.5rem;
-      min-width: 0;
-      max-width: 100%;
-    }
-  }
+  gap: 0.5rem;
+  overflow-y: auto;
 }
 </style>

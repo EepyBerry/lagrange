@@ -34,6 +34,7 @@ function set(ev: Event) {
 .lg-input-wrapper {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 0.5rem;
   font-family: monospace;
 

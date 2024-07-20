@@ -7,7 +7,7 @@
   <tr class="field">
     <td colspan="2">
       <div class="container">
-        <div class="color-ramp" ref="htmlColorRamp" @click="togglePanel()">
+        <div class="color-ramp" ref="htmlColorRamp" @click="togglePanel">
           <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
             <span
               ref="htmlColorSteps"
@@ -24,9 +24,9 @@
           class="lg edit"
           :class="{ 'menu-expanded': panelOpen }"
           :aria-label="$t('a11y.action_edit_ramp')"
-          @click="togglePanel()"
+          @click="togglePanel"
         >
-          <iconify-icon v-if="panelOpen" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+          <iconify-icon v-if="panelOpen" class="icon" icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
           <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
         </button>
       </div>
@@ -69,7 +69,7 @@
             </td>
             <td>
               <div class="color-wrapper">
-                <span class="current-color" :style="{ backgroundColor: `#${step.color.getHexString()}` }"></span>
+                <span class="current-color" :style="{ backgroundColor: `#${step.color.getHexString()}` }" @click="togglePicker(step.id)"></span>
                 <button
                   class="lg edit"
                   :class="{ 'menu-expanded': pickerIdOpen === step.id }"
@@ -79,7 +79,7 @@
                   <iconify-icon
                     v-if="pickerIdOpen === step.id"
                     class="icon"
-                    icon="mingcute:close-line"
+                    icon="mingcute:check-line"
                     width="1.25rem"
                     aria-hidden="true"
                   />
@@ -108,6 +108,7 @@
             <div class="add-step">
               <button class="lg" @click="addStep()" :aria-label="$t('a11y.action_add_colorstep')">
                 <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
+                {{ $t('editor.$action_add') }}
               </button>
               <iconify-icon class="icon" icon="ph:dot-outline-fill" width="1.25rem" aria-hidden="true" />
               <button class="lg" @click="sortSteps()" :aria-label="$t('a11y.action_sort_colorsteps')">
@@ -117,6 +118,7 @@
                   width="1.25rem"
                   aria-hidden="true"
                 />
+                {{ $t('editor.$action_sort') }}
               </button>
             </div>
           </td>
@@ -269,6 +271,7 @@ function removeStep(id: string) {
     height: 2rem;
     border-radius: 4px;
     border: 1px solid var(--lg-accent);
+    cursor: pointer;
   }
   .add-step {
     margin-top: 0.5rem;
