@@ -295,9 +295,7 @@ watch(() => [window.innerWidth, window.innerHeight], () => {
   z-index: 5;
   position: absolute;
   inset: 60% 0 0;
-  padding: 0.5rem;
-
-  border-top: 1px solid var(--lg-accent);
+  padding: 0.75rem 0.5rem 0.5rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
