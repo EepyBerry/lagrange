@@ -133,7 +133,7 @@
             <ParameterDivider />
             <ParameterColorRamp
               mode="color"
-              v-model="LG_PARAMETERS.planetSurfaceColorRamp as ColorRamp"
+              v-model="LG_PARAMETERS.planetSurfaceColorRamp"
               :key="LG_PARAMETERS.id"
             >
               {{ $t('editor.controls.surface.noise_colorramp') }}
@@ -215,7 +215,7 @@
               </ParameterColor>
               <ParameterColorRamp
                 mode="opacity"
-                v-model="LG_PARAMETERS.cloudsColorRamp as ColorRamp"
+                v-model="LG_PARAMETERS.cloudsColorRamp"
                 :key="LG_PARAMETERS.id"
                 >{{ $t('editor.controls.clouds.rgba_opacityramp') }}</ParameterColorRamp
               >

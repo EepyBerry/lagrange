@@ -134,7 +134,7 @@
             <ParameterDivider />
             <ParameterColorRamp
               mode="color"
-              v-model="LG_PARAMETERS.planetSurfaceColorRamp as ColorRamp"
+              v-model="LG_PARAMETERS.planetSurfaceColorRamp"
               :key="LG_PARAMETERS.id"
             >
               {{ $t('editor.controls.surface.noise_colorramp') }}
@@ -216,10 +216,11 @@
               </ParameterColor>
               <ParameterColorRamp
                 mode="opacity"
-                v-model="LG_PARAMETERS.cloudsColorRamp as ColorRamp"
+                v-model="LG_PARAMETERS.cloudsColorRamp"
                 :key="LG_PARAMETERS.id"
-                >{{ $t('editor.controls.clouds.rgba_opacityramp') }}</ParameterColorRamp
               >
+                {{ $t('editor.controls.clouds.rgba_opacityramp') }}
+              </ParameterColorRamp>
             </template>
           </ParameterTable>
         </template>
@@ -271,7 +272,6 @@
 import { LG_PARAMETERS } from '@core/globals'
 import ParameterColorRamp from '@components/parameters/ParameterColorRamp.vue'
 import ParameterDivider from '@components/parameters/ParameterDivider.vue'
-import type { ColorRamp } from '@core/models/color-ramp.model'
 import SidebarSection from '@components/elements/SidebarSection.vue'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'
 import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
@@ -297,6 +297,7 @@ import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
     gap: 0.5rem;
     overflow: auto;
 
+    user-select: none;
     direction: rtl;
 
     & > section {
