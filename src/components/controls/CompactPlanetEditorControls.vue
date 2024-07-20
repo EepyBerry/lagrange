@@ -1,5 +1,5 @@
 <template>
-  <div id="controls" ref="controls">
+  <div id="controls">
       <!-- Lighting -->
       <CollapsibleSection icon="mingcute:sun-line" :expand="false">
         <template v-slot:title>{{ $t('editor.controls.lighting.$title') }}</template>
@@ -273,21 +273,8 @@ import ParameterDivider from '@components/parameters/ParameterDivider.vue'
 import type { ColorRamp } from '@core/models/color-ramp.model'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'
 import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
-import { ref, watch, type Ref } from 'vue'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
 import InlineFooter from '../main/InlineFooter.vue'
-
-const controls: Ref<HTMLElement|null> = ref(null)
-
-watch(() => [window.innerWidth, window.innerHeight], () => {
-  console.log()
-  if (window.innerHeight > window.innerWidth && window.innerHeight < 1200) {
-    controls.value?.setAttribute('compact', '')
-  } else {
-    controls.value?.removeAttribute('compact')
-  }
-})
-
 </script>
 
 <style scoped lang="scss">
