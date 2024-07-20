@@ -20,9 +20,14 @@ jobs:
         run: npm ci
       - name: Build application
         run: npm run build --if-present
-      - name: Archive Release
+      - name: Create release
         uses: thedoctor0/zip-release@0.7.5
         with:
           type: 'zip'
           path: dist
           filename: 'lagrange-${{ github.ref_name }}.zip'
+      - name: Upload release
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          artifacts: 'lagrange-${{ github.ref_name }}.zip'
+          token: ${{ secrets.GITHUB_TOKEN }}
