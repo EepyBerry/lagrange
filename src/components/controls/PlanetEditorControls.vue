@@ -127,16 +127,12 @@
               id="s-lac"
               :step="0.01"
               :min="1"
-              :max="2.5"
+              :max="3"
             >
               {{ $t('editor.controls.surface.noise_fbm_lacunarity') }}
             </ParameterSlider>
             <ParameterDivider />
-            <ParameterColorRamp
-              mode="color"
-              v-model="LG_PARAMETERS.planetSurfaceColorRamp as ColorRamp"
-              :key="LG_PARAMETERS.id"
-            >
+            <ParameterColorRamp mode="color" v-model="LG_PARAMETERS.planetSurfaceColorRamp" :key="LG_PARAMETERS.id">
               {{ $t('editor.controls.surface.noise_colorramp') }}
             </ParameterColorRamp>
           </ParameterTable>
@@ -189,7 +185,7 @@
                 {{ $t('editor.controls.clouds.transform_rotation') }} <sup>(°)</sup>
               </ParameterSlider>
               <ParameterCategory>{{ $t('editor.controls.clouds.noise') }}</ParameterCategory>
-              <ParameterSlider v-model="LG_PARAMETERS.cloudsNoise.frequency" id="c-freq" :step="0.01" :min="0" :max="5">
+              <ParameterSlider v-model="LG_PARAMETERS.cloudsNoise.frequency" id="c-freq" :step="0.01" :max="5">
                 {{ $t('editor.controls.clouds.noise_fbm_frequency') }}
               </ParameterSlider>
               <ParameterSlider
@@ -201,25 +197,16 @@
               >
                 {{ $t('editor.controls.clouds.noise_fbm_amplitude') }}
               </ParameterSlider>
-              <ParameterSlider
-                v-model="LG_PARAMETERS.cloudsNoise.lacunarity"
-                id="c-lac"
-                :step="0.01"
-                :min="0"
-                :max="2.5"
-              >
+              <ParameterSlider v-model="LG_PARAMETERS.cloudsNoise.lacunarity" id="c-lac" :step="0.01" :min="1" :max="3">
                 {{ $t('editor.controls.clouds.noise_fbm_lacunarity') }}
               </ParameterSlider>
               <ParameterCategory>{{ $t('editor.controls.clouds.rgba') }}</ParameterCategory>
               <ParameterColor v-model="LG_PARAMETERS.cloudsColor">
                 {{ $t('editor.controls.clouds.rgba_color') }}
               </ParameterColor>
-              <ParameterColorRamp
-                mode="opacity"
-                v-model="LG_PARAMETERS.cloudsColorRamp as ColorRamp"
-                :key="LG_PARAMETERS.id"
-                >{{ $t('editor.controls.clouds.rgba_opacityramp') }}</ParameterColorRamp
-              >
+              <ParameterColorRamp mode="opacity" v-model="LG_PARAMETERS.cloudsColorRamp" :key="LG_PARAMETERS.id">
+                {{ $t('editor.controls.clouds.rgba_opacityramp') }}
+              </ParameterColorRamp>
             </template>
           </ParameterTable>
         </template>
@@ -271,7 +258,6 @@
 import { LG_PARAMETERS } from '@core/globals'
 import ParameterColorRamp from '@components/parameters/ParameterColorRamp.vue'
 import ParameterDivider from '@components/parameters/ParameterDivider.vue'
-import type { ColorRamp } from '@core/models/color-ramp.model'
 import SidebarSection from '@components/elements/SidebarSection.vue'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'
 import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
@@ -279,34 +265,31 @@ import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
 
 <style scoped lang="scss">
 #controls {
-  z-index: 5;
+  z-index: 10;
   position: absolute;
-  inset: 0;
+  inset: 0 auto 0;
 
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  pointer-events: none;
   overflow: hidden;
 
   .sidebar {
     width: 100%;
-    max-width: 26rem;
     padding: 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-
-    scrollbar-color: var(--lg-accent) transparent;
-    scrollbar-width: thin;
     overflow: auto;
 
+    user-select: none;
     direction: rtl;
 
     & > section {
       direction: ltr;
       align-self: flex-end;
+      min-width: 26rem;
     }
   }
 }
@@ -323,12 +306,20 @@ import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
     .sidebar {
       padding: 0.5rem;
       margin-top: 3.375rem;
+
+      & > section {
+        min-width: 0;
+      }
+      & > section.expanded {
+        min-width: 26rem;
+      }
     }
   }
 }
 @media screen and (max-width: 767px) {
   #controls {
     min-width: 2rem;
+    margin-bottom: 3.875rem;
 
     .sidebar {
       padding: 0.5rem;
@@ -339,6 +330,7 @@ import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
   #controls {
     .sidebar {
       padding: 0.5rem;
+      min-width: 0;
       max-width: 100%;
     }
   }

@@ -33,11 +33,10 @@ tr.field {
     text-wrap: nowrap;
   }
   td:first-of-type {
-    width: 100%;
     white-space: nowrap;
   }
   td:last-of-type {
-    width: auto;
+    width: 100%;
     min-width: 10px;
     padding-left: 4px;
     text-align: end;

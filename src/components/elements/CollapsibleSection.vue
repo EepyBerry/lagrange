@@ -83,6 +83,7 @@ function toggleExpand() {
     font-size: 0.875rem;
     font-weight: 300;
     padding: 0 0.75rem 0.75rem;
+    overflow-x: auto;
   }
   .section-content:has(.default) {
     text-align: center;

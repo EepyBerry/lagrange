@@ -125,21 +125,39 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
 @media screen and (max-width: 767px) {
   #dialog-about {
     .about-grid {
+      grid-template-areas:
+        'logo'
+        'text'
+        'tech'
+        'crgt';
       gap: 1.5rem 0;
 
       #app-logo,
       #app-logo-uwu {
-        display: none;
+        //display: none;
+        justify-self: center;
       }
       .about-text > p {
         width: 100%;
         text-align: center;
       }
       .about-tech {
+        margin: 0 auto;
         justify-content: center;
       }
       .about-copyright {
         align-items: center;
+      }
+    }
+  }
+}
+@media screen and (max-width: 567px) {
+  #dialog-about {
+    .about-grid {
+      .about-tech {
+        margin: 0 auto;
+        justify-content: center;
+        flex-direction: column;
       }
     }
   }

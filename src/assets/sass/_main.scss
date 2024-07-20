@@ -3,6 +3,9 @@
 *::after {
   box-sizing: border-box;
   margin: 0;
+
+  scrollbar-color: var(--lg-accent) transparent;
+  scrollbar-width: thin;
 }
 
 html {
@@ -19,6 +22,7 @@ body {
   min-height: 100%;
 
   border-radius: 2px;
+  background: var(--lg-panel);
   color: var(--lg-text);
 
   font-family:
