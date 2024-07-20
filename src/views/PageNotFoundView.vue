@@ -17,7 +17,7 @@
 import AppLogo from '@components/elements/AppLogo.vue'
 import { useHead } from '@unhead/vue'
 import { onMounted, ref } from 'vue'
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'vue-i18n'
 
 const i18n = useI18n()
 useHead({

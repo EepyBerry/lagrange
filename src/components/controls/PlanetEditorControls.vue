@@ -132,11 +132,7 @@
               {{ $t('editor.controls.surface.noise_fbm_lacunarity') }}
             </ParameterSlider>
             <ParameterDivider />
-            <ParameterColorRamp
-              mode="color"
-              v-model="LG_PARAMETERS.planetSurfaceColorRamp"
-              :key="LG_PARAMETERS.id"
-            >
+            <ParameterColorRamp mode="color" v-model="LG_PARAMETERS.planetSurfaceColorRamp" :key="LG_PARAMETERS.id">
               {{ $t('editor.controls.surface.noise_colorramp') }}
             </ParameterColorRamp>
           </ParameterTable>
@@ -201,24 +197,14 @@
               >
                 {{ $t('editor.controls.clouds.noise_fbm_amplitude') }}
               </ParameterSlider>
-              <ParameterSlider
-                v-model="LG_PARAMETERS.cloudsNoise.lacunarity"
-                id="c-lac"
-                :step="0.01"
-                :min="1"
-                :max="3"
-              >
+              <ParameterSlider v-model="LG_PARAMETERS.cloudsNoise.lacunarity" id="c-lac" :step="0.01" :min="1" :max="3">
                 {{ $t('editor.controls.clouds.noise_fbm_lacunarity') }}
               </ParameterSlider>
               <ParameterCategory>{{ $t('editor.controls.clouds.rgba') }}</ParameterCategory>
               <ParameterColor v-model="LG_PARAMETERS.cloudsColor">
                 {{ $t('editor.controls.clouds.rgba_color') }}
               </ParameterColor>
-              <ParameterColorRamp
-                mode="opacity"
-                v-model="LG_PARAMETERS.cloudsColorRamp"
-                :key="LG_PARAMETERS.id"
-              >
+              <ParameterColorRamp mode="opacity" v-model="LG_PARAMETERS.cloudsColorRamp" :key="LG_PARAMETERS.id">
                 {{ $t('editor.controls.clouds.rgba_opacityramp') }}
               </ParameterColorRamp>
             </template>

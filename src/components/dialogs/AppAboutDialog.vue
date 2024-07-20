@@ -126,12 +126,11 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
   #dialog-about {
     .about-grid {
       grid-template-areas:
-      'logo'
-      'text'
-      'tech'
-      'crgt';
+        'logo'
+        'text'
+        'tech'
+        'crgt';
       gap: 1.5rem 0;
-      
 
       #app-logo,
       #app-logo-uwu {

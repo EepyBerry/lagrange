@@ -14,7 +14,15 @@ import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js'
 import * as Lagrange from '@core/lagrange.service'
-import { AXIS_NX, AXIS_X, COMPACT_UI_WIDTH_THRESHOLD, LG_HEIGHT_DIVIDER, LG_NAME_AMBLIGHT, LG_PARAMETERS, SUN_INIT_POS } from '@core/globals'
+import {
+  AXIS_NX,
+  AXIS_X,
+  COMPACT_UI_WIDTH_THRESHOLD,
+  LG_HEIGHT_DIVIDER,
+  LG_NAME_AMBLIGHT,
+  LG_PARAMETERS,
+  SUN_INIT_POS,
+} from '@core/globals'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { GeometryType } from '@core/types'
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla'
@@ -30,7 +38,7 @@ import CompactPlanetEditorControls from '@/components/controls/CompactPlanetEdit
 const i18n = useI18n()
 useHead({
   title: i18n.t('editor.$title') + ' · ' + i18n.t('main.$title'),
-  meta: [{ name: 'description', content: 'Planet editor' }]
+  meta: [{ name: 'description', content: 'Planet editor' }],
 })
 
 // THREE canvas/scene root
@@ -59,7 +67,8 @@ function init() {
   const width = window.innerWidth,
     height = window.innerHeight,
     pixelRatio = window.devicePixelRatio
-  let effectiveWidth = width, effectiveHeight = height
+  let effectiveWidth = width,
+    effectiveHeight = height
 
   // Determine UI mode on start
   showCompactUI.value = width < COMPACT_UI_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
@@ -169,7 +178,8 @@ function renderFrame(stats: Stats) {
 }
 
 function onWindowResize() {
-  let effectiveWidth = window.innerWidth, effectiveHeight = window.innerHeight
+  let effectiveWidth = window.innerWidth,
+    effectiveHeight = window.innerHeight
   showCompactUI.value = window.innerWidth < COMPACT_UI_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
   if (showCompactUI.value) {
     effectiveWidth = window.outerWidth
