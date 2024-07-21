@@ -6,8 +6,8 @@
     "more_coming_soon": "More coming soon!",
 
     "nav": {
-      "codex": "Planetary Codex",
-      "editor": "Create new planet"
+      "codex": "Codex",
+      "editor": "Editor"
     }
   },
   "dialog": {

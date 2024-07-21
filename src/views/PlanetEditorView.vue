@@ -1,10 +1,9 @@
 <template>
-  <div id="editor-header">
-    <AppSidebarButton />
-    <PlanetInfoControls :compact-mode="compactInfoControls" />
-    <span v-if="centerInfoControls" style="width:2.875rem"></span>
+  <div id="editor-header" :class="{ compact: !!showCompactNavigation }">
+    <AppNavigation :compact-mode="showCompactNavigation" />
+    <PlanetInfoControls :compact-mode="showCompactInfo" />
   </div>
-  <CompactPlanetEditorControls v-if="showCompactUI" />
+  <CompactPlanetEditorControls v-if="showCompactControls" />
   <PlanetEditorControls v-else />
 
   <div ref="sceneRoot" id="scene-root"></div>
@@ -21,9 +20,9 @@ import * as Lagrange from '@core/lagrange.service'
 import {
   AXIS_NX,
   AXIS_X,
-  CENTER_INFO_CONTROLS_WIDTH_THRESHOLD,
-  COMPACT_INFO_CONTROLS_WIDTH_THRESHOLD,
-  COMPACT_UI_WIDTH_THRESHOLD,
+  MD_WIDTH_THRESHOLD,
+  XS_WIDTH_THRESHOLD,
+  SM_WIDTH_THRESHOLD,
   LG_HEIGHT_DIVIDER,
   LG_NAME_AMBLIGHT,
   LG_PARAMETERS,
@@ -40,7 +39,8 @@ import { idb, KeyBindingAction } from '@/dexie.config'
 import { EventBus } from '@core/window-event-bus'
 import { useI18n } from 'vue-i18n'
 import CompactPlanetEditorControls from '@/components/controls/CompactPlanetEditorControls.vue'
-import AppSidebarButton from '@/components/main/AppSidebarButton.vue'
+import AppNavigation from '@/components/main/AppNavigation.vue'
+import { setShaderMaterialUniform, setShaderMaterialUniforms } from '@/utils/three-utils'
 
 const i18n = useI18n()
 useHead({
@@ -48,13 +48,16 @@ useHead({
   meta: [{ name: 'description', content: 'Planet editor' }],
 })
 
+// Responsiveness
+const centerInfoControls: Ref<boolean> = ref(true)
+const showCompactInfo: Ref<boolean> = ref(false)
+const showCompactControls: Ref<boolean> = ref(false)
+const showCompactNavigation: Ref<boolean> = ref(false)
+
 // THREE canvas/scene root
 const sceneRoot: Ref<any> = ref(null)
 const showSpinner: Ref<boolean> = ref(true)
 const clock = new THREE.Clock()
-const centerInfoControls = ref(true)
-const compactInfoControls = ref(false)
-const showCompactUI: Ref<boolean> = ref(false)
 
 // Main THREE objects
 let $se: SceneElements
@@ -73,18 +76,16 @@ onUnmounted(() => {
 })
 
 function init() {
+  // Determine UI modes on start
+  computeResponsiveness()
+
   const width = window.innerWidth,
     height = window.innerHeight,
     pixelRatio = window.devicePixelRatio
   let effectiveWidth = width,
     effectiveHeight = height
-
-  // Determine UI mode on start
-  showCompactUI.value = width < COMPACT_UI_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
-  centerInfoControls.value = window.innerWidth > CENTER_INFO_CONTROLS_WIDTH_THRESHOLD
-  compactInfoControls.value = window.innerWidth <= COMPACT_INFO_CONTROLS_WIDTH_THRESHOLD
   
-  if (showCompactUI.value) {
+  if (showCompactControls.value) {
     effectiveWidth = window.outerWidth
     effectiveHeight = window.outerHeight * 0.6
   }
@@ -190,14 +191,12 @@ function renderFrame(stats: Stats) {
 }
 
 function onWindowResize() {
+  computeResponsiveness()
+
   let effectiveWidth = window.innerWidth,
     effectiveHeight = window.innerHeight
 
-  showCompactUI.value = window.innerWidth <= COMPACT_UI_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
-  centerInfoControls.value = window.innerWidth > CENTER_INFO_CONTROLS_WIDTH_THRESHOLD
-  compactInfoControls.value = window.innerWidth <= COMPACT_INFO_CONTROLS_WIDTH_THRESHOLD
-
-  if (showCompactUI.value) {
+  if (showCompactControls.value) {
     effectiveWidth = window.outerWidth
     effectiveHeight = window.outerHeight * 0.6
   }
@@ -207,16 +206,14 @@ function onWindowResize() {
   $se.renderer.setSize(effectiveWidth, effectiveHeight)
 }
 
-// ------------------------------------------------------------------------------------------------
+function computeResponsiveness() {
+  showCompactInfo.value = window.innerWidth <= XS_WIDTH_THRESHOLD
+  showCompactControls.value = window.innerWidth <= SM_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
+  showCompactNavigation.value = window.innerWidth < MD_WIDTH_THRESHOLD
+  centerInfoControls.value = window.innerWidth > MD_WIDTH_THRESHOLD
+}
 
-function setShaderMaterialUniform(mat: CustomShaderMaterial | THREE.ShaderMaterial, uname: string, uvalue: any): void {
-  mat.uniforms[uname] = { value: uvalue }
-}
-function setShaderMaterialUniforms(mat: CustomShaderMaterial, unames: string[], uvalues: any[]): void {
-  for (let i = 0; i < unames.length; i++) {
-    mat.uniforms[unames[i]] = { value: uvalues[i] }
-  }
-}
+// ------------------------------------------------------------------------------------------------
 
 function updatePlanet() {
   if (LG_PARAMETERS.changedProps.length === 0) {
@@ -492,9 +489,14 @@ function updatePlanet() {
 
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 0.5rem;
+
+  &.compact {
+    justify-content: space-between;
+  }
 }
+
 #scene-root {
   box-shadow: black 5px 10px 10px;
   z-index: 5;

@@ -1,5 +1,5 @@
 <template>
-  <div id="planet-info">
+  <div id="planet-info" :class="{ compact: !!compactMode }">
     <div class="name-wrapper">
       <input
         v-if="editMode"
@@ -144,6 +144,10 @@ function resetPlanet() {
   gap: 0.5rem;
 
   align-self: center;
+
+  &.compact {
+    justify-self: flex-end;
+  }
 
   hr {
     height: 1.5rem;

@@ -1,6 +1,6 @@
 <template>
-  <div id="codex-header">
-    <AppSidebarButton />
+  <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
+    <AppNavigation :compact-mode="showCompactNavigation" />
     <RouterLink class="lg dark create-planet" to="planet-editor">
       <iconify-icon icon="mingcute:add-line" width="1.5rem" />
       {{ $t('codex.$action_add') }}
@@ -12,16 +12,21 @@
 </template>
 
 <script setup lang="ts">
-import PlanetCardElement from '@/components/elements/PlanetCardElement.vue';
 import { idb, type IDBPlanet } from '@/dexie.config';
 import { useHead } from '@unhead/vue';
-import { onMounted, ref, type Ref } from 'vue';
+import { onMounted, onUnmounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import AppSidebarButton from '@components/main/AppSidebarButton.vue';
 import { RouterLink } from 'vue-router';
+import { EventBus } from '@/core/window-event-bus';
+import { MD_WIDTH_THRESHOLD } from '@/core/globals';
+import PlanetCardElement from '@/components/elements/PlanetCardElement.vue';
+import AppNavigation from '@/components/main/AppNavigation.vue';
 
 const i18n = useI18n()
 const planets: Ref<IDBPlanet[]> = ref([])
+
+// Responsiveness
+const showCompactNavigation: Ref<boolean> = ref(false)
 
 useHead({
   title: i18n.t('codex.$title') + ' · ' + i18n.t('main.$title'),
@@ -30,10 +35,18 @@ useHead({
 
 onMounted(async () => {
   await loadPlanets()
+  EventBus.registerWindowEventListener('resize', onWindowResize)
+})
+onUnmounted(() => {
+  EventBus.deregisterWindowEventListener('resize', onWindowResize)
 })
 
 async function loadPlanets() {
   planets.value = await idb.planets.toArray()
+}
+
+function onWindowResize() {
+  showCompactNavigation.value = window.innerWidth < MD_WIDTH_THRESHOLD
 }
 
 </script>
@@ -47,8 +60,12 @@ async function loadPlanets() {
   margin: 1rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 0.5rem;
+
+  &.compact {
+    justify-content: space-between;
+  }
 
   a.create-planet {
     min-height: 2.875rem;
