@@ -4,7 +4,7 @@
  */
 type WindowEventRegistryOptions = { autoEnable: boolean }
 
-export class EventBus {
+export class WindowEventBus {
   private static windowEventRegistry: Map<keyof WindowEventMap, any> = new Map<keyof WindowEventMap, any>()
 
   /**
@@ -18,7 +18,7 @@ export class EventBus {
     listener: (this: Window, ev: WindowEventMap[K]) => any,
     options?: WindowEventRegistryOptions,
   ) {
-    EventBus.windowEventRegistry.set(type, listener)
+    WindowEventBus.windowEventRegistry.set(type, listener)
     if (!options || options.autoEnable) {
       window.addEventListener(type, listener)
     }
@@ -28,7 +28,7 @@ export class EventBus {
     type: K,
     listener: (this: Window, ev: WindowEventMap[K]) => any,
   ) {
-    EventBus.windowEventRegistry.delete(type)
+    WindowEventBus.windowEventRegistry.delete(type)
     window.removeEventListener(type, listener)
   }
 
@@ -37,7 +37,7 @@ export class EventBus {
    * @param type event-listener type (e.g. `keydown`)
    */
   public static enableWindowEventListener<K extends keyof WindowEventMap>(type: K) {
-    const event = EventBus.windowEventRegistry.get(type)
+    const event = WindowEventBus.windowEventRegistry.get(type)
     window.addEventListener(type, event)
   }
 
@@ -46,7 +46,7 @@ export class EventBus {
    * @param type event-listener type (e.g. `keydown`)
    */
   public static disableWindowEventListener<K extends keyof WindowEventMap>(type: K) {
-    const event = EventBus.windowEventRegistry.get(type)
+    const event = WindowEventBus.windowEventRegistry.get(type)
     window.removeEventListener(type, event)
   }
 }

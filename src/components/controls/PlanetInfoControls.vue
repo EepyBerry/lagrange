@@ -71,7 +71,7 @@ import { LG_PARAMETERS } from '@core/globals'
 import pako from 'pako'
 import { saveAs } from 'file-saver'
 import { ref, type Ref } from 'vue'
-import { EventBus } from '@core/window-event-bus'
+import { WindowEventBus } from '@core/window-event-bus'
 import { useI18n } from 'vue-i18n'
 
 const i18n = useI18n()
@@ -87,10 +87,10 @@ const $emit = defineEmits(['dataLoad'])
 function toggleEditMode() {
   editMode.value = !editMode.value
   if (editMode.value) {
-    EventBus.disableWindowEventListener('keydown')
+    WindowEventBus.disableWindowEventListener('keydown')
     setTimeout(() => planetNameInput.value?.focus())
   } else {
-    EventBus.enableWindowEventListener('keydown')
+    WindowEventBus.enableWindowEventListener('keydown')
   }
 }
 

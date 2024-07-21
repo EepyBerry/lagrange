@@ -16,7 +16,7 @@ import PlanetInfoControls from '@components/controls/PlanetInfoControls.vue'
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js'
-import * as Lagrange from '@core/lagrange.service'
+import * as EditorService from '@/core/planet-editor.service'
 import {
   AXIS_NX,
   AXIS_X,
@@ -36,7 +36,7 @@ import { useHead } from '@unhead/vue'
 import type { SceneElements } from '@core/models/scene-elements.model'
 import type { LensFlareEffect } from '@core/three/lens-flare.effect'
 import { idb, KeyBindingAction } from '@/dexie.config'
-import { EventBus } from '@core/window-event-bus'
+import { WindowEventBus } from '@core/window-event-bus'
 import { useI18n } from 'vue-i18n'
 import CompactPlanetEditorControls from '@/components/controls/CompactPlanetEditorControls.vue'
 import AppNavigation from '@/components/main/AppNavigation.vue'
@@ -71,8 +71,8 @@ let _lensFlare: LensFlareEffect
 
 onMounted(() => init())
 onUnmounted(() => {
-  EventBus.deregisterWindowEventListener('resize', onWindowResize)
-  EventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
+  WindowEventBus.deregisterWindowEventListener('resize', onWindowResize)
+  WindowEventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
 })
 
 function init() {
@@ -91,13 +91,13 @@ function init() {
   }
 
   // Init scene
-  $se = Lagrange.createScene(effectiveWidth, effectiveHeight, pixelRatio)
+  $se = EditorService.createScene(effectiveWidth, effectiveHeight, pixelRatio)
   initLighting()
   initPlanet()
   initRendering(effectiveWidth, effectiveHeight)
   createControls($se.camera, $se.renderer.domElement)
-  EventBus.registerWindowEventListener('resize', onWindowResize)
-  EventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
+  WindowEventBus.registerWindowEventListener('resize', onWindowResize)
+  WindowEventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
   showSpinner.value = false
 }
 
@@ -117,9 +117,9 @@ function initRendering(width: number, height: number) {
 function initPlanet(): void {
   const b = new THREE.BoxGeometry(1, 1, 1)
   $se.scene.add(new THREE.Mesh(b))
-  const planet = Lagrange.createPlanet(GeometryType.SPHERE)
-  const clouds = Lagrange.createClouds(GeometryType.SPHERE)
-  const atmosphere = Lagrange.createAtmosphere(GeometryType.SPHERE, _sunLight.position)
+  const planet = EditorService.createPlanet(GeometryType.SPHERE)
+  const clouds = EditorService.createClouds(GeometryType.SPHERE)
+  const atmosphere = EditorService.createAtmosphere(GeometryType.SPHERE, _sunLight.position)
   const pivot = new THREE.Group()
   pivot.add(planet)
   pivot.add(clouds)
@@ -143,8 +143,8 @@ function initPlanet(): void {
 }
 
 function initLighting(): void {
-  const sun = Lagrange.createSun()
-  const lensFlare = Lagrange.createLensFlare(sun.position, sun.color)
+  const sun = EditorService.createSun()
+  const lensFlare = EditorService.createLensFlare(sun.position, sun.color)
   sun.add(lensFlare.mesh)
   $se.scene.add(sun)
   _sunLight = sun

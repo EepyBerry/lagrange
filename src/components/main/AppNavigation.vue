@@ -10,9 +10,11 @@
         <hr>
         <RouterLink class="lg dark" to="codex">
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
+          {{ $t('main.nav.codex') }}
         </RouterLink>
         <RouterLink class="lg dark" to="planet-editor">
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
+          {{ $t('main.nav.editor') }}
         </RouterLink>
       </nav>
     </aside>
@@ -35,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { EventBus } from '@/core/window-event-bus';
+import { WindowEventBus } from '@/core/window-event-bus';
 import { onMounted, onUnmounted, ref, type Ref } from 'vue';
 import { RouterLink } from 'vue-router';
 
@@ -45,12 +47,12 @@ const isOpen: Ref<boolean> = ref(false)
 
 defineProps<{ compactMode: boolean }>()
 onMounted(async () => {
-  EventBus.registerWindowEventListener('click', handleClick)
-  EventBus.registerWindowEventListener('keydown', handleKey)
+  WindowEventBus.registerWindowEventListener('click', handleClick)
+  WindowEventBus.registerWindowEventListener('keydown', handleKey)
 })
 onUnmounted(() => {
-  EventBus.deregisterWindowEventListener('click', handleClick)
-  EventBus.deregisterWindowEventListener('keydown', handleKey)
+  WindowEventBus.deregisterWindowEventListener('click', handleClick)
+  WindowEventBus.deregisterWindowEventListener('keydown', handleKey)
 })
 
 function handleClick(evt: MouseEvent) {

@@ -17,7 +17,7 @@ import { useHead } from '@unhead/vue';
 import { onMounted, onUnmounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
-import { EventBus } from '@/core/window-event-bus';
+import { WindowEventBus } from '@/core/window-event-bus';
 import { MD_WIDTH_THRESHOLD } from '@/core/globals';
 import PlanetCardElement from '@/components/elements/PlanetCardElement.vue';
 import AppNavigation from '@/components/main/AppNavigation.vue';
@@ -35,10 +35,10 @@ useHead({
 
 onMounted(async () => {
   await loadPlanets()
-  EventBus.registerWindowEventListener('resize', onWindowResize)
+  WindowEventBus.registerWindowEventListener('resize', onWindowResize)
 })
 onUnmounted(() => {
-  EventBus.deregisterWindowEventListener('resize', onWindowResize)
+  WindowEventBus.deregisterWindowEventListener('resize', onWindowResize)
 })
 
 async function loadPlanets() {
