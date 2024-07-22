@@ -41,26 +41,6 @@
     >
       <iconify-icon icon="tabler:reload" width="1.5rem" aria-hidden="true" />
     </button>
-    <template v-if="!compactMode">
-      <hr />
-      <input ref="fileInput" type="file" @change="importPlanetFile" hidden />
-      <button
-        class="lg dark"
-        :aria-label="$t('a11y.topbar_import')"
-        :title="$t('tooltip.topbar_import')"
-        @click="openFileDialog"
-      >
-        <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
-      </button>
-      <button
-        class="lg dark"
-        :aria-label="$t('a11y.topbar_export')"
-        :title="$t('tooltip.topbar_export')"
-        @click="exportPlanetFile"
-      >
-        <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
-      </button>
-    </template>
     
     <AppResetConfirmDialog ref="resetDialog" @confirm="resetPlanet" />
   </div>
@@ -69,8 +49,6 @@
 <script setup lang="ts">
 import AppResetConfirmDialog from '../dialogs/AppResetConfirmDialog.vue'
 import { LG_PARAMETERS } from '@core/globals'
-import pako from 'pako'
-import { saveAs } from 'file-saver'
 import { ref, type Ref } from 'vue'
 import { WindowEventBus } from '@core/window-event-bus'
 import { useI18n } from 'vue-i18n'
@@ -78,7 +56,6 @@ import { useI18n } from 'vue-i18n'
 const i18n = useI18n()
 const editMode: Ref<boolean> = ref(false)
 
-const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const planetNameInput: Ref<HTMLInputElement | null> = ref(null)
 const resetDialog: Ref<{ open: Function } | null> = ref(null)
 
@@ -95,37 +72,6 @@ function toggleEditMode() {
   }
 }
 
-function openFileDialog() {
-  fileInput.value?.click()
-}
-
-function importPlanetFile(event: Event) {
-  const files = (event.target as HTMLInputElement).files
-  if (files?.length !== 1) {
-    console.warn('only one file cane be loaded at a time!')
-    return
-  }
-
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    try {
-      const data = JSON.parse(pako.inflate(e.target?.result as ArrayBuffer, { to: 'string' }))
-      LG_PARAMETERS.loadData(data)
-      $emit('dataLoad')
-    } catch (err) {
-      console.error(err)
-    }
-  }
-  reader.readAsArrayBuffer(files[0])
-}
-
-function exportPlanetFile() {
-  const jsonParams = JSON.stringify(LG_PARAMETERS)
-  const gzipParams = pako.deflate(jsonParams)
-  const planetFilename = LG_PARAMETERS.planetName?.replace(/\s/g, '_') ?? 'Planet'
-  saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
-}
-
 function resetPlanet() {
   LG_PARAMETERS.reset()
   LG_PARAMETERS.planetName = i18n.t('editor.default_planet_name')
@@ -137,7 +83,7 @@ function resetPlanet() {
 #planet-info {
   z-index: 10;
   pointer-events: all;
-  height: 2.875rem;
+  height: 2.75rem;
 
   display: flex;
   justify-content: center;
@@ -158,7 +104,7 @@ function resetPlanet() {
     background: var(--lg-primary);
     border: 1px solid var(--lg-accent);
     border-radius: 4px;
-    height: 2.875rem;
+    height: 2.75rem;
     padding: 0 0.25rem 0 0.75rem;
 
     display: flex;

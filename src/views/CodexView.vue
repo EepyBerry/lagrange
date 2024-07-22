@@ -5,9 +5,30 @@
       <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
       {{ $t('codex.$action_add') }}
     </RouterLink>
+    <hr />
+      <input ref="fileInput" type="file" @change="importPlanetFile" hidden />
+      <button
+        class="lg dark"
+        :aria-label="$t('a11y.topbar_import')"
+        :title="$t('tooltip.topbar_import')"
+        @click="openFileDialog"
+      >
+        <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
+      </button>
+      <button
+        class="lg dark"
+        :aria-label="$t('a11y.topbar_export')"
+        :title="$t('tooltip.topbar_export')"
+        @click="exportPlanets"
+      >
+        <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
+      </button>
   </div>
-  <div id="codex-grid" router-link="/planet-editor">
+  <div v-if="planets.length > 0" id="codex-grid" router-link="/planet-editor">
     <PlanetCardElement v-for="planet of planets" :key="planet.id" :planet="planet" />
+  </div>
+  <div v-else id="codex-grid" class="empty">
+    <span>{{ $t('codex.no_planets') }}</span>
   </div>
 </template>
 
@@ -21,9 +42,14 @@ import { WindowEventBus } from '@/core/window-event-bus';
 import { MD_WIDTH_THRESHOLD } from '@/core/globals';
 import PlanetCardElement from '@/components/elements/PlanetCardElement.vue';
 import AppNavigation from '@/components/main/AppNavigation.vue';
+import pako from 'pako'
+import { saveAs } from 'file-saver'
+import PlanetData from '@/core/models/planet-data.model';
 
 const i18n = useI18n()
+const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const planets: Ref<IDBPlanet[]> = ref([])
+const isLoading: Ref<boolean> = ref(false)
 
 // Responsiveness
 const showCompactNavigation: Ref<boolean> = ref(false)
@@ -54,6 +80,47 @@ function computeResponsiveness() {
   showCompactNavigation.value = window.innerWidth < MD_WIDTH_THRESHOLD
 }
 
+// ------------------------------------------------------------------------------------------------
+
+function openFileDialog() {
+  fileInput.value?.click()
+}
+
+function importPlanetFile(event: Event) {
+  const files = (event.target as HTMLInputElement).files
+  if (files?.length !== 1) {
+    console.warn('only one file cane be loaded at a time!')
+    return
+  }
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(pako.inflate(e.target?.result as ArrayBuffer, { to: 'string' })) as IDBPlanet
+      const newParams = PlanetData.createFrom(data)
+      console.debug(`Loaded planet (ID=${data.id}): [${newParams.planetName}]`)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  reader.readAsArrayBuffer(files[0])
+}
+
+function exportPlanets() {
+  const jsonParams = JSON.stringify(planets)
+  const gzipParams = pako.deflate(jsonParams)
+  const planetFilename = 'Planet'
+  saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
+}
+
+function exportPlanetFile(id: string) {
+  const planet = planets.value.find(p => p.id === id)!
+  const jsonParams = JSON.stringify(planet)
+  const gzipParams = pako.deflate(jsonParams)
+  const planetFilename = 'Planet'
+  saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
+}
+
 </script>
 
 <style scoped lang="scss">
@@ -73,7 +140,7 @@ function computeResponsiveness() {
   }
 
   a.create-planet {
-    height: 2.875rem;
+    height: 2.75rem;
     padding: 0.5rem 1rem;
     background: var(--lg-primary);
     border: 1px solid var(--lg-accent);
@@ -88,13 +155,41 @@ function computeResponsiveness() {
   }
 }
 #codex-grid {
+  flex: 1;
+  padding: 1rem;
+  margin: 1rem;
+  margin-top: 4.75rem;
+  height: calc(100% - 4.75rem);
+
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+
+  &.empty {
+    border: 2px dashed var(--lg-accent);
+    color: var(--lg-contrast-focus);
+    font-style: italic;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    span {
+      padding: 1rem;
+      padding-bottom: 4.75rem;
+    }
+  }
 }
 
 @media screen and (max-width: 1199px) {
   #codex-header {
     margin: 0.5rem;
+  }
+  #codex-grid {
+    padding: 0.5rem;
+    margin: 0.5rem;
+    margin-top: 3.75rem;
   }
 }
 </style>

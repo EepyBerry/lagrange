@@ -562,4 +562,10 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereHue = data._atmosphereHue
     this.markAllForChange()
   }
+
+  public static createFrom(data: any) {
+    const planetData = new PlanetData()
+    planetData.loadData(data)
+    return planetData
+  }
 }
