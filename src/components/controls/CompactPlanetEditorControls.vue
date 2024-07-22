@@ -1,7 +1,7 @@
 <template>
   <div id="controls">
     <!-- Lighting -->
-    <CollapsibleSection icon="mingcute:sun-line" :expand="false">
+    <CollapsibleSection icon="mingcute:sun-line" :expand="false" ariaLabel="Lighting settings">
       <template v-slot:title>{{ $t('editor.controls.lighting.$title') }}</template>
       <template v-slot:content>
         <ParameterTable>
@@ -56,7 +56,7 @@
     </CollapsibleSection>
 
     <!-- Planet & Rendering -->
-    <CollapsibleSection icon="tabler:gizmo" :expand="false">
+    <CollapsibleSection icon="tabler:gizmo" :expand="false" ariaLabel="Planet rendering settings">
       <template v-slot:title>{{ $t('editor.controls.planet_rendering.$title') }}</template>
       <template v-slot:content>
         <ParameterTable>

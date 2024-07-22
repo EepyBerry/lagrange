@@ -206,14 +206,15 @@
 
     "editor_generic_input": "Parameter value",
 
+    "action_nav_toggle": "Toggle navigation menu",
+    "action_nav_codex": "Codex link",
+    "action_nav_editor": "Planet Editor link",
+
     "action_edit_keybind": "Edit key binding",
     "action_edit_ramp": "Edit ramp",
-
     "action_open_colorpanel": "Open color panel",
-
     "action_add_colorstep": "Add color step",
     "action_sort_colorsteps": "Sort color steps",
-
     "action_close_dialog": "Close dialog"
   }
 }

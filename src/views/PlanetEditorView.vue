@@ -88,7 +88,7 @@ function init() {
   
   if (showCompactControls.value) {
     effectiveWidth = window.outerWidth
-    effectiveHeight = window.outerHeight * 0.6
+    effectiveHeight = window.outerHeight * 0.5
   }
 
   // Init scene
@@ -234,7 +234,7 @@ function onWindowResize() {
 
   if (showCompactControls.value) {
     effectiveWidth = window.outerWidth
-    effectiveHeight = window.outerHeight * 0.6
+    effectiveHeight = window.outerHeight * 0.5
   }
 
   $se.camera.aspect = effectiveWidth / effectiveHeight

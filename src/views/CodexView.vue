@@ -2,7 +2,7 @@
   <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
     <AppNavigation :compact-mode="showCompactNavigation" />
     <RouterLink class="lg dark create-planet" to="planet-editor">
-      <iconify-icon icon="mingcute:add-line" width="1.5rem" />
+      <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
       {{ $t('codex.$action_add') }}
     </RouterLink>
   </div>
@@ -73,7 +73,7 @@ function computeResponsiveness() {
   }
 
   a.create-planet {
-    min-height: 2.875rem;
+    height: 2.875rem;
     padding: 0.5rem 1rem;
     background: var(--lg-primary);
     border: 1px solid var(--lg-accent);

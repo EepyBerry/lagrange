@@ -2,7 +2,7 @@
   <div id="controls">
     <aside class="sidebar">
       <!-- Lighting -->
-      <SidebarSection icon="mingcute:sun-line" :expand="false">
+      <SidebarSection icon="mingcute:sun-line" :expand="false" :ariaLabel="$t('editor.controls.lighting.$title')">
         <template v-slot:title>{{ $t('editor.controls.lighting.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
@@ -57,7 +57,7 @@
       </SidebarSection>
 
       <!-- Planet & Rendering -->
-      <SidebarSection icon="tabler:gizmo" :expand="false">
+      <SidebarSection icon="tabler:gizmo" :expand="false" :ariaLabel="$t('editor.controls.planet_rendering.$title')">
         <template v-slot:title>{{ $t('editor.controls.planet_rendering.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
@@ -91,7 +91,7 @@
       </SidebarSection>
 
       <!-- Surface -->
-      <SidebarSection icon="mingcute:planet-line" :expand="false">
+      <SidebarSection icon="mingcute:planet-line" :expand="false" :ariaLabel="$t('editor.controls.surface.$title')">
         <template v-slot:title>{{ $t('editor.controls.surface.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
@@ -140,7 +140,7 @@
       </SidebarSection>
 
       <!-- Biomes -->
-      <SidebarSection icon="mingcute:mountain-2-line" :expand="false">
+      <SidebarSection icon="mingcute:mountain-2-line" :expand="false" :ariaLabel="$t('editor.controls.biomes.$title')">
         <template v-slot:title>{{ $t('editor.controls.biomes.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
@@ -167,7 +167,7 @@
       </SidebarSection>
 
       <!-- Clouds -->
-      <SidebarSection icon="mingcute:clouds-line" :expand="false">
+      <SidebarSection icon="mingcute:clouds-line" :expand="false" :ariaLabel="$t('editor.controls.clouds.$title')">
         <template v-slot:title>{{ $t('editor.controls.clouds.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>
@@ -213,7 +213,7 @@
       </SidebarSection>
 
       <!-- Atmosphere -->
-      <SidebarSection icon="material-symbols:line-curve-rounded" :expand="false">
+      <SidebarSection icon="material-symbols:line-curve-rounded" :expand="false" :ariaLabel="$t('editor.controls.atmosphere.$title')">
         <template v-slot:title>{{ $t('editor.controls.atmosphere.$title') }}</template>
         <template v-slot:content>
           <ParameterTable>

@@ -1,17 +1,19 @@
 <template>
   <template v-if="compactMode">
-    <button ref="buttonOpen" class="lg nav">
-      <iconify-icon v-if="isOpen" icon="material-symbols:menu-open-rounded" width="1.75rem" />
-      <iconify-icon v-else icon="material-symbols:menu-rounded" width="1.75rem" />
+    <button ref="buttonOpen" class="lg nav" :aria-label="$t('a11y.action_nav_toggle')">
+      <iconify-icon v-if="isOpen" icon="material-symbols:menu-open-rounded" width="1.75rem" aria-hidden="true" />
+      <iconify-icon v-else icon="material-symbols:menu-rounded" width="1.75rem" aria-hidden="true" />
     </button>
 
     <aside id="nav-compact" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
       <nav>
-        <RouterLink class="lg nav" to="codex">
+        <hr>
+        <RouterLink class="lg nav" to="codex" :aria-label="$t('a11y.action_nav_codex')">
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
         </RouterLink>
-        <RouterLink class="lg nav" to="planet-editor">
+        <hr>
+        <RouterLink class="lg nav" to="planet-editor" :aria-label="$t('a11y.action_nav_editor')">
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
         </RouterLink>
@@ -25,6 +27,7 @@
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
         </RouterLink>
+        <hr>
         <RouterLink class="lg nav" to="planet-editor">
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
@@ -85,13 +88,6 @@ function handleKey(evt: KeyboardEvent) {
     display: initial;
   }
 }
-nav hr { height: 2rem; align-self: center }
-
-button {
-  iconify-icon {
-    pointer-events: none;
-  }
-}
 
 @media screen and (max-width: 1199px) {
   #nav-compact {
@@ -108,9 +104,7 @@ button {
       flex-direction: column;
 
       hr {
-        width: 2rem;
-        height: unset;
-        align-self: center
+        display: none;
       }
     }
   }

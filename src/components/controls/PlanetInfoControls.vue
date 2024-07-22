@@ -10,6 +10,7 @@
         @keyup.enter="toggleEditMode"
       />
       <p v-else @click="toggleEditMode">{{ LG_PARAMETERS.planetName }}</p>
+      
       <button
         class="lg icon-button"
         :aria-label="$t(editMode ? 'a11y.topbar_rename_confirm' : 'a11y.topbar_rename')"
@@ -166,6 +167,8 @@ function resetPlanet() {
 
     input {
       width: 24ch;
+      height: 2rem;
+      font-size: 0.875rem;
       font-family: Poppins, Inter;
     }
     p {
@@ -185,7 +188,7 @@ function resetPlanet() {
     border-top: none;
     border-right: none;
 
-    height: 2.875rem;
+    height: 2.5rem;
     flex: 1;
 
     .name-wrapper {

@@ -94,4 +94,29 @@ input.lg[type='range'] {
     border: 1px solid var(--lg-text);
   }
 }
+
+@media screen and (max-width: 1023px) {
+  input.lg[type='number'], input.lg[type='range'] {
+    height: 2rem;
+    font-size: 1rem;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 6px;
+      height: 2rem;
+      background: var(--lg-contrast-focus);
+      cursor: pointer;
+    }
+
+    &::-moz-range-thumb {
+      background: var(--lg-contrast-focus);
+      border: none;
+      border-radius: 2px;
+      width: 6px;
+      height: 2rem;
+      cursor: pointer;
+    }
+  }
+}
 </style>

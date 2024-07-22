@@ -307,4 +307,10 @@ input.lg {
 input.lg:not([type='checkbox'], [type='radio']) {
   width: 3rem;
 }
+@media screen and (max-width: 1023px) {
+  .panel-table {
+    border-spacing: 0.5rem;
+    font-size: 1rem;
+  }
+}
 </style>

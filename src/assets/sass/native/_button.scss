@@ -15,6 +15,10 @@ a.lg {
   align-items: center;
   justify-content: center;
   gap: 0.25rem;
+
+  iconify-icon {
+    pointer-events: none;
+  }
 }
 button.lg:hover {
   cursor: pointer;
@@ -60,7 +64,7 @@ button.lg.nav {
 button.lg.nav:hover {
   background: var(--lg-contrast-medium);
 }
-button.lg.nav:focus {
+button.lg.nav:active {
   background: var(--lg-contrast);
 }
 
@@ -70,7 +74,6 @@ a.lg.dark {
   position: relative;
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
-  padding: 0.5rem;
   min-width: 2.875rem;
   min-height: 2.875rem;
   font-size: 1rem;

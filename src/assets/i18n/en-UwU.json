@@ -207,14 +207,15 @@
 
     "editor_generic_input": "Pawametew vawue",
 
+    "action_nav_toggle": "Toggwe nyavigation menyu",
+    "action_nav_codex": "Codex wink",
+    "action_nav_editor": "Pwanyet Editow wink",
+
     "action_edit_keybind": "Edit key binding",
     "action_edit_ramp": "Edit wamp",
-
     "action_open_colorpanel": "Open cowow panyew",
-
     "action_add_colorstep": "Add cowow step",
     "action_sort_colorsteps": "Sort cowow steps",
-
     "action_close_dialog": "Cwose diawog"
   }
 }
