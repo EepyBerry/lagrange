@@ -1,3 +1,4 @@
+// standard button
 button.lg,
 a.lg {
   background: var(--lg-button);
@@ -38,6 +39,32 @@ button.lg.menu-expanded:active {
   background: var(--lg-button-menu-expanded-active);
 }
 
+// nav button
+button.lg.nav {
+  position: relative;
+  background: var(--lg-contrast-light);
+  border: 1px solid var(--lg-contrast);
+  padding: 0.5rem;
+  min-width: 2.875rem;
+  min-height: 2.875rem;
+  font-size: 1rem;
+  overflow: hidden;
+
+  .link-icon {
+    position: absolute;
+    top: -0.75rem;
+    right: -0.75rem;
+    transform: rotate(-45deg);
+  }
+}
+button.lg.nav:hover {
+  background: var(--lg-contrast-medium);
+}
+button.lg.nav:focus {
+  background: var(--lg-contrast);
+}
+
+// dark button
 button.lg.dark,
 a.lg.dark {
   position: relative;
@@ -61,6 +88,7 @@ a.lg.dark:hover {
   background: var(--lg-button-active);
 }
 
+// icon button
 button.lg.icon-button {
   background: transparent;
 }

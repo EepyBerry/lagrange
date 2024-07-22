@@ -131,7 +131,7 @@
             {{ $t('editor.controls.surface.noise_fbm_lacunarity') }}
           </ParameterSlider>
           <ParameterDivider />
-          <ParameterColorRamp mode="color" v-model="LG_PARAMETERS.planetSurfaceColorRamp" :key="LG_PARAMETERS.id">
+          <ParameterColorRamp mode="color" v-model="LG_PARAMETERS.planetSurfaceColorRamp" :key="LG_PARAMETERS.planetName">
             {{ $t('editor.controls.surface.noise_colorramp') }}
           </ParameterColorRamp>
         </ParameterTable>
@@ -197,7 +197,7 @@
             <ParameterColor v-model="LG_PARAMETERS.cloudsColor">
               {{ $t('editor.controls.clouds.rgba_color') }}
             </ParameterColor>
-            <ParameterColorRamp mode="opacity" v-model="LG_PARAMETERS.cloudsColorRamp" :key="LG_PARAMETERS.id">{{
+            <ParameterColorRamp mode="opacity" v-model="LG_PARAMETERS.cloudsColorRamp" :key="LG_PARAMETERS.planetName">{{
               $t('editor.controls.clouds.rgba_opacityramp')
             }}</ParameterColorRamp>
           </template>
@@ -251,7 +251,6 @@
 import { LG_PARAMETERS } from '@core/globals'
 import ParameterColorRamp from '@components/parameters/ParameterColorRamp.vue'
 import ParameterDivider from '@components/parameters/ParameterDivider.vue'
-import type { ColorRamp } from '@core/models/color-ramp.model'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'
 import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
@@ -262,7 +261,7 @@ import InlineFooter from '../main/InlineFooter.vue'
 #controls {
   z-index: 5;
   position: absolute;
-  inset: 60% 0 0;
+  inset: 50% 0 0;
   padding: 0.75rem 0.5rem 0.5rem;
   display: flex;
   flex-direction: column;

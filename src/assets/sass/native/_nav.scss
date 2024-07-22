@@ -1,0 +1,43 @@
+nav {
+  min-height: 2.875rem;
+  border: 1px solid var(--lg-contrast);
+  border-radius: 4px;
+
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+nav > a.lg.nav {
+  min-height: 2.875rem;
+  background: var(--lg-contrast-light);
+  border: none;
+  width: 100%;
+  display: flex;
+  padding: 0 1rem;
+  font-size: 1rem;
+  text-decoration: none;
+  border-radius: 0;
+
+  & > iconify-icon {
+    pointer-events: none;
+  }
+}
+nav > a.lg.nav:hover {
+  background: var(--lg-contrast-medium);
+}
+nav > a.lg.nav.router-link-active {
+  background: var(--lg-contrast);
+  pointer-events: none;
+}
+nav > hr {
+  border-color: var(--lg-link);
+}
+
+// links
+a:not(.dark, .nav) {
+  color: var(--lg-link);
+}
+a:not(.dark, .nav):visited {
+  color: var(--lg-link-visited);
+}

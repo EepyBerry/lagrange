@@ -163,6 +163,7 @@ function initLighting(): void {
  * Removes every object from the scene, then removes the scene itself
  */
 function disposeScene() {
+
   console.debug('[unmount] Clearing scene...')
   _sunLight.dispose()
   _ambLight.dispose()

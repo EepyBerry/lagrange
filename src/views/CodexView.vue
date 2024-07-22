@@ -34,6 +34,7 @@ useHead({
 })
 
 onMounted(async () => {
+  computeResponsiveness()
   await loadPlanets()
   WindowEventBus.registerWindowEventListener('resize', onWindowResize)
 })
@@ -46,6 +47,10 @@ async function loadPlanets() {
 }
 
 function onWindowResize() {
+  computeResponsiveness()
+}
+
+function computeResponsiveness() {
   showCompactNavigation.value = window.innerWidth < MD_WIDTH_THRESHOLD
 }
 

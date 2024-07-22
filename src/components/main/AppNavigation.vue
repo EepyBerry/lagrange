@@ -1,18 +1,17 @@
 <template>
   <template v-if="compactMode">
-    <button ref="buttonOpen" class="lg dark">
+    <button ref="buttonOpen" class="lg nav">
       <iconify-icon v-if="isOpen" icon="material-symbols:menu-open-rounded" width="1.75rem" />
       <iconify-icon v-else icon="material-symbols:menu-rounded" width="1.75rem" />
     </button>
 
     <aside id="nav-compact" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
       <nav>
-        <hr>
-        <RouterLink class="lg dark" to="codex">
+        <RouterLink class="lg nav" to="codex">
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
         </RouterLink>
-        <RouterLink class="lg dark" to="planet-editor">
+        <RouterLink class="lg nav" to="planet-editor">
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
         </RouterLink>
@@ -22,12 +21,11 @@
   <template v-else>
     <aside id="nav-full" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
       <nav>
-        <RouterLink class="lg dark" to="codex">
+        <RouterLink class="lg nav" to="codex">
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
         </RouterLink>
-        <hr>
-        <RouterLink class="lg dark" to="planet-editor">
+        <RouterLink class="lg nav" to="planet-editor">
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
         </RouterLink>
@@ -87,24 +85,8 @@ function handleKey(evt: KeyboardEvent) {
     display: initial;
   }
 }
-nav {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  
-  hr { height: 2rem; align-self: center }
-  a.lg.dark {
-    width: 100%;
-    display: flex;
-    padding: 0 0.75rem;
-    font-size: 1rem;
-    text-decoration: none;
+nav hr { height: 2rem; align-self: center }
 
-    & > iconify-icon {
-      pointer-events: none;
-    }
-  }
-}
 button {
   iconify-icon {
     pointer-events: none;
@@ -114,9 +96,6 @@ button {
 @media screen and (max-width: 1199px) {
   #nav-compact {
     left: 3.375rem;
-    nav {
-      gap: 0.5rem;
-    }
   }
 }
 @media screen and (max-width: 767px) {
@@ -127,7 +106,6 @@ button {
     nav {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
 
       hr {
         width: 2rem;

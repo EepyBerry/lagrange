@@ -27,14 +27,6 @@ sup {
   font-size: 0.75rem;
 }
 
-// links
-a:not(.dark) {
-  color: var(--lg-link);
-}
-a:not(.dark):visited {
-  color: var(--lg-link-visited);
-}
-
 // lists
 ul {
   list-style-type: none;
