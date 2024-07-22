@@ -71,6 +71,7 @@ let _lensFlare: LensFlareEffect
 
 onMounted(() => init())
 onUnmounted(() => {
+  disposeScene()
   WindowEventBus.deregisterWindowEventListener('resize', onWindowResize)
   WindowEventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
 })
@@ -156,6 +157,40 @@ function initLighting(): void {
   pos.applyAxisAngle(AXIS_X, degToRad(-15))
   _sunLight.position.set(pos.x, pos.y, pos.z)
   _lensFlare.updatePosition(_sunLight.position)
+}
+
+/**
+ * Removes every object from the scene, then removes the scene itself
+ */
+function disposeScene() {
+  console.debug('[unmount] Clearing scene...')
+  _sunLight.dispose()
+  _ambLight.dispose()
+  $se.scene.remove(_sunLight)
+  $se.scene.remove(_ambLight);
+
+  _lensFlare.material.dispose()
+  _lensFlare.mesh.geometry.dispose()
+  $se.scene.remove(_lensFlare.mesh);
+
+  (_planet.material as THREE.Material).dispose()
+  _planet.geometry.dispose()
+  $se.scene.remove(_planet);
+
+  (_clouds.material as THREE.Material).dispose()
+  _clouds.geometry.dispose()
+  $se.scene.remove(_clouds);
+
+  (_atmosphere.material as THREE.Material).dispose()
+  _atmosphere.geometry.dispose()
+  $se.scene.remove(_atmosphere);
+
+  _planetPivot.clear()
+  $se.scene.remove(_planetPivot)
+
+  $se.scene.remove($se.camera)
+  $se.renderer.dispose()
+  console.debug('[unmount] ...done!')
 }
 
 // ------------------------------------------------------------------------------------------------
