@@ -50,6 +50,8 @@ import {
   LG_PLANET_DATA
 } from '@/core/planet-editor.service'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
+import type { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { saveAs } from 'file-saver'
 
 const route = useRoute()
 const i18n = useI18n()
@@ -74,6 +76,7 @@ const clock = new THREE.Clock()
 
 // Main THREE objects
 let $se: SceneElements
+let _controls: OrbitControls
 let _planetPivot: THREE.Group
 let _planet: THREE.Mesh
 let _clouds: THREE.Mesh
@@ -130,7 +133,7 @@ async function initCanvas() {
   initLighting()
   initPlanet()
   initRendering(effectiveWidth, effectiveHeight)
-  createControlsComponent($se.camera, $se.renderer.domElement)
+  _controls = createControlsComponent($se.camera, $se.renderer.domElement)
   WindowEventBus.registerWindowEventListener('resize', onWindowResize)
   WindowEventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
   showSpinner.value = false
@@ -286,6 +289,8 @@ async function resetPlanet() {
 
 async function savePlanet() {
   showSpinner.value = true
+
+  // ----------- Save planet data ------------ //
   const localData = toRaw(JSON.stringify(LG_PLANET_DATA.value))
   const idbData: IDBPlanet = {
     id: $planetEntityId.value.length > 0 ? $planetEntityId.value : generateUUID(),
@@ -293,8 +298,35 @@ async function savePlanet() {
   }
   const plid = await idb.planets.put(idbData, idbData.id)
   $planetEntityId.value = plid
-  showSpinner.value = false
-  console.info(`Saved planet [${LG_PLANET_DATA.value.planetName}] with ID: ${plid}`)
+
+  // -------- Generate planet preview -------- //
+  const initialBackground = $se.scene.background!.clone()
+  const initialCamPosition = $se.camera.position.clone()
+
+  const spherical = new THREE.Spherical(LG_PLANET_DATA.value.initCamDistance, Math.PI / 2.0, degToRad(LG_PLANET_DATA.value.initCamAngle))
+  spherical.makeSafe()
+  $se.camera.position.setFromSpherical(spherical)
+  _controls.update()
+  _lensFlare.mesh.visible = false
+
+  $se.scene.background = null
+  document.body.style.background = 'transparent'
+  $se.renderer.render($se.scene, $se.camera)
+
+  const preview = $se.renderer.domElement.toDataURL('image/png')
+  saveAs(preview, 'preview.png')
+
+  setTimeout(() => {
+    $se.camera.position.set(initialCamPosition.x, initialCamPosition.y, initialCamPosition.z)
+    _controls.update()
+
+    $se.scene.background = initialBackground
+    document.body.style.background = 'var(--lg-panel)'
+    _lensFlare.mesh.visible = true
+    showSpinner.value = false
+    console.info(`Saved planet [${LG_PLANET_DATA.value.planetName}] with ID: ${plid}`)
+  }, 1000)
+
 }
 
 function updatePlanet() {

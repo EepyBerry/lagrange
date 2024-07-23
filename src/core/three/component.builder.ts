@@ -12,13 +12,12 @@ import { resolveImports } from './shader-imports.loader'
  * @returns the renderer
  */
 export function createRendererComponent(width: number, height: number, pixelRatio?: number) {
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true })
   if (pixelRatio) {
     renderer.setPixelRatio(pixelRatio)
   }
   renderer.setSize(width, height)
-  renderer.setClearColor(0x0, 0)
-  renderer.setClearAlpha(0)
+  renderer.setClearColor(0x000000, 0)
   renderer.shadowMap.enabled = true
   renderer.shadowMap.autoUpdate = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap

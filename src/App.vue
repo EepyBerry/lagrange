@@ -76,5 +76,6 @@ main {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: transparent;
 }
 </style>
