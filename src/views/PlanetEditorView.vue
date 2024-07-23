@@ -1,7 +1,7 @@
 <template>
   <div id="editor-header" :class="{ compact: !!showCompactNavigation }">
     <AppNavigation :compact-mode="showCompactNavigation" />
-    <PlanetInfoControls :compact-mode="showCompactInfo" />
+    <PlanetInfoControls :compact-mode="showCompactInfo" @data-save="savePlanet" @data-reset="resetPlanet" />
   </div>
   <CompactPlanetEditorControls v-if="showCompactControls" />
   <PlanetEditorControls v-else />
@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import PlanetEditorControls from '@components/controls/PlanetEditorControls.vue'
 import PlanetInfoControls from '@components/controls/PlanetInfoControls.vue'
-import { onMounted, onUnmounted, ref, type Ref } from 'vue'
+import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue'
 import * as THREE from 'three'
 import {
   AXIS_NX,
@@ -23,6 +23,7 @@ import {
   SM_WIDTH_THRESHOLD,
   LG_NAME_AMBLIGHT,
   SUN_INIT_POS,
+  UUID_REGEXP,
 } from '@core/globals'
 import { degToRad, generateUUID } from 'three/src/math/MathUtils.js'
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla'
@@ -58,7 +59,7 @@ useHead({
 })
 
 // Data
-const $planetEntity: IDBPlanet = { id: generateUUID(), data: new PlanetData(i18n.t('editor.default_planet_name')) }
+const $planetEntityId: Ref<string> = ref('')
 
 // Responsiveness
 const centerInfoControls: Ref<boolean> = ref(true)
@@ -92,13 +93,15 @@ onUnmounted(() => {
 })
 
 async function initData() {
-  if (route.params.id) {
+  if (UUID_REGEXP.test(route.params.id as string)) {
     const idbPlanetData = await idb.planets.filter(p => p.id === route.params.id).first()
     if (!idbPlanetData) {
-      return;
+      console.warn(`Cannot find planet with ID: ${route.params.id}`)
+      return
     }
-    $planetEntity.id = idbPlanetData.id
+    $planetEntityId.value = idbPlanetData.id
     LG_PLANET_DATA.value.loadData(idbPlanetData.data)
+    console.info(`Loaded planet [${LG_PLANET_DATA.value.planetName}] with ID: ${$planetEntityId.value}`)
   }
 }
 
@@ -166,9 +169,6 @@ function initPlanet(): void {
   _planetPivot.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
   _planet.setRotationFromAxisAngle(_planet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
   _clouds.setRotationFromAxisAngle(_clouds.up, degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation))
-
-  // Set initial name
-  LG_PLANET_DATA.value.planetName = i18n.t('editor.default_planet_name')
 }
 
 function initRendering(width: number, height: number) {
@@ -274,6 +274,23 @@ function computeResponsiveness() {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+async function resetPlanet() {
+  LG_PLANET_DATA.value.reset()
+}
+
+async function savePlanet() {
+  showSpinner.value = true
+  const localData = toRaw(JSON.stringify(LG_PLANET_DATA.value))
+  const idbData: IDBPlanet = {
+    id: $planetEntityId.value.length > 0 ? $planetEntityId.value : generateUUID(),
+    data: JSON.parse(localData)
+  }
+  const plid = await idb.planets.put(idbData, idbData.id)
+  $planetEntityId.value = plid
+  showSpinner.value = false
+  console.info(`Saved planet [${LG_PLANET_DATA.value.planetName}] with ID: ${plid}`)
+}
 
 function updatePlanet() {
   if (LG_PLANET_DATA.value.changedProps.length === 0) {

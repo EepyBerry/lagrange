@@ -41,8 +41,16 @@
     >
       <iconify-icon icon="tabler:reload" width="1.5rem" aria-hidden="true" />
     </button>
+    <button
+      class="lg dark"
+      :aria-label="$t('a11y.topbar_save')"
+      :title="$t('tooltip.topbar_save')"
+      @click="emitSaveEvent"
+    >
+      <iconify-icon icon="mingcute:save-2-line" width="1.5rem" aria-hidden="true" />
+    </button>
     
-    <AppResetConfirmDialog ref="resetDialog" @confirm="resetPlanet" />
+    <AppResetConfirmDialog ref="resetDialog" @confirm="emitResetEvent" />
   </div>
 </template>
 
@@ -51,16 +59,14 @@ import AppResetConfirmDialog from '../dialogs/AppResetConfirmDialog.vue'
 import { LG_PLANET_DATA } from '@core/planet-editor.service'
 import { ref, type Ref } from 'vue'
 import { WindowEventBus } from '@core/window-event-bus'
-import { useI18n } from 'vue-i18n'
 
-const i18n = useI18n()
 const editMode: Ref<boolean> = ref(false)
 
 const planetNameInput: Ref<HTMLInputElement | null> = ref(null)
 const resetDialog: Ref<{ open: Function } | null> = ref(null)
 
 defineProps<{ compactMode: boolean }>()
-const $emit = defineEmits(['dataLoad'])
+const $emit = defineEmits(['dataReset', 'dataSave'])
 
 function toggleEditMode() {
   editMode.value = !editMode.value
@@ -72,10 +78,12 @@ function toggleEditMode() {
   }
 }
 
-function resetPlanet() {
-  LG_PLANET_DATA.value.reset()
-  LG_PLANET_DATA.value.planetName = i18n.t('editor.default_planet_name')
-  $emit('dataLoad')
+function emitResetEvent() {
+  $emit('dataReset')
+}
+
+function emitSaveEvent() {
+  $emit('dataSave')
 }
 </script>
 

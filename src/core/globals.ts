@@ -28,3 +28,4 @@ export const AXIS_NZ = new Vector3(0, 0, -1)
 
 // Miscellaneous
 export const SUN_INIT_POS = new Vector3(0, 0, 4e3)
+export const UUID_REGEXP = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g

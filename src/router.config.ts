@@ -5,7 +5,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/planet-editor',
+      redirect: '/codex',
     },
     {
       path: '/codex',
@@ -14,7 +14,7 @@ const router = createRouter({
       meta: { title: 'Codex' },
     },
     {
-      path: '/planet-editor',
+      path: '/planet-editor/:id',
       name: 'planet-editor',
       component: () => import('./views/PlanetEditorView.vue'),
       meta: { title: 'Planet Editor' },

@@ -2,7 +2,7 @@
   <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
     <AppNavigation :compact-mode="showCompactNavigation" />
     <div id="codex-header-controls">
-      <RouterLink class="lg dark create-planet" to="planet-editor">
+      <RouterLink class="lg dark create-planet" to="/planet-editor/new">
         <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
         {{ $t('codex.$action_add') }}
       </RouterLink>
@@ -27,7 +27,7 @@
     </div>
       
   </div>
-  <div v-if="planets.length > 0" id="codex-grid" router-link="/planet-editor">
+  <div v-if="planets.length > 0" id="codex-grid" router-link="/planet-editor/new">
     <PlanetCardElement v-for="planet of planets" :key="planet.id" :planet="planet" />
   </div>
   <div v-else id="codex-grid" class="empty">

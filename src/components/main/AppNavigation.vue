@@ -13,7 +13,7 @@
           {{ $t('main.nav.codex') }}
         </RouterLink>
         <hr>
-        <RouterLink class="lg nav" to="/planet-editor" :aria-label="$t('a11y.action_nav_editor')">
+        <RouterLink class="lg nav" to="/planet-editor/new" :aria-label="$t('a11y.action_nav_editor')">
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
         </RouterLink>
@@ -28,7 +28,7 @@
           {{ $t('main.nav.codex') }}
         </RouterLink>
         <hr>
-        <RouterLink class="lg nav" to="/planet-editor">
+        <RouterLink class="lg nav" to="/planet-editor/new">
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
         </RouterLink>
