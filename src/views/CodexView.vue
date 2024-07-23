@@ -172,7 +172,7 @@ function exportPlanetFile(id: string) {
 #codex-grid {
   flex: 1;
   padding: 1rem;
-  margin: 4.75rem 1rem 0;
+  margin: 4.75rem 1rem 1rem;
   height: calc(100% - 4.75rem);
 
   display: grid;
@@ -214,11 +214,15 @@ function exportPlanetFile(id: string) {
     }
   }
   #codex-grid {
-    padding: 0.5rem 0.5rem 0;
-    margin: 3.75rem 0.5rem 0;
+    padding: 0.5rem;
+    margin: 3.75rem 0.5rem 0.5rem;
   }
 }
 @media screen and (max-width: 767px) {
+  #codex-grid {
+    padding: 0.5rem;
+    margin: 3.75rem 0.5rem 0;
+  }
   #codex-footer {
     display: inline-flex;
     padding: 0 0.5rem 0.5rem;

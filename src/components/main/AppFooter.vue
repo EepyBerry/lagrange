@@ -45,7 +45,7 @@ const settingsDialog: Ref<{ open: Function } | null> = ref(null)
 
 <style lang="scss">
 footer {
-  position: absolute;
+  position: fixed;
   inset: auto 0 0 auto;
   padding: 1rem;
   display: flex;
