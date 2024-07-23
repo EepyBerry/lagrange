@@ -13,10 +13,12 @@ nav > a.lg.nav {
   border: 1px solid var(--lg-contrast);
   border-radius: 4px;
   width: 100%;
-  display: flex;
   padding: 0 0.875rem;
   font-size: 1rem;
   text-decoration: none;
+
+  display: flex;
+  align-items: center;
 
   & > iconify-icon {
     pointer-events: none;

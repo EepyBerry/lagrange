@@ -1,11 +1,12 @@
 <template>
   <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
     <AppNavigation :compact-mode="showCompactNavigation" />
-    <RouterLink class="lg dark create-planet" to="planet-editor">
-      <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
-      {{ $t('codex.$action_add') }}
-    </RouterLink>
-    <hr />
+    <div id="codex-header-controls">
+      <RouterLink class="lg dark create-planet" to="planet-editor">
+        <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
+        {{ $t('codex.$action_add') }}
+      </RouterLink>
+      <hr />
       <input ref="fileInput" type="file" @change="importPlanetFile" hidden />
       <button
         class="lg dark"
@@ -23,16 +24,25 @@
       >
         <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
       </button>
+    </div>
+      
   </div>
   <div v-if="planets.length > 0" id="codex-grid" router-link="/planet-editor">
     <PlanetCardElement v-for="planet of planets" :key="planet.id" :planet="planet" />
   </div>
   <div v-else id="codex-grid" class="empty">
+    <iconify-icon icon="ph:planet-thin" width="16rem" />
     <span>{{ $t('codex.no_planets') }}</span>
+  </div>
+  <div id="codex-footer">
+    <InlineFooter  />
   </div>
 </template>
 
 <script setup lang="ts">
+import PlanetCardElement from '@/components/elements/PlanetCardElement.vue';
+import AppNavigation from '@/components/main/AppNavigation.vue';
+import InlineFooter from '@/components/main/InlineFooter.vue';
 import { idb, type IDBPlanet } from '@/dexie.config';
 import { useHead } from '@unhead/vue';
 import { onMounted, onUnmounted, ref, type Ref } from 'vue';
@@ -40,8 +50,6 @@ import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
 import { WindowEventBus } from '@/core/window-event-bus';
 import { MD_WIDTH_THRESHOLD } from '@/core/globals';
-import PlanetCardElement from '@/components/elements/PlanetCardElement.vue';
-import AppNavigation from '@/components/main/AppNavigation.vue';
 import pako from 'pako'
 import { saveAs } from 'file-saver'
 import PlanetData from '@/core/models/planet-data.model';
@@ -135,6 +143,13 @@ function exportPlanetFile(id: string) {
   justify-content: center;
   gap: 0.5rem;
 
+  #codex-header-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
   &.compact {
     justify-content: space-between;
   }
@@ -157,16 +172,17 @@ function exportPlanetFile(id: string) {
 #codex-grid {
   flex: 1;
   padding: 1rem;
-  margin: 1rem;
-  margin-top: 4.75rem;
+  margin: 4.75rem 1rem 0;
   height: calc(100% - 4.75rem);
 
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 
   &.empty {
+    background: var(--lg-primary);
     border: 2px dashed var(--lg-accent);
-    color: var(--lg-contrast-focus);
+    border-radius: 4px;
+    color: var(--lg-contrast);
     font-style: italic;
     text-align: center;
 
@@ -176,20 +192,36 @@ function exportPlanetFile(id: string) {
     justify-content: center;
 
     span {
-      padding: 1rem;
+      padding: 0 1rem;
       padding-bottom: 4.75rem;
     }
   }
+}
+#codex-footer {
+  padding: 0 1rem 1rem;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
 }
 
 @media screen and (max-width: 1199px) {
   #codex-header {
     margin: 0.5rem;
+    
+    #codex-header-controls {
+      justify-content: flex-end;
+    }
   }
   #codex-grid {
-    padding: 0.5rem;
-    margin: 0.5rem;
-    margin-top: 3.75rem;
+    padding: 0.5rem 0.5rem 0;
+    margin: 3.75rem 0.5rem 0;
+  }
+}
+@media screen and (max-width: 767px) {
+  #codex-footer {
+    display: inline-flex;
+    padding: 0 0.5rem 0.5rem;
   }
 }
 </style>
