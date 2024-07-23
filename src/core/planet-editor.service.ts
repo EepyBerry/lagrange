@@ -9,7 +9,6 @@ import { degToRad } from 'three/src/math/MathUtils.js'
 import {
   LG_NAME_CLOUDS,
   LG_NAME_PLANET,
-  LG_HEIGHT_DIVIDER,
   LG_NAME_AMBLIGHT,
   LG_NAME_ATMOSPHERE,
   LG_NAME_SUN,
@@ -17,15 +16,20 @@ import {
 import { GeometryType } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
 import {
-  createAmbientight,
-  createGeometry,
-  createPerspectiveCamera,
-  createRenderer,
-  createShaderMaterial,
+  createAmbientightComponent,
+  createGeometryComponent,
+  createPerspectiveCameraComponent,
+  createRendererComponent,
+  createShaderMaterialComponent,
 } from '@core/three/component.builder'
 import { SceneElements } from './models/scene-elements.model'
 import { LensFlareEffect } from './three/lens-flare.effect'
-import type PlanetData from './models/planet-data.model'
+import PlanetData from './models/planet-data.model'
+import { ref } from 'vue'
+
+// Editor constants
+export const LG_PLANET_DATA = ref(new PlanetData())
+export const LG_HEIGHT_DIVIDER = 200.0
 
 // ----------------------------------------------------------------------------------------------------------------------
 // SCENE FUNCTIONS
@@ -43,15 +47,15 @@ export function createScene(data: PlanetData, width: number, height: number, pix
   ])
 
   // setup scene (renderer, cam, lighting)
-  const renderer = createRenderer(width, height, pixelRatio)
-  const camera = createPerspectiveCamera(
+  const renderer = createRendererComponent(width, height, pixelRatio)
+  const camera = createPerspectiveCameraComponent(
     50,
     width / height,
     0.1,
     1e6,
     new THREE.Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle)),
   )
-  const ambientLight = createAmbientight(data.ambLightColor, data.ambLightIntensity)
+  const ambientLight = createAmbientightComponent(data.ambLightColor, data.ambLightIntensity)
   ambientLight.name = LG_NAME_AMBLIGHT
   scene.add(ambientLight)
 
@@ -77,10 +81,10 @@ export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THR
 }
 
 export function createPlanet(data: PlanetData): THREE.Mesh {
-  const geometry = createGeometry(GeometryType.SPHERE)
+  const geometry = createGeometryComponent(GeometryType.SPHERE)
   geometry.computeTangents()
 
-  const material = createShaderMaterial(
+  const material = createShaderMaterialComponent(
     planetVertShader,
     planetFragShader,
     {
@@ -115,8 +119,8 @@ export function createPlanet(data: PlanetData): THREE.Mesh {
 
 export function createClouds(data: PlanetData): THREE.Mesh {
   const cloudHeight = data.cloudsHeight / LG_HEIGHT_DIVIDER
-  const geometry = createGeometry(GeometryType.SPHERE, cloudHeight)
-  const material = createShaderMaterial(
+  const geometry = createGeometryComponent(GeometryType.SPHERE, cloudHeight)
+  const material = createShaderMaterialComponent(
     cloudsVertShader,
     cloudsFragShader,
     {
@@ -144,8 +148,8 @@ export function createClouds(data: PlanetData): THREE.Mesh {
 export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE.Mesh {
   const atmosHeight = data.atmosphereHeight / LG_HEIGHT_DIVIDER
   const atmosDensity = data.atmosphereDensityScale / LG_HEIGHT_DIVIDER
-  const geometry = createGeometry(GeometryType.SPHERE, atmosHeight)
-  const material = createShaderMaterial(
+  const geometry = createGeometryComponent(GeometryType.SPHERE, atmosHeight)
+  const material = createShaderMaterialComponent(
     atmosphereVertShader,
     atmosphereFragShader,
     {

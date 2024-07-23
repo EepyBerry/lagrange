@@ -13,24 +13,20 @@
 <script setup lang="ts">
 import PlanetEditorControls from '@components/controls/PlanetEditorControls.vue'
 import PlanetInfoControls from '@components/controls/PlanetInfoControls.vue'
-import { onMounted, onUnmounted, reactive, ref, type Ref, type UnwrapNestedRefs } from 'vue'
+import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import * as THREE from 'three'
-import Stats from 'three/addons/libs/stats.module.js'
-import * as EditorService from '@/core/planet-editor.service'
 import {
   AXIS_NX,
   AXIS_X,
   MD_WIDTH_THRESHOLD,
   XS_WIDTH_THRESHOLD,
   SM_WIDTH_THRESHOLD,
-  LG_HEIGHT_DIVIDER,
   LG_NAME_AMBLIGHT,
-  LG_PARAMETERS,
   SUN_INIT_POS,
 } from '@core/globals'
 import { degToRad, generateUUID } from 'three/src/math/MathUtils.js'
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla'
-import { createControls } from '@core/three/component.builder'
+import { createControlsComponent } from '@core/three/component.builder'
 import { useHead } from '@unhead/vue'
 import type { SceneElements } from '@core/models/scene-elements.model'
 import type { LensFlareEffect } from '@core/three/lens-flare.effect'
@@ -42,6 +38,17 @@ import AppNavigation from '@/components/main/AppNavigation.vue'
 import { setShaderMaterialUniform, setShaderMaterialUniforms } from '@/utils/three-utils'
 import { useRoute } from 'vue-router'
 import PlanetData from '@/core/models/planet-data.model'
+import { 
+  createAtmosphere,
+  createClouds,
+  createLensFlare,
+  createPlanet,
+  createScene,
+  createSun,
+  LG_HEIGHT_DIVIDER,
+  LG_PLANET_DATA
+} from '@/core/planet-editor.service'
+import Stats from 'three/examples/jsm/libs/stats.module.js'
 
 const route = useRoute()
 const i18n = useI18n()
@@ -52,7 +59,6 @@ useHead({
 
 // Data
 const $planetEntity: IDBPlanet = { id: generateUUID(), data: new PlanetData(i18n.t('editor.default_planet_name')) }
-const $planetData: UnwrapNestedRefs<PlanetData> = reactive($planetEntity.data)
 
 // Responsiveness
 const centerInfoControls: Ref<boolean> = ref(true)
@@ -92,7 +98,7 @@ async function initData() {
       return;
     }
     $planetEntity.id = idbPlanetData.id
-    $planetData.loadData(idbPlanetData.data)
+    LG_PLANET_DATA.value.loadData(idbPlanetData.data)
   }
 }
 
@@ -112,11 +118,11 @@ async function initCanvas() {
   }
 
   // Init scene & objects
-  $se = EditorService.createScene($planetData as PlanetData, effectiveWidth, effectiveHeight, pixelRatio)
+  $se = createScene(LG_PLANET_DATA.value as PlanetData, effectiveWidth, effectiveHeight, pixelRatio)
   initLighting()
   initPlanet()
   initRendering(effectiveWidth, effectiveHeight)
-  createControls($se.camera, $se.renderer.domElement)
+  createControlsComponent($se.camera, $se.renderer.domElement)
   WindowEventBus.registerWindowEventListener('resize', onWindowResize)
   WindowEventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
   showSpinner.value = false
@@ -125,8 +131,8 @@ async function initCanvas() {
 // ------------------------------------------------------------------------------------------------
 
 function initLighting(): void {
-  const sun = EditorService.createSun($planetData as PlanetData)
-  const lensFlare = EditorService.createLensFlare($planetData as PlanetData, sun.position, sun.color)
+  const sun = createSun(LG_PLANET_DATA.value as PlanetData)
+  const lensFlare = createLensFlare(LG_PLANET_DATA.value as PlanetData, sun.position, sun.color)
   sun.add(lensFlare.mesh)
   $se.scene.add(sun)
   _sunLight = sun
@@ -143,9 +149,9 @@ function initLighting(): void {
 function initPlanet(): void {
   const b = new THREE.BoxGeometry(1, 1, 1)
   $se.scene.add(new THREE.Mesh(b))
-  const planet = EditorService.createPlanet($planetData as PlanetData)
-  const clouds = EditorService.createClouds($planetData as PlanetData)
-  const atmosphere = EditorService.createAtmosphere($planetData as PlanetData, _sunLight.position)
+  const planet = createPlanet(LG_PLANET_DATA.value as PlanetData)
+  const clouds = createClouds(LG_PLANET_DATA.value as PlanetData)
+  const atmosphere = createAtmosphere(LG_PLANET_DATA.value as PlanetData, _sunLight.position)
   const pivot = new THREE.Group()
   pivot.add(planet)
   pivot.add(clouds)
@@ -157,12 +163,12 @@ function initPlanet(): void {
   _planetPivot = pivot
 
   // Set initial rotations
-  _planetPivot.setRotationFromAxisAngle(AXIS_NX, degToRad($planetData.planetAxialTilt))
-  _planet.setRotationFromAxisAngle(_planet.up, degToRad($planetData.planetRotation))
-  _clouds.setRotationFromAxisAngle(_clouds.up, degToRad($planetData.planetRotation + $planetData.cloudsRotation))
+  _planetPivot.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+  _planet.setRotationFromAxisAngle(_planet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
+  _clouds.setRotationFromAxisAngle(_clouds.up, degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation))
 
   // Set initial name
-  $planetData.planetName = i18n.t('editor.default_planet_name')
+  LG_PLANET_DATA.value.planetName = i18n.t('editor.default_planet_name')
 }
 
 function initRendering(width: number, height: number) {
@@ -221,16 +227,16 @@ async function handleKeyboardEvent(event: KeyboardEvent) {
 
   switch (kb.action) {
     case KeyBindingAction.ToggleLensFlare:
-      $planetData.lensFlareEnabled = !$planetData.lensFlareEnabled
+      LG_PLANET_DATA.value.lensFlareEnabled = !LG_PLANET_DATA.value.lensFlareEnabled
       break
     case KeyBindingAction.ToggleClouds:
-      $planetData.cloudsEnabled = !$planetData.cloudsEnabled
+      LG_PLANET_DATA.value.cloudsEnabled = !LG_PLANET_DATA.value.cloudsEnabled
       break
     case KeyBindingAction.ToggleAtmosphere:
-      $planetData.atmosphereEnabled = !$planetData.atmosphereEnabled
+      LG_PLANET_DATA.value.atmosphereEnabled = !LG_PLANET_DATA.value.atmosphereEnabled
       break
     case KeyBindingAction.ToggleBiomes:
-      $planetData.biomesEnabled = !$planetData.biomesEnabled
+      LG_PLANET_DATA.value.biomesEnabled = !LG_PLANET_DATA.value.biomesEnabled
       break
   }
 }
@@ -270,47 +276,47 @@ function computeResponsiveness() {
 // ------------------------------------------------------------------------------------------------
 
 function updatePlanet() {
-  if ($planetData.changedProps.length === 0) {
+  if (LG_PLANET_DATA.value.changedProps.length === 0) {
     return
   }
-  for (const key of $planetData.changedProps) {
+  for (const key of LG_PLANET_DATA.value.changedProps) {
     switch (key) {
       // --------------------------------------------------
       // |               Lighting settings                |
       // --------------------------------------------------
       case '_lensFlareEnabled': {
-        _lensFlare.mesh.visible = LG_PARAMETERS.lensFlareEnabled
+        _lensFlare.mesh.visible = LG_PLANET_DATA.value.lensFlareEnabled
         break
       }
       case '_lensFlarePointsIntensity': {
-        setShaderMaterialUniform(_lensFlare.material, 'starPointsIntensity', LG_PARAMETERS.lensFlarePointsIntensity)
+        setShaderMaterialUniform(_lensFlare.material, 'starPointsIntensity', LG_PLANET_DATA.value.lensFlarePointsIntensity)
         break
       }
       case '_lensFlareGlareIntensity': {
-        setShaderMaterialUniform(_lensFlare.material, 'glareIntensity', LG_PARAMETERS.lensFlareGlareIntensity)
+        setShaderMaterialUniform(_lensFlare.material, 'glareIntensity', LG_PLANET_DATA.value.lensFlareGlareIntensity)
         break
       }
       case '_sunLightAngle': {
-        const v = degToRad(isNaN(LG_PARAMETERS.sunLightAngle) ? 0 : LG_PARAMETERS.sunLightAngle)
+        const v = degToRad(isNaN(LG_PLANET_DATA.value.sunLightAngle) ? 0 : LG_PLANET_DATA.value.sunLightAngle)
         const newPos = SUN_INIT_POS.clone().applyAxisAngle(AXIS_X, v)
         _sunLight.position.set(newPos.x, newPos.y, newPos.z)
         break
       }
       case '_sunLightColor': {
-        _sunLight.color = LG_PARAMETERS.sunLightColor
-        setShaderMaterialUniform(_lensFlare.material, 'colorGain', LG_PARAMETERS.sunLightColor)
+        _sunLight.color = LG_PLANET_DATA.value.sunLightColor
+        setShaderMaterialUniform(_lensFlare.material, 'colorGain', LG_PLANET_DATA.value.sunLightColor)
         break
       }
       case '_sunLightIntensity': {
-        _sunLight.intensity = LG_PARAMETERS.sunLightIntensity
+        _sunLight.intensity = LG_PLANET_DATA.value.sunLightIntensity
         break
       }
       case '_ambLightColor': {
-        _ambLight.color = LG_PARAMETERS.ambLightColor
+        _ambLight.color = LG_PLANET_DATA.value.ambLightColor
         break
       }
       case '_ambLightIntensity': {
-        _ambLight.intensity = LG_PARAMETERS.ambLightIntensity
+        _ambLight.intensity = LG_PLANET_DATA.value.ambLightIntensity
         break
       }
 
@@ -318,13 +324,13 @@ function updatePlanet() {
       // |                Planet settings                 |
       // --------------------------------------------------
       case '_planetAxialTilt': {
-        const v = degToRad(isNaN(LG_PARAMETERS.planetAxialTilt) ? 0 : LG_PARAMETERS.planetAxialTilt)
+        const v = degToRad(isNaN(LG_PLANET_DATA.value.planetAxialTilt) ? 0 : LG_PLANET_DATA.value.planetAxialTilt)
         _planetPivot.setRotationFromAxisAngle(AXIS_NX, v)
         break
       }
       case '_planetRotation': {
-        const vRad = degToRad(isNaN(LG_PARAMETERS.planetRotation) ? 0 : LG_PARAMETERS.planetRotation)
-        const cloudsRotationRad = degToRad(isNaN(LG_PARAMETERS.cloudsRotation) ? 0 : LG_PARAMETERS.cloudsRotation)
+        const vRad = degToRad(isNaN(LG_PLANET_DATA.value.planetRotation) ? 0 : LG_PLANET_DATA.value.planetRotation)
+        const cloudsRotationRad = degToRad(isNaN(LG_PLANET_DATA.value.cloudsRotation) ? 0 : LG_PLANET_DATA.value.cloudsRotation)
         _planet.setRotationFromAxisAngle(_planet.up, vRad)
         _clouds.setRotationFromAxisAngle(_clouds.up, vRad + cloudsRotationRad)
         break
@@ -333,7 +339,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_water_roughness',
-          LG_PARAMETERS.planetWaterRoughness,
+          LG_PLANET_DATA.value.planetWaterRoughness,
         )
         break
       }
@@ -341,7 +347,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_water_metalness',
-          LG_PARAMETERS.planetWaterMetalness,
+          LG_PLANET_DATA.value.planetWaterMetalness,
         )
         break
       }
@@ -349,7 +355,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_ground_roughness',
-          LG_PARAMETERS.planetGroundRoughness,
+          LG_PLANET_DATA.value.planetGroundRoughness,
         )
         break
       }
@@ -357,7 +363,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_ground_metalness',
-          LG_PARAMETERS.planetGroundMetalness,
+          LG_PLANET_DATA.value.planetGroundMetalness,
         )
         break
       }
@@ -365,7 +371,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_water_level',
-          LG_PARAMETERS.planetWaterLevel,
+          LG_PLANET_DATA.value.planetWaterLevel,
         )
         break
       }
@@ -377,7 +383,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_bump',
-          LG_PARAMETERS.planetSurfaceShowBumps,
+          LG_PLANET_DATA.value.planetSurfaceShowBumps,
         )
         break
       }
@@ -385,7 +391,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_bump_strength',
-          LG_PARAMETERS.planetSurfaceBumpStrength,
+          LG_PLANET_DATA.value.planetSurfaceBumpStrength,
         )
         break
       }
@@ -393,7 +399,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_frequency',
-          LG_PARAMETERS.planetSurfaceNoise.frequency,
+          LG_PLANET_DATA.value.planetSurfaceNoise.frequency,
         )
         break
       }
@@ -401,7 +407,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_amplitude',
-          LG_PARAMETERS.planetSurfaceNoise.amplitude,
+          LG_PLANET_DATA.value.planetSurfaceNoise.amplitude,
         )
         break
       }
@@ -409,12 +415,12 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_lacunarity',
-          LG_PARAMETERS.planetSurfaceNoise.lacunarity,
+          LG_PLANET_DATA.value.planetSurfaceNoise.lacunarity,
         )
         break
       }
       case '_planetSurfaceColorRamp': {
-        const v = LG_PARAMETERS.planetSurfaceColorRamp
+        const v = LG_PLANET_DATA.value.planetSurfaceColorRamp
         setShaderMaterialUniforms(
           _planet.material as CustomShaderMaterial,
           ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
@@ -427,14 +433,14 @@ function updatePlanet() {
       // |                 Biome settings                 |
       // --------------------------------------------------
       case '_biomesEnabled': {
-        setShaderMaterialUniform(_planet.material as CustomShaderMaterial, 'u_biomes', LG_PARAMETERS.biomesEnabled)
+        setShaderMaterialUniform(_planet.material as CustomShaderMaterial, 'u_biomes', LG_PLANET_DATA.value.biomesEnabled)
         break
       }
       case '_biomePolesEnabled': {
         setShaderMaterialUniform(
           _planet.material as CustomShaderMaterial,
           'u_show_poles',
-          LG_PARAMETERS.biomePolesEnabled,
+          LG_PLANET_DATA.value.biomePolesEnabled,
         )
         break
       }
@@ -443,13 +449,13 @@ function updatePlanet() {
       // |                Clouds settings                 |
       // --------------------------------------------------
       case '_cloudsEnabled': {
-        const v = LG_PARAMETERS.cloudsEnabled
+        const v = LG_PLANET_DATA.value.cloudsEnabled
         _clouds.visible = v
         break
       }
       case '_cloudsRotation': {
-        const planetRotationRad = degToRad(isNaN(LG_PARAMETERS.planetRotation) ? 0 : LG_PARAMETERS.planetRotation)
-        const vRad = degToRad(isNaN(LG_PARAMETERS.cloudsRotation) ? 0 : LG_PARAMETERS.cloudsRotation)
+        const planetRotationRad = degToRad(isNaN(LG_PLANET_DATA.value.planetRotation) ? 0 : LG_PLANET_DATA.value.planetRotation)
+        const vRad = degToRad(isNaN(LG_PLANET_DATA.value.cloudsRotation) ? 0 : LG_PLANET_DATA.value.cloudsRotation)
         _clouds.setRotationFromAxisAngle(_clouds.up, planetRotationRad + vRad)
         break
       }
@@ -457,7 +463,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _clouds.material as CustomShaderMaterial,
           'u_frequency',
-          LG_PARAMETERS.cloudsNoise.frequency,
+          LG_PLANET_DATA.value.cloudsNoise.frequency,
         )
         break
       }
@@ -465,7 +471,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _clouds.material as CustomShaderMaterial,
           'u_amplitude',
-          LG_PARAMETERS.cloudsNoise.amplitude,
+          LG_PLANET_DATA.value.cloudsNoise.amplitude,
         )
         break
       }
@@ -473,16 +479,16 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _clouds.material as CustomShaderMaterial,
           'u_lacunarity',
-          LG_PARAMETERS.cloudsNoise.lacunarity,
+          LG_PLANET_DATA.value.cloudsNoise.lacunarity,
         )
         break
       }
       case '_cloudsColor': {
-        setShaderMaterialUniform(_clouds.material as CustomShaderMaterial, 'u_color', LG_PARAMETERS.cloudsColor)
+        setShaderMaterialUniform(_clouds.material as CustomShaderMaterial, 'u_color', LG_PLANET_DATA.value.cloudsColor)
         break
       }
       case '_cloudsColorRamp': {
-        const v = LG_PARAMETERS.cloudsColorRamp
+        const v = LG_PLANET_DATA.value.cloudsColorRamp
         setShaderMaterialUniforms(
           _clouds.material as CustomShaderMaterial,
           ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
@@ -495,16 +501,16 @@ function updatePlanet() {
       // |               Atmosphere settings              |
       // --------------------------------------------------
       case '_atmosphereEnabled': {
-        const v = LG_PARAMETERS.atmosphereEnabled
+        const v = LG_PLANET_DATA.value.atmosphereEnabled
         _atmosphere.visible = v
         break
       }
       case '_atmosphereHeight': {
-        const atmosHeight = LG_PARAMETERS.atmosphereHeight / LG_HEIGHT_DIVIDER
+        const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / LG_HEIGHT_DIVIDER
         setShaderMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_radius',
-          LG_PARAMETERS.initPlanetRadius + atmosHeight,
+          LG_PLANET_DATA.value.initPlanetRadius + atmosHeight,
         )
         break
       }
@@ -512,25 +518,25 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_density',
-          LG_PARAMETERS.atmosphereDensityScale / LG_HEIGHT_DIVIDER,
+          LG_PLANET_DATA.value.atmosphereDensityScale / LG_HEIGHT_DIVIDER,
         )
         break
       }
       case '_atmosphereHue': {
-        setShaderMaterialUniform(_atmosphere.material as CustomShaderMaterial, 'u_hue', $planetData.atmosphereHue)
+        setShaderMaterialUniform(_atmosphere.material as CustomShaderMaterial, 'u_hue', LG_PLANET_DATA.value.atmosphereHue)
         break
       }
       case '_atmosphereIntensity': {
         setShaderMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_intensity',
-          LG_PARAMETERS.atmosphereIntensity,
+          LG_PLANET_DATA.value.atmosphereIntensity,
         )
         break
       }
     }
   }
-  LG_PARAMETERS.clearChangedProps()
+  LG_PLANET_DATA.value.clearChangedProps()
 }
 </script>
 

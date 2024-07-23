@@ -6,10 +6,10 @@
         ref="planetNameInput"
         class="lg"
         type="text"
-        v-model="LG_PARAMETERS.planetName"
+        v-model="LG_PLANET_DATA.planetName"
         @keyup.enter="toggleEditMode"
       />
-      <p v-else @click="toggleEditMode">{{ LG_PARAMETERS.planetName }}</p>
+      <p v-else @click="toggleEditMode">{{ LG_PLANET_DATA.planetName }}</p>
       
       <button
         class="lg icon-button"
@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import AppResetConfirmDialog from '../dialogs/AppResetConfirmDialog.vue'
-import { LG_PARAMETERS } from '@core/globals'
+import { LG_PLANET_DATA } from '@core/planet-editor.service'
 import { ref, type Ref } from 'vue'
 import { WindowEventBus } from '@core/window-event-bus'
 import { useI18n } from 'vue-i18n'
@@ -73,8 +73,8 @@ function toggleEditMode() {
 }
 
 function resetPlanet() {
-  LG_PARAMETERS.reset()
-  LG_PARAMETERS.planetName = i18n.t('editor.default_planet_name')
+  LG_PLANET_DATA.value.reset()
+  LG_PLANET_DATA.value.planetName = i18n.t('editor.default_planet_name')
   $emit('dataLoad')
 }
 </script>

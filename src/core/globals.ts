@@ -1,6 +1,3 @@
-import { reactive } from 'vue'
-import PlanetData from '@core/models/planet-data.model'
-import type { IDBKeyBinding } from '@/dexie.config'
 import { Vector3 } from 'three'
 
 // Responsiveness width thresholds
@@ -13,15 +10,6 @@ export const LOCALE_MAP: { [k: string]: string } = {
   en: 'en-US',
   fr: 'fr-FR',
 }
-
-
-// Editor variables
-export const LG_PARAMETERS = reactive(new PlanetData())
-export const LG_DEFAULTS = new PlanetData()
-export const LG_EDITOR_INPUTS = reactive<IDBKeyBinding[]>([]) // IDBKeyBinding[]
-
-export const LG_CLOUDS_SHADOW_HEIGHT = 1e-4
-export const LG_HEIGHT_DIVIDER = 200.0
 
 export const LG_NAME_PLANET = 'lg:planet'
 export const LG_NAME_CLOUDS = 'lg:planet:clouds'
