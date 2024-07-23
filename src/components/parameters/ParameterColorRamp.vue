@@ -46,7 +46,7 @@
                 @click="removeStep(step.id)"
                 :disabled="pickerIdOpen === step.id"
               >
-                <iconify-icon class="icon" icon="mingcute:delete-line" width="1.25rem" aria-hidden="true" />
+                <iconify-icon class="icon" icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
               </button>
             </td>
             <td>

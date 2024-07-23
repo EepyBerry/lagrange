@@ -82,7 +82,7 @@ let _sunLight: THREE.DirectionalLight
 let _ambLight: THREE.AmbientLight
 let _lensFlare: LensFlareEffect
 
-onMounted(async() => {
+onMounted(async () => {
   await initData()
   await initCanvas()
 })
@@ -93,15 +93,20 @@ onUnmounted(() => {
 })
 
 async function initData() {
-  if (UUID_REGEXP.test(route.params.id as string)) {
+  // https://stackoverflow.com/questions/3891641/regex-test-only-works-every-other-time
+  if (new RegExp(UUID_REGEXP).test(route.params.id as string)) {
     const idbPlanetData = await idb.planets.filter(p => p.id === route.params.id).first()
     if (!idbPlanetData) {
       console.warn(`Cannot find planet with ID: ${route.params.id}`)
+      LG_PLANET_DATA.value.reset()
       return
     }
     $planetEntityId.value = idbPlanetData.id
     LG_PLANET_DATA.value.loadData(idbPlanetData.data)
     console.info(`Loaded planet [${LG_PLANET_DATA.value.planetName}] with ID: ${$planetEntityId.value}`)
+  } else {
+    console.warn('No planet ID found in the URL, assuming new planet')
+    LG_PLANET_DATA.value.reset()
   }
 }
 

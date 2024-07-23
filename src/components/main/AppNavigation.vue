@@ -13,7 +13,7 @@
           {{ $t('main.nav.codex') }}
         </RouterLink>
         <hr>
-        <RouterLink class="lg nav" to="/planet-editor/new" :aria-label="$t('a11y.action_nav_editor')">
+        <RouterLink class="lg nav" :class="{ 'router-link-active': !!route.params.id }" to="/planet-editor/new" :aria-label="$t('a11y.action_nav_editor')">
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
         </RouterLink>
@@ -28,7 +28,7 @@
           {{ $t('main.nav.codex') }}
         </RouterLink>
         <hr>
-        <RouterLink class="lg nav" to="/planet-editor/new">
+        <RouterLink class="lg nav" :class="{ 'router-link-active': !!route.params.id }"  to="/planet-editor/new">
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
         </RouterLink>
@@ -40,8 +40,9 @@
 <script setup lang="ts">
 import { WindowEventBus } from '@/core/window-event-bus';
 import { onMounted, onUnmounted, ref, type Ref } from 'vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute } from 'vue-router';
 
+const route = useRoute()
 const buttonOpen: Ref<HTMLElement|null> = ref(null)
 const sidebar: Ref<HTMLElement|null> = ref(null)
 const isOpen: Ref<boolean> = ref(false)

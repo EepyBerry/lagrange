@@ -1,4 +1,8 @@
 <template>
+  <!-- <img id="codex-background" srcset="/background/space-960w.png 960w, /background/space-1920w.png 1920w, /background/space-2560w.png 2560w"
+       sizes="(max-width: 1919px) 960w, (max-width: 2559px) 1920w, (min-width: 2560px) 2560w"
+       alt="Space background"> -->
+  <span id="codex-background"></span>
   <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
     <AppNavigation :compact-mode="showCompactNavigation" />
     <div id="codex-header-controls">
@@ -57,7 +61,6 @@ import PlanetData from '@/core/models/planet-data.model';
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const planets: Ref<IDBPlanet[]> = ref([])
-const isLoading: Ref<boolean> = ref(false)
 
 // Responsiveness
 const showCompactNavigation: Ref<boolean> = ref(false)
@@ -77,7 +80,8 @@ onUnmounted(() => {
 })
 
 async function loadPlanets() {
-  planets.value = await idb.planets.toArray()
+  const idbPlanets = await idb.planets.toArray()
+  planets.value = idbPlanets.map(pl => ({ ...pl, data: PlanetData.createFrom(pl.data) }))
 }
 
 function onWindowResize() {
@@ -106,7 +110,7 @@ function importPlanetFile(event: Event) {
     try {
       const data = JSON.parse(pako.inflate(e.target?.result as ArrayBuffer, { to: 'string' })) as IDBPlanet
       const newParams = PlanetData.createFrom(data)
-      console.debug(`Loaded planet (ID=${data.id}): [${newParams.planetName}]`)
+      console.info(`Imported planet (ID=${data.id}): [${newParams.planetName}]`)
     } catch (err) {
       console.error(err)
     }
@@ -121,17 +125,18 @@ function exportPlanets() {
   saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
 }
 
-function exportPlanetFile(id: string) {
-  const planet = planets.value.find(p => p.id === id)!
-  const jsonParams = JSON.stringify(planet)
-  const gzipParams = pako.deflate(jsonParams)
-  const planetFilename = 'Planet'
-  saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
-}
-
 </script>
 
 <style scoped lang="scss">
+#codex-background {
+  z-index: -1;
+  position: fixed;
+  inset: 0;
+  background-image: url('/background/space-1920w.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 #codex-header {
   z-index: 15;
   position: absolute;
@@ -171,21 +176,16 @@ function exportPlanetFile(id: string) {
 }
 #codex-grid {
   flex: 1;
-
-
-  padding: 1rem;
   margin: 4.75rem 1rem 1rem;
   height: calc(100% - 4.75rem);
-  background: var(--lg-primary);
-  border: 1px solid var(--lg-accent);
   border-radius: 4px;
 
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 26rem;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 1rem;
 
   &.empty {
-    border: 2px dashed var(--lg-accent);
-    color: var(--lg-contrast);
     font-style: italic;
     text-align: center;
 
@@ -208,10 +208,17 @@ function exportPlanetFile(id: string) {
   width: 100%;
 }
 
+@media screen and (min-width: 2000px) {
+  #codex-background {
+    background-image: url('/background/space-2560w.png');
+  }
+}
 @media screen and (max-width: 1199px) {
+  #codex-background {
+    background-image: url('/background/space-960w.png');
+  }
   #codex-header {
     margin: 0.5rem;
-    
     #codex-header-controls {
       justify-content: flex-end;
     }
@@ -222,6 +229,9 @@ function exportPlanetFile(id: string) {
   }
 }
 @media screen and (max-width: 767px) {
+  #codex-background {
+    background-image: url('/background/space-540w.png');
+  }
   #codex-grid {
     padding: 0.5rem;
     margin: 3.75rem 0.5rem 0;

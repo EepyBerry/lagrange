@@ -76,6 +76,8 @@
   "codex": {
     "$title": "Planetary Codex",
     "$action_add": "New planet",
+    "$action_edit": "Edit",
+    "$action_export": "Export",
 
     "no_planets": "No planets found. You can create one at the top!",
 

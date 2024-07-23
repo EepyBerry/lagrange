@@ -24,7 +24,7 @@
         {{ $t('dialog.reset.$action_cancel') }}
       </button>
       <button class="lg warn" @click="confirmAndClose">
-        <iconify-icon icon="mingcute:delete-line" width="1.25rem" aria-hidden="true" />
+        <iconify-icon icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.reset.$action_confirm') }}
       </button>
     </template>

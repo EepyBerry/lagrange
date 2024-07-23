@@ -107,3 +107,19 @@ button.lg.icon-button:disabled {
   filter: brightness(40%);
   pointer-events: none;
 }
+
+// router button
+a.lg.link-button, a.lg.link-button:visited {
+  color: var(--lg-text);
+  text-decoration: none;
+}
+a.lg.link-button:hover, a.lg.link-button:visited:hover {
+  background: var(--lg-button-hover);
+  color: var(--lg-text);
+  text-decoration: none;
+}
+a.lg.link-button:active, a.lg.link-button:visited:active {
+  background: var(--lg-button-active);
+  color: var(--lg-text);
+  text-decoration: none;
+}
