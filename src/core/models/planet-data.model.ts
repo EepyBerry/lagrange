@@ -5,13 +5,13 @@ import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeTracker } from './change-tracker.model'
 import { numberToHex } from '@/utils/utils'
-import { generateUUID } from 'three/src/math/MathUtils.js'
 
 export default class PlanetData extends ChangeTracker {
   // --------------------------------------------------
   // |                      Init                      |
   // --------------------------------------------------
 
+  private _defaultPlanetName: string
   private _planetName: string
 
   private _initCamDistance: number = 4
@@ -395,9 +395,10 @@ export default class PlanetData extends ChangeTracker {
   // |                  Constructor                   |
   // --------------------------------------------------
 
-  constructor() {
+  constructor(defaultName?: string) {
     super()
-    this._planetName = ''
+    this._defaultPlanetName = defaultName ?? 'New planet'
+    this._planetName = this._defaultPlanetName
 
     this._lensFlareEnabled = true
     this._lensFlarePointsIntensity = 0.25
@@ -460,7 +461,7 @@ export default class PlanetData extends ChangeTracker {
   }
 
   public reset() {
-    this._planetName = ''
+    this._planetName = this._defaultPlanetName
 
     this._lensFlareEnabled = true
     this._lensFlarePointsIntensity = 0.25

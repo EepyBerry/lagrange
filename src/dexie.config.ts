@@ -25,7 +25,7 @@ interface IDBSettings {
 
 interface IDBPlanet {
   id: string
-  preview: Blob
+  preview?: Blob
   data: PlanetData
 }
 

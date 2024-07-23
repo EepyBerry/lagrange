@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import PlanetEditorControls from '@components/controls/PlanetEditorControls.vue'
 import PlanetInfoControls from '@components/controls/PlanetInfoControls.vue'
-import { onMounted, onUnmounted, ref, type Ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref, type Ref, type UnwrapNestedRefs } from 'vue'
 import * as THREE from 'three'
 import Stats from 'three/addons/libs/stats.module.js'
 import * as EditorService from '@/core/planet-editor.service'
@@ -28,25 +28,31 @@ import {
   LG_PARAMETERS,
   SUN_INIT_POS,
 } from '@core/globals'
-import { degToRad } from 'three/src/math/MathUtils.js'
-import { GeometryType } from '@core/types'
+import { degToRad, generateUUID } from 'three/src/math/MathUtils.js'
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla'
 import { createControls } from '@core/three/component.builder'
 import { useHead } from '@unhead/vue'
 import type { SceneElements } from '@core/models/scene-elements.model'
 import type { LensFlareEffect } from '@core/three/lens-flare.effect'
-import { idb, KeyBindingAction } from '@/dexie.config'
+import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config'
 import { WindowEventBus } from '@core/window-event-bus'
 import { useI18n } from 'vue-i18n'
 import CompactPlanetEditorControls from '@/components/controls/CompactPlanetEditorControls.vue'
 import AppNavigation from '@/components/main/AppNavigation.vue'
 import { setShaderMaterialUniform, setShaderMaterialUniforms } from '@/utils/three-utils'
+import { useRoute } from 'vue-router'
+import PlanetData from '@/core/models/planet-data.model'
 
+const route = useRoute()
 const i18n = useI18n()
 useHead({
   title: i18n.t('editor.$title') + ' · ' + i18n.t('main.$title'),
   meta: [{ name: 'description', content: 'Planet editor' }],
 })
+
+// Data
+const $planetEntity: IDBPlanet = { id: generateUUID(), data: new PlanetData(i18n.t('editor.default_planet_name')) }
+const $planetData: UnwrapNestedRefs<PlanetData> = reactive($planetEntity.data)
 
 // Responsiveness
 const centerInfoControls: Ref<boolean> = ref(true)
@@ -69,14 +75,28 @@ let _sunLight: THREE.DirectionalLight
 let _ambLight: THREE.AmbientLight
 let _lensFlare: LensFlareEffect
 
-onMounted(() => init())
+onMounted(async() => {
+  await initData()
+  await initCanvas()
+})
 onUnmounted(() => {
   disposeScene()
   WindowEventBus.deregisterWindowEventListener('resize', onWindowResize)
   WindowEventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
 })
 
-function init() {
+async function initData() {
+  if (route.params.id) {
+    const idbPlanetData = await idb.planets.filter(p => p.id === route.params.id).first()
+    if (!idbPlanetData) {
+      return;
+    }
+    $planetEntity.id = idbPlanetData.id
+    $planetData.loadData(idbPlanetData.data)
+  }
+}
+
+async function initCanvas() {
   // Determine UI modes on start
   computeResponsiveness()
 
@@ -91,8 +111,8 @@ function init() {
     effectiveHeight = window.outerHeight * 0.5
   }
 
-  // Init scene
-  $se = EditorService.createScene(effectiveWidth, effectiveHeight, pixelRatio)
+  // Init scene & objects
+  $se = EditorService.createScene($planetData as PlanetData, effectiveWidth, effectiveHeight, pixelRatio)
   initLighting()
   initPlanet()
   initRendering(effectiveWidth, effectiveHeight)
@@ -100,6 +120,49 @@ function init() {
   WindowEventBus.registerWindowEventListener('resize', onWindowResize)
   WindowEventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
   showSpinner.value = false
+}
+
+// ------------------------------------------------------------------------------------------------
+
+function initLighting(): void {
+  const sun = EditorService.createSun($planetData as PlanetData)
+  const lensFlare = EditorService.createLensFlare($planetData as PlanetData, sun.position, sun.color)
+  sun.add(lensFlare.mesh)
+  $se.scene.add(sun)
+  _sunLight = sun
+  _ambLight = $se.scene.getObjectByName(LG_NAME_AMBLIGHT) as THREE.AmbientLight
+  _lensFlare = lensFlare
+
+  // Set initial rotations
+  const pos = SUN_INIT_POS.clone()
+  pos.applyAxisAngle(AXIS_X, degToRad(-15))
+  _sunLight.position.set(pos.x, pos.y, pos.z)
+  _lensFlare.updatePosition(_sunLight.position)
+}
+
+function initPlanet(): void {
+  const b = new THREE.BoxGeometry(1, 1, 1)
+  $se.scene.add(new THREE.Mesh(b))
+  const planet = EditorService.createPlanet($planetData as PlanetData)
+  const clouds = EditorService.createClouds($planetData as PlanetData)
+  const atmosphere = EditorService.createAtmosphere($planetData as PlanetData, _sunLight.position)
+  const pivot = new THREE.Group()
+  pivot.add(planet)
+  pivot.add(clouds)
+  pivot.add(atmosphere)
+  $se.scene.add(pivot)
+  _planet = planet
+  _clouds = clouds
+  _atmosphere = atmosphere
+  _planetPivot = pivot
+
+  // Set initial rotations
+  _planetPivot.setRotationFromAxisAngle(AXIS_NX, degToRad($planetData.planetAxialTilt))
+  _planet.setRotationFromAxisAngle(_planet.up, degToRad($planetData.planetRotation))
+  _clouds.setRotationFromAxisAngle(_clouds.up, degToRad($planetData.planetRotation + $planetData.cloudsRotation))
+
+  // Set initial name
+  $planetData.planetName = i18n.t('editor.default_planet_name')
 }
 
 function initRendering(width: number, height: number) {
@@ -115,55 +178,10 @@ function initRendering(width: number, height: number) {
   sceneRoot.value.appendChild($se.renderer.domElement)
 }
 
-function initPlanet(): void {
-  const b = new THREE.BoxGeometry(1, 1, 1)
-  $se.scene.add(new THREE.Mesh(b))
-  const planet = EditorService.createPlanet(GeometryType.SPHERE)
-  const clouds = EditorService.createClouds(GeometryType.SPHERE)
-  const atmosphere = EditorService.createAtmosphere(GeometryType.SPHERE, _sunLight.position)
-  const pivot = new THREE.Group()
-  pivot.add(planet)
-  pivot.add(clouds)
-  pivot.add(atmosphere)
-  $se.scene.add(pivot)
-  _planet = planet
-  _clouds = clouds
-  _atmosphere = atmosphere
-  _planetPivot = pivot
-
-  // Set initial rotations
-  _planetPivot.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PARAMETERS.planetAxialTilt))
-  _planet.setRotationFromAxisAngle(_planet.up, degToRad(LG_PARAMETERS.planetRotation))
-  _clouds.setRotationFromAxisAngle(_clouds.up, degToRad(LG_PARAMETERS.planetRotation + LG_PARAMETERS.cloudsRotation))
-
-  //const helper = new VertexNormalsHelper( planet, 0.1, 0xff0000 );
-  //$se.scene.add( helper );
-
-  // Set initial name
-  LG_PARAMETERS.planetName = i18n.t('editor.default_planet_name')
-}
-
-function initLighting(): void {
-  const sun = EditorService.createSun()
-  const lensFlare = EditorService.createLensFlare(sun.position, sun.color)
-  sun.add(lensFlare.mesh)
-  $se.scene.add(sun)
-  _sunLight = sun
-  _ambLight = $se.scene.getObjectByName(LG_NAME_AMBLIGHT) as THREE.AmbientLight
-  _lensFlare = lensFlare
-
-  // Set initial rotations
-  const pos = SUN_INIT_POS.clone()
-  pos.applyAxisAngle(AXIS_X, degToRad(-15))
-  _sunLight.position.set(pos.x, pos.y, pos.z)
-  _lensFlare.updatePosition(_sunLight.position)
-}
-
 /**
  * Removes every object from the scene, then removes the scene itself
  */
 function disposeScene() {
-
   console.debug('[unmount] Clearing scene...')
   _sunLight.dispose()
   _ambLight.dispose()
@@ -203,16 +221,16 @@ async function handleKeyboardEvent(event: KeyboardEvent) {
 
   switch (kb.action) {
     case KeyBindingAction.ToggleLensFlare:
-      LG_PARAMETERS.lensFlareEnabled = !LG_PARAMETERS.lensFlareEnabled
+      $planetData.lensFlareEnabled = !$planetData.lensFlareEnabled
       break
     case KeyBindingAction.ToggleClouds:
-      LG_PARAMETERS.cloudsEnabled = !LG_PARAMETERS.cloudsEnabled
+      $planetData.cloudsEnabled = !$planetData.cloudsEnabled
       break
     case KeyBindingAction.ToggleAtmosphere:
-      LG_PARAMETERS.atmosphereEnabled = !LG_PARAMETERS.atmosphereEnabled
+      $planetData.atmosphereEnabled = !$planetData.atmosphereEnabled
       break
     case KeyBindingAction.ToggleBiomes:
-      LG_PARAMETERS.biomesEnabled = !LG_PARAMETERS.biomesEnabled
+      $planetData.biomesEnabled = !$planetData.biomesEnabled
       break
   }
 }
@@ -252,10 +270,10 @@ function computeResponsiveness() {
 // ------------------------------------------------------------------------------------------------
 
 function updatePlanet() {
-  if (LG_PARAMETERS.changedProps.length === 0) {
+  if ($planetData.changedProps.length === 0) {
     return
   }
-  for (const key of LG_PARAMETERS.changedProps) {
+  for (const key of $planetData.changedProps) {
     switch (key) {
       // --------------------------------------------------
       // |               Lighting settings                |
@@ -499,7 +517,7 @@ function updatePlanet() {
         break
       }
       case '_atmosphereHue': {
-        setShaderMaterialUniform(_atmosphere.material as CustomShaderMaterial, 'u_hue', LG_PARAMETERS.atmosphereHue)
+        setShaderMaterialUniform(_atmosphere.material as CustomShaderMaterial, 'u_hue', $planetData.atmosphereHue)
         break
       }
       case '_atmosphereIntensity': {

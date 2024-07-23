@@ -20,3 +20,10 @@ input.lg[type='checkbox'] {
   accent-color: var(--lg-contrast);
   width: 1rem;
 }
+
+@media screen and (max-width: 767px) {
+  input.lg[type='checkbox'] {
+    accent-color: var(--lg-contrast);
+    width: 1.5rem;
+  }
+}

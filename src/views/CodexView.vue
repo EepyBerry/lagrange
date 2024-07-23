@@ -171,17 +171,20 @@ function exportPlanetFile(id: string) {
 }
 #codex-grid {
   flex: 1;
+
+
   padding: 1rem;
   margin: 4.75rem 1rem 1rem;
   height: calc(100% - 4.75rem);
+  background: var(--lg-primary);
+  border: 1px solid var(--lg-accent);
+  border-radius: 4px;
 
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 
   &.empty {
-    background: var(--lg-primary);
     border: 2px dashed var(--lg-accent);
-    border-radius: 4px;
     color: var(--lg-contrast);
     font-style: italic;
     text-align: center;

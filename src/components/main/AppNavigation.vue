@@ -8,12 +8,12 @@
     <aside id="nav-compact" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
       <nav>
         <hr>
-        <RouterLink class="lg nav" to="codex" :aria-label="$t('a11y.action_nav_codex')">
+        <RouterLink class="lg nav" to="/codex" :aria-label="$t('a11y.action_nav_codex')">
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
         </RouterLink>
         <hr>
-        <RouterLink class="lg nav" to="planet-editor" :aria-label="$t('a11y.action_nav_editor')">
+        <RouterLink class="lg nav" to="/planet-editor" :aria-label="$t('a11y.action_nav_editor')">
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
         </RouterLink>
@@ -23,12 +23,12 @@
   <template v-else>
     <aside id="nav-full" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
       <nav>
-        <RouterLink class="lg nav" to="codex">
+        <RouterLink class="lg nav" to="/codex">
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
         </RouterLink>
         <hr>
-        <RouterLink class="lg nav" to="planet-editor">
+        <RouterLink class="lg nav" to="/planet-editor">
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
         </RouterLink>
@@ -58,11 +58,9 @@ onUnmounted(() => {
 
 function handleClick(evt: MouseEvent) {
   if (evt.target === buttonOpen.value) {
-    console.debug('open sidebar')
     isOpen.value = !isOpen.value
   }
   else if (evt.target !== sidebar.value && isOpen.value) {
-    console.debug('close sidebar')
     isOpen.value = false
   }
 }
