@@ -27,7 +27,6 @@ import { SceneElements } from './models/scene-elements.model'
 import { LensFlareEffect } from './three/lens-flare.effect'
 import PlanetData from './models/planet-data.model'
 import { ref } from 'vue'
-import saveAs from 'file-saver'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
 
 // Editor constants
@@ -211,22 +210,21 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   previewScene.add(data.clouds)
   previewScene.add(data.atmosphere)
 
+  // Setup renderer & render
   $se.renderer.clear()
   $se.renderer.setSize(w, h)
   $se.renderer.setRenderTarget(previewRenderTarget)
   $se.renderer.render(previewScene, previewCamera)
 
-  // Setup buffer
   const rawBuffer = new Uint8Array(w * h * 4)
   $se.renderer.readRenderTargetPixels(previewRenderTarget, 0, 0, w, h, rawBuffer)
+  $se.renderer.setSize(initialSize.x, initialSize.y)
   $se.renderer.setRenderTarget(null)
 
-  // Setup canvas
+  // Create preview canvas & write data from buffer
   const canvas = document.createElement('canvas')
-  canvas.style.background = 'transparent'
   canvas.width = w
   canvas.height = h
-
   const ctx = canvas.getContext("2d")!
   const imageData = ctx.createImageData(w, h)
   const previewBuffer = normalizeUInt8ArrayPixels(rawBuffer, w, h)
@@ -244,9 +242,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
   // Save and remove canvas
   const dataURL = canvas.toDataURL('image/png')
-  saveAs(dataURL)
   canvas.remove();
-  $se.renderer.setSize(initialSize.x, initialSize.y)
 
   return dataURL
 }
