@@ -12,6 +12,7 @@ import {
   LG_NAME_AMBLIGHT,
   LG_NAME_ATMOSPHERE,
   LG_NAME_SUN,
+  AXIS_Y,
 } from '@core/globals'
 import { GeometryType } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
@@ -26,6 +27,8 @@ import { SceneElements } from './models/scene-elements.model'
 import { LensFlareEffect } from './three/lens-flare.effect'
 import PlanetData from './models/planet-data.model'
 import { ref } from 'vue'
+import saveAs from 'file-saver'
+import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -169,4 +172,81 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
   mesh.userData.lens = 'no-occlusion'
   mesh.name = LG_NAME_ATMOSPHERE
   return mesh
+}
+
+// ----------------------------------------------------------------------------------------------------------------------
+// DATA FUNCTIONS
+
+export type PlanetPreviewData = {
+  sun: THREE.DirectionalLight
+  ambientLight: THREE.AmbientLight
+  planet: THREE.Mesh
+  clouds: THREE.Mesh
+  atmosphere: THREE.Mesh
+}
+export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData): string {
+  const initialSize = new THREE.Vector2()
+  $se.renderer.getSize(initialSize)
+
+  // Setup render scene
+  const w = 384, h = 384
+  const gl = $se.renderer.getContext()
+  const previewRenderTarget = new THREE.WebGLRenderTarget(w, h, {
+    //colorSpace: THREE.SRGBColorSpace
+  })
+  const previewScene = new THREE.Scene()
+  const previewCamera = createPerspectiveCameraComponent(
+    50,
+    w / h,
+    0.1,
+    1e6,
+    new THREE.Spherical(LG_PLANET_DATA.value.initCamDistance - 1.5, Math.PI / 2.0, degToRad(-60)),
+  )
+  previewCamera.setRotationFromAxisAngle(AXIS_Y, degToRad(-60))
+
+  // Add cloned objects to preview scene
+  previewScene.add(data.sun)
+  previewScene.add(data.ambientLight)
+  previewScene.add(data.planet)
+  previewScene.add(data.clouds)
+  previewScene.add(data.atmosphere)
+
+  $se.renderer.clear()
+  $se.renderer.setSize(w, h)
+  $se.renderer.setRenderTarget(previewRenderTarget)
+  $se.renderer.render(previewScene, previewCamera)
+
+  // Setup buffer
+  const rawBuffer = new Uint8Array(w * h * 4)
+  $se.renderer.readRenderTargetPixels(previewRenderTarget, 0, 0, w, h, rawBuffer)
+  $se.renderer.setRenderTarget(null)
+
+  // Setup canvas
+  const canvas = document.createElement('canvas')
+  canvas.style.background = 'transparent'
+  canvas.width = w
+  canvas.height = h
+
+  const ctx = canvas.getContext("2d")!
+  const imageData = ctx.createImageData(w, h)
+  const previewBuffer = normalizeUInt8ArrayPixels(rawBuffer, w, h)
+  for(let i = 0; i < imageData.data.length; i++) {
+      imageData.data[i] = previewBuffer[i];
+  }
+  ctx.putImageData(imageData, 0, 0)
+
+  // Clean-up resources
+  data.sun.dispose()
+  data.ambientLight.dispose()
+  previewScene.children.forEach(c => {
+    previewScene.remove(c)
+  })
+
+  // Save and remove canvas
+  const dataURL = canvas.toDataURL('image/png')
+  saveAs(dataURL)
+  canvas.remove();
+  $se.renderer.setSize(initialSize.x, initialSize.y)
+
+  return dataURL
 }

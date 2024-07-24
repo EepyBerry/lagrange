@@ -1,7 +1,7 @@
 <template>
   <div class="planet-card">
     <RouterLink :to="'/planet-editor/'+planet.id" class="planet-preview">
-      <img v-if="planet.preview" />
+      <img v-if="planet.preview" class="planet-image" :src="planet.preview" />
       <iconify-icon v-else icon="ph:planet-thin" width="auto" />
     </RouterLink>
     <p class="planet-name">{{ planet.data.planetName }}</p>
@@ -67,6 +67,10 @@ function exportPlanet() {
   .planet-preview {
     flex: 1;
     color: var(--lg-text);
+
+    .planet-image {
+      max-width: 100%;
+    }
   }
   .planet-name {
     font-weight: 500;

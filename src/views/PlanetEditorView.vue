@@ -46,12 +46,11 @@ import {
   createPlanet,
   createScene,
   createSun,
+  exportPlanetPreview,
   LG_HEIGHT_DIVIDER,
   LG_PLANET_DATA
 } from '@/core/planet-editor.service'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
-import type { OrbitControls } from 'three/examples/jsm/Addons.js'
-import { saveAs } from 'file-saver'
 
 const route = useRoute()
 const i18n = useI18n()
@@ -62,6 +61,7 @@ useHead({
 
 // Data
 const $planetEntityId: Ref<string> = ref('')
+let enableEditorRendering = true
 
 // Responsiveness
 const centerInfoControls: Ref<boolean> = ref(true)
@@ -76,8 +76,7 @@ const clock = new THREE.Clock()
 
 // Main THREE objects
 let $se: SceneElements
-let _controls: OrbitControls
-let _planetPivot: THREE.Group
+let _planetGroup: THREE.Group
 let _planet: THREE.Mesh
 let _clouds: THREE.Mesh
 let _atmosphere: THREE.Mesh
@@ -133,7 +132,7 @@ async function initCanvas() {
   initLighting()
   initPlanet()
   initRendering(effectiveWidth, effectiveHeight)
-  _controls = createControlsComponent($se.camera, $se.renderer.domElement)
+  createControlsComponent($se.camera, $se.renderer.domElement)
   WindowEventBus.registerWindowEventListener('resize', onWindowResize)
   WindowEventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
   showSpinner.value = false
@@ -171,10 +170,10 @@ function initPlanet(): void {
   _planet = planet
   _clouds = clouds
   _atmosphere = atmosphere
-  _planetPivot = pivot
+  _planetGroup = pivot
 
   // Set initial rotations
-  _planetPivot.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+  _planetGroup.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
   _planet.setRotationFromAxisAngle(_planet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
   _clouds.setRotationFromAxisAngle(_clouds.up, degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation))
 }
@@ -203,25 +202,20 @@ function disposeScene() {
   $se.scene.remove(_ambLight);
 
   _lensFlare.material.dispose()
-  _lensFlare.mesh.geometry.dispose()
-  $se.scene.remove(_lensFlare.mesh);
+  _lensFlare.mesh.geometry.dispose();
 
   (_planet.material as THREE.Material).dispose()
-  _planet.geometry.dispose()
-  $se.scene.remove(_planet);
+  _planet.geometry.dispose();
 
   (_clouds.material as THREE.Material).dispose()
-  _clouds.geometry.dispose()
-  $se.scene.remove(_clouds);
+  _clouds.geometry.dispose();
 
   (_atmosphere.material as THREE.Material).dispose()
-  _atmosphere.geometry.dispose()
-  $se.scene.remove(_atmosphere);
+  _atmosphere.geometry.dispose();
 
-  _planetPivot.clear()
-  $se.scene.remove(_planetPivot)
+  _planetGroup.clear()
 
-  $se.scene.remove($se.camera)
+  $se.scene.children.forEach(c => $se.scene.remove(c))
   $se.renderer.dispose()
   console.debug('[unmount] ...done!')
 }
@@ -252,6 +246,9 @@ async function handleKeyboardEvent(event: KeyboardEvent) {
 // ------------------------------------------------------------------------------------------------
 
 function renderFrame(stats: Stats) {
+  if (!enableEditorRendering) {
+    return
+  }
   stats.update()
   updatePlanet()
   _lensFlare.update($se.renderer, $se.scene, $se.camera, clock)
@@ -290,43 +287,30 @@ async function resetPlanet() {
 async function savePlanet() {
   showSpinner.value = true
 
+  // -------- Generate planet preview -------- //
+  enableEditorRendering = false
+  _lensFlare.mesh.visible = false
+  const previewDataString = exportPlanetPreview($se, {
+    sun: _sunLight.clone(),
+    ambientLight: _ambLight.clone(),
+    planet: _planet.clone(),
+    clouds: _clouds.clone(),
+    atmosphere: _atmosphere.clone(),
+  })
+  _lensFlare.mesh.visible = true
+
   // ----------- Save planet data ------------ //
   const localData = toRaw(JSON.stringify(LG_PLANET_DATA.value))
   const idbData: IDBPlanet = {
     id: $planetEntityId.value.length > 0 ? $planetEntityId.value : generateUUID(),
-    data: JSON.parse(localData)
+    data: JSON.parse(localData),
+    preview: previewDataString
   }
   const plid = await idb.planets.put(idbData, idbData.id)
   $planetEntityId.value = plid
 
-  // -------- Generate planet preview -------- //
-  const initialBackground = $se.scene.background!.clone()
-  const initialCamPosition = $se.camera.position.clone()
-
-  const spherical = new THREE.Spherical(LG_PLANET_DATA.value.initCamDistance, Math.PI / 2.0, degToRad(LG_PLANET_DATA.value.initCamAngle))
-  spherical.makeSafe()
-  $se.camera.position.setFromSpherical(spherical)
-  _controls.update()
-  _lensFlare.mesh.visible = false
-
-  $se.scene.background = null
-  document.body.style.background = 'transparent'
-  $se.renderer.render($se.scene, $se.camera)
-
-  const preview = $se.renderer.domElement.toDataURL('image/png')
-  saveAs(preview, 'preview.png')
-
-  setTimeout(() => {
-    $se.camera.position.set(initialCamPosition.x, initialCamPosition.y, initialCamPosition.z)
-    _controls.update()
-
-    $se.scene.background = initialBackground
-    document.body.style.background = 'var(--lg-panel)'
-    _lensFlare.mesh.visible = true
-    showSpinner.value = false
-    console.info(`Saved planet [${LG_PLANET_DATA.value.planetName}] with ID: ${plid}`)
-  }, 1000)
-
+  enableEditorRendering = true
+  showSpinner.value = false
 }
 
 function updatePlanet() {
@@ -379,7 +363,7 @@ function updatePlanet() {
       // --------------------------------------------------
       case '_planetAxialTilt': {
         const v = degToRad(isNaN(LG_PLANET_DATA.value.planetAxialTilt) ? 0 : LG_PLANET_DATA.value.planetAxialTilt)
-        _planetPivot.setRotationFromAxisAngle(AXIS_NX, v)
+        _planetGroup.setRotationFromAxisAngle(AXIS_NX, v)
         break
       }
       case '_planetRotation': {
@@ -614,6 +598,10 @@ function updatePlanet() {
 #scene-root {
   box-shadow: black 5px 10px 10px;
   z-index: 5;
+
+   & > canvas {
+    background: transparent;
+   }
 }
 
 @media screen and (max-width: 1199px) {
