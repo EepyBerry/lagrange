@@ -15,7 +15,7 @@ export default class PlanetData extends ChangeTracker {
   private _planetName: string
 
   private _initCamDistance: number = 4
-  private _initCamAngle: number = -45
+  private _initCamAngle: number = -60
   private _initPlanetRadius: number = 1
 
   // --------------------------------------------------

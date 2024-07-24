@@ -199,9 +199,9 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
     w / h,
     0.1,
     1e6,
-    new THREE.Spherical(LG_PLANET_DATA.value.initCamDistance - 1.5, Math.PI / 2.0, degToRad(-60)),
+    new THREE.Spherical(LG_PLANET_DATA.value.initCamDistance - 1.5, Math.PI / 2.0, degToRad(LG_PLANET_DATA.value.initCamAngle)),
   )
-  previewCamera.setRotationFromAxisAngle(AXIS_Y, degToRad(-60))
+  previewCamera.setRotationFromAxisAngle(AXIS_Y, degToRad(LG_PLANET_DATA.value.initCamAngle))
 
   // Add cloned objects to preview scene
   previewScene.add(data.sun)
@@ -241,7 +241,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   })
 
   // Save and remove canvas
-  const dataURL = canvas.toDataURL('image/png')
+  const dataURL = canvas.toDataURL('image/webp')
   canvas.remove();
 
   return dataURL
