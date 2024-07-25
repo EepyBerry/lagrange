@@ -248,7 +248,7 @@
 </template>
 
 <script setup lang="ts">
-import { LG_PLANET_DATA } from '@core/planet-editor.service'
+import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
 import ParameterColorRamp from '@components/parameters/ParameterColorRamp.vue'
 import ParameterDivider from '@components/parameters/ParameterDivider.vue'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'

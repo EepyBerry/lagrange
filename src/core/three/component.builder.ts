@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-shader-material/vanilla'
 import { GeometryType } from '../types'
-import { LG_PLANET_DATA } from '../planet-editor.service'
+import { LG_PLANET_DATA } from '../services/planet-editor.service'
 import { resolveImports } from './shader-imports.loader'
 
 /**

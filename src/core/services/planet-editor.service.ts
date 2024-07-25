@@ -23,9 +23,9 @@ import {
   createRendererComponent,
   createShaderMaterialComponent,
 } from '@core/three/component.builder'
-import { SceneElements } from './models/scene-elements.model'
-import { LensFlareEffect } from './three/lens-flare.effect'
-import PlanetData from './models/planet-data.model'
+import { SceneElements } from '@core/models/scene-elements.model'
+import { LensFlareEffect } from '@core/three/lens-flare.effect'
+import PlanetData from '@core/models/planet-data.model'
 import { ref } from 'vue'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
 

@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 import AppResetConfirmDialog from '../dialogs/AppResetConfirmDialog.vue'
-import { LG_PLANET_DATA } from '@core/planet-editor.service'
+import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
 import { ref, type Ref } from 'vue'
 import { WindowEventBus } from '@core/window-event-bus'
 

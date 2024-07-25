@@ -49,7 +49,7 @@ import {
   exportPlanetPreview,
   LG_HEIGHT_DIVIDER,
   LG_PLANET_DATA
-} from '@/core/planet-editor.service'
+} from '@/core/services/planet-editor.service'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 
 const route = useRoute()
