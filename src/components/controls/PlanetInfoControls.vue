@@ -66,7 +66,7 @@ const planetNameInput: Ref<HTMLInputElement | null> = ref(null)
 const resetDialog: Ref<{ open: Function } | null> = ref(null)
 
 defineProps<{ compactMode: boolean }>()
-const $emit = defineEmits(['dataReset', 'dataSave'])
+const $emit = defineEmits(['rename', 'reset', 'save'])
 
 function toggleEditMode() {
   editMode.value = !editMode.value
@@ -75,15 +75,16 @@ function toggleEditMode() {
     setTimeout(() => planetNameInput.value?.focus())
   } else {
     WindowEventBus.enableWindowEventListener('keydown')
+    $emit('rename')
   }
 }
 
 function emitResetEvent() {
-  $emit('dataReset')
+  $emit('reset')
 }
 
 function emitSaveEvent() {
-  $emit('dataSave')
+  $emit('save')
 }
 </script>
 

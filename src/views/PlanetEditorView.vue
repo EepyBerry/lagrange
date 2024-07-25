@@ -1,7 +1,7 @@
 <template>
   <div id="editor-header" :class="{ compact: !!showCompactNavigation }">
     <AppNavigation :compact-mode="showCompactNavigation" />
-    <PlanetInfoControls :compact-mode="showCompactInfo" @data-save="savePlanet" @data-reset="resetPlanet" />
+    <PlanetInfoControls :compact-mode="showCompactInfo" @rename="patchMetaHead" @save="savePlanet" @reset="resetPlanet" />
   </div>
   <CompactPlanetEditorControls v-if="showCompactControls" />
   <PlanetEditorControls v-else />
@@ -51,13 +51,14 @@ import {
   LG_PLANET_DATA
 } from '@/core/services/planet-editor.service'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
+import { getPlanetMetaTitle } from '@/utils/utils'
 
 const route = useRoute()
 const i18n = useI18n()
-useHead({
+const head = useHead({
   title: i18n.t('editor.$title') + ' · ' + i18n.t('main.$title'),
   meta: [{ name: 'description', content: 'Planet editor' }],
-})
+})!
 
 // Data
 const $planetEntityId: Ref<string> = ref('')
@@ -110,6 +111,7 @@ async function initData() {
     console.warn('No planet ID found in the URL, assuming new planet')
     LG_PLANET_DATA.value.reset()
   }
+  patchMetaHead()
 }
 
 async function initCanvas() {
@@ -133,6 +135,7 @@ async function initCanvas() {
   initPlanet()
   initRendering(effectiveWidth, effectiveHeight)
   createControlsComponent($se.camera, $se.renderer.domElement)
+  //$se.camera.setRotationFromAxisAngle(AXIS_Y, degToRad(-60))
   WindowEventBus.registerWindowEventListener('resize', onWindowResize)
   WindowEventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
   showSpinner.value = false
@@ -241,6 +244,10 @@ async function handleKeyboardEvent(event: KeyboardEvent) {
       LG_PLANET_DATA.value.biomesEnabled = !LG_PLANET_DATA.value.biomesEnabled
       break
   }
+}
+
+function patchMetaHead() {
+  head!.patch({ title: getPlanetMetaTitle(LG_PLANET_DATA.value.planetName, i18n) })
 }
 
 // ------------------------------------------------------------------------------------------------

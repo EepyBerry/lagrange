@@ -187,9 +187,8 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   const initialSize = new THREE.Vector2()
   $se.renderer.getSize(initialSize)
 
-  // Setup render scene
+  // ------------------------------- Setup render scene -------------------------------
   const w = 384, h = 384
-  const gl = $se.renderer.getContext()
   const previewRenderTarget = new THREE.WebGLRenderTarget(w, h, {
     colorSpace: THREE.SRGBColorSpace,
   })
@@ -203,14 +202,16 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   )
   previewCamera.setRotationFromAxisAngle(AXIS_Y, degToRad(LG_PLANET_DATA.value.initCamAngle))
 
-  // Add cloned objects to preview scene
+  // ---------------------- Add cloned objects to preview scene -----------------------
+  const pivot = new THREE.Group()
+  pivot.add(data.planet)
+  pivot.add(data.clouds)
+  pivot.add(data.atmosphere)
+  previewScene.add(pivot)
   previewScene.add(data.sun)
   previewScene.add(data.ambientLight)
-  previewScene.add(data.planet)
-  previewScene.add(data.clouds)
-  previewScene.add(data.atmosphere);
 
-  // Setup renderer & render
+  // ---------------------------- Setup renderer & render -----------------------------
   $se.renderer.clear()
   $se.renderer.setSize(w, h)
   $se.renderer.setRenderTarget(previewRenderTarget)
@@ -222,7 +223,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   $se.renderer.setSize(initialSize.x, initialSize.y)
   $se.renderer.setRenderTarget(null)
 
-  // Create preview canvas & write data from buffer
+  // ----------------- Create preview canvas & write data from buffer -----------------
   const canvas = document.createElement('canvas')
   canvas.width = w
   canvas.height = h
@@ -234,14 +235,23 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   }
   ctx.putImageData(imageData, 0, 0)
 
-  // Clean-up resources
+  // ------------------------------- Clean-up resources -------------------------------
+  pivot.clear()
   data.sun.dispose()
-  data.ambientLight.dispose()
-  previewScene.children.forEach(c => {
-    previewScene.remove(c)
-  })
+  data.ambientLight.dispose();
 
-  // Save and remove canvas
+  (data.clouds.material as THREE.Material).dispose();
+  (data.atmosphere.material as THREE.Material).dispose();
+  (data.planet.material as THREE.Material).dispose();
+
+  data.clouds.geometry.dispose();
+  data.atmosphere.geometry.dispose();
+  data.planet.geometry.dispose();
+  
+  previewRenderTarget.dispose()
+  previewScene.clear()
+
+  // ----------------------------- Save and remove canvas -----------------------------
   const dataURL = canvas.toDataURL('image/webp')
   canvas.remove();
 
