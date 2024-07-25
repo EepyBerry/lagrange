@@ -191,7 +191,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   const w = 384, h = 384
   const gl = $se.renderer.getContext()
   const previewRenderTarget = new THREE.WebGLRenderTarget(w, h, {
-    //colorSpace: THREE.SRGBColorSpace
+    colorSpace: THREE.SRGBColorSpace,
   })
   const previewScene = new THREE.Scene()
   const previewCamera = createPerspectiveCameraComponent(
@@ -208,16 +208,17 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   previewScene.add(data.ambientLight)
   previewScene.add(data.planet)
   previewScene.add(data.clouds)
-  previewScene.add(data.atmosphere)
+  previewScene.add(data.atmosphere);
 
   // Setup renderer & render
   $se.renderer.clear()
   $se.renderer.setSize(w, h)
   $se.renderer.setRenderTarget(previewRenderTarget)
-  $se.renderer.render(previewScene, previewCamera)
 
   const rawBuffer = new Uint8Array(w * h * 4)
+  $se.renderer.render(previewScene, previewCamera)
   $se.renderer.readRenderTargetPixels(previewRenderTarget, 0, 0, w, h, rawBuffer)
+
   $se.renderer.setSize(initialSize.x, initialSize.y)
   $se.renderer.setRenderTarget(null)
 
