@@ -16,7 +16,6 @@ export default class PlanetData extends ChangeTracker {
 
   private _initCamDistance: number = 4
   private _initCamAngle: number = -60
-  private _initPlanetRadius: number = 1
 
   // --------------------------------------------------
 
@@ -32,9 +31,6 @@ export default class PlanetData extends ChangeTracker {
   }
   public get initCamAngle() {
     return this._initCamAngle
-  }
-  public get initPlanetRadius() {
-    return this._initPlanetRadius
   }
 
   // --------------------------------------------------
@@ -117,6 +113,8 @@ export default class PlanetData extends ChangeTracker {
 
   private _planetGeometryType: GeometryType = GeometryType.SPHERE
   private _planetMeshQuality: number
+  
+  private _planetRadius: number
   private _planetAxialTilt: number
   private _planetRotation: number
   private _planetWaterRoughness: number
@@ -142,6 +140,13 @@ export default class PlanetData extends ChangeTracker {
     this.markForChange('_planetMeshQuality')
   }
 
+  public get planetRadius() {
+    return this._planetRadius
+  }
+  public set planetRadius(radius: number) {
+    this._planetRadius = radius
+    this.markForChange('_planetRadius')
+  }
   public get planetAxialTilt() {
     return this._planetAxialTilt
   }
@@ -411,6 +416,7 @@ export default class PlanetData extends ChangeTracker {
 
     this._planetGeometryType = GeometryType.SPHERE
     this._planetMeshQuality = 48.0
+    this._planetRadius = 1.0
     this._planetAxialTilt = 15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
@@ -474,6 +480,7 @@ export default class PlanetData extends ChangeTracker {
 
     this._planetGeometryType = GeometryType.SPHERE
     this._planetMeshQuality = 48.0
+    this._planetRadius = 1.0
     this._planetAxialTilt = 15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55

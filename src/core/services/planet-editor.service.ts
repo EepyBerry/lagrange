@@ -90,7 +90,7 @@ export function createPlanet(data: PlanetData): THREE.Mesh {
     planetVertShader,
     planetFragShader,
     {
-      u_radius: { value: data.initPlanetRadius },
+      u_radius: { value: data.planetRadius },
       u_octaves: { value: 6 },
       u_frequency: { value: data.planetSurfaceNoise.frequency },
       u_amplitude: { value: data.planetSurfaceNoise.amplitude },
@@ -157,8 +157,8 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
     {
       u_light_position: { value: sunPos },
       u_light_intensity: { value: data.sunLightIntensity },
-      u_surface_radius: { value: data.initPlanetRadius },
-      u_radius: { value: data.initPlanetRadius + atmosHeight },
+      u_surface_radius: { value: data.planetRadius },
+      u_radius: { value: data.planetRadius + atmosHeight },
       u_density: { value: atmosDensity },
       u_hue: { value: data.atmosphereHue },
       u_intensity: { value: data.atmosphereIntensity },

@@ -361,6 +361,11 @@ function updatePlanet() {
       // --------------------------------------------------
       // |                Planet settings                 |
       // --------------------------------------------------
+      case '_planetRadius': {
+        const v = LG_PLANET_DATA.value.planetRadius
+        _planetGroup.scale.set(v,v,v)
+        break
+      }
       case '_planetAxialTilt': {
         const v = degToRad(isNaN(LG_PLANET_DATA.value.planetAxialTilt) ? 0 : LG_PLANET_DATA.value.planetAxialTilt)
         _planetGroup.setRotationFromAxisAngle(AXIS_NX, v)
@@ -548,7 +553,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_radius',
-          LG_PLANET_DATA.value.initPlanetRadius + atmosHeight,
+          LG_PLANET_DATA.value.planetRadius + atmosHeight,
         )
         break
       }

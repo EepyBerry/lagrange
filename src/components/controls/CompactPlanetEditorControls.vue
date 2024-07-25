@@ -3,259 +3,51 @@
     <!-- Lighting -->
     <CollapsibleSection icon="mingcute:sun-line" :expand="false" ariaLabel="Lighting settings">
       <template v-slot:title>{{ $t('editor.controls.lighting.$title') }}</template>
-      <template v-slot:content>
-        <ParameterTable>
-          <ParameterCategory top>{{ $t('editor.controls.lighting.lensflare') }}</ParameterCategory>
-          <ParameterCheckbox
-            v-model="LG_PLANET_DATA.lensFlareEnabled"
-            id="f-toggle"
-            :true-value="true"
-            :false-value="false"
-          >
-            {{ $t('editor.controls.lighting.lensflare_show') }}
-          </ParameterCheckbox>
-          <template v-if="LG_PLANET_DATA.lensFlareEnabled">
-            <ParameterSlider
-              v-model="LG_PLANET_DATA.lensFlarePointsIntensity"
-              id="f-pointsint"
-              :step="0.01"
-              :min="0"
-              :max="1"
-            >
-              {{ $t('editor.controls.lighting.lensflare_points_intensity') }}
-            </ParameterSlider>
-            <ParameterSlider
-              v-model="LG_PLANET_DATA.lensFlareGlareIntensity"
-              id="f-glareint"
-              :step="0.01"
-              :min="0"
-              :max="1"
-            >
-              {{ $t('editor.controls.lighting.lensflare_glare_intensity') }}
-            </ParameterSlider>
-          </template>
-          <ParameterCategory>{{ $t('editor.controls.lighting.sunlight') }}</ParameterCategory>
-          <ParameterSlider v-model="LG_PLANET_DATA.sunLightAngle" id="l-angle" :step="0.1" :min="-90" :max="90">
-            {{ $t('editor.controls.lighting.sunlight_angle') }} <sup>(°)</sup>
-          </ParameterSlider>
-          <ParameterSlider v-model="LG_PLANET_DATA.sunLightIntensity" id="l-int" :step="0.1" :min="0" :max="50">
-            {{ $t('editor.controls.lighting.sunlight_intensity') }}
-          </ParameterSlider>
-          <ParameterColor v-model="LG_PLANET_DATA.sunLightColor">
-            {{ $t('editor.controls.lighting.sunlight_color') }}
-          </ParameterColor>
-          <ParameterCategory>{{ $t('editor.controls.lighting.amblight') }}</ParameterCategory>
-          <ParameterSlider v-model="LG_PLANET_DATA.ambLightIntensity" id="m-int" :step="0.01" :min="0" :max="1">
-            {{ $t('editor.controls.lighting.amblight_intensity') }}
-          </ParameterSlider>
-          <ParameterColor v-model="LG_PLANET_DATA.ambLightColor">
-            {{ $t('editor.controls.lighting.amblight_color') }}
-          </ParameterColor>
-        </ParameterTable>
-      </template>
+      <template v-slot:content><ControlsLighting /></template>
     </CollapsibleSection>
 
     <!-- Planet & Rendering -->
     <CollapsibleSection icon="tabler:gizmo" :expand="false" ariaLabel="Planet rendering settings">
       <template v-slot:title>{{ $t('editor.controls.planet_rendering.$title') }}</template>
-      <template v-slot:content>
-        <ParameterTable>
-          <ParameterCategory top>{{ $t('editor.controls.planet_rendering.transform') }}</ParameterCategory>
-          <ParameterSlider v-model="LG_PLANET_DATA.planetAxialTilt" id="p-tilt" :step="1" :min="0" :max="180">
-            {{ $t('editor.controls.planet_rendering.transform_axialtilt') }} <sup>(°)</sup>
-          </ParameterSlider>
-          <ParameterSlider v-model="LG_PLANET_DATA.planetRotation" id="p-rot" :step="1" :min="0" :max="360">
-            {{ $t('editor.controls.planet_rendering.transform_rotation') }} <sup>(°)</sup>
-          </ParameterSlider>
-          <ParameterCategory>{{ $t('editor.controls.planet_rendering.pbr') }}</ParameterCategory>
-          <ParameterSlider v-model="LG_PLANET_DATA.planetWaterLevel" id="p-wlevel" :step="0.01" :min="0" :max="1">
-            {{ $t('editor.controls.planet_rendering.pbr_waterlevel') }}
-          </ParameterSlider>
-          <ParameterDivider />
-          <ParameterSlider v-model="LG_PLANET_DATA.planetWaterRoughness" id="p-wrough" :step="0.01" :min="0" :max="1">
-            {{ $t('editor.controls.planet_rendering.pbr_waterroughness') }}
-          </ParameterSlider>
-          <ParameterSlider v-model="LG_PLANET_DATA.planetWaterMetalness" id="p-wmetal" :step="0.01" :min="0" :max="1">
-            {{ $t('editor.controls.planet_rendering.pbr_watermetalness') }}
-          </ParameterSlider>
-          <ParameterDivider />
-          <ParameterSlider v-model="LG_PLANET_DATA.planetGroundRoughness" id="p-grough" :step="0.01" :min="0" :max="1">
-            {{ $t('editor.controls.planet_rendering.pbr_groundroughness') }}
-          </ParameterSlider>
-          <ParameterSlider v-model="LG_PLANET_DATA.planetGroundMetalness" id="p-gmetal" :step="0.01" :min="0" :max="1">
-            {{ $t('editor.controls.planet_rendering.pbr_groundmetalness') }}
-          </ParameterSlider>
-        </ParameterTable>
-      </template>
+      <template v-slot:content><ControlsRendering /></template>
     </CollapsibleSection>
 
     <!-- Surface -->
     <CollapsibleSection icon="mingcute:planet-line" :expand="false">
       <template v-slot:title>{{ $t('editor.controls.surface.$title') }}</template>
-      <template v-slot:content>
-        <ParameterTable>
-          <ParameterCategory top>{{ $t('editor.controls.surface.bumpmap') }}</ParameterCategory>
-          <ParameterCheckbox
-            v-model="LG_PLANET_DATA.planetSurfaceShowBumps"
-            id="s-bump"
-            :true-value="true"
-            :false-value="false"
-          >
-            {{ $t('editor.controls.surface.bumpmap_show') }}
-          </ParameterCheckbox>
-          <template v-if="LG_PLANET_DATA.planetSurfaceShowBumps">
-            <ParameterSlider
-              v-model="LG_PLANET_DATA.planetSurfaceBumpStrength"
-              id="s-bumpstr"
-              :step="0.0005"
-              :min="0.02"
-              :max="0.2"
-            >
-              {{ $t('editor.controls.surface.bumpmap_strength') }}
-            </ParameterSlider>
-          </template>
-          <ParameterCategory>{{ $t('editor.controls.surface.noise') }}</ParameterCategory>
-          <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceNoise.frequency" id="s-freq" :step="0.01" :max="10">
-            {{ $t('editor.controls.surface.noise_fbm_frequency') }}
-          </ParameterSlider>
-          <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceNoise.amplitude" id="s-amp" :step="0.01" :max="1.25">
-            {{ $t('editor.controls.surface.noise_fbm_amplitude') }}
-          </ParameterSlider>
-          <ParameterSlider
-            v-model="LG_PLANET_DATA.planetSurfaceNoise.lacunarity"
-            id="s-lac"
-            :step="0.01"
-            :min="1"
-            :max="3"
-          >
-            {{ $t('editor.controls.surface.noise_fbm_lacunarity') }}
-          </ParameterSlider>
-          <ParameterDivider />
-          <ParameterColorRamp mode="color" v-model="(LG_PLANET_DATA.planetSurfaceColorRamp as ColorRamp)" :key="LG_PLANET_DATA.planetName">
-            {{ $t('editor.controls.surface.noise_colorramp') }}
-          </ParameterColorRamp>
-        </ParameterTable>
-      </template>
+      <template v-slot:content><ControlsSurface /></template>
     </CollapsibleSection>
 
     <!-- Biomes -->
     <CollapsibleSection icon="mingcute:mountain-2-line" :expand="false">
       <template v-slot:title>{{ $t('editor.controls.biomes.$title') }}</template>
-      <template v-slot:content>
-        <ParameterTable>
-          <ParameterCheckbox
-            v-model="LG_PLANET_DATA.biomesEnabled"
-            id="b-biomes"
-            :true-value="true"
-            :false-value="false"
-          >
-            {{ $t('editor.controls.biomes.biomes_show') }}
-          </ParameterCheckbox>
-          <template v-if="LG_PLANET_DATA.biomesEnabled">
-            <ParameterCheckbox
-              v-model="LG_PLANET_DATA.biomePolesEnabled"
-              id="b-poles"
-              :true-value="true"
-              :false-value="false"
-            >
-              {{ $t('editor.controls.biomes.poles_show') }}
-            </ParameterCheckbox>
-          </template>
-        </ParameterTable>
-      </template>
+      <template v-slot:content><ControlsBiomes /></template>
     </CollapsibleSection>
 
     <!-- Clouds -->
     <CollapsibleSection icon="mingcute:clouds-line" :expand="false">
       <template v-slot:title>{{ $t('editor.controls.clouds.$title') }}</template>
-      <template v-slot:content>
-        <ParameterTable>
-          <ParameterCheckbox
-            v-model="LG_PLANET_DATA.cloudsEnabled"
-            id="c-toggle"
-            :true-value="true"
-            :false-value="false"
-          >
-            {{ $t('editor.controls.clouds.clouds_show') }}
-          </ParameterCheckbox>
-          <template v-if="LG_PLANET_DATA.cloudsEnabled">
-            <ParameterCategory>{{ $t('editor.controls.clouds.transform') }}</ParameterCategory>
-            <ParameterSlider v-model="LG_PLANET_DATA.cloudsRotation" id="c-rot" :step="1" :min="0" :max="360">
-              {{ $t('editor.controls.clouds.transform_rotation') }} <sup>(°)</sup>
-            </ParameterSlider>
-            <ParameterCategory>{{ $t('editor.controls.clouds.noise') }}</ParameterCategory>
-            <ParameterSlider v-model="LG_PLANET_DATA.cloudsNoise.frequency" id="c-freq" :step="0.01" :max="5">
-              {{ $t('editor.controls.clouds.noise_fbm_frequency') }}
-            </ParameterSlider>
-            <ParameterSlider v-model="LG_PLANET_DATA.cloudsNoise.amplitude" id="c-amp" :step="0.01" :min="0" :max="1.25">
-              {{ $t('editor.controls.clouds.noise_fbm_amplitude') }}
-            </ParameterSlider>
-            <ParameterSlider v-model="LG_PLANET_DATA.cloudsNoise.lacunarity" id="c-lac" :step="0.01" :min="1" :max="3">
-              {{ $t('editor.controls.clouds.noise_fbm_lacunarity') }}
-            </ParameterSlider>
-            <ParameterCategory>{{ $t('editor.controls.clouds.rgba') }}</ParameterCategory>
-            <ParameterColor v-model="LG_PLANET_DATA.cloudsColor">
-              {{ $t('editor.controls.clouds.rgba_color') }}
-            </ParameterColor>
-            <ParameterColorRamp mode="opacity" v-model="(LG_PLANET_DATA.cloudsColorRamp as ColorRamp)" :key="LG_PLANET_DATA.planetName">{{
-              $t('editor.controls.clouds.rgba_opacityramp')
-            }}</ParameterColorRamp>
-          </template>
-        </ParameterTable>
-      </template>
+      <template v-slot:content><ControlsClouds /></template>
     </CollapsibleSection>
 
     <!-- Atmosphere -->
     <CollapsibleSection icon="material-symbols:line-curve-rounded" :expand="false">
       <template v-slot:title>{{ $t('editor.controls.atmosphere.$title') }}</template>
-      <template v-slot:content>
-        <ParameterTable>
-          <ParameterCheckbox
-            v-model="LG_PLANET_DATA.atmosphereEnabled"
-            id="a-toggle"
-            :true-value="true"
-            :false-value="false"
-          >
-            {{ $t('editor.controls.atmosphere.atmosphere_show') }}
-          </ParameterCheckbox>
-          <template v-if="LG_PLANET_DATA.atmosphereEnabled">
-            <ParameterCategory>{{ $t('editor.controls.atmosphere.transform') }}</ParameterCategory>
-            <ParameterSlider v-model="LG_PLANET_DATA.atmosphereHeight" id="a-height" :step="0.1" :min="1" :max="8">
-              {{ $t('editor.controls.atmosphere.transform_height') }}
-            </ParameterSlider>
-            <ParameterSlider
-              v-model="LG_PLANET_DATA.atmosphereDensityScale"
-              id="a-density"
-              :step="0.01"
-              :min="1"
-              :max="10"
-            >
-              {{ $t('editor.controls.atmosphere.transform_density') }}
-            </ParameterSlider>
-            <ParameterCategory>{{ $t('editor.controls.atmosphere.rgba') }}</ParameterCategory>
-            <ParameterSlider v-model="LG_PLANET_DATA.atmosphereHue" id="a-hue" :step="0.01" :min="0" :max="2">
-              {{ $t('editor.controls.atmosphere.rgba_hue') }}
-            </ParameterSlider>
-            <ParameterSlider v-model="LG_PLANET_DATA.atmosphereIntensity" id="a-int" :step="0.01" :min="0" :max="2">
-              {{ $t('editor.controls.atmosphere.rgba_intensity') }}
-            </ParameterSlider>
-          </template>
-        </ParameterTable>
-      </template>
+      <template v-slot:content><ControlsAtmosphere /></template>
     </CollapsibleSection>
     <InlineFooter />
   </div>
 </template>
 
 <script setup lang="ts">
-import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
-import ParameterColorRamp from '@components/parameters/ParameterColorRamp.vue'
-import ParameterDivider from '@components/parameters/ParameterDivider.vue'
-import ParameterSlider from '@components/parameters/ParameterSlider.vue'
-import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
 import InlineFooter from '../main/InlineFooter.vue'
-import type { ColorRamp } from '@/core/models/color-ramp.model'
+import ControlsLighting from './ControlsLighting.vue'
+import ControlsRendering from './ControlsRendering.vue'
+import ControlsSurface from './ControlsSurface.vue'
+import ControlsBiomes from './ControlsBiomes.vue'
+import ControlsClouds from './ControlsClouds.vue'
+import ControlsAtmosphere from './ControlsAtmosphere.vue'
 </script>
 
 <style scoped lang="scss">
