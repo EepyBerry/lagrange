@@ -160,8 +160,6 @@ function initLighting(): void {
 }
 
 function initPlanet(): void {
-  const b = new THREE.BoxGeometry(1, 1, 1)
-  $se.scene.add(new THREE.Mesh(b))
   const planet = createPlanet(LG_PLANET_DATA.value as PlanetData)
   const clouds = createClouds(LG_PLANET_DATA.value as PlanetData)
   const atmosphere = createAtmosphere(LG_PLANET_DATA.value as PlanetData, _sunLight.position)
