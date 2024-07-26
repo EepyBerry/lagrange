@@ -32,7 +32,7 @@
       
   </div>
   <div v-if="planets.length > 0" id="codex-grid" router-link="/planet-editor/new">
-    <PlanetCardElement v-for="planet of planets" :key="planet.id" :planet="planet" />
+    <PlanetCardElement v-for="planet of planets" :key="planet.id" :planet="planet" @export="exportPlanet(planet)" @delete="openDeleteConfirmDialog(planet)" />
   </div>
   <div v-else id="codex-grid" class="empty">
     <iconify-icon icon="ph:planet-thin" width="16rem" />
@@ -41,12 +41,16 @@
   <div id="codex-footer">
     <InlineFooter  />
   </div>
+  <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="deleteTargetedPlanet">
+    <template v-slot:planet></template>
+  </AppDeleteConfirmDialog>
 </template>
 
 <script setup lang="ts">
 import PlanetCardElement from '@/components/elements/PlanetCardElement.vue';
 import AppNavigation from '@/components/main/AppNavigation.vue';
 import InlineFooter from '@/components/main/InlineFooter.vue';
+import AppDeleteConfirmDialog from '@components/dialogs/AppDeleteConfirmDialog.vue';
 import { idb, type IDBPlanet } from '@/dexie.config';
 import { useHead } from '@unhead/vue';
 import { onMounted, onUnmounted, ref, type Ref } from 'vue';
@@ -62,7 +66,8 @@ const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const planets: Ref<IDBPlanet[]> = ref([])
 
-// Responsiveness
+const deleteTarget: Ref<IDBPlanet|null> = ref(null)
+const deleteDialogRef: Ref<{ open: Function } | null> = ref(null)
 const showCompactNavigation: Ref<boolean> = ref(false)
 
 useHead({
@@ -83,6 +88,8 @@ async function loadPlanets() {
   const idbPlanets = await idb.planets.toArray()
   planets.value = idbPlanets.map(pl => ({ ...pl, data: PlanetData.createFrom(pl.data) }))
 }
+
+// ------------------------------------------------------------------------------------------------
 
 function onWindowResize() {
   computeResponsiveness()
@@ -123,6 +130,23 @@ function exportPlanets() {
   const gzipParams = pako.deflate(jsonParams)
   const planetFilename = 'Planet'
   saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
+}
+
+function exportPlanet(planet: IDBPlanet) {
+  const jsonParams = JSON.stringify(planet)
+  const gzipParams = pako.deflate(jsonParams)
+  const planetFilename = planet.data.planetName.replaceAll(' ', '_')
+  saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
+}
+
+async function openDeleteConfirmDialog(planet: IDBPlanet) {
+  deleteTarget.value = planet
+  deleteDialogRef.value?.open(deleteTarget.value.data.planetName)
+}
+
+async function deleteTargetedPlanet() {
+  await idb.planets.delete(deleteTarget.value!.id)
+  await loadPlanets()
 }
 
 </script>
@@ -181,7 +205,7 @@ function exportPlanets() {
   border-radius: 4px;
 
   display: grid;
-  grid-template-rows: 26rem;
+  grid-template-rows: repeat(auto-fill, 26rem);
   grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
   gap: 1rem;
 
@@ -224,7 +248,7 @@ function exportPlanets() {
     }
   }
   #codex-grid {
-    padding: 0.5rem;
+    padding: 0;
     margin: 3.75rem 0.5rem 0.5rem;
   }
 }

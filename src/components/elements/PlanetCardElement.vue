@@ -18,7 +18,7 @@
         class="lg"
         :aria-label="$t('a11y.topbar_export')"
         :title="$t('tooltip.topbar_export')"
-        @click="exportPlanet"
+        @click="emitExportEvent"
       >
         <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
         {{ $t('codex.$action_export') }}
@@ -28,7 +28,7 @@
         class="lg warn"
         :aria-label="$t('a11y.topbar_export')"
         :title="$t('tooltip.topbar_export')"
-        disabled
+        @click="emitDeleteEvent"
       >
         <iconify-icon icon="mingcute:delete-2-line" width="1.5rem" aria-hidden="true" />
       </button>
@@ -38,16 +38,16 @@
 
 <script setup lang="ts">
 import { type IDBPlanet } from '@/dexie.config';
-import saveAs from 'file-saver';
-import pako from 'pako';
 import { RouterLink } from 'vue-router';
-const $props = defineProps<{ planet: IDBPlanet }>()
+defineProps<{ planet: IDBPlanet }>()
+const $emit = defineEmits(['export', 'delete'])
 
-function exportPlanet() {
-  const jsonParams = JSON.stringify($props.planet)
-  const gzipParams = pako.deflate(jsonParams)
-  const planetFilename = $props.planet.data.planetName.replaceAll(' ', '_')
-  saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
+function emitExportEvent() {
+  $emit('export')
+}
+
+function emitDeleteEvent() {
+  $emit('delete')
 }
 </script>
 

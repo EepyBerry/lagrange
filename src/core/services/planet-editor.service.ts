@@ -202,6 +202,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
     new THREE.Spherical(LG_PLANET_DATA.value.initCamDistance - 1.5, Math.PI / 2.0, degToRad(LG_PLANET_DATA.value.initCamAngle)),
   )
   previewCamera.setRotationFromAxisAngle(AXIS_Y, degToRad(LG_PLANET_DATA.value.initCamAngle))
+  previewCamera.updateProjectionMatrix()
 
   // ---------------------- Add cloned objects to preview scene -----------------------
   const pivot = new THREE.Group()

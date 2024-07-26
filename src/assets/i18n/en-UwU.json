@@ -71,6 +71,13 @@
       "warning": "Aww unsaved data wiww be wost!",
       "$action_cancel": "Cancew",
       "$action_confirm": "Confiwm"
+    },
+    "delete": {
+      "$title": "Delete [{planet}]",
+      "message": "A-awe you suwe you want to dewete this pwanyet? :O",
+      "warning": "This action cannyot be undyone!!!",
+      "$action_cancel": "Cancew",
+      "$action_confirm": "Confiwm"
     }
   },
   "codex": {
@@ -199,6 +206,7 @@
     "dialog_settings": "Settings diawog",
     "dialog_about": "About @:main.$title diawog",
     "dialog_reset": "Confiwm weset diawog",
+    "dialog_delete": "Confiwm dewete diawog",
 
     "topbar_rename": "@:tooltip.topbar_rename",
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
