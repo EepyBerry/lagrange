@@ -13,6 +13,7 @@ import {
   LG_NAME_ATMOSPHERE,
   LG_NAME_SUN,
   AXIS_Y,
+  AXIS_NX,
 } from '@core/globals'
 import { GeometryType } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
@@ -210,6 +211,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   previewScene.add(pivot)
   previewScene.add(data.sun)
   previewScene.add(data.ambientLight)
+  pivot.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
 
   // ---------------------------- Setup renderer & render -----------------------------
   $se.renderer.clear()

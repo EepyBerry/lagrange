@@ -3,8 +3,7 @@
     <AppNavigation :compact-mode="showCompactNavigation" />
     <PlanetInfoControls :compact-mode="showCompactInfo" @rename="patchMetaHead" @save="savePlanet" @reset="resetPlanet" />
   </div>
-  <CompactPlanetEditorControls v-if="showCompactControls" />
-  <PlanetEditorControls v-else />
+  <PlanetEditorControls :compact-mode="showCompactControls" />
 
   <div ref="sceneRoot" id="scene-root"></div>
   <OverlaySpinner :load="showSpinner" />
@@ -34,7 +33,6 @@ import type { LensFlareEffect } from '@core/three/lens-flare.effect'
 import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config'
 import { WindowEventBus } from '@core/window-event-bus'
 import { useI18n } from 'vue-i18n'
-import CompactPlanetEditorControls from '@/components/controls/CompactPlanetEditorControls.vue'
 import AppNavigation from '@/components/main/AppNavigation.vue'
 import { setShaderMaterialUniform, setShaderMaterialUniforms } from '@/utils/three-utils'
 import { useRoute } from 'vue-router'

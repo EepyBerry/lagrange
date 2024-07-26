@@ -1,57 +1,23 @@
 <template>
-  <div id="controls">
-    <aside class="sidebar">
-      <!-- Lighting -->
-      <SidebarSection icon="mingcute:sun-line" :expand="false" :ariaLabel="$t('editor.controls.lighting.$title')">
-        <template v-slot:title>{{ $t('editor.controls.lighting.$title') }}</template>
-        <template v-slot:content><ControlsLighting /></template>
-      </SidebarSection>
-
-      <!-- Planet & Rendering -->
-      <SidebarSection icon="tabler:gizmo" :expand="false" :ariaLabel="$t('editor.controls.planet_rendering.$title')">
-        <template v-slot:title>{{ $t('editor.controls.planet_rendering.$title') }}</template>
-        <template v-slot:content><ControlsRendering /></template>
-      </SidebarSection>
-
-      <!-- Surface -->
-      <SidebarSection icon="mingcute:planet-line" :expand="false" :ariaLabel="$t('editor.controls.surface.$title')">
-        <template v-slot:title>{{ $t('editor.controls.surface.$title') }}</template>
-        <template v-slot:content><ControlsSurface /></template>
-      </SidebarSection>
-
-      <!-- Biomes -->
-      <SidebarSection icon="mingcute:mountain-2-line" :expand="false" :ariaLabel="$t('editor.controls.biomes.$title')">
-        <template v-slot:title>{{ $t('editor.controls.biomes.$title') }}</template>
-        <template v-slot:content><ControlsBiomes /></template>
-      </SidebarSection>
-
-      <!-- Clouds -->
-      <SidebarSection icon="mingcute:clouds-line" :expand="false" :ariaLabel="$t('editor.controls.clouds.$title')">
-        <template v-slot:title>{{ $t('editor.controls.clouds.$title') }}</template>
-        <template v-slot:content><ControlsClouds /></template>
-      </SidebarSection>
-
-      <!-- Atmosphere -->
-      <SidebarSection icon="material-symbols:line-curve-rounded" :expand="false" :ariaLabel="$t('editor.controls.atmosphere.$title')">
-        <template v-slot:title>{{ $t('editor.controls.atmosphere.$title') }}</template>
-        <template v-slot:content><ControlsAtmosphere /></template>
-      </SidebarSection>
+  <div id="controls" :class="{ compact: compactMode }">
+    <template v-if="compactMode">
+      <ControlsContainer :compactMode="true" />
+      <InlineFooter />
+    </template>
+    <aside v-else class="sidebar">
+      <ControlsContainer :compactMode="false" />
     </aside>
   </div>
 </template>
 
 <script setup lang="ts">
-import SidebarSection from '@components/elements/SidebarSection.vue'
-import ControlsLighting from './ControlsLighting.vue'
-import ControlsRendering from './ControlsRendering.vue'
-import ControlsSurface from './ControlsSurface.vue'
-import ControlsBiomes from './ControlsBiomes.vue'
-import ControlsClouds from './ControlsClouds.vue'
-import ControlsAtmosphere from './ControlsAtmosphere.vue'
+import InlineFooter from '../main/InlineFooter.vue';
+import ControlsContainer from './ControlsContainer.vue'
+defineProps<{ compactMode: boolean }>()
 </script>
 
 <style scoped lang="scss">
-#controls {
+#controls:not(.compact) {
   z-index: 10;
   position: absolute;
   inset: 0 auto 0;
@@ -74,15 +40,26 @@ import ControlsAtmosphere from './ControlsAtmosphere.vue'
     user-select: none;
     direction: rtl;
 
-    & > section {
+    & > * {
       direction: ltr;
       align-self: flex-end;
-      min-width: 26rem;
     }
   }
 }
+#controls.compact {
+  z-index: 5;
+  position: absolute;
+  inset: 50% 0 0;
+  padding: 0.75rem 0.5rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  overflow-y: auto;
+}
+
 @media screen and (max-width: 1199px) {
-  #controls {
+  #controls:not(.compact) {
     .sidebar {
       padding: 0.5rem;
       margin-top: 3.375rem;
@@ -97,7 +74,7 @@ import ControlsAtmosphere from './ControlsAtmosphere.vue'
   }
 }
 @media screen and (max-width: 767px) {
-  #controls {
+  #controls:not(.compact) {
     min-width: 2rem;
     margin-bottom: 3.875rem;
 
@@ -107,7 +84,7 @@ import ControlsAtmosphere from './ControlsAtmosphere.vue'
   }
 }
 @media screen and (max-width: 567px) {
-  #controls {
+  #controls:not(.compact) {
     .sidebar {
       padding: 0.5rem;
       min-width: 0;

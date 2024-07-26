@@ -1,7 +1,7 @@
 <template>
   <section
     class="collapsible-section"
-    :class="{ expanded: _expanded }"
+    :class="{ expanded: _expanded, compact: compactMode, 'allow-icon-mode': allowIconMode }"
     role="group"
     :aria-expanded="_expanded"
   >
@@ -24,7 +24,7 @@
 import { type Ref, onMounted, ref } from 'vue'
 const _expanded: Ref<boolean> = ref(true)
 
-const _props = defineProps<{ icon?: string; expand?: boolean }>()
+const _props = defineProps<{ icon?: string, compactMode?: boolean, allowIconMode?: boolean, expand?: boolean }>()
 onMounted(() => (_expanded.value = _props.expand ?? true))
 
 function toggleExpand() {
@@ -39,14 +39,15 @@ function toggleExpand() {
   border: 1px solid var(--lg-accent);
   border-radius: 4px;
   width: 100%;
+  min-width: 26rem;
 
   display: flex;
   flex-direction: column;
   align-items: space-between;
   gap: 4px;
 
-  &.static {
-    margin-bottom: 0.75rem;
+  &.compact {
+    min-width: 0;
   }
   &.expanded .indicator {
     transform: rotateZ(90deg);
@@ -78,6 +79,26 @@ function toggleExpand() {
     .default {
       font-size: 0.75rem;
     }
+  }
+}
+
+@media screen and (max-width: 1199px) {
+  .collapsible-section:not(.expanded,.compact).allow-icon-mode {
+    align-self: flex-start;
+    width: fit-content;
+    min-width: 0;
+
+    .section-title {
+      min-width: 0;
+
+      span,
+      .indicator {
+        display: none;
+      }
+    }
+  }
+  .collapsible-section:not(.compact).expanded {
+    min-width: 16rem;
   }
 }
 </style>
