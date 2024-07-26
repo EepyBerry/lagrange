@@ -111,6 +111,7 @@
         "$title": "Planet & Rendering",
 
         "transform": "Transform",
+        "transform_radius": "Radius",
         "transform_axialtilt": "Axial tilt",
         "transform_rotation": "Rotation",
 

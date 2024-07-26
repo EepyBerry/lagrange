@@ -112,6 +112,7 @@
         "$title": "Pwanyet & Wendewing",
 
         "transform": "Twansfowm",
+        "transform_radius": "Wadius",
         "transform_axialtilt": "Axiaw tiwt",
         "transform_rotation": "Wotation",
 
