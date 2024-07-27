@@ -166,7 +166,7 @@ async function deleteTargetedPlanet() {
   z-index: -1;
   position: fixed;
   inset: 0;
-  background-image: url('/background/space-1920w.png');
+  background-image: url('/background/space-1920w.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -245,12 +245,12 @@ async function deleteTargetedPlanet() {
 
 @media screen and (min-width: 2000px) {
   #codex-background {
-    background-image: url('/background/space-2560w.png');
+    background-image: url('/background/space-2560w.jpg');
   }
 }
 @media screen and (max-width: 1199px) {
   #codex-background {
-    background-image: url('/background/space-960w.png');
+    background-image: url('/background/space-960w.jpg');
   }
   #codex-header {
     margin: 0.5rem;
@@ -265,7 +265,7 @@ async function deleteTargetedPlanet() {
 }
 @media screen and (max-width: 767px) {
   #codex-background {
-    background-image: url('/background/space-540w.png');
+    background-image: url('/background/space-540w.jpg');
   }
   #codex-grid {
     padding: 0.5rem;
