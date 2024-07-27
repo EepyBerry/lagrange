@@ -534,9 +534,9 @@ export default class PlanetData extends ChangeTracker {
     this._lensFlareEnabled = data._lensFlareEnabled
     this._lensFlareGlareIntensity = data._lensFlareGlareIntensity
     this._sunLightAngle = data._sunLightAngle
-    this._sunLightColor.set(numberToHex(data._sunLightColor))
+    this._sunLightColor.set(data._sunLightColor.x, data._sunLightColor.y, data._sunLightColor.z)
     this._sunLightIntensity = data._sunLightIntensity
-    this._ambLightColor.set(numberToHex(data._ambLightColor))
+    this._ambLightColor.set(data._ambLightColor.x, data._ambLightColor.y, data._ambLightColor.z)
     this._ambLightIntensity = data._ambLightIntensity
 
     this._planetRadius = data._planetRadius
@@ -563,7 +563,7 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsNoise.amplitude = data._cloudsNoise._amplitude
     this._cloudsNoise.frequency = data._cloudsNoise._frequency
     this._cloudsNoise.lacunarity = data._cloudsNoise._lacunarity
-    this._cloudsColor.set(numberToHex(data._cloudsColor))
+    this._cloudsColor.set(data._cloudsColor.x, data._cloudsColor.y, data._cloudsColor.z)
     this._cloudsColorRamp.load(data._cloudsColorRamp)
 
     this._atmosphereEnabled = data._atmosphereEnabled

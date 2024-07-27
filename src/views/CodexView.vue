@@ -53,7 +53,7 @@ import InlineFooter from '@/components/main/InlineFooter.vue';
 import AppDeleteConfirmDialog from '@components/dialogs/AppDeleteConfirmDialog.vue';
 import { idb, type IDBPlanet } from '@/dexie.config';
 import { useHead } from '@unhead/vue';
-import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue';
+import { onMounted, onUnmounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
 import { WindowEventBus } from '@/core/window-event-bus';
@@ -145,6 +145,7 @@ async function exportPlanets() {
 }
 
 function exportPlanet(planet: IDBPlanet) {
+  planet.data.changedProps.splice(0)
   const jsonParams = JSON.stringify(planet)
   const gzipParams = pako.deflate(jsonParams)
   const planetFilename = planet.data.planetName.replaceAll(' ', '_')

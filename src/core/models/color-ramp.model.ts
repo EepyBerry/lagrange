@@ -145,7 +145,9 @@ export class ColorRamp extends ChangeTracker {
   public load(data: any) {
     this._steps.splice(0)
     this._steps.push(
-      ...data._steps.map((s: any) => new ColorRampStep(new THREE.Color(numberToHex(s._color)), s._factor, s._isBound)),
+      ...data._steps.map((s: any) => new ColorRampStep(
+        new THREE.Color(s._color), s._factor, s._isBound)
+      ),
     )
   }
 
