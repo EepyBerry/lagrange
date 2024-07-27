@@ -70,22 +70,22 @@ export function createGeometryComponent(type: GeometryType, addtlRadius: number 
   switch (type) {
     case GeometryType.SPHERE:
       return new THREE.SphereGeometry(
-        LG_PLANET_DATA.value.planetRadius + addtlRadius,
+        1.0 + addtlRadius,
         LG_PLANET_DATA.value.planetMeshQuality,
         LG_PLANET_DATA.value.planetMeshQuality / 2.0,
       )
     case GeometryType.TORUS:
       return new THREE.TorusGeometry(
-        LG_PLANET_DATA.value.planetRadius + addtlRadius / 4.0,
-        LG_PLANET_DATA.value.planetRadius / 2.0 + addtlRadius * 2.0,
+        1.0 + addtlRadius / 4.0,
+        1.0 / 2.0 + addtlRadius * 2.0,
         LG_PLANET_DATA.value.planetMeshQuality * 2.0,
         LG_PLANET_DATA.value.planetMeshQuality * 4.0,
       )
     case GeometryType.BOX:
       return new THREE.BoxGeometry(
-        LG_PLANET_DATA.value.planetRadius * 1.5 + addtlRadius,
-        LG_PLANET_DATA.value.planetRadius * 1.5 + addtlRadius,
-        LG_PLANET_DATA.value.planetRadius * 1.5 + addtlRadius,
+        1.0 * 1.5 + addtlRadius,
+        1.0 * 1.5 + addtlRadius,
+        1.0 * 1.5 + addtlRadius,
       )
   }
 }

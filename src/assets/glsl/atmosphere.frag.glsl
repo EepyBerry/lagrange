@@ -23,7 +23,7 @@ in vec3 viewRay; // View space ray direction
 @import functions/color_utils;
 
 void main() {
-    // Step 3: World Space Ray
+    // World Space Ray
     vec4 worldRay = inverse(viewMatrix) * vec4(viewRay, 0.0);
 
     // Normalize the ray direction

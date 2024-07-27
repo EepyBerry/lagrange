@@ -91,7 +91,7 @@ export function createPlanet(data: PlanetData): THREE.Mesh {
     planetVertShader,
     planetFragShader,
     {
-      u_radius: { value: data.planetRadius },
+      u_radius: { value: 1.0 },
       u_octaves: { value: 6 },
       u_frequency: { value: data.planetSurfaceNoise.frequency },
       u_amplitude: { value: data.planetSurfaceNoise.amplitude },
@@ -158,8 +158,8 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
     {
       u_light_position: { value: sunPos },
       u_light_intensity: { value: data.sunLightIntensity },
-      u_surface_radius: { value: data.planetRadius },
-      u_radius: { value: data.planetRadius + atmosHeight },
+      u_surface_radius: { value: 1.0 },
+      u_radius: { value: 1.0 + atmosHeight },
       u_density: { value: atmosDensity },
       u_hue: { value: data.atmosphereHue },
       u_intensity: { value: data.atmosphereIntensity },
@@ -205,6 +205,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   previewCamera.updateProjectionMatrix()
 
   // ---------------------- Add cloned objects to preview scene -----------------------
+
   const pivot = new THREE.Group()
   pivot.add(data.planet)
   pivot.add(data.clouds)
@@ -212,9 +213,13 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   previewScene.add(pivot)
   previewScene.add(data.sun)
   previewScene.add(data.ambientLight)
+
+  const r = LG_PLANET_DATA.value.planetRadius
+  pivot.scale.set(r,r,r)
   pivot.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
 
   // ---------------------------- Setup renderer & render -----------------------------
+
   $se.renderer.clear()
   $se.renderer.setSize(w, h)
   $se.renderer.setRenderTarget(previewRenderTarget)
@@ -227,6 +232,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   $se.renderer.setRenderTarget(null)
 
   // ----------------- Create preview canvas & write data from buffer -----------------
+
   const canvas = document.createElement('canvas')
   canvas.width = w
   canvas.height = h
@@ -239,6 +245,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   ctx.putImageData(imageData, 0, 0)
 
   // ------------------------------- Clean-up resources -------------------------------
+
   pivot.clear()
   data.sun.dispose()
   data.ambientLight.dispose();
@@ -255,6 +262,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   previewScene.clear()
 
   // ----------------------------- Save and remove canvas -----------------------------
+
   const dataURL = canvas.toDataURL('image/webp')
   canvas.remove();
 

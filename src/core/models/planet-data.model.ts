@@ -539,6 +539,7 @@ export default class PlanetData extends ChangeTracker {
     this._ambLightColor.set(numberToHex(data._ambLightColor))
     this._ambLightIntensity = data._ambLightIntensity
 
+    this._planetRadius = data._planetRadius
     this._planetAxialTilt = data._planetAxialTilt
     this._planetRotation = data._planetRotation
     this._planetWaterRoughness = data._planetWaterRoughness

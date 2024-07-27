@@ -366,7 +366,14 @@ function updatePlanet() {
       // --------------------------------------------------
       case '_planetRadius': {
         const v = LG_PLANET_DATA.value.planetRadius
+        const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / LG_HEIGHT_DIVIDER
         _planetGroup.scale.set(v,v,v)
+        setShaderMaterialUniform(_planet.material as CustomShaderMaterial, 'u_radius', v)
+        setShaderMaterialUniforms(
+          _atmosphere.material as CustomShaderMaterial,
+          ['u_surface_radius', 'u_radius'],
+          [v, v + atmosHeight]
+        )
         break
       }
       case '_planetAxialTilt': {

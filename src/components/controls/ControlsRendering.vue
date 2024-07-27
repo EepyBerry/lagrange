@@ -1,7 +1,7 @@
 <template>
     <ParameterTable>
         <ParameterCategory top>{{ $t('editor.controls.planet_rendering.transform') }}</ParameterCategory>
-        <ParameterSlider v-model="LG_PLANET_DATA.planetRadius" id="p-tilt" :step="0.05" :min="0" :max="1">
+        <ParameterSlider v-model="LG_PLANET_DATA.planetRadius" id="p-tilt" :step="0.01" :min="0.5" :max="1">
         {{ $t('editor.controls.planet_rendering.transform_radius') }}
         </ParameterSlider>
         <ParameterSlider v-model="LG_PLANET_DATA.planetAxialTilt" id="p-tilt" :step="1" :min="0" :max="180">
