@@ -22,6 +22,7 @@
       "shortcuts_biomes": "Toggle biomes",
       "shortcuts_clouds": "Toggle clouds",
       "shortcuts_atmosphere": "Toggle atmosphere",
+      "shortcuts_screenshot": "Take screenshot",
 
       "topbar": "Top bar - Naming & data",
       "topbar_rename": "Rename planet",
@@ -49,11 +50,12 @@
       "general_theme_voyager": "Voyager",
       "general_monospace": "Enable monospace font",
 
-      "keybinds": "Key bindings",
-      "keybinds_lensflare": "@:dialog.init.shortcuts_lensflare",
-      "keybinds_biomes": "@:dialog.init.shortcuts_biomes",
-      "keybinds_clouds": "@:dialog.init.shortcuts_clouds",
-      "keybinds_atmosphere": "@:dialog.init.shortcuts_atmosphere"
+      "editor": "Editor",
+      "editor_lensflare": "@:dialog.init.shortcuts_lensflare",
+      "editor_biomes": "@:dialog.init.shortcuts_biomes",
+      "editor_clouds": "@:dialog.init.shortcuts_clouds",
+      "editor_atmosphere": "@:dialog.init.shortcuts_atmosphere",
+      "editor_screenshot": "@:dialog.init.shortcuts_screenshot"
     },
     "about": {
       "description": "A procedural planet-building application.",

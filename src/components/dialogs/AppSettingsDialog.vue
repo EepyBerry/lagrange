@@ -76,46 +76,48 @@
 
         <CollapsibleSection class="section-keybinds">
           <template v-slot:title>
-            {{ $t('dialog.settings.keybinds') }}
+            {{ $t('dialog.settings.editor') }}
           </template>
           <template v-slot:content>
-            <div class="settings-keybinds">
+            <div class="settings-editor">
               <ParameterTable>
                 <ParameterDivider />
-                <tr v-for="kb of keyBinds" :key="kb.action">
-                  <td>
-                    <div class="keybind">
-                      <div class="keybinds-label">
-                        <iconify-icon :icon="getIcon(kb.action)" width="1.5rem" aria-hidden="true" />
-                        {{ $t('dialog.settings.keybinds_' + getTranslationKey(kb.action)) }}
-                      </div>
-                      <div class="keybinds-key" :class="{ unset: kb.key === '[unset]' }">
-                        <iconify-icon
-                          v-if="tryGetKeyRepresentation(kb.key)"
-                          :icon="tryGetKeyRepresentation(kb.key)"
-                          width="1.25rem"
-                        />
-                        <span v-else>{{ selectedAction === kb.action ? '.....' : kb.key }}</span>
-                      </div>
-                      <button class="lg" :aria-label="$t('a11y.action_edit_keybind')" @click="toggleAction(kb.action)">
-                        <iconify-icon
-                          v-if="selectedAction === kb.action"
-                          class="icon"
-                          icon="mingcute:close-line"
-                          width="1.25rem"
-                          aria-hidden="true"
-                        />
-                        <iconify-icon
-                          v-else
-                          class="icon"
-                          icon="mingcute:edit-2-line"
-                          width="1.25rem"
-                          aria-hidden="true"
-                        />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                <ParameterKeyBinding icon="mingcute:sun-line"
+                  :key-bind="getKeyBind('toggle-lens-flare')"
+                  :selected="selectedAction === 'toggle-lens-flare'"
+                  @toggle="toggleAction('toggle-lens-flare')"
+                >
+                  {{ $t('dialog.settings.editor_lensflare') }}
+                </ParameterKeyBinding>
+                <ParameterKeyBinding icon="mingcute:mountain-2-line"
+                  :key-bind="getKeyBind('toggle-biomes')"
+                  :selected="selectedAction === 'toggle-biomes'"
+                  @toggle="toggleAction('toggle-biomes')"
+                >
+                  {{ $t('dialog.settings.editor_biomes') }}
+                </ParameterKeyBinding>
+                <ParameterKeyBinding icon="mingcute:clouds-line"
+                  :key-bind="getKeyBind('toggle-clouds')"
+                  :selected="selectedAction === 'toggle-clouds'"
+                  @toggle="toggleAction('toggle-clouds')"
+                >
+                  {{ $t('dialog.settings.editor_clouds') }}
+                </ParameterKeyBinding>
+                <ParameterKeyBinding icon="material-symbols:line-curve-rounded"
+                  :key-bind="getKeyBind('toggle-atmosphere')"
+                  :selected="selectedAction === 'toggle-atmosphere'"
+                  @toggle="toggleAction('toggle-atmosphere')"
+                >
+                  {{ $t('dialog.settings.editor_atmosphere') }}
+                </ParameterKeyBinding>
+                <ParameterDivider />
+                <ParameterKeyBinding icon="mingcute:screenshot-line"
+                  :key-bind="getKeyBind('take-screenshot')"
+                  :selected="selectedAction === 'take-screenshot'"
+                  @toggle="toggleAction('take-screenshot')"
+                >
+                  {{ $t('dialog.settings.editor_screenshot') }}
+                </ParameterKeyBinding>
               </ParameterTable>
             </div>
           </template>
@@ -126,7 +128,7 @@
 </template>
 
 <script setup lang="ts">
-import { KeyBindingAction, idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
+import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
 import { ref, watch, type Ref } from 'vue'
 import DialogElement from '../elements/DialogElement.vue'
 import ParameterTable from '../parameters/ParameterTable.vue'
@@ -138,6 +140,7 @@ import ParameterSelect from '../parameters/ParameterSelect.vue'
 import { useI18n } from 'vue-i18n'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
 import { mapLocale } from '@/utils/utils'
+import ParameterKeyBinding from '../parameters/ParameterKeyBinding.vue'
 
 const i18n = useI18n()
 
@@ -178,7 +181,7 @@ watch(
 
 async function loadData() {
   let settings = await idb.settings.limit(1).first()
-  let kb = await idb.keyBindings.limit(4).toArray()
+  let kb = await idb.keyBindings.toArray()
   appSettings.value!.locale = i18n.locale.value
   appSettings.value = settings!
   keyBinds.value.push(...kb)
@@ -229,43 +232,8 @@ async function setSelectedActionKey(event: KeyboardEvent) {
   toggleAction(keyBinds.value[kbidx].action)
 }
 
-function getTranslationKey(action: KeyBindingAction) {
-  switch (action) {
-    case KeyBindingAction.ToggleLensFlare:
-      return 'lensflare'
-    case KeyBindingAction.ToggleBiomes:
-      return 'biomes'
-    case KeyBindingAction.ToggleClouds:
-      return 'clouds'
-    case KeyBindingAction.ToggleAtmosphere:
-      return 'atmosphere'
-  }
-}
-function getIcon(action: KeyBindingAction) {
-  switch (action) {
-    case KeyBindingAction.ToggleLensFlare:
-      return 'mingcute:sun-line'
-    case KeyBindingAction.ToggleBiomes:
-      return 'mingcute:mountain-2-line'
-    case KeyBindingAction.ToggleClouds:
-      return 'mingcute:clouds-line'
-    case KeyBindingAction.ToggleAtmosphere:
-      return 'material-symbols:line-curve-rounded'
-  }
-}
-function tryGetKeyRepresentation(key: string) {
-  switch (key) {
-    case 'ARROWUP':
-      return 'mingcute:arrow-up-line'
-    case 'ARROWRIGHT':
-      return 'mingcute:arrow-right-line'
-    case 'ARROWDOWN':
-      return 'mingcute:arrow-down-line'
-    case 'ARROWLEFT':
-      return 'mingcute:arrow-left-line'
-    default:
-      return undefined
-  }
+function getKeyBind(action: string) {
+  return keyBinds.value.find(kb => kb.action === action)
 }
 </script>
 
@@ -278,7 +246,7 @@ function tryGetKeyRepresentation(key: string) {
     gap: 1rem;
 
     .settings-general,
-    .settings-keybinds {
+    .settings-editor {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -288,36 +256,6 @@ function tryGetKeyRepresentation(key: string) {
         width: 100%;
         border-collapse: separate;
         border-spacing: 0 0.125rem;
-      }
-    }
-    .settings-keybinds {
-      .keybind {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.5rem;
-      }
-      .keybinds-label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding-right: 0.5rem;
-        flex: 1;
-      }
-      .keybinds-key {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 6rem;
-        min-height: 2rem;
-        background: var(--lg-panel);
-        border: 1px solid var(--lg-accent);
-        border-radius: 0.25rem;
-        font-weight: 600;
-        padding: 0 0.5rem;
-        &.unset {
-          border-color: var(--lg-warn-active);
-        }
       }
     }
   }

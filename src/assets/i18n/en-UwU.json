@@ -22,6 +22,7 @@
       "shortcuts_biomes": "Toggwe biomes",
       "shortcuts_clouds": "Toggwe cwouds",
       "shortcuts_atmosphere": "Toggwe atmosphewe",
+      "shortcuts_screenshot": "Take scweenshot",
 
       "topbar": "Top baw - Nyaming & data",
       "topbar_rename": "Wenyame pwanyet",
@@ -49,11 +50,12 @@
       "general_theme_voyager": "Voyagew",
       "general_monospace": "Enyabwe monyospace font",
 
-      "keybinds": "Key bindings ^w^",
-      "keybinds_lensflare": "@:dialog.init.shortcuts_lensflare",
-      "keybinds_biomes": "@:dialog.init.shortcuts_biomes",
-      "keybinds_clouds": "@:dialog.init.shortcuts_clouds",
-      "keybinds_atmosphere": "@:dialog.init.shortcuts_atmosphere"
+      "editor": "Editow ^w^",
+      "editor_lensflare": "@:dialog.init.shortcuts_lensflare",
+      "editor_biomes": "@:dialog.init.shortcuts_biomes",
+      "editor_clouds": "@:dialog.init.shortcuts_clouds",
+      "editor_atmosphere": "@:dialog.init.shortcuts_atmosphere",
+      "editor_screenshot": "@:dialog.init.shortcuts_screenshot"
     },
     "about": {
       "description": "A pwoceduwaw pwanyet-buiwding appwication!!! >w<",

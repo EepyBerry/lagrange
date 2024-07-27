@@ -15,5 +15,6 @@ export async function addDefaultKeyBindings(): Promise<any> {
     { action: KeyBindingAction.ToggleBiomes, key: 'B' },
     { action: KeyBindingAction.ToggleClouds, key: 'C' },
     { action: KeyBindingAction.ToggleAtmosphere, key: 'A' },
+    { action: KeyBindingAction.TakeScreenshot, key: 'X' },
   ])
 }

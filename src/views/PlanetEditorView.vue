@@ -50,6 +50,7 @@ import {
 } from '@/core/services/planet-editor.service'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { getPlanetMetaTitle } from '@/utils/utils'
+import { saveAs } from 'file-saver'
 
 const route = useRoute()
 const i18n = useI18n()
@@ -239,6 +240,12 @@ async function handleKeyboardEvent(event: KeyboardEvent) {
     case KeyBindingAction.ToggleBiomes:
       LG_PLANET_DATA.value.biomesEnabled = !LG_PLANET_DATA.value.biomesEnabled
       break
+    case KeyBindingAction.TakeScreenshot: {
+      $se.renderer.domElement.toBlob(blob => {
+        saveAs(blob!, `${LG_PLANET_DATA.value.planetName}-${new Date().toISOString()}.png`)
+      }, 'image/png')
+      break
+    }
   }
 }
 
