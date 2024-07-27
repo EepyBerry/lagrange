@@ -39,7 +39,7 @@ const idb = new Dexie('LagrangeIDB', { autoOpen: true }) as Dexie & {
 idb.version(1).stores({
   keyBindings: '++id, action',
   settings: '++id',
-  planets: '++id',
+  planets: '++id, data._planetName',
 })
 
 export type { IDBKeyBinding, IDBSettings, IDBPlanet }

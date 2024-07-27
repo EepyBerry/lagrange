@@ -1,7 +1,4 @@
 <template>
-  <!-- <img id="codex-background" srcset="/background/space-960w.png 960w, /background/space-1920w.png 1920w, /background/space-2560w.png 2560w"
-       sizes="(max-width: 1919px) 960w, (max-width: 2559px) 1920w, (min-width: 2560px) 2560w"
-       alt="Space background"> -->
   <span id="codex-background"></span>
   <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
     <AppNavigation :compact-mode="showCompactNavigation" />
@@ -86,7 +83,7 @@ onUnmounted(() => {
 })
 
 async function loadPlanets() {
-  const idbPlanets = await idb.planets.toArray()
+  const idbPlanets = await idb.planets.orderBy('data._planetName').toArray()
   planets.value = idbPlanets.map(pl => ({ ...pl, data: PlanetData.createFrom(pl.data) }))
 }
 
@@ -122,7 +119,7 @@ function importPlanetFile(event: Event) {
         data: PlanetData.createFrom(data.data),
         preview: data.preview
       }
-      await idb.planets.put(newIdb)
+      await idb.planets.add(newIdb, data.id)
       await loadPlanets()
       console.info(`Imported planet (ID=${data.id}): [${newIdb.data.planetName}]`)
     } catch (err) {
@@ -213,6 +210,7 @@ async function deleteTargetedPlanet() {
 }
 #codex-grid {
   flex: 1;
+  padding-bottom: 3.75rem;
   margin: 4.75rem 1rem 1rem;
   height: calc(100% - 4.75rem);
   border-radius: 4px;
@@ -261,7 +259,7 @@ async function deleteTargetedPlanet() {
     }
   }
   #codex-grid {
-    padding: 0;
+    padding-bottom: 3.25rem;
     margin: 3.75rem 0.5rem 0.5rem;
   }
 }

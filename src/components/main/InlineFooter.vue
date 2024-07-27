@@ -1,4 +1,5 @@
 <template>
+  <span class="filler"></span>
   <hr />
   <div id="footer-nav">
     <a
@@ -58,5 +59,11 @@ hr {
   & > a {
     flex: 1;
   }
+}
+.filler {
+  flex: 1;
+}
+hr {
+  margin-top: 0;
 }
 </style>

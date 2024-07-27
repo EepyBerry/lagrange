@@ -1,9 +1,9 @@
 <template>
   <div class="planet-card">
-    <RouterLink :to="'/planet-editor/'+planet.id" class="planet-preview">
-      <img v-if="planet.preview" class="planet-image" :src="planet.preview" />
+    <div class="planet-preview">
+      <img v-if="planet.preview" class="planet-image" :src="planet.preview" :aria-label="planet.data.planetName" :alt="planet.data.planetName" />
       <iconify-icon v-else icon="ph:planet-thin" width="auto" />
-    </RouterLink>
+    </div>
     <p class="planet-name">{{ planet.data.planetName }}</p>
     <div class="actions">
       <RouterLink :to="'/planet-editor/'+planet.id"

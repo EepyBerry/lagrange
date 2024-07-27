@@ -21,6 +21,7 @@
       >
         <iconify-icon icon="mingcute:settings-6-line" width="1.5rem" aria-hidden="true" />
       </button>
+      <hr />
       <button
         class="lg dark"
         :title="$t('tooltip.footer_about')"
@@ -46,24 +47,31 @@ const settingsDialog: Ref<{ open: Function } | null> = ref(null)
 <style lang="scss">
 footer {
   position: fixed;
-  inset: auto 0 0 auto;
+  bottom: 0;
   padding: 1rem;
   display: flex;
   align-items: flex-end;
+  align-self: center;
   gap: 1rem;
   z-index: 5;
 
   #footer-nav {
     display: flex;
-    flex-direction: column;
+    flex-direction: row-reverse;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
 
     hr {
-      width: 1.5rem;
+      height: 1.5rem;
       border-color: var(--lg-accent);
     }
+  }
+}
+@media screen and (max-width: 1199px) {
+  footer {
+    padding: 0.5rem;
+    align-self: flex-end;
   }
 }
 

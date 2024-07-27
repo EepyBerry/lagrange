@@ -309,8 +309,8 @@ async function savePlanet() {
     data: JSON.parse(localData),
     preview: previewDataString
   }
-  const plid = await idb.planets.put(idbData, idbData.id)
-  $planetEntityId.value = plid
+  await idb.planets.update(idbData.id, { data: idbData.data })
+  $planetEntityId.value = idbData.id
 
   enableEditorRendering = true
   showSpinner.value = false
