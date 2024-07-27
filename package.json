@@ -31,6 +31,7 @@
     "dexie": "^4.0.7",
     "file-saver": "^2.0.5",
     "iconify-icon": "^2.1.0",
+    "jszip": "^3.10.1",
     "pako": "^2.1.0",
     "three": "^0.166.0",
     "three-custom-shader-material": "^5.4.0",

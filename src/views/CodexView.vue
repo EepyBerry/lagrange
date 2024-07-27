@@ -22,11 +22,11 @@
       </button>
       <button
         class="lg dark"
-        :aria-label="$t('a11y.topbar_export')"
-        :title="$t('tooltip.topbar_export')"
+        :aria-label="$t('a11y.topbar_export_all')"
+        :title="$t('tooltip.topbar_export_all')"
         @click="exportPlanets"
       >
-        <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
+        <iconify-icon icon="mingcute:folder-zip-line" width="1.5rem" aria-hidden="true" />
       </button>
     </div>
       
@@ -53,7 +53,7 @@ import InlineFooter from '@/components/main/InlineFooter.vue';
 import AppDeleteConfirmDialog from '@components/dialogs/AppDeleteConfirmDialog.vue';
 import { idb, type IDBPlanet } from '@/dexie.config';
 import { useHead } from '@unhead/vue';
-import { onMounted, onUnmounted, ref, type Ref } from 'vue';
+import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
 import { WindowEventBus } from '@/core/window-event-bus';
@@ -61,6 +61,7 @@ import { MD_WIDTH_THRESHOLD } from '@/core/globals';
 import pako from 'pako'
 import { saveAs } from 'file-saver'
 import PlanetData from '@/core/models/planet-data.model';
+import JSZip from 'jszip';
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
@@ -113,11 +114,17 @@ function importPlanetFile(event: Event) {
   }
 
   const reader = new FileReader()
-  reader.onload = (e) => {
+  reader.onload = async (e) => {
     try {
       const data = JSON.parse(pako.inflate(e.target?.result as ArrayBuffer, { to: 'string' })) as IDBPlanet
-      const newParams = PlanetData.createFrom(data)
-      console.info(`Imported planet (ID=${data.id}): [${newParams.planetName}]`)
+      const newIdb: IDBPlanet = {
+        id: data.id,
+        data: PlanetData.createFrom(data.data),
+        preview: data.preview
+      }
+      await idb.planets.put(newIdb)
+      await loadPlanets()
+      console.info(`Imported planet (ID=${data.id}): [${newIdb.data.planetName}]`)
     } catch (err) {
       console.error(err)
     }
@@ -125,11 +132,16 @@ function importPlanetFile(event: Event) {
   reader.readAsArrayBuffer(files[0])
 }
 
-function exportPlanets() {
-  const jsonParams = JSON.stringify(planets)
-  const gzipParams = pako.deflate(jsonParams)
-  const planetFilename = 'Planet'
-  saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
+async function exportPlanets() {
+  const idbZip = new JSZip()
+  for (const planet of planets.value) {
+    const json = JSON.stringify(planet)
+    const deflated = pako.deflate(json)
+    const planetFilename = planet.data.planetName.replaceAll(' ', '_') + '.lagrange'
+    idbZip.file(planetFilename, deflated)
+  }
+  const generatedZip = await idbZip.generateAsync({ type: 'blob' })
+  saveAs(generatedZip, `lagrange-${import.meta.env.APP_VERSION}-planets-${new Date().toISOString()}.zip`)
 }
 
 function exportPlanet(planet: IDBPlanet) {

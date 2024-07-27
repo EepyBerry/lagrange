@@ -192,6 +192,7 @@
     "topbar_save": "Save planet",
     "topbar_import": "Import planet file",
     "topbar_export": "Export planet file",
+    "topbar_export_all": "Export all planets as .zip",
 
     "footer_github": "GitHub repository (opens in new tab)",
     "footer_settings": "Settings",
@@ -213,6 +214,7 @@
     "topbar_save": "@:tooltip.topbar_save",
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
+    "topbar_export_all": "@:tooltip.topbar_export_all",
 
     "footer_github": "@:tooltip.footer_github",
     "footer_settings": "@:tooltip.footer_settings",

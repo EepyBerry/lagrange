@@ -69,7 +69,7 @@ function emitDeleteEvent() {
     color: var(--lg-text);
 
     .planet-image {
-      max-width: 100%;
+      max-width: 16rem;
     }
   }
   .planet-name {

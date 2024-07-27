@@ -193,6 +193,7 @@
     "topbar_save": "S-save pwanyet",
     "topbar_import": "Impowt pwanyet fiwe",
     "topbar_export": "Expowt pwanyet fiwe",
+    "topbar_export_all": "Expowt aww pwanyets as .zip!!!",
 
     "footer_github": "GitHub wepositowy!!! (opens in nyew tab OwO)",
     "footer_settings": "Settings",
@@ -214,6 +215,7 @@
     "topbar_save": "@:tooltip.topbar_save",
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
+    "topbar_export_all": "@:tooltip.topbar_export_all",
 
     "footer_github": "@:tooltip.footer_github",
     "footer_settings": "@:tooltip.footer_settings",
