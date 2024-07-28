@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------------------------------
 // Effect: CRT (greatly simplified)
 
-.crt {
+:root[data-effects='on'] .crt {
   position: absolute;
   inset: 0;
   max-width: 16rem;
@@ -12,7 +12,7 @@
   opacity: 0.125;
   animation: none;
 }
-.crt.animated {
+:root[data-effects='on'] .crt.animated {
   --duration: 10s;
   animation: crtscroll var(--duration) infinite linear forwards;
   -webkit-animation: crtscroll var(--duration) infinite linear forwards;
@@ -36,6 +36,11 @@
 
 // ------------------------------------------------------------------------------------------------
 // Disable all animations if prefers-reduced-motion is active
+// Disable all effects if data-effects is set to off
+
+:root[data-effects='off'] .crt {
+  display: none;
+}
 
 @media screen and (prefers-reduced-motion) {
   .crt.animated {

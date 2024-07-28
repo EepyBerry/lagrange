@@ -58,6 +58,7 @@
       "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
 
       "a11y": "Accessibiwity !!!",
+      "a11y_effects": "Enyabwe visuaw effects",
       "a11y_animations": "Enyabwe animations",
       
       "shortcuts": "@:dialog.init.shortcuts"

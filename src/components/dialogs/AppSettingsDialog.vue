@@ -12,7 +12,7 @@
     </template>
     <template v-slot:content>
       <div class="settings-grid">
-        <CollapsibleSection expand>
+        <CollapsibleSection icon="mingcute:tool-line" class="section-general" expand>
           <template v-slot:title>{{ $t('dialog.settings.general') }}</template>
           <template v-slot:content>
             <ParameterTable>
@@ -74,7 +74,7 @@
           </template>
         </CollapsibleSection>
 
-        <CollapsibleSection class="section-editor">
+        <CollapsibleSection icon="mingcute:planet-line" class="section-editor">
           <template v-slot:title>
             {{ $t('dialog.settings.editor') }}
           </template>
@@ -123,13 +123,21 @@
           </template>
         </CollapsibleSection>
 
-        <CollapsibleSection class="section-a11y">
+        <CollapsibleSection icon="material-symbols:accessibility-new-rounded" class="section-a11y">
           <template v-slot:title>
             {{ $t('dialog.settings.a11y') }}
           </template>
           <template v-slot:content>
             <div class="settings-a11y">
               <ParameterTable>
+                <ParameterCheckbox
+                  id="settings-effects"
+                  :true-value="true"
+                  :false-value="false"
+                  v-model="appSettings.enableEffects"
+                >
+                  {{ $t('dialog.settings.a11y_effects') }}:
+                </ParameterCheckbox>
                 <ParameterCheckbox
                   id="settings-anim"
                   :true-value="true"
@@ -159,14 +167,14 @@ import ParameterRadioOption from '../parameters/ParameterRadioOption.vue'
 import ParameterSelect from '../parameters/ParameterSelect.vue'
 import { useI18n } from 'vue-i18n'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
-import { mapLocale, prefersReducedMotion } from '@/utils/utils'
+import { mapLocale } from '@/utils/utils'
 import ParameterKeyBinding from '../parameters/ParameterKeyBinding.vue'
 import ParameterCategory from '../parameters/ParameterCategory.vue'
 import { A11Y_ANIMATE } from '@/core/globals'
 
 const i18n = useI18n()
 
-const appSettings: Ref<IDBSettings> = ref({ id: 0, locale: 'en-US', theme: '', font: '', enableAnimations: true })
+const appSettings: Ref<IDBSettings> = ref({ id: 0, locale: 'en-US', theme: '', font: '', enableAnimations: true, enableEffects: true })
 const keyBinds: Ref<IDBKeyBinding[]> = ref([])
 let dataLoaded = false
 
@@ -225,12 +233,14 @@ async function updateSettings() {
   i18n.locale.value = appSettings.value!.locale
   document.documentElement.setAttribute('data-theme', appSettings.value!.theme)
   document.documentElement.setAttribute('data-font', appSettings.value!.font)
+  document.documentElement.setAttribute('data-effects', appSettings.value!.enableEffects ? 'on' : 'off')
   A11Y_ANIMATE.value = appSettings.value!.enableAnimations!
   
   await idb.settings.update(appSettings.value!.id, {
     locale: mapLocale(appSettings.value!.locale),
     theme: appSettings.value!.theme,
     font: appSettings.value!.font,
+    enableEffects: appSettings.value!.enableEffects,
     enableAnimations: appSettings.value!.enableAnimations
   })
 }

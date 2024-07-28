@@ -68,6 +68,7 @@ async function initDexie() {
   }
   document.documentElement.setAttribute('data-theme', settings?.theme ?? 'default')
   document.documentElement.setAttribute('data-font', settings?.font ?? 'default')
+  document.documentElement.setAttribute('data-effects', settings?.enableEffects ? 'on' : 'off')
 }
 
 async function disableInitDialog() {
