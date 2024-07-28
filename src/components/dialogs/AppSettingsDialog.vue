@@ -74,14 +74,14 @@
           </template>
         </CollapsibleSection>
 
-        <CollapsibleSection class="section-keybinds">
+        <CollapsibleSection class="section-editor">
           <template v-slot:title>
             {{ $t('dialog.settings.editor') }}
           </template>
           <template v-slot:content>
             <div class="settings-editor">
               <ParameterTable>
-                <ParameterDivider />
+                <ParameterCategory top>{{ $t('dialog.settings.shortcuts') }}</ParameterCategory>
                 <ParameterKeyBinding icon="mingcute:sun-line"
                   :key-bind="getKeyBind('toggle-lens-flare')"
                   :selected="selectedAction === 'toggle-lens-flare'"
@@ -122,6 +122,26 @@
             </div>
           </template>
         </CollapsibleSection>
+
+        <CollapsibleSection class="section-a11y">
+          <template v-slot:title>
+            {{ $t('dialog.settings.a11y') }}
+          </template>
+          <template v-slot:content>
+            <div class="settings-a11y">
+              <ParameterTable>
+                <ParameterCheckbox
+                  id="settings-anim"
+                  :true-value="true"
+                  :false-value="false"
+                  v-model="appSettings.enableAnimations"
+                >
+                  {{ $t('dialog.settings.a11y_animations') }}:
+                </ParameterCheckbox>
+              </ParameterTable>
+            </div>
+          </template>
+        </CollapsibleSection>
       </div>
     </template>
   </DialogElement>
@@ -141,10 +161,11 @@ import { useI18n } from 'vue-i18n'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
 import { mapLocale } from '@/utils/utils'
 import ParameterKeyBinding from '../parameters/ParameterKeyBinding.vue'
+import ParameterCategory from '../parameters/ParameterCategory.vue'
 
 const i18n = useI18n()
 
-const appSettings: Ref<IDBSettings> = ref({ id: 0, locale: 'en-US', theme: '', font: '' })
+const appSettings: Ref<IDBSettings> = ref({ id: 0, locale: 'en-US', theme: '', font: '', enableAnimations: true })
 const keyBinds: Ref<IDBKeyBinding[]> = ref([])
 let dataLoaded = false
 
@@ -207,6 +228,7 @@ async function updateSettings() {
     locale: mapLocale(appSettings.value!.locale),
     theme: appSettings.value!.theme,
     font: appSettings.value!.font,
+    enableAnimations: appSettings.value!.enableAnimations
   })
 }
 
@@ -246,7 +268,8 @@ function getKeyBind(action: string) {
     gap: 1rem;
 
     .settings-general,
-    .settings-editor {
+    .settings-editor,
+    .settings-a11y {
       display: flex;
       flex-direction: column;
       align-items: flex-start;

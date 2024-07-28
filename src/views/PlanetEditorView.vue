@@ -316,7 +316,7 @@ async function savePlanet() {
     data: JSON.parse(localData),
     preview: previewDataString
   }
-  await idb.planets.update(idbData.id, { data: idbData.data })
+  await idb.planets.put(idbData, idbData.id)
   $planetEntityId.value = idbData.id
 
   enableEditorRendering = true
@@ -351,7 +351,7 @@ function updatePlanet() {
         break
       }
       case '_sunLightColor': {
-        _sunLight.color = LG_PLANET_DATA.value.sunLightColor
+        _sunLight.color.set(LG_PLANET_DATA.value.sunLightColor)
         setShaderMaterialUniform(_lensFlare.material, 'colorGain', LG_PLANET_DATA.value.sunLightColor)
         break
       }
@@ -360,7 +360,7 @@ function updatePlanet() {
         break
       }
       case '_ambLightColor': {
-        _ambLight.color = LG_PLANET_DATA.value.ambLightColor
+        _ambLight.color.set(LG_PLANET_DATA.value.ambLightColor)
         break
       }
       case '_ambLightIntensity': {

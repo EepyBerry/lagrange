@@ -55,7 +55,12 @@
       "editor_biomes": "@:dialog.init.shortcuts_biomes",
       "editor_clouds": "@:dialog.init.shortcuts_clouds",
       "editor_atmosphere": "@:dialog.init.shortcuts_atmosphere",
-      "editor_screenshot": "@:dialog.init.shortcuts_screenshot"
+      "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
+
+      "a11y": "Accessibility",
+      "a11y_animations": "Enable animations",
+
+      "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {
       "description": "A procedural planet-building application.",

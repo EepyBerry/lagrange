@@ -81,7 +81,7 @@ export default class PlanetData extends ChangeTracker {
     return this._sunLightColor
   }
   public set sunLightColor(value: Color) {
-    this._sunLightColor = value
+    this._sunLightColor.set(value)
     this.markForChange('_sunLightColor')
   }
   public get sunLightIntensity(): number {
@@ -96,7 +96,7 @@ export default class PlanetData extends ChangeTracker {
     return this._ambLightColor
   }
   public set ambLightColor(value: Color) {
-    this._ambLightColor = value
+    this._ambLightColor.set(value)
     this.markForChange('_ambLightColor')
   }
   public get ambLightIntensity(): number {
@@ -275,7 +275,7 @@ export default class PlanetData extends ChangeTracker {
   private _cloudsRotation: number
   private _cloudsHeight: number
   private _cloudsNoise: NoiseParameters
-  private _cloudsColor: Color = new Color(0xffffff)
+  private _cloudsColor: Color
   private _cloudsColorRamp: ColorRamp
 
   // --------------------------------------------------
@@ -312,7 +312,7 @@ export default class PlanetData extends ChangeTracker {
     return this._cloudsColor
   }
   public set cloudsColor(value: Color) {
-    this._cloudsColor = value
+    this._cloudsColor.set(value)
     this.markForChange('_cloudsColor')
   }
 
@@ -534,9 +534,9 @@ export default class PlanetData extends ChangeTracker {
     this._lensFlareEnabled = data._lensFlareEnabled
     this._lensFlareGlareIntensity = data._lensFlareGlareIntensity
     this._sunLightAngle = data._sunLightAngle
-    this._sunLightColor.set(data._sunLightColor.x, data._sunLightColor.y, data._sunLightColor.z)
+    this._sunLightColor.set(data._sunLightColor)
     this._sunLightIntensity = data._sunLightIntensity
-    this._ambLightColor.set(data._ambLightColor.x, data._ambLightColor.y, data._ambLightColor.z)
+    this._ambLightColor.set(data._ambLightColor)
     this._ambLightIntensity = data._ambLightIntensity
 
     this._planetRadius = data._planetRadius
@@ -563,7 +563,7 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsNoise.amplitude = data._cloudsNoise._amplitude
     this._cloudsNoise.frequency = data._cloudsNoise._frequency
     this._cloudsNoise.lacunarity = data._cloudsNoise._lacunarity
-    this._cloudsColor.set(data._cloudsColor.x, data._cloudsColor.y, data._cloudsColor.z)
+    this._cloudsColor.set(data._cloudsColor)
     this._cloudsColorRamp.load(data._cloudsColorRamp)
 
     this._atmosphereEnabled = data._atmosphereEnabled

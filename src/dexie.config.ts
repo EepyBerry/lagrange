@@ -22,6 +22,7 @@ interface IDBSettings {
   theme: string
   font: string
   showInitDialog?: boolean
+  enableAnimations?: boolean
 }
 
 interface IDBPlanet {

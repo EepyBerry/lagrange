@@ -54,7 +54,7 @@ function emitDeleteEvent() {
 <style scoped lang="scss">
 .planet-card {
   padding: 1rem;
-  background: var(--lg-panel);
+  background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
   border-radius: 4px;
   overflow: hidden;

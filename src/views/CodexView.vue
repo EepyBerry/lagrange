@@ -167,9 +167,9 @@ async function deleteTargetedPlanet() {
   position: fixed;
   inset: 0;
   background-image: url('/background/space-1920w.jpg');
-  background-size: cover;
+  background-size: 50%;
   background-position: center;
-  background-repeat: no-repeat;
+  background-repeat: repeat;
 }
 #codex-header {
   z-index: 15;
@@ -243,11 +243,6 @@ async function deleteTargetedPlanet() {
   width: 100%;
 }
 
-@media screen and (min-width: 2000px) {
-  #codex-background {
-    background-image: url('/background/space-2560w.jpg');
-  }
-}
 @media screen and (max-width: 1199px) {
   #codex-background {
     background-image: url('/background/space-960w.jpg');
