@@ -81,7 +81,6 @@
           <template v-slot:content>
             <div class="settings-editor">
               <ParameterTable>
-                <ParameterCategory top>{{ $t('dialog.settings.shortcuts') }}</ParameterCategory>
                 <ParameterKeyBinding icon="mingcute:sun-line"
                   :key-bind="getKeyBind('toggle-lens-flare')"
                   :selected="selectedAction === 'toggle-lens-flare'"
