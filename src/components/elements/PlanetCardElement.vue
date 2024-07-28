@@ -3,6 +3,7 @@
     <div class="planet-preview">
       <img v-if="planet.preview" class="planet-image" :src="planet.preview" :aria-label="planet.data.planetName" :alt="planet.data.planetName" />
       <iconify-icon v-else icon="ph:planet-thin" width="auto" />
+      <span class="crt" :class="{ animated: A11Y_ANIMATE }"></span>
     </div>
     <p class="planet-name">{{ planet.data.planetName }}</p>
     <div class="actions">
@@ -37,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import { A11Y_ANIMATE } from '@/core/globals';
 import { type IDBPlanet } from '@/dexie.config';
 import { RouterLink } from 'vue-router';
 defineProps<{ planet: IDBPlanet }>()
@@ -49,6 +51,7 @@ function emitExportEvent() {
 function emitDeleteEvent() {
   $emit('delete')
 }
+
 </script>
 
 <style scoped lang="scss">
@@ -62,11 +65,13 @@ function emitDeleteEvent() {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   gap: 1rem;
 
   .planet-preview {
-    flex: 1;
+    position: relative;
     color: var(--lg-text);
+    max-height: 16rem;
 
     .planet-image {
       max-width: 16rem;

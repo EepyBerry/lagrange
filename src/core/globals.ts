@@ -1,4 +1,5 @@
 import { Vector3 } from 'three'
+import { ref } from 'vue'
 
 // Responsiveness width thresholds
 export const XS_WIDTH_THRESHOLD = 568
@@ -10,6 +11,12 @@ export const LOCALE_MAP: { [k: string]: string } = {
   en: 'en-US',
   fr: 'fr-FR',
 }
+
+// Accessibility
+
+export const A11Y_ANIMATE = ref(true)
+
+// Scene object names
 
 export const LG_NAME_PLANET = 'lg:planet'
 export const LG_NAME_CLOUDS = 'lg:planet:clouds'

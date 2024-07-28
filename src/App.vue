@@ -15,6 +15,7 @@ import AppInitDialog from '@components/dialogs/AppInitDialog.vue'
 import { useI18n } from 'vue-i18n'
 import { mapLocale } from './utils/utils'
 import { useHead } from '@unhead/vue'
+import { A11Y_ANIMATE } from './core/globals'
 
 const i18n = useI18n()
 useHead({
@@ -44,6 +45,10 @@ onMounted(async () => {
   }
   await idb.settings.update(settings.value!.id, { locale: mapLocale(i18n.locale.value) })
 
+  // Set initial global values
+  A11Y_ANIMATE.value = settings.value?.enableAnimations!
+
+  // Open init dialog if necessary
   if (settings.value?.showInitDialog) {
     dialogInit.value?.open()
   }

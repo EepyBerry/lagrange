@@ -159,9 +159,10 @@ import ParameterRadioOption from '../parameters/ParameterRadioOption.vue'
 import ParameterSelect from '../parameters/ParameterSelect.vue'
 import { useI18n } from 'vue-i18n'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
-import { mapLocale } from '@/utils/utils'
+import { mapLocale, prefersReducedMotion } from '@/utils/utils'
 import ParameterKeyBinding from '../parameters/ParameterKeyBinding.vue'
 import ParameterCategory from '../parameters/ParameterCategory.vue'
+import { A11Y_ANIMATE } from '@/core/globals'
 
 const i18n = useI18n()
 
@@ -224,6 +225,8 @@ async function updateSettings() {
   i18n.locale.value = appSettings.value!.locale
   document.documentElement.setAttribute('data-theme', appSettings.value!.theme)
   document.documentElement.setAttribute('data-font', appSettings.value!.font)
+  A11Y_ANIMATE.value = appSettings.value!.enableAnimations!
+  
   await idb.settings.update(appSettings.value!.id, {
     locale: mapLocale(appSettings.value!.locale),
     theme: appSettings.value!.theme,

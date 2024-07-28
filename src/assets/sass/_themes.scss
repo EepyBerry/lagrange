@@ -2,6 +2,7 @@
   --lg-text: #f7f7f7;
   --lg-text-disabled: #b6b6b6;
   --lg-primary: #070f13;
+  --lg-primary-static: #070f13;
   --lg-panel: #030608;
   --lg-accent: #1f3642;
   --lg-logo: #354852;
@@ -36,6 +37,7 @@
 }
 :root[data-theme='supernova'] {
   --lg-primary: linear-gradient(to bottom, #110a20 0%, #06030c 100%);
+  --lg-primary-static: #110a20;
   --lg-panel: #040107;
   --lg-accent: #2d1b42;
   --lg-logo: #412c5a;
@@ -70,6 +72,7 @@
 }
 :root[data-theme='voyager'] {
   --lg-primary: repeating-linear-gradient(to bottom, #0c0903, #0c0903 0.375rem, #1a1102 0.5rem);
+  --lg-primary-static: #0c0903;
   --lg-panel: #070502;
   --lg-accent: #412c08;
   --lg-logo: #573a0b;

@@ -1,13 +1,13 @@
 import { idb, KeyBindingAction } from '@/dexie.config'
+import { prefersReducedMotion } from './utils'
 
 export async function addDefaultSettings(): Promise<any> {
-  const disableAnims = window.matchMedia(`(prefers-reduced-motion: reduce)`).matches || window.matchMedia(`(prefers-reduced-motion: reduce)`).matches
   return idb.settings.put({
     theme: 'default',
     locale: navigator.language ?? 'en-US',
     font: 'default',
     showInitDialog: true,
-    enableAnimations: !disableAnims
+    enableAnimations: !prefersReducedMotion()
   })
 }
 
