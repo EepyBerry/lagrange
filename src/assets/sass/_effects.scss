@@ -13,7 +13,7 @@
   animation: none;
 }
 :root[data-effects='on'] .crt.animated {
-  --duration: 10s;
+  --duration: 18s;
   animation: crtscroll var(--duration) infinite linear forwards;
   -webkit-animation: crtscroll var(--duration) infinite linear forwards;
   -moz-animation: crtscroll var(--duration) infinite linear forwards;

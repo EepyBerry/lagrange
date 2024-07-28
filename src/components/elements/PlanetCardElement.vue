@@ -75,6 +75,7 @@ function emitDeleteEvent() {
 
     .planet-image {
       max-width: 16rem;
+      filter: contrast(110%);
     }
   }
   .planet-name {
