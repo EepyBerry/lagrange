@@ -48,6 +48,14 @@ void main() {
 
     vec4 I = in_scatter(eye, rayDir, e, sunglightDir, u_light_intensity);
     vec4 I_gamma = pow(I, vec4(1.0 / 2.2));
-    vec4 I_shifted = vec4(hue_shift(I_gamma.xyz, u_hue * PI), I_gamma.a);
-    csm_DiffuseColor = I_shifted * u_intensity;
+
+    // TODO: Apply color matrix calculations
+    mat4 colorMatrix = mat4(
+        vec4(1.0,    0.0,    0.0,    0.0),
+        vec4(0.0,    1.0,    0.0,    0.0),
+        vec4(0.0,    0.0,    1.0,    0.0),
+        vec4(0.0,    0.0,    0.0,    1.0)
+    );
+
+    csm_DiffuseColor = I_gamma * colorMatrix * u_intensity;
 }
