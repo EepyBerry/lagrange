@@ -7,6 +7,7 @@ export async function addDefaultSettings(): Promise<any> {
     locale: navigator.language ?? 'en-US',
     font: 'default',
     showInitDialog: true,
+    enableEffects: !prefersReducedMotion(),
     enableAnimations: !prefersReducedMotion()
   })
 }
