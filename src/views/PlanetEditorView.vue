@@ -544,7 +544,11 @@ function updatePlanet() {
         break
       }
       case '_cloudsColor': {
-        setShaderMaterialUniform(_clouds.material as CustomShaderMaterial, 'u_color', LG_PLANET_DATA.value.cloudsColor)
+        setShaderMaterialUniform(
+          _clouds.material as CustomShaderMaterial,
+          'u_color',
+          LG_PLANET_DATA.value.cloudsColor
+        )
         break
       }
       case '_cloudsColorRamp': {
@@ -582,10 +586,6 @@ function updatePlanet() {
         )
         break
       }
-      case '_atmosphereHue': {
-        setShaderMaterialUniform(_atmosphere.material as CustomShaderMaterial, 'u_hue', LG_PLANET_DATA.value.atmosphereHue)
-        break
-      }
       case '_atmosphereIntensity': {
         setShaderMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
@@ -594,8 +594,28 @@ function updatePlanet() {
         )
         break
       }
+      case '_atmosphereColorMode': {
+        setShaderMaterialUniform(
+          _atmosphere.material as CustomShaderMaterial,
+          'u_color_mode',
+          LG_PLANET_DATA.value.atmosphereColorMode
+        )
+        break
+      }
+      case '_atmosphereHue': {
+        setShaderMaterialUniform(
+          _atmosphere.material as CustomShaderMaterial,
+          'u_hue',
+          LG_PLANET_DATA.value.atmosphereHue
+        )
+        break
+      }
       case '_atmosphereTint': {
-        setShaderMaterialUniform(_atmosphere.material as CustomShaderMaterial, 'u_tint', LG_PLANET_DATA.value.atmosphereTint)
+        setShaderMaterialUniform(
+          _atmosphere.material as CustomShaderMaterial,
+          'u_tint',
+          LG_PLANET_DATA.value.atmosphereTint
+        )
         break
       }
     }

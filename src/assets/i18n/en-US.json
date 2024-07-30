@@ -181,6 +181,10 @@
 
         "rgba": "Color & intensity",
         "rgba_intensity": "Intensity",
+        "rgba_mode": "Color mode",
+        "rgba_mode_realistic": "Realistic",
+        "rgba_mode_direct": "Direct",
+        "rgba_mode_mixed": "Mixed",
         "rgba_hue": "Hue",
         "rgba_tint": "Tint"
       }
@@ -234,6 +238,9 @@
     "general_theme_voyager": "Set Voyager theme (orange)",
 
     "editor_generic_input": "Parameter value",
+    "editor_atmosphere_rgba_mode_realistic": "Realistic atmosphere",
+    "editor_atmosphere_rgba_mode_direct": "Direct tone atmosphere",
+    "editor_atmosphere_rgba_mode_mixed": "Mixed atmosphere",
 
     "action_nav_toggle": "Toggle navigation menu",
     "action_nav_codex": "Codex link",

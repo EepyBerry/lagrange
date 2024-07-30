@@ -7,14 +7,16 @@
 precision highp float;
 #endif
 
-uniform vec3 u_light_position;
+uniform vec3  u_light_position;
 uniform float u_light_intensity;
 uniform float u_surface_radius;
 uniform float u_radius;
 uniform float u_density;
-uniform float u_hue;
+
 uniform float u_intensity;
-uniform vec3 u_tint;
+uniform int   u_color_mode; // determines color output between hue-mode, direct-mode or mixed-mode
+uniform float u_hue;
+uniform vec3  u_tint;
 
 in float fov;
 in vec4 vWorldPosition;
@@ -51,6 +53,12 @@ void main() {
     vec4 I_gamma = pow(I, vec4(1.0 / 2.2));
     vec4 I_shifted = vec4(hue_shift(I_gamma.xyz, u_hue * PI), I_gamma.a);
     vec4 tint = vec4(u_tint, 1.0);
-
-    csm_DiffuseColor = I_shifted * tint * u_intensity;
+    
+    if (u_color_mode == 0) {
+        csm_DiffuseColor = I_shifted * u_intensity;
+    } else if (u_color_mode == 1) {
+        csm_DiffuseColor = whitescale(I_gamma) * tint_to_matrix(tint) * u_intensity;
+    } else {
+        csm_DiffuseColor = I_shifted * tint * u_intensity;
+    }
 }

@@ -182,6 +182,10 @@
 
         "rgba": "Cowow  & intensity",
         "rgba_intensity": "Intensity",
+        "rgba_mode": "Cowow mode",
+        "rgba_mode_realistic": "Weawistic",
+        "rgba_mode_direct": "Diwect",
+        "rgba_mode_mixed": "Mixed",
         "rgba_hue": "Hue",
         "rgba_tint": "Tint"
       }
@@ -235,6 +239,9 @@
     "general_theme_voyager": "Set Voyagew theme (owange)",
 
     "editor_generic_input": "Pawametew vawue",
+    "editor_atmosphere_rgba_mode_realistic": "Weawistic atmosphewe",
+    "editor_atmosphere_rgba_mode_direct": "Diwect tone atmosphewe",
+    "editor_atmosphere_rgba_mode_mixed": "Mixed atmosphewe",
 
     "action_nav_toggle": "Toggwe nyavigation menyu",
     "action_nav_codex": "Codex wink",

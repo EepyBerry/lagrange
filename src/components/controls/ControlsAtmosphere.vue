@@ -26,12 +26,53 @@
         <ParameterSlider v-model="LG_PLANET_DATA.atmosphereIntensity" id="a-int" :step="0.01" :min="0" :max="2">
             {{ $t('editor.controls.atmosphere.rgba_intensity') }}
         </ParameterSlider>
-        <ParameterSlider v-model="LG_PLANET_DATA.atmosphereHue" id="a-hue" :step="0.01" :min="0" :max="2" extras="rgb">
-            {{ $t('editor.controls.atmosphere.rgba_hue') }}
-        </ParameterSlider>
-        <ParameterColor v-model="LG_PLANET_DATA.atmosphereTint">
-            {{ $t('editor.controls.atmosphere.rgba_tint') }}
-        </ParameterColor>
+        <ParameterDivider />
+        <ParameterRadio>
+            <template v-slot:title> {{ $t('editor.controls.atmosphere.rgba_mode') }}: </template>
+            <template v-slot:options>
+                <ParameterRadioOption
+                    v-model="LG_PLANET_DATA.atmosphereColorMode"
+                    icon="mingcute:photo-album-line"
+                    name="atmos-mode"
+                    :id="'0'"
+                    :value="ColorMode.REALISTIC"
+                    :ariaLabel="$t('a11y.editor_atmosphere_rgba_mode_realistic')"
+                >
+                    {{ $t('editor.controls.atmosphere.rgba_mode_realistic') }}
+                </ParameterRadioOption>
+                <ParameterRadioOption
+                    v-model="LG_PLANET_DATA.atmosphereColorMode"
+                    icon="mingcute:color-picker-line"
+                    name="atmos-mode"
+                    :id="'1'"
+                    :value="ColorMode.DIRECT"
+                    :ariaLabel="$t('a11y.editor_atmosphere_rgba_mode_direct')"
+                >
+                    {{ $t('editor.controls.atmosphere.rgba_mode_direct') }}
+                </ParameterRadioOption>
+                <ParameterRadioOption
+                    v-model="LG_PLANET_DATA.atmosphereColorMode"
+                    icon="mingcute:color-filter-line"
+                    name="atmos-mode"
+                    :id="'1'"
+                    :value="ColorMode.MIXED"
+                    :ariaLabel="$t('a11y.editor_atmosphere_rgba_mode_mixed')"
+                >
+                    {{ $t('editor.controls.atmosphere.rgba_mode_mixed') }}
+                </ParameterRadioOption>
+            </template>
+        </ParameterRadio>
+        <ParameterDivider />
+        <template v-if="[ColorMode.REALISTIC, ColorMode.MIXED].includes(LG_PLANET_DATA.atmosphereColorMode)">
+            <ParameterSlider v-model="LG_PLANET_DATA.atmosphereHue" id="a-hue" :step="0.01" :min="0" :max="2" extras="rgb">
+                {{ $t('editor.controls.atmosphere.rgba_hue') }}
+            </ParameterSlider>
+        </template>
+        <template v-if="[ColorMode.DIRECT, ColorMode.MIXED].includes(LG_PLANET_DATA.atmosphereColorMode)">
+            <ParameterColor v-model="LG_PLANET_DATA.atmosphereTint">
+                {{ $t('editor.controls.atmosphere.rgba_tint') }}
+            </ParameterColor>
+        </template>
         </template>
     </ParameterTable>
 </template>
@@ -41,6 +82,7 @@ import ParameterTable from '@components/parameters/ParameterTable.vue'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'
 import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
 import ParameterCategory from '@components/parameters/ParameterCategory.vue'
-import ParameterDivider from '../parameters/ParameterDivider.vue'
 import ParameterColor from '../parameters/ParameterColor.vue'
+import ParameterDivider from '../parameters/ParameterDivider.vue'
+import { ColorMode } from '@/core/types'
 </script>

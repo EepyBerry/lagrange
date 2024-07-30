@@ -1,10 +1,9 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
-import { GeometryType, NoiseType } from '@core/types'
+import { ColorMode, GeometryType, NoiseType } from '@core/types'
 import { clamp, isNumeric } from '@/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeTracker } from './change-tracker.model'
-import { numberToHex } from '@/utils/utils'
 
 export default class PlanetData extends ChangeTracker {
   // --------------------------------------------------
@@ -335,6 +334,7 @@ export default class PlanetData extends ChangeTracker {
   private _atmosphereHeight: number
   private _atmosphereDensityScale: number
   private _atmosphereIntensity: number
+  private _atmosphereColorMode: number
   private _atmosphereHue: number
   private _atmosphereTint: Color
 
@@ -369,6 +369,13 @@ export default class PlanetData extends ChangeTracker {
   public set atmosphereIntensity(value: number) {
     this._atmosphereIntensity = value
     this.markForChange('_atmosphereIntensity')
+  }
+  public get atmosphereColorMode(): number {
+    return this._atmosphereColorMode
+  }
+  public set atmosphereColorMode(value: number) {
+    this._atmosphereColorMode = value
+    this.markForChange('_atmosphereColorMode')
   }
   public get atmosphereHue(): number {
     return this._atmosphereHue
@@ -469,6 +476,7 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereHeight = 8.0
     this._atmosphereDensityScale = 2.5
     this._atmosphereIntensity = 1.15
+    this._atmosphereColorMode = ColorMode.REALISTIC
     this._atmosphereHue = 0
     this._atmosphereTint = new Color(0xffffff)
   }
@@ -531,6 +539,7 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereHeight = 8.0
     this._atmosphereDensityScale = 2.5
     this._atmosphereIntensity = 1.15
+    this._atmosphereColorMode = ColorMode.REALISTIC
     this._atmosphereHue = 0
     this._atmosphereTint = new Color(0xffffff)
 
@@ -577,6 +586,7 @@ export default class PlanetData extends ChangeTracker {
 
     this._atmosphereEnabled = data._atmosphereEnabled
     this._atmosphereIntensity = data._atmosphereIntensity
+    this._atmosphereColorMode = data._atmosphereColorMode
     this._atmosphereHue = data._atmosphereHue
     this._atmosphereTint.set(data._atmosphereTint)
     this.markAllForChange()

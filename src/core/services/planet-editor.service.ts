@@ -15,7 +15,7 @@ import {
   AXIS_Y,
   AXIS_NX,
 } from '@core/globals'
-import { GeometryType } from '@core/types'
+import { ColorMode, GeometryType } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
 import {
   createAmbientightComponent,
@@ -161,9 +161,10 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
       u_surface_radius: { value: 1.0 },
       u_radius: { value: 1.0 + atmosHeight },
       u_density: { value: atmosDensity },
+      u_intensity: { value: data.atmosphereIntensity },
+      u_color_mode: { value: ColorMode.REALISTIC },
       u_hue: { value: data.atmosphereHue },
       u_tint: { value: data.atmosphereTint },
-      u_intensity: { value: data.atmosphereIntensity },
     },
     THREE.ShaderMaterial,
   )
