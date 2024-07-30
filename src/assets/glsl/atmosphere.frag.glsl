@@ -14,6 +14,7 @@ uniform float u_radius;
 uniform float u_density;
 uniform float u_hue;
 uniform float u_intensity;
+uniform vec3 u_tint;
 
 in float fov;
 in vec4 vWorldPosition;
@@ -48,14 +49,8 @@ void main() {
 
     vec4 I = in_scatter(eye, rayDir, e, sunglightDir, u_light_intensity);
     vec4 I_gamma = pow(I, vec4(1.0 / 2.2));
+    vec4 I_shifted = vec4(hue_shift(I_gamma.xyz, u_hue * PI), I_gamma.a);
+    vec4 tint = vec4(u_tint, 1.0);
 
-    // TODO: Apply color matrix calculations
-    mat4 colorMatrix = mat4(
-        vec4(1.0,    0.0,    0.0,    0.0),
-        vec4(0.0,    1.0,    0.0,    0.0),
-        vec4(0.0,    0.0,    1.0,    0.0),
-        vec4(0.0,    0.0,    0.0,    1.0)
-    );
-
-    csm_DiffuseColor = I_gamma * colorMatrix * u_intensity;
+    csm_DiffuseColor = I_shifted * tint * u_intensity;
 }

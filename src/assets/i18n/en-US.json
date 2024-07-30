@@ -180,8 +180,9 @@
         "transform_density": "Density",
 
         "rgba": "Color & intensity",
+        "rgba_intensity": "Intensity",
         "rgba_hue": "Hue",
-        "rgba_intensity": "Intensity"
+        "rgba_tint": "Tint"
       }
     }
   },

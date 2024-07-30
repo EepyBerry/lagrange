@@ -336,6 +336,7 @@ export default class PlanetData extends ChangeTracker {
   private _atmosphereDensityScale: number
   private _atmosphereIntensity: number
   private _atmosphereHue: number
+  private _atmosphereTint: Color
 
   // --------------------------------------------------
 
@@ -354,7 +355,6 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereHeight = clamp(value, 1.0, 8.0)
     this.markForChange('_atmosphereHeight')
   }
-
   public get atmosphereDensityScale(): number {
     return this._atmosphereDensityScale
   }
@@ -370,13 +370,19 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereIntensity = value
     this.markForChange('_atmosphereIntensity')
   }
-
   public get atmosphereHue(): number {
     return this._atmosphereHue
   }
   public set atmosphereHue(value: number) {
     this._atmosphereHue = clamp(value, 0.0, 2.0)
     this.markForChange('_atmosphereHue')
+  }
+  public get atmosphereTint(): Color {
+    return this._atmosphereTint
+  }
+  public set atmosphereTint(value: Color) {
+    this._atmosphereTint.set(value)
+    this.markForChange('_atmosphereTint')
   }
 
   // --------------------------------------------------
@@ -464,6 +470,7 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereDensityScale = 2.5
     this._atmosphereIntensity = 1.15
     this._atmosphereHue = 0
+    this._atmosphereTint = new Color(0xffffff)
   }
 
   public reset() {
@@ -525,6 +532,8 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereDensityScale = 2.5
     this._atmosphereIntensity = 1.15
     this._atmosphereHue = 0
+    this._atmosphereTint = new Color(0xffffff)
+
     this.markAllForChange()
   }
 
@@ -569,6 +578,7 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereEnabled = data._atmosphereEnabled
     this._atmosphereIntensity = data._atmosphereIntensity
     this._atmosphereHue = data._atmosphereHue
+    this._atmosphereTint.set(data._atmosphereTint)
     this.markAllForChange()
   }
 

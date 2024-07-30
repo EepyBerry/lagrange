@@ -23,12 +23,15 @@
             {{ $t('editor.controls.atmosphere.transform_density') }}
         </ParameterSlider>
         <ParameterCategory>{{ $t('editor.controls.atmosphere.rgba') }}</ParameterCategory>
-        <ParameterSlider v-model="LG_PLANET_DATA.atmosphereHue" id="a-hue" :step="0.01" :min="0" :max="2">
-            {{ $t('editor.controls.atmosphere.rgba_hue') }}
-        </ParameterSlider>
         <ParameterSlider v-model="LG_PLANET_DATA.atmosphereIntensity" id="a-int" :step="0.01" :min="0" :max="2">
             {{ $t('editor.controls.atmosphere.rgba_intensity') }}
         </ParameterSlider>
+        <ParameterSlider v-model="LG_PLANET_DATA.atmosphereHue" id="a-hue" :step="0.01" :min="0" :max="2" extras="rgb">
+            {{ $t('editor.controls.atmosphere.rgba_hue') }}
+        </ParameterSlider>
+        <ParameterColor v-model="LG_PLANET_DATA.atmosphereTint">
+            {{ $t('editor.controls.atmosphere.rgba_tint') }}
+        </ParameterColor>
         </template>
     </ParameterTable>
 </template>
@@ -38,4 +41,6 @@ import ParameterTable from '@components/parameters/ParameterTable.vue'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'
 import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
 import ParameterCategory from '@components/parameters/ParameterCategory.vue'
+import ParameterDivider from '../parameters/ParameterDivider.vue'
+import ParameterColor from '../parameters/ParameterColor.vue'
 </script>

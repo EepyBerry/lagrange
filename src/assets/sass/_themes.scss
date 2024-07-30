@@ -34,6 +34,8 @@
   --lg-warn-hover: #a53614;
   --lg-warn-active: #912a0b;
   --lg-warn-panel: #b63f1a44;
+
+  --lg-hue-background: linear-gradient(to right, #00ffff 0%, #00ff00 17%, #ffff00 33%, #ff0000 50%, #ff00ff 67%, #0000ff 83%, #00ffff 100%);
 }
 :root[data-theme='supernova'] {
   --lg-primary: linear-gradient(to bottom, #110a20 0%, #06030c 100%);

@@ -594,6 +594,10 @@ function updatePlanet() {
         )
         break
       }
+      case '_atmosphereTint': {
+        setShaderMaterialUniform(_atmosphere.material as CustomShaderMaterial, 'u_tint', LG_PLANET_DATA.value.atmosphereTint)
+        break
+      }
     }
   }
   LG_PLANET_DATA.value.clearChangedProps()

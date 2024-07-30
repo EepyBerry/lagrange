@@ -162,6 +162,7 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
       u_radius: { value: 1.0 + atmosHeight },
       u_density: { value: atmosDensity },
       u_hue: { value: data.atmosphereHue },
+      u_tint: { value: data.atmosphereTint },
       u_intensity: { value: data.atmosphereIntensity },
     },
     THREE.ShaderMaterial,

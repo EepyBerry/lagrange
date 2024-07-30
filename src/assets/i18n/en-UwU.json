@@ -181,8 +181,9 @@
         "transform_density": "Density",
 
         "rgba": "Cowow  & intensity",
-        "rgba_hue": "Hue >w<",
-        "rgba_intensity": "Intensity"
+        "rgba_intensity": "Intensity",
+        "rgba_hue": "Hue",
+        "rgba_tint": "Tint"
       }
     }
   },
