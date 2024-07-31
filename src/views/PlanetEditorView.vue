@@ -22,9 +22,8 @@ import {
   SM_WIDTH_THRESHOLD,
   LG_NAME_AMBLIGHT,
   SUN_INIT_POS,
-  UUID_REGEXP,
 } from '@core/globals'
-import { degToRad, generateUUID } from 'three/src/math/MathUtils.js'
+import { degToRad } from 'three/src/math/MathUtils.js'
 import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla'
 import { createControlsComponent } from '@core/three/component.builder'
 import { useHead } from '@unhead/vue'
@@ -51,6 +50,7 @@ import {
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { getPlanetMetaTitle } from '@/utils/utils'
 import { saveAs } from 'file-saver'
+import { nanoid } from 'nanoid'
 
 const route = useRoute()
 const i18n = useI18n()
@@ -96,7 +96,7 @@ onUnmounted(() => {
 
 async function initData() {
   // https://stackoverflow.com/questions/3891641/regex-test-only-works-every-other-time
-  if (new RegExp(UUID_REGEXP).test(route.params.id as string)) {
+  if ((route.params.id as string).length > 3) {
     const idbPlanetData = await idb.planets.filter(p => p.id === route.params.id).first()
     if (!idbPlanetData) {
       console.warn(`Cannot find planet with ID: ${route.params.id}`)
@@ -312,7 +312,7 @@ async function savePlanet() {
   // ----------- Save planet data ------------ //
   const localData = toRaw(JSON.stringify(LG_PLANET_DATA.value))
   const idbData: IDBPlanet = {
-    id: $planetEntityId.value.length > 0 ? $planetEntityId.value : generateUUID(),
+    id: $planetEntityId.value.length > 0 ? $planetEntityId.value : nanoid(),
     data: JSON.parse(localData),
     preview: previewDataString
   }
