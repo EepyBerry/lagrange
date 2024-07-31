@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { WindowEventBus } from '@core/window-event-bus'
+import { EventBus } from '@core/services/event-bus'
 import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue'
 
 const dialog: Ref<HTMLDialogElement | null> = ref(null)
@@ -49,11 +49,11 @@ onBeforeUnmount(() => {
 })
 
 function open() {
-  WindowEventBus.disableWindowEventListener('keydown')
+  EventBus.disableWindowEventListener('keydown')
   dialog.value?.showModal()
 }
 function close() {
-  WindowEventBus.enableWindowEventListener('keydown')
+  EventBus.enableWindowEventListener('keydown')
   dialog.value?.close()
 }
 

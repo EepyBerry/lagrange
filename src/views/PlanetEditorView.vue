@@ -30,7 +30,7 @@ import { useHead } from '@unhead/vue'
 import type { SceneElements } from '@core/models/scene-elements.model'
 import type { LensFlareEffect } from '@core/three/lens-flare.effect'
 import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config'
-import { WindowEventBus } from '@core/window-event-bus'
+import { EventBus } from '@/core/services/event-bus'
 import { useI18n } from 'vue-i18n'
 import AppNavigation from '@/components/main/AppNavigation.vue'
 import { setShaderMaterialUniform, setShaderMaterialUniforms } from '@/utils/three-utils'
@@ -90,8 +90,8 @@ onMounted(async () => {
 })
 onUnmounted(() => {
   disposeScene()
-  WindowEventBus.deregisterWindowEventListener('resize', onWindowResize)
-  WindowEventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
+  EventBus.deregisterWindowEventListener('resize', onWindowResize)
+  EventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
 })
 
 async function initData() {
@@ -135,8 +135,8 @@ async function initCanvas() {
   initRendering(effectiveWidth, effectiveHeight)
   createControlsComponent($se.camera, $se.renderer.domElement)
   //$se.camera.setRotationFromAxisAngle(AXIS_Y, degToRad(-60))
-  WindowEventBus.registerWindowEventListener('resize', onWindowResize)
-  WindowEventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
+  EventBus.registerWindowEventListener('resize', onWindowResize)
+  EventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
   showSpinner.value = false
 }
 
@@ -321,6 +321,7 @@ async function savePlanet() {
 
   enableEditorRendering = true
   showSpinner.value = false
+  EventBus.sendToastEvent('info', 'toast.save_success', 5000)
 }
 
 function updatePlanet() {

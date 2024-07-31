@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { WindowEventBus } from '@/core/window-event-bus';
+import { EventBus } from '@/core/services/event-bus';
 import { onMounted, onUnmounted, ref, type Ref } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 
@@ -49,12 +49,12 @@ const isOpen: Ref<boolean> = ref(false)
 
 defineProps<{ compactMode: boolean }>()
 onMounted(async () => {
-  WindowEventBus.registerWindowEventListener('click', handleClick)
-  WindowEventBus.registerWindowEventListener('keydown', handleKey)
+  EventBus.registerWindowEventListener('click', handleClick)
+  EventBus.registerWindowEventListener('keydown', handleKey)
 })
 onUnmounted(() => {
-  WindowEventBus.deregisterWindowEventListener('click', handleClick)
-  WindowEventBus.deregisterWindowEventListener('keydown', handleKey)
+  EventBus.deregisterWindowEventListener('click', handleClick)
+  EventBus.deregisterWindowEventListener('keydown', handleKey)
 })
 
 function handleClick(evt: MouseEvent) {

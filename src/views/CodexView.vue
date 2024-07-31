@@ -53,7 +53,7 @@ import { useHead } from '@unhead/vue';
 import { onMounted, onUnmounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
-import { WindowEventBus } from '@/core/window-event-bus';
+import { EventBus } from '@/core/services/event-bus';
 import { MD_WIDTH_THRESHOLD } from '@/core/globals';
 import pako from 'pako'
 import { saveAs } from 'file-saver'
@@ -76,10 +76,10 @@ useHead({
 onMounted(async () => {
   computeResponsiveness()
   await loadPlanets()
-  WindowEventBus.registerWindowEventListener('resize', onWindowResize)
+  EventBus.registerWindowEventListener('resize', onWindowResize)
 })
 onUnmounted(() => {
-  WindowEventBus.deregisterWindowEventListener('resize', onWindowResize)
+  EventBus.deregisterWindowEventListener('resize', onWindowResize)
 })
 
 async function loadPlanets() {
@@ -135,12 +135,17 @@ async function importPlanetFile(event: Event) {
 
   try {
     const newPlanets: PromiseSettledResult<IDBPlanet>[] = await Promise.allSettled(readPromises)
+    if (newPlanets.every(p => p.status === 'rejected')) {
+      EventBus.sendToastEvent('warn', 'toast.import_failure', 5000)
+      return
+    }
     await idb.planets.bulkAdd(newPlanets.filter(np => np.status === 'fulfilled').map(np => np.value))
-  } catch (err) {
-    console.warn('Some imports failed', err)
+  } catch (_) {
+    EventBus.sendToastEvent('warn', 'toast.import_partial', 5000)
   } finally {
     await loadPlanets()
     fileInput.value!.value = ''
+    EventBus.sendToastEvent('info', 'toast.import_success', 5000)
   }
 }
 
@@ -170,8 +175,14 @@ async function openDeleteConfirmDialog(planet: IDBPlanet) {
 }
 
 async function deleteTargetedPlanet() {
-  await idb.planets.delete(deleteTarget.value!.id)
-  await loadPlanets()
+  try {
+    await idb.planets.delete(deleteTarget.value!.id)
+    EventBus.sendToastEvent('info', 'toast.delete_success', 5000)
+  } catch(_) {
+    EventBus.sendToastEvent('warn', 'toast.delete_failure', 5000)
+  } finally {
+    await loadPlanets()
+  }
 }
 
 </script>

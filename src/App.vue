@@ -2,6 +2,7 @@
   <main>
     <RouterView></RouterView>
   </main>
+  <AppToastBar />
   <AppFooter />
   <AppInitDialog ref="dialogInit" :keybinds="keybinds" @disable-init-dialog="disableInitDialog" @enable-persistence="enablePersistence" />
 </template>
@@ -16,6 +17,8 @@ import { useI18n } from 'vue-i18n'
 import { mapLocale } from './utils/utils'
 import { useHead } from '@unhead/vue'
 import { A11Y_ANIMATE } from './core/globals'
+import AppToastBar from './components/main/AppToastBar.vue'
+import { EventBus } from './core/services/event-bus'
 
 const i18n = useI18n()
 useHead({
@@ -78,8 +81,10 @@ async function disableInitDialog() {
 
 async function enablePersistence() {
   const enabled = await navigator.storage.persist()
-  if (!enabled) {
-    console.error('Could not enable persistent storage due to browser rules!')
+  if (enabled) {
+    EventBus.sendToastEvent('info', 'toast.storage_success', 5000)
+  } else {
+    EventBus.sendToastEvent('warn', 'toast.storage_failure_rules', 5000)
   }
 }
 </script>

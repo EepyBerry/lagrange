@@ -4,6 +4,7 @@
     "locale": "en-UwU",
     "language": "Uwuish",
     "more_coming_soon": "Mowe coming s-soon!",
+    "test_message": "pancake hehe :3",
 
     "nav": {
       "codex": "Codex",
@@ -201,6 +202,16 @@
     "text_04": "PAGE\u00A0IS\u00A0MISSING! STATUS\u00A0IS\u00A0404!! SPACE\u00A0IS\u00A0VOID!!! x3",
     "subtext": "The wequested page c-couwd nyot be found :c"
   },
+  "toast": {
+    "storage_success": "Pewsistent stowage enyabwed!",
+    "storage_failure_rules": "C-couwd not enyabwe pewsistent stowage d-due to bwowsew wules ;w;",
+    "delete_success": "Deweted pwanyet successfuwwy! ÒwÓ",
+    "delete_failure": "Couwd nyot dewete pwanyet ;;w;;",
+    "import_success": "Impowted pwanyet(s) successfuwwy! :3",
+    "import_partial": "Wawning: faiwed to impowt some pwanyet(s)...",
+    "import_failure": "Couwd nyot impowt pwanyets... :c Pp-wease check if the cowwect fiwes a-awe sewected and twy again!!!",
+    "save_success": "Saved pwanyet successfuwwy!"
+  },
   "tooltip": {
     "topbar_rename": "Wenyame pwanyet",
     "topbar_rename_confirm": "Confiwm pwanyet nyame",
@@ -254,6 +265,7 @@
     "action_open_colorpanel": "Open cowow panyew",
     "action_add_colorstep": "Add cowow step",
     "action_sort_colorsteps": "Sort cowow steps",
-    "action_close_dialog": "Cwose diawog"
+    "action_close_dialog": "Cwose diawog",
+    "action_close_toast": "Cwose message"
   }
 }

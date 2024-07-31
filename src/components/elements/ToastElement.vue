@@ -1,0 +1,58 @@
+<template>
+  <div class="toast" :class="type">
+    <div class="toast-icon">
+      <iconify-icon v-if="type === 'info'" icon="mingcute:information-line"  width="1.5rem" aria-hidden="true" />
+      <iconify-icon v-if="type === 'warn'" icon="mingcute:alert-line"        width="1.5rem" aria-hidden="true" />
+      <iconify-icon v-if="type === 'wip'"  icon="mingcute:traffic-cone-line" width="1.5rem" aria-hidden="true" />
+    </div>
+    <div class="toast-message">
+      <slot>TOAST_MESSAGE</slot>
+    </div>
+    <button class="lg icon-button" @click="$emit('close')" :aria-label="$t('a11y.action_close_toast')">
+      <iconify-icon icon="mingcute:close-line" width="1.5rem" aria-hidden="true" />
+    </button>
+  </div>
+</template>
+
+<script setup lang="ts">
+defineProps<{ type: 'info' | 'warn' | 'wip' }>()
+defineEmits(['close'])
+</script>
+
+<style scoped lang="scss">
+.toast {
+  width: fit-content;
+  min-height: 2.75rem;
+  background: var(--lg-panel);
+  border: 1px solid var(--lg-accent);
+  border-radius: 4px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 0.5rem;
+  overflow: hidden;
+
+  &.info .toast-icon {
+    background: var(--lg-info);
+  }
+  &.warn .toast-icon,
+  &.wip .toast-icon {
+    background: var(--lg-warn);
+  }
+}
+.toast-icon {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+}
+.toast-message {
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  padding: 0.5rem;
+}
+</style>

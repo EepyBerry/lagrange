@@ -58,7 +58,7 @@
 import AppResetConfirmDialog from '../dialogs/AppResetConfirmDialog.vue'
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
 import { ref, type Ref } from 'vue'
-import { WindowEventBus } from '@core/window-event-bus'
+import { EventBus } from '@/core/services/event-bus'
 
 const editMode: Ref<boolean> = ref(false)
 
@@ -71,10 +71,10 @@ const $emit = defineEmits(['rename', 'reset', 'save'])
 function toggleEditMode() {
   editMode.value = !editMode.value
   if (editMode.value) {
-    WindowEventBus.disableWindowEventListener('keydown')
+    EventBus.disableWindowEventListener('keydown')
     setTimeout(() => planetNameInput.value?.focus())
   } else {
-    WindowEventBus.enableWindowEventListener('keydown')
+    EventBus.enableWindowEventListener('keydown')
     $emit('rename')
   }
 }

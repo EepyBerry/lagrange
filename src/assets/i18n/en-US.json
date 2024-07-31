@@ -4,6 +4,7 @@
     "locale": "en-US",
     "language": "English",
     "more_coming_soon": "More coming soon!",
+    "test_message": "pancake hehe :3",
 
     "nav": {
       "codex": "Codex",
@@ -200,6 +201,16 @@
     "text_04": "PAGE\u00A0IS\u00A0MISSING. STATUS\u00A0IS\u00A0404. SPACE\u00A0IS\u00A0VOID.",
     "subtext": "The requested page could not be found."
   },
+  "toast": {
+    "storage_success": "Persistent storage enabled!",
+    "storage_failure_rules": "Could not enable persistent storage due to browser rules!",
+    "delete_success": "Deleted planet successfully!",
+    "delete_failure": "Could not delete planet",
+    "import_success": "Imported planet(s) successfully!",
+    "import_partial": "Warning: failed to import some planet(s)",
+    "import_failure": "Could not import planets. Please check if the correct files are selected and try again",
+    "save_success": "Saved planet successfully!"
+  },
   "tooltip": {
     "topbar_rename": "Rename planet",
     "topbar_rename_confirm": "Confirm planet name",
@@ -253,6 +264,7 @@
     "action_open_colorpanel": "Open color panel",
     "action_add_colorstep": "Add color step",
     "action_sort_colorsteps": "Sort color steps",
-    "action_close_dialog": "Close dialog"
+    "action_close_dialog": "Close dialog",
+    "action_close_toast": "Close message"
   }
 }
