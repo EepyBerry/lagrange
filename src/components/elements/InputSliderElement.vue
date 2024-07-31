@@ -74,7 +74,11 @@ function set(ev: Event) {
     border-bottom-right-radius: 0;
     border-bottom: none;
 
-    &::-webkit-slider-thumb,
+    &::-webkit-slider-thumb {
+      height: 1.25rem;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
     &::-moz-range-thumb {
       height: 1.25rem;
       border-bottom-left-radius: 0;
@@ -114,17 +118,18 @@ input.lg[type='range'] {
     z-index: 1;
     -webkit-appearance: none;
     appearance: none;
+    background: var(--lg-contrast-focus);
+    border-radius: 2px;
+    border: none;
     width: 4px;
     height: 1.5rem;
-    background: var(--lg-contrast-focus);
     cursor: pointer;
   }
-
   &::-moz-range-thumb {
     z-index: 1;
     background: var(--lg-contrast-focus);
-    border: none;
     border-radius: 2px;
+    border: none;
     width: 4px;
     height: 1.5rem;
     cursor: pointer;
@@ -133,8 +138,10 @@ input.lg[type='range'] {
   &:focus {
     background: var(--lg-input-focus);
   }
-
-  &:focus::-webkit-slider-thumb,
+  &:focus::-webkit-slider-thumb {
+    background: var(--lg-contrast-focus);
+    border: 1px solid var(--lg-text);
+  }
   &:focus::-moz-range-thumb {
     background: var(--lg-contrast-focus);
     border: 1px solid var(--lg-text);
@@ -142,23 +149,24 @@ input.lg[type='range'] {
 }
 
 @media screen and (max-width: 1023px) {
-  input.lg[type='number'], input.lg[type='range'] {
+  input.lg[type='number'] {
+    height: 2rem;
+    font-size: 1rem;
+  }
+  input.lg[type='range'] {
     height: 2rem;
     font-size: 1rem;
 
     &::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
+      background: var(--lg-contrast-focus);
       width: 6px;
       height: 2rem;
-      background: var(--lg-contrast-focus);
       cursor: pointer;
     }
-
     &::-moz-range-thumb {
       background: var(--lg-contrast-focus);
-      border: none;
-      border-radius: 2px;
       width: 6px;
       height: 2rem;
       cursor: pointer;
@@ -169,10 +177,11 @@ input.lg[type='range'] {
     .lg-input-wrapper-slider > input.lg[type='range'] {
       height: calc(2rem - 4px);
 
-      &::-webkit-slider-thumb,
+      &::-webkit-slider-thumb {
+        height: calc(2rem - 4px);
+      }
       &::-moz-range-thumb {
-        height: calc(1rem - 4px);
-        background: red
+        height: calc(2rem - 4px);
       }
     }
   }
