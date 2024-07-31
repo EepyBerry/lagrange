@@ -164,5 +164,17 @@ input.lg[type='range'] {
       cursor: pointer;
     }
   }
+  
+  .lg-input-wrapper.rgb {
+    .lg-input-wrapper-slider > input.lg[type='range'] {
+      height: calc(2rem - 4px);
+
+      &::-webkit-slider-thumb,
+      &::-moz-range-thumb {
+        height: calc(1rem - 4px);
+        background: red
+      }
+    }
+  }
 }
 </style>
