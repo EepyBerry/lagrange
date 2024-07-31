@@ -8,7 +8,7 @@
         {{ $t('codex.$action_add') }}
       </RouterLink>
       <hr />
-      <input ref="fileInput" type="file" @change="importPlanetFile" hidden />
+      <input ref="fileInput" type="file" @change="importPlanetFile" accept=".lagrange" multiple hidden />
       <button
         class="lg dark"
         :aria-label="$t('a11y.topbar_import')"
@@ -103,30 +103,45 @@ function openFileDialog() {
   fileInput.value?.click()
 }
 
-function importPlanetFile(event: Event) {
+async function importPlanetFile(event: Event) {
   const files = (event.target as HTMLInputElement).files
-  if (files?.length !== 1) {
-    console.warn('only one file cane be loaded at a time!')
+  if (!files || files?.length === 0) {
+    console.warn('At least one file should be specified!')
     return
   }
 
-  const reader = new FileReader()
-  reader.onload = async (e) => {
-    try {
-      const data = JSON.parse(pako.inflate(e.target?.result as ArrayBuffer, { to: 'string' })) as IDBPlanet
-      const newIdb: IDBPlanet = {
-        id: data.id,
-        data: PlanetData.createFrom(data.data),
-        preview: data.preview
+  const readPromises = Array.from(files).map(f => {
+    const reader = new FileReader()
+    return new Promise<IDBPlanet>((resolve, reject) => {
+      reader.onload = async (e) => {
+        try {
+          const data = JSON.parse(pako.inflate(e.target?.result as ArrayBuffer, { to: 'string' })) as IDBPlanet
+          const newIdb: IDBPlanet = {
+            id: data.id,
+            data: PlanetData.createFrom(data.data),
+            preview: data.preview
+          }
+          console.info(`Imported planet (ID=${newIdb.id}): [${newIdb.data.planetName}]`)
+          resolve(newIdb)
+        } catch (err) {
+          console.error(err)
+          reject()
+        }
       }
-      await idb.planets.add(newIdb, data.id)
-      await loadPlanets()
-      console.info(`Imported planet (ID=${data.id}): [${newIdb.data.planetName}]`)
-    } catch (err) {
-      console.error(err)
-    }
+      reader.readAsArrayBuffer(f)
+    })
+    
+  })
+
+  try {
+    const newPlanets: PromiseSettledResult<IDBPlanet>[] = await Promise.allSettled(readPromises)
+    await idb.planets.bulkAdd(newPlanets.filter(np => np.status === 'fulfilled').map(np => np.value))
+  } catch (err) {
+    console.warn('Some imports failed', err)
+  } finally {
+    await loadPlanets()
+    fileInput.value!.value = ''
   }
-  reader.readAsArrayBuffer(files[0])
 }
 
 async function exportPlanets() {
