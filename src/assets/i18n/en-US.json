@@ -29,6 +29,7 @@
       "topbar_reset": "Reset to defaults",
       "topbar_import": "Import planet",
       "topbar_export": "Export planet",
+      "topbar_export_all": "Export full codex",
 
       "footer": "Footer - Miscellaneous",
       "footer_github": "GitHub page",
@@ -36,6 +37,7 @@
       "footer_about": "About @:main.$title",
 
       "show_next_time": "Show this introduction next time?",
+      "enable_persistence": "Enable browser storage persistence for this app?",
 
       "$action_confirm": "Get started!"
     },
@@ -196,7 +198,7 @@
     "text_02": "\"This sector is completely empty, Captain!\"",
     "text_03": "Huh. Must've taken a wrong turn somewhere...",
     "text_04": "PAGE\u00A0IS\u00A0MISSING. STATUS\u00A0IS\u00A0404. SPACE\u00A0IS\u00A0VOID.",
-    "subtext": "The requested page could not be found :c"
+    "subtext": "The requested page could not be found."
   },
   "tooltip": {
     "topbar_rename": "Rename planet",

@@ -29,6 +29,7 @@
       "topbar_reset": "Weset t-to defauwts",
       "topbar_import": "Impowt pwanyet",
       "topbar_export": "Expowt pwanyet",
+      "topbar_export_all": "Expowt fuww codex",
 
       "footer": "Footew - Miscewwanyeous",
       "footer_github": "GitHub p-p-page",
@@ -36,6 +37,7 @@
       "footer_about": "About @:main.$title",
 
       "show_next_time": "Show this intwoduction nyext time?",
+      "enable_persistence": "Enabwe bwowsew stowage p-pewsistence fow this app? :3",
 
       "$action_confirm": "Get s-stawted!"
     },

@@ -3,7 +3,7 @@
     <RouterView></RouterView>
   </main>
   <AppFooter />
-  <AppInitDialog ref="dialogInit" :keybinds="keybinds" @disable-init-dialog="disableInitDialog" />
+  <AppInitDialog ref="dialogInit" :keybinds="keybinds" @disable-init-dialog="disableInitDialog" @enable-persistence="enablePersistence" />
 </template>
 
 <script setup lang="ts">
@@ -28,8 +28,9 @@ const keybinds: Ref<IDBKeyBinding[]> = ref([])
 const settings: Ref<IDBSettings | undefined> = ref(undefined)
 
 onMounted(async () => {
+  await DexieUtils.initStoragePersistence()
   await initDexie()
-  keybinds.value = await idb.keyBindings.limit(4).toArray()
+  keybinds.value = await idb.keyBindings.toArray()
   settings.value = await idb.settings.limit(1).first()
 
   // Set locale
@@ -73,6 +74,13 @@ async function initDexie() {
 
 async function disableInitDialog() {
   await idb.settings.update(settings.value!.id, { showInitDialog: false }).catch((err) => console.error(err))
+}
+
+async function enablePersistence() {
+  const enabled = await navigator.storage.persist()
+  if (!enabled) {
+    console.error('Could not enable persistent storage due to browser rules!')
+  }
 }
 </script>
 

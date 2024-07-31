@@ -34,4 +34,8 @@ defineProps<{ type: 'info' | 'warn' | 'wip' }>()
     border: 1px solid var(--lg-warn);
   }
 }
+.notification-icon {
+  display: flex;
+  align-items: center;
+}
 </style>

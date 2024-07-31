@@ -1,5 +1,5 @@
 <template>
-  <DialogElement ref="dialogRef" id="dialog-editor-init" :showActions="true" :aria-label="$t('a11y.dialog_init')">
+  <DialogElement ref="dialogRef" id="dialog-editor-init" :showActions="true" :prevent-click-close="true" :aria-label="$t('a11y.dialog_init')">
     <template v-slot:content>
       <div class="init-container">
         <section class="intro">
@@ -50,6 +50,10 @@
                 <span class="keybind">{{ keybinds[3]?.key }}</span>
                 <span>{{ $t('dialog.init.shortcuts_atmosphere') }}</span>
               </li>
+              <li class="lg">
+                <span class="keybind">{{ keybinds[4]?.key }}</span>
+                <span>{{ $t('dialog.init.shortcuts_screenshot') }}</span>
+              </li>
             </ul>
           </template>
         </CollapsibleSection>
@@ -59,20 +63,20 @@
           <template v-slot:content>
             <ul class="controls">
               <li class="lg">
-                <iconify-icon icon="mingcute:edit-2-line" width="1.5rem" aria-hidden="true" /> :
+                <iconify-icon icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
                 {{ $t('dialog.init.topbar_rename') }}
               </li>
               <li class="lg">
-                <iconify-icon icon="tabler:reload" width="1.5rem" aria-hidden="true" /> :
+                <iconify-icon icon="tabler:reload" width="1.25rem" aria-hidden="true" />
                 {{ $t('dialog.init.topbar_reset') }}
               </li>
               <li class="lg">
-                <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" /> :
+                <iconify-icon icon="mingcute:upload-line" width="1.25rem" aria-hidden="true" />
                 {{ $t('dialog.init.topbar_import') }}
               </li>
               <li class="lg">
-                <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" /> :
-                {{ $t('dialog.init.topbar_export') }}
+                <iconify-icon icon="mingcute:folder-zip-line" width="1.25rem" aria-hidden="true" />
+                {{ $t('dialog.init.topbar_export_all') }}
               </li>
             </ul>
           </template>
@@ -83,24 +87,30 @@
           <template v-slot:content>
             <ul class="controls">
               <li class="lg">
-                <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" /> :
-                {{ $t('dialog.init.footer_github') }}
+                <iconify-icon icon="mingcute:information-line" width="1.25rem" aria-hidden="true" />
+                {{ $t('dialog.init.footer_about') }}
               </li>
               <li class="lg">
-                <iconify-icon icon="mingcute:settings-6-line" width="1.5rem" aria-hidden="true" /> :
+                <iconify-icon icon="mingcute:settings-6-line" width="1.25rem" aria-hidden="true" />
                 {{ $t('dialog.init.footer_settings') }}
               </li>
               <li class="lg">
-                <iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true" /> :
-                {{ $t('dialog.init.footer_about') }}
+                <iconify-icon icon="mingcute:github-line" width="1.25rem" aria-hidden="true" />
+                {{ $t('dialog.init.footer_github') }}
               </li>
             </ul>
           </template>
         </CollapsibleSection>
 
-        <div class="init-checkbox">
-          <label for="show-on-next-visits">{{ $t('dialog.init.show_next_time') }}</label>
-          <input id="show-on-next-visits" class="lg" type="checkbox" v-model="shouldShowOnNextVisits" />
+        <div class="init-actions">
+          <div class="init-checkbox important">
+            <label for="enable-persistence">{{ $t('dialog.init.enable_persistence') }}</label>
+            <input id="enable-persistence" class="lg" type="checkbox" v-model="shouldEnableStoragePersistence" />
+          </div>
+          <div class="init-checkbox important">
+            <label for="show-on-next-visits">{{ $t('dialog.init.show_next_time') }}</label>
+            <input id="show-on-next-visits" class="lg" type="checkbox" v-model="shouldShowOnNextVisits" />
+          </div>
         </div>
       </div>
     </template>
@@ -123,14 +133,18 @@ import CollapsibleSection from '../elements/CollapsibleSection.vue'
 
 const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
 const shouldShowOnNextVisits = ref(true)
+const shouldEnableStoragePersistence = ref(true)
 
-const $emit = defineEmits(['disableInitDialog'])
+const $emit = defineEmits(['disableInitDialog', 'enablePersistence'])
 defineProps<{ keybinds: IDBKeyBinding[] }>()
 defineExpose({ open: () => dialogRef.value?.open() })
 
 function doClose() {
   if (!shouldShowOnNextVisits.value) {
     $emit('disableInitDialog')
+  }
+  if (shouldEnableStoragePersistence.value) {
+    $emit('enablePersistence')
   }
   dialogRef.value?.close()
 }
@@ -142,6 +156,7 @@ function doClose() {
     max-width: 56rem;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 1rem;
 
     #app-logo,
@@ -150,11 +165,25 @@ function doClose() {
       align-self: center;
       justify-self: center;
     }
-    .init-checkbox {
+    .init-actions {
+      width: 100%;
+      margin-top: 1rem;
       display: flex;
-      gap: 2rem;
-      align-items: center;
-      justify-content: flex-end;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 0.25rem;
+
+      .init-checkbox {
+        background: var(--lg-panel);
+        border: 1px solid var(--lg-input); 
+        border-radius: 4px;
+        padding: 0.25rem 0.5rem;
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+        justify-content: flex-end;
+      }
     }
   }
   .intro {
@@ -171,7 +200,7 @@ function doClose() {
   }
   .controls {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
     justify-content: flex-start;
     gap: 1rem;
     margin-top: 0.5rem;
@@ -180,9 +209,10 @@ function doClose() {
     li {
       display: flex;
       align-items: center;
-      gap: 0.25rem;
+      gap: 0.75rem;
       flex-wrap: nowrap;
       text-overflow: ellipsis;
+      height: 2.5rem;
 
       .keybind {
         display: flex;
@@ -195,17 +225,21 @@ function doClose() {
         border-radius: 0.25rem;
         font-weight: 600;
         padding: 0 0.5rem;
+
         &.unset {
           border-color: var(--lg-warn-active);
         }
       }
-    }
-  }
-}
-@media screen and (max-width: 1023px) {
-  #dialog-editor-init {
-    .controls {
-      grid-template-columns: 1fr 1fr;
+      iconify-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2rem;
+        min-height: 2rem;
+        background: var(--lg-panel);
+        border: 1px solid var(--lg-accent);
+        border-radius: 0.25rem;
+      }
     }
   }
 }
@@ -217,7 +251,6 @@ function doClose() {
       align-items: center;
       justify-content: center;
       grid-template-rows: auto auto;
-      grid-template-columns: 1fr;
 
       #app-logo,
       #app-logo-uwu {
@@ -240,13 +273,6 @@ function doClose() {
     }
     .controls {
       align-items: center;
-    }
-  }
-}
-@media screen and (max-width: 567px) {
-  #dialog-editor-init {
-    .controls {
-      grid-template-columns: 1fr;
     }
   }
 }
