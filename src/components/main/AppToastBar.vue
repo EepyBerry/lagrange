@@ -7,10 +7,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, type Ref } from 'vue';
-import ToastElement from '../elements/ToastElement.vue';
-import { EventBus } from '@/core/services/event-bus';
-import type { InfoLevel } from '@/core/types';
+import { ref, watch, type Ref } from 'vue'
+import ToastElement from '../elements/ToastElement.vue'
+import { EventBus } from '@/core/services/event-bus'
+import type { InfoLevel } from '@/core/types'
 
 const toastType: Ref<InfoLevel> = ref('info')
 const toastMessageRaw: Ref<string> = ref('main.test_message')
@@ -24,7 +24,8 @@ watch(EventBus.toastEvent, (evt) => {
 })
 
 function showToast(type: InfoLevel, translationKey: string, millis: number) {
-  if (timeoutId !== null) { // if a timeout is currently running, clear it
+  if (timeoutId !== null) {
+    // if a timeout is currently running, clear it
     clearTimeout(timeoutId)
     closeToast()
   }

@@ -7,13 +7,18 @@
 
     <aside id="nav-compact" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
       <nav>
-        <hr>
+        <hr />
         <RouterLink class="lg nav" to="/codex" :aria-label="$t('a11y.action_nav_codex')">
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
         </RouterLink>
-        <hr>
-        <RouterLink class="lg nav" :class="{ 'router-link-active': !!route.params.id }" to="/planet-editor/new" :aria-label="$t('a11y.action_nav_editor')">
+        <hr />
+        <RouterLink
+          class="lg nav"
+          :class="{ 'router-link-active': !!route.params.id }"
+          to="/planet-editor/new"
+          :aria-label="$t('a11y.action_nav_editor')"
+        >
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
         </RouterLink>
@@ -27,8 +32,8 @@
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
         </RouterLink>
-        <hr>
-        <RouterLink class="lg nav" :class="{ 'router-link-active': !!route.params.id }"  to="/planet-editor/new">
+        <hr />
+        <RouterLink class="lg nav" :class="{ 'router-link-active': !!route.params.id }" to="/planet-editor/new">
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
         </RouterLink>
@@ -38,13 +43,13 @@
 </template>
 
 <script setup lang="ts">
-import { EventBus } from '@/core/services/event-bus';
-import { onMounted, onUnmounted, ref, type Ref } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { EventBus } from '@/core/services/event-bus'
+import { onMounted, onUnmounted, ref, type Ref } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
 
 const route = useRoute()
-const buttonOpen: Ref<HTMLElement|null> = ref(null)
-const sidebar: Ref<HTMLElement|null> = ref(null)
+const buttonOpen: Ref<HTMLElement | null> = ref(null)
+const sidebar: Ref<HTMLElement | null> = ref(null)
 const isOpen: Ref<boolean> = ref(false)
 
 defineProps<{ compactMode: boolean }>()
@@ -60,8 +65,7 @@ onUnmounted(() => {
 function handleClick(evt: MouseEvent) {
   if (evt.target === buttonOpen.value) {
     isOpen.value = !isOpen.value
-  }
-  else if (evt.target !== sidebar.value && isOpen.value) {
+  } else if (evt.target !== sidebar.value && isOpen.value) {
     isOpen.value = false
   }
 }

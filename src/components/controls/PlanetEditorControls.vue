@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import InlineFooter from '../main/InlineFooter.vue';
+import InlineFooter from '../main/InlineFooter.vue'
 import ControlsContainer from './ControlsContainer.vue'
 defineProps<{ compactMode: boolean }>()
 </script>

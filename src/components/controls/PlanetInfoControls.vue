@@ -10,7 +10,7 @@
         @keyup.enter="toggleEditMode"
       />
       <p v-else @click="toggleEditMode">{{ LG_PLANET_DATA.planetName }}</p>
-      
+
       <button
         class="lg icon-button"
         :aria-label="$t(editMode ? 'a11y.topbar_rename_confirm' : 'a11y.topbar_rename')"
@@ -49,7 +49,7 @@
     >
       <iconify-icon icon="mingcute:save-2-line" width="1.5rem" aria-hidden="true" />
     </button>
-    
+
     <AppResetConfirmDialog ref="resetDialog" @confirm="emitResetEvent" />
   </div>
 </template>

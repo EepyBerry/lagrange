@@ -1,7 +1,12 @@
 <template>
   <div id="editor-header" :class="{ compact: !!showCompactNavigation }">
     <AppNavigation :compact-mode="showCompactNavigation" />
-    <PlanetInfoControls :compact-mode="showCompactInfo" @rename="patchMetaHead" @save="savePlanet" @reset="resetPlanet" />
+    <PlanetInfoControls
+      :compact-mode="showCompactInfo"
+      @rename="patchMetaHead"
+      @save="savePlanet"
+      @reset="resetPlanet"
+    />
   </div>
   <PlanetEditorControls :compact-mode="showCompactControls" />
 
@@ -36,7 +41,7 @@ import AppNavigation from '@/components/main/AppNavigation.vue'
 import { setShaderMaterialUniform, setShaderMaterialUniforms } from '@/utils/three-utils'
 import { useRoute } from 'vue-router'
 import PlanetData from '@/core/models/planet-data.model'
-import { 
+import {
   createAtmosphere,
   createClouds,
   createLensFlare,
@@ -45,7 +50,7 @@ import {
   createSun,
   exportPlanetPreview,
   LG_HEIGHT_DIVIDER,
-  LG_PLANET_DATA
+  LG_PLANET_DATA,
 } from '@/core/services/planet-editor.service'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { getPlanetMetaTitle } from '@/utils/utils'
@@ -97,7 +102,7 @@ onUnmounted(() => {
 async function initData() {
   // https://stackoverflow.com/questions/3891641/regex-test-only-works-every-other-time
   if ((route.params.id as string).length > 3) {
-    const idbPlanetData = await idb.planets.filter(p => p.id === route.params.id).first()
+    const idbPlanetData = await idb.planets.filter((p) => p.id === route.params.id).first()
     if (!idbPlanetData) {
       console.warn(`Cannot find planet with ID: ${route.params.id}`)
       LG_PLANET_DATA.value.reset()
@@ -122,7 +127,7 @@ async function initCanvas() {
     pixelRatio = window.devicePixelRatio
   let effectiveWidth = width,
     effectiveHeight = height
-  
+
   if (showCompactControls.value) {
     effectiveWidth = window.outerWidth
     effectiveHeight = window.outerHeight * 0.5
@@ -175,7 +180,10 @@ function initPlanet(): void {
   // Set initial rotations
   _planetGroup.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
   _planet.setRotationFromAxisAngle(_planet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
-  _clouds.setRotationFromAxisAngle(_clouds.up, degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation))
+  _clouds.setRotationFromAxisAngle(
+    _clouds.up,
+    degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation),
+  )
 }
 
 function initRendering(width: number, height: number) {
@@ -199,23 +207,23 @@ function disposeScene() {
   _sunLight.dispose()
   _ambLight.dispose()
   $se.scene.remove(_sunLight)
-  $se.scene.remove(_ambLight);
+  $se.scene.remove(_ambLight)
 
   _lensFlare.material.dispose()
-  _lensFlare.mesh.geometry.dispose();
+  _lensFlare.mesh.geometry.dispose()
 
-  (_planet.material as THREE.Material).dispose()
-  _planet.geometry.dispose();
+  ;(_planet.material as THREE.Material).dispose()
+  _planet.geometry.dispose()
 
-  (_clouds.material as THREE.Material).dispose()
-  _clouds.geometry.dispose();
+  ;(_clouds.material as THREE.Material).dispose()
+  _clouds.geometry.dispose()
 
-  (_atmosphere.material as THREE.Material).dispose()
-  _atmosphere.geometry.dispose();
+  ;(_atmosphere.material as THREE.Material).dispose()
+  _atmosphere.geometry.dispose()
 
   _planetGroup.clear()
 
-  $se.scene.children.forEach(c => $se.scene.remove(c))
+  $se.scene.children.forEach((c) => $se.scene.remove(c))
   $se.renderer.dispose()
   console.debug('[unmount] ...done!')
 }
@@ -241,7 +249,7 @@ async function handleKeyboardEvent(event: KeyboardEvent) {
       LG_PLANET_DATA.value.biomesEnabled = !LG_PLANET_DATA.value.biomesEnabled
       break
     case KeyBindingAction.TakeScreenshot: {
-      $se.renderer.domElement.toBlob(blob => {
+      $se.renderer.domElement.toBlob((blob) => {
         saveAs(blob!, `${LG_PLANET_DATA.value.planetName}-${new Date().toISOString()}.png`)
       }, 'image/png')
       break
@@ -314,7 +322,7 @@ async function savePlanet() {
   const idbData: IDBPlanet = {
     id: $planetEntityId.value.length > 0 ? $planetEntityId.value : nanoid(),
     data: JSON.parse(localData),
-    preview: previewDataString
+    preview: previewDataString,
   }
   await idb.planets.put(idbData, idbData.id)
   $planetEntityId.value = idbData.id
@@ -338,7 +346,11 @@ function updatePlanet() {
         break
       }
       case '_lensFlarePointsIntensity': {
-        setShaderMaterialUniform(_lensFlare.material, 'starPointsIntensity', LG_PLANET_DATA.value.lensFlarePointsIntensity)
+        setShaderMaterialUniform(
+          _lensFlare.material,
+          'starPointsIntensity',
+          LG_PLANET_DATA.value.lensFlarePointsIntensity,
+        )
         break
       }
       case '_lensFlareGlareIntensity': {
@@ -375,12 +387,12 @@ function updatePlanet() {
       case '_planetRadius': {
         const v = LG_PLANET_DATA.value.planetRadius
         const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / LG_HEIGHT_DIVIDER
-        _planetGroup.scale.set(v,v,v)
+        _planetGroup.scale.set(v, v, v)
         setShaderMaterialUniform(_planet.material as CustomShaderMaterial, 'u_radius', v)
         setShaderMaterialUniforms(
           _atmosphere.material as CustomShaderMaterial,
           ['u_surface_radius', 'u_radius'],
-          [v, v + atmosHeight]
+          [v, v + atmosHeight],
         )
         break
       }
@@ -391,7 +403,9 @@ function updatePlanet() {
       }
       case '_planetRotation': {
         const vRad = degToRad(isNaN(LG_PLANET_DATA.value.planetRotation) ? 0 : LG_PLANET_DATA.value.planetRotation)
-        const cloudsRotationRad = degToRad(isNaN(LG_PLANET_DATA.value.cloudsRotation) ? 0 : LG_PLANET_DATA.value.cloudsRotation)
+        const cloudsRotationRad = degToRad(
+          isNaN(LG_PLANET_DATA.value.cloudsRotation) ? 0 : LG_PLANET_DATA.value.cloudsRotation,
+        )
         _planet.setRotationFromAxisAngle(_planet.up, vRad)
         _clouds.setRotationFromAxisAngle(_clouds.up, vRad + cloudsRotationRad)
         break
@@ -494,7 +508,11 @@ function updatePlanet() {
       // |                 Biome settings                 |
       // --------------------------------------------------
       case '_biomesEnabled': {
-        setShaderMaterialUniform(_planet.material as CustomShaderMaterial, 'u_biomes', LG_PLANET_DATA.value.biomesEnabled)
+        setShaderMaterialUniform(
+          _planet.material as CustomShaderMaterial,
+          'u_biomes',
+          LG_PLANET_DATA.value.biomesEnabled,
+        )
         break
       }
       case '_biomePolesEnabled': {
@@ -515,7 +533,9 @@ function updatePlanet() {
         break
       }
       case '_cloudsRotation': {
-        const planetRotationRad = degToRad(isNaN(LG_PLANET_DATA.value.planetRotation) ? 0 : LG_PLANET_DATA.value.planetRotation)
+        const planetRotationRad = degToRad(
+          isNaN(LG_PLANET_DATA.value.planetRotation) ? 0 : LG_PLANET_DATA.value.planetRotation,
+        )
         const vRad = degToRad(isNaN(LG_PLANET_DATA.value.cloudsRotation) ? 0 : LG_PLANET_DATA.value.cloudsRotation)
         _clouds.setRotationFromAxisAngle(_clouds.up, planetRotationRad + vRad)
         break
@@ -545,11 +565,7 @@ function updatePlanet() {
         break
       }
       case '_cloudsColor': {
-        setShaderMaterialUniform(
-          _clouds.material as CustomShaderMaterial,
-          'u_color',
-          LG_PLANET_DATA.value.cloudsColor
-        )
+        setShaderMaterialUniform(_clouds.material as CustomShaderMaterial, 'u_color', LG_PLANET_DATA.value.cloudsColor)
         break
       }
       case '_cloudsColorRamp': {
@@ -599,7 +615,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_color_mode',
-          LG_PLANET_DATA.value.atmosphereColorMode
+          LG_PLANET_DATA.value.atmosphereColorMode,
         )
         break
       }
@@ -607,7 +623,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_hue',
-          LG_PLANET_DATA.value.atmosphereHue
+          LG_PLANET_DATA.value.atmosphereHue,
         )
         break
       }
@@ -615,7 +631,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           _atmosphere.material as CustomShaderMaterial,
           'u_tint',
-          LG_PLANET_DATA.value.atmosphereTint
+          LG_PLANET_DATA.value.atmosphereTint,
         )
         break
       }
@@ -646,9 +662,9 @@ function updatePlanet() {
   box-shadow: black 5px 10px 10px;
   z-index: 5;
 
-   & > canvas {
+  & > canvas {
     background: transparent;
-   }
+  }
 }
 
 @media screen and (max-width: 1199px) {

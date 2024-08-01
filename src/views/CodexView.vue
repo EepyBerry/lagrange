@@ -26,43 +26,48 @@
         <iconify-icon icon="mingcute:folder-zip-line" width="1.5rem" aria-hidden="true" />
       </button>
     </div>
-      
   </div>
   <div v-if="planets.length > 0" id="codex-grid" router-link="/planet-editor/new">
-    <PlanetCardElement v-for="planet of planets" :key="planet.id" :planet="planet" @export="exportPlanet(planet)" @delete="openDeleteConfirmDialog(planet)" />
+    <PlanetCardElement
+      v-for="planet of planets"
+      :key="planet.id"
+      :planet="planet"
+      @export="exportPlanet(planet)"
+      @delete="openDeleteConfirmDialog(planet)"
+    />
   </div>
   <div v-else id="codex-grid" class="empty">
     <iconify-icon icon="ph:planet-thin" width="16rem" />
     <span>{{ $t('codex.no_planets') }}</span>
   </div>
   <div id="codex-footer">
-    <InlineFooter  />
+    <InlineFooter />
   </div>
   <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="deleteTargetedPlanet" />
 </template>
 
 <script setup lang="ts">
-import PlanetCardElement from '@/components/elements/PlanetCardElement.vue';
-import AppNavigation from '@/components/main/AppNavigation.vue';
-import InlineFooter from '@/components/main/InlineFooter.vue';
-import AppDeleteConfirmDialog from '@components/dialogs/AppDeleteConfirmDialog.vue';
-import { idb, type IDBPlanet } from '@/dexie.config';
-import { useHead } from '@unhead/vue';
-import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { RouterLink } from 'vue-router';
-import { EventBus } from '@/core/services/event-bus';
-import { MD_WIDTH_THRESHOLD } from '@/core/globals';
+import PlanetCardElement from '@/components/elements/PlanetCardElement.vue'
+import AppNavigation from '@/components/main/AppNavigation.vue'
+import InlineFooter from '@/components/main/InlineFooter.vue'
+import AppDeleteConfirmDialog from '@components/dialogs/AppDeleteConfirmDialog.vue'
+import { idb, type IDBPlanet } from '@/dexie.config'
+import { useHead } from '@unhead/vue'
+import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { RouterLink } from 'vue-router'
+import { EventBus } from '@/core/services/event-bus'
+import { MD_WIDTH_THRESHOLD } from '@/core/globals'
 import pako from 'pako'
 import { saveAs } from 'file-saver'
-import PlanetData from '@/core/models/planet-data.model';
-import JSZip from 'jszip';
+import PlanetData from '@/core/models/planet-data.model'
+import JSZip from 'jszip'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const planets: Ref<IDBPlanet[]> = ref([])
 
-const deleteTarget: Ref<IDBPlanet|null> = ref(null)
+const deleteTarget: Ref<IDBPlanet | null> = ref(null)
 const deleteDialogRef: Ref<{ open: Function } | null> = ref(null)
 const showCompactNavigation: Ref<boolean> = ref(false)
 
@@ -79,11 +84,14 @@ onMounted(async () => {
 onUnmounted(() => {
   EventBus.deregisterWindowEventListener('resize', onWindowResize)
 })
-watch(() => EventBus.clearEvent.value, async () => await loadPlanets())
+watch(
+  () => EventBus.clearEvent.value,
+  async () => await loadPlanets(),
+)
 
 async function loadPlanets() {
   const idbPlanets = await idb.planets.orderBy('data._planetName').toArray()
-  planets.value = idbPlanets.map(pl => ({ ...pl, data: PlanetData.createFrom(pl.data) }))
+  planets.value = idbPlanets.map((pl) => ({ ...pl, data: PlanetData.createFrom(pl.data) }))
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -109,7 +117,7 @@ async function importPlanetFile(event: Event) {
     return
   }
 
-  const readPromises = Array.from(files).map(f => {
+  const readPromises = Array.from(files).map((f) => {
     const reader = new FileReader()
     return new Promise<IDBPlanet>((resolve, reject) => {
       reader.onload = async (e) => {
@@ -118,7 +126,7 @@ async function importPlanetFile(event: Event) {
           const newIdb: IDBPlanet = {
             id: data.id,
             data: PlanetData.createFrom(data.data),
-            preview: data.preview
+            preview: data.preview,
           }
           console.info(`Imported planet (ID=${newIdb.id}): [${newIdb.data.planetName}]`)
           resolve(newIdb)
@@ -129,16 +137,15 @@ async function importPlanetFile(event: Event) {
       }
       reader.readAsArrayBuffer(f)
     })
-    
   })
 
   try {
     const newPlanets: PromiseSettledResult<IDBPlanet>[] = await Promise.allSettled(readPromises)
-    if (newPlanets.every(p => p.status === 'rejected')) {
+    if (newPlanets.every((p) => p.status === 'rejected')) {
       EventBus.sendToastEvent('warn', 'toast.import_failure', 3000)
       return
     }
-    await idb.planets.bulkAdd(newPlanets.filter(np => np.status === 'fulfilled').map(np => np.value))
+    await idb.planets.bulkAdd(newPlanets.filter((np) => np.status === 'fulfilled').map((np) => np.value))
   } catch (_) {
     EventBus.sendToastEvent('warn', 'toast.import_partial', 3000)
   } finally {
@@ -177,13 +184,12 @@ async function deleteTargetedPlanet() {
   try {
     await idb.planets.delete(deleteTarget.value!.id)
     EventBus.sendToastEvent('success', 'toast.delete_success', 3000)
-  } catch(_) {
+  } catch (_) {
     EventBus.sendToastEvent('warn', 'toast.delete_failure', 3000)
   } finally {
     await loadPlanets()
   }
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -200,7 +206,7 @@ async function deleteTargetedPlanet() {
   z-index: 15;
   position: absolute;
   inset: 0 0 auto 0;
-  
+
   margin: 1rem;
   display: flex;
   align-items: center;

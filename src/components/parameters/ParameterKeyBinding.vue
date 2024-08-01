@@ -15,30 +15,18 @@
           <span v-else>{{ selected ? '.....' : keyBind?.key }}</span>
         </div>
         <button class="lg" :aria-label="$t('a11y.action_edit_keybind')" @click="$emit('toggle')">
-          <iconify-icon
-            v-if="selected"
-            class="icon"
-            icon="mingcute:close-line"
-            width="1.25rem"
-            aria-hidden="true"
-          />
-          <iconify-icon
-            v-else
-            class="icon"
-            icon="mingcute:edit-2-line"
-            width="1.25rem"
-            aria-hidden="true"
-          />
+          <iconify-icon v-if="selected" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+          <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
         </button>
       </div>
     </td>
   </tr>
 </template>
 <script setup lang="ts">
-import type { IDBKeyBinding } from '@/dexie.config';
+import type { IDBKeyBinding } from '@/dexie.config'
 
 const $emit = defineEmits(['toggle'])
-defineProps<{ keyBind?: IDBKeyBinding, selected: boolean, icon: string }>()
+defineProps<{ keyBind?: IDBKeyBinding; selected: boolean; icon: string }>()
 
 function tryGetKeyRepresentation(key?: string) {
   if (!key) {

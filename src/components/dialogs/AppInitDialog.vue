@@ -1,5 +1,11 @@
 <template>
-  <DialogElement ref="dialogRef" id="dialog-editor-init" :showActions="true" :prevent-click-close="true" :aria-label="$t('a11y.dialog_init')">
+  <DialogElement
+    ref="dialogRef"
+    id="dialog-editor-init"
+    :showActions="true"
+    :prevent-click-close="true"
+    :aria-label="$t('a11y.dialog_init')"
+  >
     <template v-slot:content>
       <div class="init-container">
         <section class="intro">
@@ -15,7 +21,7 @@
               {{ $t('dialog.init.introduction') }}
             </p>
             <br />
-            
+
             <CollapsibleSection icon="mingcute:news-line">
               <template v-slot:title>{{ $t('dialog.init.update_title') }}</template>
               <template v-slot:content>
@@ -189,7 +195,7 @@ function doClose() {
 
       .init-checkbox {
         background: var(--lg-panel);
-        border: 1px solid var(--lg-input); 
+        border: 1px solid var(--lg-input);
         border-radius: 4px;
         padding: 0.25rem 0.5rem;
         display: flex;

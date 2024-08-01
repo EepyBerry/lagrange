@@ -7,7 +7,7 @@ enum KeyBindingAction {
   ToggleClouds = 'toggle-clouds',
   ToggleAtmosphere = 'toggle-atmosphere',
   ToggleBiomes = 'toggle-biomes',
-  TakeScreenshot = 'take-screenshot'
+  TakeScreenshot = 'take-screenshot',
 }
 
 interface IDBKeyBinding {

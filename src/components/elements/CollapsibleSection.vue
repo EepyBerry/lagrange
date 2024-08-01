@@ -5,18 +5,18 @@
     role="group"
     :aria-expanded="_expanded"
   >
-  <button class="section-title" @click="toggleExpand()" @keydown.enter="toggleExpand()">
-    <h3>
-      <iconify-icon :icon="icon" width="1.25rem" aria-hidden="true" />
-      <span><slot name="title">SECTION_TITLE</slot></span>
-    </h3>
-    <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.25rem" aria-hidden="true" />
-  </button>
-  <div class="section-content" v-show="_expanded">
-    <slot name="content">
-      <span class="default">Nothing here yet, sorry :c</span>
-    </slot>
-  </div>
+    <button class="section-title" @click="toggleExpand()" @keydown.enter="toggleExpand()">
+      <h3>
+        <iconify-icon :icon="icon" width="1.25rem" aria-hidden="true" />
+        <span><slot name="title">SECTION_TITLE</slot></span>
+      </h3>
+      <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.25rem" aria-hidden="true" />
+    </button>
+    <div class="section-content" v-show="_expanded">
+      <slot name="content">
+        <span class="default">Nothing here yet, sorry :c</span>
+      </slot>
+    </div>
   </section>
 </template>
 
@@ -24,7 +24,7 @@
 import { type Ref, onMounted, ref } from 'vue'
 const _expanded: Ref<boolean> = ref(true)
 
-const _props = defineProps<{ icon?: string, compactMode?: boolean, allowIconMode?: boolean, expand?: boolean }>()
+const _props = defineProps<{ icon?: string; compactMode?: boolean; allowIconMode?: boolean; expand?: boolean }>()
 onMounted(() => (_expanded.value = _props.expand ?? true))
 
 function toggleExpand() {
@@ -83,7 +83,7 @@ function toggleExpand() {
 }
 
 @media screen and (max-width: 1199px) {
-  .collapsible-section:not(.expanded,.compact).allow-icon-mode {
+  .collapsible-section:not(.expanded, .compact).allow-icon-mode {
     align-self: flex-start;
     width: fit-content;
     min-width: 0;

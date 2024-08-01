@@ -7,8 +7,14 @@
   max-width: 16rem;
   max-height: 16rem;
   border-radius: 50%;
-  background: repeating-linear-gradient(0deg, var(--lg-primary-static), var(--lg-primary-static) 2px, transparent 4px, transparent 8px);
-	background-size: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    var(--lg-primary-static),
+    var(--lg-primary-static) 2px,
+    transparent 4px,
+    transparent 8px
+  );
+  background-size: 100%;
   opacity: 0.125;
   animation: none;
 }
@@ -22,16 +28,28 @@
 // keyframe animations
 
 @-webkit-keyframes crtscroll {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 256px; }
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 256px;
+  }
 }
 @-moz-keyframes crtscroll {
-  0% { background-position: 0% 0; }
-  100% { background-position: 0 256px; }
+  0% {
+    background-position: 0% 0;
+  }
+  100% {
+    background-position: 0 256px;
+  }
 }
 @keyframes crtscroll {
-  0% { background-position: 0% 0; }
-  100% { background-position: 0 256px; }
+  0% {
+    background-position: 0% 0;
+  }
+  100% {
+    background-position: 0 256px;
+  }
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -10,7 +10,7 @@
 import { useRoute } from 'vue-router'
 import SVGAppLogo from '../svg/SVGAppLogo.vue'
 import SVGAppLogoUwU from '../svg/SVGAppLogoUwU.vue'
-import SVGAppLogoUpdate from '../svg/SVGAppLogoUpdate.vue';
+import SVGAppLogoUpdate from '../svg/SVGAppLogoUpdate.vue'
 const $route = useRoute()
 defineProps<{ showUpdate?: boolean }>()
 </script>

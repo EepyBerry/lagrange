@@ -112,7 +112,7 @@ export default class PlanetData extends ChangeTracker {
 
   private _planetGeometryType: GeometryType = GeometryType.SPHERE
   private _planetMeshQuality: number
-  
+
   private _planetRadius: number
   private _planetAxialTilt: number
   private _planetRotation: number
@@ -464,14 +464,7 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsEnabled = true
     this._cloudsRotation = 0.0
     this._cloudsHeight = 1.0
-    this._cloudsNoise = new NoiseParameters(
-      this._changedProps,
-      '_cloudsNoise',
-      NoiseType.FBM,
-      4.0,
-      0.6,
-      1.75
-    )
+    this._cloudsNoise = new NoiseParameters(this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 1.75)
     this._cloudsColor = new Color(0xffffff)
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
       new ColorRampStep(0x000000, 0.0, true),
@@ -579,17 +572,18 @@ export default class PlanetData extends ChangeTracker {
     this._planetSurfaceNoise.amplitude = data._planetSurfaceNoise._amplitude ?? 3.41
     this._planetSurfaceNoise.frequency = data._planetSurfaceNoise._frequency ?? 0.5
     this._planetSurfaceNoise.lacunarity = data._planetSurfaceNoise._lacunarity ?? 2.16
-    this._planetSurfaceColorRamp.loadFromSteps(data._planetSurfaceColorRamp
-      ? data._planetSurfaceColorRamp._steps
-      : [
-        new ColorRampStep(0x061c3f, 0, true),
-        new ColorRampStep(0x0f2851, 0.4),
-        new ColorRampStep(0x1f4178, 0.495),
-        new ColorRampStep(0x2f2e10, 0.5),
-        new ColorRampStep(0x446611, 0.505),
-        new ColorRampStep(0x223b05, 0.65),
-        new ColorRampStep(0x223b05, 1, true),
-      ]
+    this._planetSurfaceColorRamp.loadFromSteps(
+      data._planetSurfaceColorRamp
+        ? data._planetSurfaceColorRamp._steps
+        : [
+            new ColorRampStep(0x061c3f, 0, true),
+            new ColorRampStep(0x0f2851, 0.4),
+            new ColorRampStep(0x1f4178, 0.495),
+            new ColorRampStep(0x2f2e10, 0.5),
+            new ColorRampStep(0x446611, 0.505),
+            new ColorRampStep(0x223b05, 0.65),
+            new ColorRampStep(0x223b05, 1, true),
+          ],
     )
 
     this._biomePolesEnabled = data._biomePolesEnabled ?? true
@@ -601,13 +595,14 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsNoise.frequency = data._cloudsNoise._frequency ?? 0.6
     this._cloudsNoise.lacunarity = data._cloudsNoise._lacunarity ?? 1.75
     this._cloudsColor.set(data._cloudsColor ?? 0xffffff)
-    this._cloudsColorRamp.loadFromSteps(data._cloudsColorRamp
-      ? data._cloudsColorRamp._steps
-      : [
-        new ColorRampStep(0x000000, 0.0, true),
-        new ColorRampStep(0x000000, 0.6),
-        new ColorRampStep(0xbbbbbb, 1.0, true),
-      ]
+    this._cloudsColorRamp.loadFromSteps(
+      data._cloudsColorRamp
+        ? data._cloudsColorRamp._steps
+        : [
+            new ColorRampStep(0x000000, 0.0, true),
+            new ColorRampStep(0x000000, 0.6),
+            new ColorRampStep(0xbbbbbb, 1.0, true),
+          ],
     )
 
     this._atmosphereEnabled = data._atmosphereEnabled ?? true

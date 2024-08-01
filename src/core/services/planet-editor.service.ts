@@ -191,7 +191,8 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   $se.renderer.getSize(initialSize)
 
   // ------------------------------- Setup render scene -------------------------------
-  const w = 384, h = 384
+  const w = 384,
+    h = 384
   const previewRenderTarget = new THREE.WebGLRenderTarget(w, h, {
     colorSpace: THREE.SRGBColorSpace,
   })
@@ -201,7 +202,11 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
     w / h,
     0.1,
     1e6,
-    new THREE.Spherical(LG_PLANET_DATA.value.initCamDistance - 1.5, Math.PI / 2.0, degToRad(LG_PLANET_DATA.value.initCamAngle)),
+    new THREE.Spherical(
+      LG_PLANET_DATA.value.initCamDistance - 1.5,
+      Math.PI / 2.0,
+      degToRad(LG_PLANET_DATA.value.initCamAngle),
+    ),
   )
   previewCamera.setRotationFromAxisAngle(AXIS_Y, degToRad(LG_PLANET_DATA.value.initCamAngle))
   previewCamera.updateProjectionMatrix()
@@ -217,7 +222,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   previewScene.add(data.ambientLight)
 
   const r = LG_PLANET_DATA.value.planetRadius
-  pivot.scale.set(r,r,r)
+  pivot.scale.set(r, r, r)
   pivot.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
 
   // ---------------------------- Setup renderer & render -----------------------------
@@ -238,11 +243,11 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   const canvas = document.createElement('canvas')
   canvas.width = w
   canvas.height = h
-  const ctx = canvas.getContext("2d")!
+  const ctx = canvas.getContext('2d')!
   const imageData = ctx.createImageData(w, h)
   const previewBuffer = normalizeUInt8ArrayPixels(rawBuffer, w, h)
-  for(let i = 0; i < imageData.data.length; i++) {
-      imageData.data[i] = previewBuffer[i];
+  for (let i = 0; i < imageData.data.length; i++) {
+    imageData.data[i] = previewBuffer[i]
   }
   ctx.putImageData(imageData, 0, 0)
 
@@ -250,23 +255,23 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
   pivot.clear()
   data.sun.dispose()
-  data.ambientLight.dispose();
+  data.ambientLight.dispose()
 
-  (data.clouds.material as THREE.Material).dispose();
-  (data.atmosphere.material as THREE.Material).dispose();
-  (data.planet.material as THREE.Material).dispose();
+  ;(data.clouds.material as THREE.Material).dispose()
+  ;(data.atmosphere.material as THREE.Material).dispose()
+  ;(data.planet.material as THREE.Material).dispose()
 
-  data.clouds.geometry.dispose();
-  data.atmosphere.geometry.dispose();
-  data.planet.geometry.dispose();
-  
+  data.clouds.geometry.dispose()
+  data.atmosphere.geometry.dispose()
+  data.planet.geometry.dispose()
+
   previewRenderTarget.dispose()
   previewScene.clear()
 
   // ----------------------------- Save and remove canvas -----------------------------
 
   const dataURL = canvas.toDataURL('image/webp')
-  canvas.remove();
+  canvas.remove()
 
   return dataURL
 }
