@@ -7,10 +7,14 @@ import { ref, type Ref } from "vue"
 type WindowEventRegistryOptions = { autoEnable: boolean }
 type ToastMessageEvent = { type: 'info' | 'warn' | 'wip', translationKey: string, millis: number }
 
-
 export class EventBus {
+  public static clearEvent: Ref<string> = ref('')
   public static toastEvent: Ref<ToastMessageEvent|null> = ref(null)
   private static windowEventRegistry: Map<keyof WindowEventMap, any> = new Map<keyof WindowEventMap, any>()
+
+  public static sendDataClearEvent() {
+    EventBus.clearEvent.value = new Date().toISOString()
+  }
 
   public static sendToastEvent(type: 'info' | 'warn' | 'wip', translationKey: string, millis: number) {
     EventBus.toastEvent.value = { type, translationKey, millis }

@@ -48,7 +48,7 @@ import InlineFooter from '@/components/main/InlineFooter.vue';
 import AppDeleteConfirmDialog from '@components/dialogs/AppDeleteConfirmDialog.vue';
 import { idb, type IDBPlanet } from '@/dexie.config';
 import { useHead } from '@unhead/vue';
-import { onMounted, onUnmounted, ref, type Ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
 import { EventBus } from '@/core/services/event-bus';
@@ -79,6 +79,7 @@ onMounted(async () => {
 onUnmounted(() => {
   EventBus.deregisterWindowEventListener('resize', onWindowResize)
 })
+watch(() => EventBus.clearEvent.value, async () => await loadPlanets())
 
 async function loadPlanets() {
   const idbPlanets = await idb.planets.orderBy('data._planetName').toArray()
