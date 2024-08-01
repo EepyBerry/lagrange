@@ -63,6 +63,15 @@
       "a11y": "Accessibiwity !!!",
       "a11y_effects": "Enyabwe visuaw effects",
       "a11y_animations": "Enyabwe animations",
+
+      "advanced": "Advanced Settings",
+      "advanced_persist": "Pewsist IndexedDB stowage",
+      "advanced_persist_prompt": "Enyabwe",
+      "advanced_persist_success": "Pewsisted! ^w^",
+      "advanced_persist_failure": "Cannyot pewsist! :c",
+      "advanced_persist_info": "S-stowage pewsistence depends on bwowsew wules, a-and may be deweted without nyotice if disabwed!!! (e.g. in case of w-wow disk space)",
+      "advanced_danger_zone": "Danger Zone!",
+      "advanced_clear_data": "Clear all data",
       
       "shortcuts": "@:dialog.init.shortcuts"
     },

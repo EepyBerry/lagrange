@@ -149,6 +149,44 @@
             </div>
           </template>
         </CollapsibleSection>
+
+        <CollapsibleSection icon="mingcute:alert-diamond-line" class="section-advanced">
+          <template v-slot:title>
+            {{ $t('dialog.settings.advanced') }}
+          </template>
+          <template v-slot:content>
+            <div class="settings-advanced">
+              <ParameterTable>
+                <tr class="setting-persist">
+                  <td style="width: 100%">{{ $t('dialog.settings.advanced_persist') }}:</td>
+                  <td style="text-wrap: nowrap">
+                    <button class="lg" :disabled="!!persistStorage || failedToPersist" @click="tryPersistStorage">
+                      {{ $t('dialog.settings.advanced_persist_' + (persistStorage ? 'success' : failedToPersist ? 'failure' : 'prompt')) }}
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <NotificationElement type="info">
+                      {{ $t('dialog.settings.advanced_persist_info') }}
+                    </NotificationElement>
+                  </td>
+                </tr>
+                <ParameterCategory>
+                  {{ $t('dialog.settings.advanced_danger_zone') }}
+                </ParameterCategory>
+                <ParameterDivider />
+                <tr>
+                  <td colspan="2">
+                    <button class="lg warn" style="width: 100%;">
+                      {{ $t('dialog.settings.advanced_clear_data') }}
+                    </button>
+                  </td>
+                </tr>
+              </ParameterTable>
+            </div>
+          </template>
+        </CollapsibleSection>
       </div>
     </template>
   </DialogElement>
@@ -156,7 +194,7 @@
 
 <script setup lang="ts">
 import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
-import { ref, watch, type Ref } from 'vue'
+import { onMounted, ref, watch, type Ref } from 'vue'
 import DialogElement from '../elements/DialogElement.vue'
 import ParameterTable from '../parameters/ParameterTable.vue'
 import ParameterCheckbox from '../parameters/ParameterCheckbox.vue'
@@ -168,18 +206,21 @@ import { useI18n } from 'vue-i18n'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
 import { mapLocale } from '@/utils/utils'
 import ParameterKeyBinding from '../parameters/ParameterKeyBinding.vue'
-import ParameterCategory from '../parameters/ParameterCategory.vue'
 import { A11Y_ANIMATE } from '@/core/globals'
+import NotificationElement from '../elements/NotificationElement.vue'
+import ParameterCategory from '../parameters/ParameterCategory.vue'
 
 const i18n = useI18n()
 
+const dialogRef: Ref<{ open: Function; close: Function; ignoreNativeEvents: Function; isOpen: boolean } | null> = ref(null)
 const appSettings: Ref<IDBSettings> = ref({ id: 0, locale: 'en-US', theme: '', font: '', enableAnimations: true, enableEffects: true })
-const keyBinds: Ref<IDBKeyBinding[]> = ref([])
-let dataLoaded = false
-
-const dialogRef: Ref<{ open: Function; close: Function; ignoreNativeEvents: Function; isOpen: boolean } | null> =
-  ref(null)
+const persistStorage: Ref<boolean> = ref(false)
 const selectedAction: Ref<string | null> = ref(null)
+const keyBinds: Ref<IDBKeyBinding[]> = ref([])
+
+const failedToPersist: Ref<boolean> = ref(false)
+
+let dataLoaded = false
 
 defineExpose({
   open: async () => {
@@ -191,22 +232,19 @@ defineExpose({
   },
 })
 
-watch(
-  () => appSettings.value,
-  () => updateSettings(),
-  { deep: true },
-)
-watch(
-  () => dialogRef.value,
-  (v) => {
-    if (!v?.isOpen && selectedAction.value) {
-      const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value)
-      keyBinds.value[kbidx].key = '[unset]'
-      toggleAction(selectedAction.value)
-    }
-  },
-  { deep: true },
-)
+onMounted(async () => {
+  persistStorage.value = await navigator.storage.persisted()
+})
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+watch([() => appSettings.value, () => dialogRef.value?.isOpen], ([_, isDialogOpen]) => {
+  updateSettings()
+  if (!isDialogOpen && selectedAction.value) {
+    const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value)
+    keyBinds.value[kbidx].key = '[unset]'
+    toggleAction(selectedAction.value)
+  }
+}, { deep: true })
 
 async function loadData() {
   let settings = await idb.settings.limit(1).first()
@@ -244,6 +282,14 @@ async function updateSettings() {
   })
 }
 
+async function tryPersistStorage() {
+  const persisted = await navigator.storage.persist()
+  failedToPersist.value = !persisted
+  persistStorage.value = persisted
+}
+
+// ------------------------------------------------------------------------------------------------
+
 async function setSelectedActionKey(event: KeyboardEvent) {
   const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value)
   if (['Escape', 'Enter'].includes(event.key)) {
@@ -273,7 +319,8 @@ function getKeyBind(action: string) {
 
 <style scoped lang="scss">
 #dialog-settings {
-  min-width: 32rem;
+  min-width: 36rem;
+  max-width: 36rem;
   .settings-grid {
     display: flex;
     flex-direction: column;
@@ -281,7 +328,8 @@ function getKeyBind(action: string) {
 
     .settings-general,
     .settings-editor,
-    .settings-a11y {
+    .settings-a11y,
+    .settings-advanced {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -294,11 +342,15 @@ function getKeyBind(action: string) {
       }
     }
   }
+  .setting-persist button {
+    padding: 0 0.5rem;
+  }
 }
 
 @media screen and (max-width: 767px) {
   #dialog-settings {
     min-width: 0;
+    max-width: 0;
     width: 100%;
   }
 }
