@@ -24,8 +24,7 @@ watch(EventBus.toastEvent, (evt) => {
 })
 
 function showToast(type: InfoLevel, translationKey: string, millis: number) {
-  // if a timeout is currently running, clear it
-  if (timeoutId) {
+  if (timeoutId !== null) { // if a timeout is currently running, clear it
     clearTimeout(timeoutId)
     closeToast()
   }
