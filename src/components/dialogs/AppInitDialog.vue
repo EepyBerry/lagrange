@@ -3,7 +3,9 @@
     <template v-slot:content>
       <div class="init-container">
         <section class="intro">
-          <AppLogo />
+          <div class="logo">
+            <AppLogo :show-update="true" />
+          </div>
           <div>
             <h2>
               <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
@@ -13,7 +15,14 @@
               {{ $t('dialog.init.introduction') }}
             </p>
             <br />
-            <NotificationElement type="wip">
+            
+            <CollapsibleSection icon="mingcute:news-line">
+              <template v-slot:title>{{ $t('dialog.init.update_title') }}</template>
+              <template v-slot:content>
+                {{ $t('dialog.init.update_brief') }}
+              </template>
+            </CollapsibleSection>
+            <NotificationElement id="tmp-notification" type="wip">
               {{ $t('dialog.init.$tmp_wip') }}
             </NotificationElement>
           </div>
@@ -152,19 +161,23 @@ function doClose() {
 
 <style scoped lang="scss">
 #dialog-editor-init {
+  .logo {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #tmp-notification {
+    margin-top: 0.5rem;
+  }
+
   .init-container {
-    max-width: 56rem;
+    max-width: 60rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
 
-    #app-logo,
-    #app-logo-uwu {
-      width: clamp(160px, 1rem + 10vw, 200px);
-      align-self: center;
-      justify-self: center;
-    }
     .init-actions {
       width: 100%;
       margin-top: 1rem;
@@ -192,10 +205,15 @@ function doClose() {
     align-items: center;
     justify-content: flex-start;
     gap: 1rem;
-    font-size: 1rem;
+    font-size: 0.925rem;
+
     h2 {
       font-size: 1.75rem;
       margin-bottom: 1rem;
+    }
+    h3 {
+      margin-top: 0.5rem;
+      margin-bottom: 0.75rem;
     }
   }
   .controls {
@@ -247,21 +265,24 @@ function doClose() {
   #dialog-editor-init {
     min-width: 0;
 
+    .logo {
+      display: none;
+    }
+
     .init-container {
       align-items: center;
       justify-content: center;
       grid-template-rows: auto auto;
-
-      #app-logo,
-      #app-logo-uwu {
-        display: none;
-      }
 
       section.intro {
         font-size: 0.875rem;
         h2 {
           justify-content: center;
           font-size: 1.375rem;
+        }
+        h3.update-title {
+          justify-content: center;
+          font-size: 1.25rem;
         }
       }
 
