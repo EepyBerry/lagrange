@@ -38,9 +38,7 @@
   <div id="codex-footer">
     <InlineFooter  />
   </div>
-  <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="deleteTargetedPlanet">
-    <template v-slot:planet></template>
-  </AppDeleteConfirmDialog>
+  <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="deleteTargetedPlanet" />
 </template>
 
 <script setup lang="ts">

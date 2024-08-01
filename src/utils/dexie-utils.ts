@@ -1,10 +1,11 @@
 import { idb, KeyBindingAction } from '@/dexie.config'
 import { prefersReducedMotion } from './utils'
+import { I18N_SUPPORTED_LANGS } from '@/i18n.config'
 
 export async function addDefaultSettings(): Promise<any> {
   return idb.settings.put({
     theme: 'default',
-    locale: navigator.language ?? 'en-US',
+    locale: (I18N_SUPPORTED_LANGS.includes(navigator.language as any) ? navigator.language : 'en-US'),
     font: 'default',
     showInitDialog: true,
     enableEffects: !prefersReducedMotion(),
@@ -20,6 +21,28 @@ export async function addDefaultKeyBindings(): Promise<any> {
     { action: KeyBindingAction.ToggleAtmosphere, key: 'A' },
     { action: KeyBindingAction.TakeScreenshot, key: 'X' },
   ])
+}
+
+export async function clearData(): Promise<any> {
+  const settings = await idb.settings.limit(1).toArray()
+  const keyBindings = (await idb.keyBindings.toArray()).sort((a,b) => a.id - b.id)
+
+  await idb.settings.update(settings[0].id, {
+    theme: 'default',
+    locale: (I18N_SUPPORTED_LANGS.includes(navigator.language as any) ? navigator.language : 'en-US'),
+    font: 'default',
+    showInitDialog: true,
+    enableEffects: !prefersReducedMotion(),
+    enableAnimations: !prefersReducedMotion()
+  })
+  await idb.keyBindings.bulkUpdate([
+    { key: keyBindings[0].id, changes: { key: 'L' }},
+    { key: keyBindings[1].id, changes: { key: 'B' }},
+    { key: keyBindings[2].id, changes: { key: 'C' }},
+    { key: keyBindings[3].id, changes: { key: 'A' }},
+    { key: keyBindings[4].id, changes: { key: 'X' }},
+  ])
+  await idb.planets.clear()
 }
 
 export async function initStoragePersistence() {

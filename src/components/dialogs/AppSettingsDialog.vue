@@ -178,9 +178,10 @@
                 <ParameterDivider />
                 <tr>
                   <td colspan="2">
-                    <button class="lg warn" style="width: 100%;">
+                    <button class="lg warn" style="width: 100%;" @click="confirmDialogRef?.open()">
                       {{ $t('dialog.settings.advanced_clear_data') }}
                     </button>
+                    <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
                   </td>
                 </tr>
               </ParameterTable>
@@ -209,9 +210,12 @@ import ParameterKeyBinding from '../parameters/ParameterKeyBinding.vue'
 import { A11Y_ANIMATE } from '@/core/globals'
 import NotificationElement from '../elements/NotificationElement.vue'
 import ParameterCategory from '../parameters/ParameterCategory.vue'
+import AppClearDataConfirmDialog from './AppClearDataConfirmDialog.vue'
+import { clearData } from '@/utils/dexie-utils'
 
 const i18n = useI18n()
 
+const confirmDialogRef: Ref<{ open: Function } | null> = ref(null)
 const dialogRef: Ref<{ open: Function; close: Function; ignoreNativeEvents: Function; isOpen: boolean } | null> = ref(null)
 const appSettings: Ref<IDBSettings> = ref({ id: 0, locale: 'en-US', theme: '', font: '', enableAnimations: true, enableEffects: true })
 const persistStorage: Ref<boolean> = ref(false)
@@ -251,7 +255,13 @@ async function loadData() {
   let kb = await idb.keyBindings.toArray()
   appSettings.value!.locale = i18n.locale.value
   appSettings.value = settings!
+  keyBinds.value.splice(0)
   keyBinds.value.push(...kb)
+}
+
+async function clearAllData() {
+  await clearData()
+  await loadData()
 }
 
 function toggleAction(action: string): void {

@@ -98,6 +98,13 @@
       "warning": "This action cannot be undone!",
       "$action_cancel": "Cancel",
       "$action_confirm": "Confirm"
+    },
+    "clear_data": {
+      "$title": "Clear Lagrange data",
+      "message": "Are you sure you want to clear all application data?",
+      "warning": "This action cannot be undone!",
+      "$action_cancel": "Cancel",
+      "$action_confirm": "Confirm"
     }
   },
   "codex": {
@@ -242,6 +249,7 @@
     "dialog_about": "About @:main.$title dialog",
     "dialog_reset": "Confirm reset dialog",
     "dialog_delete": "Confirm delete dialog",
+    "dialog_clear_data": "Confirm data clear dialog",
 
     "topbar_rename": "@:tooltip.topbar_rename",
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
