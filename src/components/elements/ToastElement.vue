@@ -1,9 +1,10 @@
 <template>
   <div class="toast" :class="type">
     <div class="toast-icon">
-      <iconify-icon v-if="type === 'info'" icon="mingcute:information-line"  width="1.5rem" aria-hidden="true" />
-      <iconify-icon v-if="type === 'warn'" icon="mingcute:alert-line"        width="1.5rem" aria-hidden="true" />
-      <iconify-icon v-if="type === 'wip'"  icon="mingcute:traffic-cone-line" width="1.5rem" aria-hidden="true" />
+      <iconify-icon v-if="type === 'success'" icon="mingcute:check-circle-line" width="1.5rem" aria-hidden="true" />
+      <iconify-icon v-if="type === 'info'"    icon="mingcute:information-line"  width="1.5rem" aria-hidden="true" />
+      <iconify-icon v-if="type === 'warn'"    icon="mingcute:alert-line"        width="1.5rem" aria-hidden="true" />
+      <iconify-icon v-if="type === 'wip'"     icon="mingcute:traffic-cone-line" width="1.5rem" aria-hidden="true" />
     </div>
     <div class="toast-message">
       <slot>TOAST_MESSAGE</slot>
@@ -15,7 +16,9 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ type: 'info' | 'warn' | 'wip' }>()
+import type { InfoLevel } from '@/core/types';
+
+defineProps<{ type: InfoLevel }>()
 defineEmits(['close'])
 </script>
 
@@ -26,13 +29,24 @@ defineEmits(['close'])
   background: var(--lg-panel);
   border: 1px solid var(--lg-accent);
   border-radius: 4px;
+  transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+  opacity: 0;
+  transform: scale(95%);
 
   display: flex;
   justify-content: space-between;
   align-items: stretch;
   gap: 0.5rem;
   overflow: hidden;
+  
+  &.visible {
+    opacity: 1;
+    transform: scale(100%);
+  }
 
+  &.success .toast-icon {
+    background: var(--lg-success);
+  }
   &.info .toast-icon {
     background: var(--lg-info);
   }

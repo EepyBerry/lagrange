@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-shader-material/vanilla'
 import { GeometryType } from '../types'
 import { LG_PLANET_DATA } from '../services/planet-editor.service'

@@ -12,7 +12,9 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ type: 'info' | 'warn' | 'wip' }>()
+import type { InfoLevel } from '@/core/types';
+
+defineProps<{ type: InfoLevel }>()
 </script>
 
 <style scoped lang="scss">
@@ -24,6 +26,10 @@ defineProps<{ type: 'info' | 'warn' | 'wip' }>()
   align-items: center;
   font-size: 0.875rem;
 
+  &.success {
+    background: var(--lg-success-panel);
+    border: 1px solid var(--lg-success);
+  }
   &.info {
     background: var(--lg-info-panel);
     border: 1px solid var(--lg-info);

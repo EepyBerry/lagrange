@@ -63,6 +63,7 @@ async function initDexie() {
   if (!settings) {
     console.debug('No settings found in IndexedDB, adding defaults')
     await DexieUtils.addDefaultSettings()
+    settings = await idb.settings.limit(1).first()
   }
 
   let kb = await idb.keyBindings.limit(4).toArray()
@@ -70,9 +71,9 @@ async function initDexie() {
     console.debug('No keybinds found in IndexedDB, adding defaults')
     await DexieUtils.addDefaultKeyBindings()
   }
-  document.documentElement.setAttribute('data-theme', settings?.theme ?? 'default')
-  document.documentElement.setAttribute('data-font', settings?.font ?? 'default')
-  document.documentElement.setAttribute('data-effects', settings?.enableEffects ? 'on' : 'off')
+  document.documentElement.setAttribute('data-theme', settings!.theme ?? 'default')
+  document.documentElement.setAttribute('data-font', settings!.font ?? 'default')
+  document.documentElement.setAttribute('data-effects', settings!.enableEffects ? 'on' : 'off')
 }
 
 async function disableInitDialog() {
@@ -82,9 +83,9 @@ async function disableInitDialog() {
 async function enablePersistence() {
   const enabled = await navigator.storage.persist()
   if (enabled) {
-    EventBus.sendToastEvent('info', 'toast.storage_success', 5000)
+    EventBus.sendToastEvent('success', 'toast.storage_success', 3000)
   } else {
-    EventBus.sendToastEvent('warn', 'toast.storage_failure_rules', 5000)
+    EventBus.sendToastEvent('warn', 'toast.storage_failure_rules', 3000)
   }
 }
 </script>

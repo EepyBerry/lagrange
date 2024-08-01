@@ -243,6 +243,7 @@ onMounted(async () => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 watch([() => appSettings.value, () => dialogRef.value?.isOpen], ([_, isDialogOpen]) => {
+  if (!dataLoaded) { return }
   updateSettings()
   if (!isDialogOpen && selectedAction.value) {
     const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value)

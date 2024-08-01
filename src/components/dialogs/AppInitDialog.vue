@@ -115,7 +115,7 @@
       </div>
     </template>
     <template v-slot:actions>
-      <button class="lg" @click="doClose" autofocus>
+      <button class="lg success" @click="doClose" autofocus>
         <iconify-icon icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.init.$action_confirm') }}
       </button>

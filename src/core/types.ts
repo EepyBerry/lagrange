@@ -12,3 +12,5 @@ export enum ColorMode {
   DIRECT,
   MIXED
 }
+
+export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'

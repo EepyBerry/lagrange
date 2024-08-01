@@ -1,6 +1,6 @@
 <template>
   <div id="toast-bar">
-    <ToastElement v-show="isToastShown" :type="toastType" @close="closeToast">
+    <ToastElement :class="{ visible: isToastShown }" :type="toastType" @close="closeToast">
       {{ $t(toastMessageRaw) }}
     </ToastElement>
   </div>
@@ -10,25 +10,35 @@
 import { ref, watch, type Ref } from 'vue';
 import ToastElement from '../elements/ToastElement.vue';
 import { EventBus } from '@/core/services/event-bus';
+import type { InfoLevel } from '@/core/types';
 
-const toastType: Ref<'info' | 'warn' | 'wip'> = ref('info')
+const toastType: Ref<InfoLevel> = ref('info')
 const toastMessageRaw: Ref<string> = ref('main.test_message')
 const isToastShown: Ref<boolean> = ref(false)
+
+let timeoutId: NodeJS.Timeout | null = null
 
 watch(EventBus.toastEvent, (evt) => {
   if (evt === null) return
   showToast(evt.type, evt.translationKey, evt.millis)
 })
 
-function showToast(type: 'info' | 'warn' | 'wip', translationKey: string, millis: number) {
+function showToast(type: InfoLevel, translationKey: string, millis: number) {
+  // if a timeout is currently running, clear it
+  if (timeoutId) {
+    clearTimeout(timeoutId)
+    closeToast()
+  }
+
   toastType.value = type
   toastMessageRaw.value = translationKey
   isToastShown.value = true
-  setTimeout(closeToast, millis)
+  timeoutId = setTimeout(closeToast, millis)
 }
 
 function closeToast() {
   isToastShown.value = false
+  timeoutId = null
 }
 </script>
 

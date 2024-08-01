@@ -135,16 +135,16 @@ async function importPlanetFile(event: Event) {
   try {
     const newPlanets: PromiseSettledResult<IDBPlanet>[] = await Promise.allSettled(readPromises)
     if (newPlanets.every(p => p.status === 'rejected')) {
-      EventBus.sendToastEvent('warn', 'toast.import_failure', 5000)
+      EventBus.sendToastEvent('warn', 'toast.import_failure', 3000)
       return
     }
     await idb.planets.bulkAdd(newPlanets.filter(np => np.status === 'fulfilled').map(np => np.value))
   } catch (_) {
-    EventBus.sendToastEvent('warn', 'toast.import_partial', 5000)
+    EventBus.sendToastEvent('warn', 'toast.import_partial', 3000)
   } finally {
     await loadPlanets()
     fileInput.value!.value = ''
-    EventBus.sendToastEvent('info', 'toast.import_success', 5000)
+    EventBus.sendToastEvent('success', 'toast.import_success', 3000)
   }
 }
 
@@ -176,9 +176,9 @@ async function openDeleteConfirmDialog(planet: IDBPlanet) {
 async function deleteTargetedPlanet() {
   try {
     await idb.planets.delete(deleteTarget.value!.id)
-    EventBus.sendToastEvent('info', 'toast.delete_success', 5000)
+    EventBus.sendToastEvent('success', 'toast.delete_success', 3000)
   } catch(_) {
-    EventBus.sendToastEvent('warn', 'toast.delete_failure', 5000)
+    EventBus.sendToastEvent('warn', 'toast.delete_failure', 3000)
   } finally {
     await loadPlanets()
   }

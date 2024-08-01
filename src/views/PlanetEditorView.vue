@@ -321,7 +321,7 @@ async function savePlanet() {
 
   enableEditorRendering = true
   showSpinner.value = false
-  EventBus.sendToastEvent('info', 'toast.save_success', 5000)
+  EventBus.sendToastEvent('success', 'toast.save_success', 3000)
 }
 
 function updatePlanet() {

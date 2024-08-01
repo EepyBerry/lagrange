@@ -1,5 +1,5 @@
 <template>
-  <div class="planet-card">
+  <div class="planet-card" ref="cardRoot">
     <div class="planet-preview">
       <img v-if="planet.preview" class="planet-image" :src="planet.preview" :aria-label="planet.data.planetName" :alt="planet.data.planetName" />
       <iconify-icon v-else icon="ph:planet-thin" width="auto" />
@@ -40,9 +40,15 @@
 <script setup lang="ts">
 import { A11Y_ANIMATE } from '@/core/globals';
 import { type IDBPlanet } from '@/dexie.config';
+import { onMounted, ref, type Ref } from 'vue';
 import { RouterLink } from 'vue-router';
+
+const cardRoot: Ref<HTMLElement | null> = ref(null)
+
 defineProps<{ planet: IDBPlanet }>()
 const $emit = defineEmits(['export', 'delete'])
+
+onMounted(() => setTimeout(() => cardRoot.value?.classList.add('animated')))
 
 function emitExportEvent() {
   $emit('export')
@@ -62,11 +68,18 @@ function emitDeleteEvent() {
   border-radius: 4px;
   overflow: hidden;
 
+  opacity: 0;
+  transition: opacity 100ms ease-in-out;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+
+  &.animated {
+    opacity: 1;
+  }
 
   .planet-preview {
     position: relative;
@@ -104,6 +117,12 @@ function emitDeleteEvent() {
       min-height: 2.5rem;
       font-size: 0.875rem;
     }
+  }
+}
+
+@media screen and (prefers-reduced-motion) {
+  .planet-card {
+    transition: none;
   }
 }
 </style>
