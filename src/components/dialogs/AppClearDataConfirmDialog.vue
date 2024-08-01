@@ -14,7 +14,7 @@
       <div class="clear-data-text">
         <p>{{ $t('dialog.clear_data.message') }}</p>
         <p>
-          <b>{{ $t('dialog.clear_data.warning') }}</b>
+          <strong>{{ $t('dialog.clear_data.warning') }}</strong>
         </p>
       </div>
     </template>
@@ -24,7 +24,7 @@
         {{ $t('dialog.clear_data.$action_cancel') }}
       </button>
       <button class="lg warn" @click="confirmAndClose">
-        <iconify-icon icon="mingcute:folder-2-line" width="1.25rem" aria-hidden="true" />
+        <iconify-icon icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.clear_data.$action_confirm') }}
       </button>
     </template>
@@ -37,7 +37,7 @@ import { ref, type Ref } from 'vue'
 const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
 
 const $emit = defineEmits(['confirm'])
-defineExpose({ open: (p: string) => {
+defineExpose({ open: () => {
   dialogRef.value?.open()
 }})
 

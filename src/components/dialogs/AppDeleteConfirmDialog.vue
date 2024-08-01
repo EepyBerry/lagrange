@@ -14,7 +14,7 @@
       <div class="delete-text">
         <p>{{ $t('dialog.delete.message') }}</p>
         <p>
-          <b>{{ $t('dialog.delete.warning') }}</b>
+          <strong>{{ $t('dialog.delete.warning') }}</strong>
         </p>
       </div>
     </template>

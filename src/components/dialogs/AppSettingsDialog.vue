@@ -179,6 +179,7 @@
                 <tr>
                   <td colspan="2">
                     <button class="lg warn" style="width: 100%;" @click="confirmDialogRef?.open()">
+                      <iconify-icon icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
                       {{ $t('dialog.settings.advanced_clear_data') }}
                     </button>
                     <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
