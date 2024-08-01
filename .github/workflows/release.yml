@@ -1,4 +1,4 @@
-name: Lagrange Deployment
+name: Release Testing
 
 on:
   push:
