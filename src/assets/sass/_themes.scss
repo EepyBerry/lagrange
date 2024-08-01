@@ -1,18 +1,22 @@
 :root {
   --lg-text: #f7f7f7;
   --lg-text-disabled: #b6b6b6;
-  --lg-primary: #060b0f;
+  --lg-primary: #070f13;
+  --lg-primary-static: #070f13;
   --lg-panel: #030608;
-  --lg-accent: #1b2e38;
+  --lg-accent: #1f3642;
   --lg-logo: #354852;
   --lg-input: #0f191f;
   --lg-input-focus: #15242c;
   --lg-overlay: #2f373e44;
+
+  --lg-contrast-light: #0b201f;
+  --lg-contrast-medium: #143f3b;
   --lg-contrast: #427773;
   --lg-contrast-focus: #64a19c;
 
-  --lg-button: #2b434d;
-  --lg-button-hover: #223a44;
+  --lg-button: #314d58;
+  --lg-button-hover: #274350;
   --lg-button-active: var(--lg-accent);
   --lg-button-disabled: #535353;
   --lg-button-menu-expanded: var(--lg-contrast);
@@ -22,28 +26,38 @@
   --lg-link: var(--lg-contrast-focus);
   --lg-link-visited: var(--lg-contrast-focus);
 
-  --lg-info: #0b6449;
-  --lg-info-hover: #06533c;
-  --lg-info-active: #043d2c;
-  --lg-info-panel: #0b644944;
+  --lg-success: #0b6449;
+  --lg-success-hover: #06533c;
+  --lg-success-active: #043d2c;
+  --lg-success-panel: #0b644944;
+  --lg-info: #10388d;
+  --lg-info-hover: #092e7e;
+  --lg-info-active: #072568;
+  --lg-info-panel: #11349444;
   --lg-warn: #b63f1a;
   --lg-warn-hover: #a53614;
   --lg-warn-active: #912a0b;
   --lg-warn-panel: #b63f1a44;
+
+  --lg-hue-background: linear-gradient(to right, #00ffff 0%, #00ff00 17%, #ffff00 33%, #ff0000 50%, #ff00ff 67%, #0000ff 83%, #00ffff 100%);
 }
 :root[data-theme='supernova'] {
-  --lg-primary: linear-gradient(to bottom, #0e081a 0%, #06030c 100%);
+  --lg-primary: linear-gradient(to bottom, #110a20 0%, #06030c 100%);
+  --lg-primary-static: #110a20;
   --lg-panel: #040107;
-  --lg-accent: #27153b;
+  --lg-accent: #2d1b42;
   --lg-logo: #412c5a;
   --lg-input: #1d1027;
   --lg-input-focus: #311e42;
   --lg-overlay: #2f333e44;
-  --lg-contrast: #378055;
-  --lg-contrast-focus: #49aa73;
+  
+  --lg-contrast-light: #0b140f;
+  --lg-contrast-medium: #214232;
+  --lg-contrast: #2f7253;
+  --lg-contrast-focus: #3c8f65;
 
-  --lg-button: #38254b;
-  --lg-button-hover: #2f1c42;
+  --lg-button: #3f2757;
+  --lg-button-hover: #3b2453;
   --lg-button-active: var(--lg-accent);
   --lg-button-disabled: #3b3b3b;
   --lg-button-menu-expanded: var(--lg-contrast);
@@ -53,10 +67,14 @@
   --lg-link: var(--lg-contrast-focus);
   --lg-link-visited: var(--lg-contrast-focus);
 
-  --lg-info: #0b6449;
-  --lg-info-hover: #06533c;
-  --lg-info-active: #043d2c;
-  --lg-info-panel: #0b644944;
+  --lg-success: #0b6449;
+  --lg-success-hover: #06533c;
+  --lg-success-active: #043d2c;
+  --lg-success-panel: #0b644944;
+  --lg-info: #0b5a64;
+  --lg-info-hover: #064e53;
+  --lg-info-active: #04393d;
+  --lg-info-panel: #0b576444;
   --lg-warn: #b61a4e;
   --lg-warn-hover: #a5144c;
   --lg-warn-active: #910b43;
@@ -64,17 +82,21 @@
 }
 :root[data-theme='voyager'] {
   --lg-primary: repeating-linear-gradient(to bottom, #0c0903, #0c0903 0.375rem, #1a1102 0.5rem);
+  --lg-primary-static: #0c0903;
   --lg-panel: #070502;
-  --lg-accent: #3b2809;
+  --lg-accent: #412c08;
   --lg-logo: #573a0b;
   --lg-input: #181108;
   --lg-input-focus: #2c2415;
   --lg-overlay: #3e392f44;
+
+  --lg-contrast-light: #201900;
+  --lg-contrast-medium: #493800;
   --lg-contrast: #7e6100;
   --lg-contrast-focus: #b68c00;
 
-  --lg-button: #4d3710;
-  --lg-button-hover: #46310a;
+  --lg-button: #573d12;
+  --lg-button-hover: #4e3609;
   --lg-button-active: var(--lg-accent);
   --lg-button-disabled: #313131;
   --lg-button-menu-expanded: var(--lg-contrast);
@@ -84,10 +106,14 @@
   --lg-link: var(--lg-contrast-focus);
   --lg-link-visited: var(--lg-contrast-focus);
 
-  --lg-info: #455264;
-  --lg-info-hover: #333d50;
-  --lg-info-active: #242c3a;
-  --lg-info-panel: #45526444;
+  --lg-success: #295336;
+  --lg-success-hover: #1f4227;
+  --lg-success-active: #18311d;
+  --lg-success-panel: #22492d44;
+  --lg-info: #384a64;
+  --lg-info-hover: #26344e;
+  --lg-info-active: #1c2636;
+  --lg-info-panel: #30456144;
   --lg-warn: #a81f1f;
   --lg-warn-hover: #911111;
   --lg-warn-active: #7e0a0a;
@@ -99,6 +125,19 @@
       Jetbrains Mono,
       monospace;
   }
+}
+
+.lg.success {
+  background: var(--lg-success);
+  background: var(--lg-success);
+}
+.lg.success:not(:disabled):hover {
+  background: var(--lg-success-hover);
+  background: var(--lg-success-hover);
+}
+.lg.success:not(:disabled):active {
+  background: var(--lg-success-active);
+  background: var(--lg-success-active);
 }
 
 .lg.warn {

@@ -1,4 +1,5 @@
 import { LOCALE_MAP } from '@core/globals'
+import type { Composer, I18n } from 'vue-i18n'
 
 // https://stackoverflow.com/questions/72557387/rgb-to-greyscale-converter
 export function rgbToGrayscale(hex: string) {
@@ -22,4 +23,14 @@ export function numberEquals(na: number, nb: number) {
 
 export function mapLocale(locale: string): string {
   return locale.length > 2 ? locale : (LOCALE_MAP[locale] ?? 'en-US')
+}
+
+export function getPlanetMetaTitle(planetName: string, i18n: Composer): string {
+  return `[${planetName}]` + ' · ' + i18n.t('main.$title')
+}
+
+
+
+export function prefersReducedMotion() {
+  return window.matchMedia(`(prefers-reduced-motion: reduce)`).matches || window.matchMedia(`(prefers-reduced-motion: reduce)`).matches
 }

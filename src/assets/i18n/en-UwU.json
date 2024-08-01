@@ -3,12 +3,20 @@
     "$title": "Wagwange",
     "locale": "en-UwU",
     "language": "Uwuish",
-    "more_coming_soon": "Mowe coming s-soon!"
+    "more_coming_soon": "Mowe coming s-soon!",
+    "test_message": "pancake hehe :3",
+
+    "nav": {
+      "codex": "Codex",
+      "editor": "Editow"
+    }
   },
   "dialog": {
     "init": {
       "$title": "Wewcome :3 t-to @:main.$title",
       "introduction": "Wagwange is a fuwwy pwoceduwaw pwanyet buiwdew, pewfect fow wowwdbuiwding and tying youw wowe t-to a pwopew pwanyet, sowaw system o-ow even an entiwe gawaxy! (・`ω´・)",
+      "update_title": "Update 0.2 - Worwd Cowwector!",
+      "update_brief": "You can now s-save your pwanyets wocawwy, a-as weww as shawe them with the new impowt/expowt functions! Pwus, thewe's a host of shiny new impwovements as a bonus! ^w^",
       "$tmp_wip": "Cuwwentwy wowk-in-pwogwess. M-Mowe featuwes awe pwannyed fow the nyext vewsions! x3",
 
       "shortcuts": "Showtcuts",
@@ -17,12 +25,14 @@
       "shortcuts_biomes": "Toggwe biomes",
       "shortcuts_clouds": "Toggwe cwouds",
       "shortcuts_atmosphere": "Toggwe atmosphewe",
+      "shortcuts_screenshot": "Take scweenshot",
 
       "topbar": "Top baw - Nyaming & data",
       "topbar_rename": "Wenyame pwanyet",
       "topbar_reset": "Weset t-to defauwts",
       "topbar_import": "Impowt pwanyet",
       "topbar_export": "Expowt pwanyet",
+      "topbar_export_all": "Expowt fuww codex",
 
       "footer": "Footew - Miscewwanyeous",
       "footer_github": "GitHub p-p-page",
@@ -30,6 +40,7 @@
       "footer_about": "About @:main.$title",
 
       "show_next_time": "Show this intwoduction nyext time?",
+      "enable_persistence": "Enabwe bwowsew stowage p-pewsistence fow this app? :3",
 
       "$action_confirm": "Get s-stawted!"
     },
@@ -39,16 +50,32 @@
       "general": "Genyewaw >:3",
       "general_language": "Wanguage",
       "general_theme": "Choose theme t-to use",
-      "general_theme_default": "Defauwt",
+      "general_theme_default": "Comet",
       "general_theme_supernova": "Supewnyova",
       "general_theme_voyager": "Voyagew",
       "general_monospace": "Enyabwe monyospace font",
 
-      "keybinds": "Key bindings ^w^",
-      "keybinds_lensflare": "@:dialog.init.shortcuts_lensflare",
-      "keybinds_biomes": "@:dialog.init.shortcuts_biomes",
-      "keybinds_clouds": "@:dialog.init.shortcuts_clouds",
-      "keybinds_atmosphere": "@:dialog.init.shortcuts_atmosphere"
+      "editor": "Editow ^w^",
+      "editor_lensflare": "@:dialog.init.shortcuts_lensflare",
+      "editor_biomes": "@:dialog.init.shortcuts_biomes",
+      "editor_clouds": "@:dialog.init.shortcuts_clouds",
+      "editor_atmosphere": "@:dialog.init.shortcuts_atmosphere",
+      "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
+
+      "a11y": "Accessibiwity !!!",
+      "a11y_effects": "Enyabwe visuaw effects",
+      "a11y_animations": "Enyabwe animations",
+
+      "advanced": "Advanced Settings",
+      "advanced_persist": "Pewsist IndexedDB stowage",
+      "advanced_persist_prompt": "Enyabwe",
+      "advanced_persist_success": "Pewsisted! ^w^",
+      "advanced_persist_failure": "Cannyot pewsist! :c",
+      "advanced_persist_info": "S-stowage pewsistence depends on bwowsew wules, a-and may be deweted without nyotice if disabwed!!! (e.g. in case of w-wow disk space)",
+      "advanced_danger_zone": "Danger Zone!",
+      "advanced_clear_data": "Clear all data",
+      
+      "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {
       "description": "A pwoceduwaw pwanyet-buiwding appwication!!! >w<",
@@ -66,7 +93,32 @@
       "warning": "Aww unsaved data wiww be wost!",
       "$action_cancel": "Cancew",
       "$action_confirm": "Confiwm"
+    },
+    "delete": {
+      "$title": "Delete [{planet}]",
+      "message": "A-awe you suwe you want to dewete this pwanyet? :O",
+      "warning": "This action cannyot be undyone!!!",
+      "$action_cancel": "Cancew",
+      "$action_confirm": "Confiwm"
+    },
+    "clear_data": {
+      "$title": "Cweaw Wagwange data",
+      "message": "A-are you suwe you want to c-cweaw aww appwication data? (っ- ‸ - ς)",
+      "warning": "This action cannyot be undyone!!!",
+      "$action_cancel": "Cancew",
+      "$action_confirm": "Confiwm"
     }
+  },
+  "codex": {
+    "$title": "Pwanyetawy Codex >:3",
+    "$action_add": "Nyew pwanyet !!!",
+    "$action_edit": "Edit x3",
+    "$action_export": "Expowt :O",
+
+    "no_planets": "No pwanyets found... (っ- ‸ - ς). Y-you can cweate one at the top !!! x3",
+
+    "topbar_import": "Import planet from file",
+    "topbar_export": "Export all planets"
   },
   "editor": {
     "$title": "Pwanyet Editow",
@@ -96,6 +148,7 @@
         "$title": "Pwanyet & Wendewing",
 
         "transform": "Twansfowm",
+        "transform_radius": "Wadius",
         "transform_axialtilt": "Axiaw tiwt",
         "transform_rotation": "Wotation",
 
@@ -149,8 +202,13 @@
         "transform_density": "Density",
 
         "rgba": "Cowow  & intensity",
-        "rgba_hue": "Hue >w<",
-        "rgba_intensity": "Intensity"
+        "rgba_intensity": "Intensity",
+        "rgba_mode": "Cowow mode",
+        "rgba_mode_realistic": "Weawistic",
+        "rgba_mode_direct": "Diwect",
+        "rgba_mode_mixed": "Mixed",
+        "rgba_hue": "Hue",
+        "rgba_tint": "Tint"
       }
     }
   },
@@ -158,16 +216,28 @@
     "$title": "Page Not Found",
     "text_01": "Nyothing uvw hewe, sowwyyyy...",
     "text_02": "\"This sectow is c-compwetewy empty, Captain! :O\"",
-    "text_03": "Oh nyooo ;;w;; Took a wwong tuwn sumwhewe x3",
-    "text_04": "PAGE\u00A0IS\u00A0MISSING! STATUS\u00A0IS\u00A0404!! SPACE\u00A0IS\u00A0VOID!!! >:3",
+    "text_03": "Oh nyooo ;;w;; Took a wwong tuwn sumwhewe...",
+    "text_04": "PAGE\u00A0IS\u00A0MISSING! STATUS\u00A0IS\u00A0404!! SPACE\u00A0IS\u00A0VOID!!! x3",
     "subtext": "The wequested page c-couwd nyot be found :c"
+  },
+  "toast": {
+    "storage_success": "Pewsistent stowage enyabwed!",
+    "storage_failure_rules": "C-couwd not enyabwe pewsistent stowage d-due to bwowsew wules ;w;",
+    "delete_success": "Deweted pwanyet successfuwwy! ÒwÓ",
+    "delete_failure": "Couwd nyot dewete pwanyet ;;w;;",
+    "import_success": "Impowted pwanyet(s) successfuwwy! :3",
+    "import_partial": "Wawning: faiwed to impowt some pwanyet(s)...",
+    "import_failure": "Couwd nyot impowt pwanyets... :c Pp-wease check if the cowwect fiwes a-awe sewected and twy again!!!",
+    "save_success": "Saved pwanyet successfuwwy!"
   },
   "tooltip": {
     "topbar_rename": "Wenyame pwanyet",
     "topbar_rename_confirm": "Confiwm pwanyet nyame",
     "topbar_reset": "Weset t-to defauwts",
+    "topbar_save": "S-save pwanyet",
     "topbar_import": "Impowt pwanyet fiwe",
     "topbar_export": "Expowt pwanyet fiwe",
+    "topbar_export_all": "Expowt aww pwanyets as .zip!!!",
 
     "footer_github": "GitHub wepositowy!!! (opens in nyew tab OwO)",
     "footer_settings": "Settings",
@@ -176,36 +246,46 @@
   "a11y": {
     "logo": "Wagwange wogo",
     "logo_alt": "Secwet Wagwange wogo!",
+    "logo_update_codex": "Wowwd Cowwectow update!",
 
     "dialog_init": "Intwoduction diawog",
     "dialog_settings": "Settings diawog",
     "dialog_about": "About @:main.$title diawog",
     "dialog_reset": "Confiwm weset diawog",
+    "dialog_delete": "Confiwm dewete diawog",
+    "dialog_clear_data": "Confiwm data cweaw diawog",
 
     "topbar_rename": "@:tooltip.topbar_rename",
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
     "topbar_reset": "@:tooltip.topbar_reset",
+    "topbar_save": "@:tooltip.topbar_save",
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
+    "topbar_export_all": "@:tooltip.topbar_export_all",
 
     "footer_github": "@:tooltip.footer_github",
     "footer_settings": "@:tooltip.footer_settings",
     "footer_about": "@:tooltip.footer_about",
 
-    "general_theme_default": "Set defauwt theme (bwue)",
+    "general_theme_default": "Set Comet theme (bwue)",
     "general_theme_supernova": "Set Supewnyova theme (puwple)",
     "general_theme_voyager": "Set Voyagew theme (owange)",
 
     "editor_generic_input": "Pawametew vawue",
+    "editor_atmosphere_rgba_mode_realistic": "Weawistic atmosphewe",
+    "editor_atmosphere_rgba_mode_direct": "Diwect tone atmosphewe",
+    "editor_atmosphere_rgba_mode_mixed": "Mixed atmosphewe",
+
+    "action_nav_toggle": "Toggwe nyavigation menyu",
+    "action_nav_codex": "Codex wink",
+    "action_nav_editor": "Pwanyet Editow wink",
 
     "action_edit_keybind": "Edit key binding",
     "action_edit_ramp": "Edit wamp",
-
     "action_open_colorpanel": "Open cowow panyew",
-
     "action_add_colorstep": "Add cowow step",
     "action_sort_colorsteps": "Sort cowow steps",
-
-    "action_close_dialog": "Cwose diawog"
+    "action_close_dialog": "Cwose diawog",
+    "action_close_toast": "Cwose message"
   }
 }

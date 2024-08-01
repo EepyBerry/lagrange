@@ -44,6 +44,9 @@ tr.field {
 select.lg {
   min-width: 16rem;
   text-align: center;
+  cursor: pointer;
+
+  option:hover { cursor: pointer; }
 }
 
 @media screen and (max-width: 567px) {

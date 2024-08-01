@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { ChangeTracker } from './change-tracker.model'
-import { generateUUID } from 'three/src/math/MathUtils.js'
-import { numberEquals, numberToHex } from '@/utils/utils'
+import { numberEquals } from '@/utils/utils'
+import { nanoid } from 'nanoid'
 
 export class ColorRampStep {
   static EMPTY = new ColorRampStep(0x0, 1)
@@ -12,7 +12,7 @@ export class ColorRampStep {
   private _isBound: boolean
 
   constructor(color: THREE.ColorRepresentation, factor: number, isBound: boolean = false) {
-    this._id = generateUUID()
+    this._id = nanoid()
     this._color = new THREE.Color(color)
     this._factor = factor
     this._isBound = isBound
@@ -145,12 +145,18 @@ export class ColorRamp extends ChangeTracker {
   public load(data: any) {
     this._steps.splice(0)
     this._steps.push(
-      ...data._steps.map((s: any) => new ColorRampStep(new THREE.Color(numberToHex(s._color)), s._factor, s._isBound)),
+      ...data._steps.map((s: any) => new ColorRampStep(
+        s._color, s._factor, s._isBound)
+      ),
     )
   }
 
   public loadFromSteps(data: ColorRampStep[]) {
     this._steps.splice(0)
-    this._steps.push(...data)
+    this._steps.push(
+      ...data.map((s: any) => new ColorRampStep(
+        s._color, s._factor, s._isBound)
+      ),
+    )
   }
 }

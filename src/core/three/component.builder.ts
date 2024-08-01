@@ -1,8 +1,8 @@
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-shader-material/vanilla'
 import { GeometryType } from '../types'
-import { LG_PARAMETERS } from '../globals'
+import { LG_PLANET_DATA } from '../services/planet-editor.service'
 import { resolveImports } from './shader-imports.loader'
 
 /**
@@ -11,14 +11,13 @@ import { resolveImports } from './shader-imports.loader'
  * @param height canvas height
  * @returns the renderer
  */
-export function createRenderer(width: number, height: number, pixelRatio?: number) {
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+export function createRendererComponent(width: number, height: number, pixelRatio?: number) {
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true })
   if (pixelRatio) {
     renderer.setPixelRatio(pixelRatio)
   }
   renderer.setSize(width, height)
-  renderer.setClearColor(0x0, 0)
-  renderer.setClearAlpha(0)
+  renderer.setClearColor(0x000000, 0)
   renderer.shadowMap.enabled = true
   renderer.shadowMap.autoUpdate = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
@@ -34,7 +33,7 @@ export function createRenderer(width: number, height: number, pixelRatio?: numbe
  * @param initialOrbit (optional) orbit settings (angle, etc)
  * @returns the configured camera
  */
-export function createPerspectiveCamera(
+export function createPerspectiveCameraComponent(
   fov: number,
   ratio: number,
   near: number,
@@ -55,7 +54,7 @@ export function createPerspectiveCamera(
  * @param intensity light intensity
  * @returns the AmbientLight instance
  */
-export function createAmbientight(color: THREE.ColorRepresentation, intensity: number) {
+export function createAmbientightComponent(color: THREE.ColorRepresentation, intensity: number) {
   const light = new THREE.AmbientLight(color)
   light.intensity = intensity
   return light
@@ -67,26 +66,26 @@ export function createAmbientight(color: THREE.ColorRepresentation, intensity: n
  * @param addtlRadius additional radius to add, used for clouds and other above-surface elements
  * @returns the geometry instance
  */
-export function createGeometry(type: GeometryType, addtlRadius: number = 0): THREE.BufferGeometry {
+export function createGeometryComponent(type: GeometryType, addtlRadius: number = 0): THREE.BufferGeometry {
   switch (type) {
     case GeometryType.SPHERE:
       return new THREE.SphereGeometry(
-        LG_PARAMETERS.initPlanetRadius + addtlRadius,
-        LG_PARAMETERS.planetMeshQuality,
-        LG_PARAMETERS.planetMeshQuality / 2.0,
+        1.0 + addtlRadius,
+        LG_PLANET_DATA.value.planetMeshQuality,
+        LG_PLANET_DATA.value.planetMeshQuality / 2.0,
       )
     case GeometryType.TORUS:
       return new THREE.TorusGeometry(
-        LG_PARAMETERS.initPlanetRadius + addtlRadius / 4.0,
-        LG_PARAMETERS.initPlanetRadius / 2.0 + addtlRadius * 2.0,
-        LG_PARAMETERS.planetMeshQuality * 2.0,
-        LG_PARAMETERS.planetMeshQuality * 4.0,
+        1.0 + addtlRadius / 4.0,
+        1.0 / 2.0 + addtlRadius * 2.0,
+        LG_PLANET_DATA.value.planetMeshQuality * 2.0,
+        LG_PLANET_DATA.value.planetMeshQuality * 4.0,
       )
     case GeometryType.BOX:
       return new THREE.BoxGeometry(
-        LG_PARAMETERS.initPlanetRadius * 1.5 + addtlRadius,
-        LG_PARAMETERS.initPlanetRadius * 1.5 + addtlRadius,
-        LG_PARAMETERS.initPlanetRadius * 1.5 + addtlRadius,
+        1.0 * 1.5 + addtlRadius,
+        1.0 * 1.5 + addtlRadius,
+        1.0 * 1.5 + addtlRadius,
       )
   }
 }
@@ -100,7 +99,7 @@ export function createGeometry(type: GeometryType, addtlRadius: number = 0): THR
  * @param baseMaterial (optional) base material to use
  * @returns the RawShaderMaterial instance
  */
-export function createShaderMaterial<T extends MaterialConstructor>(
+export function createShaderMaterialComponent<T extends MaterialConstructor>(
   vertexShader: string,
   fragmentShader?: string,
   uniforms?: { [uniform: string]: THREE.IUniform<any> },
@@ -122,7 +121,7 @@ export function createShaderMaterial<T extends MaterialConstructor>(
  * @param canvas the render canvas
  * @returns an instance of OrbitControls
  */
-export function createControls(camera: THREE.Camera, canvas: HTMLCanvasElement): OrbitControls {
+export function createControlsComponent(camera: THREE.Camera, canvas: HTMLCanvasElement): OrbitControls {
   const controls = new OrbitControls(camera, canvas)
   controls.enablePan = false
   controls.enableDamping = false

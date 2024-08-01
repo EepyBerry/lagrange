@@ -34,6 +34,10 @@ function select() {
   color: var(--lg-text);
   padding: 0 0.5rem;
   border: none;
+  border-radius: 0;
+  flex-grow: 1;
+  height: 100%;
+  
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,5 +53,11 @@ function select() {
 
 input.lg[type='radio'] {
   display: none;
+}
+
+@media screen and (max-width: 1023px) {
+  .radio-button {
+    font-size: 0.875rem;
+  }
 }
 </style>

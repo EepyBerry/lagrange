@@ -36,5 +36,7 @@ void main() {
     opacity += fbm3(vPos + wOpacity, u_frequency, u_amplitude, u_lacunarity, u_octaves);
 
     opacity = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, opacity.x);
+    csm_Metalness = 0.5;
+    csm_Roughness = 1.0;
     csm_DiffuseColor = vec4(u_color, opacity.x);
 }

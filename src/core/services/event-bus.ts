@@ -1,11 +1,27 @@
+import { ref, type Ref } from "vue"
+import type { InfoLevel } from "../types"
+
 /**
  * Defines options to pass when registering a window event-listener:
  * - `autoEnable`: if the listener should also be added to the window (default: `true`)
  */
 type WindowEventRegistryOptions = { autoEnable: boolean }
+type ToastMessageEvent = { type: InfoLevel, translationKey: string, millis: number }
 
 export class EventBus {
+  public static clearEvent: Ref<string> = ref('')
+  public static toastEvent: Ref<ToastMessageEvent|null> = ref(null)
   private static windowEventRegistry: Map<keyof WindowEventMap, any> = new Map<keyof WindowEventMap, any>()
+
+  public static sendDataClearEvent() {
+    EventBus.clearEvent.value = new Date().toISOString()
+  }
+
+  public static sendToastEvent(type: InfoLevel, translationKey: string, millis: number) {
+    EventBus.toastEvent.value = { type, translationKey, millis }
+  }
+
+  // ----------------------------------------------------------------------------------------------
 
   /**
    * Registers a window event-listener

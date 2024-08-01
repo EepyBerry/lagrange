@@ -66,11 +66,11 @@ void main() {
     if (u_biomes && u_show_poles) {
         float northBlendValue = (vPos.y - u_pole_limit) / (u_radius - u_pole_limit);
         color = vPos.y > u_pole_limit && height > u_water_level
-            ? mix(color, vec3(1.0), northBlendValue)
+            ? mix(color, vec3(1.0), clamp(northBlendValue, 0.0, 1.0))
             : color;
         float southBlendValue = (vPos.y + u_radius) / (-u_pole_limit + u_radius);
         color = vPos.y < -u_pole_limit && height > u_water_level
-            ? mix( vec3(1.0), color, southBlendValue)
+            ? mix(vec3(1.0), color, clamp(southBlendValue, 0.0, 1.0))
             : color;
     }
    

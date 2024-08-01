@@ -1,6 +1,24 @@
 <template>
   <footer>
     <div id="footer-nav">
+      <button
+        class="lg dark"
+        :title="$t('tooltip.footer_about')"
+        :aria-label="$t('a11y.footer_about')"
+        @click="infoDialog!.open()"
+      >
+        <iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true" />
+      </button>
+      <hr />
+      <button
+        class="lg dark"
+        :title="$t('tooltip.footer_settings')"
+        :aria-label="$t('a11y.footer_settings')"
+        @click="settingsDialog!.open()"
+      >
+        <iconify-icon icon="mingcute:settings-6-line" width="1.5rem" aria-hidden="true" />
+      </button>
+      <hr />
       <a
         class="lg dark"
         href="https://github.com/EepyBerry/lagrange"
@@ -12,23 +30,6 @@
         <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" />
         <iconify-icon class="link-icon" icon="mingcute:right-small-fill" width="2rem" aria-hidden="true" />
       </a>
-      <hr />
-      <button
-        class="lg dark"
-        :title="$t('tooltip.footer_settings')"
-        :aria-label="$t('a11y.footer_settings')"
-        @click="settingsDialog!.open()"
-      >
-        <iconify-icon icon="mingcute:settings-6-line" width="1.5rem" aria-hidden="true" />
-      </button>
-      <button
-        class="lg dark"
-        :title="$t('tooltip.footer_about')"
-        :aria-label="$t('a11y.footer_about')"
-        @click="infoDialog!.open()"
-      >
-        <iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true" />
-      </button>
     </div>
   </footer>
   <AppAboutDialog ref="infoDialog" />
@@ -45,25 +46,32 @@ const settingsDialog: Ref<{ open: Function } | null> = ref(null)
 
 <style lang="scss">
 footer {
-  position: absolute;
-  inset: auto 0 0 auto;
+  position: fixed;
+  bottom: 0;
   padding: 1rem;
   display: flex;
   align-items: flex-end;
+  align-self: center;
   gap: 1rem;
   z-index: 5;
 
   #footer-nav {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
 
     hr {
-      width: 1.5rem;
+      height: 1.5rem;
       border-color: var(--lg-accent);
     }
+  }
+}
+@media screen and (max-width: 1199px) {
+  footer {
+    padding: 0.5rem;
+    align-self: flex-end;
   }
 }
 

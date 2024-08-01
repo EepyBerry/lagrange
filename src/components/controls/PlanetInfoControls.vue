@@ -1,15 +1,16 @@
 <template>
-  <div id="planet-info">
+  <div id="planet-info" :class="{ compact: !!compactMode }">
     <div class="name-wrapper">
       <input
         v-if="editMode"
         ref="planetNameInput"
         class="lg"
         type="text"
-        v-model="LG_PARAMETERS.planetName"
+        v-model="LG_PLANET_DATA.planetName"
         @keyup.enter="toggleEditMode"
       />
-      <p v-else @click="toggleEditMode">{{ LG_PARAMETERS.planetName }}</p>
+      <p v-else @click="toggleEditMode">{{ LG_PLANET_DATA.planetName }}</p>
+      
       <button
         class="lg icon-button"
         :aria-label="$t(editMode ? 'a11y.topbar_rename_confirm' : 'a11y.topbar_rename')"
@@ -40,44 +41,32 @@
     >
       <iconify-icon icon="tabler:reload" width="1.5rem" aria-hidden="true" />
     </button>
-    <hr />
-    <input ref="fileInput" type="file" @change="importPlanetFile" hidden />
     <button
       class="lg dark"
-      :aria-label="$t('a11y.topbar_import')"
-      :title="$t('tooltip.topbar_import')"
-      @click="openFileDialog"
+      :aria-label="$t('a11y.topbar_save')"
+      :title="$t('tooltip.topbar_save')"
+      @click="emitSaveEvent"
     >
-      <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
+      <iconify-icon icon="mingcute:save-2-line" width="1.5rem" aria-hidden="true" />
     </button>
-    <button
-      class="lg dark"
-      :aria-label="$t('a11y.topbar_export')"
-      :title="$t('tooltip.topbar_export')"
-      @click="exportPlanetFile"
-    >
-      <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
-    </button>
-    <AppResetConfirmDialog ref="resetDialog" @confirm="resetPlanet" />
+    
+    <AppResetConfirmDialog ref="resetDialog" @confirm="emitResetEvent" />
   </div>
 </template>
 
 <script setup lang="ts">
 import AppResetConfirmDialog from '../dialogs/AppResetConfirmDialog.vue'
-import { LG_PARAMETERS } from '@core/globals'
-import pako from 'pako'
-import { saveAs } from 'file-saver'
+import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
 import { ref, type Ref } from 'vue'
-import { EventBus } from '@core/window-event-bus'
-import { useI18n } from 'vue-i18n'
+import { EventBus } from '@/core/services/event-bus'
 
-const i18n = useI18n()
-
-const resetDialog: Ref<{ open: Function } | null> = ref(null)
-const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const editMode: Ref<boolean> = ref(false)
+
 const planetNameInput: Ref<HTMLInputElement | null> = ref(null)
-const $emit = defineEmits(['dataLoad'])
+const resetDialog: Ref<{ open: Function } | null> = ref(null)
+
+defineProps<{ compactMode: boolean }>()
+const $emit = defineEmits(['rename', 'reset', 'save'])
 
 function toggleEditMode() {
   editMode.value = !editMode.value
@@ -86,44 +75,16 @@ function toggleEditMode() {
     setTimeout(() => planetNameInput.value?.focus())
   } else {
     EventBus.enableWindowEventListener('keydown')
+    $emit('rename')
   }
 }
 
-function openFileDialog() {
-  fileInput.value?.click()
+function emitResetEvent() {
+  $emit('reset')
 }
 
-function importPlanetFile(event: Event) {
-  const files = (event.target as HTMLInputElement).files
-  if (files?.length !== 1) {
-    console.warn('only one file cane be loaded at a time!')
-    return
-  }
-
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    try {
-      const data = JSON.parse(pako.inflate(e.target?.result as ArrayBuffer, { to: 'string' }))
-      LG_PARAMETERS.loadData(data)
-      $emit('dataLoad')
-    } catch (err) {
-      console.error(err)
-    }
-  }
-  reader.readAsArrayBuffer(files[0])
-}
-
-function exportPlanetFile() {
-  const jsonParams = JSON.stringify(LG_PARAMETERS)
-  const gzipParams = pako.deflate(jsonParams)
-  const planetFilename = LG_PARAMETERS.planetName?.replace(/\s/g, '_') ?? 'Planet'
-  saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
-}
-
-function resetPlanet() {
-  LG_PARAMETERS.reset()
-  LG_PARAMETERS.planetName = i18n.t('editor.default_planet_name')
-  $emit('dataLoad')
+function emitSaveEvent() {
+  $emit('save')
 }
 </script>
 
@@ -131,10 +92,7 @@ function resetPlanet() {
 #planet-info {
   z-index: 10;
   pointer-events: all;
-  position: absolute;
-  inset: 0 0 auto;
-  height: 2.875rem;
-  margin-top: 1rem;
+  height: 2.75rem;
 
   display: flex;
   justify-content: center;
@@ -142,6 +100,10 @@ function resetPlanet() {
   gap: 0.5rem;
 
   align-self: center;
+
+  &.compact {
+    justify-self: flex-end;
+  }
 
   hr {
     height: 1.5rem;
@@ -151,7 +113,7 @@ function resetPlanet() {
     background: var(--lg-primary);
     border: 1px solid var(--lg-accent);
     border-radius: 4px;
-    height: 2.875rem;
+    height: 2.75rem;
     padding: 0 0.25rem 0 0.75rem;
 
     display: flex;
@@ -160,6 +122,8 @@ function resetPlanet() {
 
     input {
       width: 24ch;
+      height: 2rem;
+      font-size: 0.875rem;
       font-family: Poppins, Inter;
     }
     p {
@@ -171,11 +135,6 @@ function resetPlanet() {
   }
 }
 
-@media screen and (max-width: 1199px) {
-  #planet-info {
-    margin-top: 0.5rem;
-  }
-}
 @media screen and (max-width: 767px) {
   #planet-info {
     width: 100%;
@@ -184,9 +143,8 @@ function resetPlanet() {
     border-top: none;
     border-right: none;
 
-    height: 2.875rem;
-    padding: 0 0.5rem;
-    margin-top: 0.5rem;
+    height: 2.5rem;
+    flex: 1;
 
     .name-wrapper {
       flex: 1;

@@ -7,7 +7,7 @@
     :aria-label="$t('a11y.dialog_reset')"
   >
     <template v-slot:title>
-      <iconify-icon icon="mingcute:warning-line" width="1.5rem" />
+      <iconify-icon icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
       {{ $t('dialog.reset.$title') }}
     </template>
     <template v-slot:content>
@@ -20,11 +20,11 @@
     </template>
     <template v-slot:actions>
       <button class="lg" @click="dialogRef?.close()" autofocus>
-        <iconify-icon icon="mingcute:close-line" width="1.25rem" />
+        <iconify-icon icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.reset.$action_cancel') }}
       </button>
       <button class="lg warn" @click="confirmAndClose">
-        <iconify-icon icon="mingcute:delete-line" width="1.25rem" />
+        <iconify-icon icon="tabler:reload" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.reset.$action_confirm') }}
       </button>
     </template>
