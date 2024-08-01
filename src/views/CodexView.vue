@@ -145,7 +145,11 @@ async function importPlanetFile(event: Event) {
       EventBus.sendToastEvent('warn', 'toast.import_failure', 3000)
       return
     }
-    await idb.planets.bulkAdd(newPlanets.filter((np) => np.status === 'fulfilled').map((np: PromiseFulfilledResult<IDBPlanet>) => np.value))
+    await idb.planets.bulkAdd(
+      newPlanets
+        .filter((np) => np.status === 'fulfilled')
+        .map((np: PromiseSettledResult<IDBPlanet>) => (np as PromiseFulfilledResult<IDBPlanet>).value),
+    )
   } catch (_) {
     EventBus.sendToastEvent('warn', 'toast.import_partial', 3000)
   } finally {

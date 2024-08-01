@@ -256,7 +256,6 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   pivot.clear()
   data.sun.dispose()
   data.ambientLight.dispose()
-
   ;(data.clouds.material as THREE.Material).dispose()
   ;(data.atmosphere.material as THREE.Material).dispose()
   ;(data.planet.material as THREE.Material).dispose()

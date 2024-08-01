@@ -211,13 +211,10 @@ function disposeScene() {
 
   _lensFlare.material.dispose()
   _lensFlare.mesh.geometry.dispose()
-
   ;(_planet.material as THREE.Material).dispose()
   _planet.geometry.dispose()
-
   ;(_clouds.material as THREE.Material).dispose()
   _clouds.geometry.dispose()
-
   ;(_atmosphere.material as THREE.Material).dispose()
   _atmosphere.geometry.dispose()
 
