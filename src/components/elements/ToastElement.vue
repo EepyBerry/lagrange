@@ -42,6 +42,7 @@ defineEmits(['close'])
   overflow: hidden;
 
   &.visible {
+    pointer-events: all;
     opacity: 1;
     transform: scale(100%);
   }
