@@ -27,10 +27,6 @@ tr.field {
   border-radius: 4px;
   border: none;
 
-  :deep(.radio-button) {
-    border-radius: 0;
-    flex-grow: 1;
-  }
   & > :deep(.radio-button:first-of-type) {
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
@@ -38,6 +34,12 @@ tr.field {
   & > :deep(.radio-button:last-of-type) {
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
+  }
+}
+
+@media screen and (max-width: 1023px) {
+  .radio-options {
+    height: 2.75rem;
   }
 }
 </style>

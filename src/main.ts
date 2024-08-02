@@ -4,7 +4,6 @@ import 'iconify-icon'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router.config'
-import SidebarSection from '@components/elements/SidebarSection.vue'
 import OverlaySpinner from '@components/elements/OverlaySpinner.vue'
 import ParameterTable from '@components/parameters/ParameterTable.vue'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'
@@ -21,7 +20,6 @@ createApp(App)
   .use(router)
   .use(i18nConfig.i18n)
   .use(createHead())
-  .component('SidebarSection', SidebarSection)
   .component('ParameterTable', ParameterTable)
   .component('ParameterSlider', ParameterSlider)
   .component('ParameterRadio', ParameterRadio)

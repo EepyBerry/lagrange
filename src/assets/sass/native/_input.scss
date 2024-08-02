@@ -1,4 +1,5 @@
 input.lg {
+  background: transparent;
   background: var(--lg-input);
   border: 1px solid var(--lg-accent);
   border-radius: 4px;
@@ -19,4 +20,11 @@ input.lg::-webkit-inner-spin-button {
 input.lg[type='checkbox'] {
   accent-color: var(--lg-contrast);
   width: 1rem;
+}
+
+@media screen and (max-width: 767px) {
+  input.lg[type='checkbox'] {
+    accent-color: var(--lg-contrast);
+    width: 1.375rem;
+  }
 }

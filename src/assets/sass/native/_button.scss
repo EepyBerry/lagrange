@@ -1,3 +1,4 @@
+// standard button
 button.lg,
 a.lg {
   background: var(--lg-button);
@@ -14,6 +15,10 @@ a.lg {
   align-items: center;
   justify-content: center;
   gap: 0.25rem;
+
+  iconify-icon {
+    pointer-events: none;
+  }
 }
 button.lg:hover {
   cursor: pointer;
@@ -38,14 +43,40 @@ button.lg.menu-expanded:active {
   background: var(--lg-button-menu-expanded-active);
 }
 
+// nav button
+button.lg.nav {
+  position: relative;
+  background: var(--lg-contrast-light);
+  border: 1px solid var(--lg-contrast);
+  padding: 0.5rem;
+  min-width: 2.75rem;
+  height: 2.75rem;
+  font-size: 1rem;
+  overflow: hidden;
+
+  .link-icon {
+    position: absolute;
+    top: -0.75rem;
+    right: -0.75rem;
+    transform: rotate(-45deg);
+  }
+}
+button.lg.nav:hover {
+  background: var(--lg-contrast-medium);
+}
+button.lg.nav:active {
+  background: var(--lg-contrast);
+}
+
+// dark button
 button.lg.dark,
 a.lg.dark {
   position: relative;
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
-  padding: 0.5rem;
-  min-width: 2.875rem;
-  min-height: 2.875rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  font-size: 1rem;
   overflow: hidden;
 
   .link-icon {
@@ -60,6 +91,7 @@ a.lg.dark:hover {
   background: var(--lg-button-active);
 }
 
+// icon button
 button.lg.icon-button {
   background: transparent;
 }
@@ -74,4 +106,23 @@ button.lg.icon-button:active {
 button.lg.icon-button:disabled {
   filter: brightness(40%);
   pointer-events: none;
+}
+
+// router button
+a.lg.link-button,
+a.lg.link-button:visited {
+  color: var(--lg-text);
+  text-decoration: none;
+}
+a.lg.link-button:hover,
+a.lg.link-button:visited:hover {
+  background: var(--lg-button-hover);
+  color: var(--lg-text);
+  text-decoration: none;
+}
+a.lg.link-button:active,
+a.lg.link-button:visited:active {
+  background: var(--lg-button-active);
+  color: var(--lg-text);
+  text-decoration: none;
 }

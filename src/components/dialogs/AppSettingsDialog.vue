@@ -12,7 +12,7 @@
     </template>
     <template v-slot:content>
       <div class="settings-grid">
-        <CollapsibleSection expand>
+        <CollapsibleSection icon="mingcute:tool-line" class="section-general" expand>
           <template v-slot:title>{{ $t('dialog.settings.general') }}</template>
           <template v-slot:content>
             <ParameterTable>
@@ -34,7 +34,7 @@
                     name="theme-select"
                     :id="'0'"
                     value="default"
-                    icon="mingcute:planet-line"
+                    icon="majesticons:comet"
                     :ariaLabel="$t('a11y.general_theme_default')"
                   >
                     {{ $t('dialog.settings.general_theme_default') }}
@@ -74,46 +74,125 @@
           </template>
         </CollapsibleSection>
 
-        <CollapsibleSection class="section-keybinds">
+        <CollapsibleSection icon="mingcute:planet-line" class="section-editor">
           <template v-slot:title>
-            {{ $t('dialog.settings.keybinds') }}
+            {{ $t('dialog.settings.editor') }}
           </template>
           <template v-slot:content>
-            <div class="settings-keybinds">
+            <div class="settings-editor">
               <ParameterTable>
+                <ParameterKeyBinding
+                  icon="mingcute:sun-line"
+                  :key-bind="getKeyBind('toggle-lens-flare')"
+                  :selected="selectedAction === 'toggle-lens-flare'"
+                  @toggle="toggleAction('toggle-lens-flare')"
+                >
+                  {{ $t('dialog.settings.editor_lensflare') }}
+                </ParameterKeyBinding>
+                <ParameterKeyBinding
+                  icon="mingcute:mountain-2-line"
+                  :key-bind="getKeyBind('toggle-biomes')"
+                  :selected="selectedAction === 'toggle-biomes'"
+                  @toggle="toggleAction('toggle-biomes')"
+                >
+                  {{ $t('dialog.settings.editor_biomes') }}
+                </ParameterKeyBinding>
+                <ParameterKeyBinding
+                  icon="mingcute:clouds-line"
+                  :key-bind="getKeyBind('toggle-clouds')"
+                  :selected="selectedAction === 'toggle-clouds'"
+                  @toggle="toggleAction('toggle-clouds')"
+                >
+                  {{ $t('dialog.settings.editor_clouds') }}
+                </ParameterKeyBinding>
+                <ParameterKeyBinding
+                  icon="material-symbols:line-curve-rounded"
+                  :key-bind="getKeyBind('toggle-atmosphere')"
+                  :selected="selectedAction === 'toggle-atmosphere'"
+                  @toggle="toggleAction('toggle-atmosphere')"
+                >
+                  {{ $t('dialog.settings.editor_atmosphere') }}
+                </ParameterKeyBinding>
                 <ParameterDivider />
-                <tr v-for="kb of keyBinds" :key="kb.action">
-                  <td>
-                    <div class="keybind">
-                      <div class="keybinds-label">
-                        <iconify-icon :icon="getIcon(kb.action)" width="1.5rem" aria-hidden="true" />
-                        {{ $t('dialog.settings.keybinds_' + getTranslationKey(kb.action)) }}
-                      </div>
-                      <div class="keybinds-key" :class="{ unset: kb.key === '[unset]' }">
-                        <iconify-icon
-                          v-if="tryGetKeyRepresentation(kb.key)"
-                          :icon="tryGetKeyRepresentation(kb.key)"
-                          width="1.25rem"
-                        />
-                        <span v-else>{{ selectedAction === kb.action ? '.....' : kb.key }}</span>
-                      </div>
-                      <button class="lg" :aria-label="$t('a11y.action_edit_keybind')" @click="toggleAction(kb.action)">
-                        <iconify-icon
-                          v-if="selectedAction === kb.action"
-                          class="icon"
-                          icon="mingcute:close-line"
-                          width="1.25rem"
-                          aria-hidden="true"
-                        />
-                        <iconify-icon
-                          v-else
-                          class="icon"
-                          icon="mingcute:edit-2-line"
-                          width="1.25rem"
-                          aria-hidden="true"
-                        />
-                      </button>
-                    </div>
+                <ParameterKeyBinding
+                  icon="mingcute:screenshot-line"
+                  :key-bind="getKeyBind('take-screenshot')"
+                  :selected="selectedAction === 'take-screenshot'"
+                  @toggle="toggleAction('take-screenshot')"
+                >
+                  {{ $t('dialog.settings.editor_screenshot') }}
+                </ParameterKeyBinding>
+              </ParameterTable>
+            </div>
+          </template>
+        </CollapsibleSection>
+
+        <CollapsibleSection icon="material-symbols:accessibility-new-rounded" class="section-a11y">
+          <template v-slot:title>
+            {{ $t('dialog.settings.a11y') }}
+          </template>
+          <template v-slot:content>
+            <div class="settings-a11y">
+              <ParameterTable>
+                <ParameterCheckbox
+                  id="settings-effects"
+                  :true-value="true"
+                  :false-value="false"
+                  v-model="appSettings.enableEffects"
+                >
+                  {{ $t('dialog.settings.a11y_effects') }}:
+                </ParameterCheckbox>
+                <ParameterCheckbox
+                  id="settings-anim"
+                  :true-value="true"
+                  :false-value="false"
+                  v-model="appSettings.enableAnimations"
+                >
+                  {{ $t('dialog.settings.a11y_animations') }}:
+                </ParameterCheckbox>
+              </ParameterTable>
+            </div>
+          </template>
+        </CollapsibleSection>
+
+        <CollapsibleSection icon="mingcute:alert-diamond-line" class="section-advanced">
+          <template v-slot:title>
+            {{ $t('dialog.settings.advanced') }}
+          </template>
+          <template v-slot:content>
+            <div class="settings-advanced">
+              <ParameterTable>
+                <tr class="setting-persist">
+                  <td style="width: 100%">{{ $t('dialog.settings.advanced_persist') }}:</td>
+                  <td style="text-wrap: nowrap">
+                    <button class="lg" :disabled="!!persistStorage || failedToPersist" @click="tryPersistStorage">
+                      {{
+                        $t(
+                          'dialog.settings.advanced_persist_' +
+                            (persistStorage ? 'success' : failedToPersist ? 'failure' : 'prompt'),
+                        )
+                      }}
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <NotificationElement type="info">
+                      {{ $t('dialog.settings.advanced_persist_info') }}
+                    </NotificationElement>
+                  </td>
+                </tr>
+                <ParameterCategory>
+                  {{ $t('dialog.settings.advanced_danger_zone') }}
+                </ParameterCategory>
+                <ParameterDivider />
+                <tr>
+                  <td colspan="2">
+                    <button class="lg warn" style="width: 100%" @click="confirmDialogRef?.open()">
+                      <iconify-icon icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
+                      {{ $t('dialog.settings.advanced_clear_data') }}
+                    </button>
+                    <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
                   </td>
                 </tr>
               </ParameterTable>
@@ -126,8 +205,8 @@
 </template>
 
 <script setup lang="ts">
-import { KeyBindingAction, idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
-import { ref, watch, type Ref } from 'vue'
+import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
+import { onMounted, ref, watch, type Ref } from 'vue'
 import DialogElement from '../elements/DialogElement.vue'
 import ParameterTable from '../parameters/ParameterTable.vue'
 import ParameterCheckbox from '../parameters/ParameterCheckbox.vue'
@@ -138,16 +217,34 @@ import ParameterSelect from '../parameters/ParameterSelect.vue'
 import { useI18n } from 'vue-i18n'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
 import { mapLocale } from '@/utils/utils'
+import ParameterKeyBinding from '../parameters/ParameterKeyBinding.vue'
+import { A11Y_ANIMATE } from '@/core/globals'
+import NotificationElement from '../elements/NotificationElement.vue'
+import ParameterCategory from '../parameters/ParameterCategory.vue'
+import AppClearDataConfirmDialog from './AppClearDataConfirmDialog.vue'
+import { clearData } from '@/utils/dexie-utils'
+import { EventBus } from '@/core/services/event-bus'
 
 const i18n = useI18n()
 
-const appSettings: Ref<IDBSettings> = ref({ id: 0, locale: 'en-US', theme: '', font: '' })
-const keyBinds: Ref<IDBKeyBinding[]> = ref([])
-let dataLoaded = false
-
+const confirmDialogRef: Ref<{ open: Function } | null> = ref(null)
 const dialogRef: Ref<{ open: Function; close: Function; ignoreNativeEvents: Function; isOpen: boolean } | null> =
   ref(null)
+const appSettings: Ref<IDBSettings> = ref({
+  id: 0,
+  locale: 'en-US',
+  theme: '',
+  font: '',
+  enableAnimations: true,
+  enableEffects: true,
+})
+const persistStorage: Ref<boolean> = ref(false)
 const selectedAction: Ref<string | null> = ref(null)
+const keyBinds: Ref<IDBKeyBinding[]> = ref([])
+
+const failedToPersist: Ref<boolean> = ref(false)
+
+let dataLoaded = false
 
 defineExpose({
   open: async () => {
@@ -159,15 +256,19 @@ defineExpose({
   },
 })
 
+onMounted(async () => {
+  persistStorage.value = await navigator.storage.persisted()
+})
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 watch(
-  () => appSettings.value,
-  () => updateSettings(),
-  { deep: true },
-)
-watch(
-  () => dialogRef.value,
-  (v) => {
-    if (!v?.isOpen && selectedAction.value) {
+  [() => appSettings.value, () => dialogRef.value?.isOpen],
+  ([_, isDialogOpen]) => {
+    if (!dataLoaded) {
+      return
+    }
+    updateSettings()
+    if (!isDialogOpen && selectedAction.value) {
       const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value)
       keyBinds.value[kbidx].key = '[unset]'
       toggleAction(selectedAction.value)
@@ -178,10 +279,17 @@ watch(
 
 async function loadData() {
   let settings = await idb.settings.limit(1).first()
-  let kb = await idb.keyBindings.limit(4).toArray()
+  let kb = await idb.keyBindings.toArray()
   appSettings.value!.locale = i18n.locale.value
   appSettings.value = settings!
+  keyBinds.value.splice(0)
   keyBinds.value.push(...kb)
+}
+
+async function clearAllData() {
+  await clearData()
+  await loadData()
+  EventBus.sendDataClearEvent()
 }
 
 function toggleAction(action: string): void {
@@ -200,12 +308,25 @@ async function updateSettings() {
   i18n.locale.value = appSettings.value!.locale
   document.documentElement.setAttribute('data-theme', appSettings.value!.theme)
   document.documentElement.setAttribute('data-font', appSettings.value!.font)
+  document.documentElement.setAttribute('data-effects', appSettings.value!.enableEffects ? 'on' : 'off')
+  A11Y_ANIMATE.value = appSettings.value!.enableAnimations!
+
   await idb.settings.update(appSettings.value!.id, {
     locale: mapLocale(appSettings.value!.locale),
     theme: appSettings.value!.theme,
     font: appSettings.value!.font,
+    enableEffects: appSettings.value!.enableEffects,
+    enableAnimations: appSettings.value!.enableAnimations,
   })
 }
+
+async function tryPersistStorage() {
+  const persisted = await navigator.storage.persist()
+  failedToPersist.value = !persisted
+  persistStorage.value = persisted
+}
+
+// ------------------------------------------------------------------------------------------------
 
 async function setSelectedActionKey(event: KeyboardEvent) {
   const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value)
@@ -229,56 +350,24 @@ async function setSelectedActionKey(event: KeyboardEvent) {
   toggleAction(keyBinds.value[kbidx].action)
 }
 
-function getTranslationKey(action: KeyBindingAction) {
-  switch (action) {
-    case KeyBindingAction.ToggleLensFlare:
-      return 'lensflare'
-    case KeyBindingAction.ToggleBiomes:
-      return 'biomes'
-    case KeyBindingAction.ToggleClouds:
-      return 'clouds'
-    case KeyBindingAction.ToggleAtmosphere:
-      return 'atmosphere'
-  }
-}
-function getIcon(action: KeyBindingAction) {
-  switch (action) {
-    case KeyBindingAction.ToggleLensFlare:
-      return 'mingcute:sun-line'
-    case KeyBindingAction.ToggleBiomes:
-      return 'mingcute:mountain-2-line'
-    case KeyBindingAction.ToggleClouds:
-      return 'mingcute:clouds-line'
-    case KeyBindingAction.ToggleAtmosphere:
-      return 'material-symbols:line-curve-rounded'
-  }
-}
-function tryGetKeyRepresentation(key: string) {
-  switch (key) {
-    case 'ARROWUP':
-      return 'mingcute:arrow-up-line'
-    case 'ARROWRIGHT':
-      return 'mingcute:arrow-right-line'
-    case 'ARROWDOWN':
-      return 'mingcute:arrow-down-line'
-    case 'ARROWLEFT':
-      return 'mingcute:arrow-left-line'
-    default:
-      return undefined
-  }
+function getKeyBind(action: string) {
+  return keyBinds.value.find((kb) => kb.action === action)
 }
 </script>
 
 <style scoped lang="scss">
 #dialog-settings {
-  min-width: 32rem;
+  min-width: 36rem;
+  max-width: 36rem;
   .settings-grid {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 
     .settings-general,
-    .settings-keybinds {
+    .settings-editor,
+    .settings-a11y,
+    .settings-advanced {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -290,42 +379,16 @@ function tryGetKeyRepresentation(key: string) {
         border-spacing: 0 0.125rem;
       }
     }
-    .settings-keybinds {
-      .keybind {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.5rem;
-      }
-      .keybinds-label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding-right: 0.5rem;
-        flex: 1;
-      }
-      .keybinds-key {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 6rem;
-        min-height: 2rem;
-        background: var(--lg-panel);
-        border: 1px solid var(--lg-accent);
-        border-radius: 0.25rem;
-        font-weight: 600;
-        padding: 0 0.5rem;
-        &.unset {
-          border-color: var(--lg-warn-active);
-        }
-      }
-    }
+  }
+  .setting-persist button {
+    padding: 0 0.5rem;
   }
 }
 
 @media screen and (max-width: 767px) {
   #dialog-settings {
     min-width: 0;
+    max-width: 0;
     width: 100%;
   }
 }

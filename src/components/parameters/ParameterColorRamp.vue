@@ -46,7 +46,7 @@
                 @click="removeStep(step.id)"
                 :disabled="pickerIdOpen === step.id"
               >
-                <iconify-icon class="icon" icon="mingcute:delete-line" width="1.25rem" aria-hidden="true" />
+                <iconify-icon class="icon" icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
               </button>
             </td>
             <td>
@@ -134,11 +134,12 @@
 
 <script setup lang="ts">
 import { ref, watch, type Ref } from 'vue'
-import { ColorRamp } from '@core/models/color-ramp.model'
 import { ColorPicker } from 'vue-accessible-color-picker'
 import InputSliderElement from '../elements/InputSliderElement.vue'
+import type { ColorRamp } from '@/core/models/color-ramp.model'
 
-const lgColorRamp = defineModel<ColorRamp>()
+const lgColorRamp = defineModel<ColorRamp>() // type here is actually ColorRamp, ts-plugin doesn't like proxied objects in templates...
+
 const htmlColorRamp: Ref<HTMLElement | null> = ref(null)
 const htmlColorSteps: Ref<HTMLElement[]> = ref([])
 const htmlFactorInputs: Ref<HTMLInputElement[]> = ref([])
@@ -306,5 +307,11 @@ input.lg {
 }
 input.lg:not([type='checkbox'], [type='radio']) {
   width: 3rem;
+}
+@media screen and (max-width: 1023px) {
+  .panel-table {
+    border-spacing: 0.5rem;
+    font-size: 1rem;
+  }
 }
 </style>

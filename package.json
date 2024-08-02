@@ -1,6 +1,6 @@
 {
   "name": "lagrange",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -31,6 +31,8 @@
     "dexie": "^4.0.7",
     "file-saver": "^2.0.5",
     "iconify-icon": "^2.1.0",
+    "jszip": "^3.10.1",
+    "nanoid": "^5.0.7",
     "pako": "^2.1.0",
     "three": "^0.166.0",
     "three-custom-shader-material": "^5.4.0",

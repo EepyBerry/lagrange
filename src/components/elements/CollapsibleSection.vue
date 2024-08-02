@@ -1,16 +1,11 @@
 <template>
   <section
     class="collapsible-section"
-    :class="{ expanded: _expanded, static: static }"
+    :class="{ expanded: _expanded, compact: compactMode, 'allow-icon-mode': allowIconMode }"
     role="group"
     :aria-expanded="_expanded"
   >
-    <div v-if="static" class="section-title static">
-      <h3>
-        <span><slot name="title">SECTION_TITLE</slot></span>
-      </h3>
-    </div>
-    <button v-else class="section-title" @click="toggleExpand()" @keydown.enter="toggleExpand()">
+    <button class="section-title" @click="toggleExpand()" @keydown.enter="toggleExpand()">
       <h3>
         <iconify-icon :icon="icon" width="1.25rem" aria-hidden="true" />
         <span><slot name="title">SECTION_TITLE</slot></span>
@@ -29,13 +24,10 @@
 import { type Ref, onMounted, ref } from 'vue'
 const _expanded: Ref<boolean> = ref(true)
 
-const _props = defineProps<{ icon?: string; static?: boolean; expand?: boolean }>()
+const _props = defineProps<{ icon?: string; compactMode?: boolean; allowIconMode?: boolean; expand?: boolean }>()
 onMounted(() => (_expanded.value = _props.expand ?? true))
 
 function toggleExpand() {
-  if (_props.static) {
-    return
-  }
   _expanded.value = !_expanded.value
 }
 </script>
@@ -47,14 +39,15 @@ function toggleExpand() {
   border: 1px solid var(--lg-accent);
   border-radius: 4px;
   width: 100%;
+  min-width: 26rem;
 
   display: flex;
   flex-direction: column;
   align-items: space-between;
   gap: 4px;
 
-  &.static {
-    margin-bottom: 0.75rem;
+  &.compact {
+    min-width: 0;
   }
   &.expanded .indicator {
     transform: rotateZ(90deg);
@@ -75,10 +68,6 @@ function toggleExpand() {
     justify-content: space-between;
     align-items: center;
   }
-  .section-title.static {
-    justify-content: center;
-    cursor: default;
-  }
   .section-content {
     font-size: 0.875rem;
     font-weight: 300;
@@ -90,6 +79,26 @@ function toggleExpand() {
     .default {
       font-size: 0.75rem;
     }
+  }
+}
+
+@media screen and (max-width: 1199px) {
+  .collapsible-section:not(.expanded, .compact).allow-icon-mode {
+    align-self: flex-start;
+    width: fit-content;
+    min-width: 0;
+
+    .section-title {
+      min-width: 0;
+
+      span,
+      .indicator {
+        display: none;
+      }
+    }
+  }
+  .collapsible-section:not(.compact).expanded {
+    min-width: 16rem;
   }
 }
 </style>

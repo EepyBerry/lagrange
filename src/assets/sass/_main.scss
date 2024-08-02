@@ -9,7 +9,7 @@
 }
 
 html {
-  background: var(--eepy-color-background);
+  background: transparent;
   scroll-behavior: smooth;
 
   display: flex;
@@ -22,7 +22,7 @@ body {
   min-height: 100%;
 
   border-radius: 2px;
-  background: var(--lg-panel);
+  background: black;
   color: var(--lg-text);
 
   font-family:

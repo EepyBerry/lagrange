@@ -1,0 +1,46 @@
+nav {
+  min-height: 2.75rem;
+
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+nav > a.lg.nav {
+  height: 2.75rem;
+  background: var(--lg-contrast-light);
+  border: 1px solid var(--lg-contrast);
+  border-radius: 4px;
+  width: 100%;
+  padding: 0 0.875rem;
+  font-size: 1rem;
+  text-decoration: none;
+
+  display: flex;
+  align-items: center;
+
+  & > iconify-icon {
+    pointer-events: none;
+  }
+}
+nav > a.lg.nav:hover {
+  background: var(--lg-contrast-medium);
+}
+nav > a.lg.nav.router-link-active {
+  background: var(--lg-contrast);
+  pointer-events: none;
+}
+nav > hr {
+  border-color: var(--lg-contrast);
+  height: 1.5rem;
+  align-self: center;
+}
+
+// links
+a:not(.dark, .nav) {
+  color: var(--lg-link);
+}
+a:not(.dark, .nav):visited {
+  color: var(--lg-link-visited);
+}

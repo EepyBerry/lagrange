@@ -1,29 +1,22 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
-import { GeometryType, NoiseType } from '@core/types'
+import { ColorMode, GeometryType, NoiseType } from '@core/types'
 import { clamp, isNumeric } from '@/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeTracker } from './change-tracker.model'
-import { numberToHex } from '@/utils/utils'
-import { generateUUID } from 'three/src/math/MathUtils.js'
 
-export default class LagrangeParameters extends ChangeTracker {
+export default class PlanetData extends ChangeTracker {
   // --------------------------------------------------
   // |                      Init                      |
   // --------------------------------------------------
 
-  private _id: string
+  private _defaultPlanetName: string
   private _planetName: string
 
   private _initCamDistance: number = 4
-  private _initCamAngle: number = -45
-  private _initPlanetRadius: number = 1
+  private _initCamAngle: number = -60
 
   // --------------------------------------------------
-
-  public get id() {
-    return this._id
-  }
 
   public get planetName(): string {
     return this._planetName
@@ -37,9 +30,6 @@ export default class LagrangeParameters extends ChangeTracker {
   }
   public get initCamAngle() {
     return this._initCamAngle
-  }
-  public get initPlanetRadius() {
-    return this._initPlanetRadius
   }
 
   // --------------------------------------------------
@@ -90,7 +80,7 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._sunLightColor
   }
   public set sunLightColor(value: Color) {
-    this._sunLightColor = value
+    this._sunLightColor.set(value)
     this.markForChange('_sunLightColor')
   }
   public get sunLightIntensity(): number {
@@ -105,7 +95,7 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._ambLightColor
   }
   public set ambLightColor(value: Color) {
-    this._ambLightColor = value
+    this._ambLightColor.set(value)
     this.markForChange('_ambLightColor')
   }
   public get ambLightIntensity(): number {
@@ -122,6 +112,8 @@ export default class LagrangeParameters extends ChangeTracker {
 
   private _planetGeometryType: GeometryType = GeometryType.SPHERE
   private _planetMeshQuality: number
+
+  private _planetRadius: number
   private _planetAxialTilt: number
   private _planetRotation: number
   private _planetWaterRoughness: number
@@ -147,6 +139,13 @@ export default class LagrangeParameters extends ChangeTracker {
     this.markForChange('_planetMeshQuality')
   }
 
+  public get planetRadius() {
+    return this._planetRadius
+  }
+  public set planetRadius(radius: number) {
+    this._planetRadius = radius
+    this.markForChange('_planetRadius')
+  }
   public get planetAxialTilt() {
     return this._planetAxialTilt
   }
@@ -275,7 +274,7 @@ export default class LagrangeParameters extends ChangeTracker {
   private _cloudsRotation: number
   private _cloudsHeight: number
   private _cloudsNoise: NoiseParameters
-  private _cloudsColor: Color = new Color(0xffffff)
+  private _cloudsColor: Color
   private _cloudsColorRamp: ColorRamp
 
   // --------------------------------------------------
@@ -312,7 +311,7 @@ export default class LagrangeParameters extends ChangeTracker {
     return this._cloudsColor
   }
   public set cloudsColor(value: Color) {
-    this._cloudsColor = value
+    this._cloudsColor.set(value)
     this.markForChange('_cloudsColor')
   }
 
@@ -335,7 +334,9 @@ export default class LagrangeParameters extends ChangeTracker {
   private _atmosphereHeight: number
   private _atmosphereDensityScale: number
   private _atmosphereIntensity: number
+  private _atmosphereColorMode: number
   private _atmosphereHue: number
+  private _atmosphereTint: Color
 
   // --------------------------------------------------
 
@@ -354,7 +355,6 @@ export default class LagrangeParameters extends ChangeTracker {
     this._atmosphereHeight = clamp(value, 1.0, 8.0)
     this.markForChange('_atmosphereHeight')
   }
-
   public get atmosphereDensityScale(): number {
     return this._atmosphereDensityScale
   }
@@ -370,13 +370,26 @@ export default class LagrangeParameters extends ChangeTracker {
     this._atmosphereIntensity = value
     this.markForChange('_atmosphereIntensity')
   }
-
+  public get atmosphereColorMode(): number {
+    return this._atmosphereColorMode
+  }
+  public set atmosphereColorMode(value: number) {
+    this._atmosphereColorMode = value
+    this.markForChange('_atmosphereColorMode')
+  }
   public get atmosphereHue(): number {
     return this._atmosphereHue
   }
   public set atmosphereHue(value: number) {
     this._atmosphereHue = clamp(value, 0.0, 2.0)
     this.markForChange('_atmosphereHue')
+  }
+  public get atmosphereTint(): Color {
+    return this._atmosphereTint
+  }
+  public set atmosphereTint(value: Color) {
+    this._atmosphereTint.set(value)
+    this.markForChange('_atmosphereTint')
   }
 
   // --------------------------------------------------
@@ -400,10 +413,10 @@ export default class LagrangeParameters extends ChangeTracker {
   // |                  Constructor                   |
   // --------------------------------------------------
 
-  constructor() {
+  constructor(defaultName?: string) {
     super()
-    this._id = generateUUID()
-    this._planetName = ''
+    this._defaultPlanetName = defaultName ?? 'New planet'
+    this._planetName = this._defaultPlanetName
 
     this._lensFlareEnabled = true
     this._lensFlarePointsIntensity = 0.25
@@ -416,6 +429,7 @@ export default class LagrangeParameters extends ChangeTracker {
 
     this._planetGeometryType = GeometryType.SPHERE
     this._planetMeshQuality = 48.0
+    this._planetRadius = 1.0
     this._planetAxialTilt = 15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
@@ -462,11 +476,13 @@ export default class LagrangeParameters extends ChangeTracker {
     this._atmosphereHeight = 8.0
     this._atmosphereDensityScale = 2.5
     this._atmosphereIntensity = 1.15
-    this._atmosphereHue = 0
+    this._atmosphereColorMode = ColorMode.REALISTIC
+    this._atmosphereHue = 0.0
+    this._atmosphereTint = new Color(0xffffff)
   }
 
   public reset() {
-    this._planetName = ''
+    this._planetName = this._defaultPlanetName
 
     this._lensFlareEnabled = true
     this._lensFlarePointsIntensity = 0.25
@@ -479,6 +495,7 @@ export default class LagrangeParameters extends ChangeTracker {
 
     this._planetGeometryType = GeometryType.SPHERE
     this._planetMeshQuality = 48.0
+    this._planetRadius = 1.0
     this._planetAxialTilt = 15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
@@ -522,53 +539,85 @@ export default class LagrangeParameters extends ChangeTracker {
     this._atmosphereHeight = 8.0
     this._atmosphereDensityScale = 2.5
     this._atmosphereIntensity = 1.15
+    this._atmosphereColorMode = ColorMode.REALISTIC
     this._atmosphereHue = 0
+    this._atmosphereTint = new Color(0xffffff)
+
     this.markAllForChange()
   }
 
   public loadData(data: any) {
-    if (!data._id) {
-      this._id = generateUUID()
-    }
-    this._planetName = data._planetName.replaceAll('_', ' ')
+    this._planetName = data._planetName?.replaceAll('_', ' ') ?? this._defaultPlanetName
 
-    this._lensFlareEnabled = data._lensFlareEnabled
-    this._lensFlareGlareIntensity = data._lensFlareGlareIntensity
-    this._sunLightAngle = data._sunLightAngle
-    this._sunLightColor.set(numberToHex(data._sunLightColor))
-    this._sunLightIntensity = data._sunLightIntensity
-    this._ambLightColor.set(numberToHex(data._ambLightColor))
-    this._ambLightIntensity = data._ambLightIntensity
+    this._lensFlareEnabled = data._lensFlareEnabled ?? true
+    this._lensFlarePointsIntensity = data._lensFlarePointsIntensity ?? 0.25
+    this._lensFlareGlareIntensity = data._lensFlareGlareIntensity ?? 0.4
+    this._sunLightAngle = data._sunLightAngle ?? -15.0
+    this._sunLightColor.set(data._sunLightColor ?? 0xfff6e8)
+    this._sunLightIntensity = data._sunLightIntensity ?? 10.0
+    this._ambLightColor.set(data._ambLightColor ?? 0xffffff)
+    this._ambLightIntensity = data._ambLightIntensity ?? 0.02
 
-    this._planetAxialTilt = data._planetAxialTilt
-    this._planetRotation = data._planetRotation
-    this._planetWaterRoughness = data._planetWaterRoughness
-    this._planetWaterMetalness = data._planetWaterMetalness
-    this._planetGroundRoughness = data._planetGroundRoughness
-    this._planetGroundMetalness = data._planetGroundMetalness
-    this._planetWaterLevel = data._planetWaterLevel
+    this._planetRadius = data._planetRadius ?? 1.0
+    this._planetAxialTilt = data._planetAxialTilt ?? 15.0
+    this._planetRotation = data._planetRotation ?? 0.0
+    this._planetWaterRoughness = data._planetWaterRoughness ?? 0.55
+    this._planetWaterMetalness = data._planetWaterMetalness ?? 0.5
+    this._planetGroundRoughness = data._planetGroundRoughness ?? 0.8
+    this._planetGroundMetalness = data._planetGroundMetalness ?? 0.1
+    this._planetWaterLevel = data._planetWaterLevel ?? 0.5
 
-    this._planetSurfaceShowBumps = data._planetSurfaceShowBumps
-    this._planetSurfaceBumpStrength = data._planetSurfaceBumpStrength
-    this._planetSurfaceNoise.amplitude = data._planetSurfaceNoise._amplitude
-    this._planetSurfaceNoise.frequency = data._planetSurfaceNoise._frequency
-    this._planetSurfaceNoise.lacunarity = data._planetSurfaceNoise._lacunarity
-    this._planetSurfaceColorRamp.load(data._planetSurfaceColorRamp)
+    this._planetSurfaceShowBumps = data._planetSurfaceShowBumps ?? true
+    this._planetSurfaceBumpStrength = data._planetSurfaceBumpStrength ?? 0.0875
+    this._planetSurfaceNoise.amplitude = data._planetSurfaceNoise._amplitude ?? 3.41
+    this._planetSurfaceNoise.frequency = data._planetSurfaceNoise._frequency ?? 0.5
+    this._planetSurfaceNoise.lacunarity = data._planetSurfaceNoise._lacunarity ?? 2.16
+    this._planetSurfaceColorRamp.loadFromSteps(
+      data._planetSurfaceColorRamp
+        ? data._planetSurfaceColorRamp._steps
+        : [
+            new ColorRampStep(0x061c3f, 0, true),
+            new ColorRampStep(0x0f2851, 0.4),
+            new ColorRampStep(0x1f4178, 0.495),
+            new ColorRampStep(0x2f2e10, 0.5),
+            new ColorRampStep(0x446611, 0.505),
+            new ColorRampStep(0x223b05, 0.65),
+            new ColorRampStep(0x223b05, 1, true),
+          ],
+    )
 
-    this._biomePolesEnabled = data._biomePolesEnabled
-    this._biomesEnabled = data._biomesEnabled
+    this._biomePolesEnabled = data._biomePolesEnabled ?? true
+    this._biomesEnabled = data._biomesEnabled ?? true
 
-    this._cloudsEnabled = data._cloudsEnabled
-    this._cloudsRotation = data._cloudsRotation
-    this._cloudsNoise.amplitude = data._cloudsNoise._amplitude
-    this._cloudsNoise.frequency = data._cloudsNoise._frequency
-    this._cloudsNoise.lacunarity = data._cloudsNoise._lacunarity
-    this._cloudsColor.set(numberToHex(data._cloudsColor))
-    this._cloudsColorRamp.load(data._cloudsColorRamp)
+    this._cloudsEnabled = data._cloudsEnabled ?? true
+    this._cloudsRotation = data._cloudsRotation ?? 0.0
+    this._cloudsNoise.amplitude = data._cloudsNoise._amplitude ?? 4.0
+    this._cloudsNoise.frequency = data._cloudsNoise._frequency ?? 0.6
+    this._cloudsNoise.lacunarity = data._cloudsNoise._lacunarity ?? 1.75
+    this._cloudsColor.set(data._cloudsColor ?? 0xffffff)
+    this._cloudsColorRamp.loadFromSteps(
+      data._cloudsColorRamp
+        ? data._cloudsColorRamp._steps
+        : [
+            new ColorRampStep(0x000000, 0.0, true),
+            new ColorRampStep(0x000000, 0.6),
+            new ColorRampStep(0xbbbbbb, 1.0, true),
+          ],
+    )
 
-    this._atmosphereEnabled = data._atmosphereEnabled
-    this._atmosphereIntensity = data._atmosphereIntensity
-    this._atmosphereHue = data._atmosphereHue
+    this._atmosphereEnabled = data._atmosphereEnabled ?? true
+    this._atmosphereHeight = data._atmosphereHeight ?? 8.0
+    this._atmosphereDensityScale = data._atmosphereDensityScale ?? 2.5
+    this._atmosphereIntensity = data._atmosphereIntensity ?? 1.15
+    this._atmosphereColorMode = data._atmosphereColorMode ?? ColorMode.REALISTIC
+    this._atmosphereHue = data._atmosphereHue ?? 0.0
+    this._atmosphereTint.set(data._atmosphereTint ?? 0xffffff)
     this.markAllForChange()
+  }
+
+  public static createFrom(data: any) {
+    const planetData = new PlanetData()
+    planetData.loadData(data)
+    return planetData
   }
 }

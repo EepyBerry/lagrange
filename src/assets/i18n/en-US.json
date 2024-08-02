@@ -3,12 +3,20 @@
     "$title": "Lagrange",
     "locale": "en-US",
     "language": "English",
-    "more_coming_soon": "More coming soon!"
+    "more_coming_soon": "More coming soon!",
+    "test_message": "pancake hehe :3",
+
+    "nav": {
+      "codex": "Codex",
+      "editor": "Editor"
+    }
   },
   "dialog": {
     "init": {
       "$title": "Welcome to @:main.$title",
       "introduction": "Lagrange is a fully procedural planet builder, perfect for worldbuilding and tying your lore to a proper planet, solar system or even an entire galaxy!",
+      "update_title": "Update 0.2 - World Collector!",
+      "update_brief": "You can now save your planets in the Codex, as well as share them with the new import/export functions! Also includes a lot of UI additions & improvements!",
       "$tmp_wip": "Currently work-in-progress. More features are planned for the next versions!",
 
       "shortcuts": "Shortcuts",
@@ -17,12 +25,14 @@
       "shortcuts_biomes": "Toggle biomes",
       "shortcuts_clouds": "Toggle clouds",
       "shortcuts_atmosphere": "Toggle atmosphere",
+      "shortcuts_screenshot": "Take screenshot",
 
       "topbar": "Top bar - Naming & data",
       "topbar_rename": "Rename planet",
       "topbar_reset": "Reset to defaults",
       "topbar_import": "Import planet",
       "topbar_export": "Export planet",
+      "topbar_export_all": "Export full codex",
 
       "footer": "Footer - Miscellaneous",
       "footer_github": "GitHub page",
@@ -30,6 +40,7 @@
       "footer_about": "About @:main.$title",
 
       "show_next_time": "Show this introduction next time?",
+      "enable_persistence": "Enable browser storage persistence for this app?",
 
       "$action_confirm": "Get started!"
     },
@@ -39,16 +50,32 @@
       "general": "General",
       "general_language": "Language",
       "general_theme": "Choose theme to use",
-      "general_theme_default": "Default",
+      "general_theme_default": "Comet",
       "general_theme_supernova": "Supernova",
       "general_theme_voyager": "Voyager",
       "general_monospace": "Enable monospace font",
 
-      "keybinds": "Key bindings",
-      "keybinds_lensflare": "@:dialog.init.shortcuts_lensflare",
-      "keybinds_biomes": "@:dialog.init.shortcuts_biomes",
-      "keybinds_clouds": "@:dialog.init.shortcuts_clouds",
-      "keybinds_atmosphere": "@:dialog.init.shortcuts_atmosphere"
+      "editor": "Editor",
+      "editor_lensflare": "@:dialog.init.shortcuts_lensflare",
+      "editor_biomes": "@:dialog.init.shortcuts_biomes",
+      "editor_clouds": "@:dialog.init.shortcuts_clouds",
+      "editor_atmosphere": "@:dialog.init.shortcuts_atmosphere",
+      "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
+
+      "a11y": "Accessibility",
+      "a11y_effects": "Enable visual effects",
+      "a11y_animations": "Enable animations",
+
+      "advanced": "Advanced Settings",
+      "advanced_persist": "Persist IndexedDB storage",
+      "advanced_persist_prompt": "Enable",
+      "advanced_persist_success": "Persisted!",
+      "advanced_persist_failure": "Cannot persist!",
+      "advanced_persist_info": "Storage persistence depends on browser rules, and may be deleted without notice if disabled (e.g. in case of low disk space)",
+      "advanced_danger_zone": "Danger Zone!",
+      "advanced_clear_data": "Clear all data",
+
+      "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {
       "description": "A procedural planet-building application.",
@@ -66,7 +93,32 @@
       "warning": "All unsaved data will be lost!",
       "$action_cancel": "Cancel",
       "$action_confirm": "Confirm"
+    },
+    "delete": {
+      "$title": "Delete [{planet}]",
+      "message": "Are you sure you want to delete this planet?",
+      "warning": "This action cannot be undone!",
+      "$action_cancel": "Cancel",
+      "$action_confirm": "Confirm"
+    },
+    "clear_data": {
+      "$title": "Clear Lagrange data",
+      "message": "Are you sure you want to clear all application data?",
+      "warning": "This action cannot be undone!",
+      "$action_cancel": "Cancel",
+      "$action_confirm": "Confirm"
     }
+  },
+  "codex": {
+    "$title": "Planetary Codex",
+    "$action_add": "New planet",
+    "$action_edit": "Edit",
+    "$action_export": "Export",
+
+    "no_planets": "No planets found. You can create one at the top!",
+
+    "topbar_import": "Import planet from file",
+    "topbar_export": "Export all planets"
   },
   "editor": {
     "$title": "Planet Editor",
@@ -95,6 +147,7 @@
         "$title": "Planet & Rendering",
 
         "transform": "Transform",
+        "transform_radius": "Radius",
         "transform_axialtilt": "Axial tilt",
         "transform_rotation": "Rotation",
 
@@ -148,8 +201,13 @@
         "transform_density": "Density",
 
         "rgba": "Color & intensity",
+        "rgba_intensity": "Intensity",
+        "rgba_mode": "Color mode",
+        "rgba_mode_realistic": "Realistic",
+        "rgba_mode_direct": "Direct",
+        "rgba_mode_mixed": "Mixed",
         "rgba_hue": "Hue",
-        "rgba_intensity": "Intensity"
+        "rgba_tint": "Tint"
       }
     }
   },
@@ -159,14 +217,26 @@
     "text_02": "\"This sector is completely empty, Captain!\"",
     "text_03": "Huh. Must've taken a wrong turn somewhere...",
     "text_04": "PAGE\u00A0IS\u00A0MISSING. STATUS\u00A0IS\u00A0404. SPACE\u00A0IS\u00A0VOID.",
-    "subtext": "The requested page could not be found :c"
+    "subtext": "The requested page could not be found."
+  },
+  "toast": {
+    "storage_success": "Persistent storage enabled!",
+    "storage_failure_rules": "Could not enable persistent storage due to browser rules!",
+    "delete_success": "Deleted planet successfully!",
+    "delete_failure": "Could not delete planet",
+    "import_success": "Imported planet(s) successfully!",
+    "import_partial": "Warning: failed to import some planet(s)",
+    "import_failure": "Could not import planets. Please check if the correct files are selected and try again",
+    "save_success": "Saved planet successfully!"
   },
   "tooltip": {
     "topbar_rename": "Rename planet",
     "topbar_rename_confirm": "Confirm planet name",
     "topbar_reset": "Reset to defaults",
+    "topbar_save": "Save planet",
     "topbar_import": "Import planet file",
     "topbar_export": "Export planet file",
+    "topbar_export_all": "Export all planets as .zip",
 
     "footer_github": "GitHub repository (opens in new tab)",
     "footer_settings": "Settings",
@@ -175,36 +245,46 @@
   "a11y": {
     "logo": "Lagrange logo",
     "logo_alt": "Secret Lagrange logo!",
+    "logo_update_codex": "World Collector update",
 
     "dialog_init": "Introduction dialog",
     "dialog_settings": "Settings dialog",
     "dialog_about": "About @:main.$title dialog",
     "dialog_reset": "Confirm reset dialog",
+    "dialog_delete": "Confirm delete dialog",
+    "dialog_clear_data": "Confirm data clear dialog",
 
     "topbar_rename": "@:tooltip.topbar_rename",
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
     "topbar_reset": "@:tooltip.topbar_reset",
+    "topbar_save": "@:tooltip.topbar_save",
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
+    "topbar_export_all": "@:tooltip.topbar_export_all",
 
     "footer_github": "@:tooltip.footer_github",
     "footer_settings": "@:tooltip.footer_settings",
     "footer_about": "@:tooltip.footer_about",
 
-    "general_theme_default": "Set default theme (blue)",
+    "general_theme_default": "Set Comet theme (blue)",
     "general_theme_supernova": "Set Supernova theme (purple)",
     "general_theme_voyager": "Set Voyager theme (orange)",
 
     "editor_generic_input": "Parameter value",
+    "editor_atmosphere_rgba_mode_realistic": "Realistic atmosphere",
+    "editor_atmosphere_rgba_mode_direct": "Direct tone atmosphere",
+    "editor_atmosphere_rgba_mode_mixed": "Mixed atmosphere",
+
+    "action_nav_toggle": "Toggle navigation menu",
+    "action_nav_codex": "Codex link",
+    "action_nav_editor": "Planet Editor link",
 
     "action_edit_keybind": "Edit key binding",
     "action_edit_ramp": "Edit ramp",
-
     "action_open_colorpanel": "Open color panel",
-
     "action_add_colorstep": "Add color step",
     "action_sort_colorsteps": "Sort color steps",
-
-    "action_close_dialog": "Close dialog"
+    "action_close_dialog": "Close dialog",
+    "action_close_toast": "Close message"
   }
 }

@@ -2,7 +2,9 @@
   <DialogElement ref="dialogRef" id="dialog-about" :showTitle="false" :aria-label="$t('a11y.dialog_about')">
     <template v-slot:content>
       <div class="about-grid">
-        <AppLogo />
+        <div class="about-logo">
+          <AppLogo />
+        </div>
         <div class="about-text">
           <p class="highlight">{{ $t('dialog.about.description') }}</p>
           <p>{{ $t('dialog.about.motivation') }}</p>
@@ -63,12 +65,11 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
       'logo crgt';
     gap: 1.5rem;
 
-    #app-logo,
-    #app-logo-uwu {
-      width: 220px;
+    .about-logo {
+      position: relative;
       grid-area: logo;
-      max-width: 16rem;
-      align-self: center;
+      display: flex;
+      justify-content: center;
     }
     .about-text {
       grid-area: text;
@@ -131,12 +132,6 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
         'tech'
         'crgt';
       gap: 1.5rem 0;
-
-      #app-logo,
-      #app-logo-uwu {
-        //display: none;
-        justify-self: center;
-      }
       .about-text > p {
         width: 100%;
         text-align: center;

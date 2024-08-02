@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { EventBus } from '@core/window-event-bus'
+import { EventBus } from '@core/services/event-bus'
 import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue'
 
 const dialog: Ref<HTMLDialogElement | null> = ref(null)
@@ -33,12 +33,12 @@ const handleCancel = (evt: Event) => {
   close()
 }
 const handleClick = (evt: Event) => {
-  if (evt.target === dialog.value) {
+  if (!$props.preventClickClose && evt.target === dialog.value) {
     close()
   }
 }
 
-defineProps<{ showTitle?: boolean; showActions?: boolean }>()
+const $props = defineProps<{ showTitle?: boolean; showActions?: boolean; preventClickClose?: boolean }>()
 onMounted(() => {
   dialog.value?.addEventListener('click', handleClick)
   dialog.value?.addEventListener('cancel', handleCancel)

@@ -144,8 +144,9 @@ export class LensFlareEffect {
       this._material.uniforms.lensPosition.value.set(this._flarePosition.x, this._flarePosition.y)
     }
 
+    const planet = scene.getObjectByName(LG_NAME_PLANET)!
     this._raycaster.setFromCamera(new THREE.Vector2(projectedPosition.x, projectedPosition.y), camera)
-    const intersects = this._raycaster.intersectObjects([scene.getObjectByName(LG_NAME_PLANET)!], false)
+    const intersects = this._raycaster.intersectObjects([planet], false)
     this.checkTransparency(intersects)
 
     this._material.uniforms.iTime.value += dt

@@ -14,6 +14,31 @@ vec3 color_ramp(vec3 colors[16], float positions[16], int ramp_size, float fac) 
   return mix(colors[pos_idx], colors[pos_idx+1], lerpFac);
 }
 
+// ------------------------------------------------------------------------------------------------
+
+mat4 tint_to_matrix(vec4 tint) {
+  return mat4(
+    vec4(tint.x, 0.0,    0.0,    0.0),
+    vec4(0.0,    tint.y, 0.0,    0.0),
+    vec4(0.0,    0.0,    tint.z, 0.0),
+    vec4(0.0,    0.0,    0.0,    tint.w)
+  );
+}
+
+vec4 greyscale(vec4 color) {
+  return color * mat4(
+    vec4(0.2126, 0.7152, 0.0722, 0.0),
+    vec4(0.2126, 0.7152, 0.0722, 0.0),
+    vec4(0.2126, 0.7152, 0.0722, 0.0),
+    vec4(0.0,    0.0,    0.0,    1.0)
+  );
+}
+
+// basically greyscale but cranked to white
+vec4 whitescale(vec4 color) {
+  return greyscale(color) * 2.0;
+}
+
 // From: https://gist.github.com/mairod/a75e7b44f68110e1576d77419d608786?permalink_comment_id=3195243#gistcomment-3195243
 vec3 hue_shift(vec3 color, float dhue) {
   float s = sin(dhue);

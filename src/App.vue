@@ -2,8 +2,14 @@
   <main>
     <RouterView></RouterView>
   </main>
+  <AppToastBar />
   <AppFooter />
-  <AppInitDialog ref="dialogInit" :keybinds="keybinds" @disable-init-dialog="disableInitDialog" />
+  <AppInitDialog
+    ref="dialogInit"
+    :keybinds="keybinds"
+    @disable-init-dialog="disableInitDialog"
+    @enable-persistence="enablePersistence"
+  />
 </template>
 
 <script setup lang="ts">
@@ -15,6 +21,9 @@ import AppInitDialog from '@components/dialogs/AppInitDialog.vue'
 import { useI18n } from 'vue-i18n'
 import { mapLocale } from './utils/utils'
 import { useHead } from '@unhead/vue'
+import { A11Y_ANIMATE } from './core/globals'
+import AppToastBar from './components/main/AppToastBar.vue'
+import { EventBus } from './core/services/event-bus'
 
 const i18n = useI18n()
 useHead({
@@ -27,8 +36,9 @@ const keybinds: Ref<IDBKeyBinding[]> = ref([])
 const settings: Ref<IDBSettings | undefined> = ref(undefined)
 
 onMounted(async () => {
+  await DexieUtils.initStoragePersistence()
   await initDexie()
-  keybinds.value = await idb.keyBindings.limit(4).toArray()
+  keybinds.value = await idb.keyBindings.toArray()
   settings.value = await idb.settings.limit(1).first()
 
   // Set locale
@@ -44,6 +54,10 @@ onMounted(async () => {
   }
   await idb.settings.update(settings.value!.id, { locale: mapLocale(i18n.locale.value) })
 
+  // Set initial global values
+  A11Y_ANIMATE.value = settings.value?.enableAnimations!
+
+  // Open init dialog if necessary
   if (settings.value?.showInitDialog) {
     dialogInit.value?.open()
   }
@@ -54,6 +68,7 @@ async function initDexie() {
   if (!settings) {
     console.debug('No settings found in IndexedDB, adding defaults')
     await DexieUtils.addDefaultSettings()
+    settings = await idb.settings.limit(1).first()
   }
 
   let kb = await idb.keyBindings.limit(4).toArray()
@@ -61,12 +76,22 @@ async function initDexie() {
     console.debug('No keybinds found in IndexedDB, adding defaults')
     await DexieUtils.addDefaultKeyBindings()
   }
-  document.documentElement.setAttribute('data-theme', settings?.theme ?? 'default')
-  document.documentElement.setAttribute('data-font', settings?.font ?? 'default')
+  document.documentElement.setAttribute('data-theme', settings!.theme ?? 'default')
+  document.documentElement.setAttribute('data-font', settings!.font ?? 'default')
+  document.documentElement.setAttribute('data-effects', settings!.enableEffects ? 'on' : 'off')
 }
 
 async function disableInitDialog() {
   await idb.settings.update(settings.value!.id, { showInitDialog: false }).catch((err) => console.error(err))
+}
+
+async function enablePersistence() {
+  const enabled = await navigator.storage.persist()
+  if (enabled) {
+    EventBus.sendToastEvent('success', 'toast.storage_success', 3000)
+  } else {
+    EventBus.sendToastEvent('warn', 'toast.storage_failure_rules', 3000)
+  }
 }
 </script>
 
@@ -75,5 +100,7 @@ main {
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  background: transparent;
 }
 </style>

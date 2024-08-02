@@ -13,4 +13,10 @@ table {
   border-collapse: separate;
   border-spacing: 0 2px;
 }
+@media screen and (max-width: 1023px) {
+  table {
+    border-spacing: 0 8px;
+    font-size: 1rem;
+  }
+}
 </style>
