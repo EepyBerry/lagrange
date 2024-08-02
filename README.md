@@ -36,26 +36,23 @@ Vite copies the output to the `dist` folder, creating it first if need be.
 
 ## 📋 Current Features
 
-| Category              | Subcategory      | Available functions                                                 | Notes                |
-| --------------------- | ---------------- | ------------------------------------------------------------------- | -------------------- |
-| **Lighting Settings** | Sunlight         | angle, color, intensity                                             |                      |
-|                       | Ambient light    | color, intensity                                                    |                      |
-| **Planet Settings**   | Transform        | axial tilt, rotation                                                |                      |
-|                       | PBR Parameters   | water level, water roughness/metalness, surface roughness/metalness |                      |
-| **Surface**           | Bump-map         | toggle, strength                                                    |                      |
-|                       | Noise Parameters | frequency, amplitude, lacunarity, color ramp                        | fBM only             |
-| **Biomes**            | -                | toggle, show poles                                                  | see planned features |
-| **Clouds**            | Transform        | rotation                                                            |                      |
-|                       | Noise Parameters | frequency, amplitude, lacunarity                                    |                      |
-|                       | Color & Opacity  | color, opacity ramp                                                 |                      |
-| **Atmosphere**        | -                | toggle                                                              |                      |
+### Codex
+- 📋 Create, import & export your planets! (now set as the landing page)
+- 🔎 See previews of your creations!
+
+### Editor
+- ☀️ **Lighting parameters!** (sunlight, ambient light)
+- 🌍 **Planet & Rendering parameters!** (transform, PBR, water level)
+- 🗺️ **Surface parameters!** (bumps, noise settings, color)
+- ⛰️ **Biome parameters!** (🚧 poles)
+- ☁️ **Clouds parameters!** (transform, color, opacity)
+- 🌈 **Atmosphere parameters!** (density, color)
 
 ## ⏰ Planned features
 
 - More biomes!
 - Cracks & Craters!
 - Gas Giants!
-- _Planetary Codex_, to view all your planets at once!
 - _Galactic Map_, to organize them around stars!
 
 ## ✨ Inspirations
