@@ -4,7 +4,12 @@
   </main>
   <AppToastBar />
   <AppFooter />
-  <AppInitDialog ref="dialogInit" :keybinds="keybinds" @disable-init-dialog="disableInitDialog" @enable-persistence="enablePersistence" />
+  <AppInitDialog
+    ref="dialogInit"
+    :keybinds="keybinds"
+    @disable-init-dialog="disableInitDialog"
+    @enable-persistence="enablePersistence"
+  />
 </template>
 
 <script setup lang="ts">

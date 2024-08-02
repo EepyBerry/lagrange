@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-shader-material/vanilla'
 import { GeometryType } from '../types'
 import { LG_PLANET_DATA } from '../services/planet-editor.service'
@@ -82,11 +82,7 @@ export function createGeometryComponent(type: GeometryType, addtlRadius: number 
         LG_PLANET_DATA.value.planetMeshQuality * 4.0,
       )
     case GeometryType.BOX:
-      return new THREE.BoxGeometry(
-        1.0 * 1.5 + addtlRadius,
-        1.0 * 1.5 + addtlRadius,
-        1.0 * 1.5 + addtlRadius,
-      )
+      return new THREE.BoxGeometry(1.0 * 1.5 + addtlRadius, 1.0 * 1.5 + addtlRadius, 1.0 * 1.5 + addtlRadius)
   }
 }
 

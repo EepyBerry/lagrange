@@ -81,28 +81,32 @@
           <template v-slot:content>
             <div class="settings-editor">
               <ParameterTable>
-                <ParameterKeyBinding icon="mingcute:sun-line"
+                <ParameterKeyBinding
+                  icon="mingcute:sun-line"
                   :key-bind="getKeyBind('toggle-lens-flare')"
                   :selected="selectedAction === 'toggle-lens-flare'"
                   @toggle="toggleAction('toggle-lens-flare')"
                 >
                   {{ $t('dialog.settings.editor_lensflare') }}
                 </ParameterKeyBinding>
-                <ParameterKeyBinding icon="mingcute:mountain-2-line"
+                <ParameterKeyBinding
+                  icon="mingcute:mountain-2-line"
                   :key-bind="getKeyBind('toggle-biomes')"
                   :selected="selectedAction === 'toggle-biomes'"
                   @toggle="toggleAction('toggle-biomes')"
                 >
                   {{ $t('dialog.settings.editor_biomes') }}
                 </ParameterKeyBinding>
-                <ParameterKeyBinding icon="mingcute:clouds-line"
+                <ParameterKeyBinding
+                  icon="mingcute:clouds-line"
                   :key-bind="getKeyBind('toggle-clouds')"
                   :selected="selectedAction === 'toggle-clouds'"
                   @toggle="toggleAction('toggle-clouds')"
                 >
                   {{ $t('dialog.settings.editor_clouds') }}
                 </ParameterKeyBinding>
-                <ParameterKeyBinding icon="material-symbols:line-curve-rounded"
+                <ParameterKeyBinding
+                  icon="material-symbols:line-curve-rounded"
                   :key-bind="getKeyBind('toggle-atmosphere')"
                   :selected="selectedAction === 'toggle-atmosphere'"
                   @toggle="toggleAction('toggle-atmosphere')"
@@ -110,7 +114,8 @@
                   {{ $t('dialog.settings.editor_atmosphere') }}
                 </ParameterKeyBinding>
                 <ParameterDivider />
-                <ParameterKeyBinding icon="mingcute:screenshot-line"
+                <ParameterKeyBinding
+                  icon="mingcute:screenshot-line"
                   :key-bind="getKeyBind('take-screenshot')"
                   :selected="selectedAction === 'take-screenshot'"
                   @toggle="toggleAction('take-screenshot')"
@@ -161,7 +166,12 @@
                   <td style="width: 100%">{{ $t('dialog.settings.advanced_persist') }}:</td>
                   <td style="text-wrap: nowrap">
                     <button class="lg" :disabled="!!persistStorage || failedToPersist" @click="tryPersistStorage">
-                      {{ $t('dialog.settings.advanced_persist_' + (persistStorage ? 'success' : failedToPersist ? 'failure' : 'prompt')) }}
+                      {{
+                        $t(
+                          'dialog.settings.advanced_persist_' +
+                            (persistStorage ? 'success' : failedToPersist ? 'failure' : 'prompt'),
+                        )
+                      }}
                     </button>
                   </td>
                 </tr>
@@ -178,7 +188,7 @@
                 <ParameterDivider />
                 <tr>
                   <td colspan="2">
-                    <button class="lg warn" style="width: 100%;" @click="confirmDialogRef?.open()">
+                    <button class="lg warn" style="width: 100%" @click="confirmDialogRef?.open()">
                       <iconify-icon icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
                       {{ $t('dialog.settings.advanced_clear_data') }}
                     </button>
@@ -218,8 +228,16 @@ import { EventBus } from '@/core/services/event-bus'
 const i18n = useI18n()
 
 const confirmDialogRef: Ref<{ open: Function } | null> = ref(null)
-const dialogRef: Ref<{ open: Function; close: Function; ignoreNativeEvents: Function; isOpen: boolean } | null> = ref(null)
-const appSettings: Ref<IDBSettings> = ref({ id: 0, locale: 'en-US', theme: '', font: '', enableAnimations: true, enableEffects: true })
+const dialogRef: Ref<{ open: Function; close: Function; ignoreNativeEvents: Function; isOpen: boolean } | null> =
+  ref(null)
+const appSettings: Ref<IDBSettings> = ref({
+  id: 0,
+  locale: 'en-US',
+  theme: '',
+  font: '',
+  enableAnimations: true,
+  enableEffects: true,
+})
 const persistStorage: Ref<boolean> = ref(false)
 const selectedAction: Ref<string | null> = ref(null)
 const keyBinds: Ref<IDBKeyBinding[]> = ref([])
@@ -243,15 +261,21 @@ onMounted(async () => {
 })
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-watch([() => appSettings.value, () => dialogRef.value?.isOpen], ([_, isDialogOpen]) => {
-  if (!dataLoaded) { return }
-  updateSettings()
-  if (!isDialogOpen && selectedAction.value) {
-    const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value)
-    keyBinds.value[kbidx].key = '[unset]'
-    toggleAction(selectedAction.value)
-  }
-}, { deep: true })
+watch(
+  [() => appSettings.value, () => dialogRef.value?.isOpen],
+  ([_, isDialogOpen]) => {
+    if (!dataLoaded) {
+      return
+    }
+    updateSettings()
+    if (!isDialogOpen && selectedAction.value) {
+      const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value)
+      keyBinds.value[kbidx].key = '[unset]'
+      toggleAction(selectedAction.value)
+    }
+  },
+  { deep: true },
+)
 
 async function loadData() {
   let settings = await idb.settings.limit(1).first()
@@ -286,13 +310,13 @@ async function updateSettings() {
   document.documentElement.setAttribute('data-font', appSettings.value!.font)
   document.documentElement.setAttribute('data-effects', appSettings.value!.enableEffects ? 'on' : 'off')
   A11Y_ANIMATE.value = appSettings.value!.enableAnimations!
-  
+
   await idb.settings.update(appSettings.value!.id, {
     locale: mapLocale(appSettings.value!.locale),
     theme: appSettings.value!.theme,
     font: appSettings.value!.font,
     enableEffects: appSettings.value!.enableEffects,
-    enableAnimations: appSettings.value!.enableAnimations
+    enableAnimations: appSettings.value!.enableAnimations,
   })
 }
 
@@ -327,7 +351,7 @@ async function setSelectedActionKey(event: KeyboardEvent) {
 }
 
 function getKeyBind(action: string) {
-  return keyBinds.value.find(kb => kb.action === action)
+  return keyBinds.value.find((kb) => kb.action === action)
 }
 </script>
 

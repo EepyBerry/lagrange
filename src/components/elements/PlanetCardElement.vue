@@ -1,13 +1,20 @@
 <template>
   <div class="planet-card" ref="cardRoot">
     <div class="planet-preview">
-      <img v-if="planet.preview" class="planet-image" :src="planet.preview" :aria-label="planet.data.planetName" :alt="planet.data.planetName" />
+      <img
+        v-if="planet.preview"
+        class="planet-image"
+        :src="planet.preview"
+        :aria-label="planet.data.planetName"
+        :alt="planet.data.planetName"
+      />
       <iconify-icon v-else icon="ph:planet-thin" width="auto" />
       <span class="crt" :class="{ animated: A11Y_ANIMATE }"></span>
     </div>
     <p class="planet-name">{{ planet.data.planetName }}</p>
     <div class="actions">
-      <RouterLink :to="'/planet-editor/'+planet.id"
+      <RouterLink
+        :to="'/planet-editor/' + planet.id"
         class="lg link-button"
         :aria-label="$t('a11y.topbar_export')"
         :title="$t('tooltip.topbar_export')"
@@ -24,7 +31,7 @@
         <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
         {{ $t('codex.$action_export') }}
       </button>
-      <hr>
+      <hr />
       <button
         class="lg warn"
         :aria-label="$t('a11y.topbar_export')"
@@ -38,10 +45,10 @@
 </template>
 
 <script setup lang="ts">
-import { A11Y_ANIMATE } from '@/core/globals';
-import { type IDBPlanet } from '@/dexie.config';
-import { onMounted, ref, type Ref } from 'vue';
-import { RouterLink } from 'vue-router';
+import { A11Y_ANIMATE } from '@/core/globals'
+import { type IDBPlanet } from '@/dexie.config'
+import { onMounted, ref, type Ref } from 'vue'
+import { RouterLink } from 'vue-router'
 
 const cardRoot: Ref<HTMLElement | null> = ref(null)
 
@@ -57,7 +64,6 @@ function emitExportEvent() {
 function emitDeleteEvent() {
   $emit('delete')
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -109,7 +115,8 @@ function emitDeleteEvent() {
     hr {
       height: 1.5rem;
     }
-    & > .lg:not(.warn), & > a {
+    & > .lg:not(.warn),
+    & > a {
       flex: 1;
     }
     & > .lg {

@@ -37,9 +37,11 @@ import { ref, type Ref } from 'vue'
 const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
 
 const $emit = defineEmits(['confirm'])
-defineExpose({ open: () => {
-  dialogRef.value?.open()
-}})
+defineExpose({
+  open: () => {
+    dialogRef.value?.open()
+  },
+})
 
 function cancelAndClose() {
   dialogRef.value?.close()

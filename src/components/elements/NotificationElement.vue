@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import type { InfoLevel } from '@/core/types';
+import type { InfoLevel } from '@/core/types'
 
 defineProps<{ type: InfoLevel }>()
 </script>

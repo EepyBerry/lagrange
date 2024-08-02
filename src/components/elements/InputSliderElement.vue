@@ -13,7 +13,7 @@
       />
       <span class="rgb"></span>
     </div>
-    
+
     <input
       :aria-labelledby="iid"
       class="lg"
@@ -172,7 +172,7 @@ input.lg[type='range'] {
       cursor: pointer;
     }
   }
-  
+
   .lg-input-wrapper.rgb {
     .lg-input-wrapper-slider > input.lg[type='range'] {
       height: calc(2rem - 4px);

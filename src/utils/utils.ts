@@ -29,8 +29,9 @@ export function getPlanetMetaTitle(planetName: string, i18n: Composer): string {
   return `[${planetName}]` + ' · ' + i18n.t('main.$title')
 }
 
-
-
 export function prefersReducedMotion() {
-  return window.matchMedia(`(prefers-reduced-motion: reduce)`).matches || window.matchMedia(`(prefers-reduced-motion: reduce)`).matches
+  return (
+    window.matchMedia(`(prefers-reduced-motion: reduce)`).matches ||
+    window.matchMedia(`(prefers-reduced-motion: reduce)`).matches
+  )
 }

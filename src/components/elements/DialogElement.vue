@@ -38,7 +38,7 @@ const handleClick = (evt: Event) => {
   }
 }
 
-const $props = defineProps<{ showTitle?: boolean; showActions?: boolean, preventClickClose?: boolean }>()
+const $props = defineProps<{ showTitle?: boolean; showActions?: boolean; preventClickClose?: boolean }>()
 onMounted(() => {
   dialog.value?.addEventListener('click', handleClick)
   dialog.value?.addEventListener('cancel', handleCancel)

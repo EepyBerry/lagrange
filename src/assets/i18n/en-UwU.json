@@ -16,7 +16,7 @@
       "$title": "Wewcome :3 t-to @:main.$title",
       "introduction": "Wagwange is a fuwwy pwoceduwaw pwanyet buiwdew, pewfect fow wowwdbuiwding and tying youw wowe t-to a pwopew pwanyet, sowaw system o-ow even an entiwe gawaxy! (・`ω´・)",
       "update_title": "Update 0.2 - Worwd Cowwector!",
-      "update_brief": "You can now s-save your pwanyets wocawwy, a-as weww as shawe them with the new impowt/expowt functions! Pwus, thewe's a host of shiny new impwovements as a bonus! ^w^",
+      "update_brief": "You can now s-save your pwanyets in the Codex, a-as weww as shawe them with the new impowt/expowt functions!!! Awso incwudes a wot of UI additions & impwovemyents!!! ^w^",
       "$tmp_wip": "Cuwwentwy wowk-in-pwogwess. M-Mowe featuwes awe pwannyed fow the nyext vewsions! x3",
 
       "shortcuts": "Showtcuts",
@@ -74,7 +74,7 @@
       "advanced_persist_info": "S-stowage pewsistence depends on bwowsew wules, a-and may be deweted without nyotice if disabwed!!! (e.g. in case of w-wow disk space)",
       "advanced_danger_zone": "Danger Zone!",
       "advanced_clear_data": "Clear all data",
-      
+
       "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {

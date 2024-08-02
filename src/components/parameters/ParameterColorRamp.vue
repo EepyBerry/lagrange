@@ -136,7 +136,7 @@
 import { ref, watch, type Ref } from 'vue'
 import { ColorPicker } from 'vue-accessible-color-picker'
 import InputSliderElement from '../elements/InputSliderElement.vue'
-import type { ColorRamp } from '@/core/models/color-ramp.model';
+import type { ColorRamp } from '@/core/models/color-ramp.model'
 
 const lgColorRamp = defineModel<ColorRamp>() // type here is actually ColorRamp, ts-plugin doesn't like proxied objects in templates...
 

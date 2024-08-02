@@ -10,7 +10,7 @@ export enum NoiseType {
 export enum ColorMode {
   REALISTIC,
   DIRECT,
-  MIXED
+  MIXED,
 }
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'

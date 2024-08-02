@@ -6,7 +6,7 @@ import enUwU from '@assets/i18n/en-UwU.json'
 const I18N_SUPPORTED_LANGS = ['en', 'en-US', 'en-UwU'] as const
 
 type IntlSchema = typeof enUS
-type IntlSupportedLangs = typeof I18N_SUPPORTED_LANGS[number]
+type IntlSupportedLangs = (typeof I18N_SUPPORTED_LANGS)[number]
 
 const i18n = createI18n<[IntlSchema], IntlSupportedLangs>({
   legacy: false,

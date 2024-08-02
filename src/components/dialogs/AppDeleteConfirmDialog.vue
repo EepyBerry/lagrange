@@ -38,10 +38,12 @@ const planet = ref('')
 const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
 
 const $emit = defineEmits(['confirm'])
-defineExpose({ open: (p: string) => {
-  planet.value = p
-  dialogRef.value?.open()
-}})
+defineExpose({
+  open: (p: string) => {
+    planet.value = p
+    dialogRef.value?.open()
+  },
+})
 
 function cancelAndClose() {
   planet.value = ''

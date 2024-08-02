@@ -55,7 +55,6 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
 
 <style scoped lang="scss">
 #dialog-about {
-
   .about-grid {
     display: grid;
     grid-template-columns: auto 1fr;

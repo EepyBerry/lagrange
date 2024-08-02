@@ -14,7 +14,7 @@
         :max="max ?? 10"
         :step="step ?? 1"
         :disabled="disabled"
-        v-model="(lgParam as number)"
+        v-model="lgParam as number"
       />
     </td>
   </tr>
@@ -24,7 +24,7 @@
 import InputSliderElement from '../elements/InputSliderElement.vue'
 const lgParam = defineModel<string | number | boolean>()
 
-type SliderExtras = 'rgb' | undefined;
+type SliderExtras = 'rgb' | undefined
 defineProps<{ id: string; step?: number; min?: number; max?: number; extras?: SliderExtras; disabled?: boolean }>()
 </script>
 
