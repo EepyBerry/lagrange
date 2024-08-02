@@ -1,6 +1,6 @@
 {
   "name": "lagrange",
-  "version": "0.2.0",
+  "version": "0.2.0a",
   "private": true,
   "type": "module",
   "scripts": {
