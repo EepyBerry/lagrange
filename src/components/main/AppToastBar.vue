@@ -50,6 +50,7 @@ function closeToast() {
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 }
 @media screen and (max-width: 1199px) {
   #toast-bar {
