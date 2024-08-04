@@ -81,8 +81,17 @@
       "description": "A pwoceduwaw pwanyet-buiwding appwication!!! >w<",
       "motivation": "Made as a p-pet pwoject *blushes* t-to matewiawize my fascinyation with space & pwanyets!",
 
+      "tech": "Main toows & libwawies behind this p-pwoject x3",
       "prefix_engine": "3D u-using",
       "prefix_framework": "Powewed by",
+
+      "changelogs": {
+        "$title": "Main featuwe changewogs",
+        "02_title": "Update 0.2 - Wowwd Cowwectow",
+        "02_codex": "I-intwoduces the [Codex]: wist, impowt and expowt pwanyets easiwy a-and entiwewy within youw bwowsew!!!",
+        "02_ui": "New diawog boxes, toasts & settings, a-and new editow pawametews (wadius, a-atmosphewe)!!!",
+        "02_a11y": "Accessibiwity featuwes & impwovements!!!"
+      },
 
       "built_with_love": "Buiwt with 🏳️‍🌈 & ❤️",
       "license": "BSD 3-Cwause Wicense"
@@ -112,8 +121,9 @@
   "codex": {
     "$title": "Pwanyetawy Codex >:3",
     "$action_add": "Nyew pwanyet !!!",
-    "$action_edit": "Edit x3",
-    "$action_export": "Expowt :O",
+    "$action_edit": "Edit {planet} x3",
+    "$action_export": "Expowt {planet} :O",
+    "$action_delete": "Dewete {planet} ;w;",
 
     "no_planets": "No pwanyets found... (っ- ‸ - ς). Y-you can cweate one at the top !!! x3",
 

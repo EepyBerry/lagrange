@@ -81,8 +81,17 @@
       "description": "A procedural planet-building application.",
       "motivation": "Made as a pet project to materialize my fascination with space & planets!",
 
-      "prefix_engine": "3D using",
+      "tech": "Main tools & libraries behind this project",
       "prefix_framework": "Powered by",
+      "prefix_engine": "3D using",
+
+      "changelogs": {
+        "$title": "Main feature changelogs",
+        "02_title": "Update 0.2 - World Collector",
+        "02_codex": "Introduces the [Codex]: list, import and export planets easily and entirely within your browser!",
+        "02_ui": "New dialog boxes, toasts & settings, and new editor parameters (radius, atmosphere)",
+        "02_a11y": "Accessibility features & improvements"
+      },
 
       "built_with_love": "Built with 🏳️‍🌈 & ❤️",
       "license": "BSD 3-Clause License"
@@ -112,8 +121,9 @@
   "codex": {
     "$title": "Planetary Codex",
     "$action_add": "New planet",
-    "$action_edit": "Edit",
-    "$action_export": "Export",
+    "$action_edit": "Edit {planet}",
+    "$action_export": "Export {planet}",
+    "$action_delete": "Delete {planet}",
 
     "no_planets": "No planets found. You can create one at the top!",
 

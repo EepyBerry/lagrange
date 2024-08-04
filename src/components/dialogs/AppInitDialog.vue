@@ -17,7 +17,7 @@
               <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
               {{ $t('dialog.init.$title') }}!
             </h2>
-            <p>
+            <p class="intro-text">
               {{ $t('dialog.init.introduction') }}
             </p>
             <br />
@@ -202,6 +202,7 @@ function doClose() {
         gap: 2rem;
         align-items: center;
         justify-content: flex-end;
+        text-align: end;
       }
     }
   }
@@ -290,12 +291,19 @@ function doClose() {
           justify-content: center;
           font-size: 1.25rem;
         }
+        .intro-text {
+          text-align: center;
+        }
       }
 
       .init-checkbox {
         text-align: start;
         justify-content: space-between;
         gap: 1rem;
+      }
+
+      .init-actions {
+        align-items: unset;
       }
     }
     .controls {

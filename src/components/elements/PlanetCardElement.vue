@@ -9,23 +9,27 @@
         :alt="planet.data.planetName"
       />
       <iconify-icon v-else icon="ph:planet-thin" width="auto" />
-      <span class="crt" :class="{ animated: A11Y_ANIMATE }"></span>
+      <span
+        class="crt"
+        :class="{ animated: A11Y_ANIMATE }"
+        :style="{ width: `${planet.data.planetRadius * 15.5}rem`, height: `${planet.data.planetRadius * 15.5}rem` }"
+      ></span>
     </div>
     <p class="planet-name">{{ planet.data.planetName }}</p>
     <div class="actions">
       <RouterLink
         :to="'/planet-editor/' + planet.id"
         class="lg link-button"
-        :aria-label="$t('a11y.topbar_export')"
-        :title="$t('tooltip.topbar_export')"
+        :aria-label="$t('codex.$action_edit', { planet: planet.data.planetName })"
+        :title="$t('codex.$action_edit', { planet: planet.data.planetName })"
       >
         <iconify-icon icon="mingcute:edit-2-line" width="1.5rem" aria-hidden="true" />
         {{ $t('codex.$action_edit') }}
       </RouterLink>
       <button
         class="lg"
-        :aria-label="$t('a11y.topbar_export')"
-        :title="$t('tooltip.topbar_export')"
+        :aria-label="$t('codex.$action_export', { planet: planet.data.planetName })"
+        :title="$t('codex.$action_export', { planet: planet.data.planetName })"
         @click="emitExportEvent"
       >
         <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
@@ -34,8 +38,8 @@
       <hr />
       <button
         class="lg warn"
-        :aria-label="$t('a11y.topbar_export')"
-        :title="$t('tooltip.topbar_export')"
+        :aria-label="$t('codex.$action_delete', { planet: planet.data.planetName })"
+        :title="$t('codex.$action_delete', { planet: planet.data.planetName })"
         @click="emitDeleteEvent"
       >
         <iconify-icon icon="mingcute:delete-2-line" width="1.5rem" aria-hidden="true" />
@@ -90,7 +94,11 @@ function emitDeleteEvent() {
   .planet-preview {
     position: relative;
     color: var(--lg-text);
-    max-height: 16rem;
+    width: 16rem;
+    height: 16rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .planet-image {
       max-width: 16rem;

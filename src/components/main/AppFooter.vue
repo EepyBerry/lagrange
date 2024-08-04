@@ -40,8 +40,8 @@
 import { ref, type Ref } from 'vue'
 import AppAboutDialog from '@components/dialogs/AppAboutDialog.vue'
 import AppSettingsDialog from '@components/dialogs/AppSettingsDialog.vue'
-const infoDialog: Ref<{ open: Function } | null> = ref(null)
-const settingsDialog: Ref<{ open: Function } | null> = ref(null)
+const infoDialog: Ref<{ open: Function; close: Function } | null> = ref(null)
+const settingsDialog: Ref<{ open: Function; close: Function } | null> = ref(null)
 </script>
 
 <style lang="scss">

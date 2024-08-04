@@ -75,7 +75,6 @@ dialog[open].lg {
   border-radius: 4px;
   padding: 1rem;
   margin: auto;
-  max-width: 90%;
   color: var(--lg-text);
 
   display: flex;
@@ -94,6 +93,7 @@ dialog[open].lg {
     }
 
     button.dialog-close {
+      z-index: 1;
       position: absolute;
       top: 0.5rem;
       right: 0.5rem;

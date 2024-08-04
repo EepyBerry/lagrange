@@ -3,7 +3,7 @@
   <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
     <AppNavigation :compact-mode="showCompactNavigation" />
     <div id="codex-header-controls">
-      <RouterLink class="lg dark create-planet" to="/planet-editor/new">
+      <RouterLink class="lg dark create-planet" to="/planet-editor/new" :title="$t('codex.$action_add')">
         <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
         {{ $t('codex.$action_add') }}
       </RouterLink>
@@ -27,7 +27,7 @@
       </button>
     </div>
   </div>
-  <div v-if="planets.length > 0" id="codex-grid" router-link="/planet-editor/new">
+  <div v-if="planets.length > 0" id="codex-grid">
     <PlanetCardElement
       v-for="planet of planets"
       :key="planet.id"
@@ -35,12 +35,13 @@
       @export="exportPlanet(planet)"
       @delete="openDeleteConfirmDialog(planet)"
     />
+    <NewCardElement />
   </div>
   <div v-else id="codex-grid" class="empty">
     <iconify-icon icon="ph:planet-thin" width="16rem" />
     <span>{{ $t('codex.no_planets') }}</span>
   </div>
-  <div id="codex-footer">
+  <div v-if="showInlineFooter" id="codex-footer">
     <InlineFooter />
   </div>
   <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="deleteTargetedPlanet" />
@@ -57,11 +58,12 @@ import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 import { EventBus } from '@/core/services/event-bus'
-import { MD_WIDTH_THRESHOLD } from '@/core/globals'
+import { MD_WIDTH_THRESHOLD, SM_WIDTH_THRESHOLD } from '@/core/globals'
 import pako from 'pako'
 import { saveAs } from 'file-saver'
 import PlanetData from '@/core/models/planet-data.model'
 import JSZip from 'jszip'
+import NewCardElement from '@/components/elements/NewCardElement.vue'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
@@ -70,6 +72,7 @@ const planets: Ref<IDBPlanet[]> = ref([])
 const deleteTarget: Ref<IDBPlanet | null> = ref(null)
 const deleteDialogRef: Ref<{ open: Function } | null> = ref(null)
 const showCompactNavigation: Ref<boolean> = ref(false)
+const showInlineFooter: Ref<boolean> = ref(false)
 
 useHead({
   title: i18n.t('codex.$title') + ' · ' + i18n.t('main.$title'),
@@ -102,6 +105,7 @@ function onWindowResize() {
 
 function computeResponsiveness() {
   showCompactNavigation.value = window.innerWidth < MD_WIDTH_THRESHOLD
+  showInlineFooter.value = window.innerWidth < SM_WIDTH_THRESHOLD
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -208,10 +212,12 @@ async function deleteTargetedPlanet() {
 }
 #codex-header {
   z-index: 15;
-  position: absolute;
+  position: fixed;
+  backdrop-filter: blur(8px) brightness(50%);
   inset: 0 0 auto 0;
 
-  margin: 1rem;
+  padding: 1rem;
+  margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -271,8 +277,8 @@ async function deleteTargetedPlanet() {
   }
 }
 #codex-footer {
+  display: inline-flex;
   padding: 0 1rem 1rem;
-  display: none;
   flex-direction: column;
   justify-content: center;
   width: 100%;
@@ -283,7 +289,7 @@ async function deleteTargetedPlanet() {
     background-image: url('/background/space-960w.jpg');
   }
   #codex-header {
-    margin: 0.5rem;
+    padding: 0.5rem;
     #codex-header-controls {
       justify-content: flex-end;
     }
@@ -298,11 +304,10 @@ async function deleteTargetedPlanet() {
     background-image: url('/background/space-540w.jpg');
   }
   #codex-grid {
-    padding: 0.5rem;
     margin: 3.75rem 0.5rem 0;
+    padding-bottom: 0.5rem;
   }
   #codex-footer {
-    display: inline-flex;
     padding: 0 0.5rem 0.5rem;
   }
 }
