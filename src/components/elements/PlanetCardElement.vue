@@ -9,7 +9,7 @@
         :alt="planet.data.planetName"
       />
       <iconify-icon v-else icon="ph:planet-thin" width="auto" />
-      <span class="crt" :class="{ animated: A11Y_ANIMATE }"></span>
+      <span class="crt" :class="{ animated: A11Y_ANIMATE }" :style="{ width: `${planet.data.planetRadius * 15.5}rem`, height: `${planet.data.planetRadius * 15.5}rem` }"></span>
     </div>
     <p class="planet-name">{{ planet.data.planetName }}</p>
     <div class="actions">
@@ -90,7 +90,11 @@ function emitDeleteEvent() {
   .planet-preview {
     position: relative;
     color: var(--lg-text);
-    max-height: 16rem;
+    width: 16rem;
+    height: 16rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .planet-image {
       max-width: 16rem;
