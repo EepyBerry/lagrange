@@ -113,6 +113,7 @@ export function createPlanet(data: PlanetData): THREE.Mesh {
     },
     THREE.MeshStandardMaterial,
   )
+  material.depthTest = false
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true

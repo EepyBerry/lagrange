@@ -16,16 +16,16 @@
       <RouterLink
         :to="'/planet-editor/' + planet.id"
         class="lg link-button"
-        :aria-label="$t('a11y.topbar_export')"
-        :title="$t('tooltip.topbar_export')"
+        :aria-label="$t('codex.$action_edit', { planet: planet.data.planetName })"
+        :title="$t('codex.$action_edit', { planet: planet.data.planetName })"
       >
         <iconify-icon icon="mingcute:edit-2-line" width="1.5rem" aria-hidden="true" />
         {{ $t('codex.$action_edit') }}
       </RouterLink>
       <button
         class="lg"
-        :aria-label="$t('a11y.topbar_export')"
-        :title="$t('tooltip.topbar_export')"
+        :aria-label="$t('codex.$action_export', { planet: planet.data.planetName })"
+        :title="$t('codex.$action_export', { planet: planet.data.planetName })"
         @click="emitExportEvent"
       >
         <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
@@ -34,8 +34,8 @@
       <hr />
       <button
         class="lg warn"
-        :aria-label="$t('a11y.topbar_export')"
-        :title="$t('tooltip.topbar_export')"
+        :aria-label="$t('codex.$action_delete', { planet: planet.data.planetName })"
+        :title="$t('codex.$action_delete', { planet: planet.data.planetName })"
         @click="emitDeleteEvent"
       >
         <iconify-icon icon="mingcute:delete-2-line" width="1.5rem" aria-hidden="true" />

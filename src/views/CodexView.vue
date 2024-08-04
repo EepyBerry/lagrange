@@ -3,7 +3,7 @@
   <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
     <AppNavigation :compact-mode="showCompactNavigation" />
     <div id="codex-header-controls">
-      <RouterLink class="lg dark create-planet" to="/planet-editor/new">
+      <RouterLink class="lg dark create-planet" to="/planet-editor/new" :title="$t('codex.$action_add')">
         <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
         {{ $t('codex.$action_add') }}
       </RouterLink>
@@ -27,7 +27,7 @@
       </button>
     </div>
   </div>
-  <div v-if="planets.length > 0" id="codex-grid" router-link="/planet-editor/new">
+  <div v-if="planets.length > 0" id="codex-grid">
     <PlanetCardElement
       v-for="planet of planets"
       :key="planet.id"
@@ -35,6 +35,7 @@
       @export="exportPlanet(planet)"
       @delete="openDeleteConfirmDialog(planet)"
     />
+    <NewCardElement />
   </div>
   <div v-else id="codex-grid" class="empty">
     <iconify-icon icon="ph:planet-thin" width="16rem" />
@@ -62,6 +63,7 @@ import pako from 'pako'
 import { saveAs } from 'file-saver'
 import PlanetData from '@/core/models/planet-data.model'
 import JSZip from 'jszip'
+import NewCardElement from '@/components/elements/NewCardElement.vue'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
