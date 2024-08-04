@@ -8,7 +8,7 @@
         <div class="about-text">
           <p class="highlight">{{ $t('dialog.about.description') }}</p>
           <p>{{ $t('dialog.about.motivation') }}</p>
-          <hr width="100%">
+          <hr width="100%" />
           <p>{{ $t('dialog.about.tech') }}:</p>
         </div>
         <div class="about-tech">
@@ -62,10 +62,10 @@ import AppLogo from '../elements/AppLogo.vue'
 import DialogElement from '../elements/DialogElement.vue'
 import ChipElement from '../elements/ChipElement.vue'
 import { onMounted, ref, type Ref } from 'vue'
-import CollapsibleSection from '../elements/CollapsibleSection.vue';
+import CollapsibleSection from '../elements/CollapsibleSection.vue'
 
 const version = ref('UNKNOWN_VERSION')
-const dialogRef: Ref<{ open: Function, close: Function } | null> = ref(null)
+const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
 defineExpose({ open: () => dialogRef.value?.open(), close: () => dialogRef.value?.close() })
 
 onMounted(() => (version.value = import.meta.env.APP_VERSION))
@@ -95,7 +95,9 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
       align-items: flex-start;
       justify-content: flex-end;
       font-size: 1rem;
-      hr { margin: 1rem 0; }
+      hr {
+        margin: 1rem 0;
+      }
     }
     .about-tech {
       grid-area: tech;
@@ -122,7 +124,10 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
       min-width: 0;
       grid-area: updt;
       margin: 1rem 0;
-      .about-update-inner { margin-top: 0.75rem; min-width: 0; }
+      .about-update-inner {
+        margin-top: 0.75rem;
+        min-width: 0;
+      }
     }
     .about-copyright {
       grid-area: crgt;
@@ -157,7 +162,9 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
         'crgt';
       gap: 1.5rem 0;
       .about-text {
-        hr { align-self: center; }
+        hr {
+          align-self: center;
+        }
         p {
           width: 100%;
           text-align: center;

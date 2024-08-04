@@ -9,7 +9,11 @@
         :alt="planet.data.planetName"
       />
       <iconify-icon v-else icon="ph:planet-thin" width="auto" />
-      <span class="crt" :class="{ animated: A11Y_ANIMATE }" :style="{ width: `${planet.data.planetRadius * 15.5}rem`, height: `${planet.data.planetRadius * 15.5}rem` }"></span>
+      <span
+        class="crt"
+        :class="{ animated: A11Y_ANIMATE }"
+        :style="{ width: `${planet.data.planetRadius * 15.5}rem`, height: `${planet.data.planetRadius * 15.5}rem` }"
+      ></span>
     </div>
     <p class="planet-name">{{ planet.data.planetName }}</p>
     <div class="actions">
