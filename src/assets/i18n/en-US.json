@@ -87,7 +87,7 @@
 
       "changelogs": {
         "$title": "Main feature changelogs",
-        "02_title": "Update 0.2 - World Collector!",
+        "02_title": "Update 0.2 - World Collector",
         "02_codex": "Introduces the [Codex]: list, import and export planets easily and entirely within your browser!",
         "02_ui": "New dialog boxes, toasts & settings, and new editor parameters (radius, atmosphere)",
         "02_a11y": "Accessibility features & improvements"

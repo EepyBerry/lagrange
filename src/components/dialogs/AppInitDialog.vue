@@ -202,6 +202,7 @@ function doClose() {
         gap: 2rem;
         align-items: center;
         justify-content: flex-end;
+        text-align: end;
       }
     }
   }
