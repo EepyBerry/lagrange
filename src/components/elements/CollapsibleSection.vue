@@ -49,7 +49,7 @@ function toggleExpand() {
   &.compact {
     min-width: 0;
   }
-  &.expanded .indicator {
+  &.expanded > .section-title > .indicator {
     transform: rotateZ(90deg);
   }
 

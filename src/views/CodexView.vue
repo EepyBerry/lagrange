@@ -305,6 +305,7 @@ async function deleteTargetedPlanet() {
   }
   #codex-grid {
     margin: 3.75rem 0.5rem 0;
+    padding-bottom: 0.5rem;
   }
   #codex-footer {
     padding: 0 0.5rem 0.5rem;
