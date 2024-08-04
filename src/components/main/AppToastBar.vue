@@ -1,6 +1,6 @@
 <template>
   <div id="toast-bar">
-    <ToastElement :class="{ visible: isToastShown }" :type="toastType" @close="closeToast">
+    <ToastElement :visible="isToastShown" :type="toastType" @close="closeToast">
       {{ $t(toastMessageRaw) }}
     </ToastElement>
   </div>

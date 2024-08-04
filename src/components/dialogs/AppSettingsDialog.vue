@@ -227,7 +227,7 @@ import { EventBus } from '@/core/services/event-bus'
 
 const i18n = useI18n()
 
-const confirmDialogRef: Ref<{ open: Function } | null> = ref(null)
+const confirmDialogRef: Ref<{ open: Function, close: Function } | null> = ref(null)
 const dialogRef: Ref<{ open: Function; close: Function; ignoreNativeEvents: Function; isOpen: boolean } | null> =
   ref(null)
 const appSettings: Ref<IDBSettings> = ref({
@@ -388,7 +388,7 @@ function getKeyBind(action: string) {
 @media screen and (max-width: 767px) {
   #dialog-settings {
     min-width: 0;
-    max-width: 0;
+    max-width: calc(100% - 1rem);
     width: 100%;
   }
 }
