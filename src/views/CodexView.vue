@@ -41,7 +41,7 @@
     <iconify-icon icon="ph:planet-thin" width="16rem" />
     <span>{{ $t('codex.no_planets') }}</span>
   </div>
-  <div id="codex-footer">
+  <div v-if="showInlineFooter" id="codex-footer">
     <InlineFooter />
   </div>
   <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="deleteTargetedPlanet" />
@@ -58,7 +58,7 @@ import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 import { EventBus } from '@/core/services/event-bus'
-import { MD_WIDTH_THRESHOLD } from '@/core/globals'
+import { MD_WIDTH_THRESHOLD, SM_WIDTH_THRESHOLD } from '@/core/globals'
 import pako from 'pako'
 import { saveAs } from 'file-saver'
 import PlanetData from '@/core/models/planet-data.model'
@@ -72,6 +72,7 @@ const planets: Ref<IDBPlanet[]> = ref([])
 const deleteTarget: Ref<IDBPlanet | null> = ref(null)
 const deleteDialogRef: Ref<{ open: Function } | null> = ref(null)
 const showCompactNavigation: Ref<boolean> = ref(false)
+const showInlineFooter: Ref<boolean> = ref(false)
 
 useHead({
   title: i18n.t('codex.$title') + ' · ' + i18n.t('main.$title'),
@@ -104,6 +105,7 @@ function onWindowResize() {
 
 function computeResponsiveness() {
   showCompactNavigation.value = window.innerWidth < MD_WIDTH_THRESHOLD
+  showInlineFooter.value = window.innerWidth < SM_WIDTH_THRESHOLD
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -275,8 +277,8 @@ async function deleteTargetedPlanet() {
   }
 }
 #codex-footer {
+  display: inline-flex;
   padding: 0 1rem 1rem;
-  display: none;
   flex-direction: column;
   justify-content: center;
   width: 100%;
@@ -305,7 +307,6 @@ async function deleteTargetedPlanet() {
     margin: 3.75rem 0.5rem 0;
   }
   #codex-footer {
-    display: inline-flex;
     padding: 0 0.5rem 0.5rem;
   }
 }

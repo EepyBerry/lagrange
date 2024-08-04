@@ -97,7 +97,7 @@ function toggleExpand() {
       }
     }
   }
-  .collapsible-section:not(.compact).expanded {
+  .collapsible-section:not(.compact) {
     min-width: 16rem;
   }
 }

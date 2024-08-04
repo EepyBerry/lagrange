@@ -8,20 +8,22 @@
         <div class="about-text">
           <p class="highlight">{{ $t('dialog.about.description') }}</p>
           <p>{{ $t('dialog.about.motivation') }}</p>
+          <hr width="100%">
+          <p>{{ $t('dialog.about.tech') }}:</p>
         </div>
         <div class="about-tech">
-          <div class="tech-block">
-            <iconify-icon mode="svg" icon="logos:threejs" width="3rem" style="fill: var(--lg-text)" />
-            <div>
-              <p>{{ $t('dialog.about.prefix_engine') }} <span class="highlight">three.js</span></p>
-              <ChipElement>r166</ChipElement>
-            </div>
-          </div>
           <div class="tech-block">
             <iconify-icon mode="svg" icon="simple-icons:vuedotjs" width="3rem" style="fill: var(--lg-text)" />
             <div>
               <p>{{ $t('dialog.about.prefix_framework') }} <span class="highlight nowrap">Vue + Vite</span></p>
               <ChipElement>3.4.21</ChipElement> <ChipElement>5.2.8</ChipElement>
+            </div>
+          </div>
+          <div class="tech-block">
+            <iconify-icon mode="svg" icon="logos:threejs" width="3rem" style="fill: var(--lg-text)" />
+            <div>
+              <p>{{ $t('dialog.about.prefix_engine') }} <span class="highlight">three.js</span></p>
+              <ChipElement>r166</ChipElement>
             </div>
           </div>
         </div>
@@ -34,6 +36,21 @@
             </a>
           </p>
         </div>
+        <CollapsibleSection class="about-updates" icon="mingcute:news-line">
+          <template v-slot:title>{{ $t('dialog.about.changelogs.$title') }}</template>
+          <template v-slot:content>
+            <CollapsibleSection class="about-update-inner" icon="mingcute:planet-line">
+              <template v-slot:title>{{ $t('dialog.about.changelogs.02_title') }}</template>
+              <template v-slot:content>
+                <ul style="list-style-type: disc; margin-left: 1rem">
+                  <li>{{ $t('dialog.about.changelogs.02_codex') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.02_ui') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.02_a11y') }}</li>
+                </ul>
+              </template>
+            </CollapsibleSection>
+          </template>
+        </CollapsibleSection>
       </div>
       <span id="app-version">{{ version }}</span>
     </template>
@@ -45,10 +62,11 @@ import AppLogo from '../elements/AppLogo.vue'
 import DialogElement from '../elements/DialogElement.vue'
 import ChipElement from '../elements/ChipElement.vue'
 import { onMounted, ref, type Ref } from 'vue'
+import CollapsibleSection from '../elements/CollapsibleSection.vue';
 
 const version = ref('UNKNOWN_VERSION')
-const dialogRef: Ref<{ open: Function } | null> = ref(null)
-defineExpose({ open: () => dialogRef.value?.open() })
+const dialogRef: Ref<{ open: Function, close: Function } | null> = ref(null)
+defineExpose({ open: () => dialogRef.value?.open(), close: () => dialogRef.value?.close() })
 
 onMounted(() => (version.value = import.meta.env.APP_VERSION))
 </script>
@@ -57,13 +75,12 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
 #dialog-about {
   .about-grid {
     display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto 1fr auto;
     grid-template-areas:
       'logo text'
       'logo tech'
-      'logo crgt';
-    gap: 1.5rem;
+      'updt updt'
+      'crgt crgt';
+    gap: 1rem;
 
     .about-logo {
       position: relative;
@@ -77,14 +94,15 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
       flex-direction: column;
       align-items: flex-start;
       justify-content: flex-end;
-      margin-top: 1rem;
       font-size: 1rem;
+      hr { margin: 1rem 0; }
     }
     .about-tech {
       grid-area: tech;
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
+      align-items: flex-start;
       gap: 2.5rem;
 
       .row {
@@ -99,6 +117,12 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
         align-items: center;
         gap: 0.5rem;
       }
+    }
+    .about-updates {
+      min-width: 0;
+      grid-area: updt;
+      margin: 1rem 0;
+      .about-update-inner { margin-top: 0.75rem; min-width: 0; }
     }
     .about-copyright {
       grid-area: crgt;
@@ -118,8 +142,7 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
 #app-version {
   position: absolute;
   opacity: 0.5;
-  bottom: 0.25rem;
-  left: 0.5rem;
+  transform: translateY(-1rem);
   user-select: none;
 }
 
@@ -130,11 +153,15 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
         'logo'
         'text'
         'tech'
+        'updt'
         'crgt';
       gap: 1.5rem 0;
-      .about-text > p {
-        width: 100%;
-        text-align: center;
+      .about-text {
+        hr { align-self: center; }
+        p {
+          width: 100%;
+          text-align: center;
+        }
       }
       .about-tech {
         margin: 0 auto;
@@ -144,6 +171,10 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
         align-items: center;
       }
     }
+  }
+  #app-version {
+    top: 0;
+    transform: translateY(0.75rem);
   }
 }
 @media screen and (max-width: 567px) {
