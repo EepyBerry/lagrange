@@ -80,7 +80,7 @@ function handleKey(evt: KeyboardEvent) {
 <style scoped lang="scss">
 #nav-full {
   position: absolute;
-  left: 0;
+  left: 1rem;
 }
 
 #nav-compact {
