@@ -9,7 +9,12 @@
     <div class="toast-message">
       <slot>TOAST_MESSAGE</slot>
     </div>
-    <button class="lg icon-button" @click="$emit('close')" :aria-label="$t('a11y.action_close_toast')" :tabindex="visible ? 'auto' : '-1'">
+    <button
+      class="lg icon-button"
+      @click="$emit('close')"
+      :aria-label="$t('a11y.action_close_toast')"
+      :tabindex="visible ? 'auto' : '-1'"
+    >
       <iconify-icon icon="mingcute:close-line" width="1.5rem" aria-hidden="true" />
     </button>
   </div>
@@ -17,15 +22,12 @@
 
 <script setup lang="ts">
 import type { InfoLevel } from '@/core/types'
-import { computed, type ComputedRef } from 'vue';
+import { computed, type ComputedRef } from 'vue'
 
-const $props = defineProps<{ type: InfoLevel, visible: boolean }>()
+const $props = defineProps<{ type: InfoLevel; visible: boolean }>()
 defineEmits(['close'])
 
-const classObject: ComputedRef<string[]> = computed(() => ([
-  $props.visible ? 'visible' : '',
-  $props.type
-]))
+const classObject: ComputedRef<string[]> = computed(() => [$props.visible ? 'visible' : '', $props.type])
 </script>
 
 <style scoped lang="scss">

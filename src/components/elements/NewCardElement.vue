@@ -1,5 +1,8 @@
 <template>
-  <RouterLink class="planet-card-link" ref="cardRoot" to="/planet-editor/new"
+  <RouterLink
+    class="planet-card-link"
+    ref="cardRoot"
+    to="/planet-editor/new"
     :aria-label="$t('codex.$action_add')"
     :title="$t('codex.$action_add')"
   >
@@ -8,7 +11,8 @@
 </template>
 
 <style scoped lang="scss">
-.planet-card-link, .planet-card-link:visited {
+.planet-card-link,
+.planet-card-link:visited {
   min-height: 26rem;
   padding: 1rem;
   background: transparent;
@@ -17,9 +21,10 @@
   border-radius: 4px;
   overflow: hidden;
 
-  transition: transform 100ms ease-in-out,
-              border 100ms ease-in-out,
-              color 100ms ease-in-out;
+  transition:
+    transform 100ms ease-in-out,
+    border 100ms ease-in-out,
+    color 100ms ease-in-out;
   opacity: 1;
   cursor: pointer;
 

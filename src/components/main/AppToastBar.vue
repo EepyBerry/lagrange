@@ -45,7 +45,7 @@ function closeToast() {
 <style scoped lang="scss">
 #toast-bar {
   z-index: 10;
-  position: absolute;
+  position: fixed;
   inset: auto 1rem 4.75rem;
   display: flex;
   align-items: center;
@@ -55,6 +55,11 @@ function closeToast() {
 @media screen and (max-width: 1199px) {
   #toast-bar {
     inset: auto 0.5rem 3.75rem;
+  }
+}
+@media screen and (max-width: 767px) {
+  #toast-bar {
+    inset: auto 0.5rem 1.5rem;
   }
 }
 </style>

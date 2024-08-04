@@ -37,10 +37,12 @@ Vite copies the output to the `dist` folder, creating it first if need be.
 ## 📋 Current Features
 
 ### Codex
+
 - 📋 Create, import & export your planets! (now set as the landing page)
 - 🔎 See previews of your creations!
 
 ### Editor
+
 - ☀️ **Lighting parameters!** (sunlight, ambient light)
 - 🌍 **Planet & Rendering parameters!** (transform, PBR, water level)
 - 🗺️ **Surface parameters!** (bumps, noise settings, color)
