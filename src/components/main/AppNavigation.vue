@@ -85,7 +85,7 @@ function handleKey(evt: KeyboardEvent) {
 
 #nav-compact {
   position: absolute;
-  left: 3.875rem;
+  left: 4.375rem;
   display: none;
   &.open {
     display: initial;
@@ -94,13 +94,13 @@ function handleKey(evt: KeyboardEvent) {
 
 @media screen and (max-width: 1199px) {
   #nav-compact {
-    left: 3.375rem;
+    left: 3.875rem;
   }
 }
 @media screen and (max-width: 767px) {
   #nav-compact {
-    left: 0;
-    top: 3.375rem;
+    left: 0.5rem;
+    top: 3.875rem;
 
     nav {
       display: flex;
