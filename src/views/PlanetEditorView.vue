@@ -66,6 +66,7 @@ const head = useHead({
 
 // Data
 const $planetEntityId: Ref<string> = ref('')
+const $planetEntityVersion: Ref<string> = ref('')
 let enableEditorRendering = true
 
 // Responsiveness
@@ -109,6 +110,7 @@ async function initData() {
       return
     }
     $planetEntityId.value = idbPlanetData.id
+    $planetEntityVersion.value = idbPlanetData.version ?? '2'
     LG_PLANET_DATA.value.loadData(idbPlanetData.data)
     console.info(`Loaded planet [${LG_PLANET_DATA.value.planetName}] with ID: ${$planetEntityId.value}`)
   } else {
@@ -318,7 +320,7 @@ async function savePlanet() {
   const localData = toRaw(JSON.stringify(LG_PLANET_DATA.value))
   const idbData: IDBPlanet = {
     id: $planetEntityId.value.length > 0 ? $planetEntityId.value : nanoid(),
-    version: '2',
+    version: $planetEntityVersion.value ?? '2',
     data: JSON.parse(localData),
     preview: previewDataString,
   }

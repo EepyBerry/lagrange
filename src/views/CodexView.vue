@@ -148,7 +148,8 @@ async function importPlanetFile(event: Event) {
     const allAdded = await idb.planets.bulkPut(
       newPlanets
         .filter((np) => np.status === 'fulfilled')
-        .map((np: PromiseSettledResult<IDBPlanet>) => (np as PromiseFulfilledResult<IDBPlanet>).value),
+        .map((np: PromiseSettledResult<IDBPlanet>) => (np as PromiseFulfilledResult<IDBPlanet>).value)
+        .map(np => ({ ...np, version: np.version ?? '2' }))
     )
     if (allAdded && rejectedFiles.length === 0) {
       EventBus.sendToastEvent('success', 'toast.import_success', 3000)
