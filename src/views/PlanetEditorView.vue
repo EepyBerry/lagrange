@@ -318,6 +318,7 @@ async function savePlanet() {
   const localData = toRaw(JSON.stringify(LG_PLANET_DATA.value))
   const idbData: IDBPlanet = {
     id: $planetEntityId.value.length > 0 ? $planetEntityId.value : nanoid(),
+    version: '2',
     data: JSON.parse(localData),
     preview: previewDataString,
   }

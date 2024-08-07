@@ -28,6 +28,7 @@ interface IDBSettings {
 
 interface IDBPlanet {
   id: string
+  version?: string
   preview?: string
   data: PlanetData
 }

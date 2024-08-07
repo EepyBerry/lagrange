@@ -64,6 +64,7 @@ import { saveAs } from 'file-saver'
 import PlanetData from '@/core/models/planet-data.model'
 import JSZip from 'jszip'
 import NewCardElement from '@/components/elements/NewCardElement.vue'
+import { readFileData } from '@/core/import.helper'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
@@ -125,17 +126,10 @@ async function importPlanetFile(event: Event) {
     const reader = new FileReader()
     return new Promise<IDBPlanet>((resolve, reject) => {
       reader.onload = async (e) => {
-        try {
-          const data = JSON.parse(pako.inflate(e.target?.result as ArrayBuffer, { to: 'string' })) as IDBPlanet
-          const newIdb: IDBPlanet = {
-            id: data.id,
-            data: PlanetData.createFrom(data.data),
-            preview: data.preview,
-          }
-          console.info(`Imported planet (ID=${newIdb.id}): [${newIdb.data.planetName}]`)
-          resolve(newIdb)
-        } catch (err) {
-          console.error(err)
+        const data = readFileData(e.target?.result as ArrayBuffer)
+        if (data) {
+          resolve(data)
+        } else {
           reject()
         }
       }
@@ -151,7 +145,7 @@ async function importPlanetFile(event: Event) {
       return
     }
 
-    const allAdded = await idb.planets.bulkAdd(
+    const allAdded = await idb.planets.bulkPut(
       newPlanets
         .filter((np) => np.status === 'fulfilled')
         .map((np: PromiseSettledResult<IDBPlanet>) => (np as PromiseFulfilledResult<IDBPlanet>).value),
