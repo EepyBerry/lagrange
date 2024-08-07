@@ -145,21 +145,27 @@ async function importPlanetFile(event: Event) {
 
   try {
     const newPlanets: PromiseSettledResult<IDBPlanet>[] = await Promise.allSettled(readPromises)
-    if (newPlanets.every((p) => p.status === 'rejected')) {
+    const rejectedFiles = newPlanets.filter((p) => p.status === 'rejected')
+    if (rejectedFiles.length === newPlanets.length) {
       EventBus.sendToastEvent('warn', 'toast.import_failure', 3000)
       return
     }
-    await idb.planets.bulkAdd(
+
+    const allAdded = await idb.planets.bulkAdd(
       newPlanets
         .filter((np) => np.status === 'fulfilled')
         .map((np: PromiseSettledResult<IDBPlanet>) => (np as PromiseFulfilledResult<IDBPlanet>).value),
     )
+    if (allAdded && rejectedFiles.length === 0) {
+      EventBus.sendToastEvent('success', 'toast.import_success', 3000)
+    } else {
+      EventBus.sendToastEvent('warn', 'toast.import_partial', 3000)
+    }
   } catch (_) {
     EventBus.sendToastEvent('warn', 'toast.import_partial', 3000)
   } finally {
     await loadPlanets()
     fileInput.value!.value = ''
-    EventBus.sendToastEvent('success', 'toast.import_success', 3000)
   }
 }
 
