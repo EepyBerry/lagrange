@@ -64,6 +64,7 @@ import { saveAs } from 'file-saver'
 import PlanetData from '@/core/models/planet-data.model'
 import JSZip from 'jszip'
 import NewCardElement from '@/components/elements/NewCardElement.vue'
+import { readFileData } from '@/core/import.helper'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
@@ -125,17 +126,10 @@ async function importPlanetFile(event: Event) {
     const reader = new FileReader()
     return new Promise<IDBPlanet>((resolve, reject) => {
       reader.onload = async (e) => {
-        try {
-          const data = JSON.parse(pako.inflate(e.target?.result as ArrayBuffer, { to: 'string' })) as IDBPlanet
-          const newIdb: IDBPlanet = {
-            id: data.id,
-            data: PlanetData.createFrom(data.data),
-            preview: data.preview,
-          }
-          console.info(`Imported planet (ID=${newIdb.id}): [${newIdb.data.planetName}]`)
-          resolve(newIdb)
-        } catch (err) {
-          console.error(err)
+        const data = readFileData(e.target?.result as ArrayBuffer)
+        if (data) {
+          resolve(data)
+        } else {
           reject()
         }
       }
@@ -145,21 +139,28 @@ async function importPlanetFile(event: Event) {
 
   try {
     const newPlanets: PromiseSettledResult<IDBPlanet>[] = await Promise.allSettled(readPromises)
-    if (newPlanets.every((p) => p.status === 'rejected')) {
+    const rejectedFiles = newPlanets.filter((p) => p.status === 'rejected')
+    if (rejectedFiles.length === newPlanets.length) {
       EventBus.sendToastEvent('warn', 'toast.import_failure', 3000)
       return
     }
-    await idb.planets.bulkAdd(
+
+    const allAdded = await idb.planets.bulkPut(
       newPlanets
         .filter((np) => np.status === 'fulfilled')
-        .map((np: PromiseSettledResult<IDBPlanet>) => (np as PromiseFulfilledResult<IDBPlanet>).value),
+        .map((np: PromiseSettledResult<IDBPlanet>) => (np as PromiseFulfilledResult<IDBPlanet>).value)
+        .map(np => ({ ...np, version: np.version ?? '1' }))
     )
+    if (allAdded && rejectedFiles.length === 0) {
+      EventBus.sendToastEvent('success', 'toast.import_success', 3000)
+    } else {
+      EventBus.sendToastEvent('warn', 'toast.import_partial', 3000)
+    }
   } catch (_) {
     EventBus.sendToastEvent('warn', 'toast.import_partial', 3000)
   } finally {
     await loadPlanets()
     fileInput.value!.value = ''
-    EventBus.sendToastEvent('success', 'toast.import_success', 3000)
   }
 }
 
