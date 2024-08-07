@@ -149,7 +149,7 @@ async function importPlanetFile(event: Event) {
       newPlanets
         .filter((np) => np.status === 'fulfilled')
         .map((np: PromiseSettledResult<IDBPlanet>) => (np as PromiseFulfilledResult<IDBPlanet>).value)
-        .map(np => ({ ...np, version: np.version ?? '1' }))
+        .map((np) => ({ ...np, version: np.version ?? '1' })),
     )
     if (allAdded && rejectedFiles.length === 0) {
       EventBus.sendToastEvent('success', 'toast.import_success', 3000)
