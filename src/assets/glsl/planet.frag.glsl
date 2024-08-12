@@ -37,6 +37,7 @@ in vec3 vTangent;
 in vec3 vBitangent;
 
 @import functions/fbm;
+@import functions/voronoise;
 @import functions/color_utils;
 @import functions/normal_utils;
 
@@ -45,22 +46,18 @@ void main() {
     vec3 N = vNormal;
     float height = fbm3(vPos,  u_frequency, u_amplitude, u_lacunarity, u_octaves);
 
-    if (u_bump) {
-        // Calculate height, dxHeight and dyHeight
-        vec3 dx = vTangent * u_bump_offset;
-        vec3 dy = vBitangent * u_bump_offset;
-        float dxHeight = fbm3(vPos + dx, u_frequency, u_amplitude, u_lacunarity, u_octaves);
-        float dyHeight = fbm3(vPos + dy, u_frequency, u_amplitude, u_lacunarity, u_octaves);
-
-        // Perturb normal
-        N = u_bump
-            ? perturbNormal(vPos, dx, dy, height, dxHeight, dyHeight, u_radius, u_bump_strength)
-            : vNormal;
-    }
-
     // Render noise as color
     color += height;
     color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
+
+    // Render biomes
+    if (u_biomes && (height >= u_water_level)) {
+        // create initial voronoi diagram
+        vec2 c = voronoi3((5.5*sin(0.2))*vPos, 1.0);
+        color = 0.5 + 0.5*cos( c.y*6.2831 + vec3(0.0,1.0,2.0) );	
+        color *= clamp(1.0 - 0.4*c.x*c.x,0.0,1.0);
+        //color -= (1.0-smoothstep( 0.08, 0.09, c.x)); // Delaunay center point
+    }
 
     // Render poles
     if (u_biomes && u_show_poles) {
@@ -74,6 +71,19 @@ void main() {
             : color;
     }
    
+    // Bump mapping
+    if (u_bump) {
+        // Calculate height, dxHeight and dyHeight
+        vec3 dx = vTangent * u_bump_offset;
+        vec3 dy = vBitangent * u_bump_offset;
+        float dxHeight = fbm3(vPos + dx, u_frequency, u_amplitude, u_lacunarity, u_octaves);
+        float dyHeight = fbm3(vPos + dy, u_frequency, u_amplitude, u_lacunarity, u_octaves);
+
+        // Perturb normal
+        N = u_bump
+            ? perturbNormal(vPos, dx, dy, height, dxHeight, dyHeight, u_radius, u_bump_strength)
+            : vNormal;
+    }
 
     // Set outputs
     csm_Bump = height > u_water_level ? N : vNormal;
