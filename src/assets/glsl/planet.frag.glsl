@@ -51,12 +51,13 @@ void main() {
     color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
 
     // Render biomes
-    if (u_biomes && (height >= u_water_level)) {
-        // create initial voronoi diagram
-        vec2 c = voronoi3((5.5*sin(0.2))*vPos, 1.0);
-        color = 0.5 + 0.5*cos( c.y*6.2831 + vec3(0.0,1.0,2.0) );	
-        color *= clamp(1.0 - 0.4*c.x*c.x,0.0,1.0);
+    if (u_biomes && height >= u_water_level) {
+        vec2 c = voronoi3((5.5*sin(0.2))*vPos);
+        vec3 biomeColor = 0.5 + 0.5*cos( c.y*6.2831 + vec3(0.0,1.0,2.0) );	
+        biomeColor *= clamp(1.0 - 0.4*c.x*c.x,0.0,1.0);
         //color -= (1.0-smoothstep( 0.08, 0.09, c.x)); // Delaunay center point
+        color = mix(color, biomeColor, 0.5);
+        color = (c.x == vPos.y && vPos.y > 0.5) ? vec3(1.0, .0, .0) : color;
     }
 
     // Render poles

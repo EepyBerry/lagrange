@@ -45,7 +45,7 @@ float pcurve( float x, float a, float b ){
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // https://www.youtube.com/c/InigoQuilez
 // https://iquilezles.org/
-vec2 voronoi3( in vec3 x, in float time )
+vec2 voronoi3( in vec3 x )
 {
     vec3 n = floor(x);
     vec3 f = fract(x);
@@ -57,7 +57,7 @@ vec2 voronoi3( in vec3 x, in float time )
             {
                 vec3 g = vec3(float(i),float(j),float(k));
                 vec3 o = hash3d( n + g );
-                vec3 r = g + (0.5+0.5*sin(vec3(time)+6.2831*o)) - f;
+                vec3 r = g + (0.5+0.5*sin(1.0+6.2831*o)) - f;
                 float d = dot(r,r);
                 if( d<m.x )
                 {
