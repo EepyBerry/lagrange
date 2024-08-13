@@ -2,6 +2,14 @@
 precision highp float;
 #endif
 
+struct BiomeParameters {
+    float frequency;
+    float amplitude;
+    float lacunarity;
+    float temperatureMin;
+    float temperatureMax;
+};
+
 // Noise uniforms
 uniform float u_radius;
 uniform int u_octaves;
@@ -37,58 +45,49 @@ in vec3 vTangent;
 in vec3 vBitangent;
 
 @import functions/fbm;
-@import functions/voronoise;
 @import functions/color_utils;
 @import functions/normal_utils;
 
+// Biome calculation function
+// TODO: replace test code by actual implementation
+vec3 apply_biomes(float temperature, vec3 color) {
+    float biomeHeight = fbm3(vPos, 2.0, 0.275, 2.5);
+    vec3 biomeColor = vec3(biomeHeight, 0.0, 0.0);
+    return mix(biomeColor, color, 0.5);
+}
+
+// Bump mapping function, pretty mediocre but enough for a start...
+vec3 apply_bump(float height) {
+    // Calculate height, dxHeight and dyHeight
+    vec3 dx = vTangent * u_bump_offset;
+    vec3 dy = vBitangent * u_bump_offset;
+    float dxHeight = fbm3(vPos + dx, u_frequency, u_amplitude, u_lacunarity, u_octaves);
+    float dyHeight = fbm3(vPos + dy, u_frequency, u_amplitude, u_lacunarity, u_octaves);
+
+    // Perturb normal
+    return perturb_normal(vPos, dx, dy, height, dxHeight, dyHeight, u_radius, u_bump_strength);
+}
+
 void main() {
+    // main variables
+    float temperatureGrad = smoothstep(0.75, 0.0, abs(vPos.y));
     vec3 color = vec3(0.0);
-    vec3 N = vNormal;
+
+    // Initial heightmap & flags
     float height = fbm3(vPos,  u_frequency, u_amplitude, u_lacunarity, u_octaves);
+    float FLAG_LAND = step(u_water_level, height);
+    float FLAG_BIOMES = FLAG_LAND * float(u_biomes);
 
     // Render noise as color
     color += height;
     color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
 
     // Render biomes
-    if (u_biomes && height >= u_water_level) {
-        vec2 c = voronoi3((5.5*sin(0.2))*vPos);
-        vec3 biomeColor = 0.5 + 0.5*cos( c.y*6.2831 + vec3(0.0,1.0,2.0) );	
-        biomeColor *= clamp(1.0 - 0.4*c.x*c.x,0.0,1.0);
-        //color -= (1.0-smoothstep( 0.08, 0.09, c.x)); // Delaunay center point
-        color = mix(color, biomeColor, 0.5);
-        color = (c.x == vPos.y && vPos.y > 0.5) ? vec3(1.0, .0, .0) : color;
-    }
-
-    // Render poles
-    if (u_biomes && u_show_poles) {
-        float northBlendValue = (vPos.y - u_pole_limit) / (u_radius - u_pole_limit);
-        color = vPos.y > u_pole_limit && height > u_water_level
-            ? mix(color, vec3(1.0), clamp(northBlendValue, 0.0, 1.0))
-            : color;
-        float southBlendValue = (vPos.y + u_radius) / (-u_pole_limit + u_radius);
-        color = vPos.y < -u_pole_limit && height > u_water_level
-            ? mix(vec3(1.0), color, clamp(southBlendValue, 0.0, 1.0))
-            : color;
-    }
-   
-    // Bump mapping
-    if (u_bump) {
-        // Calculate height, dxHeight and dyHeight
-        vec3 dx = vTangent * u_bump_offset;
-        vec3 dy = vBitangent * u_bump_offset;
-        float dxHeight = fbm3(vPos + dx, u_frequency, u_amplitude, u_lacunarity, u_octaves);
-        float dyHeight = fbm3(vPos + dy, u_frequency, u_amplitude, u_lacunarity, u_octaves);
-
-        // Perturb normal
-        N = u_bump
-            ? perturbNormal(vPos, dx, dy, height, dxHeight, dyHeight, u_radius, u_bump_strength)
-            : vNormal;
-    }
+    color = mix(color, apply_biomes(temperatureGrad, color), FLAG_BIOMES);
 
     // Set outputs
-    csm_Bump = height > u_water_level ? N : vNormal;
-    csm_Metalness = height > u_water_level ? u_ground_metalness : u_water_metalness;
-    csm_Roughness = height > u_water_level ? u_ground_roughness : u_water_roughness;
+    csm_Bump = mix(vNormal, apply_bump(height), FLAG_LAND);
+    csm_Roughness = mix(u_water_roughness, u_ground_roughness, FLAG_LAND);
+    csm_Metalness = mix(u_water_metalness, u_ground_metalness, FLAG_LAND);
     csm_DiffuseColor = vec4(color, 1.0);
 }
