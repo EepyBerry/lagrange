@@ -2,7 +2,7 @@
 precision highp float;
 #endif
 
-struct BiomeParameters {
+struct Biome {
     float frequency;
     float amplitude;
     float lacunarity;
@@ -51,9 +51,10 @@ in vec3 vBitangent;
 // Biome calculation function
 // TODO: replace test code by actual implementation
 vec3 apply_biomes(float temperature, vec3 color) {
-    float biomeHeight = fbm3(vPos, 2.0, 0.275, 2.5);
-    vec3 biomeColor = vec3(biomeHeight, 0.0, 0.0);
-    return mix(biomeColor, color, 0.5);
+    Biome bp = Biome(2.0, 1.0, 1.0, 0.25, 1.0);
+    float biomeHeight = fbm3(vPos, bp.frequency, bp.amplitude, bp.lacunarity);
+    vec3 biomeColor = vec3(biomeHeight, biomeHeight, 0.0);
+    return mix(color, biomeColor, biomeHeight * step(0.5, biomeHeight));
 }
 
 // Bump mapping function, pretty mediocre but enough for a start...

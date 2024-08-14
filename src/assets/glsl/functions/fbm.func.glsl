@@ -49,6 +49,14 @@ float fbm3(vec3 x, float freq, float amp, float lac) {
 	return val;
 }
 
+float fbm3v(vec3 x, float freq, float amp, float lac, float val) {
+	vec3 shift = vec3(100);
+	val += amp * noise3(x*freq);
+    x = x * lac + shift;
+    amp *= 0.5;
+	return clamp(val, 0.0, 1.0);
+}
+
 // Sourced from Yi-wen LIN:
 // https://github.com/yiwenl/glsl-fbm/blob/master/1d.glsl
 // ------------------------------------------------------------------------------------------------
