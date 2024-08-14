@@ -8,6 +8,7 @@ struct Biome {
     float lacunarity;
     float temperatureMin;
     float temperatureMax;
+    vec3 color;
 };
 
 // Noise uniforms
@@ -51,10 +52,27 @@ in vec3 vBitangent;
 // Biome calculation function
 // TODO: replace test code by actual implementation
 vec3 apply_biomes(float temperature, vec3 color) {
-    Biome bp = Biome(2.0, 1.0, 1.0, 0.25, 1.0);
-    float biomeHeight = fbm3(vPos, bp.frequency, bp.amplitude, bp.lacunarity);
-    vec3 biomeColor = vec3(biomeHeight, biomeHeight, 0.0);
-    return mix(color, biomeColor, biomeHeight * step(0.5, biomeHeight));
+    Biome b[1] = Biome[](
+        Biome(2.0, 1.0, 1.0, 0.25, 1.0, vec3(1.0, 1.0, 0.0))
+    );
+
+    vec3 biomeColor = vec3(0.0);
+    for (int i = 0; i < b.length(); i++) {
+        Biome cb = b[i];
+        float FLAG_BELOW_MAX_TEMP = step(temperature, cb.temperatureMax);
+        float FLAG_ABOVE_MIN_TEMP = step(cb.temperatureMin, temperature);
+        float FLAG_VALID = FLAG_BELOW_MAX_TEMP * FLAG_ABOVE_MIN_TEMP;
+
+        float biomeHeight = FLAG_VALID * fbm3(vPos, cb.frequency, cb.amplitude, cb.lacunarity);
+        biomeHeight = smoothstep(cb.temperatureMin, cb.temperatureMax, biomeHeight);
+
+        // calculate smoothing based on an arbitrary "dead-zone"
+        float biomeDz = 0.05;
+
+        biomeColor = mix(color, cb.color, biomeHeight);
+    }
+
+    return biomeColor;
 }
 
 // Bump mapping function, pretty mediocre but enough for a start...
@@ -71,7 +89,7 @@ vec3 apply_bump(float height) {
 
 void main() {
     // main variables
-    float temperatureGrad = smoothstep(0.75, 0.0, abs(vPos.y));
+    float temperatureHeight = smoothstep(0.75, 0.0, abs(vPos.y));
     vec3 color = vec3(0.0);
 
     // Initial heightmap & flags
@@ -84,7 +102,7 @@ void main() {
     color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
 
     // Render biomes
-    color = mix(color, apply_biomes(temperatureGrad, color), FLAG_BIOMES);
+    color = mix(color, apply_biomes(temperatureHeight, color), FLAG_BIOMES);
 
     // Set outputs
     csm_Bump = mix(vNormal, apply_bump(height), FLAG_LAND);
