@@ -47,27 +47,38 @@ in vec3 vBitangent;
 @import functions/normal_utils;
 
 // Biome calculation function
-// TODO: replace test code by actual implementation
+// (note: initial surface color is converted to a biome to keep default behaviour)
 vec3 apply_biomes(float temperature, vec3 color) {
+    Biome defaultBiome = Biome(0.0, 1.0, color);
     Biome b[3] = Biome[](
-        Biome(0.0, 1.0, color),
-        Biome(0.0, 0.025, vec3(1.0, 1.0, 1.0)),
-        Biome(0.25, 1.0, vec3(1.0, 1.0, 0.0))
+        defaultBiome,
+        Biome(0.0125, 0.15, vec3(1.0, 1.0, 1.0)),
+        Biome(0.375, 1.0, vec3(0.5, 0.4, 0.05))
     );
 
     float biomeSmoothing = 0.1;
     vec3 biomeColor = vec3(0.0);
     for (int i = 0; i < b.length(); i++) {
         Biome cb = b[i];
+
+        // Calculate flags, skip if fragment texel isn't in the current biome
         float FLAG_BELOW_MAX_TEMP = step(temperature, cb.temperatureMax);
         float FLAG_ABOVE_MIN_TEMP = step(cb.temperatureMin, temperature);
+        //float FLAG_EDGE_BIOME = step();
         float FLAG_VALID = FLAG_BELOW_MAX_TEMP * FLAG_ABOVE_MIN_TEMP;
         if (FLAG_VALID < 0.5) {
             continue;
         }
 
-        float biomeHeight = smoothstep(cb.temperatureMin, cb.temperatureMax, FLAG_VALID);
-        biomeColor = mix(color, cb.color, biomeHeight);
+        // Apply color using additional flags
+        float FLAG_FROM_POLE = step(cb.temperatureMin, 1e-4);
+        float FLAG_AT_EQUATOR = step(cb.temperatureMax, 1.0);
+
+        float temperatureRatio = (temperature - cb.temperatureMin) / (cb.temperatureMax - cb.temperatureMin);
+        float temperatureScalar = cb.temperatureMax < 1.0
+          ? 1.0 - temperatureRatio
+          : temperatureRatio;
+        biomeColor = mix(color, cb.color, temperatureScalar);
     }
 
     return biomeColor;
@@ -88,7 +99,7 @@ vec3 apply_bump(float height) {
 void main() {
     // main variables
     float temperatureHeight = smoothstep(1.0, 0.0, abs(vPos.y));
-    temperatureHeight *= fbm3(vPos, 3.0, 1.0, 1.0);
+    temperatureHeight = clamp(temperatureHeight * fbm3(vPos, 2.5, 1.5, 2.5, 2), 0.0, 1.0);
     vec3 color = vec3(0.0);
 
     // Initial heightmap & flags

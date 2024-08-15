@@ -48,33 +48,3 @@ float fbm3(vec3 x, float freq, float amp, float lac) {
     amp *= 0.5;
 	return val;
 }
-
-float fbm3v(vec3 x, float freq, float amp, float lac, float val) {
-	vec3 shift = vec3(100);
-	val += amp * noise3(x*freq);
-    x = x * lac + shift;
-    amp *= 0.5;
-	return clamp(val, 0.0, 1.0);
-}
-
-// Sourced from Yi-wen LIN:
-// https://github.com/yiwenl/glsl-fbm/blob/master/1d.glsl
-// ------------------------------------------------------------------------------------------------
-// 1D fractional Brownian motion
-
-float rand(float n){return fract(sin(n) * 43758.5453123);}
-
-float noise1(float p){
-    float fl = floor(p);
-    float fc = fract(p);
-    return mix(rand(fl), rand(fl + 1.0), fc);
-}
-
-float fbm1(float x, float freq, float amp, float lac) {
-	float val = 0.0;
-	float shift = 100.0;
-	val += amp * noise1(x*freq);
-    x = x * lac + shift;
-    amp *= 0.5;
-	return val;
-}
