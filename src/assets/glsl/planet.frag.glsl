@@ -3,9 +3,6 @@ precision highp float;
 #endif
 
 struct Biome {
-    float frequency;
-    float amplitude;
-    float lacunarity;
     float temperatureMin;
     float temperatureMax;
     vec3 color;
@@ -52,15 +49,24 @@ in vec3 vBitangent;
 // Biome calculation function
 // TODO: replace test code by actual implementation
 vec3 apply_biomes(float temperature, vec3 color) {
-    Biome b[1] = Biome[](
-        Biome(3.0, 1.0, 1.0, 0.25, 1.0, vec3(1.0, 1.0, 0.0))
+    Biome b[3] = Biome[](
+        Biome(0.0, 1.0, color),
+        Biome(0.0, 0.025, vec3(1.0, 1.0, 1.0)),
+        Biome(0.25, 1.0, vec3(1.0, 1.0, 0.0))
     );
 
     float biomeSmoothing = 0.1;
     vec3 biomeColor = vec3(0.0);
     for (int i = 0; i < b.length(); i++) {
         Biome cb = b[i];
-        float biomeHeight = smoothstep(cb.temperatureMin, cb.temperatureMin + biomeSmoothing, temperature);
+        float FLAG_BELOW_MAX_TEMP = step(temperature, cb.temperatureMax);
+        float FLAG_ABOVE_MIN_TEMP = step(cb.temperatureMin, temperature);
+        float FLAG_VALID = FLAG_BELOW_MAX_TEMP * FLAG_ABOVE_MIN_TEMP;
+        if (FLAG_VALID < 0.5) {
+            continue;
+        }
+
+        float biomeHeight = smoothstep(cb.temperatureMin, cb.temperatureMax, FLAG_VALID);
         biomeColor = mix(color, cb.color, biomeHeight);
     }
 
@@ -81,8 +87,8 @@ vec3 apply_bump(float height) {
 
 void main() {
     // main variables
-    float temperatureHeight = smoothstep(0.75, 0.0, abs(vPos.y));
-    temperatureHeight *= fbm3(vPos, 3.0, 1.5, 2.0);
+    float temperatureHeight = smoothstep(1.0, 0.0, abs(vPos.y));
+    temperatureHeight *= fbm3(vPos, 3.0, 1.0, 1.0);
     vec3 color = vec3(0.0);
 
     // Initial heightmap & flags
