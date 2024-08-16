@@ -56,14 +56,12 @@ vec3 apply_biomes(float t, vec3 color) {
 }
 
 // Bump mapping function, pretty mediocre but enough for a start...
+// Calculates height derivatives, then perturbs the normal according to these values
 vec3 apply_bump(float height) {
-    // Calculate height, dxHeight and dyHeight
     vec3 dx = vTangent * u_bump_offset;
     vec3 dy = vBitangent * u_bump_offset;
     float dxHeight = fbm3(vPos + dx, u_frequency, u_amplitude, u_lacunarity, u_octaves);
     float dyHeight = fbm3(vPos + dy, u_frequency, u_amplitude, u_lacunarity, u_octaves);
-
-    // Perturb normal
     return perturb_normal(vPos, dx, dy, height, dxHeight, dyHeight, u_radius, u_bump_strength);
 }
 
