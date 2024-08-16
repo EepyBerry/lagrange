@@ -8,14 +8,22 @@ export class ColorRampStep {
 
   private _id: string // internal ID for tracking changes
   private _color: THREE.Color
+  private _alpha: number
   private _factor: number
   private _isBound: boolean
 
   constructor(color: THREE.ColorRepresentation, factor: number, isBound: boolean = false) {
     this._id = nanoid()
     this._color = new THREE.Color(color)
+    this._alpha = 1.0
     this._factor = factor
     this._isBound = isBound
+  }
+
+  static newWithAlpha(color: THREE.ColorRepresentation, alpha: number, factor: number): ColorRampStep {
+    const step = new ColorRampStep(color, factor)
+    step.alpha = alpha
+    return step
   }
 
   public get id() {
@@ -27,6 +35,12 @@ export class ColorRampStep {
   }
   public set color(color: THREE.Color) {
     this._color = color
+  }
+  public get alpha(): number {
+    return this._alpha
+  }
+  public set alpha(value: number) {
+    this._alpha = value
   }
   public get factor() {
     return this._factor
@@ -101,7 +115,7 @@ export class ColorRamp extends ChangeTracker {
     if (this._steps.length >= this._maxSize - 1) {
       throw new Error('(ColorRamp) Maximum size reached')
     }
-    this._steps.push(new ColorRampStep('black', this._steps[this._steps.length - 2].factor + 0.01))
+    this._steps.push(new ColorRampStep('black', this._steps[this._steps.length - 2].factor))
     this.sortSteps()
     this.markForChange(this._changePrefix)
   }

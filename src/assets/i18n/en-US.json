@@ -183,8 +183,7 @@
       },
       "biomes": {
         "$title": "Biomes",
-        "biomes_show": "Show biomes",
-        "poles_show": "Show poles"
+        "biomes_show": "Show biomes"
       },
       "clouds": {
         "$title": "Clouds",

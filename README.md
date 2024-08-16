@@ -46,7 +46,7 @@ Vite copies the output to the `dist` folder, creating it first if need be.
 - ☀️ **Lighting parameters!** (sunlight, ambient light)
 - 🌍 **Planet & Rendering parameters!** (transform, PBR, water level)
 - 🗺️ **Surface parameters!** (bumps, noise settings, color)
-- ⛰️ **Biome parameters!** (🚧 poles)
+- ⛰️ **Biome parameters!** (🚧)
 - ☁️ **Clouds parameters!** (transform, color, opacity)
 - 🌈 **Atmosphere parameters!** (density, color)
 

@@ -29,6 +29,8 @@ import { LensFlareEffect } from '@core/three/lens-flare.effect'
 import PlanetData from '@core/models/planet-data.model'
 import { ref } from 'vue'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
+import { ColorRamp, ColorRampStep } from '../models/color-ramp.model'
+import { create1DColorTexture } from '@/utils/three-utils'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -87,6 +89,16 @@ export function createPlanet(data: PlanetData): THREE.Mesh {
   const geometry = createGeometryComponent(GeometryType.SPHERE)
   geometry.computeTangents()
 
+  // TODO:  TEST CODE, REMOVE LATER
+  const biomeRamp = new ColorRamp([], '', [
+    ColorRampStep.newWithAlpha(new THREE.Color(0xbaa345), 0.0, 0),
+    ColorRampStep.newWithAlpha(new THREE.Color(0xbaa345), 0.0, 48),
+    ColorRampStep.newWithAlpha(new THREE.Color(0xbaa345), 1.0, 96),
+    ColorRampStep.newWithAlpha(new THREE.Color(0xbaa345), 1.0, 128),
+  ])
+  const biomeTex = create1DColorTexture(128, biomeRamp.definedSteps)
+  // END TODO
+
   const material = createShaderMaterialComponent(
     planetVertShader,
     planetFragShader,
@@ -105,11 +117,11 @@ export function createPlanet(data: PlanetData): THREE.Mesh {
       u_bump_strength: { value: data.planetSurfaceBumpStrength },
       u_bump_offset: { value: 0.005 },
       u_biomes: { value: data.biomesEnabled },
-      u_show_poles: { value: data.biomePolesEnabled },
       u_pole_limit: { value: 0.8 },
       u_cr_colors: { value: data.planetSurfaceColorRamp.colors },
       u_cr_positions: { value: data.planetSurfaceColorRamp.factors },
       u_cr_size: { value: data.planetSurfaceColorRampSize },
+      u_biome_tex: { value: biomeTex }
     },
     THREE.MeshStandardMaterial,
   )

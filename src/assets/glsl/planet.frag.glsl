@@ -3,8 +3,8 @@ precision highp float;
 #endif
 
 struct Biome {
-    float temperatureMin;
-    float temperatureMax;
+    float tMin;
+    float tMax;
     vec3 color;
 };
 
@@ -29,8 +29,8 @@ uniform float u_ground_metalness;
 
 // Biome uniforms
 uniform bool u_biomes;
-uniform bool u_show_poles;
 uniform float u_pole_limit;
+uniform sampler2D u_biome_tex;
 
 // Color ramp uniforms
 uniform float[16] u_cr_positions;
@@ -47,40 +47,11 @@ in vec3 vBitangent;
 @import functions/normal_utils;
 
 // Biome calculation function
-// (note: initial surface color is converted to a biome to keep default behaviour)
-vec3 apply_biomes(float temperature, vec3 color) {
-    Biome defaultBiome = Biome(0.0, 1.0, color);
-    Biome b[3] = Biome[](
-        defaultBiome,
-        Biome(0.0125, 0.15, vec3(1.0, 1.0, 1.0)),
-        Biome(0.375, 1.0, vec3(0.5, 0.4, 0.05))
-    );
-
-    float biomeSmoothing = 0.1;
-    vec3 biomeColor = vec3(0.0);
-    for (int i = 0; i < b.length(); i++) {
-        Biome cb = b[i];
-
-        // Calculate flags, skip if fragment texel isn't in the current biome
-        float FLAG_BELOW_MAX_TEMP = step(temperature, cb.temperatureMax);
-        float FLAG_ABOVE_MIN_TEMP = step(cb.temperatureMin, temperature);
-        //float FLAG_EDGE_BIOME = step();
-        float FLAG_VALID = FLAG_BELOW_MAX_TEMP * FLAG_ABOVE_MIN_TEMP;
-        if (FLAG_VALID < 0.5) {
-            continue;
-        }
-
-        // Apply color using additional flags
-        float FLAG_FROM_POLE = step(cb.temperatureMin, 1e-4);
-        float FLAG_AT_EQUATOR = step(cb.temperatureMax, 1.0);
-
-        float temperatureRatio = (temperature - cb.temperatureMin) / (cb.temperatureMax - cb.temperatureMin);
-        float temperatureScalar = cb.temperatureMax < 1.0
-          ? 1.0 - temperatureRatio
-          : temperatureRatio;
-        biomeColor = mix(color, cb.color, temperatureScalar);
-    }
-
+vec3 apply_biomes(float t, vec3 color) {
+    vec3 biomeColor = color;
+    vec2 texCoord = vec2(t, 0.5);
+    vec4 texel = texture2D(u_biome_tex, texCoord);
+    biomeColor = mix(color, texel.xyz, texel.w);
     return biomeColor;
 }
 

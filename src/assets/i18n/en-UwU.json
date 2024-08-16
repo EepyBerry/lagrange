@@ -184,8 +184,7 @@
       },
       "biomes": {
         "$title": "Biomes",
-        "biomes_show": "Show biomes :3",
-        "poles_show": "Show powes :3"
+        "biomes_show": "Show biomes :3"
       },
       "clouds": {
         "$title": "Cwouds",

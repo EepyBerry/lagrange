@@ -513,14 +513,6 @@ function updatePlanet() {
         )
         break
       }
-      case '_biomePolesEnabled': {
-        setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
-          'u_show_poles',
-          LG_PLANET_DATA.value.biomePolesEnabled,
-        )
-        break
-      }
 
       // --------------------------------------------------
       // |                Clouds settings                 |

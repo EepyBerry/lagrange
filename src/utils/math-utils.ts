@@ -45,3 +45,7 @@ export function normalizeUInt8ArrayPixels(buffer: Uint8Array, w: number, h: numb
   }
   return result
 }
+
+export function lerp(start: number, end: number, fac: number){
+  return (1-fac) * start + fac * end
+}

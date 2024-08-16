@@ -246,7 +246,6 @@ export default class PlanetData extends ChangeTracker {
   // --------------------------------------------------
 
   private _biomesEnabled: boolean
-  private _biomePolesEnabled: boolean
 
   // --------------------------------------------------
 
@@ -256,14 +255,6 @@ export default class PlanetData extends ChangeTracker {
   public set biomesEnabled(value: boolean) {
     this._biomesEnabled = value
     this.markForChange('_biomesEnabled')
-  }
-
-  public get biomePolesEnabled(): boolean {
-    return this._biomePolesEnabled
-  }
-  public set biomePolesEnabled(value: boolean) {
-    this._biomePolesEnabled = value
-    this.markForChange('_biomePolesEnabled')
   }
 
   // --------------------------------------------------
@@ -458,7 +449,6 @@ export default class PlanetData extends ChangeTracker {
       new ColorRampStep(0x223b05, 1, true),
     ])
 
-    this._biomePolesEnabled = true
     this._biomesEnabled = true
 
     this._cloudsEnabled = true
@@ -519,7 +509,6 @@ export default class PlanetData extends ChangeTracker {
       new ColorRampStep(0x223b05, 1, true),
     ])
 
-    this._biomePolesEnabled = true
     this._biomesEnabled = true
 
     this._cloudsEnabled = true
@@ -586,7 +575,6 @@ export default class PlanetData extends ChangeTracker {
           ],
     )
 
-    this._biomePolesEnabled = data._biomePolesEnabled ?? true
     this._biomesEnabled = data._biomesEnabled ?? true
 
     this._cloudsEnabled = data._cloudsEnabled ?? true

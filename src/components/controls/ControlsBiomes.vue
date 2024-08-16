@@ -4,14 +4,6 @@
       {{ $t('editor.controls.biomes.biomes_show') }}
     </ParameterCheckbox>
     <template v-if="LG_PLANET_DATA.biomesEnabled">
-      <ParameterCheckbox
-        v-model="LG_PLANET_DATA.biomePolesEnabled"
-        id="b-poles"
-        :true-value="true"
-        :false-value="false"
-      >
-        {{ $t('editor.controls.biomes.poles_show') }}
-      </ParameterCheckbox>
     </template>
   </ParameterTable>
 </template>
