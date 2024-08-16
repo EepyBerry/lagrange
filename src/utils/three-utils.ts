@@ -35,10 +35,8 @@ export function create1DColorTexture(w: number, steps: ColorRampStep[]): DataTex
       data[ stride + 2 ] = b
       data[ stride + 3 ] = a
       stride += 4
-      console.log(nextStep.alpha)
     }
   }
-  console.log(data.toString())
   const dt = new DataTexture(data, w, 1)
   dt.needsUpdate = true
   return dt
