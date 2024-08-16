@@ -91,12 +91,13 @@ export function createPlanet(data: PlanetData): THREE.Mesh {
 
   // TODO:  TEST CODE, REMOVE LATER
   const biomeRamp = new ColorRamp([], '', [
-    ColorRampStep.newWithAlpha(new THREE.Color(0xbaa345), 0.0, 0),
-    ColorRampStep.newWithAlpha(new THREE.Color(0xbaa345), 0.0, 48),
-    ColorRampStep.newWithAlpha(new THREE.Color(0xbaa345), 1.0, 96),
-    ColorRampStep.newWithAlpha(new THREE.Color(0xbaa345), 1.0, 128),
+    ColorRampStep.newWithAlpha(new THREE.Color(0xffffff), 1.0, 0),
+    ColorRampStep.newWithAlpha(new THREE.Color(0xffffff), 0.25, 0.1),
+    ColorRampStep.newWithAlpha(new THREE.Color(0xffffff), 0.0, 0.15),
+    ColorRampStep.newWithAlpha(new THREE.Color(0xbaa345), 0.0, 0.5),
+    ColorRampStep.newWithAlpha(new THREE.Color(0xbaa345), 1.0, 1.0),
   ])
-  const biomeTex = create1DColorTexture(128, biomeRamp.definedSteps)
+  const biomeTex = create1DColorTexture(256, biomeRamp.definedSteps)
   // END TODO
 
   const material = createShaderMaterialComponent(

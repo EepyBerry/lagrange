@@ -1,7 +1,7 @@
 import type {  ColorRampStep } from '@/core/models/color-ramp.model'
 import { DataTexture, type ShaderMaterial } from 'three'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
-import { lerp } from './math-utils'
+import { lerp } from 'three/src/math/MathUtils.js'
 
 export function setShaderMaterialUniform(mat: CustomShaderMaterial | ShaderMaterial, uname: string, uvalue: any): void {
   mat.uniforms[uname] = { value: uvalue }
@@ -20,7 +20,7 @@ export function create1DColorTexture(w: number, steps: ColorRampStep[]): DataTex
   for (let s = 0; s < steps.length-1; s++) {
     const step = steps[s]
     const nextStep = steps[s+1]
-    const stepIterations = nextStep.factor - step.factor
+    const stepIterations = Math.ceil((nextStep.factor*w) - (step.factor*w))
 
     for (let i = 0.0; i < stepIterations; i++) {
       const lerpFac = parseFloat((i/stepIterations).toFixed(4))
