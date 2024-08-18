@@ -1,135 +1,124 @@
 <template>
-  <tr class="field">
-    <td colspan="2">
-      <slot>ParameterName</slot>
-    </td>
-  </tr>
-  <tr class="field">
-    <td colspan="2">
-      <div class="container">
-        <div class="color-ramp" ref="htmlColorRamp" @click="togglePanel">
-          <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
-            <span
-              ref="htmlColorSteps"
-              class="color-step"
-              :style="{
-                left: `${step.factor * 100}%`,
-                display: step.isBound ? 'none' : 'initial',
-              }"
-            >
-            </span>
-          </template>
-        </div>
-        <button
-          class="lg edit"
-          :class="{ 'menu-expanded': panelOpen }"
-          :aria-label="$t('a11y.action_edit_ramp')"
-          @click="togglePanel"
+  <p>
+    <slot>ParameterName</slot>
+  </p>
+  <div class="container">
+    <div class="color-ramp" ref="htmlColorRamp" @click="togglePanel">
+      <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
+        <span
+          ref="htmlColorSteps"
+          class="color-step"
+          :style="{
+            left: `${step.factor * 100}%`,
+            display: step.isBound ? 'none' : 'initial',
+          }"
         >
-          <iconify-icon v-if="panelOpen" class="icon" icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
-          <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-        </button>
-      </div>
-    </td>
-  </tr>
-
-  <tr v-show="panelOpen">
-    <td colspan="2">
-      <table class="panel-table">
-        <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
-          <tr>
-            <td class="action">
-              <button
-                v-if="!lgColorRamp?.isBoundStep(step.id) && mode !== 'opacity'"
-                class="lg warn"
-                :aria-label="$t('a11y.action_open_colorpanel')"
-                @click="removeStep(step.id)"
-                :disabled="pickerIdOpen === step.id"
-              >
-                <iconify-icon class="icon" icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
-              </button>
-            </td>
-            <td>
-              <div class="factor-wrapper">
-                <span></span>
-                <span v-if="lgColorRamp?.isBoundStep(step.id)">{{ step.factor }}</span>
-                <InputSliderElement
-                  v-else
-                  ref="htmlFactorInputs"
-                  class="lg fw"
-                  :id="step.id"
-                  :min="0.001"
-                  :max="0.999"
-                  :step="0.001"
-                  :aria-label="$t('a11y.editor_generic_input')"
-                  v-model="step.factor"
-                  @input="updateStepFactor(step.id, $event)"
-                />
-              </div>
-            </td>
-            <td>
-              <div class="color-wrapper">
-                <span
-                  class="current-color"
-                  :style="{ backgroundColor: `#${step.color.getHexString()}` }"
-                  @click="togglePicker(step.id)"
-                ></span>
-                <button
-                  class="lg edit"
-                  :class="{ 'menu-expanded': pickerIdOpen === step.id }"
-                  :aria-label="$t('a11y.action_open_colorpanel')"
-                  @click="togglePicker(step.id)"
-                >
-                  <iconify-icon
-                    v-if="pickerIdOpen === step.id"
-                    class="icon"
-                    icon="mingcute:check-line"
-                    width="1.25rem"
-                    aria-hidden="true"
-                  />
-                  <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-                </button>
-              </div>
-            </td>
-          </tr>
-          <tr v-if="pickerIdOpen === step.id">
-            <td colspan="4" class="picker-wrapper">
-              <ColorPicker
-                default-format="hex"
-                :alpha-channel="mode === 'rgba' ? 'show' : 'hide'"
-                :color="'#' + step.color.getHexString()"
-                @color-change="updateStepColor(step.id, $event.colors.hex)"
-              >
-                <template #hue-range-input-label>
-                  <span class="visually-hidden">Hue</span>
-                </template>
-              </ColorPicker>
-            </td>
-          </tr>
-        </template>
-        <tr v-if="['rgb', 'rgba'].includes(mode ?? 'rgb') || !mode">
-          <td colspan="4">
-            <div class="add-step">
-              <button class="lg" @click="addStep()" :aria-label="$t('a11y.action_add_colorstep')">
-                <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
-                {{ $t('editor.$action_add') }}
-              </button>
-              <iconify-icon class="icon" icon="ph:dot-outline-fill" width="1.25rem" aria-hidden="true" />
-              <button class="lg" @click="sortSteps()" :aria-label="$t('a11y.action_sort_colorsteps')">
-                <iconify-icon
-                  class="icon"
-                  icon="mingcute:numbers-09-sort-ascending-line"
-                  width="1.25rem"
-                  aria-hidden="true"
-                />
-                {{ $t('editor.$action_sort') }}
-              </button>
-            </div>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
+        </span>
+      </template>
+    </div>
+    <button
+      class="lg edit"
+      :class="{ 'menu-expanded': panelOpen }"
+      :aria-label="$t('a11y.action_edit_ramp')"
+      @click="togglePanel"
+    >
+      <iconify-icon v-if="panelOpen" class="icon" icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
+      <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
+    </button>
+  </div>
+  <table v-show="panelOpen" class="panel-table">
+    <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
+      <tr>
+        <td class="action">
+          <button
+            v-if="!lgColorRamp?.isBoundStep(step.id) && mode !== 'opacity'"
+            class="lg warn"
+            :aria-label="$t('a11y.action_open_colorpanel')"
+            @click="removeStep(step.id)"
+            :disabled="pickerIdOpen === step.id"
+          >
+            <iconify-icon class="icon" icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
+          </button>
+        </td>
+        <td>
+          <div class="factor-wrapper">
+            <span></span>
+            <span v-if="lgColorRamp?.isBoundStep(step.id)">{{ step.factor }}</span>
+            <InputSliderElement
+              v-else
+              ref="htmlFactorInputs"
+              class="lg fw"
+              :id="step.id"
+              :min="0.001"
+              :max="0.999"
+              :step="0.001"
+              :aria-label="$t('a11y.editor_generic_input')"
+              v-model="step.factor"
+              @input="updateStepFactor(step.id, $event)"
+            />
+          </div>
+        </td>
+        <td>
+          <div class="color-wrapper">
+            <span
+              class="current-color"
+              :style="{ backgroundColor: `#${step.color.getHexString()}` }"
+              @click="togglePicker(step.id)"
+            ></span>
+            <button
+              class="lg edit"
+              :class="{ 'menu-expanded': pickerIdOpen === step.id }"
+              :aria-label="$t('a11y.action_open_colorpanel')"
+              @click="togglePicker(step.id)"
+            >
+              <iconify-icon
+                v-if="pickerIdOpen === step.id"
+                class="icon"
+                icon="mingcute:check-line"
+                width="1.25rem"
+                aria-hidden="true"
+              />
+              <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
+            </button>
+          </div>
+        </td>
+      </tr>
+      <tr v-if="pickerIdOpen === step.id">
+        <td colspan="4" class="picker-wrapper">
+          <ColorPicker
+            default-format="hex"
+            :alpha-channel="mode === 'rgba' ? 'show' : 'hide'"
+            :color="'#' + step.color.getHexString()"
+            @color-change="updateStepColor(step.id, $event.colors.hex)"
+          >
+            <template #hue-range-input-label>
+              <span class="visually-hidden">Hue</span>
+            </template>
+          </ColorPicker>
+        </td>
+      </tr>
+    </template>
+    <tr v-if="['rgb', 'rgba'].includes(mode ?? 'rgb') || !mode">
+      <td colspan="4">
+        <div class="add-step">
+          <button class="lg" @click="addStep()" :aria-label="$t('a11y.action_add_colorstep')">
+            <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
+            {{ $t('editor.$action_add') }}
+          </button>
+          <iconify-icon class="icon" icon="ph:dot-outline-fill" width="1.25rem" aria-hidden="true" />
+          <button class="lg" @click="sortSteps()" :aria-label="$t('a11y.action_sort_colorsteps')">
+            <iconify-icon
+              class="icon"
+              icon="mingcute:numbers-09-sort-ascending-line"
+              width="1.25rem"
+              aria-hidden="true"
+            />
+            {{ $t('editor.$action_sort') }}
+          </button>
+        </div>
+      </td>
+    </tr>
+  </table>
 </template>
 
 <script setup lang="ts">
@@ -210,7 +199,11 @@ function removeStep(id: string) {
 </script>
 
 <style scoped lang="scss">
+p {
+  grid-column: span 2;
+}
 .container {
+  grid-column: span 2;
   width: 100%;
   white-space: nowrap;
 
@@ -242,6 +235,7 @@ function removeStep(id: string) {
   padding-bottom: 1rem;
 }
 .panel-table {
+  grid-column: span 2;
   width: 100%;
   border-spacing: 0.5rem 0.125rem;
   padding: 0.375rem 0;

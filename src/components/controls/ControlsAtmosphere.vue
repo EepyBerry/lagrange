@@ -1,5 +1,5 @@
 <template>
-  <ParameterTable>
+  <ParameterGrid>
     <ParameterCheckbox v-model="LG_PLANET_DATA.atmosphereEnabled" id="a-toggle" :true-value="true" :false-value="false">
       {{ $t('editor.controls.atmosphere.atmosphere_show') }}
     </ParameterCheckbox>
@@ -63,11 +63,11 @@
         </ParameterColor>
       </template>
     </template>
-  </ParameterTable>
+  </ParameterGrid>
 </template>
 <script setup lang="ts">
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
-import ParameterTable from '@components/parameters/ParameterTable.vue'
+import ParameterGrid from '@components/parameters/ParameterGrid.vue'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'
 import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
 import ParameterCategory from '@components/parameters/ParameterCategory.vue'

@@ -5,7 +5,6 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router.config'
 import OverlaySpinner from '@components/elements/OverlaySpinner.vue'
-import ParameterTable from '@components/parameters/ParameterTable.vue'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'
 import ParameterRadio from '@components/parameters/ParameterRadio.vue'
 import ParameterRadioOption from '@components/parameters/ParameterRadioOption.vue'
@@ -20,7 +19,6 @@ createApp(App)
   .use(router)
   .use(i18nConfig.i18n)
   .use(createHead())
-  .component('ParameterTable', ParameterTable)
   .component('ParameterSlider', ParameterSlider)
   .component('ParameterRadio', ParameterRadio)
   .component('ParameterRadioOption', ParameterRadioOption)

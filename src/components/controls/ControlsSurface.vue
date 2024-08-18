@@ -1,5 +1,5 @@
 <template>
-  <ParameterTable>
+  <ParameterGrid>
     <ParameterCategory top>{{ $t('editor.controls.surface.bumpmap') }}</ParameterCategory>
     <ParameterCheckbox
       v-model="LG_PLANET_DATA.planetSurfaceShowBumps"
@@ -36,16 +36,16 @@
     <ParameterDivider />
     <ParameterColorRamp
       mode="rgb"
-      v-model="LG_PLANET_DATA.planetSurfaceColorRamp as ColorRamp"
+      v-model="(LG_PLANET_DATA.planetSurfaceColorRamp as ColorRamp)"
       :key="LG_PLANET_DATA.planetName"
     >
       {{ $t('editor.controls.surface.noise_colorramp') }}
     </ParameterColorRamp>
-  </ParameterTable>
+  </ParameterGrid>
 </template>
 <script setup lang="ts">
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
-import ParameterTable from '@components/parameters/ParameterTable.vue'
+import ParameterGrid from '@components/parameters/ParameterGrid.vue'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'
 import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
 import ParameterCategory from '@components/parameters/ParameterCategory.vue'

@@ -1,23 +1,17 @@
 <template>
-  <tr class="field">
-    <td>
-      <label :for="id">
-        <slot>ParameterName</slot>
-      </label>
-    </td>
-    <td>
-      <InputSliderElement
-        class="lg"
-        :class="extras"
-        :iid="id"
-        :min="min ?? 0"
-        :max="max ?? 10"
-        :step="step ?? 1"
-        :disabled="disabled"
-        v-model="lgParam as number"
-      />
-    </td>
-  </tr>
+  <label :for="id">
+    <slot>ParameterName</slot>
+  </label>
+  <InputSliderElement
+    class="lg"
+    :class="extras"
+    :iid="id"
+    :min="min ?? 0"
+    :max="max ?? 10"
+    :step="step ?? 1"
+    :disabled="disabled"
+    v-model="(lgParam as number)"
+  />
 </template>
 
 <script setup lang="ts">
@@ -26,31 +20,14 @@ const lgParam = defineModel<string | number | boolean>()
 
 type SliderExtras = 'rgb' | undefined
 defineProps<{ id: string; step?: number; min?: number; max?: number; extras?: SliderExtras; disabled?: boolean }>()
+
 </script>
 
 <style scoped lang="scss">
-tr.field {
-  width: 100%;
-
-  td {
-    text-wrap: nowrap;
-  }
-  td:first-of-type {
-    white-space: nowrap;
-  }
-  td:last-of-type {
-    width: 100%;
-    min-width: 10px;
-    padding-left: 4px;
-    text-align: end;
-  }
-
-  td.unit {
-    font-size: 0.75rem;
-  }
-}
-
+label { grid-column: 1;}
 input.lg {
+  grid-column: 2;
+  justify-self: end;
   text-align: end;
 }
 input.lg:not([type='checkbox'], [type='radio'], [type='range']) {

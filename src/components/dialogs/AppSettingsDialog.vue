@@ -15,7 +15,7 @@
         <CollapsibleSection icon="mingcute:tool-line" class="section-general" expand>
           <template v-slot:title>{{ $t('dialog.settings.general') }}</template>
           <template v-slot:content>
-            <ParameterTable>
+            <ParameterGrid>
               <ParameterDivider />
               <ParameterSelect id="language" v-model="appSettings.locale">
                 {{ $t('dialog.settings.general_language') }}
@@ -70,7 +70,7 @@
               >
                 {{ $t('dialog.settings.general_monospace') }}:
               </ParameterCheckbox>
-            </ParameterTable>
+            </ParameterGrid>
           </template>
         </CollapsibleSection>
 
@@ -80,7 +80,7 @@
           </template>
           <template v-slot:content>
             <div class="settings-editor">
-              <ParameterTable>
+              <ParameterGrid>
                 <ParameterKeyBinding
                   icon="mingcute:sun-line"
                   :key-bind="getKeyBind('toggle-lens-flare')"
@@ -122,7 +122,7 @@
                 >
                   {{ $t('dialog.settings.editor_screenshot') }}
                 </ParameterKeyBinding>
-              </ParameterTable>
+              </ParameterGrid>
             </div>
           </template>
         </CollapsibleSection>
@@ -133,7 +133,7 @@
           </template>
           <template v-slot:content>
             <div class="settings-a11y">
-              <ParameterTable>
+              <ParameterGrid>
                 <ParameterCheckbox
                   id="settings-effects"
                   :true-value="true"
@@ -150,7 +150,7 @@
                 >
                   {{ $t('dialog.settings.a11y_animations') }}:
                 </ParameterCheckbox>
-              </ParameterTable>
+              </ParameterGrid>
             </div>
           </template>
         </CollapsibleSection>
@@ -161,41 +161,29 @@
           </template>
           <template v-slot:content>
             <div class="settings-advanced">
-              <ParameterTable>
-                <tr class="setting-persist">
-                  <td style="width: 100%">{{ $t('dialog.settings.advanced_persist') }}:</td>
-                  <td style="text-wrap: nowrap">
-                    <button class="lg" :disabled="!!persistStorage || failedToPersist" @click="tryPersistStorage">
-                      {{
-                        $t(
-                          'dialog.settings.advanced_persist_' +
-                            (persistStorage ? 'success' : failedToPersist ? 'failure' : 'prompt'),
-                        )
-                      }}
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <NotificationElement type="info">
-                      {{ $t('dialog.settings.advanced_persist_info') }}
-                    </NotificationElement>
-                  </td>
-                </tr>
+              <ParameterGrid>
+                <p>{{ $t('dialog.settings.advanced_persist') }}:</p>
+                <button class="lg" :disabled="!!persistStorage || failedToPersist" @click="tryPersistStorage">
+                  {{
+                    $t(
+                      'dialog.settings.advanced_persist_' +
+                        (persistStorage ? 'success' : failedToPersist ? 'failure' : 'prompt'),
+                    )
+                  }}
+                </button>
+                <NotificationElement type="info">
+                  {{ $t('dialog.settings.advanced_persist_info') }}
+                </NotificationElement>
                 <ParameterCategory>
                   {{ $t('dialog.settings.advanced_danger_zone') }}
                 </ParameterCategory>
                 <ParameterDivider />
-                <tr>
-                  <td colspan="2">
-                    <button class="lg warn" style="width: 100%" @click="confirmDialogRef?.open()">
-                      <iconify-icon icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
-                      {{ $t('dialog.settings.advanced_clear_data') }}
-                    </button>
-                    <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
-                  </td>
-                </tr>
-              </ParameterTable>
+                <button class="lg warn clear-data" style="width: 100%" @click="confirmDialogRef?.open()">
+                  <iconify-icon icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
+                  {{ $t('dialog.settings.advanced_clear_data') }}
+                </button>
+                <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
+              </ParameterGrid>
             </div>
           </template>
         </CollapsibleSection>
@@ -208,7 +196,7 @@
 import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
 import { onMounted, ref, watch, type Ref } from 'vue'
 import DialogElement from '../elements/DialogElement.vue'
-import ParameterTable from '../parameters/ParameterTable.vue'
+import ParameterGrid from '../parameters/ParameterGrid.vue'
 import ParameterCheckbox from '../parameters/ParameterCheckbox.vue'
 import ParameterRadio from '../parameters/ParameterRadio.vue'
 import ParameterDivider from '../parameters/ParameterDivider.vue'
@@ -372,17 +360,13 @@ function getKeyBind(action: string) {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.75rem;
-
-      table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 0.125rem;
-      }
     }
   }
   .setting-persist button {
+    grid-column: 2;
     padding: 0 0.5rem;
   }
+  .notification, button.clear-data { grid-column: span 2; }
 }
 
 @media screen and (max-width: 767px) {

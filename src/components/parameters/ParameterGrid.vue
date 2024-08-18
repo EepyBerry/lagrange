@@ -7,13 +7,14 @@
 </template>
 <style scoped lang="scss">
 .param-grid {
+  width: 100%;
   display: grid;
   grid-template-columns: auto auto;
-  width: 100%;
+  align-items: center;
+  gap: 8px 0;
 }
 @media screen and (max-width: 1023px) {
   .param-grid {
-    gap: 0 8px;
     font-size: 1rem;
   }
 }

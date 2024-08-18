@@ -1,23 +1,18 @@
 <template>
-  <tr class="field">
-    <td colspan="2">
-      <div class="radio-label">
-        <slot name="title">ParameterName</slot>
-      </div>
-      <div class="radio-options">
-        <slot name="options"></slot>
-      </div>
-    </td>
-  </tr>
+  <p class="radio-label">
+    <slot name="title">ParameterName</slot>
+  </p>
+  <div class="radio-options">
+    <slot name="options"></slot>
+  </div>
 </template>
 
 <style scoped lang="scss">
-tr.field {
-  td {
-    text-wrap: nowrap;
-  }
+p {
+  grid-column: span 2;
 }
 .radio-options {
+  grid-column: span 2;
   display: flex;
   align-items: center;
   height: 2rem;

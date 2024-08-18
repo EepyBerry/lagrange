@@ -1,42 +1,35 @@
 <template>
-  <tr class="field">
-    <td class="color">
-      <slot>ParameterName</slot>
-    </td>
-    <td class="color">
-      <div class="color-wrapper">
-        <span
-          class="current-color"
-          :style="{ backgroundColor: `#${lgColor?.getHexString()}` }"
-          @click="togglePanel"
-        ></span>
-        <button
-          class="lg edit"
-          :aria-label="$t('a11y.action_open_colorpanel')"
-          :class="{ 'menu-expanded': pickerOpen }"
-          @click="togglePanel"
-        >
-          <iconify-icon v-if="pickerOpen" class="icon" icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
-          <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-        </button>
-      </div>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <ColorPicker
-        v-show="pickerOpen"
-        alpha-channel="hide"
-        default-format="hex"
-        :color="pickerInitColor"
-        @color-change="setColor($event.colors.hex)"
-      >
-        <template #hue-range-input-label>
-          <span class="visually-hidden">Hue</span>
-        </template>
-      </ColorPicker>
-    </td>
-  </tr>
+  <p>
+    <slot>ParameterName</slot>
+  </p>
+  <div class="color-wrapper">
+    <span
+      class="current-color"
+      :style="{ backgroundColor: `#${lgColor?.getHexString()}` }"
+      @click="togglePanel"
+    ></span>
+    <button
+      class="lg edit"
+      :aria-label="$t('a11y.action_open_colorpanel')"
+      :class="{ 'menu-expanded': pickerOpen }"
+      @click="togglePanel"
+    >
+      <iconify-icon v-if="pickerOpen" class="icon" icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
+      <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
+    </button>
+  </div>
+  <ColorPicker
+    class="picker"
+    v-show="pickerOpen"
+    alpha-channel="hide"
+    default-format="hex"
+    :color="pickerInitColor"
+    @color-change="setColor($event.colors.hex)"
+  >
+    <template #hue-range-input-label>
+      <span class="visually-hidden">Hue</span>
+    </template>
+  </ColorPicker>
 </template>
 
 <script setup lang="ts">
@@ -68,28 +61,14 @@ function togglePanel(): void {
 </script>
 
 <style scoped lang="scss">
-tr.field {
-  width: 100%;
-
-  & > td.color {
-    text-wrap: nowrap;
-    height: 100%;
-  }
-  & > td.color:first-of-type {
-    white-space: nowrap;
-  }
-  & > td.color:last-of-type {
-    width: 100%;
-    min-width: 10px;
-    padding-left: 4px;
-    text-align: end;
-  }
+.picker {
+  grid-column: span 2;
 }
 .color-wrapper {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.5rem;
+  gap: 8px;
   height: 100%;
 }
 .current-color {

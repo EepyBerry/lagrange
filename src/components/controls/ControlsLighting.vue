@@ -1,5 +1,5 @@
 <template>
-  <ParameterTable>
+  <ParameterGrid>
     <ParameterCategory top>{{ $t('editor.controls.lighting.lensflare') }}</ParameterCategory>
     <ParameterCheckbox v-model="LG_PLANET_DATA.lensFlareEnabled" id="f-toggle" :true-value="true" :false-value="false">
       {{ $t('editor.controls.lighting.lensflare_show') }}
@@ -35,11 +35,11 @@
     <ParameterColor v-model="LG_PLANET_DATA.ambLightColor">
       {{ $t('editor.controls.lighting.amblight_color') }}
     </ParameterColor>
-  </ParameterTable>
+  </ParameterGrid>
 </template>
 <script setup lang="ts">
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
-import ParameterTable from '@components/parameters/ParameterTable.vue'
+import ParameterGrid from '@components/parameters/ParameterGrid.vue'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'
 import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
 import ParameterCategory from '@components/parameters/ParameterCategory.vue'
