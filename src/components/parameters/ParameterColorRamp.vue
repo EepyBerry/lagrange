@@ -92,7 +92,7 @@
               </div>
             </td>
           </tr>
-          <tr v-show="pickerIdOpen === step.id">
+          <tr v-if="pickerIdOpen === step.id">
             <td colspan="4" class="picker-wrapper">
               <ColorPicker
                 alpha-channel="hide"
@@ -133,7 +133,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, type Ref } from 'vue'
+import { onMounted, ref, watch, type Ref } from 'vue'
 import { ColorPicker } from 'vue-accessible-color-picker'
 import InputSliderElement from '../elements/InputSliderElement.vue'
 import type { ColorRamp } from '@/core/models/color-ramp.model'
@@ -154,6 +154,7 @@ watch(
     updateRamp()
   },
 )
+onMounted(() => updateRamp())
 
 function updateRamp() {
   const gradient: string[] = []

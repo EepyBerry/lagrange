@@ -7,13 +7,17 @@ struct Biome {
     float tMax;
     vec3 color;
 };
+struct NoiseParameters {
+    int type;
+    float freq;
+    float amp;
+    float lac;
+    int oct;
+};
 
 // Noise uniforms
 uniform float u_radius;
-uniform int u_octaves;
-uniform float u_frequency;
-uniform float u_amplitude;
-uniform float u_lacunarity;
+uniform NoiseParameters u_gnd_noise;
 
 // Bump uniforms
 uniform bool u_bump;
@@ -30,6 +34,7 @@ uniform float u_ground_metalness;
 // Biome uniforms
 uniform bool u_biomes;
 uniform float u_pole_limit;
+uniform NoiseParameters u_temp_noise;
 uniform sampler2D u_biome_tex;
 
 // Color ramp uniforms
@@ -46,7 +51,7 @@ in vec3 vBitangent;
 @import functions/color_utils;
 @import functions/normal_utils;
 
-// Biome calculation function
+// Biome function
 vec3 apply_biomes(float t, vec3 color) {
     vec3 biomeColor = color;
     vec2 texCoord = vec2(t, 0.5);
@@ -60,19 +65,22 @@ vec3 apply_biomes(float t, vec3 color) {
 vec3 apply_bump(float height) {
     vec3 dx = vTangent * u_bump_offset;
     vec3 dy = vBitangent * u_bump_offset;
-    float dxHeight = fbm3(vPos + dx, u_frequency, u_amplitude, u_lacunarity, u_octaves);
-    float dyHeight = fbm3(vPos + dy, u_frequency, u_amplitude, u_lacunarity, u_octaves);
+    float dxHeight = fbm3(vPos + dx, u_gnd_noise.freq, u_gnd_noise.amp, u_gnd_noise.lac, u_gnd_noise.oct);
+    float dyHeight = fbm3(vPos + dy, u_gnd_noise.freq, u_gnd_noise.amp, u_gnd_noise.lac, u_gnd_noise.oct);
     return perturb_normal(vPos, dx, dy, height, dxHeight, dyHeight, u_radius, u_bump_strength);
 }
 
 void main() {
     // main variables
-    float temperatureHeight = smoothstep(1.0, 0.0, abs(vPos.y));
-    temperatureHeight = clamp(temperatureHeight * fbm3(vPos, 2.5, 1.5, 2.5, 2), 0.0, 1.0);
+    float tHeight = smoothstep(1.0, 0.0, abs(vPos.y));
+    tHeight = clamp(
+        tHeight * fbm3(vPos, u_temp_noise.freq, u_temp_noise.amp, u_temp_noise.lac, u_temp_noise.oct),
+        0.0, 1.0
+    );
     vec3 color = vec3(0.0);
 
     // Initial heightmap & flags
-    float height = fbm3(vPos,  u_frequency, u_amplitude, u_lacunarity, u_octaves);
+    float height = fbm3(vPos, u_gnd_noise.freq, u_gnd_noise.amp, u_gnd_noise.lac, u_gnd_noise.oct);
     float FLAG_LAND = step(u_water_level, height);
     float FLAG_BIOMES = FLAG_LAND * float(u_biomes);
 
@@ -81,7 +89,7 @@ void main() {
     color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
 
     // Render biomes
-    color = mix(color, apply_biomes(temperatureHeight, color), FLAG_BIOMES);
+    color = mix(color, apply_biomes(tHeight, color), FLAG_BIOMES);
 
     // Set outputs
     csm_Bump = mix(vNormal, apply_bump(height), FLAG_LAND);

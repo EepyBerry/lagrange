@@ -136,6 +136,12 @@
     "$action_sort": "Sowt",
     "$action_add": "Add",
 
+    "general": {
+      "noise_fbm_frequency": "Fwequency",
+      "noise_fbm_amplitude": "Ampwitude",
+      "noise_fbm_lacunarity": "Wacunawity",
+      "noise_fbm_octaves": "Octaves"
+    },
     "controls": {
       "lighting": {
         "$title": "Wighting",
@@ -184,7 +190,13 @@
       },
       "biomes": {
         "$title": "Biomes",
-        "biomes_show": "Show biomes :3"
+        "biomes_show": "Show biomes :3",
+
+        "texture_resolution": "Wesowution",
+        "temperature": "Tempewatuwe gwadient",
+        "humidity": "Humidity gwadient",
+        
+        "biome_list": "Biomes"
       },
       "clouds": {
         "$title": "Cwouds",

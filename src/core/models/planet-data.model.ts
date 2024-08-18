@@ -4,6 +4,7 @@ import { clamp, isNumeric } from '@/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeTracker } from './change-tracker.model'
+import { BiomeParameters } from './biome-parameters.model'
 
 export default class PlanetData extends ChangeTracker {
   // --------------------------------------------------
@@ -246,6 +247,9 @@ export default class PlanetData extends ChangeTracker {
   // --------------------------------------------------
 
   private _biomesEnabled: boolean
+  private _biomesTemperatureResolution: number
+  private _biomesTemperatureNoise: NoiseParameters
+  private _biomesParams: BiomeParameters[]
 
   // --------------------------------------------------
 
@@ -255,6 +259,26 @@ export default class PlanetData extends ChangeTracker {
   public set biomesEnabled(value: boolean) {
     this._biomesEnabled = value
     this.markForChange('_biomesEnabled')
+  }
+  public get biomesTemperatureResolution(): number {
+    return this._biomesTemperatureResolution
+  }
+  public set biomesTemperatureResolution(value: number) {
+    this._biomesTemperatureResolution = value
+    this.markForChange('_biomesTemperatureResolution')
+  }
+  
+  public get biomesTemperatureNoise(): NoiseParameters {
+    return this._biomesTemperatureNoise
+  }
+
+  public get biomesParams(): BiomeParameters[] {
+    return this._biomesParams
+  }
+  public set biomesParams(value: BiomeParameters[]) {
+    this._biomesParams.splice(0)
+    this._biomesParams.push(...value)
+    this.markForChange('_biomesParams')
   }
 
   // --------------------------------------------------
@@ -438,6 +462,7 @@ export default class PlanetData extends ChangeTracker {
       3.41,
       0.5,
       2.16,
+      6
     )
     this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
       new ColorRampStep(0x061c3f, 0, true),
@@ -450,11 +475,43 @@ export default class PlanetData extends ChangeTracker {
     ])
 
     this._biomesEnabled = true
+    this._biomesTemperatureResolution = 256
+    this._biomesTemperatureNoise = new NoiseParameters(
+      this._changedProps,
+      '_biomesTemperatureNoise',
+      NoiseType.FBM,
+      2.5,
+      1.5,
+      2.5,
+      2
+    )
+    this._biomesParams = [
+      new BiomeParameters(
+        this._changedProps,
+        '_biomesParams',
+        0.0,
+        0.15,
+        new ColorRamp(this._changedProps, '_cloudsColorRamp', [
+          new ColorRampStep(0x000000, 0.0, true),
+          new ColorRampStep(0x000000, 0.6),
+          new ColorRampStep(0xbbbbbb, 1.0, true),
+        ], 3, true),
+        new Color(0xffffff)
+      )
+    ]
 
     this._cloudsEnabled = true
     this._cloudsRotation = 0.0
     this._cloudsHeight = 1.0
-    this._cloudsNoise = new NoiseParameters(this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 1.75)
+    this._cloudsNoise = new NoiseParameters(
+      this._changedProps,
+      '_cloudsNoise', 
+      NoiseType.FBM,
+      4.0,
+      0.6,
+      1.75,
+      4
+    )
     this._cloudsColor = new Color(0xffffff)
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
       new ColorRampStep(0x000000, 0.0, true),
@@ -510,6 +567,7 @@ export default class PlanetData extends ChangeTracker {
     ])
 
     this._biomesEnabled = true
+    this._biomesTemperatureResolution = 256
 
     this._cloudsEnabled = true
     this._cloudsRotation = 0.0
@@ -576,6 +634,7 @@ export default class PlanetData extends ChangeTracker {
     )
 
     this._biomesEnabled = data._biomesEnabled ?? true
+    this._biomesTemperatureResolution = data._biomesTemperatureResolution ?? 256
 
     this._cloudsEnabled = data._cloudsEnabled ?? true
     this._cloudsRotation = data._cloudsRotation ?? 0.0

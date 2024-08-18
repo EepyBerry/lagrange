@@ -22,13 +22,16 @@
     </template>
     <ParameterCategory>{{ $t('editor.controls.surface.noise') }}</ParameterCategory>
     <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceNoise.frequency" id="s-freq" :step="0.01" :max="10">
-      {{ $t('editor.controls.surface.noise_fbm_frequency') }}
+      {{ $t('editor.general.noise_fbm_frequency') }}
     </ParameterSlider>
     <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceNoise.amplitude" id="s-amp" :step="0.01" :max="1.25">
-      {{ $t('editor.controls.surface.noise_fbm_amplitude') }}
+      {{ $t('editor.general.noise_fbm_amplitude') }}
     </ParameterSlider>
     <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceNoise.lacunarity" id="s-lac" :step="0.01" :min="1" :max="3">
-      {{ $t('editor.controls.surface.noise_fbm_lacunarity') }}
+      {{ $t('editor.general.noise_fbm_lacunarity') }}
+    </ParameterSlider>
+    <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceNoise.octaves" id="s-oct" :step="1" :min="1" :max="8">
+      {{ $t('editor.general.noise_fbm_octaves') }}
     </ParameterSlider>
     <ParameterDivider />
     <ParameterColorRamp

@@ -58,11 +58,13 @@ export class ColorRamp extends ChangeTracker {
 
   private _steps: ColorRampStep[] = []
   private _maxSize: number = 16
+  private _lockedSize: boolean = true
 
-  constructor(changedPropsRef: string[], changePrefix: string, steps: ColorRampStep[], maxSize: number = 16) {
+  constructor(changedPropsRef: string[], changePrefix: string, steps: ColorRampStep[], maxSize: number = 16, lockedSize = false) {
     super(changedPropsRef, changePrefix)
     this._maxSize = maxSize
     this._steps = steps
+    this._lockedSize = lockedSize
     this.markForChange(this._changePrefix)
   }
 
@@ -73,9 +75,14 @@ export class ColorRamp extends ChangeTracker {
     this._steps.splice(0)
     this._steps.push(...steps)
   }
-
   public get maxSize() {
     return this._maxSize
+  }
+  public get lockedSize(): boolean {
+    return this._lockedSize
+  }
+  public set lockedSize(value: boolean) {
+    this._lockedSize = value
   }
 
   public get colors() {

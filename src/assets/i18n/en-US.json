@@ -135,6 +135,13 @@
     "default_planet_name": "New planet",
     "$action_sort": "Sort",
     "$action_add": "Add",
+    
+    "general": {
+      "noise_fbm_frequency": "Frequency",
+      "noise_fbm_amplitude": "Amplitude",
+      "noise_fbm_lacunarity": "Lacunarity",
+      "noise_fbm_octaves": "Octaves"
+    },
     "controls": {
       "lighting": {
         "$title": "Lighting",
@@ -176,14 +183,17 @@
         "bumpmap_strength": "Bump strength",
 
         "noise": "Noise parameters",
-        "noise_fbm_frequency": "Frequency",
-        "noise_fbm_amplitude": "Amplitude",
-        "noise_fbm_lacunarity": "Lacunarity",
         "noise_colorramp": "Color ramp"
       },
       "biomes": {
         "$title": "Biomes",
-        "biomes_show": "Show biomes"
+        "biomes_show": "Show biomes",
+
+        "texture_resolution": "Resolution",
+        "temperature": "Temperature gradient",
+        "humidity": "Humidity gradient",
+
+        "biome_list": "Biomes"
       },
       "clouds": {
         "$title": "Clouds",

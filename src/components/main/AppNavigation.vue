@@ -80,27 +80,21 @@ function handleKey(evt: KeyboardEvent) {
 <style scoped lang="scss">
 #nav-full {
   position: absolute;
-  left: 1rem;
+  left: 0;
 }
 
 #nav-compact {
   position: absolute;
-  left: 4.375rem;
+  left: 3.375rem;
   display: none;
   &.open {
     display: initial;
   }
 }
-
-@media screen and (max-width: 1199px) {
-  #nav-compact {
-    left: 3.875rem;
-  }
-}
 @media screen and (max-width: 767px) {
   #nav-compact {
-    left: 0.5rem;
-    top: 3.875rem;
+    left: 0;
+    top: 3.375rem;
 
     nav {
       display: flex;

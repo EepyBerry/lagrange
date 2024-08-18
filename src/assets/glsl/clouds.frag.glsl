@@ -2,11 +2,17 @@
 precision highp float;
 #endif
 
+struct NoiseParameters {
+    int type;
+    float freq;
+    float amp;
+    float lac;
+    int oct;
+};
+
 // Main uniforms
 uniform int u_octaves;
-uniform float u_frequency;
-uniform float u_amplitude;
-uniform float u_lacunarity;
+uniform NoiseParameters u_noise;
 uniform vec3 u_color;
 
 // Color ramp uniforms
@@ -26,14 +32,14 @@ const vec3 DVEC_B = vec3(0.2, 0.2, 0.0);
 void main() {
     vec3 opacity = vec3(0.0);
     vec3 wOpacity = vec3(
-        fbm3(vPos, u_frequency,  u_amplitude, u_lacunarity, u_octaves),
-        fbm3(vPos + DVEC_A,      u_frequency, u_amplitude, u_lacunarity, u_octaves),
-        fbm3(vPos + DVEC_B,      u_frequency, u_amplitude, u_lacunarity, u_octaves)
+        fbm3(vPos,               u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct),
+        fbm3(vPos + DVEC_A,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct),
+        fbm3(vPos + DVEC_B,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct)
     );
     if (wOpacity.x < 0.1) {
         discard;
     }
-    opacity += fbm3(vPos + wOpacity, u_frequency, u_amplitude, u_lacunarity, u_octaves);
+    opacity += fbm3(vPos + wOpacity, u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct);
 
     opacity = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, opacity.x);
     csm_Metalness = 0.5;
