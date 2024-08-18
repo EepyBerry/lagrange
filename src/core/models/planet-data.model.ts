@@ -556,6 +556,7 @@ export default class PlanetData extends ChangeTracker {
     this._planetSurfaceNoise.frequency = 3.41
     this._planetSurfaceNoise.amplitude = 0.5
     this._planetSurfaceNoise.lacunarity = 2.16
+    this._planetSurfaceNoise.octaves = 6
     this._planetSurfaceColorRamp.loadFromSteps([
       new ColorRampStep(0x061c3f, 0, true),
       new ColorRampStep(0x0f2851, 0.4),
@@ -568,6 +569,10 @@ export default class PlanetData extends ChangeTracker {
 
     this._biomesEnabled = true
     this._biomesTemperatureResolution = 256
+    this._biomesTemperatureNoise.frequency = 2.5
+    this._biomesTemperatureNoise.amplitude = 1.5
+    this._biomesTemperatureNoise.lacunarity = 2.5
+    this._biomesTemperatureNoise.frequency = 2
 
     this._cloudsEnabled = true
     this._cloudsRotation = 0.0
@@ -576,6 +581,7 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsNoise.frequency = 4.0
     this._cloudsNoise.amplitude = 0.6
     this._cloudsNoise.lacunarity = 1.75
+    this._cloudsNoise.octaves = 4
     this._cloudsColorRamp.loadFromSteps([
       new ColorRampStep(0x000000, 0.0, true),
       new ColorRampStep(0x000000, 0.6),
@@ -616,9 +622,10 @@ export default class PlanetData extends ChangeTracker {
 
     this._planetSurfaceShowBumps = data._planetSurfaceShowBumps ?? true
     this._planetSurfaceBumpStrength = data._planetSurfaceBumpStrength ?? 0.0875
-    this._planetSurfaceNoise.amplitude = data._planetSurfaceNoise._amplitude ?? 3.41
-    this._planetSurfaceNoise.frequency = data._planetSurfaceNoise._frequency ?? 0.5
-    this._planetSurfaceNoise.lacunarity = data._planetSurfaceNoise._lacunarity ?? 2.16
+    this._planetSurfaceNoise.amplitude = data._planetSurfaceNoise?._amplitude ?? 3.41
+    this._planetSurfaceNoise.frequency = data._planetSurfaceNoise?._frequency ?? 0.5
+    this._planetSurfaceNoise.lacunarity = data._planetSurfaceNoise?._lacunarity ?? 2.16
+    this._planetSurfaceNoise.octaves = data._planetSurfaceNoise._octaves ?? 6
     this._planetSurfaceColorRamp.loadFromSteps(
       data._planetSurfaceColorRamp
         ? data._planetSurfaceColorRamp._steps
@@ -635,12 +642,17 @@ export default class PlanetData extends ChangeTracker {
 
     this._biomesEnabled = data._biomesEnabled ?? true
     this._biomesTemperatureResolution = data._biomesTemperatureResolution ?? 256
+    this._biomesTemperatureNoise.frequency = data._biomesTemperatureNoise?._frequency ?? 2.5
+    this._biomesTemperatureNoise.amplitude = data._biomesTemperatureNoise?._amplitude ?? 1.5
+    this._biomesTemperatureNoise.lacunarity = data._biomesTemperatureNoise?._lacunarity ?? 2.5
+    this._biomesTemperatureNoise.octaves = data._biomesTemperatureNoise?._octaves ?? 2
 
     this._cloudsEnabled = data._cloudsEnabled ?? true
     this._cloudsRotation = data._cloudsRotation ?? 0.0
-    this._cloudsNoise.amplitude = data._cloudsNoise._amplitude ?? 4.0
-    this._cloudsNoise.frequency = data._cloudsNoise._frequency ?? 0.6
-    this._cloudsNoise.lacunarity = data._cloudsNoise._lacunarity ?? 1.75
+    this._cloudsNoise.amplitude = data._cloudsNoise?._amplitude ?? 4.0
+    this._cloudsNoise.frequency = data._cloudsNoise?._frequency ?? 0.6
+    this._cloudsNoise.lacunarity = data._cloudsNoise?._lacunarity ?? 1.75
+    this._cloudsNoise.octaves = data._cloudsNoise._octaves ?? 4
     this._cloudsColor.set(data._cloudsColor ?? 0xffffff)
     this._cloudsColorRamp.loadFromSteps(
       data._cloudsColorRamp
