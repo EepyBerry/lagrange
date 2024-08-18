@@ -35,7 +35,7 @@
     </ParameterSlider>
     <ParameterDivider />
     <ParameterColorRamp
-      mode="color"
+      mode="rgb"
       v-model="LG_PLANET_DATA.planetSurfaceColorRamp as ColorRamp"
       :key="LG_PLANET_DATA.planetName"
     >

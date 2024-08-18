@@ -491,10 +491,10 @@ export default class PlanetData extends ChangeTracker {
         '_biomesParams',
         0.0,
         0.15,
-        new ColorRamp(this._changedProps, '_cloudsColorRamp', [
-          new ColorRampStep(0x000000, 0.0, true),
-          new ColorRampStep(0x000000, 0.6),
-          new ColorRampStep(0xbbbbbb, 1.0, true),
+        new ColorRamp(this._changedProps, '_biomesParams._rgbaRamp', [
+          ColorRampStep.newWithAlpha(0xbaa345, 0.0, 0.0, true),
+          ColorRampStep.newWithAlpha(0xbaa345, 0.5, 1.0),
+          ColorRampStep.newWithAlpha(0xbaa345, 1.0, 0.0, true),
         ], 3, true),
         new Color(0xffffff)
       )

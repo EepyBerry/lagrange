@@ -20,7 +20,7 @@ export class ColorRampStep {
     this._isBound = isBound
   }
 
-  static newWithAlpha(color: THREE.ColorRepresentation, alpha: number, factor: number): ColorRampStep {
+  static newWithAlpha(color: THREE.ColorRepresentation, alpha: number, factor: number, isBound: boolean = false): ColorRampStep {
     const step = new ColorRampStep(color, factor)
     step.alpha = alpha
     return step
@@ -143,6 +143,18 @@ export class ColorRamp extends ChangeTracker {
 
     this._steps[index].color = color ? new THREE.Color(color) : this._steps[index].color
     this._steps[index].factor = factor ?? this._steps[index].factor
+    this.markForChange(this._changePrefix)
+  }
+
+  public updateStep(id: string, options: { color?: string, factor?: number, alpha?: number }) {
+    const index = this._steps.findIndex((s) => s.id === id)
+    if (index === -1) {
+      throw new Error('Cannot find step with ID ' + id)
+    }
+
+    this._steps[index].color.set(options.color ? options.color : this._steps[index].color)
+    this._steps[index].alpha = options.alpha ?? this._steps[index].alpha
+    this._steps[index].factor = options.factor ?? this._steps[index].factor
     this.markForChange(this._changePrefix)
   }
 

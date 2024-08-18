@@ -95,8 +95,8 @@
           <tr v-if="pickerIdOpen === step.id">
             <td colspan="4" class="picker-wrapper">
               <ColorPicker
-                alpha-channel="hide"
                 default-format="hex"
+                :alpha-channel="mode === 'rgba' ? 'show' : 'hide'"
                 :color="'#' + step.color.getHexString()"
                 @color-change="updateStepColor(step.id, $event.colors.hex)"
               >
@@ -107,7 +107,7 @@
             </td>
           </tr>
         </template>
-        <tr v-if="mode === 'color' || !mode">
+        <tr v-if="['rgb', 'rgba'].includes(mode ?? 'rgb') || !mode">
           <td colspan="4">
             <div class="add-step">
               <button class="lg" @click="addStep()" :aria-label="$t('a11y.action_add_colorstep')">
@@ -138,7 +138,7 @@ import { ColorPicker } from 'vue-accessible-color-picker'
 import InputSliderElement from '../elements/InputSliderElement.vue'
 import type { ColorRamp } from '@/core/models/color-ramp.model'
 
-const lgColorRamp = defineModel<ColorRamp>() // type here is actually ColorRamp, ts-plugin doesn't like proxied objects in templates...
+const lgColorRamp = defineModel<ColorRamp>()
 
 const htmlColorRamp: Ref<HTMLElement | null> = ref(null)
 const htmlColorSteps: Ref<HTMLElement[]> = ref([])
@@ -147,13 +147,8 @@ const htmlFactorInputs: Ref<HTMLInputElement[]> = ref([])
 const panelOpen = ref(false)
 const pickerIdOpen: Ref<string | null> = ref(null)
 
-defineProps<{ mode?: 'color' | 'opacity' }>()
-watch(
-  () => lgColorRamp.value?.definedSteps,
-  () => {
-    updateRamp()
-  },
-)
+defineProps<{ mode?: 'rgb' | 'rgba' | 'opacity' }>()
+watch(() => lgColorRamp.value?.definedSteps, () => updateRamp())
 onMounted(() => updateRamp())
 
 function updateRamp() {
@@ -196,11 +191,11 @@ function updateStepFactor(id: string, e: Event) {
   if (!htmlInput.valueAsNumber || isNaN(htmlInput.valueAsNumber)) {
     return
   }
-  lgColorRamp.value?.setStep(id, undefined, htmlInput.valueAsNumber)
+  lgColorRamp.value?.updateStep(id, { factor: htmlInput.valueAsNumber })
   updateRamp()
 }
 function updateStepColor(id: string, c: string) {
-  lgColorRamp.value?.setStep(id, c.substring(0, 7)) // strip alpha from color
+  lgColorRamp.value?.updateStep(id, { color: c.substring(0, 7), alpha: Number('0x'+c.substring(7)) }) // strip alpha from color
   updateRamp()
 }
 

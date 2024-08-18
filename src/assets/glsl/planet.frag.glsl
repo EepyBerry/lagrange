@@ -2,11 +2,6 @@
 precision highp float;
 #endif
 
-struct Biome {
-    float tMin;
-    float tMax;
-    vec3 color;
-};
 struct NoiseParameters {
     int type;
     float freq;

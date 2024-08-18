@@ -1,8 +1,10 @@
 import type { Color } from "three";
 import { ChangeTracker } from "./change-tracker.model";
 import type { ColorRamp, ColorRampStep } from "./color-ramp.model";
+import { nanoid } from "nanoid";
 
 export class BiomeParameters extends ChangeTracker {
+  private _id: string;
   private _tempMin: number = 0
   private _tempMax: number = 0.5
   private _rgbaRamp: ColorRamp;
@@ -17,10 +19,15 @@ export class BiomeParameters extends ChangeTracker {
     color: Color
   ) {
     super(changedPropsRef, changePrefix)
+    this._id = nanoid()
     this._tempMin = tempMin
     this._tempMax = tempMax
     this._rgbaRamp = rgbaRamp
     this._color = color
+  }
+  
+  public get id(): string {
+    return this._id;
   }
 
   public get tempMin(): number {

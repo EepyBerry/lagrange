@@ -1,12 +1,7 @@
 <template>
-  <tr class="field">
-    <td>
-      
-    </td>
-    <td>
-      
-    </td>
-  </tr>
+  <div class="biome-grid">
+    
+  </div>
 </template>
 <script setup lang="ts">
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
@@ -18,3 +13,16 @@ import ParameterColorRamp from '@components/parameters/ParameterColorRamp.vue'
 import ParameterColor from '@components/parameters/ParameterColor.vue'
 import type { ColorRamp } from '@/core/models/color-ramp.model'
 </script>
+<style scoped lang="scss">
+.biome-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+  width: 100%;
+}
+@media screen and (max-width: 1023px) {
+  .biome-grid {
+    gap: 0 8px;
+    font-size: 1rem;
+  }
+}
+</style>
