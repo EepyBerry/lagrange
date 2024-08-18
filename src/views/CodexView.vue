@@ -217,6 +217,7 @@ async function deleteTargetedPlanet() {
   backdrop-filter: blur(8px) brightness(50%);
   inset: 0 0 auto 0;
 
+  inset: auto 1rem;
   padding: 1rem;
   margin: 0;
   display: flex;
@@ -290,7 +291,9 @@ async function deleteTargetedPlanet() {
     background-image: url('/background/space-960w.jpg');
   }
   #codex-header {
+    inset: auto 0;
     padding: 0.5rem;
+    :deep(aside) { left: 3.875rem; }
     #codex-header-controls {
       justify-content: flex-end;
     }
@@ -301,6 +304,12 @@ async function deleteTargetedPlanet() {
   }
 }
 @media screen and (max-width: 767px) {
+  #codex-header {
+    :deep(aside) {
+      left: unset;
+      top: 3.75rem;
+    }
+  }
   #codex-background {
     background-image: url('/background/space-540w.jpg');
   }

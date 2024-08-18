@@ -15,7 +15,7 @@
       <ParameterSlider v-model="LG_PLANET_DATA.biomesTemperatureNoise.lacunarity" id="b-tlac" :step="0.01" :min="1" :max="3">
         {{ $t('editor.general.noise_fbm_lacunarity') }}
       </ParameterSlider>
-      <ParameterSlider v-model="LG_PLANET_DATA.biomesTemperatureNoise.octaves" id="b-tlac" :step="1" :min="1" :max="8">
+      <ParameterSlider v-model="LG_PLANET_DATA.biomesTemperatureNoise.octaves" id="b-toct" :step="1" :min="1" :max="8">
         {{ $t('editor.general.noise_fbm_octaves') }}
       </ParameterSlider>
       <ParameterCategory>{{ $t('editor.controls.biomes.biome_list') }}</ParameterCategory>
