@@ -29,8 +29,11 @@ uniform float u_ground_metalness;
 // Biome uniforms
 uniform bool u_biomes;
 uniform int u_temp_mode;
+uniform int u_humi_mode;
 uniform NoiseParameters u_temp_noise;
-uniform sampler2D u_biome_tex;
+uniform NoiseParameters u_humi_noise;
+uniform sampler2D u_temp_tex;
+uniform sampler2D u_humi_tex;
 
 // Color ramp uniforms
 uniform float[16] u_cr_positions;
@@ -47,11 +50,15 @@ in vec3 vBitangent;
 @import functions/normal_utils;
 
 // Biome function
-vec3 apply_biomes(float t, vec3 color) {
+vec3 apply_biomes(float t, float h, vec3 color) {
+    vec2 tTexCoord = vec2(t, 0.5);
+    vec2 hTexCoord = vec2(h, 0.5);
+    vec4 tTexel = texture2D(u_temp_tex, tTexCoord);
+    vec4 hTexel = texture2D(u_humi_tex, hTexCoord);
+    
     vec3 biomeColor = color;
-    vec2 texCoord = vec2(t, 0.5);
-    vec4 texel = texture2D(u_biome_tex, texCoord);
-    biomeColor = mix(color, texel.xyz, texel.w);
+    biomeColor = mix(color, tTexel.xyz, tTexel.w);
+    //biomeColor = mix(color, hTexel.xyz, hTexel.w);
     return biomeColor;
 }
 
@@ -66,12 +73,13 @@ vec3 apply_bump(float height) {
 }
 
 void main() {
-    // main variables
-    float tHeight = mix(smoothstep(1.0, 0.0, abs(vPos.y)), 1.0, float(u_temp_mode));
-    tHeight = clamp(
-        tHeight * fbm3(vPos, u_temp_noise.freq, u_temp_noise.amp, u_temp_noise.lac, u_temp_noise.oct),
-        0.0, 1.0
-    );
+    // temp/humi fields
+    float tHeight = mix(smoothstep(1.0, 0.0, abs(vPos.y)), 0.75, float(u_temp_mode));
+    tHeight *= fbm3(vPos, u_temp_noise.freq, u_temp_noise.amp, u_temp_noise.lac, u_temp_noise.oct);
+    float hHeight = mix(smoothstep(1.0, 0.0, 1.0 - abs(vPos.y)), 0.75, float(u_humi_mode));
+    hHeight *= fbm3(vPos, u_humi_noise.freq, u_humi_noise.amp, u_humi_noise.lac, u_humi_noise.oct);
+
+    // initial color (always black)
     vec3 color = vec3(0.0);
 
     // Initial heightmap & flags
@@ -84,7 +92,7 @@ void main() {
     color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
 
     // Render biomes
-    color = mix(color, apply_biomes(tHeight, color), FLAG_BIOMES);
+    color = mix(color, apply_biomes(tHeight, hHeight, color), FLAG_BIOMES);
 
     // Set outputs
     csm_Bump = mix(vNormal, apply_bump(height), FLAG_LAND);

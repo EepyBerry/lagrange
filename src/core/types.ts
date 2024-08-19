@@ -1,3 +1,5 @@
+import type { ColorRamp } from "./models/color-ramp.model"
+
 export enum GeometryType {
   SPHERE,
   TORUS,
@@ -18,3 +20,11 @@ export enum GradientMode {
 }
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
+
+export type BiomeRect = {
+  colors: ColorRamp
+  x: number
+  y: number
+  w: number
+  h: number
+}

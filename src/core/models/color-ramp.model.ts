@@ -21,7 +21,7 @@ export class ColorRampStep {
   }
 
   static newWithAlpha(color: THREE.ColorRepresentation, alpha: number, factor: number, isBound: boolean = false): ColorRampStep {
-    const step = new ColorRampStep(color, factor)
+    const step = new ColorRampStep(color, factor, isBound)
     step.alpha = alpha
     return step
   }

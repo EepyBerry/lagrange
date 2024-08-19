@@ -5,25 +5,28 @@ import { nanoid } from "nanoid";
 
 export class BiomeParameters extends ChangeTracker {
   private _id: string;
-  private _tempMin: number = 0
-  private _tempMax: number = 0.5
+  private _tempMin: number = 0.0
+  private _tempMax: number = 1.0
+  private _humiMin: number = 0.0;
+  private _humiMax: number = 1.0;
   private _rgbaRamp: ColorRamp;
-  private _color: Color
 
   constructor(
     changedPropsRef: string[],
     changePrefix: string,
     tempMin: number,
     tempMax: number,
-    rgbaRamp: ColorRamp,
-    color: Color
+    humiMin: number,
+    humiMax: number,
+    rgbaRamp: ColorRamp
   ) {
     super(changedPropsRef, changePrefix)
     this._id = nanoid()
     this._tempMin = tempMin
     this._tempMax = tempMax
+    this._humiMin = humiMin
+    this._humiMax = humiMax
     this._rgbaRamp = rgbaRamp
-    this._color = color
   }
   
   public get id(): string {
@@ -45,18 +48,26 @@ export class BiomeParameters extends ChangeTracker {
     this.markForChange(`${this._changePrefix}._tempMax`)
   }
 
-  public get opacityRamp(): ColorRamp {
+  public get humiMin(): number {
+    return this._humiMin;
+  }
+  public set humiMin(value: number) {
+    this._humiMin = value;
+    this.markForChange(`${this._changePrefix}._humiMin`)
+  }
+  public get humiMax(): number {
+    return this._humiMax;
+  }
+  public set humiMax(value: number) {
+    this._humiMax = value;
+    this.markForChange(`${this._changePrefix}._humiMax`)
+  }
+
+  public get rgbaRamp(): ColorRamp {
     return this._rgbaRamp
   }
-  public set opacityRamp(value: ColorRampStep[]) {
+  public set rgbaRamp(value: ColorRampStep[]) {
     this._rgbaRamp.loadFromSteps(value);
     this.markForChange(`${this._changePrefix}._rgbaRamp`)
-  }
-  public get color(): Color {
-    return this._color
-  }
-  public set color(value: Color) {
-    this._color.set(value)
-    this.markForChange(`${this._changePrefix}._color`)
   }
 }

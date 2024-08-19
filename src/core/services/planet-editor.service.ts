@@ -15,7 +15,7 @@ import {
   AXIS_Y,
   AXIS_NX,
 } from '@core/globals'
-import { ColorMode, GeometryType } from '@core/types'
+import { ColorMode, GeometryType, GradientMode } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
 import {
   createAmbientightComponent,
@@ -29,8 +29,7 @@ import { LensFlareEffect } from '@core/three/lens-flare.effect'
 import PlanetData from '@core/models/planet-data.model'
 import { ref } from 'vue'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
-import { ColorRamp, ColorRampStep } from '../models/color-ramp.model'
-import { create1DColorTexture } from '@/utils/three-utils'
+import { createMerged1DColorTexture } from '@/utils/three-utils'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -89,18 +88,8 @@ export function createPlanet(data: PlanetData): THREE.Mesh {
   const geometry = createGeometryComponent(GeometryType.SPHERE)
   geometry.computeTangents()
 
-  // TODO:  TEST CODE, REMOVE LATER
-  const biomeRamp = new ColorRamp([], '', [
-    ColorRampStep.newWithAlpha(new THREE.Color(0xffffff), 1.0, 0),
-    ColorRampStep.newWithAlpha(new THREE.Color(0xffffff), 0.5, 0.025),
-    ColorRampStep.newWithAlpha(new THREE.Color(0xffffff), 0.25, 0.05),
-    ColorRampStep.newWithAlpha(new THREE.Color(0xffffff), 0.0, 0.15),
-    ColorRampStep.newWithAlpha(new THREE.Color(0xbaa345), 0.1, 0.5),
-    ColorRampStep.newWithAlpha(new THREE.Color(0xbaa345), 0.5, 0.75),
-    ColorRampStep.newWithAlpha(new THREE.Color(0xbaa345), 1.0, 1.0),
-  ])
-  const biomeTex = create1DColorTexture(256, biomeRamp.definedSteps)
-  // END TODO
+  const tempTex = createMerged1DColorTexture(256, "temp", data.biomesParams)
+  //const humiTex = createMerged1DColorTexture(256, "humi", data.biomesParams)
 
   const material = createShaderMaterialComponent(
     planetVertShader,
@@ -137,7 +126,16 @@ export function createPlanet(data: PlanetData): THREE.Mesh {
         lac: data.biomesTemperatureNoise.lacunarity,
         oct: data.biomesTemperatureNoise.octaves,
       }},
-      u_biome_tex: { value: biomeTex }
+      u_temp_tex: { value: tempTex },
+      u_humi_mode: { value: GradientMode.REALISTIC },
+      u_humi_noise: { value: {
+        type: data.biomesHumidityNoise.noiseType,
+        freq: data.biomesHumidityNoise.frequency,
+        amp: data.biomesHumidityNoise.amplitude,
+        lac: data.biomesHumidityNoise.lacunarity,
+        oct: data.biomesHumidityNoise.octaves,
+      }},
+      //u_humi_tex: { value: humiTex },
     },
     THREE.MeshStandardMaterial,
   )
