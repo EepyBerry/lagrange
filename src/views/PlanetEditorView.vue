@@ -537,6 +537,11 @@ function updatePlanet() {
         )
         break
       }
+      case '_biomesTemperatureMode': {
+        const material = _planet.material as CustomShaderMaterial
+        setShaderMaterialUniform(material, 'u_temp_mode', LG_PLANET_DATA.value.biomesTemperatureMode)
+        break
+      }
       case '_biomesTemperatureNoise._frequency': {
         const material = _planet.material as CustomShaderMaterial
         setShaderMaterialUniform(

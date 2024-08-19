@@ -28,7 +28,7 @@ uniform float u_ground_metalness;
 
 // Biome uniforms
 uniform bool u_biomes;
-uniform float u_pole_limit;
+uniform int u_temp_mode;
 uniform NoiseParameters u_temp_noise;
 uniform sampler2D u_biome_tex;
 
@@ -67,7 +67,7 @@ vec3 apply_bump(float height) {
 
 void main() {
     // main variables
-    float tHeight = smoothstep(1.0, 0.0, abs(vPos.y));
+    float tHeight = mix(smoothstep(1.0, 0.0, abs(vPos.y)), 1.0, float(u_temp_mode));
     tHeight = clamp(
         tHeight * fbm3(vPos, u_temp_noise.freq, u_temp_noise.amp, u_temp_noise.lac, u_temp_noise.oct),
         0.0, 1.0

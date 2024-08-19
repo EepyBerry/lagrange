@@ -5,7 +5,31 @@
     </ParameterCheckbox>
     <template v-if="LG_PLANET_DATA.biomesEnabled">
       <ParameterCategory>{{ $t('editor.controls.biomes.temperature') }}</ParameterCategory>
-      <ParameterDivider />
+      <ParameterRadio>
+        <template v-slot:title> {{ $t('editor.controls.biomes.gradient_mode') }}: </template>
+        <template v-slot:options>
+          <ParameterRadioOption
+            v-model="LG_PLANET_DATA.biomesTemperatureMode"
+            icon="mingcute:photo-album-line"
+            name="temp-mode"
+            :id="'0'"
+            :value="GradientMode.REALISTIC"
+            :ariaLabel="$t('a11y.editor_biome_gradient_mode_realistic')"
+          >
+            {{ $t('editor.controls.biomes.gradient_mode_realistic') }}
+          </ParameterRadioOption>
+          <ParameterRadioOption
+            v-model="LG_PLANET_DATA.biomesTemperatureMode"
+            icon="tabler:ease-in-out-control-points"
+            name="temp-mode"
+            :id="'1'"
+            :value="GradientMode.FULLNOISE"
+            :ariaLabel="$t('a11y.editor_biome_gradient_mode_fullnoise')"
+          >
+            {{ $t('editor.controls.biomes.gradient_mode_fullnoise') }}
+          </ParameterRadioOption>
+        </template>
+      </ParameterRadio>
       <ParameterSlider v-model="LG_PLANET_DATA.biomesTemperatureNoise.frequency" id="b-tfreq" :step="0.01" :max="5">
         {{ $t('editor.general.noise_fbm_frequency') }}
       </ParameterSlider>
@@ -33,4 +57,5 @@ import ParameterBiome from '../parameters/ParameterBiome.vue';
 import ParameterSlider from '../parameters/ParameterSlider.vue';
 import ParameterCategory from '../parameters/ParameterCategory.vue';
 import ParameterDivider from '../parameters/ParameterDivider.vue';
+import { GradientMode } from '@/core/types';
 </script>

@@ -1,5 +1,5 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
-import { ColorMode, GeometryType, NoiseType } from '@core/types'
+import { ColorMode, GeometryType, GradientMode, NoiseType } from '@core/types'
 import { clamp, isNumeric } from '@/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
@@ -248,6 +248,7 @@ export default class PlanetData extends ChangeTracker {
 
   private _biomesEnabled: boolean
   private _biomesTemperatureResolution: number
+  private _biomesTemperatureMode: GradientMode
   private _biomesTemperatureNoise: NoiseParameters
   private _biomesParams: BiomeParameters[]
 
@@ -268,6 +269,13 @@ export default class PlanetData extends ChangeTracker {
     this.markForChange('_biomesTemperatureResolution')
   }
   
+  public get biomesTemperatureMode(): GradientMode {
+    return this._biomesTemperatureMode
+  }
+  public set biomesTemperatureMode(value: GradientMode) {
+    this._biomesTemperatureMode = value
+    this.markForChange('_biomesTemperatureMode')
+  }
   public get biomesTemperatureNoise(): NoiseParameters {
     return this._biomesTemperatureNoise
   }
@@ -476,6 +484,7 @@ export default class PlanetData extends ChangeTracker {
 
     this._biomesEnabled = true
     this._biomesTemperatureResolution = 256
+    this._biomesTemperatureMode = GradientMode.REALISTIC
     this._biomesTemperatureNoise = new NoiseParameters(
       this._changedProps,
       '_biomesTemperatureNoise',
@@ -569,10 +578,11 @@ export default class PlanetData extends ChangeTracker {
 
     this._biomesEnabled = true
     this._biomesTemperatureResolution = 256
+    this._biomesTemperatureMode = GradientMode.REALISTIC
     this._biomesTemperatureNoise.frequency = 2.5
     this._biomesTemperatureNoise.amplitude = 1.5
     this._biomesTemperatureNoise.lacunarity = 2.5
-    this._biomesTemperatureNoise.frequency = 2
+    this._biomesTemperatureNoise.octaves = 2
 
     this._cloudsEnabled = true
     this._cloudsRotation = 0.0
@@ -642,6 +652,7 @@ export default class PlanetData extends ChangeTracker {
 
     this._biomesEnabled = data._biomesEnabled ?? true
     this._biomesTemperatureResolution = data._biomesTemperatureResolution ?? 256
+    this._biomesTemperatureMode = data._biomesTemperatureMode ?? GradientMode.REALISTIC
     this._biomesTemperatureNoise.frequency = data._biomesTemperatureNoise?._frequency ?? 2.5
     this._biomesTemperatureNoise.amplitude = data._biomesTemperatureNoise?._amplitude ?? 1.5
     this._biomesTemperatureNoise.lacunarity = data._biomesTemperatureNoise?._lacunarity ?? 2.5

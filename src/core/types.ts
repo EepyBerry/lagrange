@@ -12,5 +12,9 @@ export enum ColorMode {
   DIRECT,
   MIXED,
 }
+export enum GradientMode {
+  REALISTIC,
+  FULLNOISE
+}
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'

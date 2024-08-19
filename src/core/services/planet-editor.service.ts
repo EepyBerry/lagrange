@@ -129,6 +129,7 @@ export function createPlanet(data: PlanetData): THREE.Mesh {
       u_cr_size: { value: data.planetSurfaceColorRampSize },
       // Biomes
       u_biomes: { value: data.biomesEnabled },
+      u_temp_mode: { value: data.biomesTemperatureMode },
       u_temp_noise: { value: {
         type: data.biomesTemperatureNoise.noiseType,
         freq: data.biomesTemperatureNoise.frequency,
