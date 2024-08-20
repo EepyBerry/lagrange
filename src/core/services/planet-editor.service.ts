@@ -15,7 +15,7 @@ import {
   AXIS_Y,
   AXIS_NX,
 } from '@core/globals'
-import { ColorMode, GeometryType, GradientMode } from '@core/types'
+import { ColorMode, GeometryType, GradientMode, type DataTextureWrapper } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
 import {
   createAmbientightComponent,
@@ -29,7 +29,7 @@ import { LensFlareEffect } from '@core/three/lens-flare.effect'
 import PlanetData from '@core/models/planet-data.model'
 import { ref } from 'vue'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
-import { createMerged1DColorTexture } from '@/utils/three-utils'
+import { create1DTexture } from '@/utils/three-utils'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -84,11 +84,11 @@ export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THR
   })
 }
 
-export function createPlanet(data: PlanetData): THREE.Mesh {
+export function createPlanet(data: PlanetData): { mesh: THREE.Mesh, texs: DataTextureWrapper[] } {
   const geometry = createGeometryComponent(GeometryType.SPHERE)
   geometry.computeTangents()
 
-  const tempTex = createMerged1DColorTexture(256, "temp", data.biomesParams)
+  const tempTex = create1DTexture(256, "temp", data.biomesParams)
   //const humiTex = createMerged1DColorTexture(256, "humi", data.biomesParams)
 
   const material = createShaderMaterialComponent(
@@ -126,7 +126,7 @@ export function createPlanet(data: PlanetData): THREE.Mesh {
         lac: data.biomesTemperatureNoise.lacunarity,
         oct: data.biomesTemperatureNoise.octaves,
       }},
-      u_temp_tex: { value: tempTex },
+      u_temp_tex: { value: tempTex.texture },
       u_humi_mode: { value: GradientMode.REALISTIC },
       u_humi_noise: { value: {
         type: data.biomesHumidityNoise.noiseType,
@@ -144,7 +144,7 @@ export function createPlanet(data: PlanetData): THREE.Mesh {
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
   mesh.name = LG_NAME_PLANET
-  return mesh
+  return { mesh, texs: [tempTex] }
 }
 
 export function createClouds(data: PlanetData): THREE.Mesh {

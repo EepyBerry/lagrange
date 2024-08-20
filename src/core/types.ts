@@ -1,3 +1,4 @@
+import type { DataTexture } from "three"
 import type { ColorRamp } from "./models/color-ramp.model"
 
 export enum GeometryType {
@@ -27,4 +28,9 @@ export type BiomeRect = {
   y: number
   w: number
   h: number
+}
+
+export type DataTextureWrapper = {
+  texture: DataTexture
+  data: Uint8Array
 }

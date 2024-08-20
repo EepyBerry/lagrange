@@ -140,7 +140,9 @@
       "noise_fbm_frequency": "Fwequency",
       "noise_fbm_amplitude": "Ampwitude",
       "noise_fbm_lacunarity": "Wacunawity",
-      "noise_fbm_octaves": "Octaves"
+      "noise_fbm_octaves": "Octaves",
+      "noise_rgbramp": "Cowow wamp",
+      "noise_rgbaramp": "Cowow/awpha wamp"
     },
     "controls": {
       "lighting": {
@@ -200,7 +202,12 @@
         "gradient_mode_realistic": "Weawistic",
         "gradient_mode_fullnoise": "Fuww nyoise",
         
-        "biome_list": "Biomes"
+        "biome_list": "Biomes",
+        "biome_name": "Name",
+        "temperature_min": "Min. tempewatuwe",
+        "temperature_max": "Max. tempewatuwe",
+        "humidity_min": "Min. humidity",
+        "humidity_max": "Max. humidity"
       },
       "clouds": {
         "$title": "Cwouds",

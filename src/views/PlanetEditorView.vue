@@ -38,7 +38,7 @@ import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config'
 import { EventBus } from '@/core/services/event-bus'
 import { useI18n } from 'vue-i18n'
 import AppNavigation from '@/components/main/AppNavigation.vue'
-import { setShaderMaterialUniform, setShaderMaterialUniforms } from '@/utils/three-utils'
+import { recalculate1DTexture, setShaderMaterialUniform, setShaderMaterialUniforms } from '@/utils/three-utils'
 import { useRoute } from 'vue-router'
 import PlanetData from '@/core/models/planet-data.model'
 import {
@@ -56,6 +56,7 @@ import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { getPlanetMetaTitle } from '@/utils/utils'
 import { saveAs } from 'file-saver'
 import { nanoid } from 'nanoid'
+import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 
 const route = useRoute()
 const i18n = useI18n()
@@ -88,6 +89,11 @@ let _atmosphere: THREE.Mesh
 let _sunLight: THREE.DirectionalLight
 let _ambLight: THREE.AmbientLight
 let _lensFlare: LensFlareEffect
+
+// DataTextures
+let _tempData: Uint8Array
+let _tempDataTex: THREE.DataTexture
+//let _humiDataTex: THREE.DataTexture
 
 onMounted(async () => {
   await initData()
@@ -168,14 +174,18 @@ function initPlanet(): void {
   const clouds = createClouds(LG_PLANET_DATA.value as PlanetData)
   const atmosphere = createAtmosphere(LG_PLANET_DATA.value as PlanetData, _sunLight.position)
   const pivot = new THREE.Group()
-  pivot.add(planet)
+  pivot.add(planet.mesh)
   pivot.add(clouds)
   pivot.add(atmosphere)
   $se.scene.add(pivot)
-  _planet = planet
+  _planet = planet.mesh
   _clouds = clouds
   _atmosphere = atmosphere
   _planetGroup = pivot
+
+  // Set datatextures + data
+  _tempData = planet.texs[0].data
+  _tempDataTex = planet.texs[0].texture
 
   // Set initial rotations
   _planetGroup.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
@@ -335,7 +345,9 @@ function updatePlanet() {
     return
   }
   for (const key of LG_PLANET_DATA.value.changedProps) {
-    switch (key) {
+    const strippedKey = key.split('#').at(0)
+    const biomeId = key.split('#').at(1) ?? undefined
+    switch (strippedKey) {
       // --------------------------------------------------
       // |               Lighting settings                |
       // --------------------------------------------------
@@ -588,6 +600,13 @@ function updatePlanet() {
             oct: LG_PLANET_DATA.value.biomesTemperatureNoise.octaves
           }
         )
+        break
+      }
+      case '_biomesParameters': {
+        console.log(_tempData)
+        recalculate1DTexture(_tempData, 1, 'temp', LG_PLANET_DATA.value.biomesParams as BiomeParameters[])
+        console.log(_tempData)
+        _tempDataTex.needsUpdate = true
         break
       }
 

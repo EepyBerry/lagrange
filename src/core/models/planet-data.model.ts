@@ -505,7 +505,7 @@ export default class PlanetData extends ChangeTracker {
     this._biomesParams = [
       new BiomeParameters(
         this._changedProps,
-        '_biomesParams',
+        '_biomesParameters',
         0.0,  0.15,
         0.85, 1.0,
         new ColorRamp(this._changedProps, '0._rgbaRamp', [
@@ -516,7 +516,7 @@ export default class PlanetData extends ChangeTracker {
       ),
       new BiomeParameters(
         this._changedProps,
-        '_biomesParams',
+        '_biomesParameters',
         0.5,  1.0,
         0.0,  0.25,
         new ColorRamp(this._changedProps, '1._rgbaRamp', [

@@ -140,7 +140,10 @@
       "noise_fbm_frequency": "Frequency",
       "noise_fbm_amplitude": "Amplitude",
       "noise_fbm_lacunarity": "Lacunarity",
-      "noise_fbm_octaves": "Octaves"
+      "noise_fbm_octaves": "Octaves",
+
+      "noise_rgbramp": "Color ramp",
+      "noise_rgbaramp": "Color/alpha ramp"
     },
     "controls": {
       "lighting": {
@@ -197,7 +200,12 @@
         "gradient_mode_realistic": "Realistic",
         "gradient_mode_fullnoise": "Full noise",
 
-        "biome_list": "Biomes"
+        "biome_list": "Biomes",
+        "biome_name": "Name",
+        "temperature_min": "Min. temperature",
+        "temperature_max": "Max. temperature",
+        "humidity_min": "Min. humidity",
+        "humidity_max": "Max. humidity"
       },
       "clouds": {
         "$title": "Clouds",

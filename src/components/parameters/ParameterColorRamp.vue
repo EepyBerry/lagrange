@@ -47,7 +47,7 @@
             <InputSliderElement
               v-else
               ref="htmlFactorInputs"
-              class="lg fw"
+              class="lg wrapper-input"
               :id="step.id"
               :min="0.001"
               :max="0.999"
@@ -136,7 +136,7 @@ const htmlFactorInputs: Ref<HTMLInputElement[]> = ref([])
 const panelOpen = ref(false)
 const pickerIdOpen: Ref<string | null> = ref(null)
 
-defineProps<{ mode?: 'rgb' | 'rgba' | 'opacity' }>()
+const $props = defineProps<{ mode?: 'rgb' | 'rgba' | 'opacity' }>()
 watch(() => lgColorRamp.value?.definedSteps, () => updateRamp())
 onMounted(() => updateRamp())
 
@@ -144,7 +144,8 @@ function updateRamp() {
   const gradient: string[] = []
   for (let i = 0; i < lgColorRamp.value!.definedSteps.length; i++) {
     const step = lgColorRamp.value!.definedSteps[i]
-    gradient.push(`#${step.color.getHexString()} ${step.factor * 100.0}%`)
+    const rgba = `rgba(${step.color.r * 255}, ${step.color.g * 255}, ${step.color.b * 255}, 1.0)`
+    gradient.push(`${rgba} ${step.factor * 100.0}%`)
   }
   htmlColorRamp.value!.style.background = `linear-gradient(90deg, ${gradient.join(', ')})`
 }
@@ -184,7 +185,8 @@ function updateStepFactor(id: string, e: Event) {
   updateRamp()
 }
 function updateStepColor(id: string, c: string) {
-  lgColorRamp.value?.updateStep(id, { color: c.substring(0, 7), alpha: Number('0x'+c.substring(7)) }) // strip alpha from color
+  const alpha = $props.mode === 'rgba' ? Number('0x'+c.substring(7)) : 255
+  lgColorRamp.value?.updateStep(id, { color: c.substring(0, 7), alpha: alpha/255 }) // strip alpha from color
   updateRamp()
 }
 
@@ -250,6 +252,14 @@ p {
   .factor-wrapper {
     display: flex;
     justify-content: space-between;
+    flex: 1;
+    .wrapper-input {
+      flex: 1;
+      & > :deep(.lg-input-wrapper-slider) {
+        flex: 1;
+        input { flex: 1; }
+      }
+    }
   }
   .color-wrapper {
     display: flex;

@@ -1,4 +1,3 @@
-import type { Color } from "three";
 import { ChangeTracker } from "./change-tracker.model";
 import type { ColorRamp, ColorRampStep } from "./color-ramp.model";
 import { nanoid } from "nanoid";
@@ -38,14 +37,14 @@ export class BiomeParameters extends ChangeTracker {
   }
   public set tempMin(value: number) {
     this._tempMin = value
-    this.markForChange(`${this._changePrefix}._tempMin`)
+    this.markForChange(`${this._changePrefix}#${this.id}`)
   }
   public get tempMax(): number {
     return this._tempMax
   }
   public set tempMax(value: number) {
     this._tempMax = value
-    this.markForChange(`${this._changePrefix}._tempMax`)
+    this.markForChange(`${this._changePrefix}#${this.id}`)
   }
 
   public get humiMin(): number {
@@ -53,14 +52,14 @@ export class BiomeParameters extends ChangeTracker {
   }
   public set humiMin(value: number) {
     this._humiMin = value;
-    this.markForChange(`${this._changePrefix}._humiMin`)
+    this.markForChange(`${this._changePrefix}#${this.id}`)
   }
   public get humiMax(): number {
     return this._humiMax;
   }
   public set humiMax(value: number) {
     this._humiMax = value;
-    this.markForChange(`${this._changePrefix}._humiMax`)
+    this.markForChange(`${this._changePrefix}#${this.id}`)
   }
 
   public get rgbaRamp(): ColorRamp {
@@ -68,6 +67,6 @@ export class BiomeParameters extends ChangeTracker {
   }
   public set rgbaRamp(value: ColorRampStep[]) {
     this._rgbaRamp.loadFromSteps(value);
-    this.markForChange(`${this._changePrefix}._rgbaRamp`)
+    this.markForChange(`${this._changePrefix}#${this.id}`)
   }
 }

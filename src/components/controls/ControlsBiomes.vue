@@ -44,8 +44,9 @@
       </ParameterSlider>
       <ParameterCategory>{{ $t('editor.controls.biomes.biome_list') }}</ParameterCategory>
       <template v-for="(_, index) in LG_PLANET_DATA.biomesParams" :key="index">
-        <ParameterBiome v-model="LG_PLANET_DATA.biomesParams[index]" />
+        <ParameterBiome v-model="(LG_PLANET_DATA.biomesParams[index] as BiomeParameters)" />
       </template>
+      <button class="lg">Add biome</button>
     </template>
   </ParameterGrid>
 </template>
@@ -56,6 +57,6 @@ import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
 import ParameterBiome from '../parameters/ParameterBiome.vue';
 import ParameterSlider from '../parameters/ParameterSlider.vue';
 import ParameterCategory from '../parameters/ParameterCategory.vue';
-import ParameterDivider from '../parameters/ParameterDivider.vue';
 import { GradientMode } from '@/core/types';
+import type { BiomeParameters } from '@/core/models/biome-parameters.model';
 </script>
