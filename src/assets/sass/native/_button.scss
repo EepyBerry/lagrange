@@ -33,15 +33,6 @@ button.lg:disabled {
   background: var(--lg-button-disabled);
   color: var(--lg-text-disabled);
 }
-button.lg.menu-expanded {
-  background: var(--lg-button-menu-expanded);
-}
-button.lg.menu-expanded:hover {
-  background: var(--lg-button-menu-expanded-hover);
-}
-button.lg.menu-expanded:active {
-  background: var(--lg-button-menu-expanded-active);
-}
 
 // nav button
 button.lg.nav {

@@ -3,7 +3,7 @@
     <slot>ParameterName</slot>
   </p>
   <div class="container">
-    <div class="color-ramp" ref="htmlColorRamp" @click="togglePanel">
+    <div ref="htmlColorRamp" class="color-ramp" @click="togglePanel">
       <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
         <span
           ref="htmlColorSteps"
@@ -15,10 +15,11 @@
         >
         </span>
       </template>
+      <div v-show="mode === 'rgba'" ref="htmlAlphaRamp" class="alpha-ramp"></div>
     </div>
     <button
       class="lg edit"
-      :class="{ 'menu-expanded': panelOpen }"
+      :class="{ 'success': panelOpen }"
       :aria-label="$t('a11y.action_edit_ramp')"
       @click="togglePanel"
     >
@@ -67,7 +68,7 @@
             ></span>
             <button
               class="lg edit"
-              :class="{ 'menu-expanded': pickerIdOpen === step.id }"
+              :class="{ 'success': pickerIdOpen === step.id }"
               :aria-label="$t('a11y.action_open_colorpanel')"
               @click="togglePicker(step.id)"
             >
@@ -126,9 +127,13 @@ import { onMounted, ref, watch, type Ref } from 'vue'
 import { ColorPicker } from 'vue-accessible-color-picker'
 import InputSliderElement from '../elements/InputSliderElement.vue'
 import type { ColorRamp } from '@/core/models/color-ramp.model'
+import { numberToHex } from '@/utils/utils';
+import { Color } from 'three';
+import { COLOR_BLACK, COLOR_WHITE } from '@/core/globals';
 
 const lgColorRamp = defineModel<ColorRamp>()
 
+const htmlAlphaRamp: Ref<HTMLElement | null> = ref(null)
 const htmlColorRamp: Ref<HTMLElement | null> = ref(null)
 const htmlColorSteps: Ref<HTMLElement[]> = ref([])
 const htmlFactorInputs: Ref<HTMLInputElement[]> = ref([])
@@ -142,12 +147,16 @@ onMounted(() => updateRamp())
 
 function updateRamp() {
   const gradient: string[] = []
+  const alphaGradient: string[] = []
   for (let i = 0; i < lgColorRamp.value!.definedSteps.length; i++) {
     const step = lgColorRamp.value!.definedSteps[i]
-    const rgba = `rgba(${step.color.r * 255}, ${step.color.g * 255}, ${step.color.b * 255}, 1.0)`
-    gradient.push(`${rgba} ${step.factor * 100.0}%`)
+    const rgb = step.color.getHexString()
+    const a = new Color().lerpColors(COLOR_BLACK, COLOR_WHITE, step.alpha).getHexString()
+    gradient.push(`#${rgb} ${step.factor * 100.0}%`)
+    alphaGradient.push(`#${a} ${step.factor * 100.0}%`)
   }
   htmlColorRamp.value!.style.background = `linear-gradient(90deg, ${gradient.join(', ')})`
+  htmlAlphaRamp.value!.style.background = `linear-gradient(90deg, ${alphaGradient.join(', ')})`
 }
 
 function togglePanel(): void {
@@ -224,6 +233,7 @@ p {
 
   .color-step {
     position: absolute;
+    z-index: 1;
     top: 0;
     bottom: 0;
     border-left: 1px solid var(--lg-accent);
@@ -231,6 +241,14 @@ p {
     background: white;
     width: 4px;
   }
+}
+.alpha-ramp {
+  position: absolute;
+  inset: auto 0 0;
+  height: 4px;
+  border-top: 1px solid var(--lg-input);
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 }
 
 .picker-wrapper {

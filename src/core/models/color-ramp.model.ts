@@ -80,7 +80,7 @@ export class ColorRamp extends ChangeTracker {
   clone(): ColorRamp {
     const clonedSteps: ColorRampStep[] = []
     this.definedSteps.forEach(s => clonedSteps.push(s.clone()))
-    return new ColorRamp(this._changedProps, this._changePrefix, clonedSteps, this._maxSize, this._lockedSize)
+    return new ColorRamp([], this._changePrefix, clonedSteps, this._maxSize, this._lockedSize)
   }
 
   public get steps() {

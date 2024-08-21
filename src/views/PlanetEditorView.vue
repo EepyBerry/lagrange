@@ -573,7 +573,7 @@ function updatePlanet() {
           'u_temp_noise',
           {
             ...material.uniforms['u_temp_noise'].value,
-            lac: LG_PLANET_DATA.value.biomesTemperatureNoise.amplitude
+            amp: LG_PLANET_DATA.value.biomesTemperatureNoise.amplitude
           }
         )
         break

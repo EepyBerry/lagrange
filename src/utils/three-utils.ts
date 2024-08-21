@@ -46,7 +46,6 @@ function extractAndSortSteps(
     }
   }
   extractedSteps.sort((a, b) => a.factor - b.factor)
-  console.log(extractedSteps)
   return extractedSteps
 }
 

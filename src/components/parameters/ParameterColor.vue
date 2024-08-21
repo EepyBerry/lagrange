@@ -11,7 +11,7 @@
     <button
       class="lg edit"
       :aria-label="$t('a11y.action_open_colorpanel')"
-      :class="{ 'menu-expanded': pickerOpen }"
+      :class="{ 'success': pickerOpen }"
       @click="togglePanel"
     >
       <iconify-icon v-if="pickerOpen" class="icon" icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
