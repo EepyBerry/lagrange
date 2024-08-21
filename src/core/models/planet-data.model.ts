@@ -617,7 +617,7 @@ export default class PlanetData extends ChangeTracker {
           ColorRampStep.newWithAlpha(0xffffff, 1.0,  0.0, true),
           ColorRampStep.newWithAlpha(0xffffff, 0.25, 0.5),
           ColorRampStep.newWithAlpha(0xffffff, 0.0,  1.0, true),
-        ], 3, true)
+        ])
       ),
       new BiomeParameters(
         this._changedProps,
@@ -628,7 +628,7 @@ export default class PlanetData extends ChangeTracker {
           ColorRampStep.newWithAlpha(0xbaa345, 0.0,  0.0, true),
           ColorRampStep.newWithAlpha(0xbaa345, 0.75, 0.85),
           ColorRampStep.newWithAlpha(0xbaa345, 1.0,  1.0, true),
-        ], 3, true)
+        ])
       )
     ])
 
