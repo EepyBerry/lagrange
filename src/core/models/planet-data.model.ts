@@ -606,6 +606,31 @@ export default class PlanetData extends ChangeTracker {
     this._biomesTemperatureNoise.amplitude = 1.5
     this._biomesTemperatureNoise.lacunarity = 2.5
     this._biomesTemperatureNoise.octaves = 2
+    this._biomesParams.splice(0)
+    this._biomesParams.push(...[
+      new BiomeParameters(
+        this._changedProps,
+        '_biomesParameters',
+        0.0,  0.15,
+        0.85, 1.0,
+        new ColorRamp(this._changedProps, '_biomesParameters', [
+          ColorRampStep.newWithAlpha(0xffffff, 1.0,  0.0, true),
+          ColorRampStep.newWithAlpha(0xffffff, 0.25, 0.5),
+          ColorRampStep.newWithAlpha(0xffffff, 0.0,  1.0, true),
+        ], 3, true)
+      ),
+      new BiomeParameters(
+        this._changedProps,
+        '_biomesParameters',
+        0.5,  1.0,
+        0.0,  0.25,
+        new ColorRamp(this._changedProps, '_biomesParameters', [
+          ColorRampStep.newWithAlpha(0xbaa345, 0.0,  0.0, true),
+          ColorRampStep.newWithAlpha(0xbaa345, 0.75, 0.85),
+          ColorRampStep.newWithAlpha(0xbaa345, 1.0,  1.0, true),
+        ], 3, true)
+      )
+    ])
 
     // Clouds
     this._cloudsEnabled = true
@@ -685,6 +710,24 @@ export default class PlanetData extends ChangeTracker {
     this._biomesTemperatureNoise.amplitude = data._biomesTemperatureNoise?._amplitude ?? 1.5
     this._biomesTemperatureNoise.lacunarity = data._biomesTemperatureNoise?._lacunarity ?? 2.5
     this._biomesTemperatureNoise.octaves = data._biomesTemperatureNoise?._octaves ?? 2
+    this._biomesParams.splice(0)
+    this._biomesParams.push(...data._biomesParams.map((rbp: any) => {
+      const nbp = new BiomeParameters(
+      this.changedProps,
+      '_biomesParameters',
+      rbp._tempMin,
+      rbp._tempMax,
+      rbp._humiMin,
+      rbp._humiMax,
+      new ColorRamp(
+        this.changedProps,
+        '_biomesParameters',
+        []
+      ))
+      nbp.rgbaRamp.loadFromSteps(rbp._rgbaRamp._steps)
+      return nbp
+    }
+    ))
 
     // Clouds
     this._cloudsEnabled = data._cloudsEnabled ?? true

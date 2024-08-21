@@ -45,6 +45,7 @@ export class ColorRampStep {
   public set color(color: THREE.Color) {
     this._color = color
   }
+
   public get alpha(): number {
     return this._alpha
   }
@@ -150,17 +151,6 @@ export class ColorRamp extends ChangeTracker {
     return this._steps[index]
   }
 
-  public setStep(stepId: string, color?: string, factor?: number) {
-    const index = this._steps.findIndex((s) => s.id === stepId)
-    if (index === -1) {
-      throw new Error('Cannot find step with ID ' + stepId)
-    }
-
-    this._steps[index].color = color ? new THREE.Color(color) : this._steps[index].color
-    this._steps[index].factor = factor ?? this._steps[index].factor
-    this.markForChange(this._changePrefix)
-  }
-
   public updateStep(id: string, options: { color?: string, factor?: number, alpha?: number }) {
     const index = this._steps.findIndex((s) => s.id === id)
     if (index === -1) {
@@ -190,13 +180,8 @@ export class ColorRamp extends ChangeTracker {
     return this._steps.find((s) => s.id === stepId)?.isBound
   }
 
-  public load(data: any) {
-    this._steps.splice(0)
-    this._steps.push(...data._steps.map((s: any) => new ColorRampStep(s._color, s._factor, s._isBound)))
-  }
-
   public loadFromSteps(data: ColorRampStep[]) {
     this._steps.splice(0)
-    this._steps.push(...data.map((s: any) => new ColorRampStep(s._color, s._factor, s._isBound)))
+    this._steps.push(...data.map((s: any) => ColorRampStep.newWithAlpha(s._color, s._alpha, s._factor, s._isBound)))
   }
 }

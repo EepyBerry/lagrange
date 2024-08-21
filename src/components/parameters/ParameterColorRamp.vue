@@ -89,8 +89,8 @@
           <ColorPicker
             default-format="hex"
             :alpha-channel="mode === 'rgba' ? 'show' : 'hide'"
-            :color="'#' + step.color.getHexString()"
-            @color-change="updateStepColor(step.id, $event.colors.hex)"
+            :color="pickerIdInitColor"
+            @color-change="updateStepColor(step, $event.colors.hex)"
           >
             <template #hue-range-input-label>
               <span class="visually-hidden">Hue</span>
@@ -126,10 +126,7 @@
 import { onMounted, ref, watch, type Ref } from 'vue'
 import { ColorPicker } from 'vue-accessible-color-picker'
 import InputSliderElement from '../elements/InputSliderElement.vue'
-import type { ColorRamp } from '@/core/models/color-ramp.model'
-import { numberToHex } from '@/utils/utils';
-import { Color } from 'three';
-import { COLOR_BLACK, COLOR_WHITE } from '@/core/globals';
+import { ColorRamp, type ColorRampStep } from '@/core/models/color-ramp.model'
 
 const lgColorRamp = defineModel<ColorRamp>()
 
@@ -140,20 +137,24 @@ const htmlFactorInputs: Ref<HTMLInputElement[]> = ref([])
 
 const panelOpen = ref(false)
 const pickerIdOpen: Ref<string | null> = ref(null)
+const pickerIdInitColor = ref('')
 
 const $props = defineProps<{ mode?: 'rgb' | 'rgba' | 'opacity' }>()
 watch(() => lgColorRamp.value?.definedSteps, () => updateRamp())
 onMounted(() => updateRamp())
 
 function updateRamp() {
+  if (!lgColorRamp.value) {
+    return
+  }
   const gradient: string[] = []
   const alphaGradient: string[] = []
   for (let i = 0; i < lgColorRamp.value!.definedSteps.length; i++) {
     const step = lgColorRamp.value!.definedSteps[i]
     const rgb = step.color.getHexString()
-    const a = new Color().lerpColors(COLOR_BLACK, COLOR_WHITE, step.alpha).getHexString()
+    const a = Math.ceil(step.alpha*255).toString(16)
     gradient.push(`#${rgb} ${step.factor * 100.0}%`)
-    alphaGradient.push(`#${a} ${step.factor * 100.0}%`)
+    alphaGradient.push(`#${a+a+a} ${step.factor * 100.0}%`)
   }
   htmlColorRamp.value!.style.background = `linear-gradient(90deg, ${gradient.join(', ')})`
   htmlAlphaRamp.value!.style.background = `linear-gradient(90deg, ${alphaGradient.join(', ')})`
@@ -169,6 +170,10 @@ function togglePicker(id: string): void {
     pickerIdOpen.value = null
   } else {
     pickerIdOpen.value = id
+    const step = lgColorRamp.value!.getStep(id)
+    const rgb = step.color.getHexString()
+    const a = Math.ceil(step.alpha*255).toString(16)
+    pickerIdInitColor.value = `#${rgb}${a}`
   }
 }
 
@@ -193,9 +198,13 @@ function updateStepFactor(id: string, e: Event) {
   lgColorRamp.value?.updateStep(id, { factor: htmlInput.valueAsNumber })
   updateRamp()
 }
-function updateStepColor(id: string, c: string) {
-  const alpha = $props.mode === 'rgba' ? Number('0x'+c.substring(7)) : 255
-  lgColorRamp.value?.updateStep(id, { color: c.substring(0, 7), alpha: alpha/255 }) // strip alpha from color
+function updateStepColor(step: ColorRampStep, c: string) {
+  const intAlpha = parseInt(c.substring(7), 16)
+  const floatAlpha = parseFloat((intAlpha/255.0).toFixed(2))
+  const alpha = $props.mode === 'rgba' ? floatAlpha : 1.0
+
+  console.log(step)
+  lgColorRamp.value?.updateStep(step.id, { color: c.substring(0, 7), alpha })
   updateRamp()
 }
 
@@ -229,6 +238,7 @@ p {
   border-radius: 4px;
   border: 1px solid var(--lg-accent);
   width: 100%;
+  overflow: hidden;
   cursor: pointer;
 
   .color-step {
@@ -247,8 +257,6 @@ p {
   inset: auto 0 0;
   height: 4px;
   border-top: 1px solid var(--lg-input);
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
 }
 
 .picker-wrapper {

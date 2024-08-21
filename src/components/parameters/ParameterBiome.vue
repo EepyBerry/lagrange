@@ -22,7 +22,7 @@
     <ParameterColorRamp
       mode="rgba"
       v-model="(lgParam!.rgbaRamp as ColorRamp)"
-      :key="LG_PLANET_DATA.planetName"
+      :key="lgParam!.id"
     >
       {{ $t('editor.general.noise_rgbaramp') }}
     </ParameterColorRamp>

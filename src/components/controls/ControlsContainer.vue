@@ -44,7 +44,7 @@
     :ariaLabel="$t('editor.controls.biomes.$title')"
   >
     <template v-slot:title>{{ $t('editor.controls.biomes.$title') }}</template>
-    <template v-slot:content><ControlsBiomes /></template>
+    <template v-slot:content><ControlsBiomes :key="LG_PLANET_DATA.biomesParams[0]!.id" /></template>
   </CollapsibleSection>
 
   <!-- Clouds -->
@@ -79,5 +79,6 @@ import ControlsSurface from './ControlsSurface.vue'
 import ControlsBiomes from './ControlsBiomes.vue'
 import ControlsClouds from './ControlsClouds.vue'
 import ControlsAtmosphere from './ControlsAtmosphere.vue'
+import { LG_PLANET_DATA } from '@/core/services/planet-editor.service'
 defineProps<{ compactMode: boolean }>()
 </script>

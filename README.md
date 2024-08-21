@@ -9,9 +9,28 @@
 A WebGL side-project using VueJS and ThreeJS! <br>
 Lagrange is a browser application to help you create your own planets, using procedural noise as a foundation to build upon.
 
-_(**important note:** this is something I am working on during my free time, which means that update frequency will vary!)_
-
 **🪐✨ [Check out the app here!](https://lagrange.eepyberry.me) ✨🪐**
+
+_(**note:** this is something I am working on during my free time, which means that update frequency will vary!)_
+
+## ⚠️ Requirements
+
+### **IMPORTANT:** to properly run the application, a **graphics card of any kind** as well as [**WebGL 2.0 browser support**](https://get.webgl.org/webgl2/) are required! <br>
+
+### Browser compatibility/implementation issues:
+
+- On some Linux-based systems, there is an issue with Firefox not being able to initialize the WebGL context properly, thus leading to the following GLSL error:
+  ```
+  THREE.WebGLProgram: Shader Error 0 - VALIDATE_STATUS false
+
+  Material Name: 
+  Material Type: MeshStandardMaterial
+
+  Program Info Log: Statically used varyings do not fit within packing limits. (see GLSL ES Specification 1.0.17, p111)
+  ```
+
+  If this happens, please try using another browser before submitting an issue. Thanks <3
+
 
 ## ⚙️ Installation & building
 

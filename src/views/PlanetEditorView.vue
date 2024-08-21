@@ -228,6 +228,8 @@ function disposeScene() {
   ;(_atmosphere.material as THREE.Material).dispose()
   _atmosphere.geometry.dispose()
 
+  _tempData.fill(0)
+  _tempDataTex.dispose()
   _planetGroup.clear()
 
   $se.scene.children.forEach((c) => $se.scene.remove(c))
@@ -603,7 +605,7 @@ function updatePlanet() {
         break
       }
       case '_biomesParameters': {
-        const v: BiomeParameters[] = LG_PLANET_DATA.value.biomesParams.map(b => b.clone())
+        const v: BiomeParameters[] =LG_PLANET_DATA.value.biomesParams.map(b => b.clone())
         recalculate1DTexture(_tempData, 256, 'temp', v)
         _tempDataTex.needsUpdate = true
         break

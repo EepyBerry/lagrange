@@ -1,4 +1,4 @@
-import { Color, Vector3 } from 'three'
+import { Vector3 } from 'three'
 import { ref } from 'vue'
 
 // Responsiveness width thresholds
@@ -16,7 +16,6 @@ export const LOCALE_MAP: { [k: string]: string } = {
 export const A11Y_ANIMATE = ref(true)
 
 // Scene object names
-
 export const LG_NAME_PLANET = 'lg:planet'
 export const LG_NAME_CLOUDS = 'lg:planet:clouds'
 export const LG_NAME_ATMOSPHERE = 'lg:planet:atmosphere'
@@ -31,10 +30,6 @@ export const AXIS_Z = new Vector3(0, 0, 1)
 export const AXIS_NX = new Vector3(-1, 0, 0)
 export const AXIS_NY = new Vector3(0, -1, 0)
 export const AXIS_NZ = new Vector3(0, 0, -1)
-
-// Colors
-export const COLOR_BLACK = new Color('black')
-export const COLOR_WHITE = new Color('white')
 
 // Miscellaneous
 export const SUN_INIT_POS = new Vector3(0, 0, 4e3)
