@@ -26,6 +26,15 @@ export class ColorRampStep {
     return step
   }
 
+  clone(): ColorRampStep {
+    return ColorRampStep.newWithAlpha(
+      this._color,
+      this._alpha,
+      this._factor,
+      this._isBound,
+    )
+  }
+
   public get id() {
     return this._id
   }
@@ -66,6 +75,12 @@ export class ColorRamp extends ChangeTracker {
     this._steps = steps
     this._lockedSize = lockedSize
     this.markForChange(this._changePrefix)
+  }
+
+  clone(): ColorRamp {
+    const clonedSteps: ColorRampStep[] = []
+    this.definedSteps.forEach(s => clonedSteps.push(s.clone()))
+    return new ColorRamp(this._changedProps, this._changePrefix, clonedSteps, this._maxSize, this._lockedSize)
   }
 
   public get steps() {

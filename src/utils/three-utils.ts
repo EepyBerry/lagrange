@@ -18,7 +18,7 @@ export function setShaderMaterialUniforms(mat: CustomShaderMaterial, unames: str
 export function create1DTexture(
   w: number, param: 'temp'|'humi', biomes: BiomeParameters[]
 ): DataTextureWrapper {
-  const extractedSteps: ColorRampStep[] = extractAndSortSteps(w, param, biomes.slice(0))
+  const extractedSteps: ColorRampStep[] = extractAndSortSteps(w, param, biomes)
   const data = calculate1DTextureData(w, extractedSteps)
   const dt = new DataTexture(data, w, 1)
   dt.needsUpdate = true
@@ -27,7 +27,7 @@ export function create1DTexture(
 export function recalculate1DTexture(
   data: Uint8Array, w: number, param: 'temp'|'humi', biomes: BiomeParameters[]
 ): void {
-  const extractedSteps: ColorRampStep[] = extractAndSortSteps(w, param, biomes.slice(0))
+  const extractedSteps: ColorRampStep[] = extractAndSortSteps(w, param, biomes)
   recalculate1DTextureData(data, extractedSteps)
 }
 
@@ -46,6 +46,7 @@ function extractAndSortSteps(
     }
   }
   extractedSteps.sort((a, b) => a.factor - b.factor)
+  console.log(extractedSteps)
   return extractedSteps
 }
 

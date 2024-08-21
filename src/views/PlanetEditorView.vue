@@ -603,9 +603,8 @@ function updatePlanet() {
         break
       }
       case '_biomesParameters': {
-        console.log(_tempData)
-        recalculate1DTexture(_tempData, 1, 'temp', LG_PLANET_DATA.value.biomesParams as BiomeParameters[])
-        console.log(_tempData)
+        const v: BiomeParameters[] = LG_PLANET_DATA.value.biomesParams.map(b => b.clone())
+        recalculate1DTexture(_tempData, 256, 'temp', v)
         _tempDataTex.needsUpdate = true
         break
       }

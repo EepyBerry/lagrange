@@ -28,6 +28,18 @@ export class BiomeParameters extends ChangeTracker {
     this._rgbaRamp = rgbaRamp
   }
   
+  clone(): BiomeParameters {
+    return new BiomeParameters(
+      this._changedProps,
+      this._changePrefix,
+      this._tempMin,
+      this._tempMax,
+      this._humiMin,
+      this._humiMax,
+      this._rgbaRamp.clone()
+    )
+  }
+
   public get id(): string {
     return this._id;
   }

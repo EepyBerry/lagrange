@@ -88,7 +88,7 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh, texs: DataTe
   const geometry = createGeometryComponent(GeometryType.SPHERE)
   geometry.computeTangents()
 
-  const tempTex = create1DTexture(256, "temp", data.biomesParams)
+  const tempTex = create1DTexture(256, "temp", data.biomesParams.map(b => b.clone()))
   //const humiTex = createMerged1DColorTexture(256, "humi", data.biomesParams)
 
   const material = createShaderMaterialComponent(
