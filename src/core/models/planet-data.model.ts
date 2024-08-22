@@ -470,22 +470,22 @@ export default class PlanetData extends ChangeTracker {
 
     // Surface
     this._planetSurfaceShowBumps = true
-    this._planetSurfaceBumpStrength = 0.0875
+    this._planetSurfaceBumpStrength = 0.12
     this._planetSurfaceNoise = new NoiseParameters(
       this._changedProps,
       '_planetSurfaceNoise',
       NoiseType.FBM,
-      3.41,
-      0.5,
+      2.45,
+      0.53,
       2.16,
       6
     )
     this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
-      new ColorRampStep(0x061c3f, 0, true),
-      new ColorRampStep(0x0f2851, 0.4),
-      new ColorRampStep(0x1f4178, 0.495),
+      new ColorRampStep(0x000000, 0, true),
+      new ColorRampStep(0x0b1931, 0.4),
+      new ColorRampStep(0x2d4265, 0.495),
       new ColorRampStep(0x2f2e10, 0.5),
-      new ColorRampStep(0x446611, 0.505),
+      new ColorRampStep(0x446611, 0.525),
       new ColorRampStep(0x223b05, 0.65),
       new ColorRampStep(0x223b05, 1, true),
     ])
@@ -495,7 +495,7 @@ export default class PlanetData extends ChangeTracker {
     this._biomesTemperatureMode = GradientMode.REALISTIC
     this._biomesTemperatureNoise = new NoiseParameters(
       this._changedProps, '_biomesTemperatureNoise',
-      NoiseType.FBM, 2.5, 1.5, 2.5, 2
+      NoiseType.FBM, 2.5, 1.25, 2.5, 4
     )
     this._biomesHumidityMode = GradientMode.REALISTIC
     this._biomesHumidityNoise = new NoiseParameters(
@@ -506,7 +506,7 @@ export default class PlanetData extends ChangeTracker {
       new BiomeParameters(
         this._changedProps,
         '_biomesParameters',
-        0.0,  0.15,
+        0.0,  0.08,
         0.85, 1.0,
         new ColorRamp(this._changedProps, '_biomesParameters', [
           ColorRampStep.newWithAlpha(0xffffff, 1.0,  0.0, true),
@@ -517,7 +517,7 @@ export default class PlanetData extends ChangeTracker {
       new BiomeParameters(
         this._changedProps,
         '_biomesParameters',
-        0.5,  1.0,
+        0.6,  1.0,
         0.0,  0.25,
         new ColorRamp(this._changedProps, '_biomesParameters', [
           ColorRampStep.newWithAlpha(0xbaa345, 0.0,  0.0, true),
@@ -550,8 +550,8 @@ export default class PlanetData extends ChangeTracker {
     // Atmosphere
     this._atmosphereEnabled = true
     this._atmosphereHeight = 8.0
-    this._atmosphereDensityScale = 2.5
-    this._atmosphereIntensity = 1.15
+    this._atmosphereDensityScale = 3.0
+    this._atmosphereIntensity = 1.35
     this._atmosphereColorMode = ColorMode.REALISTIC
     this._atmosphereHue = 0.0
     this._atmosphereTint = new Color(0xffffff)
@@ -584,17 +584,17 @@ export default class PlanetData extends ChangeTracker {
 
     // Surface
     this._planetSurfaceShowBumps = true
-    this._planetSurfaceBumpStrength = 0.0875
-    this._planetSurfaceNoise.frequency = 3.41
-    this._planetSurfaceNoise.amplitude = 0.5
+    this._planetSurfaceBumpStrength = 0.12
+    this._planetSurfaceNoise.frequency = 2.45
+    this._planetSurfaceNoise.amplitude = 0.53
     this._planetSurfaceNoise.lacunarity = 2.16
     this._planetSurfaceNoise.octaves = 6
     this._planetSurfaceColorRamp.loadFromSteps([
-      new ColorRampStep(0x061c3f, 0, true),
-      new ColorRampStep(0x0f2851, 0.4),
-      new ColorRampStep(0x1f4178, 0.495),
+      new ColorRampStep(0x000000, 0, true),
+      new ColorRampStep(0x0b1931, 0.4),
+      new ColorRampStep(0x2d4265, 0.495),
       new ColorRampStep(0x2f2e10, 0.5),
-      new ColorRampStep(0x446611, 0.505),
+      new ColorRampStep(0x446611, 0.525),
       new ColorRampStep(0x223b05, 0.65),
       new ColorRampStep(0x223b05, 1, true),
     ])
@@ -603,15 +603,15 @@ export default class PlanetData extends ChangeTracker {
     this._biomesEnabled = true
     this._biomesTemperatureMode = GradientMode.REALISTIC
     this._biomesTemperatureNoise.frequency = 2.5
-    this._biomesTemperatureNoise.amplitude = 1.5
+    this._biomesTemperatureNoise.amplitude = 1.25
     this._biomesTemperatureNoise.lacunarity = 2.5
-    this._biomesTemperatureNoise.octaves = 2
+    this._biomesTemperatureNoise.octaves = 4
     this._biomesParams.splice(0)
     this._biomesParams.push(...[
       new BiomeParameters(
         this._changedProps,
         '_biomesParameters',
-        0.0,  0.15,
+        0.0,  0.08,
         0.85, 1.0,
         new ColorRamp(this._changedProps, '_biomesParameters', [
           ColorRampStep.newWithAlpha(0xffffff, 1.0,  0.0, true),
@@ -622,7 +622,7 @@ export default class PlanetData extends ChangeTracker {
       new BiomeParameters(
         this._changedProps,
         '_biomesParameters',
-        0.5,  1.0,
+        0.6,  1.0,
         0.0,  0.25,
         new ColorRamp(this._changedProps, '_biomesParameters', [
           ColorRampStep.newWithAlpha(0xbaa345, 0.0,  0.0, true),
@@ -650,8 +650,8 @@ export default class PlanetData extends ChangeTracker {
     // Atmosphere
     this._atmosphereEnabled = true
     this._atmosphereHeight = 8.0
-    this._atmosphereDensityScale = 2.5
-    this._atmosphereIntensity = 1.15
+    this._atmosphereDensityScale = 3.0
+    this._atmosphereIntensity = 1.35
     this._atmosphereColorMode = ColorMode.REALISTIC
     this._atmosphereHue = 0
     this._atmosphereTint = new Color(0xffffff)
@@ -685,19 +685,19 @@ export default class PlanetData extends ChangeTracker {
     // Surface
     this._planetSurfaceShowBumps = data._planetSurfaceShowBumps ?? true
     this._planetSurfaceBumpStrength = data._planetSurfaceBumpStrength ?? 0.0875
-    this._planetSurfaceNoise.amplitude = data._planetSurfaceNoise?._amplitude ?? 3.41
-    this._planetSurfaceNoise.frequency = data._planetSurfaceNoise?._frequency ?? 0.5
+    this._planetSurfaceNoise.amplitude = data._planetSurfaceNoise?._amplitude ?? 2.45
+    this._planetSurfaceNoise.frequency = data._planetSurfaceNoise?._frequency ?? 0.53
     this._planetSurfaceNoise.lacunarity = data._planetSurfaceNoise?._lacunarity ?? 2.16
     this._planetSurfaceNoise.octaves = data._planetSurfaceNoise._octaves ?? 6
     this._planetSurfaceColorRamp.loadFromSteps(
       data._planetSurfaceColorRamp
         ? data._planetSurfaceColorRamp._steps
         : [
-            new ColorRampStep(0x061c3f, 0, true),
-            new ColorRampStep(0x0f2851, 0.4),
-            new ColorRampStep(0x1f4178, 0.495),
+            new ColorRampStep(0x000000, 0, true),
+            new ColorRampStep(0x0b1931, 0.4),
+            new ColorRampStep(0x2d4265, 0.495),
             new ColorRampStep(0x2f2e10, 0.5),
-            new ColorRampStep(0x446611, 0.505),
+            new ColorRampStep(0x446611, 0.525),
             new ColorRampStep(0x223b05, 0.65),
             new ColorRampStep(0x223b05, 1, true),
           ],
@@ -707,7 +707,7 @@ export default class PlanetData extends ChangeTracker {
     this._biomesEnabled = data._biomesEnabled ?? true
     this._biomesTemperatureMode = data._biomesTemperatureMode ?? GradientMode.REALISTIC
     this._biomesTemperatureNoise.frequency = data._biomesTemperatureNoise?._frequency ?? 2.5
-    this._biomesTemperatureNoise.amplitude = data._biomesTemperatureNoise?._amplitude ?? 1.5
+    this._biomesTemperatureNoise.amplitude = data._biomesTemperatureNoise?._amplitude ?? 1.25
     this._biomesTemperatureNoise.lacunarity = data._biomesTemperatureNoise?._lacunarity ?? 2.5
     this._biomesTemperatureNoise.octaves = data._biomesTemperatureNoise?._octaves ?? 2
     this._biomesParams.splice(0)
@@ -750,8 +750,8 @@ export default class PlanetData extends ChangeTracker {
     // Atmosphere
     this._atmosphereEnabled = data._atmosphereEnabled ?? true
     this._atmosphereHeight = data._atmosphereHeight ?? 8.0
-    this._atmosphereDensityScale = data._atmosphereDensityScale ?? 2.5
-    this._atmosphereIntensity = data._atmosphereIntensity ?? 1.15
+    this._atmosphereDensityScale = data._atmosphereDensityScale ?? 3.0
+    this._atmosphereIntensity = data._atmosphereIntensity ?? 1.35
     this._atmosphereColorMode = data._atmosphereColorMode ?? ColorMode.REALISTIC
     this._atmosphereHue = data._atmosphereHue ?? 0.0
     this._atmosphereTint.set(data._atmosphereTint ?? 0xffffff)
