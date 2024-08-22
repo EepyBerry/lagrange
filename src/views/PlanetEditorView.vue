@@ -12,6 +12,25 @@
 
   <div ref="sceneRoot" id="scene-root"></div>
   <OverlaySpinner :load="showSpinner" />
+  <DialogElement
+    ref="webglErrorDialogRef"
+    id="dialog-error"
+    :show-title="true"
+    :prevent-click-close="true"
+    :aria-label="$t('a11y.dialog_webgl_error')"
+    @close="redirectToCodex">
+    <template v-slot:title>
+      <iconify-icon icon="mingcute:warning-line" width="2rem" aria-hidden="true" />
+      <span>{{ $t('dialog.webglerror.$title') }}</span>
+    </template>
+    <template v-slot:content>
+      <div class="error-info">
+        <p>{{ $t('dialog.webglerror.brief') }}</p>
+      </div>
+      <hr class="error-divider">
+      <div ref="webglErrorContainerRef" class="error-container"></div>
+    </template>
+  </DialogElement>
 </template>
 
 <script setup lang="ts">
@@ -29,7 +48,7 @@ import {
   SUN_INIT_POS,
 } from '@core/globals'
 import { degToRad } from 'three/src/math/MathUtils.js'
-import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla'
+import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import { createControlsComponent } from '@core/three/component.builder'
 import { useHead } from '@unhead/vue'
 import type { SceneElements } from '@core/models/scene-elements.model'
@@ -39,7 +58,7 @@ import { EventBus } from '@/core/services/event-bus'
 import { useI18n } from 'vue-i18n'
 import AppNavigation from '@/components/main/AppNavigation.vue'
 import { recalculate1DTexture, setShaderMaterialUniform, setShaderMaterialUniforms } from '@/utils/three-utils'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import PlanetData from '@/core/models/planet-data.model'
 import {
   createAtmosphere,
@@ -57,13 +76,21 @@ import { getPlanetMetaTitle } from '@/utils/utils'
 import { saveAs } from 'file-saver'
 import { nanoid } from 'nanoid'
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
+import WebGL from 'three/addons/capabilities/WebGL.js'
+import DialogElement from '@/components/elements/DialogElement.vue'
 
 const route = useRoute()
+const router = useRouter()
 const i18n = useI18n()
 const head = useHead({
   title: i18n.t('editor.$title') + ' · ' + i18n.t('main.$title'),
   meta: [{ name: 'description', content: 'Planet editor' }],
 })!
+
+// Warnings
+const webglErrorDialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
+const webglErrorContainerRef: Ref<HTMLElement | null> = ref(null)
+let loadedCorrectly = false
 
 // Data
 const $planetEntityId: Ref<string> = ref('')
@@ -96,14 +123,39 @@ let _tempDataTex: THREE.DataTexture
 //let _humiDataTex: THREE.DataTexture
 
 onMounted(async () => {
-  await initData()
-  await initCanvas()
+  await bootstrapEditor()
 })
 onUnmounted(() => {
-  disposeScene()
+  if (loadedCorrectly) {
+    disposeScene()
+  }
   EventBus.deregisterWindowEventListener('resize', onWindowResize)
   EventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
 })
+
+async function bootstrapEditor() {
+  if(WebGL.isWebGL2Available()) {
+    await initData()
+    await initCanvas()
+    loadedCorrectly = true
+  } else {
+    showSpinner.value = false
+    const error = WebGL.getWebGL2ErrorMessage()
+    error.style.margin = ''
+    error.style.background = ''
+    error.style.color = ''
+    error.style.fontFamily = ''
+    error.style.fontSize = ''
+    error.style.width = ''
+    ;(error.lastChild as HTMLLinkElement).style.color = ''
+    webglErrorContainerRef.value?.appendChild(error)
+    webglErrorDialogRef.value?.open()
+  }
+}
+
+function redirectToCodex() {
+  router.push('/codex')
+}
 
 async function initData() {
   // https://stackoverflow.com/questions/3891641/regex-test-only-works-every-other-time
@@ -775,6 +827,26 @@ function updatePlanet() {
 
   & > canvas {
     background: transparent;
+  }
+}
+
+#dialog-error {
+  z-index: 100;
+  border: 1px solid var(--lg-warn);
+  background: var(--lg-warn-panel);
+
+  hr.error-divider {
+    border: 1px solid var(--lg-text);
+    margin-top: 1rem;
+    opacity: 0.5;
+  }
+}
+:deep(.error-container) > div#webglmessage {
+  font-family: unset;
+  font-size: 0.875rem;
+  background: transparent;
+  a {
+  color: var(--lg-link-error);
   }
 }
 

@@ -12,6 +12,10 @@
     }
   },
   "dialog": {
+    "webglerror": {
+      "$title": "Failed to start the Planet Editor!",
+      "brief": "The WebGL context failed to initialize properly. See below for error information."
+    },
     "init": {
       "$title": "Welcome to @:main.$title",
       "introduction": "Lagrange is a fully procedural planet builder, perfect for worldbuilding and tying your lore to a proper planet, solar system or even an entire galaxy!",

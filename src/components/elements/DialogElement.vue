@@ -90,6 +90,7 @@ dialog[open].lg {
     .dialog-title {
       font-weight: 600;
       padding-bottom: 1rem;
+      padding-right: 2rem;
     }
 
     button.dialog-close {

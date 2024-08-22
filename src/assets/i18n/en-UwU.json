@@ -12,6 +12,10 @@
     }
   },
   "dialog": {
+    "webglerror": {
+      "$title": "Faiwed to stawt the Pwanyet Editow!!! ;;w;;",
+      "brief": "T-the WebGL context faiwed to initiawize p-pwopewwy... See bewow for e-error infowmation :c"
+    },
     "init": {
       "$title": "Wewcome :3 t-to @:main.$title",
       "introduction": "Wagwange is a fuwwy pwoceduwaw pwanyet buiwdew, pewfect fow wowwdbuiwding and tying youw wowe t-to a pwopew pwanyet, sowaw system o-ow even an entiwe gawaxy! (・`ω´・)",
