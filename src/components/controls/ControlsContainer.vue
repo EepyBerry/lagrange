@@ -44,7 +44,7 @@
     :ariaLabel="$t('editor.controls.biomes.$title')"
   >
     <template v-slot:title>{{ $t('editor.controls.biomes.$title') }}</template>
-    <template v-slot:content><ControlsBiomes :key="LG_PLANET_DATA.biomesParams[0]!.id" /></template>
+    <template v-slot:content><ControlsBiomes /></template>
   </CollapsibleSection>
 
   <!-- Clouds -->

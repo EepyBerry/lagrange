@@ -44,9 +44,12 @@
       </ParameterSlider>
       <ParameterCategory>{{ $t('editor.controls.biomes.biome_list') }}</ParameterCategory>
       <template v-for="(_, index) in LG_PLANET_DATA.biomesParams" :key="index">
-        <ParameterBiome v-model="(LG_PLANET_DATA.biomesParams[index] as BiomeParameters)" />
+        <ParameterBiome v-model="(LG_PLANET_DATA.biomesParams[index] as BiomeParameters)" @delete="deleteBiome" />
       </template>
-      <button class="lg">Add biome</button>
+      <button class="lg action-add" @click="addBiome">
+        <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
+        {{ $t('editor.$action_add') }}
+      </button>
     </template>
   </ParameterGrid>
 </template>
@@ -58,5 +61,36 @@ import ParameterBiome from '../parameters/ParameterBiome.vue';
 import ParameterSlider from '../parameters/ParameterSlider.vue';
 import ParameterCategory from '../parameters/ParameterCategory.vue';
 import { GradientMode } from '@/core/types';
-import type { BiomeParameters } from '@/core/models/biome-parameters.model';
+import { BiomeParameters } from '@/core/models/biome-parameters.model';
+import { ColorRamp, ColorRampStep } from '@/core/models/color-ramp.model';
+
+function addBiome() {
+  const newBiome = new BiomeParameters(
+    LG_PLANET_DATA.value.changedProps,
+    '_biomesParameters',
+    0.0, 1.0,
+    0.0, 1.0,
+    new ColorRamp(LG_PLANET_DATA.value.changedProps, '_biomesParameters', [
+      ColorRampStep.newWithAlpha(0xffffff, 1.0,  0.0, true),
+      ColorRampStep.newWithAlpha(0xffffff, 0.5,  0.5),
+      ColorRampStep.newWithAlpha(0xffffff, 0.0,  1.0, true),
+    ])
+  )
+  LG_PLANET_DATA.value.biomesParams.push(newBiome)
+  LG_PLANET_DATA.value.markForChange('_biomesParameters')
+}
+
+function deleteBiome(id: string) {
+  const biomeIdx = LG_PLANET_DATA.value.biomesParams.findIndex(b => b.id === id)
+  if (biomeIdx < 0) {
+    throw new Error('Cannot delete non-existent biome!')
+  }
+  LG_PLANET_DATA.value.biomesParams.splice(biomeIdx, 1)
+  LG_PLANET_DATA.value.markForChange('_biomesParameters')
+}
 </script>
+<style scoped lang="scss">
+.action-add {
+  grid-column: span 2;
+}
+</style>

@@ -711,7 +711,7 @@ export default class PlanetData extends ChangeTracker {
     this._biomesTemperatureNoise.lacunarity = data._biomesTemperatureNoise?._lacunarity ?? 2.5
     this._biomesTemperatureNoise.octaves = data._biomesTemperatureNoise?._octaves ?? 2
     this._biomesParams.splice(0)
-    this._biomesParams.push(...data._biomesParams.map((rbp: any) => {
+    this._biomesParams.push(...(data._biomesParams ?? []).map((rbp: any) => {
       const nbp = new BiomeParameters(
       this.changedProps,
       '_biomesParameters',

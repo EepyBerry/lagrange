@@ -9,6 +9,16 @@
     "nav": {
       "codex": "Codex",
       "editor": "Editor"
+    },
+
+    "planet_data": {
+      "biome_type_arctic": "Arctic",
+      "biome_type_tundra": "Tundra",
+      "biome_type_temperate": "Temperate",
+      "biome_type_subtropical": "Subtropical",
+      "biome_type_tropical": "Tropical",
+      "biome_type_volcanic": "Volcanic",
+      "biome_type_various": "Various"
     }
   },
   "dialog": {
@@ -205,7 +215,7 @@
         "gradient_mode_fullnoise": "Full noise",
 
         "biome_list": "Biomes",
-        "biome_name": "Name",
+        "biome_type": "Type",
         "temperature_min": "Min. temperature",
         "temperature_max": "Max. temperature",
         "humidity_min": "Min. humidity",

@@ -64,8 +64,9 @@
             <span
               class="current-color"
               :style="{ backgroundColor: `#${step.color.getHexString()}` }"
-              @click="togglePicker(step.id)"
-            ></span>
+              @click="togglePicker(step.id)">
+              <div v-show="mode === 'rgba'" class="alpha-color" :style="{ background: alphaToGrayscale(step.alpha, true) }"></div>
+            </span>
             <button
               class="lg edit"
               :class="{ 'success': pickerIdOpen === step.id }"
@@ -171,7 +172,7 @@ function togglePicker(id: string): void {
   } else {
     const step = lgColorRamp.value!.getStep(id)
     const rgb = step.color.getHexString()
-    const a = Math.ceil(step.alpha*255).toString(16).padStart(2, '0')
+    const a = alphaToGrayscale(step.alpha)
     pickerIdInitColor.value = `#${rgb}${a}`
     pickerIdOpen.value = id
   }
@@ -214,6 +215,14 @@ function removeStep(id: string) {
   lgColorRamp.value?.removeStep(id)
   updateRamp()
 }
+
+// Misc functions
+
+function alphaToGrayscale(alpha: number, full = false): string {
+  const hex = Math.ceil(alpha*255).toString(16).padStart(2, '0')
+  return full ? `#${hex+hex+hex}` : hex
+}
+
 </script>
 
 <style scoped lang="scss">
@@ -249,12 +258,6 @@ p {
     background: white;
     width: 4px;
   }
-}
-.alpha-ramp {
-  position: absolute;
-  inset: auto 0 0;
-  height: 4px;
-  border-top: 1px solid var(--lg-input);
 }
 
 .picker-wrapper {
@@ -294,6 +297,7 @@ p {
     justify-self: end;
   }
   .current-color {
+    position: relative;
     display: inline-flex;
     align-self: center;
     width: 3rem;
@@ -311,6 +315,13 @@ p {
       flex: 1;
     }
   }
+}
+
+.alpha-ramp, .alpha-color {
+  position: absolute;
+  inset: auto 0 0;
+  height: 4px;
+  border-top: 1px solid var(--lg-input);
 }
 
 button.edit {
