@@ -253,7 +253,7 @@
     "text_01": "Nyothing uvw hewe, sowwyyyy...",
     "text_02": "\"This sectow is c-compwetewy empty, Captain! :O\"",
     "text_03": "Oh nyooo ;;w;; Took a wwong tuwn sumwhewe...",
-    "text_04": "PAGE\u00A0IS\u00A0MISSING! STATUS\u00A0IS\u00A0404!! SPACE\u00A0IS\u00A0VOID!!! x3",
+    "text_04": "PAGE\u00A0IS\u00A0MISSING! STATUS\u00A0IS\u00A0404!! SPACE\u00A0IS\u00A0EMPTY!!! x3",
     "subtext": "The wequested page c-couwd nyot be found :c"
   },
   "toast": {
@@ -284,6 +284,7 @@
     "logo_alt": "Secwet Wagwange wogo!",
     "logo_update_codex": "Wowwd Cowwectow update!",
 
+    "dialog_webgl_error": "WebGL ewwow diawog",
     "dialog_init": "Intwoduction diawog",
     "dialog_settings": "Settings diawog",
     "dialog_about": "About @:main.$title diawog",

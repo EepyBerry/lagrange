@@ -251,7 +251,7 @@
     "text_01": "Nothing over here, sorry!",
     "text_02": "\"This sector is completely empty, Captain!\"",
     "text_03": "Huh. Must've taken a wrong turn somewhere...",
-    "text_04": "PAGE\u00A0IS\u00A0MISSING. STATUS\u00A0IS\u00A0404. SPACE\u00A0IS\u00A0VOID.",
+    "text_04": "PAGE\u00A0IS\u00A0MISSING. STATUS\u00A0IS\u00A0404. SPACE\u00A0IS\u00A0EMPTY.",
     "subtext": "The requested page could not be found."
   },
   "toast": {
@@ -282,6 +282,7 @@
     "logo_alt": "Secret Lagrange logo!",
     "logo_update_codex": "World Collector update",
 
+    "dialog_webgl_error": "WebGL error dialog",
     "dialog_init": "Introduction dialog",
     "dialog_settings": "Settings dialog",
     "dialog_about": "About @:main.$title dialog",

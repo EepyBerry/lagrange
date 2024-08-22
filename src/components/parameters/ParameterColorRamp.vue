@@ -169,11 +169,11 @@ function togglePicker(id: string): void {
   if (pickerIdOpen.value === id) {
     pickerIdOpen.value = null
   } else {
-    pickerIdOpen.value = id
     const step = lgColorRamp.value!.getStep(id)
     const rgb = step.color.getHexString()
-    const a = Math.ceil(step.alpha*255).toString(16)
+    const a = Math.ceil(step.alpha*255).toString(16).padStart(2, '0')
     pickerIdInitColor.value = `#${rgb}${a}`
+    pickerIdOpen.value = id
   }
 }
 
@@ -202,8 +202,6 @@ function updateStepColor(step: ColorRampStep, c: string) {
   const intAlpha = parseInt(c.substring(7), 16)
   const floatAlpha = parseFloat((intAlpha/255.0).toFixed(2))
   const alpha = $props.mode === 'rgba' ? floatAlpha : 1.0
-
-  console.log(step)
   lgColorRamp.value?.updateStep(step.id, { color: c.substring(0, 7), alpha })
   updateRamp()
 }
