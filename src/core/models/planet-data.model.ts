@@ -715,10 +715,10 @@ export default class PlanetData extends ChangeTracker {
       const nbp = new BiomeParameters(
       this.changedProps,
       '_biomesParameters',
-      rbp._tempMin,
-      rbp._tempMax,
-      rbp._humiMin,
-      rbp._humiMax,
+      rbp._tempMin ?? 0.0,
+      rbp._tempMax ?? 0.5,
+      rbp._humiMin ?? 0.0,
+      rbp._humiMax ?? 0.5,
       new ColorRamp(
         this.changedProps,
         '_biomesParameters',

@@ -16,12 +16,13 @@
       {{ $t('editor.controls.biomes.temperature_max') }}
     </ParameterSlider>
     <ParameterDivider />
-    <ParameterSlider v-model="lgParam!.humiMin" :id="lgParam!.id + '-b-hmin'" :step="0.01" :min="0" :max="1">
+    <!-- TODO: add humidity controls once the system works -->
+    <!-- <ParameterSlider v-model="lgParam!.humiMin" :id="lgParam!.id + '-b-hmin'" :step="0.01" :min="0" :max="1">
       {{ $t('editor.controls.biomes.humidity_min') }}
     </ParameterSlider>
     <ParameterSlider v-model="lgParam!.humiMax" :id="lgParam!.id + '-b-hmax'" :step="0.01" :min="0" :max="1">
       {{ $t('editor.controls.biomes.humidity_max') }}
-    </ParameterSlider>
+    </ParameterSlider> -->
     <ParameterDivider />
     <ParameterColorRamp
       mode="rgba"
