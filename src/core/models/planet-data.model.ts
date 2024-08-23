@@ -151,7 +151,7 @@ export default class PlanetData extends ChangeTracker {
     return this._planetAxialTilt
   }
   public set planetAxialTilt(tilt: number) {
-    this._planetAxialTilt = isNumeric(tilt) ? clamp(tilt, 0, 180) : 0
+    this._planetAxialTilt = isNumeric(tilt) ? clamp(tilt, -180, 180) : 0
     this.markForChange('_planetAxialTilt')
   }
 

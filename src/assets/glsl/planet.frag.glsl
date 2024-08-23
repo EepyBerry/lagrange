@@ -78,7 +78,7 @@ void main() {
     float FLAG_NOISE_GRADIENT = step(1.5, float(u_temp_mode));
     float y = mix(abs(vPos.y), vPos.y, FLAG_POLAR_GRADIENT);
     float adjustedY = smoothstep(1.0, -FLAG_POLAR_GRADIENT, y);
-    float tHeight = mix(adjustedY, 0.75, FLAG_NOISE_GRADIENT);
+    float tHeight = mix(adjustedY, 1.0, FLAG_NOISE_GRADIENT);
     tHeight *= fbm3(vPos, u_temp_noise.freq, u_temp_noise.amp, u_temp_noise.lac, u_temp_noise.oct);
     //float hHeight = mix(smoothstep(1.0, 0.0, 1.0 - abs(vPos.y)), 0.75, float(u_humi_mode));
     //hHeight *= fbm3(vPos, u_humi_noise.freq, u_humi_noise.amp, u_humi_noise.lac, u_humi_noise.oct);

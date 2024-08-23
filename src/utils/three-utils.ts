@@ -48,13 +48,12 @@ function extractAndSortSteps(
     }
   }
   extractedSteps.sort((a, b) => a.factor - b.factor)
-  console.log(extractedSteps)
   return extractedSteps
 }
 
 function calculate1DTextureData(w: number, steps: ColorRampStep[]): Uint8Array {
   const data = new Uint8Array(4 * w);
-  let stride = steps[0].factor * 4;
+  let stride = (steps[0]?.factor ?? 0) * 4;
   for (let s = 0; s < steps.length-1; s++) {
     const step = steps[s]
     const nextStep = steps[s+1]
@@ -79,7 +78,7 @@ function calculate1DTextureData(w: number, steps: ColorRampStep[]): Uint8Array {
 
 function recalculate1DTextureData(data: Uint8Array, steps: ColorRampStep[]): Uint8Array {
   data.fill(0)
-  let stride = steps[0].factor * 4;
+  let stride = (steps[0]?.factor ?? 0) * 4;
   for (let s = 0; s < steps.length-1; s++) {
     const step = steps[s]
     const nextStep = steps[s+1]

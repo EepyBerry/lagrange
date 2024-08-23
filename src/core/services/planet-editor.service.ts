@@ -13,7 +13,7 @@ import {
   LG_NAME_ATMOSPHERE,
   LG_NAME_SUN,
   AXIS_Y,
-  AXIS_NX,
+  AXIS_X,
 } from '@core/globals'
 import { ColorMode, GeometryType, GradientMode, type DataTextureWrapper } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
@@ -257,7 +257,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
   const r = LG_PLANET_DATA.value.planetRadius
   pivot.scale.set(r, r, r)
-  pivot.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+  pivot.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
 
   // ---------------------------- Setup renderer & render -----------------------------
 

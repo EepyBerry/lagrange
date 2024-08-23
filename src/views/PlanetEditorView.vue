@@ -240,7 +240,7 @@ function initPlanet(): void {
   _tempDataTex = planet.texs[0].texture
 
   // Set initial rotations
-  _planetGroup.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+  _planetGroup.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
   _planet.setRotationFromAxisAngle(_planet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
   _clouds.setRotationFromAxisAngle(
     _clouds.up,
@@ -460,7 +460,7 @@ function updatePlanet() {
       }
       case '_planetAxialTilt': {
         const v = degToRad(isNaN(LG_PLANET_DATA.value.planetAxialTilt) ? 0 : LG_PLANET_DATA.value.planetAxialTilt)
-        _planetGroup.setRotationFromAxisAngle(AXIS_NX, v)
+        _planetGroup.setRotationFromAxisAngle(AXIS_X, v)
         break
       }
       case '_planetRotation': {
