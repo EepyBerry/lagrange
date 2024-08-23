@@ -142,6 +142,7 @@ async function bootstrapEditor() {
 }
 
 function redirectToCodex() {
+  showSpinner.value = true
   router.push('/codex')
 }
 
@@ -152,7 +153,7 @@ async function initData() {
     if (!idbPlanetData) {
       console.warn(`Cannot find planet with ID: ${route.params.id}`)
       LG_PLANET_DATA.value.reset()
-      return
+      throw new Error(`Planet with ID [${route.params.id}] doesn't exist.`)
     }
     $planetEntityId.value = idbPlanetData.id
     LG_PLANET_DATA.value.loadData(idbPlanetData.data)
@@ -283,6 +284,9 @@ async function handleKeyboardEvent(event: KeyboardEvent) {
   const keyBinds = await idb.keyBindings.toArray()
   const kb = keyBinds.find((k) => k.key === event.key.toUpperCase())
   if (!kb) return
+  if (event.shiftKey && kb.key !== 'SHIFT') { return }
+  if (event.ctrlKey && kb.key !== 'CONTROL') { return }
+  if (event.altKey && kb.key !== 'ALT') { return }
 
   switch (kb.action) {
     case KeyBindingAction.ToggleLensFlare:
