@@ -20,9 +20,19 @@
           </ParameterRadioOption>
           <ParameterRadioOption
             v-model="LG_PLANET_DATA.biomesTemperatureMode"
-            icon="tabler:ease-in-out-control-points"
+            icon="material-symbols:gradient-outline"
             name="temp-mode"
             :id="'1'"
+            :value="GradientMode.POLE_TO_POLE"
+            :ariaLabel="$t('a11y.editor_biome_gradient_mode_poletopole')"
+          >
+            {{ $t('editor.controls.biomes.gradient_mode_poletopole') }}
+          </ParameterRadioOption>
+          <ParameterRadioOption
+            v-model="LG_PLANET_DATA.biomesTemperatureMode"
+            icon="tabler:ease-in-out-control-points"
+            name="temp-mode"
+            :id="'2'"
             :value="GradientMode.FULLNOISE"
             :ariaLabel="$t('a11y.editor_biome_gradient_mode_fullnoise')"
           >

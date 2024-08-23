@@ -212,6 +212,7 @@
 
         "gradient_mode": "Gradient mode",
         "gradient_mode_realistic": "Realistic",
+        "gradient_mode_poletopole": "Pole-to-pole",
         "gradient_mode_fullnoise": "Full noise",
 
         "biome_list": "Biomes",
@@ -318,6 +319,7 @@
 
     "editor_generic_input": "Parameter value",
     "editor_biome_gradient_mode_realistic": "Realistic temperature gradient",
+    "editor_biome_gradient_mode_poletopole": "Pole-to-pole temperature gradient",
     "editor_biome_gradient_mode_fullnoise": "Fully noisy temperature gradient",
     "editor_atmosphere_rgba_mode_realistic": "Realistic atmosphere",
     "editor_atmosphere_rgba_mode_direct": "Direct tone atmosphere",

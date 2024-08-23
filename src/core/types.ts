@@ -16,8 +16,9 @@ export enum ColorMode {
   MIXED,
 }
 export enum GradientMode {
-  REALISTIC,
-  FULLNOISE
+  REALISTIC = 0,
+  POLE_TO_POLE = 1,
+  FULLNOISE = 2
 }
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'

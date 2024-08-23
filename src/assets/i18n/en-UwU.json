@@ -214,6 +214,7 @@
 
         "gradient_mode": "Gwadient mode",
         "gradient_mode_realistic": "Weawistic",
+        "gradient_mode_poletopole": "Powe-to-powe",
         "gradient_mode_fullnoise": "Fuww nyoise",
         
         "biome_list": "Biomes",
@@ -321,6 +322,7 @@
 
     "editor_generic_input": "Pawametew vawue",
     "editor_biome_gradient_mode_realistic": "Weawistic tempewature gwadient",
+    "editor_biome_gradient_mode_poletopole": "Powe-to-powe tempewatuwe gwadient",
     "editor_biome_gradient_mode_fullnoise": "Fuwwy nyoisy tempewature gwadient",
     "editor_atmosphere_rgba_mode_realistic": "Weawistic atmosphewe",
     "editor_atmosphere_rgba_mode_direct": "Diwect tone atmosphewe",

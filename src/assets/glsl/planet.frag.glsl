@@ -54,7 +54,7 @@ vec3 apply_biomes(float t, float h, vec3 color) {
     vec2 tTexCoord = vec2(t, 0.5);
     vec2 hTexCoord = vec2(h, 0.5);
     vec4 tTexel = texture2D(u_temp_tex, tTexCoord);
-    vec4 hTexel = texture2D(u_humi_tex, hTexCoord);
+    //vec4 hTexel = texture2D(u_humi_tex, hTexCoord);
     
     vec3 biomeColor = color;
     biomeColor = mix(color, tTexel.xyz, tTexel.w);
@@ -74,10 +74,14 @@ vec3 apply_bump(float height) {
 
 void main() {
     // temp/humi fields
-    float tHeight = mix(smoothstep(1.0, 0.0, abs(vPos.y)), 0.75, float(u_temp_mode));
+    float FLAG_POLAR_GRADIENT = step(0.5, float(u_temp_mode));
+    float FLAG_NOISE_GRADIENT = step(1.5, float(u_temp_mode));
+    float y = mix(abs(vPos.y), vPos.y, FLAG_POLAR_GRADIENT);
+    float adjustedY = smoothstep(1.0, -FLAG_POLAR_GRADIENT, y);
+    float tHeight = mix(adjustedY, 0.75, FLAG_NOISE_GRADIENT);
     tHeight *= fbm3(vPos, u_temp_noise.freq, u_temp_noise.amp, u_temp_noise.lac, u_temp_noise.oct);
-    float hHeight = mix(smoothstep(1.0, 0.0, 1.0 - abs(vPos.y)), 0.75, float(u_humi_mode));
-    hHeight *= fbm3(vPos, u_humi_noise.freq, u_humi_noise.amp, u_humi_noise.lac, u_humi_noise.oct);
+    //float hHeight = mix(smoothstep(1.0, 0.0, 1.0 - abs(vPos.y)), 0.75, float(u_humi_mode));
+    //hHeight *= fbm3(vPos, u_humi_noise.freq, u_humi_noise.amp, u_humi_noise.lac, u_humi_noise.oct);
 
     // initial color (always black)
     vec3 color = vec3(0.0);
@@ -92,7 +96,7 @@ void main() {
     color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
 
     // Render biomes
-    color = mix(color, apply_biomes(tHeight, hHeight, color), FLAG_BIOMES);
+    color = mix(color, apply_biomes(tHeight, /* hHeight */ 0.0, color), FLAG_BIOMES);
 
     // Set outputs
     csm_Bump = mix(vNormal, apply_bump(height), FLAG_LAND);
