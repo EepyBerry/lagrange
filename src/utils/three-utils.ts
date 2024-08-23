@@ -4,6 +4,7 @@ import type { DataTextureWrapper } from '@/core/types'
 import { DataTexture, type ShaderMaterial } from 'three'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import { lerp } from 'three/src/math/MathUtils.js'
+import { clamp } from './math-utils'
 
 export function setShaderMaterialUniform(mat: CustomShaderMaterial | ShaderMaterial, uname: string, uvalue: any): void {
   mat.uniforms[uname] = { value: uvalue }
@@ -24,6 +25,7 @@ export function create1DTexture(
   dt.needsUpdate = true
   return { texture: dt, data }
 }
+
 export function recalculate1DTexture(
   data: Uint8Array, w: number, param: 'temp'|'humi', biomes: BiomeParameters[]
 ): void {
@@ -41,17 +43,18 @@ function extractAndSortSteps(
     const wMax = Math.floor((param === 'temp' ? b.tempMax: b.humiMax) * w)
     for (const s of b.rgbaRamp.definedSteps) {
       const adjustedFactor = (s.factor * (wMax - wMin)) + wMin
-      s.factor = Math.ceil(adjustedFactor)
+      s.factor = clamp(Math.ceil(adjustedFactor), 0, w)
       extractedSteps.push(s)
     }
   }
   extractedSteps.sort((a, b) => a.factor - b.factor)
+  console.log(extractedSteps)
   return extractedSteps
 }
 
 function calculate1DTextureData(w: number, steps: ColorRampStep[]): Uint8Array {
   const data = new Uint8Array(4 * w);
-  let stride = 0;
+  let stride = steps[0].factor * 4;
   for (let s = 0; s < steps.length-1; s++) {
     const step = steps[s]
     const nextStep = steps[s+1]
@@ -75,7 +78,8 @@ function calculate1DTextureData(w: number, steps: ColorRampStep[]): Uint8Array {
 }
 
 function recalculate1DTextureData(data: Uint8Array, steps: ColorRampStep[]): Uint8Array {
-  let stride = 0;
+  data.fill(0)
+  let stride = steps[0].factor * 4;
   for (let s = 0; s < steps.length-1; s++) {
     const step = steps[s]
     const nextStep = steps[s+1]

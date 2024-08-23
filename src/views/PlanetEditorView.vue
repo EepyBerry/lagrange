@@ -399,9 +399,7 @@ function updatePlanet() {
     return
   }
   for (const key of LG_PLANET_DATA.value.changedProps) {
-    const strippedKey = key.split('#').at(0)
-    const biomeId = key.split('#').at(1) ?? undefined
-    switch (strippedKey) {
+    switch (key) {
       // --------------------------------------------------
       // |               Lighting settings                |
       // --------------------------------------------------
@@ -657,7 +655,7 @@ function updatePlanet() {
         break
       }
       case '_biomesParameters': {
-        const v: BiomeParameters[] =LG_PLANET_DATA.value.biomesParams.map(b => b.clone())
+        const v: BiomeParameters[] = LG_PLANET_DATA.value.biomesParams.map(b => b.clone())
         recalculate1DTexture(_tempData, 256, 'temp', v)
         _tempDataTex.needsUpdate = true
         break

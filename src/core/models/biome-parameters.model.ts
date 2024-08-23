@@ -49,14 +49,14 @@ export class BiomeParameters extends ChangeTracker {
   }
   public set tempMin(value: number) {
     this._tempMin = value
-    this.markForChange(`${this._changePrefix}#${this.id}`)
+    this.markForChange(this._changePrefix)
   }
   public get tempMax(): number {
     return this._tempMax
   }
   public set tempMax(value: number) {
     this._tempMax = value
-    this.markForChange(`${this._changePrefix}#${this.id}`)
+    this.markForChange(this._changePrefix)
   }
 
   public get humiMin(): number {
@@ -64,14 +64,14 @@ export class BiomeParameters extends ChangeTracker {
   }
   public set humiMin(value: number) {
     this._humiMin = value;
-    this.markForChange(`${this._changePrefix}#${this.id}`)
+    this.markForChange(this._changePrefix)
   }
   public get humiMax(): number {
     return this._humiMax;
   }
   public set humiMax(value: number) {
     this._humiMax = value;
-    this.markForChange(`${this._changePrefix}#${this.id}`)
+    this.markForChange(this._changePrefix)
   }
 
   public get rgbaRamp(): ColorRamp {
