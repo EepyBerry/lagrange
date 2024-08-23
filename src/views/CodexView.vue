@@ -293,7 +293,9 @@ async function deleteTargetedPlanet() {
   #codex-header {
     inset: auto 0;
     padding: 0.5rem;
-    :deep(aside) { left: 3.875rem; }
+    :deep(aside) {
+      left: 3.875rem;
+    }
     #codex-header-controls {
       justify-content: flex-end;
     }

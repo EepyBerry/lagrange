@@ -20,19 +20,19 @@ export class ColorRampStep {
     this._isBound = isBound
   }
 
-  static newWithAlpha(color: THREE.ColorRepresentation, alpha: number, factor: number, isBound: boolean = false): ColorRampStep {
+  static newWithAlpha(
+    color: THREE.ColorRepresentation,
+    alpha: number,
+    factor: number,
+    isBound: boolean = false,
+  ): ColorRampStep {
     const step = new ColorRampStep(color, factor, isBound)
     step.alpha = alpha
     return step
   }
 
   clone(): ColorRampStep {
-    return ColorRampStep.newWithAlpha(
-      this._color,
-      this._alpha,
-      this._factor,
-      this._isBound,
-    )
+    return ColorRampStep.newWithAlpha(this._color, this._alpha, this._factor, this._isBound)
   }
 
   public get id() {
@@ -70,7 +70,13 @@ export class ColorRamp extends ChangeTracker {
   private _maxSize: number = 16
   private _lockedSize: boolean = true
 
-  constructor(changedPropsRef: string[], changePrefix: string, steps: ColorRampStep[], maxSize: number = 16, lockedSize = false) {
+  constructor(
+    changedPropsRef: string[],
+    changePrefix: string,
+    steps: ColorRampStep[],
+    maxSize: number = 16,
+    lockedSize = false,
+  ) {
     super(changedPropsRef, changePrefix)
     this._maxSize = maxSize
     this._steps = steps
@@ -80,7 +86,7 @@ export class ColorRamp extends ChangeTracker {
 
   clone(): ColorRamp {
     const clonedSteps: ColorRampStep[] = []
-    this.definedSteps.forEach(s => clonedSteps.push(s.clone()))
+    this.definedSteps.forEach((s) => clonedSteps.push(s.clone()))
     return new ColorRamp([], this._changePrefix, clonedSteps, this._maxSize, this._lockedSize)
   }
 
@@ -151,7 +157,7 @@ export class ColorRamp extends ChangeTracker {
     return this._steps[index]
   }
 
-  public updateStep(id: string, options: { color?: string, factor?: number, alpha?: number }) {
+  public updateStep(id: string, options: { color?: string; factor?: number; alpha?: number }) {
     const index = this._steps.findIndex((s) => s.id === id)
     if (index === -1) {
       throw new Error('Cannot find step with ID ' + id)

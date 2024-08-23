@@ -262,7 +262,7 @@ export default class PlanetData extends ChangeTracker {
     this._biomesEnabled = value
     this.markForChange('_biomesEnabled')
   }
-  
+
   public get biomesTemperatureMode(): GradientMode {
     return this._biomesTemperatureMode
   }
@@ -478,7 +478,7 @@ export default class PlanetData extends ChangeTracker {
       2.45,
       0.53,
       2.16,
-      6
+      6,
     )
     this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
       new ColorRampStep(0x000000, 0, true),
@@ -494,52 +494,70 @@ export default class PlanetData extends ChangeTracker {
     this._biomesEnabled = true
     this._biomesTemperatureMode = GradientMode.REALISTIC
     this._biomesTemperatureNoise = new NoiseParameters(
-      this._changedProps, '_biomesTemperatureNoise',
-      NoiseType.FBM, 2.5, 1.25, 2.5, 4
+      this._changedProps,
+      '_biomesTemperatureNoise',
+      NoiseType.FBM,
+      2.5,
+      1.25,
+      2.5,
+      4,
     )
     this._biomesHumidityMode = GradientMode.REALISTIC
     this._biomesHumidityNoise = new NoiseParameters(
-      this._changedProps, '_biomesHumidityNoise',
-      NoiseType.FBM, 3.5, 1.25, 3.0, 3
+      this._changedProps,
+      '_biomesHumidityNoise',
+      NoiseType.FBM,
+      3.5,
+      1.25,
+      3.0,
+      3,
     )
     this._biomesParams = [
       new BiomeParameters(
         this._changedProps,
         '_biomesParameters',
-        0.0,  0.08,
-        0.85, 1.0,
-        new ColorRamp(this._changedProps, '_biomesParameters', [
-          ColorRampStep.newWithAlpha(0xffffff, 1.0,  0.0, true),
-          ColorRampStep.newWithAlpha(0xffffff, 0.25, 0.5),
-          ColorRampStep.newWithAlpha(0xffffff, 0.0,  1.0, true),
-        ], 3, true)
+        0.0,
+        0.08,
+        0.85,
+        1.0,
+        new ColorRamp(
+          this._changedProps,
+          '_biomesParameters',
+          [
+            ColorRampStep.newWithAlpha(0xffffff, 1.0, 0.0, true),
+            ColorRampStep.newWithAlpha(0xffffff, 0.25, 0.5),
+            ColorRampStep.newWithAlpha(0xffffff, 0.0, 1.0, true),
+          ],
+          3,
+          true,
+        ),
       ),
       new BiomeParameters(
         this._changedProps,
         '_biomesParameters',
-        0.6,  1.0,
-        0.0,  0.25,
-        new ColorRamp(this._changedProps, '_biomesParameters', [
-          ColorRampStep.newWithAlpha(0xbaa345, 0.0,  0.0, true),
-          ColorRampStep.newWithAlpha(0xbaa345, 0.75, 0.85),
-          ColorRampStep.newWithAlpha(0xbaa345, 1.0,  1.0, true),
-        ], 3, true)
-      )
+        0.6,
+        1.0,
+        0.0,
+        0.25,
+        new ColorRamp(
+          this._changedProps,
+          '_biomesParameters',
+          [
+            ColorRampStep.newWithAlpha(0xbaa345, 0.0, 0.0, true),
+            ColorRampStep.newWithAlpha(0xbaa345, 0.75, 0.85),
+            ColorRampStep.newWithAlpha(0xbaa345, 1.0, 1.0, true),
+          ],
+          3,
+          true,
+        ),
+      ),
     ]
 
     // Clouds
     this._cloudsEnabled = true
     this._cloudsRotation = 0.0
     this._cloudsHeight = 1.0
-    this._cloudsNoise = new NoiseParameters(
-      this._changedProps,
-      '_cloudsNoise', 
-      NoiseType.FBM,
-      4.0,
-      0.6,
-      1.75,
-      4
-    )
+    this._cloudsNoise = new NoiseParameters(this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 1.75, 4)
     this._cloudsColor = new Color(0xffffff)
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
       new ColorRampStep(0x000000, 0.0, true),
@@ -607,30 +625,36 @@ export default class PlanetData extends ChangeTracker {
     this._biomesTemperatureNoise.lacunarity = 2.5
     this._biomesTemperatureNoise.octaves = 4
     this._biomesParams.splice(0)
-    this._biomesParams.push(...[
-      new BiomeParameters(
-        this._changedProps,
-        '_biomesParameters',
-        0.0,  0.08,
-        0.85, 1.0,
-        new ColorRamp(this._changedProps, '_biomesParameters', [
-          ColorRampStep.newWithAlpha(0xffffff, 1.0,  0.0, true),
-          ColorRampStep.newWithAlpha(0xffffff, 0.25, 0.5),
-          ColorRampStep.newWithAlpha(0xffffff, 0.0,  1.0, true),
-        ])
-      ),
-      new BiomeParameters(
-        this._changedProps,
-        '_biomesParameters',
-        0.6,  1.0,
-        0.0,  0.25,
-        new ColorRamp(this._changedProps, '_biomesParameters', [
-          ColorRampStep.newWithAlpha(0xbaa345, 0.0,  0.0, true),
-          ColorRampStep.newWithAlpha(0xbaa345, 0.75, 0.85),
-          ColorRampStep.newWithAlpha(0xbaa345, 1.0,  1.0, true),
-        ])
-      )
-    ])
+    this._biomesParams.push(
+      ...[
+        new BiomeParameters(
+          this._changedProps,
+          '_biomesParameters',
+          0.0,
+          0.08,
+          0.85,
+          1.0,
+          new ColorRamp(this._changedProps, '_biomesParameters', [
+            ColorRampStep.newWithAlpha(0xffffff, 1.0, 0.0, true),
+            ColorRampStep.newWithAlpha(0xffffff, 0.25, 0.5),
+            ColorRampStep.newWithAlpha(0xffffff, 0.0, 1.0, true),
+          ]),
+        ),
+        new BiomeParameters(
+          this._changedProps,
+          '_biomesParameters',
+          0.6,
+          1.0,
+          0.0,
+          0.25,
+          new ColorRamp(this._changedProps, '_biomesParameters', [
+            ColorRampStep.newWithAlpha(0xbaa345, 0.0, 0.0, true),
+            ColorRampStep.newWithAlpha(0xbaa345, 0.75, 0.85),
+            ColorRampStep.newWithAlpha(0xbaa345, 1.0, 1.0, true),
+          ]),
+        ),
+      ],
+    )
 
     // Clouds
     this._cloudsEnabled = true
@@ -711,23 +735,21 @@ export default class PlanetData extends ChangeTracker {
     this._biomesTemperatureNoise.lacunarity = data._biomesTemperatureNoise?._lacunarity ?? 2.5
     this._biomesTemperatureNoise.octaves = data._biomesTemperatureNoise?._octaves ?? 2
     this._biomesParams.splice(0)
-    this._biomesParams.push(...(data._biomesParams ?? []).map((rbp: any) => {
-      const nbp = new BiomeParameters(
-      this.changedProps,
-      '_biomesParameters',
-      rbp._tempMin ?? 0.0,
-      rbp._tempMax ?? 0.5,
-      rbp._humiMin ?? 0.0,
-      rbp._humiMax ?? 0.5,
-      new ColorRamp(
-        this.changedProps,
-        '_biomesParameters',
-        []
-      ))
-      nbp.rgbaRamp.loadFromSteps(rbp._rgbaRamp._steps)
-      return nbp
-    }
-    ))
+    this._biomesParams.push(
+      ...(data._biomesParams ?? []).map((rbp: any) => {
+        const nbp = new BiomeParameters(
+          this.changedProps,
+          '_biomesParameters',
+          rbp._tempMin ?? 0.0,
+          rbp._tempMax ?? 0.5,
+          rbp._humiMin ?? 0.0,
+          rbp._humiMax ?? 0.5,
+          new ColorRamp(this.changedProps, '_biomesParameters', []),
+        )
+        nbp.rgbaRamp.loadFromSteps(rbp._rgbaRamp._steps)
+        return nbp
+      }),
+    )
 
     // Clouds
     this._cloudsEnabled = data._cloudsEnabled ?? true

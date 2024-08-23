@@ -15,6 +15,9 @@ const vuePluginConfig: Options = {
 export default defineConfig({
   assetsInclude: ['**/*.glsl', '**/*.ico', '**/*.ttf'],
   plugins: [vue(vuePluginConfig)],
+  build: {
+    sourcemap: true,
+  },
   define: {
     'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),
   },

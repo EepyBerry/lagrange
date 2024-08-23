@@ -15,7 +15,9 @@ const $emit = defineEmits(['change'])
 </script>
 
 <style scoped lang="scss">
-label { grid-column: 1; }
+label {
+  grid-column: 1;
+}
 select.lg {
   grid-column: 2;
   min-width: 16rem;

@@ -19,7 +19,7 @@
     </div>
     <button
       class="lg edit"
-      :class="{ 'success': panelOpen }"
+      :class="{ success: panelOpen }"
       :aria-label="$t('a11y.action_edit_ramp')"
       @click="togglePanel"
     >
@@ -64,12 +64,17 @@
             <span
               class="current-color"
               :style="{ backgroundColor: `#${step.color.getHexString()}` }"
-              @click="togglePicker(step.id)">
-              <div v-show="mode === 'rgba'" class="alpha-color" :style="{ background: alphaToGrayscale(step.alpha, true) }"></div>
+              @click="togglePicker(step.id)"
+            >
+              <div
+                v-show="mode === 'rgba'"
+                class="alpha-color"
+                :style="{ background: alphaToGrayscale(step.alpha, true) }"
+              ></div>
             </span>
             <button
               class="lg edit"
-              :class="{ 'success': pickerIdOpen === step.id }"
+              :class="{ success: pickerIdOpen === step.id }"
               :aria-label="$t('a11y.action_open_colorpanel')"
               @click="togglePicker(step.id)"
             >
@@ -141,7 +146,10 @@ const pickerIdOpen: Ref<string | null> = ref(null)
 const pickerIdInitColor = ref('')
 
 const $props = defineProps<{ mode?: 'rgb' | 'rgba' | 'opacity' }>()
-watch(() => lgColorRamp.value?.definedSteps, () => updateRamp())
+watch(
+  () => lgColorRamp.value?.definedSteps,
+  () => updateRamp(),
+)
 onMounted(() => updateRamp())
 
 function updateRamp() {
@@ -153,9 +161,9 @@ function updateRamp() {
   for (let i = 0; i < lgColorRamp.value!.definedSteps.length; i++) {
     const step = lgColorRamp.value!.definedSteps[i]
     const rgb = step.color.getHexString()
-    const a = Math.ceil(step.alpha*255).toString(16)
+    const a = Math.ceil(step.alpha * 255).toString(16)
     gradient.push(`#${rgb} ${step.factor * 100.0}%`)
-    alphaGradient.push(`#${a+a+a} ${step.factor * 100.0}%`)
+    alphaGradient.push(`#${a + a + a} ${step.factor * 100.0}%`)
   }
   htmlColorRamp.value!.style.background = `linear-gradient(90deg, ${gradient.join(', ')})`
   htmlAlphaRamp.value!.style.background = `linear-gradient(90deg, ${alphaGradient.join(', ')})`
@@ -201,7 +209,7 @@ function updateStepFactor(id: string, e: Event) {
 }
 function updateStepColor(step: ColorRampStep, c: string) {
   const intAlpha = parseInt(c.substring(7), 16)
-  const floatAlpha = parseFloat((intAlpha/255.0).toFixed(2))
+  const floatAlpha = parseFloat((intAlpha / 255.0).toFixed(2))
   const alpha = $props.mode === 'rgba' ? floatAlpha : 1.0
   lgColorRamp.value?.updateStep(step.id, { color: c.substring(0, 7), alpha })
   updateRamp()
@@ -219,10 +227,11 @@ function removeStep(id: string) {
 // Misc functions
 
 function alphaToGrayscale(alpha: number, full = false): string {
-  const hex = Math.ceil(alpha*255).toString(16).padStart(2, '0')
-  return full ? `#${hex+hex+hex}` : hex
+  const hex = Math.ceil(alpha * 255)
+    .toString(16)
+    .padStart(2, '0')
+  return full ? `#${hex + hex + hex}` : hex
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -284,7 +293,9 @@ p {
       flex: 1;
       & > :deep(.lg-input-wrapper-slider) {
         flex: 1;
-        input { flex: 1; }
+        input {
+          flex: 1;
+        }
       }
     }
   }
@@ -317,7 +328,8 @@ p {
   }
 }
 
-.alpha-ramp, .alpha-color {
+.alpha-ramp,
+.alpha-color {
   position: absolute;
   inset: auto 0 0;
   height: 4px;

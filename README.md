@@ -20,17 +20,17 @@ _(**note:** this is something I am working on during my free time, which means t
 ### Browser compatibility/implementation issues:
 
 - On some Linux-based systems, there is an issue with Firefox not being able to initialize the WebGL context properly, thus leading to the following GLSL error:
+
   ```
   THREE.WebGLProgram: Shader Error 0 - VALIDATE_STATUS false
 
-  Material Name: 
+  Material Name:
   Material Type: MeshStandardMaterial
 
   Program Info Log: Statically used varyings do not fit within packing limits. (see GLSL ES Specification 1.0.17, p111)
   ```
 
   If this happens, please try using another browser before submitting an issue. Thanks <3
-
 
 ## ⚙️ Installation & building
 

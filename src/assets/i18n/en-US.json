@@ -26,6 +26,11 @@
       "$title": "Failed to start the Planet Editor!",
       "brief": "The WebGL context failed to initialize properly. See below for error information."
     },
+    "planeterror": {
+      "$title": "Failed to start the Planet Editor!",
+      "brief": "Planet failed to load properly. See below for error information.",
+      "reporting": "If you can, please check your browser console and open an issue on GitHub!"
+    },
     "init": {
       "$title": "Welcome to @:main.$title",
       "introduction": "Lagrange is a fully procedural planet builder, perfect for worldbuilding and tying your lore to a proper planet, solar system or even an entire galaxy!",
@@ -149,7 +154,7 @@
     "default_planet_name": "New planet",
     "$action_sort": "Sort",
     "$action_add": "Add",
-    
+
     "general": {
       "noise_fbm_frequency": "Frequency",
       "noise_fbm_amplitude": "Amplitude",
@@ -294,6 +299,7 @@
     "logo_update_codex": "World Collector update",
 
     "dialog_webgl_error": "WebGL error dialog",
+    "dialog_planet_error": "Planet error dialog",
     "dialog_init": "Introduction dialog",
     "dialog_settings": "Settings dialog",
     "dialog_about": "About @:main.$title dialog",

@@ -1,14 +1,14 @@
-import { ChangeTracker } from "./change-tracker.model";
-import type { ColorRamp, ColorRampStep } from "./color-ramp.model";
-import { nanoid } from "nanoid";
+import { ChangeTracker } from './change-tracker.model'
+import type { ColorRamp, ColorRampStep } from './color-ramp.model'
+import { nanoid } from 'nanoid'
 
 export class BiomeParameters extends ChangeTracker {
-  private _id: string;
+  private _id: string
   private _tempMin: number = 0.0
   private _tempMax: number = 1.0
-  private _humiMin: number = 0.0;
-  private _humiMax: number = 1.0;
-  private _rgbaRamp: ColorRamp;
+  private _humiMin: number = 0.0
+  private _humiMax: number = 1.0
+  private _rgbaRamp: ColorRamp
 
   constructor(
     changedPropsRef: string[],
@@ -17,7 +17,7 @@ export class BiomeParameters extends ChangeTracker {
     tempMax: number,
     humiMin: number,
     humiMax: number,
-    rgbaRamp: ColorRamp
+    rgbaRamp: ColorRamp,
   ) {
     super(changedPropsRef, changePrefix)
     this._id = nanoid()
@@ -27,7 +27,7 @@ export class BiomeParameters extends ChangeTracker {
     this._humiMax = humiMax
     this._rgbaRamp = rgbaRamp
   }
-  
+
   clone(): BiomeParameters {
     return new BiomeParameters(
       this._changedProps,
@@ -36,12 +36,12 @@ export class BiomeParameters extends ChangeTracker {
       this._tempMax,
       this._humiMin,
       this._humiMax,
-      this._rgbaRamp.clone()
+      this._rgbaRamp.clone(),
     )
   }
 
   public get id(): string {
-    return this._id;
+    return this._id
   }
 
   public get tempMin(): number {
@@ -60,17 +60,17 @@ export class BiomeParameters extends ChangeTracker {
   }
 
   public get humiMin(): number {
-    return this._humiMin;
+    return this._humiMin
   }
   public set humiMin(value: number) {
-    this._humiMin = value;
+    this._humiMin = value
     this.markForChange(this._changePrefix)
   }
   public get humiMax(): number {
-    return this._humiMax;
+    return this._humiMax
   }
   public set humiMax(value: number) {
-    this._humiMax = value;
+    this._humiMax = value
     this.markForChange(this._changePrefix)
   }
 
@@ -78,7 +78,7 @@ export class BiomeParameters extends ChangeTracker {
     return this._rgbaRamp
   }
   public set rgbaRamp(value: ColorRampStep[]) {
-    this._rgbaRamp.loadFromSteps(value);
+    this._rgbaRamp.loadFromSteps(value)
     this.markForChange(`${this._changePrefix}#${this.id}`)
   }
 }

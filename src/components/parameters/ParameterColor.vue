@@ -3,15 +3,11 @@
     <slot>ParameterName</slot>
   </p>
   <div class="color-wrapper">
-    <span
-      class="current-color"
-      :style="{ backgroundColor: `#${lgColor?.getHexString()}` }"
-      @click="togglePanel"
-    ></span>
+    <span class="current-color" :style="{ backgroundColor: `#${lgColor?.getHexString()}` }" @click="togglePanel"></span>
     <button
       class="lg edit"
       :aria-label="$t('a11y.action_open_colorpanel')"
-      :class="{ 'success': pickerOpen }"
+      :class="{ success: pickerOpen }"
       @click="togglePanel"
     >
       <iconify-icon v-if="pickerOpen" class="icon" icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />

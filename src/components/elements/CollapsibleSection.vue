@@ -81,6 +81,10 @@ function toggleExpand() {
     }
   }
 }
+.collapsible-section.warn {
+  background: var(--lg-warn-panel);
+  border: 1px solid var(--lg-warn);
+}
 
 @media screen and (max-width: 1199px) {
   .collapsible-section:not(.expanded, .compact).allow-icon-mode {

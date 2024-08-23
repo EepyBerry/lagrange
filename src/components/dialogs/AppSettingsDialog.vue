@@ -366,7 +366,10 @@ function getKeyBind(action: string) {
     grid-column: 2;
     padding: 0 0.5rem;
   }
-  .notification, button.clear-data { grid-column: span 2; }
+  .notification,
+  button.clear-data {
+    grid-column: span 2;
+  }
 }
 
 @media screen and (max-width: 767px) {

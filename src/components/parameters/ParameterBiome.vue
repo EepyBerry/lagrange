@@ -2,13 +2,13 @@
   <div class="biome-grid" :id="lgParam!.id">
     <div class="biome-header">
       <p>
-        <strong>{{ $t('editor.controls.biomes.biome_type') }}:</strong> {{ getBiomeType() }}<br>
+        <strong>{{ $t('editor.controls.biomes.biome_type') }}:</strong> {{ getBiomeType() }}<br />
       </p>
       <button class="lg warn" @click="$emit('delete', lgParam!.id)">
         <iconify-icon icon="mingcute-delete-2-line" width="1.25rem" aria-hidden="true" />
       </button>
     </div>
-    <hr class="name-divider">
+    <hr class="name-divider" />
     <ParameterSlider v-model="lgParam!.tempMin" :id="lgParam!.id + '-b-tmin'" :step="0.01" :min="0" :max="1">
       {{ $t('editor.controls.biomes.temperature_min') }}
     </ParameterSlider>
@@ -24,11 +24,7 @@
       {{ $t('editor.controls.biomes.humidity_max') }}
     </ParameterSlider> -->
     <ParameterDivider />
-    <ParameterColorRamp
-      mode="rgba"
-      v-model="(lgParam!.rgbaRamp as ColorRamp)"
-      :key="lgParam!.id"
-    >
+    <ParameterColorRamp mode="rgba" v-model="(lgParam!.rgbaRamp as ColorRamp)" :key="lgParam!.id">
       {{ $t('editor.general.noise_rgbaramp') }}
     </ParameterColorRamp>
   </div>
@@ -45,17 +41,17 @@ const lgParam = defineModel<BiomeParameters>()
 const i18n = useI18n()
 
 const biomeTypeTable = [
-  { tempMin: 0,    tempMax: 0.15, label: i18n.t('main.planet_data.biome_type_arctic') },
-  { tempMin: 0.15, tempMax: 0.3,  label: i18n.t('main.planet_data.biome_type_tundra') },
-  { tempMin: 0.3,  tempMax: 0.5,  label: i18n.t('main.planet_data.biome_type_temperate') },
-  { tempMin: 0.5,  tempMax: 0.6,  label: i18n.t('main.planet_data.biome_type_subtropical') },
-  { tempMin: 0.6,  tempMax: 0.8,  label: i18n.t('main.planet_data.biome_type_tropical') },
-  { tempMin: 0.8,  tempMax: 1.0,  label: i18n.t('main.planet_data.biome_type_volcanic') },
+  { tempMin: 0, tempMax: 0.15, label: i18n.t('main.planet_data.biome_type_arctic') },
+  { tempMin: 0.15, tempMax: 0.3, label: i18n.t('main.planet_data.biome_type_tundra') },
+  { tempMin: 0.3, tempMax: 0.5, label: i18n.t('main.planet_data.biome_type_temperate') },
+  { tempMin: 0.5, tempMax: 0.6, label: i18n.t('main.planet_data.biome_type_subtropical') },
+  { tempMin: 0.6, tempMax: 0.8, label: i18n.t('main.planet_data.biome_type_tropical') },
+  { tempMin: 0.8, tempMax: 1.0, label: i18n.t('main.planet_data.biome_type_volcanic') },
 ]
 
 function getBiomeType() {
-  let minType = biomeTypeTable.find(b => b.tempMin >= lgParam.value!.tempMin)?.label
-  let maxType = biomeTypeTable.find(b => b.tempMax >= lgParam.value!.tempMax)?.label
+  let minType = biomeTypeTable.find((b) => b.tempMin >= lgParam.value!.tempMin)?.label
+  let maxType = biomeTypeTable.find((b) => b.tempMax >= lgParam.value!.tempMax)?.label
   if (minType === maxType) {
     return minType
   } else {
@@ -64,7 +60,6 @@ function getBiomeType() {
 }
 
 defineEmits(['delete'])
-
 </script>
 <style scoped lang="scss">
 .biome-grid {

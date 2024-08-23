@@ -1,8 +1,6 @@
 <template>
   <div class="param-grid">
-    <slot>
-      Add parameters here
-    </slot>
+    <slot> Add parameters here </slot>
   </div>
 </template>
 <style scoped lang="scss">

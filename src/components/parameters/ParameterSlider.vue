@@ -20,11 +20,12 @@ const lgParam = defineModel<string | number | boolean>()
 
 type SliderExtras = 'rgb' | undefined
 defineProps<{ id: string; step?: number; min?: number; max?: number; extras?: SliderExtras; disabled?: boolean }>()
-
 </script>
 
 <style scoped lang="scss">
-label { grid-column: 1;}
+label {
+  grid-column: 1;
+}
 input.lg {
   grid-column: 2;
   justify-self: end;

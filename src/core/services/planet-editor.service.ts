@@ -84,11 +84,15 @@ export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THR
   })
 }
 
-export function createPlanet(data: PlanetData): { mesh: THREE.Mesh, texs: DataTextureWrapper[] } {
+export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
   const geometry = createGeometryComponent(GeometryType.SPHERE)
   geometry.computeTangents()
 
-  const tempTex = create1DTexture(256, "temp", data.biomesParams.map(b => b.clone()))
+  const tempTex = create1DTexture(
+    256,
+    'temp',
+    data.biomesParams.map((b) => b.clone()),
+  )
   //const humiTex = createMerged1DColorTexture(256, "humi", data.biomesParams)
 
   const material = createShaderMaterialComponent(
@@ -106,35 +110,41 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh, texs: DataTe
       u_bump: { value: data.planetSurfaceShowBumps },
       u_bump_strength: { value: data.planetSurfaceBumpStrength },
       u_bump_offset: { value: 0.005 },
-      u_gnd_noise: { value: {
-        type: data.planetSurfaceNoise.noiseType,
-        freq: data.planetSurfaceNoise.frequency,
-        amp: data.planetSurfaceNoise.amplitude,
-        lac: data.planetSurfaceNoise.lacunarity,
-        oct: data.planetSurfaceNoise.octaves,
-      }},
+      u_gnd_noise: {
+        value: {
+          type: data.planetSurfaceNoise.noiseType,
+          freq: data.planetSurfaceNoise.frequency,
+          amp: data.planetSurfaceNoise.amplitude,
+          lac: data.planetSurfaceNoise.lacunarity,
+          oct: data.planetSurfaceNoise.octaves,
+        },
+      },
       u_cr_colors: { value: data.planetSurfaceColorRamp.colors },
       u_cr_positions: { value: data.planetSurfaceColorRamp.factors },
       u_cr_size: { value: data.planetSurfaceColorRampSize },
       // Biomes
       u_biomes: { value: data.biomesEnabled },
       u_temp_mode: { value: data.biomesTemperatureMode },
-      u_temp_noise: { value: {
-        type: data.biomesTemperatureNoise.noiseType,
-        freq: data.biomesTemperatureNoise.frequency,
-        amp: data.biomesTemperatureNoise.amplitude,
-        lac: data.biomesTemperatureNoise.lacunarity,
-        oct: data.biomesTemperatureNoise.octaves,
-      }},
+      u_temp_noise: {
+        value: {
+          type: data.biomesTemperatureNoise.noiseType,
+          freq: data.biomesTemperatureNoise.frequency,
+          amp: data.biomesTemperatureNoise.amplitude,
+          lac: data.biomesTemperatureNoise.lacunarity,
+          oct: data.biomesTemperatureNoise.octaves,
+        },
+      },
       u_temp_tex: { value: tempTex.texture },
       u_humi_mode: { value: GradientMode.REALISTIC },
-      u_humi_noise: { value: {
-        type: data.biomesHumidityNoise.noiseType,
-        freq: data.biomesHumidityNoise.frequency,
-        amp: data.biomesHumidityNoise.amplitude,
-        lac: data.biomesHumidityNoise.lacunarity,
-        oct: data.biomesHumidityNoise.octaves,
-      }},
+      u_humi_noise: {
+        value: {
+          type: data.biomesHumidityNoise.noiseType,
+          freq: data.biomesHumidityNoise.frequency,
+          amp: data.biomesHumidityNoise.amplitude,
+          lac: data.biomesHumidityNoise.lacunarity,
+          oct: data.biomesHumidityNoise.octaves,
+        },
+      },
       //u_humi_tex: { value: humiTex },
     },
     THREE.MeshStandardMaterial,
@@ -158,13 +168,15 @@ export function createClouds(data: PlanetData): THREE.Mesh {
       u_frequency: { value: data.cloudsNoise.frequency },
       u_amplitude: { value: data.cloudsNoise.amplitude },
       u_lacunarity: { value: data.cloudsNoise.lacunarity },
-      u_noise: { value: {
-        type: data.cloudsNoise.noiseType,
-        freq: data.cloudsNoise.frequency,
-        amp: data.cloudsNoise.amplitude,
-        lac: data.cloudsNoise.lacunarity,
-        oct: data.cloudsNoise.octaves,
-      }},
+      u_noise: {
+        value: {
+          type: data.cloudsNoise.noiseType,
+          freq: data.cloudsNoise.frequency,
+          amp: data.cloudsNoise.amplitude,
+          lac: data.cloudsNoise.lacunarity,
+          oct: data.cloudsNoise.octaves,
+        },
+      },
       u_color: { value: data.cloudsColor },
       u_cr_colors: { value: data.cloudsColorRamp.colors },
       u_cr_positions: { value: data.cloudsColorRamp.factors },

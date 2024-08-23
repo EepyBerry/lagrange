@@ -26,6 +26,11 @@
       "$title": "Faiwed to stawt the Pwanyet Editow!!! ;;w;;",
       "brief": "T-the WebGL context faiwed to initiawize p-pwopewwy... See bewow for e-error infowmation :c"
     },
+    "planeterror": {
+      "$title": "Faiwed to stawt the Pwanyet Editow!!! ;;w;;",
+      "brief": "P-pwanyet faiwed to woad p-pwopewwy... See bewow for e-error infowmation :c",
+      "reporting": "If you can, p-pwease check youw bwowsew c-consowe and open an issue on GitHub!!! (^-^)"
+    },
     "init": {
       "$title": "Wewcome :3 t-to @:main.$title",
       "introduction": "Wagwange is a fuwwy pwoceduwaw pwanyet buiwdew, pewfect fow wowwdbuiwding and tying youw wowe t-to a pwopew pwanyet, sowaw system o-ow even an entiwe gawaxy! (・`ω´・)",
@@ -216,7 +221,7 @@
         "gradient_mode_realistic": "Weawistic",
         "gradient_mode_poletopole": "Powe-to-powe",
         "gradient_mode_fullnoise": "Fuww nyoise",
-        
+
         "biome_list": "Biomes",
         "biome_type": "Type",
 
@@ -297,6 +302,7 @@
     "logo_update_codex": "Wowwd Cowwectow update!",
 
     "dialog_webgl_error": "WebGL ewwow diawog",
+    "dialog_planet_error": "Pwanyet ewwow diawog",
     "dialog_init": "Intwoduction diawog",
     "dialog_settings": "Settings diawog",
     "dialog_about": "About @:main.$title diawog",

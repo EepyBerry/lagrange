@@ -43,10 +43,22 @@
       <ParameterSlider v-model="LG_PLANET_DATA.biomesTemperatureNoise.frequency" id="b-tfreq" :step="0.01" :max="5">
         {{ $t('editor.general.noise_fbm_frequency') }}
       </ParameterSlider>
-      <ParameterSlider v-model="LG_PLANET_DATA.biomesTemperatureNoise.amplitude" id="b-tamp" :step="0.01" :min="0" :max="2">
+      <ParameterSlider
+        v-model="LG_PLANET_DATA.biomesTemperatureNoise.amplitude"
+        id="b-tamp"
+        :step="0.01"
+        :min="0"
+        :max="2"
+      >
         {{ $t('editor.general.noise_fbm_amplitude') }}
       </ParameterSlider>
-      <ParameterSlider v-model="LG_PLANET_DATA.biomesTemperatureNoise.lacunarity" id="b-tlac" :step="0.01" :min="1" :max="3">
+      <ParameterSlider
+        v-model="LG_PLANET_DATA.biomesTemperatureNoise.lacunarity"
+        id="b-tlac"
+        :step="0.01"
+        :min="1"
+        :max="3"
+      >
         {{ $t('editor.general.noise_fbm_lacunarity') }}
       </ParameterSlider>
       <ParameterSlider v-model="LG_PLANET_DATA.biomesTemperatureNoise.octaves" id="b-toct" :step="1" :min="1" :max="8">
@@ -67,31 +79,33 @@
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
 import ParameterGrid from '@components/parameters/ParameterGrid.vue'
 import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
-import ParameterBiome from '../parameters/ParameterBiome.vue';
-import ParameterSlider from '../parameters/ParameterSlider.vue';
-import ParameterCategory from '../parameters/ParameterCategory.vue';
-import { GradientMode } from '@/core/types';
-import { BiomeParameters } from '@/core/models/biome-parameters.model';
-import { ColorRamp, ColorRampStep } from '@/core/models/color-ramp.model';
+import ParameterBiome from '../parameters/ParameterBiome.vue'
+import ParameterSlider from '../parameters/ParameterSlider.vue'
+import ParameterCategory from '../parameters/ParameterCategory.vue'
+import { GradientMode } from '@/core/types'
+import { BiomeParameters } from '@/core/models/biome-parameters.model'
+import { ColorRamp, ColorRampStep } from '@/core/models/color-ramp.model'
 
 function addBiome() {
   const newBiome = new BiomeParameters(
     LG_PLANET_DATA.value.changedProps,
     '_biomesParameters',
-    0.0, 1.0,
-    0.0, 1.0,
+    0.0,
+    1.0,
+    0.0,
+    1.0,
     new ColorRamp(LG_PLANET_DATA.value.changedProps, '_biomesParameters', [
-      ColorRampStep.newWithAlpha(0xffffff, 1.0,  0.0, true),
-      ColorRampStep.newWithAlpha(0xffffff, 0.5,  0.5),
-      ColorRampStep.newWithAlpha(0xffffff, 0.0,  1.0, true),
-    ])
+      ColorRampStep.newWithAlpha(0xffffff, 1.0, 0.0, true),
+      ColorRampStep.newWithAlpha(0xffffff, 0.5, 0.5),
+      ColorRampStep.newWithAlpha(0xffffff, 0.0, 1.0, true),
+    ]),
   )
   LG_PLANET_DATA.value.biomesParams.push(newBiome)
   LG_PLANET_DATA.value.markForChange('_biomesParameters')
 }
 
 function deleteBiome(id: string) {
-  const biomeIdx = LG_PLANET_DATA.value.biomesParams.findIndex(b => b.id === id)
+  const biomeIdx = LG_PLANET_DATA.value.biomesParams.findIndex((b) => b.id === id)
   if (biomeIdx < 0) {
     throw new Error('Cannot delete non-existent biome!')
   }

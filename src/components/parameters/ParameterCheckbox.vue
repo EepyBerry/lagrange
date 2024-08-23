@@ -20,7 +20,9 @@ defineProps<{ id: string; trueValue: AcceptedType; falseValue: AcceptedType; dis
 </script>
 
 <style scoped lang="scss">
-label { grid-column: 1; }
+label {
+  grid-column: 1;
+}
 input.lg {
   grid-column: 2;
   justify-self: end;
