@@ -9,6 +9,13 @@
       </button>
     </div>
     <hr class="name-divider" />
+    <!-- <ParameterSlider v-model="lgParam!.heightMin" :id="lgParam!.id + '-b-hmin'" :step="0.01" :min="0" :max="1">
+      {{ $t('editor.controls.biomes.height_min') }}
+    </ParameterSlider>
+    <ParameterSlider v-model="lgParam!.heightMax" :id="lgParam!.id + '-b-hmax'" :step="0.01" :min="0" :max="1">
+      {{ $t('editor.controls.biomes.height_max') }}
+    </ParameterSlider> -->
+    <ParameterDivider />
     <ParameterSlider v-model="lgParam!.tempMin" :id="lgParam!.id + '-b-tmin'" :step="0.01" :min="0" :max="1">
       {{ $t('editor.controls.biomes.temperature_min') }}
     </ParameterSlider>

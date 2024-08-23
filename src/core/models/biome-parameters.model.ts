@@ -2,8 +2,18 @@ import { ChangeTracker } from './change-tracker.model'
 import type { ColorRamp, ColorRampStep } from './color-ramp.model'
 import { nanoid } from 'nanoid'
 
+export class BiomeDimensions {
+  heightMin: number = 0.0
+  heightMax: number = 1.0
+  temperatureMin: number = 0.0
+  temperatureMax: number = 1.0
+  humidityMin: number = 0.0
+  humidityMax: number = 1.0
+}
 export class BiomeParameters extends ChangeTracker {
   private _id: string
+  private _heightMin: number = 0.0
+  private _heightMax: number = 1.0
   private _tempMin: number = 0.0
   private _tempMax: number = 1.0
   private _humiMin: number = 0.0
@@ -13,18 +23,15 @@ export class BiomeParameters extends ChangeTracker {
   constructor(
     changedPropsRef: string[],
     changePrefix: string,
-    tempMin: number,
-    tempMax: number,
-    humiMin: number,
-    humiMax: number,
+    dims: BiomeDimensions,
     rgbaRamp: ColorRamp,
   ) {
     super(changedPropsRef, changePrefix)
     this._id = nanoid()
-    this._tempMin = tempMin
-    this._tempMax = tempMax
-    this._humiMin = humiMin
-    this._humiMax = humiMax
+    this._tempMin = dims.temperatureMin
+    this._tempMax = dims.temperatureMax
+    this._humiMin = dims.humidityMin
+    this._humiMax = dims.humidityMax
     this._rgbaRamp = rgbaRamp
   }
 
@@ -32,10 +39,14 @@ export class BiomeParameters extends ChangeTracker {
     return new BiomeParameters(
       this._changedProps,
       this._changePrefix,
-      this._tempMin,
-      this._tempMax,
-      this._humiMin,
-      this._humiMax,
+      { 
+        heightMin: this._heightMin,
+        heightMax: this._heightMax,
+        temperatureMin: this._tempMin,
+        temperatureMax: this._tempMax,
+        humidityMin: this._humiMin,
+        humidityMax: this._humiMax,
+      },
       this._rgbaRamp.clone(),
     )
   }
@@ -44,6 +55,21 @@ export class BiomeParameters extends ChangeTracker {
     return this._id
   }
 
+  public get heightMin(): number {
+    return this._heightMin
+  }
+  public set heightMin(value: number) {
+    this._heightMin = value
+    this.markForChange(this._changePrefix)
+  }
+  public get heightMax(): number {
+    return this._heightMax
+  }
+  public set heightMax(value: number) {
+    this._heightMax = value
+    this.markForChange(this._changePrefix)
+  }
+  
   public get tempMin(): number {
     return this._tempMin
   }

@@ -225,6 +225,8 @@
         "biome_list": "Biomes",
         "biome_type": "Type",
 
+        "height_min": "Min. height",
+        "height_max": "Max. height",
         "temperature_min": "Min. tempewatuwe",
         "temperature_max": "Max. tempewatuwe",
         "humidity_min": "Min. humidity",
