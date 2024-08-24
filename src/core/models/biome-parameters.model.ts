@@ -1,6 +1,7 @@
 import { Color } from 'three'
 import { ChangeTracker } from './change-tracker.model'
 import { nanoid } from 'nanoid'
+import { clamp } from '@/utils/math-utils'
 
 export class BiomeDimensions {
   temperatureMin: number = 0.0
@@ -54,6 +55,7 @@ export class BiomeParameters extends ChangeTracker {
   }
   public set tempMin(value: number) {
     this._tempMin = value
+    this._tempMax = clamp(this._tempMax, this._tempMin, 1)
     this.markForChange(this._changePrefix)
   }
   public get tempMax(): number {
@@ -61,6 +63,7 @@ export class BiomeParameters extends ChangeTracker {
   }
   public set tempMax(value: number) {
     this._tempMax = value
+    this._tempMin = clamp(this._tempMin, 0, this._tempMax)
     this.markForChange(this._changePrefix)
   }
 
@@ -69,6 +72,7 @@ export class BiomeParameters extends ChangeTracker {
   }
   public set humiMin(value: number) {
     this._humiMin = value
+    this._humiMax = clamp(this._humiMax, this._humiMin, 1)
     this.markForChange(this._changePrefix)
   }
   public get humiMax(): number {
@@ -76,6 +80,7 @@ export class BiomeParameters extends ChangeTracker {
   }
   public set humiMax(value: number) {
     this._humiMax = value
+    this._humiMin = clamp(this._humiMin, 0, this._humiMax)
     this.markForChange(this._changePrefix)
   }
   public get color(): Color {
