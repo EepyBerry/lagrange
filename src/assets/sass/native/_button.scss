@@ -117,3 +117,19 @@ a.lg.link-button:visited:active {
   color: var(--lg-text);
   text-decoration: none;
 }
+
+// Debug button
+button.lg.debug {
+  position: relative;
+  background: var(--lg-primary);
+  border: 2px dotted var(--lg-info);
+  min-width: 2rem;
+  min-height: 2rem;
+  font-size: 1rem;
+  font-family: monospace;
+  overflow: hidden;
+
+  iconify-icon {
+    padding-top: 0.125rem;
+  }
+}

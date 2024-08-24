@@ -7,7 +7,6 @@
       @save="savePlanet"
       @reset="resetPlanet"
     />
-    <button @click="saveTexture">get raw</button>
   </div>
   <PlanetEditorControls :compact-mode="showCompactControls" />
 
@@ -62,6 +61,7 @@ import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import WebGL from 'three/addons/capabilities/WebGL.js'
 import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
 import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
+import { DebugUtils } from '@/utils/debug-utils'
 
 const route = useRoute()
 const router = useRouter()
@@ -115,10 +115,6 @@ onUnmounted(() => {
   EventBus.deregisterWindowEventListener('resize', onWindowResize)
   EventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
 })
-
-function saveTexture() {
-  saveAs(new Blob([_biomeData]), 'test.raw')
-}
 
 async function bootstrapEditor() {
   try {
@@ -620,6 +616,7 @@ function updatePlanet() {
       }
       case '_biomesParameters': {
         recalculateBiomeTexture(_biomeData, 256, LG_PLANET_DATA.value.biomesParams as BiomeParameters[])
+        DebugUtils.biomeData = _biomeData
         _biomeDataTex.needsUpdate = true
         break
       }

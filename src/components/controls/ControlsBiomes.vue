@@ -4,6 +4,10 @@
       {{ $t('editor.controls.biomes.biomes_show') }}
     </ParameterCheckbox>
     <template v-if="LG_PLANET_DATA.biomesEnabled">
+      <button class="lg debug" style="padding: 0 0.5rem" @click="DebugUtils.getRawBiomeData">
+        <iconify-icon icon="material-symbols:code-rounded" aria-hidden="true" />
+        get tex
+      </button>
       <ParameterCategory>{{ $t('editor.controls.biomes.temperature') }}</ParameterCategory>
       <ParameterRadio>
         <template v-slot:title> {{ $t('editor.controls.biomes.gradient_mode') }}: </template>
@@ -91,6 +95,7 @@ import ParameterCategory from '../parameters/ParameterCategory.vue'
 import { GradientMode } from '@/core/types'
 import { BiomeParameters } from '@/core/models/biome-parameters.model'
 import { Color } from 'three'
+import { DebugUtils } from '@/utils/debug-utils'
 
 function moveBiome(idx: number, diff: 1 | -1) {
   console.log('sdlfhsdlfsfd: '+diff)
