@@ -9,27 +9,20 @@
       </button>
     </div>
     <hr class="name-divider" />
-    <!-- <ParameterSlider v-model="lgParam!.heightMin" :id="lgParam!.id + '-b-hmin'" :step="0.01" :min="0" :max="1">
-      {{ $t('editor.controls.biomes.height_min') }}
-    </ParameterSlider>
-    <ParameterSlider v-model="lgParam!.heightMax" :id="lgParam!.id + '-b-hmax'" :step="0.01" :min="0" :max="1">
-      {{ $t('editor.controls.biomes.height_max') }}
-    </ParameterSlider> -->
     <ParameterDivider />
-    <ParameterSlider v-model="lgParam!.tempMin" :id="lgParam!.id + '-b-tmin'" :step="0.01" :min="0" :max="1">
+    <ParameterSlider v-model="lgParam!.tempMin" :id="lgParam!.id + '-b-tmin'" :step="0.005" :min="0" :max="1">
       {{ $t('editor.controls.biomes.temperature_min') }}
     </ParameterSlider>
-    <ParameterSlider v-model="lgParam!.tempMax" :id="lgParam!.id + '-b-tmax'" :step="0.01" :min="0" :max="1">
+    <ParameterSlider v-model="lgParam!.tempMax" :id="lgParam!.id + '-b-tmax'" :step="0.005" :min="0" :max="1">
       {{ $t('editor.controls.biomes.temperature_max') }}
     </ParameterSlider>
     <ParameterDivider />
-    <!-- TODO: add humidity controls once the system works -->
-    <!-- <ParameterSlider v-model="lgParam!.humiMin" :id="lgParam!.id + '-b-hmin'" :step="0.01" :min="0" :max="1">
+    <ParameterSlider v-model="lgParam!.humiMin" :id="lgParam!.id + '-b-hmin'" :step="0.005" :min="0" :max="1">
       {{ $t('editor.controls.biomes.humidity_min') }}
     </ParameterSlider>
-    <ParameterSlider v-model="lgParam!.humiMax" :id="lgParam!.id + '-b-hmax'" :step="0.01" :min="0" :max="1">
+    <ParameterSlider v-model="lgParam!.humiMax" :id="lgParam!.id + '-b-hmax'" :step="0.005" :min="0" :max="1">
       {{ $t('editor.controls.biomes.humidity_max') }}
-    </ParameterSlider> -->
+    </ParameterSlider>
     <ParameterDivider />
     <ParameterColorRamp mode="rgba" v-model="(lgParam!.rgbaRamp as ColorRamp)" :key="lgParam!.id">
       {{ $t('editor.general.noise_rgbaramp') }}

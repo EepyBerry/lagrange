@@ -3,8 +3,6 @@ import type { ColorRamp, ColorRampStep } from './color-ramp.model'
 import { nanoid } from 'nanoid'
 
 export class BiomeDimensions {
-  heightMin: number = 0.0
-  heightMax: number = 1.0
   temperatureMin: number = 0.0
   temperatureMax: number = 1.0
   humidityMin: number = 0.0
@@ -40,8 +38,6 @@ export class BiomeParameters extends ChangeTracker {
       this._changedProps,
       this._changePrefix,
       { 
-        heightMin: this._heightMin,
-        heightMax: this._heightMax,
         temperatureMin: this._tempMin,
         temperatureMax: this._tempMax,
         humidityMin: this._humiMin,

@@ -51,14 +51,10 @@ in vec3 vBitangent;
 
 // Biome function
 vec3 apply_biomes(float t, float h, vec3 color) {
-    vec2 tTexCoord = vec2(t, 0.5);
-    vec2 hTexCoord = vec2(h, 0.5);
-    vec4 tTexel = texture2D(u_temp_tex, tTexCoord);
-    //vec4 hTexel = texture2D(u_humi_tex, hTexCoord);
-    
+    vec2 texCoord = vec2(t, 0.5);
+    vec4 texel = texture2D(u_temp_tex, texCoord);
     vec3 biomeColor = color;
-    biomeColor = mix(color, tTexel.xyz, tTexel.w);
-    //biomeColor = mix(color, hTexel.xyz, hTexel.w);
+    biomeColor = mix(color, texel.xyz, texel.w);
     return biomeColor;
 }
 

@@ -517,8 +517,6 @@ export default class PlanetData extends ChangeTracker {
         this._changedProps,
         '_biomesParameters',
         {
-          heightMin: 0.0,
-          heightMax: 1.0,
           temperatureMin: 0.0,
           temperatureMax: 0.08,
           humidityMin: 0.85,
@@ -540,8 +538,6 @@ export default class PlanetData extends ChangeTracker {
         this._changedProps,
         '_biomesParameters',
         {
-          heightMin: 0.0,
-          heightMax: 1.0,
           temperatureMin: 0.6,
           temperatureMax: 1.0,
           humidityMin: 0.0,
@@ -639,8 +635,6 @@ export default class PlanetData extends ChangeTracker {
           this._changedProps,
           '_biomesParameters',
           {
-            heightMin: 0.0,
-            heightMax: 1.0,
             temperatureMin: 0.0,
             temperatureMax: 0.08,
             humidityMin: 0.85,
@@ -656,8 +650,6 @@ export default class PlanetData extends ChangeTracker {
           this._changedProps,
           '_biomesParameters',
           {
-            heightMin: 0.0,
-            heightMax: 1.0,
             temperatureMin: 0.6,
             temperatureMax: 1.0,
             humidityMin: 0.0,
@@ -757,8 +749,6 @@ export default class PlanetData extends ChangeTracker {
           this.changedProps,
           '_biomesParameters',
           {
-            heightMin: rbp._heightMin ?? 0.0,
-            heightMax: rbp._heightMax ?? 0.0,
             temperatureMin: rbp._tempMin ?? 0.0,
             temperatureMax: rbp._tempMax ?? 0.5,
             humidityMin: rbp._humiMin ?? 0.0,
