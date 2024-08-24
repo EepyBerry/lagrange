@@ -1,10 +1,7 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
-import type { ColorRampStep } from '@/core/models/color-ramp.model'
-import type { DataTextureWrapper } from '@/core/types'
+import type { BiomeRect, DataTextureWrapper } from '@/core/types'
 import { DataTexture, type ShaderMaterial } from 'three'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
-import { lerp } from 'three/src/math/MathUtils.js'
-import { clamp } from './math-utils'
 
 export function setShaderMaterialUniform(mat: CustomShaderMaterial | ShaderMaterial, uname: string, uvalue: any): void {
   mat.uniforms[uname] = { value: uvalue }
@@ -16,136 +13,69 @@ export function setShaderMaterialUniforms(mat: CustomShaderMaterial, unames: str
   }
 }
 
-export function create1DTexture(w: number, param: 'temp' | 'humi', biomes: BiomeParameters[]): DataTextureWrapper {
-  const extractedSteps: ColorRampStep[] = extractAndSortSteps(w, param, biomes)
-  const data = calculate1DTextureData(w, extractedSteps)
-  const dt = new DataTexture(data, w, 1)
+export function createBiomeTexture(w: number, biomes: BiomeParameters[]): DataTextureWrapper {
+  const data = calculateBiomeTexture(w, biomes)
+  const dt = new DataTexture(data, w, w)
   dt.needsUpdate = true
   return { texture: dt, data }
 }
 
-export function recalculate1DTexture(
-  data: Uint8Array,
-  w: number,
-  param: 'temp' | 'humi',
-  biomes: BiomeParameters[],
-): void {
-  const extractedSteps: ColorRampStep[] = extractAndSortSteps(w, param, biomes)
-  recalculate1DTextureData(data, extractedSteps)
-}
-
-function extractAndSortSteps(w: number, param: 'temp' | 'humi', biomes: BiomeParameters[]): ColorRampStep[] {
-  const biomesCopy = biomes.slice(0)
-  const extractedSteps: ColorRampStep[] = []
-  for (const b of biomesCopy) {
-    const wMin = Math.floor((param === 'temp' ? b.tempMin : b.humiMin) * w)
-    const wMax = Math.floor((param === 'temp' ? b.tempMax : b.humiMax) * w)
-    for (const s of b.rgbaRamp.definedSteps) {
-      const adjustedFactor = s.factor * (wMax - wMin) + wMin
-      s.factor = clamp(Math.ceil(adjustedFactor), 0, w)
-      extractedSteps.push(s)
-    }
+export function calculateBiomeTexture(w: number, biomes: BiomeParameters[]): Uint8Array {
+  const data = new Uint8Array(w * w * 4)
+  if (biomes.length === 0) {
+    return data
   }
-  extractedSteps.sort((a, b) => a.factor - b.factor)
-  return extractedSteps
-}
 
-function calculate1DTextureData(w: number, steps: ColorRampStep[]): Uint8Array {
-  const data = new Uint8Array(4 * w)
-  let stride = (steps[0]?.factor ?? 0) * 4
-  for (let s = 0; s < steps.length - 1; s++) {
-    const step = steps[s]
-    const nextStep = steps[s + 1]
-    const stepIterations = Math.ceil(nextStep.factor - step.factor)
-    for (let i = 0; i < stepIterations; i++) {
-      const lerpFac = parseFloat((i / stepIterations).toFixed(4))
-      const clerp = step.color.lerp(nextStep.color, lerpFac)
-      const r = Math.floor(clerp.r * 255.0)
-      const g = Math.floor(clerp.g * 255.0)
-      const b = Math.floor(clerp.b * 255.0)
-      const a = Math.floor(lerp(step.alpha, nextStep.alpha, lerpFac) * 255.0)
-
-      data[stride] = r
-      data[stride + 1] = g
-      data[stride + 2] = b
-      data[stride + 3] = a
-      stride += 4
-    }
-  }
+  fillBiomes(data, w, biomes)
   return data
 }
 
-function recalculate1DTextureData(data: Uint8Array, steps: ColorRampStep[]): Uint8Array {
+export function recalculateBiomeTexture(data: Uint8Array, w: number, biomes: BiomeParameters[]): void {
+  if (biomes.length === 0) {
+    return
+  }
   data.fill(0)
-  let stride = (steps[0]?.factor ?? 0) * 4
-  for (let s = 0; s < steps.length - 1; s++) {
-    const step = steps[s]
-    const nextStep = steps[s + 1]
-    const stepIterations = Math.ceil(nextStep.factor - step.factor)
-    for (let i = 0; i < stepIterations; i++) {
-      const lerpFac = parseFloat((i / stepIterations).toFixed(4))
-      const clerp = step.color.lerp(nextStep.color, lerpFac)
-      const r = Math.floor(clerp.r * 255.0)
-      const g = Math.floor(clerp.g * 255.0)
-      const b = Math.floor(clerp.b * 255.0)
-      const a = Math.floor(lerp(step.alpha, nextStep.alpha, lerpFac) * 255.0)
-
-      data[stride] = r
-      data[stride + 1] = g
-      data[stride + 2] = b
-      data[stride + 3] = a
-      stride += 4
-    }
-  }
-  return data
+  fillBiomes(data, w, biomes)
 }
 
-/* export function create2DBiomeTexture(w: number, biomes: BiomeParameters[]) {
-  const data = new Uint8Array(4 * w * w)
-  const biomeBounds = computeBiomeBounds(w, biomes)
+function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
+  let lineStride = 0
+  let cellStride = (Math.ceil(biomes[0].humiMin * w) + (biomes[0].tempMin * w)) * 4
+  for (let i = 0; i < biomes.length; i++) {
+    const biome = biomes[i]
+    const biomeRect: BiomeRect = {
+      x: Math.ceil(biome.humiMin * w),
+      y: Math.ceil(biome.tempMin * w),
+      w: Math.ceil((biome.humiMax - biome.humiMin) * w),
+      h: Math.ceil((biome.tempMax - biome.tempMin) * w)
+    }
+    const totalPixels = biomeRect.w * biomeRect.h
+    const maxBiomeX = (biomeRect.x + biomeRect.w) * 4
 
-  for (const brect of biomeBounds) {
-    const bcolors = brect.colors.definedSteps
-    for (let b = 0; b < bcolors.length-1; b++) {
-      const step = bcolors[b]
-      const nextStep = bcolors[b+1]
-      const stepIterations = Math.ceil((nextStep.factor*w) - (step.factor*w))
-  
-      let stride = 0
-      const cellCount = brect.w * brect.h
-      for (let cell = 0; cell < cellCount; cell++) {
-        const lerpFac = parseFloat((cell/cellCount).toFixed(4))
-        const clerp = step.color.lerp(nextStep.color, lerpFac)
-        const r = Math.floor(clerp.r * 255.0)
-        const g = Math.floor(clerp.g * 255.0)
-        const b = Math.floor(clerp.b * 255.0)
-        const a = Math.floor(lerp(step.alpha, nextStep.alpha, lerpFac)* 255.0)
-  
-        data[ stride ] = r
-        data[ stride + 1 ] = g
-        data[ stride + 2 ] = b
-        data[ stride + 3 ] = a
-        stride += 4
-  
-        if (stride === bounds.w) {
-          stride = 0
-        }
+    // Adjust strides depending on starting temp & humi
+    cellStride = biomeRect.x * 4
+    lineStride = biomeRect.y * w * 4
+
+    // Calculate color
+    const r = Math.floor(biome.color.r * 255.0)
+    const g = Math.floor(biome.color.g * 255.0)
+    const b = Math.floor(biome.color.b * 255.0)
+
+    for (let biomePx = 0; biomePx < totalPixels; biomePx++) {
+      data[lineStride + cellStride] = r
+      data[lineStride + cellStride + 1] = g
+      data[lineStride + cellStride + 2] = b
+      data[lineStride + cellStride + 3] = 255
+      cellStride += 4
+
+      if (cellStride >= maxBiomeX) {
+        lineStride += w * 4
+        cellStride = biomeRect.x * 4
       }
     }
   }
 }
 
-export function computeBiomeBounds(w: number, biomes: BiomeParameters[]): BiomeRect[] {
-  const biomeBounds: BiomeRect[] = []
-  for (const biome of biomes) {
-    const bounds: BiomeRect = {
-      colors: biome.rgbaRamp,
-      x: Math.round(biome.tempMin * w),
-      y: Math.round(biome.humiMin * w),
-      w: Math.round((biome.tempMax * w) - (biome.tempMin * w)),
-      h: Math.round((biome.humiMax * w) - (biome.humiMin * w)),
-    }
-    biomeBounds.push(bounds)
-  }
-  return biomeBounds
-} */
+function overwriteBiome(data: Uint8Array, w: number, oldValues: BiomeParameters, newValues: BiomeParameters) {
+
+}

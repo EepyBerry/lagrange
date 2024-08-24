@@ -160,6 +160,8 @@
       "noise_fbm_amplitude": "Ampwitude",
       "noise_fbm_lacunarity": "Wacunawity",
       "noise_fbm_octaves": "Octaves",
+
+      "noise_color": "Cowow",
       "noise_rgbramp": "Cowow wamp",
       "noise_rgbaramp": "Cowow/awpha wamp"
     },

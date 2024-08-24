@@ -161,6 +161,7 @@
       "noise_fbm_lacunarity": "Lacunarity",
       "noise_fbm_octaves": "Octaves",
 
+      "noise_color": "Color",
       "noise_rgbramp": "Color ramp",
       "noise_rgbaramp": "Color/alpha ramp"
     },

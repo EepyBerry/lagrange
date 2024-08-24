@@ -32,8 +32,7 @@ uniform int u_temp_mode;
 uniform int u_humi_mode;
 uniform NoiseParameters u_temp_noise;
 uniform NoiseParameters u_humi_noise;
-uniform sampler2D u_temp_tex;
-uniform sampler2D u_humi_tex;
+uniform sampler2D u_biomes_tex;
 
 // Color ramp uniforms
 uniform float[16] u_cr_positions;
@@ -51,8 +50,10 @@ in vec3 vBitangent;
 
 // Biome function
 vec3 apply_biomes(float t, float h, vec3 color) {
-    vec2 texCoord = vec2(t, 0.5);
-    vec4 texel = texture2D(u_temp_tex, texCoord);
+    vec2 texCoord = vec2(h, t);
+    //vec4 texel = texture2D(u_biomes_tex, texCoord);
+    vec4 texel = blur(u_biomes_tex, texCoord, vec2(256.0), vec2(1.0, 0.0));
+    texel = blur(u_biomes_tex, texCoord, vec2(256.0), vec2(0.0, 1.0));
     vec3 biomeColor = color;
     biomeColor = mix(color, texel.xyz, texel.w);
     return biomeColor;
@@ -70,11 +71,11 @@ vec3 apply_bump(float height) {
 
 void main() {
     // temp/humi fields
-    float FLAG_POLAR_GRADIENT = step(0.5, float(u_temp_mode));
-    float FLAG_NOISE_GRADIENT = step(1.5, float(u_temp_mode));
-    float y = mix(abs(vPos.y), vPos.y, FLAG_POLAR_GRADIENT);
-    float adjustedY = smoothstep(1.0, -FLAG_POLAR_GRADIENT, y);
-    float tHeight = mix(adjustedY, 1.0, FLAG_NOISE_GRADIENT);
+    float FLAG_POLAR_TEMP = step(0.5, float(u_temp_mode));
+    float FLAG_NOISE_TEMP = step(1.5, float(u_temp_mode));
+    float y = mix(abs(vPos.y), vPos.y, FLAG_POLAR_TEMP);
+    float adjustedY = smoothstep(1.0, -FLAG_POLAR_TEMP, y);
+    float tHeight = mix(adjustedY, 1.0, FLAG_NOISE_TEMP);
     tHeight *= fbm3(vPos, u_temp_noise.freq, u_temp_noise.amp, u_temp_noise.lac, u_temp_noise.oct);
     //float hHeight = mix(smoothstep(1.0, 0.0, 1.0 - abs(vPos.y)), 0.75, float(u_humi_mode));
     //hHeight *= fbm3(vPos, u_humi_noise.freq, u_humi_noise.amp, u_humi_noise.lac, u_humi_noise.oct);

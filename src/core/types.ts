@@ -24,7 +24,6 @@ export enum GradientMode {
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
 export type BiomeRect = {
-  colors: ColorRamp
   x: number
   y: number
   w: number

@@ -7,6 +7,7 @@
       @save="savePlanet"
       @reset="resetPlanet"
     />
+    <button @click="saveTexture">get raw</button>
   </div>
   <PlanetEditorControls :compact-mode="showCompactControls" />
 
@@ -39,7 +40,7 @@ import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config'
 import { EventBus } from '@/core/services/event-bus'
 import { useI18n } from 'vue-i18n'
 import AppNavigation from '@/components/main/AppNavigation.vue'
-import { recalculate1DTexture, setShaderMaterialUniform, setShaderMaterialUniforms } from '@/utils/three-utils'
+import { recalculateBiomeTexture, setShaderMaterialUniform, setShaderMaterialUniforms } from '@/utils/three-utils'
 import { useRoute, useRouter } from 'vue-router'
 import PlanetData from '@/core/models/planet-data.model'
 import {
@@ -101,9 +102,8 @@ let _ambLight: THREE.AmbientLight
 let _lensFlare: LensFlareEffect
 
 // DataTextures
-let _tempData: Uint8Array
-let _tempDataTex: THREE.DataTexture
-//let _humiDataTex: THREE.DataTexture
+let _biomeData: Uint8Array
+let _biomeDataTex: THREE.DataTexture
 
 onMounted(async () => {
   await bootstrapEditor()
@@ -115,6 +115,10 @@ onUnmounted(() => {
   EventBus.deregisterWindowEventListener('resize', onWindowResize)
   EventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
 })
+
+function saveTexture() {
+  saveAs(new Blob([_biomeData]), 'test.raw')
+}
 
 async function bootstrapEditor() {
   try {
@@ -225,8 +229,8 @@ function initPlanet(): void {
   _planetGroup = pivot
 
   // Set datatextures + data
-  _tempData = planet.texs[0].data
-  _tempDataTex = planet.texs[0].texture
+  _biomeData = planet.texs[0].data
+  _biomeDataTex = planet.texs[0].texture
 
   // Set initial rotations
   _planetGroup.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
@@ -269,8 +273,8 @@ function disposeScene() {
   ;(_atmosphere.material as THREE.Material).dispose()
   _atmosphere.geometry.dispose()
 
-  _tempData.fill(0)
-  _tempDataTex.dispose()
+  _biomeData.fill(0)
+  _biomeDataTex.dispose()
   _planetGroup.clear()
 
   $se.scene.children.forEach((c) => $se.scene.remove(c))
@@ -615,9 +619,8 @@ function updatePlanet() {
         break
       }
       case '_biomesParameters': {
-        const v: BiomeParameters[] = LG_PLANET_DATA.value.biomesParams.map((b) => b.clone())
-        recalculate1DTexture(_tempData, 256, 'temp', v)
-        _tempDataTex.needsUpdate = true
+        recalculateBiomeTexture(_biomeData, 256, LG_PLANET_DATA.value.biomesParams as BiomeParameters[])
+        _biomeDataTex.needsUpdate = true
         break
       }
 

@@ -522,17 +522,7 @@ export default class PlanetData extends ChangeTracker {
           humidityMin: 0.85,
           humidityMax: 1.0
         },
-        new ColorRamp(
-          this._changedProps,
-          '_biomesParameters',
-          [
-            ColorRampStep.newWithAlpha(0xffffff, 1.0, 0.0, true),
-            ColorRampStep.newWithAlpha(0xffffff, 0.25, 0.5),
-            ColorRampStep.newWithAlpha(0xffffff, 0.0, 1.0, true),
-          ],
-          3,
-          true,
-        ),
+        new Color(0xffffff)
       ),
       new BiomeParameters(
         this._changedProps,
@@ -543,17 +533,7 @@ export default class PlanetData extends ChangeTracker {
           humidityMin: 0.0,
           humidityMax: 0.25
         },
-        new ColorRamp(
-          this._changedProps,
-          '_biomesParameters',
-          [
-            ColorRampStep.newWithAlpha(0xbaa345, 0.0, 0.0, true),
-            ColorRampStep.newWithAlpha(0xbaa345, 0.75, 0.85),
-            ColorRampStep.newWithAlpha(0xbaa345, 1.0, 1.0, true),
-          ],
-          3,
-          true,
-        ),
+        new Color(0xbaa345)
       ),
     ]
 
@@ -640,11 +620,7 @@ export default class PlanetData extends ChangeTracker {
             humidityMin: 0.85,
             humidityMax: 1.0
           },
-          new ColorRamp(this._changedProps, '_biomesParameters', [
-            ColorRampStep.newWithAlpha(0xffffff, 1.0, 0.0, true),
-            ColorRampStep.newWithAlpha(0xffffff, 0.25, 0.5),
-            ColorRampStep.newWithAlpha(0xffffff, 0.0, 1.0, true),
-          ]),
+          new Color(0xffffff)
         ),
         new BiomeParameters(
           this._changedProps,
@@ -655,11 +631,7 @@ export default class PlanetData extends ChangeTracker {
             humidityMin: 0.0,
             humidityMax: 0.25
           },
-          new ColorRamp(this._changedProps, '_biomesParameters', [
-            ColorRampStep.newWithAlpha(0xbaa345, 0.0, 0.0, true),
-            ColorRampStep.newWithAlpha(0xbaa345, 0.75, 0.85),
-            ColorRampStep.newWithAlpha(0xbaa345, 1.0, 1.0, true),
-          ]),
+          new Color(0xbaa345)
         ),
       ],
     )
@@ -754,9 +726,8 @@ export default class PlanetData extends ChangeTracker {
             humidityMin: rbp._humiMin ?? 0.0,
             humidityMax: rbp._humiMax ?? 0.5,
           },
-          new ColorRamp(this.changedProps, '_biomesParameters', []),
+          new Color(rbp._color)
         )
-        nbp.rgbaRamp.loadFromSteps(rbp._rgbaRamp._steps)
         return nbp
       }),
     )

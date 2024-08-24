@@ -29,7 +29,7 @@ import { LensFlareEffect } from '@core/three/lens-flare.effect'
 import PlanetData from '@core/models/planet-data.model'
 import { ref } from 'vue'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
-import { create1DTexture } from '@/utils/three-utils'
+import { createBiomeTexture } from '@/utils/three-utils'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -88,12 +88,7 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
   const geometry = createGeometryComponent(GeometryType.SPHERE)
   geometry.computeTangents()
 
-  const tempTex = create1DTexture(
-    256,
-    'temp',
-    data.biomesParams.map((b) => b.clone()),
-  )
-  //const humiTex = createMerged1DColorTexture(256, "humi", data.biomesParams)
+  const biomeTex = createBiomeTexture(256, data.biomesParams)
 
   const material = createShaderMaterialComponent(
     planetVertShader,
@@ -124,6 +119,7 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
       u_cr_size: { value: data.planetSurfaceColorRampSize },
       // Biomes
       u_biomes: { value: data.biomesEnabled },
+      u_biomes_tex: { value: biomeTex.texture },
       u_temp_mode: { value: data.biomesTemperatureMode },
       u_temp_noise: {
         value: {
@@ -134,7 +130,6 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
           oct: data.biomesTemperatureNoise.octaves,
         },
       },
-      u_temp_tex: { value: tempTex.texture },
       u_humi_mode: { value: GradientMode.REALISTIC },
       u_humi_noise: {
         value: {
@@ -154,7 +149,7 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
   mesh.name = LG_NAME_PLANET
-  return { mesh, texs: [tempTex] }
+  return { mesh, texs: [biomeTex] }
 }
 
 export function createClouds(data: PlanetData): THREE.Mesh {

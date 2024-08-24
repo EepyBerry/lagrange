@@ -1,5 +1,5 @@
+import { Color } from 'three'
 import { ChangeTracker } from './change-tracker.model'
-import type { ColorRamp, ColorRampStep } from './color-ramp.model'
 import { nanoid } from 'nanoid'
 
 export class BiomeDimensions {
@@ -10,19 +10,17 @@ export class BiomeDimensions {
 }
 export class BiomeParameters extends ChangeTracker {
   private _id: string
-  private _heightMin: number = 0.0
-  private _heightMax: number = 1.0
   private _tempMin: number = 0.0
   private _tempMax: number = 1.0
   private _humiMin: number = 0.0
   private _humiMax: number = 1.0
-  private _rgbaRamp: ColorRamp
+  private _color: Color
 
   constructor(
     changedPropsRef: string[],
     changePrefix: string,
     dims: BiomeDimensions,
-    rgbaRamp: ColorRamp,
+    color: Color,
   ) {
     super(changedPropsRef, changePrefix)
     this._id = nanoid()
@@ -30,7 +28,7 @@ export class BiomeParameters extends ChangeTracker {
     this._tempMax = dims.temperatureMax
     this._humiMin = dims.humidityMin
     this._humiMax = dims.humidityMax
-    this._rgbaRamp = rgbaRamp
+    this._color = new Color(color)
   }
 
   clone(): BiomeParameters {
@@ -43,27 +41,12 @@ export class BiomeParameters extends ChangeTracker {
         humidityMin: this._humiMin,
         humidityMax: this._humiMax,
       },
-      this._rgbaRamp.clone(),
+      this._color.clone(),
     )
   }
 
   public get id(): string {
     return this._id
-  }
-
-  public get heightMin(): number {
-    return this._heightMin
-  }
-  public set heightMin(value: number) {
-    this._heightMin = value
-    this.markForChange(this._changePrefix)
-  }
-  public get heightMax(): number {
-    return this._heightMax
-  }
-  public set heightMax(value: number) {
-    this._heightMax = value
-    this.markForChange(this._changePrefix)
   }
   
   public get tempMin(): number {
@@ -95,12 +78,11 @@ export class BiomeParameters extends ChangeTracker {
     this._humiMax = value
     this.markForChange(this._changePrefix)
   }
-
-  public get rgbaRamp(): ColorRamp {
-    return this._rgbaRamp
+  public get color(): Color {
+    return this._color
   }
-  public set rgbaRamp(value: ColorRampStep[]) {
-    this._rgbaRamp.loadFromSteps(value)
-    this.markForChange(`${this._changePrefix}#${this.id}`)
+  public set color(value: Color) {
+    this._color.set(value)
+    this.markForChange(this._changePrefix)
   }
 }

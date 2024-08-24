@@ -65,8 +65,14 @@
         {{ $t('editor.general.noise_fbm_octaves') }}
       </ParameterSlider>
       <ParameterCategory>{{ $t('editor.controls.biomes.biome_list') }}</ParameterCategory>
-      <template v-for="(_, index) in LG_PLANET_DATA.biomesParams" :key="index">
-        <ParameterBiome v-model="(LG_PLANET_DATA.biomesParams[index] as BiomeParameters)" @delete="deleteBiome" />
+      <template v-for="(b, index) in LG_PLANET_DATA.biomesParams" :key="b.id">
+        <ParameterBiome
+          :index="index"
+          :max-index="LG_PLANET_DATA.biomesParams.length-1"
+          v-model="(LG_PLANET_DATA.biomesParams[index] as BiomeParameters)"
+          @moveup="moveBiome(index, -1)"
+          @movedown="moveBiome(index, 1)"
+          @delete="deleteBiome" />
       </template>
       <button class="lg action-add" @click="addBiome">
         <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
@@ -84,21 +90,27 @@ import ParameterSlider from '../parameters/ParameterSlider.vue'
 import ParameterCategory from '../parameters/ParameterCategory.vue'
 import { GradientMode } from '@/core/types'
 import { BiomeParameters } from '@/core/models/biome-parameters.model'
-import { ColorRamp, ColorRampStep } from '@/core/models/color-ramp.model'
+import { Color } from 'three'
+
+function moveBiome(idx: number, diff: 1 | -1) {
+  console.log('sdlfhsdlfsfd: '+diff)
+  var element = LG_PLANET_DATA.value.biomesParams[idx];
+  LG_PLANET_DATA.value.biomesParams.splice(idx, 1);
+  LG_PLANET_DATA.value.biomesParams.splice(idx + diff, 0, element);
+  LG_PLANET_DATA.value.markForChange('_biomesParameters')
+}
 
 function addBiome() {
   const newBiome = new BiomeParameters(
     LG_PLANET_DATA.value.changedProps,
     '_biomesParameters',
-    0.0,
-    1.0,
-    0.0,
-    1.0,
-    new ColorRamp(LG_PLANET_DATA.value.changedProps, '_biomesParameters', [
-      ColorRampStep.newWithAlpha(0xffffff, 1.0, 0.0, true),
-      ColorRampStep.newWithAlpha(0xffffff, 0.5, 0.5),
-      ColorRampStep.newWithAlpha(0xffffff, 0.0, 1.0, true),
-    ]),
+    {
+      temperatureMin: 0.0,
+      temperatureMax: 1.0,
+      humidityMin: 0.0,
+      humidityMax: 1.0
+    },
+    new Color(0xffffff)
   )
   LG_PLANET_DATA.value.biomesParams.push(newBiome)
   LG_PLANET_DATA.value.markForChange('_biomesParameters')
