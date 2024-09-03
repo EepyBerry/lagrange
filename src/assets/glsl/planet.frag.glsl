@@ -99,7 +99,7 @@ void main() {
     color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
 
     // Render biomes
-    color = mix(color, apply_biomes(tHeight, hHeight, color), FLAG_BIOMES);
+    color = mix(color, apply_biomes(tHeight, 1.0 - hHeight, color), FLAG_BIOMES);
 
     // Set outputs
     csm_Bump = mix(vNormal, apply_bump(height), FLAG_LAND);
