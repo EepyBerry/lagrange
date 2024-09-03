@@ -70,15 +70,21 @@ vec3 apply_bump(float height) {
 }
 
 void main() {
-    // temp/humi fields
+    // temperature
     float FLAG_POLAR_TEMP = step(0.5, float(u_temp_mode));
     float FLAG_NOISE_TEMP = step(1.5, float(u_temp_mode));
-    float y = mix(abs(vPos.y), vPos.y, FLAG_POLAR_TEMP);
-    float adjustedY = smoothstep(1.0, -FLAG_POLAR_TEMP, y);
-    float tHeight = mix(adjustedY, 1.0, FLAG_NOISE_TEMP);
+    float ty = mix(abs(vPos.y), vPos.y, FLAG_POLAR_TEMP);
+    float adjustedTy = smoothstep(1.0, -FLAG_POLAR_TEMP, ty);
+    float tHeight = mix(adjustedTy, 1.0, FLAG_NOISE_TEMP);
     tHeight *= fbm3(vPos, u_temp_noise.freq, u_temp_noise.amp, u_temp_noise.lac, u_temp_noise.oct);
-    //float hHeight = mix(smoothstep(1.0, 0.0, 1.0 - abs(vPos.y)), 0.75, float(u_humi_mode));
-    //hHeight *= fbm3(vPos, u_humi_noise.freq, u_humi_noise.amp, u_humi_noise.lac, u_humi_noise.oct);
+
+    // humidity
+    float FLAG_POLAR_HUMI = step(0.5, float(u_temp_mode));
+    float FLAG_NOISE_HUMI = step(1.5, float(u_temp_mode));
+    float hy = mix(abs(vPos.y), vPos.y, FLAG_POLAR_HUMI);
+    float adjustedHy = smoothstep(1.0, -FLAG_POLAR_HUMI, hy);
+    float hHeight = mix(adjustedHy, 1.0, FLAG_NOISE_HUMI);
+    hHeight *= fbm3(vPos, u_humi_noise.freq, u_humi_noise.amp, u_humi_noise.lac, u_humi_noise.oct);
 
     // initial color (always black)
     vec3 color = vec3(0.0);
@@ -93,7 +99,7 @@ void main() {
     color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
 
     // Render biomes
-    color = mix(color, apply_biomes(tHeight, /* hHeight */ 0.0, color), FLAG_BIOMES);
+    color = mix(color, apply_biomes(tHeight, hHeight, color), FLAG_BIOMES);
 
     // Set outputs
     csm_Bump = mix(vNormal, apply_bump(height), FLAG_LAND);
