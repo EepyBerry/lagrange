@@ -18,7 +18,12 @@
       "biome_type_subtropical": "Subtropical",
       "biome_type_tropical": "Tropical",
       "biome_type_volcanic": "Volcanic",
-      "biome_type_various": "Various"
+      "biome_type_various": "Various",
+
+      "biome_type_arid": "Arid",
+      "biome_type_dry": "Dry",
+      "biome_type_semihumid": "Semihumid",
+      "biome_type_humid": "Humid"
     }
   },
   "dialog": {

@@ -2,7 +2,8 @@
   <div class="biome-grid" :id="lgParam!.id">
     <div class="biome-header">
       <p>
-        <strong>{{ $t('editor.controls.biomes.biome_type') }}:</strong> {{ getBiomeType() }}<br />
+        <strong>{{ $t('editor.controls.biomes.biome_type') }}:</strong>
+        &nbsp;{{ getBiomeTemperatureType() }}{{ getBiomeHumidityType() }}<br />
       </p>
       <span class="biome-actions">
         <button class="lg" @click="$emit('moveup', lgParam!.id)" :disabled="index === 0">
@@ -58,21 +59,29 @@ const temperatureTypeTable = [
   { tempMin: 0.8, tempMax: 1.0, label: i18n.t('main.planet_data.biome_type_volcanic') },
 ]
 const humidityTypeTable = [
-  { humiMin: 0, humiMax: 0.15, label: i18n.t('main.planet_data.biome_type_arctic') },
-  { humiMin: 0.15, humiMax: 0.3, label: i18n.t('main.planet_data.biome_type_tundra') },
-  { humiMin: 0.3, humiMax: 0.5, label: i18n.t('main.planet_data.biome_type_temperate') },
-  { humiMin: 0.5, humiMax: 0.6, label: i18n.t('main.planet_data.biome_type_subtropical') },
-  { humiMin: 0.6, humiMax: 0.8, label: i18n.t('main.planet_data.biome_type_tropical') },
-  { humiMin: 0.8, humiMax: 1.0, label: i18n.t('main.planet_data.biome_type_volcanic') },
+  { humiMin: 0, humiMax: 0.25, label: i18n.t('main.planet_data.biome_type_arid') },
+  { humiMin: 0.25, humiMax: 0.5, label: i18n.t('main.planet_data.biome_type_dry') },
+  { humiMin: 0.5, humiMax: 0.75, label: i18n.t('main.planet_data.biome_type_semihumid') },
+  { humiMin: 0.75, humiMax: 1.0, label: i18n.t('main.planet_data.biome_type_humid') },
 ]
 
-function getBiomeType() {
-  let minTempType = temperatureTypeTable.find((b) => b.tempMin >= lgParam.value!.tempMin)?.label
-  let maxTempType = temperatureTypeTable.find((b) => b.tempMax >= lgParam.value!.tempMax)?.label
-  if (minTempType === maxTempType) {
-    return minTempType
+function getBiomeTemperatureType() {
+  let minTypeIdx = temperatureTypeTable.findLastIndex((b) => b.tempMin <= lgParam.value!.tempMin)
+  let maxTypeIdx = temperatureTypeTable.findIndex((b) => b.tempMax >= lgParam.value!.tempMax)
+  if (minTypeIdx === maxTypeIdx) {
+    return temperatureTypeTable[minTypeIdx].label
   } else {
     return i18n.t('main.planet_data.biome_type_various')
+  }
+}
+
+function getBiomeHumidityType() {
+  let minTypeIdx = humidityTypeTable.findLastIndex((b) => b.humiMin <= lgParam.value!.humiMin)
+  let maxTypeIdx = humidityTypeTable.findIndex((b) => b.humiMax >= lgParam.value!.humiMax)
+  if (minTypeIdx === maxTypeIdx) {
+    return ' / '+ humidityTypeTable[minTypeIdx].label
+  } else {
+    return ''
   }
 }
 

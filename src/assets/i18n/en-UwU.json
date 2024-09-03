@@ -12,13 +12,18 @@
     },
 
     "planet_data": {
-      "biome_type_arctic": "Arctic",
-      "biome_type_tundra": "Tundra",
-      "biome_type_temperate": "Temperate",
-      "biome_type_subtropical": "Subtropical",
-      "biome_type_tropical": "Tropical",
-      "biome_type_volcanic": "Volcanic",
-      "biome_type_various": "Various"
+      "biome_type_arctic": "Awctic",
+      "biome_type_tundra": "Tundwa",
+      "biome_type_temperate": "Tempewate",
+      "biome_type_subtropical": "Subtwopical",
+      "biome_type_tropical": "Twopical",
+      "biome_type_volcanic": "Vowcanic",
+      "biome_type_various": "Vawious",
+
+      "biome_type_arid": "Awid",
+      "biome_type_dry": "Dwy",
+      "biome_type_semihumid": "Semihumid",
+      "biome_type_humid": "Humid"
     }
   },
   "dialog": {
