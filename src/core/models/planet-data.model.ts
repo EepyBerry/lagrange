@@ -608,6 +608,10 @@ export default class PlanetData extends ChangeTracker {
     this._biomesTemperatureNoise.amplitude = 1.25
     this._biomesTemperatureNoise.lacunarity = 2.5
     this._biomesTemperatureNoise.octaves = 4
+    this._biomesHumidityNoise.frequency = 2.25
+    this._biomesHumidityNoise.amplitude = 1.5
+    this._biomesHumidityNoise.lacunarity = 2.25
+    this._biomesHumidityNoise.octaves = 4
     this._biomesParams.splice(0)
     this._biomesParams.push(
       ...[
@@ -714,6 +718,11 @@ export default class PlanetData extends ChangeTracker {
     this._biomesTemperatureNoise.amplitude = data._biomesTemperatureNoise?._amplitude ?? 1.25
     this._biomesTemperatureNoise.lacunarity = data._biomesTemperatureNoise?._lacunarity ?? 2.5
     this._biomesTemperatureNoise.octaves = data._biomesTemperatureNoise?._octaves ?? 2
+    this._biomesHumidityMode = data._biomesHumidityMode ?? GradientMode.REALISTIC
+    this._biomesHumidityNoise.frequency = data._biomesHumidityNoise?._frequency ?? 2.25
+    this._biomesHumidityNoise.amplitude = data._biomesHumidityNoise?._amplitude ?? 1.5
+    this._biomesHumidityNoise.lacunarity =  data._biomesHumidityNoise?._lacunarity ?? 2.25
+    this._biomesHumidityNoise.octaves =  data._biomesHumidityNoise?._octaves ?? 4
     this._biomesParams.splice(0)
     this._biomesParams.push(
       ...(data._biomesParams ?? []).map((rbp: any) => {

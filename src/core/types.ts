@@ -23,7 +23,7 @@ export enum GradientMode {
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
-export type BiomeRect = {
+export type Rect = {
   x: number
   y: number
   w: number

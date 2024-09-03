@@ -130,7 +130,7 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
           oct: data.biomesTemperatureNoise.octaves,
         },
       },
-      u_humi_mode: { value: GradientMode.REALISTIC },
+      u_humi_mode: { value: data.biomesHumidityMode },
       u_humi_noise: {
         value: {
           type: data.biomesHumidityNoise.noiseType,
@@ -140,7 +140,6 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
           oct: data.biomesHumidityNoise.octaves,
         },
       },
-      //u_humi_tex: { value: humiTex },
     },
     THREE.MeshStandardMaterial,
   )

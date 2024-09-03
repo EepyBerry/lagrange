@@ -15,6 +15,7 @@ export class BiomeParameters extends ChangeTracker {
   private _tempMax: number = 1.0
   private _humiMin: number = 0.0
   private _humiMax: number = 1.0
+  private _smoothness: number = 0.2
   private _color: Color
 
   constructor(
@@ -54,40 +55,49 @@ export class BiomeParameters extends ChangeTracker {
     return this._tempMin
   }
   public set tempMin(value: number) {
-    this._tempMin = value
+    this._tempMin = clamp(value, 0.0, 1.0)
     this._tempMax = clamp(this._tempMax, this._tempMin, 1)
-    this.markForChange(this._changePrefix)
+    this.markForChange(`${this._changePrefix}|${this._id}`)
   }
   public get tempMax(): number {
     return this._tempMax
   }
   public set tempMax(value: number) {
-    this._tempMax = value
+    this._tempMax = clamp(value, 0.0, 1.0)
     this._tempMin = clamp(this._tempMin, 0, this._tempMax)
-    this.markForChange(this._changePrefix)
+    this.markForChange(`${this._changePrefix}|${this._id}`)
   }
 
   public get humiMin(): number {
     return this._humiMin
   }
   public set humiMin(value: number) {
-    this._humiMin = value
+    this._humiMin = clamp(value, 0.0, 1.0)
     this._humiMax = clamp(this._humiMax, this._humiMin, 1)
-    this.markForChange(this._changePrefix)
+    this.markForChange(`${this._changePrefix}|${this._id}`)
   }
   public get humiMax(): number {
     return this._humiMax
   }
   public set humiMax(value: number) {
-    this._humiMax = value
+    this._humiMax = clamp(value, 0.0, 1.0)
     this._humiMin = clamp(this._humiMin, 0, this._humiMax)
-    this.markForChange(this._changePrefix)
+    this.markForChange(`${this._changePrefix}|${this._id}`)
   }
+
   public get color(): Color {
     return this._color
   }
   public set color(value: Color) {
     this._color.set(value)
-    this.markForChange(this._changePrefix)
+    this.markForChange(`${this._changePrefix}|${this._id}`)
+  }
+
+  public get smoothness(): number {
+    return this._smoothness
+  }
+  public set smoothness(value: number) {
+    this._smoothness = clamp(value, 0.0, 1.0)
+    this.markForChange(`${this._changePrefix}|${this._id}`)
   }
 }

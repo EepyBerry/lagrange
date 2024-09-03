@@ -390,7 +390,20 @@ function updatePlanet() {
   if (LG_PLANET_DATA.value.changedProps.length === 0) {
     return
   }
-  for (const key of LG_PLANET_DATA.value.changedProps) {
+
+  const planetMaterial = _planet.material as CustomShaderMaterial
+  const atmosphereMaterial = _atmosphere.material as CustomShaderMaterial
+  const cloudsMaterial = _clouds.material as CustomShaderMaterial
+  for (let key of LG_PLANET_DATA.value.changedProps) {
+
+    // Check for additional info, separated by |
+    let biomeId = undefined
+    if (key.includes('|')) {
+      biomeId = (key.startsWith('_biomesParameters') ? key.split('|')[1] : undefined)
+      key = key.split('|')[0]
+    }
+
+    // Loop on changed props
     switch (key) {
       // --------------------------------------------------
       // |               Lighting settings                |
@@ -442,9 +455,9 @@ function updatePlanet() {
         const v = LG_PLANET_DATA.value.planetRadius
         const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / LG_HEIGHT_DIVIDER
         _planetGroup.scale.set(v, v, v)
-        setShaderMaterialUniform(_planet.material as CustomShaderMaterial, 'u_radius', v)
+        setShaderMaterialUniform(planetMaterial, 'u_radius', v)
         setShaderMaterialUniforms(
-          _atmosphere.material as CustomShaderMaterial,
+          atmosphereMaterial,
           ['u_surface_radius', 'u_radius'],
           [v, v + atmosHeight],
         )
@@ -466,7 +479,7 @@ function updatePlanet() {
       }
       case '_planetWaterRoughness': {
         setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
+          planetMaterial,
           'u_water_roughness',
           LG_PLANET_DATA.value.planetWaterRoughness,
         )
@@ -474,7 +487,7 @@ function updatePlanet() {
       }
       case '_planetWaterMetalness': {
         setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
+          planetMaterial,
           'u_water_metalness',
           LG_PLANET_DATA.value.planetWaterMetalness,
         )
@@ -482,7 +495,7 @@ function updatePlanet() {
       }
       case '_planetGroundRoughness': {
         setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
+          planetMaterial,
           'u_ground_roughness',
           LG_PLANET_DATA.value.planetGroundRoughness,
         )
@@ -490,7 +503,7 @@ function updatePlanet() {
       }
       case '_planetGroundMetalness': {
         setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
+          planetMaterial,
           'u_ground_metalness',
           LG_PLANET_DATA.value.planetGroundMetalness,
         )
@@ -498,7 +511,7 @@ function updatePlanet() {
       }
       case '_planetWaterLevel': {
         setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
+          planetMaterial,
           'u_water_level',
           LG_PLANET_DATA.value.planetWaterLevel,
         )
@@ -510,7 +523,7 @@ function updatePlanet() {
       // --------------------------------------------------
       case '_planetSurfaceShowBumps': {
         setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
+          planetMaterial,
           'u_bump',
           LG_PLANET_DATA.value.planetSurfaceShowBumps,
         )
@@ -518,40 +531,36 @@ function updatePlanet() {
       }
       case '_planetSurfaceBumpStrength': {
         setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
+          planetMaterial,
           'u_bump_strength',
           LG_PLANET_DATA.value.planetSurfaceBumpStrength,
         )
         break
       }
       case '_planetSurfaceNoise._frequency': {
-        const material = _planet.material as CustomShaderMaterial
-        setShaderMaterialUniform(material, 'u_gnd_noise', {
-          ...material.uniforms['u_gnd_noise'].value,
+        setShaderMaterialUniform(planetMaterial, 'u_gnd_noise', {
+          ...planetMaterial.uniforms['u_gnd_noise'].value,
           freq: LG_PLANET_DATA.value.planetSurfaceNoise.frequency,
         })
         break
       }
       case '_planetSurfaceNoise._amplitude': {
-        const material = _planet.material as CustomShaderMaterial
-        setShaderMaterialUniform(material, 'u_gnd_noise', {
-          ...material.uniforms['u_gnd_noise'].value,
+        setShaderMaterialUniform(planetMaterial, 'u_gnd_noise', {
+          ...planetMaterial.uniforms['u_gnd_noise'].value,
           amp: LG_PLANET_DATA.value.planetSurfaceNoise.amplitude,
         })
         break
       }
       case '_planetSurfaceNoise._lacunarity': {
-        const material = _planet.material as CustomShaderMaterial
-        setShaderMaterialUniform(material, 'u_gnd_noise', {
-          ...material.uniforms['u_gnd_noise'].value,
+        setShaderMaterialUniform(planetMaterial, 'u_gnd_noise', {
+          ...planetMaterial.uniforms['u_gnd_noise'].value,
           lac: LG_PLANET_DATA.value.planetSurfaceNoise.lacunarity,
         })
         break
       }
       case '_planetSurfaceNoise._octaves': {
-        const material = _planet.material as CustomShaderMaterial
-        setShaderMaterialUniform(material, 'u_gnd_noise', {
-          ...material.uniforms['u_gnd_noise'].value,
+        setShaderMaterialUniform(planetMaterial, 'u_gnd_noise', {
+          ...planetMaterial.uniforms['u_gnd_noise'].value,
           oct: LG_PLANET_DATA.value.planetSurfaceNoise.octaves,
         })
         break
@@ -559,7 +568,7 @@ function updatePlanet() {
       case '_planetSurfaceColorRamp': {
         const v = LG_PLANET_DATA.value.planetSurfaceColorRamp
         setShaderMaterialUniforms(
-          _planet.material as CustomShaderMaterial,
+          planetMaterial,
           ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
           [v.definedSteps.length, v.colors, v.factors],
         )
@@ -571,52 +580,79 @@ function updatePlanet() {
       // --------------------------------------------------
       case '_biomesEnabled': {
         setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
+          planetMaterial,
           'u_biomes',
           LG_PLANET_DATA.value.biomesEnabled,
         )
         break
       }
       case '_biomesTemperatureMode': {
-        const material = _planet.material as CustomShaderMaterial
-        setShaderMaterialUniform(material, 'u_temp_mode', LG_PLANET_DATA.value.biomesTemperatureMode)
+        setShaderMaterialUniform(planetMaterial, 'u_temp_mode', LG_PLANET_DATA.value.biomesTemperatureMode)
         break
       }
       case '_biomesTemperatureNoise._frequency': {
-        const material = _planet.material as CustomShaderMaterial
-        setShaderMaterialUniform(material, 'u_temp_noise', {
-          ...material.uniforms['u_temp_noise'].value,
+        setShaderMaterialUniform(planetMaterial, 'u_temp_noise', {
+          ...planetMaterial.uniforms['u_temp_noise'].value,
           lac: LG_PLANET_DATA.value.biomesTemperatureNoise.frequency,
         })
         break
       }
       case '_biomesTemperatureNoise._amplitude': {
-        const material = _planet.material as CustomShaderMaterial
-        setShaderMaterialUniform(material, 'u_temp_noise', {
-          ...material.uniforms['u_temp_noise'].value,
+        setShaderMaterialUniform(planetMaterial, 'u_temp_noise', {
+          ...planetMaterial.uniforms['u_temp_noise'].value,
           amp: LG_PLANET_DATA.value.biomesTemperatureNoise.amplitude,
         })
         break
       }
       case '_biomesTemperatureNoise._lacunarity': {
-        const material = _planet.material as CustomShaderMaterial
-        setShaderMaterialUniform(material, 'u_temp_noise', {
-          ...material.uniforms['u_temp_noise'].value,
+        setShaderMaterialUniform(planetMaterial, 'u_temp_noise', {
+          ...planetMaterial.uniforms['u_temp_noise'].value,
           lac: LG_PLANET_DATA.value.biomesTemperatureNoise.lacunarity,
         })
         break
       }
       case '_biomesTemperatureNoise._octaves': {
-        const material = _planet.material as CustomShaderMaterial
-        setShaderMaterialUniform(material, 'u_temp_noise', {
-          ...material.uniforms['u_temp_noise'].value,
+        setShaderMaterialUniform(planetMaterial, 'u_temp_noise', {
+          ...planetMaterial.uniforms['u_temp_noise'].value,
           oct: LG_PLANET_DATA.value.biomesTemperatureNoise.octaves,
+        })
+        break
+      }
+      case '_biomesHumidityMode': {
+        setShaderMaterialUniform(planetMaterial, 'u_humi_mode', LG_PLANET_DATA.value.biomesHumidityMode)
+        break
+      }
+      case '_biomesHumidityNoise._frequency': {
+        setShaderMaterialUniform(planetMaterial, 'u_humi_noise', {
+          ...planetMaterial.uniforms['u_humi_noise'].value,
+          lac: LG_PLANET_DATA.value.biomesHumidityNoise.frequency,
+        })
+        break
+      }
+      case '_biomesHumidityNoise._amplitude': {
+        setShaderMaterialUniform(planetMaterial, 'u_humi_noise', {
+          ...planetMaterial.uniforms['u_humi_noise'].value,
+          amp: LG_PLANET_DATA.value.biomesHumidityNoise.amplitude,
+        })
+        break
+      }
+      case '_biomesHumidityNoise._lacunarity': {
+        setShaderMaterialUniform(planetMaterial, 'u_humi_noise', {
+          ...planetMaterial.uniforms['u_humi_noise'].value,
+          lac: LG_PLANET_DATA.value.biomesHumidityNoise.lacunarity,
+        })
+        break
+      }
+      case '_biomesHumidityNoise._octaves': {
+        setShaderMaterialUniform(planetMaterial, 'u_humi_noise', {
+          ...planetMaterial.uniforms['u_humi_noise'].value,
+          oct: LG_PLANET_DATA.value.biomesHumidityNoise.octaves,
         })
         break
       }
       case '_biomesParameters': {
         recalculateBiomeTexture(_biomeData, 256, LG_PLANET_DATA.value.biomesParams as BiomeParameters[])
-        DebugUtils.biomeData = _biomeData
+        DebugUtils.biomeData.set(_biomeData, 0)
         _biomeDataTex.needsUpdate = true
         break
       }
@@ -638,45 +674,41 @@ function updatePlanet() {
         break
       }
       case '_cloudsNoise._frequency': {
-        const material = _clouds.material as CustomShaderMaterial
-        setShaderMaterialUniform(material, 'u_noise', {
-          ...material.uniforms['u_noise'].value,
+        setShaderMaterialUniform(cloudsMaterial, 'u_noise', {
+          ...cloudsMaterial.uniforms['u_noise'].value,
           freq: LG_PLANET_DATA.value.cloudsNoise.frequency,
         })
         break
       }
       case '_cloudsNoise._amplitude': {
-        const material = _clouds.material as CustomShaderMaterial
-        setShaderMaterialUniform(material, 'u_noise', {
-          ...material.uniforms['u_noise'].value,
+        setShaderMaterialUniform(cloudsMaterial, 'u_noise', {
+          ...cloudsMaterial.uniforms['u_noise'].value,
           amp: LG_PLANET_DATA.value.cloudsNoise.amplitude,
         })
         break
       }
       case '_cloudsNoise._lacunarity': {
-        const material = _clouds.material as CustomShaderMaterial
-        setShaderMaterialUniform(material, 'u_noise', {
-          ...material.uniforms['u_noise'].value,
+        setShaderMaterialUniform(cloudsMaterial, 'u_noise', {
+          ...cloudsMaterial.uniforms['u_noise'].value,
           lac: LG_PLANET_DATA.value.cloudsNoise.lacunarity,
         })
         break
       }
       case '_cloudsNoise._octaves': {
-        const material = _clouds.material as CustomShaderMaterial
-        setShaderMaterialUniform(material, 'u_noise', {
-          ...material.uniforms['u_noise'].value,
+        setShaderMaterialUniform(cloudsMaterial, 'u_noise', {
+          ...cloudsMaterial.uniforms['u_noise'].value,
           oct: LG_PLANET_DATA.value.cloudsNoise.octaves,
         })
         break
       }
       case '_cloudsColor': {
-        setShaderMaterialUniform(_clouds.material as CustomShaderMaterial, 'u_color', LG_PLANET_DATA.value.cloudsColor)
+        setShaderMaterialUniform(cloudsMaterial, 'u_color', LG_PLANET_DATA.value.cloudsColor)
         break
       }
       case '_cloudsColorRamp': {
         const v = LG_PLANET_DATA.value.cloudsColorRamp
         setShaderMaterialUniforms(
-          _clouds.material as CustomShaderMaterial,
+          cloudsMaterial,
           ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
           [v.definedSteps.length, v.colors, v.factors],
         )
@@ -694,7 +726,7 @@ function updatePlanet() {
       case '_atmosphereHeight': {
         const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / LG_HEIGHT_DIVIDER
         setShaderMaterialUniform(
-          _atmosphere.material as CustomShaderMaterial,
+          atmosphereMaterial,
           'u_radius',
           LG_PLANET_DATA.value.planetRadius + atmosHeight,
         )
@@ -702,7 +734,7 @@ function updatePlanet() {
       }
       case '_atmosphereDensityScale': {
         setShaderMaterialUniform(
-          _atmosphere.material as CustomShaderMaterial,
+          atmosphereMaterial,
           'u_density',
           LG_PLANET_DATA.value.atmosphereDensityScale / LG_HEIGHT_DIVIDER,
         )
@@ -710,7 +742,7 @@ function updatePlanet() {
       }
       case '_atmosphereIntensity': {
         setShaderMaterialUniform(
-          _atmosphere.material as CustomShaderMaterial,
+          atmosphereMaterial,
           'u_intensity',
           LG_PLANET_DATA.value.atmosphereIntensity,
         )
@@ -718,7 +750,7 @@ function updatePlanet() {
       }
       case '_atmosphereColorMode': {
         setShaderMaterialUniform(
-          _atmosphere.material as CustomShaderMaterial,
+          atmosphereMaterial,
           'u_color_mode',
           LG_PLANET_DATA.value.atmosphereColorMode,
         )
@@ -726,7 +758,7 @@ function updatePlanet() {
       }
       case '_atmosphereHue': {
         setShaderMaterialUniform(
-          _atmosphere.material as CustomShaderMaterial,
+          atmosphereMaterial,
           'u_hue',
           LG_PLANET_DATA.value.atmosphereHue,
         )
@@ -734,7 +766,7 @@ function updatePlanet() {
       }
       case '_atmosphereTint': {
         setShaderMaterialUniform(
-          _atmosphere.material as CustomShaderMaterial,
+          atmosphereMaterial,
           'u_tint',
           LG_PLANET_DATA.value.atmosphereTint,
         )
