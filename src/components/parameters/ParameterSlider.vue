@@ -34,4 +34,14 @@ input.lg {
 input.lg:not([type='checkbox'], [type='radio'], [type='range']) {
   width: 3rem;
 }
+
+@media screen and (max-width: 567px) {
+  label {
+    grid-column: span 2;
+    margin-bottom: -0.375rem;
+  }
+  .lg {
+    grid-column: span 2;
+  }
+}
 </style>

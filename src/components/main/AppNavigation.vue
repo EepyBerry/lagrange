@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { EventBus } from '@/core/services/event-bus'
+import { EventBus } from '@/core/event-bus'
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 

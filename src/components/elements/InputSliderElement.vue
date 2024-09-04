@@ -186,4 +186,19 @@ input.lg[type='range'] {
     }
   }
 }
+
+@media screen and (max-width: 567px) {
+  .lg-input-wrapper, .lg-input-wrapper-slider {
+    width: 100%;
+  }
+  input.lg[type='range'] {
+    width: 100%;
+    text-align: end;
+    flex: 1;
+  }
+  input.lg[type='number'] {
+    width: 4rem;
+    min-width: 4rem;
+  }
+}
 </style>

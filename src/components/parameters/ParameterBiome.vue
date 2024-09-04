@@ -6,7 +6,7 @@
           <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.5rem" aria-hidden="true" />
         </button>
         <span class="current-color" :style="{ backgroundColor: `#${lgParam?.color?.getHexString()}` }"></span>
-        <span class="biome-index">{{ $t('main.planet_data.biome') }} [{{ getPartialId() }}]</span>
+        <span class="biome-index">{{ getPartialId() }}</span>
       </div>
       <span class="biome-actions">
         <button class="lg" @click="$emit('moveup', lgParam!.id)" :disabled="index === 0">
@@ -128,7 +128,7 @@ function getPartialId() {
 
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  padding: 0.75rem;
 
   &.expanded > .biome-header .indicator {
     transform: rotateZ(90deg);
@@ -142,7 +142,6 @@ function getPartialId() {
     gap: 0.5rem;
     .biome-index {
       font-weight: 400;
-      font-size: 1rem;
     }
     .biome-info, .biome-actions {
       display: flex;

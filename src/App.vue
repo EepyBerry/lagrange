@@ -23,7 +23,7 @@ import { mapLocale } from './utils/utils'
 import { useHead } from '@unhead/vue'
 import { A11Y_ANIMATE } from './core/globals'
 import AppToastBar from './components/main/AppToastBar.vue'
-import { EventBus } from './core/services/event-bus'
+import { EventBus } from './core/event-bus'
 
 const i18n = useI18n()
 useHead({

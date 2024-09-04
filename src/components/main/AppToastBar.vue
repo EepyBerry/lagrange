@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { ref, watch, type Ref } from 'vue'
 import ToastElement from '../elements/ToastElement.vue'
-import { EventBus } from '@/core/services/event-bus'
+import { EventBus } from '@/core/event-bus'
 import type { InfoLevel } from '@/core/types'
 
 const toastType: Ref<InfoLevel> = ref('info')

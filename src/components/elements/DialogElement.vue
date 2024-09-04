@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { EventBus } from '@core/services/event-bus'
+import { EventBus } from '@core/event-bus'
 import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue'
 
 const dialog: Ref<HTMLDialogElement | null> = ref(null)

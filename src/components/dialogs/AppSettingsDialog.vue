@@ -211,7 +211,7 @@ import NotificationElement from '../elements/NotificationElement.vue'
 import ParameterCategory from '../parameters/ParameterCategory.vue'
 import AppClearDataConfirmDialog from './AppClearDataConfirmDialog.vue'
 import { clearData } from '@/utils/dexie-utils'
-import { EventBus } from '@/core/services/event-bus'
+import { EventBus } from '@/core/event-bus'
 
 const i18n = useI18n()
 
