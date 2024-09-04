@@ -9,6 +9,12 @@ struct NoiseParameters {
     float lac;
     int oct;
 };
+struct PBRParameters {
+    float wrough;
+    float wmetal;
+    float grough;
+    float gmetal;
+};
 
 // Noise uniforms
 uniform float u_radius;
@@ -21,10 +27,7 @@ uniform float u_bump_strength;
 
 // Water & roughness/metalness uniforms
 uniform float u_water_level;
-uniform float u_water_roughness;
-uniform float u_ground_roughness;
-uniform float u_water_metalness;
-uniform float u_ground_metalness;
+uniform PBRParameters u_pbr_params;
 
 // Biome uniforms
 uniform bool u_biomes;
@@ -39,10 +42,8 @@ uniform float[16] u_cr_positions;
 uniform vec3[16] u_cr_colors;
 uniform int u_cr_size;
 
-in vec2 vUv;
-in vec3 vPos;
-in vec3 vTangent;
-in vec3 vBitangent;
+// Packed varyings (uv, position, tangent, bitangent)
+in mat4 vTransform;
 
 @import functions/fbm;
 @import functions/color_utils;
@@ -50,12 +51,9 @@ in vec3 vBitangent;
 
 // Biome function
 vec3 apply_biomes(float t, float h, vec3 color) {
-    float bias = 0.1;
     vec3 biomeColor = color;
-
     vec2 texCoord = vec2(h, t);
     vec4 texel = texture2D(u_biomes_tex, texCoord);
-
     biomeColor = mix(color, texel.xyz, texel.w);
     return biomeColor;
 }
@@ -63,15 +61,20 @@ vec3 apply_biomes(float t, float h, vec3 color) {
 // Bump mapping function, pretty mediocre but enough for a start...
 // Calculates height derivatives, then perturbs the normal according to these values
 vec3 apply_bump(float height) {
-    vec3 dx = vTangent * u_bump_offset;
-    vec3 dy = vBitangent * u_bump_offset;
+    vec3 vPos = vTransform[1].xyz;
+    vec3 dx = vTransform[2].xyz * u_bump_offset;
+    vec3 dy = vTransform[3].xyz * u_bump_offset;
     float dxHeight = fbm3(vPos + dx, u_gnd_noise.freq, u_gnd_noise.amp, u_gnd_noise.lac, u_gnd_noise.oct);
     float dyHeight = fbm3(vPos + dy, u_gnd_noise.freq, u_gnd_noise.amp, u_gnd_noise.lac, u_gnd_noise.oct);
     return perturb_normal(vPos, dx, dy, height, dxHeight, dyHeight, u_radius, u_bump_strength);
 }
 
 void main() {
-    // temperature
+    // Initial values
+    vec3 vPos = vTransform[1].xyz;
+    vec3 color = vec3(0.0);
+
+    // Temperature
     float FLAG_POLAR_TEMP = step(0.5, float(u_temp_mode));
     float FLAG_NOISE_TEMP = step(1.5, float(u_temp_mode));
     float ty = mix(abs(vPos.y), vPos.y, FLAG_POLAR_TEMP);
@@ -79,16 +82,13 @@ void main() {
     float tHeight = mix(adjustedTy, 1.0, FLAG_NOISE_TEMP);
     tHeight *= fbm3(vPos, u_temp_noise.freq, u_temp_noise.amp, u_temp_noise.lac, u_temp_noise.oct);
 
-    // humidity
+    // Humidity
     float FLAG_POLAR_HUMI = step(0.5, float(u_humi_mode));
     float FLAG_NOISE_HUMI = step(1.5, float(u_humi_mode));
     float hy = mix(abs(vPos.y), vPos.y, FLAG_POLAR_HUMI);
     float adjustedHy = smoothstep(-FLAG_POLAR_HUMI, 1.0, hy);
     float hHeight = mix(adjustedHy, 1.0, FLAG_NOISE_HUMI);
     hHeight *= fbm3(vPos, u_humi_noise.freq, u_humi_noise.amp, u_humi_noise.lac, u_humi_noise.oct);
-
-    // initial color (always black)
-    vec3 color = vec3(0.0);
 
     // Initial heightmap & flags
     float height = fbm3(vPos, u_gnd_noise.freq, u_gnd_noise.amp, u_gnd_noise.lac, u_gnd_noise.oct);
@@ -104,7 +104,7 @@ void main() {
 
     // Set outputs
     csm_Bump = mix(vNormal, apply_bump(height), FLAG_LAND);
-    csm_Roughness = mix(u_water_roughness, u_ground_roughness, FLAG_LAND);
-    csm_Metalness = mix(u_water_metalness, u_ground_metalness, FLAG_LAND);
+    csm_Roughness = mix(u_pbr_params.wrough, u_pbr_params.grough, FLAG_LAND);
+    csm_Metalness = mix(u_pbr_params.wmetal, u_pbr_params.gmetal, FLAG_LAND);
     csm_DiffuseColor = vec4(color, 1.0);
 }

@@ -15,7 +15,7 @@ import {
   AXIS_Y,
   AXIS_X,
 } from '@core/globals'
-import { ColorMode, GeometryType, GradientMode, type DataTextureWrapper } from '@core/types'
+import { ColorMode, GeometryType, type DataTextureWrapper } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
 import {
   createAmbientightComponent,
@@ -96,11 +96,15 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
     {
       // Planet & Rendering
       u_radius: { value: 1.0 },
-      u_water_roughness: { value: data.planetWaterRoughness },
-      u_water_metalness: { value: data.planetWaterMetalness },
-      u_ground_roughness: { value: data.planetGroundRoughness },
-      u_ground_metalness: { value: data.planetGroundMetalness },
       u_water_level: { value: data.planetWaterLevel },
+      u_pbr_params: {
+        value: {
+          wrough: data.planetWaterRoughness,
+          wmetal: data.planetWaterMetalness,
+          grough: data.planetGroundRoughness,
+          gmetal: data.planetGroundMetalness
+        }
+      },
       // Surface
       u_bump: { value: data.planetSurfaceShowBumps },
       u_bump_strength: { value: data.planetSurfaceBumpStrength },
@@ -144,6 +148,7 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
     THREE.MeshStandardMaterial,
   )
   material.depthTest = false
+  console.log(material)
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true

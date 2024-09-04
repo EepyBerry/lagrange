@@ -478,35 +478,31 @@ function updatePlanet() {
         break
       }
       case '_planetWaterRoughness': {
-        setShaderMaterialUniform(
-          planetMaterial,
-          'u_water_roughness',
-          LG_PLANET_DATA.value.planetWaterRoughness,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_pbr_params', {
+          ...planetMaterial.uniforms['u_pbr_params'].value,
+          wrough: LG_PLANET_DATA.value.planetWaterRoughness,
+        })
         break
       }
       case '_planetWaterMetalness': {
-        setShaderMaterialUniform(
-          planetMaterial,
-          'u_water_metalness',
-          LG_PLANET_DATA.value.planetWaterMetalness,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_pbr_params', {
+          ...planetMaterial.uniforms['u_pbr_params'].value,
+          wmetal: LG_PLANET_DATA.value.planetWaterMetalness,
+        })
         break
       }
       case '_planetGroundRoughness': {
-        setShaderMaterialUniform(
-          planetMaterial,
-          'u_ground_roughness',
-          LG_PLANET_DATA.value.planetGroundRoughness,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_pbr_params', {
+          ...planetMaterial.uniforms['u_pbr_params'].value,
+          grough: LG_PLANET_DATA.value.planetGroundRoughness,
+        })
         break
       }
       case '_planetGroundMetalness': {
-        setShaderMaterialUniform(
-          planetMaterial,
-          'u_ground_metalness',
-          LG_PLANET_DATA.value.planetGroundMetalness,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_pbr_params', {
+          ...planetMaterial.uniforms['u_pbr_params'].value,
+          gmetal: LG_PLANET_DATA.value.planetGroundMetalness,
+        })
         break
       }
       case '_planetWaterLevel': {
