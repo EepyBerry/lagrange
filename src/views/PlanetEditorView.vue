@@ -28,6 +28,7 @@ import {
   SM_WIDTH_THRESHOLD,
   LG_NAME_AMBLIGHT,
   SUN_INIT_POS,
+  BIOME_TEXTURE_SIZE,
 } from '@core/globals'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
@@ -647,7 +648,7 @@ function updatePlanet() {
         break
       }
       case '_biomesParameters': {
-        recalculateBiomeTexture(_biomeData, 256, LG_PLANET_DATA.value.biomesParams as BiomeParameters[])
+        recalculateBiomeTexture(_biomeData, BIOME_TEXTURE_SIZE, LG_PLANET_DATA.value.biomesParams as BiomeParameters[])
         DebugUtils.biomeData.set(_biomeData, 0)
         _biomeDataTex.needsUpdate = true
         break

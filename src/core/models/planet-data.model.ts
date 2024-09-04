@@ -737,6 +737,7 @@ export default class PlanetData extends ChangeTracker {
           },
           new Color(rbp._color)
         )
+        nbp.id = rbp._id ? rbp._id : nbp.id
         return nbp
       }),
     )

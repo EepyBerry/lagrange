@@ -12,6 +12,7 @@
     },
 
     "planet_data": {
+      "biome": "Biome",
       "biome_type_arctic": "Arctic",
       "biome_type_tundra": "Tundra",
       "biome_type_temperate": "Temperate",

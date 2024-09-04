@@ -12,6 +12,7 @@
     },
 
     "planet_data": {
+      "biome": "Biome",
       "biome_type_arctic": "Awctic",
       "biome_type_tundra": "Tundwa",
       "biome_type_temperate": "Tempewate",

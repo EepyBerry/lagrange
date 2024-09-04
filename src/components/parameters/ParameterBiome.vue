@@ -6,6 +6,7 @@
           <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.5rem" aria-hidden="true" />
         </button>
         <span class="current-color" :style="{ backgroundColor: `#${lgParam?.color?.getHexString()}` }"></span>
+        <span class="biome-index">{{ $t('main.planet_data.biome') }} [{{ getPartialId() }}]</span>
       </div>
       <span class="biome-actions">
         <button class="lg" @click="$emit('moveup', lgParam!.id)" :disabled="index === 0">
@@ -24,14 +25,14 @@
       <hr class="info-divider" />
       <div class="biome-type">
         <strong>{{ $t('editor.controls.biomes.biome_type') }}:</strong>
-        <span>
+        <div>
           <iconify-icon icon="mingcute:high-temperature-line" height="1.25rem" />
-          {{ getBiomeTemperatureType() }},
-        </span>
-        <span>
+          <span>{{ getBiomeTemperatureType() }},</span>
+        </div>
+        <div>
           <iconify-icon icon="material-symbols:humidity-mid" height="1.25rem" />
-          {{ getBiomeHumidityType() }}
-        </span>
+          <span>{{ getBiomeHumidityType() }}</span>
+        </div>
       </div>
       <hr class="info-divider" />
       <ParameterDivider />
@@ -111,6 +112,10 @@ function getBiomeHumidityType() {
   }
 }
 
+function getPartialId() {
+  return lgParam.value?.id.substring(0, 6)
+}
+
 </script>
 <style scoped lang="scss">
 .biome-grid {
@@ -135,6 +140,10 @@ function getBiomeHumidityType() {
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
+    .biome-index {
+      font-weight: 400;
+      font-size: 1rem;
+    }
     .biome-info, .biome-actions {
       display: flex;
       align-items: center;
@@ -151,8 +160,14 @@ function getBiomeHumidityType() {
       display: flex;
       align-items: center;
       gap: 0.5rem;
+
+      span {
+        max-width: 16ch;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
     }
-    .biome-type > span {
+    .biome-type > div {
       display: flex;
       align-items: center;
       gap: 0.25rem;
@@ -169,8 +184,8 @@ function getBiomeHumidityType() {
 .current-color {
   display: inline-flex;
   align-self: center;
-  width: 4rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 4px;
   border: 1px solid var(--lg-accent);
 }

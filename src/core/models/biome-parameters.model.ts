@@ -50,6 +50,9 @@ export class BiomeParameters extends ChangeTracker {
   public get id(): string {
     return this._id
   }
+  public set id(id: string) {
+    this._id = id
+  }
   
   public get tempMin(): number {
     return this._tempMin

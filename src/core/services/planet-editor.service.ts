@@ -14,6 +14,7 @@ import {
   LG_NAME_SUN,
   AXIS_Y,
   AXIS_X,
+  BIOME_TEXTURE_SIZE,
 } from '@core/globals'
 import { ColorMode, GeometryType, type DataTextureWrapper } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
@@ -88,7 +89,7 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
   const geometry = createGeometryComponent(GeometryType.SPHERE)
   geometry.computeTangents()
 
-  const biomeTex = createBiomeTexture(256, data.biomesParams)
+  const biomeTex = createBiomeTexture(BIOME_TEXTURE_SIZE, data.biomesParams)
 
   const material = createShaderMaterialComponent(
     planetVertShader,

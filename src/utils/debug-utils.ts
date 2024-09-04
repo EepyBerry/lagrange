@@ -1,3 +1,4 @@
+import { BIOME_TEXTURE_SIZE } from "@/core/globals"
 import { saveAs } from "file-saver"
 
 /**
@@ -5,7 +6,7 @@ import { saveAs } from "file-saver"
  */
 export class DebugUtils {
   
-  static biomeData: Uint8Array = new Uint8Array(256 * 256 * 4)
+  static biomeData: Uint8Array = new Uint8Array(BIOME_TEXTURE_SIZE * BIOME_TEXTURE_SIZE * 4)
 
   /**
    * Downloads the current biome data in RAW format (32 BPP format)
