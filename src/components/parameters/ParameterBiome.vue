@@ -153,6 +153,7 @@ function getPartialId() {
     display: grid;
     grid-template-columns: auto auto;
     align-items: center;
+    gap: 0.5rem;
 
     .biome-type {
       grid-column: span 2;
@@ -196,6 +197,17 @@ strong {
   .biome-grid {
     gap: 0 8px;
     font-size: 1rem;
+  }
+}
+@media screen and (max-width: 767px) {
+  .biome-grid {
+    .biome-content {
+      .biome-type {
+        font-size: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+    }
   }
 }
 </style>

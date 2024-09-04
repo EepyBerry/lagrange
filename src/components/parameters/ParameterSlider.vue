@@ -25,6 +25,7 @@ type SliderExtras = 'rgb' | undefined
 <style scoped lang="scss">
 label {
   grid-column: 1;
+  text-wrap: nowrap;
 }
 input.lg {
   grid-column: 2;
