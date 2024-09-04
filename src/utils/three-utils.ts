@@ -62,7 +62,6 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
       w: biomeRect.w - biomeSmoothing[0] * (2 - biomeOverlaps[3]) * (1 - biomeOverlaps[1]),
       h: biomeRect.h - biomeSmoothing[1] * (2 - biomeOverlaps[0]) * (1 - biomeOverlaps[2]),
     }
-    console.log(biome.id +' ' +biomeOverlaps)
 
     // Adjust strides depending on starting temp & humi
     cellStride = biomeRect.x * 4

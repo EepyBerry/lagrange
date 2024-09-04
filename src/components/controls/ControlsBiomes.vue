@@ -161,7 +161,6 @@ import { Color } from 'three'
 import { DebugUtils } from '@/utils/debug-utils'
 
 function moveBiome(idx: number, diff: 1 | -1) {
-  console.log('sdlfhsdlfsfd: '+diff)
   var element = LG_PLANET_DATA.value.biomesParams[idx];
   LG_PLANET_DATA.value.biomesParams.splice(idx, 1);
   LG_PLANET_DATA.value.biomesParams.splice(idx + diff, 0, element);
