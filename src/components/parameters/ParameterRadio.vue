@@ -15,7 +15,8 @@ p {
   grid-column: span 2;
   display: flex;
   align-items: center;
-  height: 2rem;
+  min-height: 2rem;
+  height: 100%;
   justify-content: flex-end;
   gap: 2px;
   background: var(--lg-button-active);
