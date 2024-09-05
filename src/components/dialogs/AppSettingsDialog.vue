@@ -245,7 +245,9 @@ defineExpose({
 })
 
 onMounted(async () => {
-  persistStorage.value = await navigator.storage.persisted()
+  if (navigator.storage) {
+    persistStorage.value = await navigator.storage.persisted()
+  }
 })
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

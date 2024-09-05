@@ -282,6 +282,7 @@
   },
   "toast": {
     "storage_success": "Persistent storage enabled!",
+    "storage_failure_none": "Persistent storage not supported on this browser!",
     "storage_failure_rules": "Could not enable persistent storage due to browser rules!",
     "delete_success": "Deleted planet successfully!",
     "delete_failure": "Could not delete planet",

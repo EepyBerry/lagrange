@@ -104,7 +104,7 @@ void main() {
     color = mix(color, apply_biomes(tHeight, hHeight, color), FLAG_BIOMES);
 
     // Set outputs
-    csm_Bump = mix(vNormal, apply_bump(height), FLAG_LAND);
+    csm_Bump = mix(vNormal, apply_bump(height), FLAG_LAND * float(u_bump));
     csm_Roughness = mix(u_pbr_params.wrough, u_pbr_params.grough, FLAG_LAND);
     csm_Metalness = mix(u_pbr_params.wmetal, u_pbr_params.gmetal, FLAG_LAND);
     csm_DiffuseColor = vec4(color, 1.0);

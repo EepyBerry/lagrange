@@ -285,6 +285,7 @@
   },
   "toast": {
     "storage_success": "Pewsistent stowage enyabwed!",
+    "storage_failure_none": "P-pewsistent stowage not suppowted o-on this bwowsew ;w;",
     "storage_failure_rules": "C-couwd not enyabwe pewsistent stowage d-due to bwowsew wules ;w;",
     "delete_success": "Deweted pwanyet successfuwwy! ÒwÓ",
     "delete_failure": "Couwd nyot dewete pwanyet ;;w;;",

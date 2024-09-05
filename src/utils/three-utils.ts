@@ -10,3 +10,7 @@ export function setShaderMaterialUniforms(mat: CustomShaderMaterial, unames: str
     mat.uniforms[unames[i]] = { value: uvalues[i] }
   }
 }
+
+export function toRangeFactor(min: number, max: number, n: number) {
+  
+}

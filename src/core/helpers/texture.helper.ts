@@ -18,9 +18,9 @@ function fillRamp(data: Uint8Array, w: number, steps: ColorRampStep[]) {
     const step = steps[i]
     const nextStep = steps[i+1]
 
-    const totalPixels = w*4
-    const stepX = parseFloat((step.factor / w).toFixed(4))
-    const nextStepX = parseFloat((nextStep.factor / w).toFixed(4))
+    const stepX = parseFloat((step.factor * w).toFixed(4))
+    const nextStepX = parseFloat((nextStep.factor * w).toFixed(4))
+    const totalPixels = (nextStepX-stepX) * 4
 
     let currentColor: Color = step.color
     const nextColor: Color = nextStep.color

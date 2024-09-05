@@ -86,6 +86,10 @@ async function disableInitDialog() {
 }
 
 async function enablePersistence() {
+  if (!navigator.storage) {
+    EventBus.sendToastEvent('warn', 'toast.storage_failure_none', 3000)
+    return
+  }
   const enabled = await navigator.storage.persist()
   if (enabled) {
     EventBus.sendToastEvent('success', 'toast.storage_success', 3000)
