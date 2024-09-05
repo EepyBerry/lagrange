@@ -30,7 +30,7 @@ import { LensFlareEffect } from '@core/three/lens-flare.effect'
 import PlanetData from '@core/models/planet-data.model'
 import { ref } from 'vue'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
-import { createBiomeTexture } from '@/utils/three-utils'
+import { createBiomeTexture } from '../helpers/texture.helper'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())

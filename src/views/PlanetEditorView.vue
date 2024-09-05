@@ -40,7 +40,7 @@ import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config'
 import { EventBus } from '@/core/event-bus'
 import { useI18n } from 'vue-i18n'
 import AppNavigation from '@/components/main/AppNavigation.vue'
-import { recalculateBiomeTexture, setShaderMaterialUniform, setShaderMaterialUniforms } from '@/utils/three-utils'
+import { setShaderMaterialUniform, setShaderMaterialUniforms } from '@/utils/three-utils'
 import { useRoute, useRouter } from 'vue-router'
 import PlanetData from '@/core/models/planet-data.model'
 import {
@@ -63,6 +63,7 @@ import WebGL from 'three/addons/capabilities/WebGL.js'
 import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
 import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
 import { DebugUtils } from '@/utils/debug-utils'
+import { recalculateBiomeTexture } from '@/core/helpers/texture.helper'
 
 const route = useRoute()
 const router = useRouter()

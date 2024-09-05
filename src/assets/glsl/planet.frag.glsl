@@ -41,6 +41,7 @@ uniform sampler2D u_biomes_tex;
 uniform float[16] u_cr_positions;
 uniform vec3[16] u_cr_colors;
 uniform int u_cr_size;
+uniform sampler2D u_surface_tex;
 
 // Packed varyings (uv, position, tangent, bitangent)
 in mat4 vTransform;

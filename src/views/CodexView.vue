@@ -64,7 +64,7 @@ import { saveAs } from 'file-saver'
 import PlanetData from '@/core/models/planet-data.model'
 import JSZip from 'jszip'
 import NewCardElement from '@/components/elements/NewCardElement.vue'
-import { readFileData } from '@/core/import.helper'
+import { readFileData } from '@/core/helpers/import.helper'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)

@@ -1,5 +1,5 @@
 import type { IDBPlanet } from '@/dexie.config'
-import PlanetData from './models/planet-data.model'
+import PlanetData from '../models/planet-data.model'
 import pako from 'pako'
 import { nanoid } from 'nanoid'
 
