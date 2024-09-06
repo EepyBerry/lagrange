@@ -1,5 +1,4 @@
 import type { DataTexture } from 'three'
-import type { ColorRamp } from './models/color-ramp.model'
 
 export enum GeometryType {
   SPHERE,

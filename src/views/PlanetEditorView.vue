@@ -536,29 +536,29 @@ function updatePlanet() {
         break
       }
       case '_planetSurfaceNoise._frequency': {
-        setShaderMaterialUniform(planetMaterial, 'u_gnd_noise', {
-          ...planetMaterial.uniforms['u_gnd_noise'].value,
+        setShaderMaterialUniform(planetMaterial, 'u_surface_noise', {
+          ...planetMaterial.uniforms['u_surface_noise'].value,
           freq: LG_PLANET_DATA.value.planetSurfaceNoise.frequency,
         })
         break
       }
       case '_planetSurfaceNoise._amplitude': {
-        setShaderMaterialUniform(planetMaterial, 'u_gnd_noise', {
-          ...planetMaterial.uniforms['u_gnd_noise'].value,
+        setShaderMaterialUniform(planetMaterial, 'u_surface_noise', {
+          ...planetMaterial.uniforms['u_surface_noise'].value,
           amp: LG_PLANET_DATA.value.planetSurfaceNoise.amplitude,
         })
         break
       }
       case '_planetSurfaceNoise._lacunarity': {
-        setShaderMaterialUniform(planetMaterial, 'u_gnd_noise', {
-          ...planetMaterial.uniforms['u_gnd_noise'].value,
+        setShaderMaterialUniform(planetMaterial, 'u_surface_noise', {
+          ...planetMaterial.uniforms['u_surface_noise'].value,
           lac: LG_PLANET_DATA.value.planetSurfaceNoise.lacunarity,
         })
         break
       }
       case '_planetSurfaceNoise._octaves': {
-        setShaderMaterialUniform(planetMaterial, 'u_gnd_noise', {
-          ...planetMaterial.uniforms['u_gnd_noise'].value,
+        setShaderMaterialUniform(planetMaterial, 'u_surface_noise', {
+          ...planetMaterial.uniforms['u_surface_noise'].value,
           oct: LG_PLANET_DATA.value.planetSurfaceNoise.octaves,
         })
         break
@@ -585,7 +585,10 @@ function updatePlanet() {
         break
       }
       case '_biomesTemperatureMode': {
-        setShaderMaterialUniform(planetMaterial, 'u_temp_mode', LG_PLANET_DATA.value.biomesTemperatureMode)
+        setShaderMaterialUniform(planetMaterial, 'u_temp_noise', {
+          ...planetMaterial.uniforms['u_temp_noise'].value,
+          mode: LG_PLANET_DATA.value.biomesTemperatureMode,
+        })
         break
       }
       case '_biomesTemperatureNoise._frequency': {
@@ -617,7 +620,10 @@ function updatePlanet() {
         break
       }
       case '_biomesHumidityMode': {
-        setShaderMaterialUniform(planetMaterial, 'u_humi_mode', LG_PLANET_DATA.value.biomesHumidityMode)
+        setShaderMaterialUniform(planetMaterial, 'u_humi_noise', {
+          ...planetMaterial.uniforms['u_humi_noise'].value,
+          mode: LG_PLANET_DATA.value.biomesHumidityMode,
+        })
         break
       }
       case '_biomesHumidityNoise._frequency': {

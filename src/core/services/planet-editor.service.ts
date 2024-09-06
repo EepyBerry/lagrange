@@ -110,7 +110,7 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
       u_bump: { value: data.planetSurfaceShowBumps },
       u_bump_strength: { value: data.planetSurfaceBumpStrength },
       u_bump_offset: { value: 0.005 },
-      u_gnd_noise: {
+      u_surface_noise: {
         value: {
           type: data.planetSurfaceNoise.noiseType,
           freq: data.planetSurfaceNoise.frequency,
@@ -125,9 +125,9 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
       // Biomes
       u_biomes: { value: data.biomesEnabled },
       u_biomes_tex: { value: biomeTex.texture },
-      u_temp_mode: { value: data.biomesTemperatureMode },
       u_temp_noise: {
         value: {
+          mode: data.biomesTemperatureMode,
           type: data.biomesTemperatureNoise.noiseType,
           freq: data.biomesTemperatureNoise.frequency,
           amp: data.biomesTemperatureNoise.amplitude,
@@ -135,9 +135,9 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
           oct: data.biomesTemperatureNoise.octaves,
         },
       },
-      u_humi_mode: { value: data.biomesHumidityMode },
       u_humi_noise: {
         value: {
+          mode: data.biomesHumidityMode,
           type: data.biomesHumidityNoise.noiseType,
           freq: data.biomesHumidityNoise.frequency,
           amp: data.biomesHumidityNoise.amplitude,
