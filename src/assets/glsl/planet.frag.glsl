@@ -98,6 +98,7 @@ void main() {
     // Render noise as color
     color += height;
     color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
+    //color = texture2D(u_surface_tex, vec2(height, 0.5)).xyz;
 
     // Render biomes
     color = mix(color, apply_biomes(tHeight, hHeight, color), FLAG_BIOMES);

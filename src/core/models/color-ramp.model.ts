@@ -115,7 +115,7 @@ export class ColorRamp extends ChangeTracker {
     return this.computeSteps().map((s) => s.factor)
   }
 
-  public get definedSteps() {
+  public get definedSteps(): ColorRampStep[] {
     return this._steps
   }
 

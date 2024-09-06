@@ -15,6 +15,7 @@ import {
   AXIS_Y,
   AXIS_X,
   BIOME_TEXTURE_SIZE,
+  SURFACE_TEXTURE_SIZE,
 } from '@core/globals'
 import { ColorMode, GeometryType, type DataTextureWrapper } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
@@ -30,7 +31,7 @@ import { LensFlareEffect } from '@core/three/lens-flare.effect'
 import PlanetData from '@core/models/planet-data.model'
 import { ref } from 'vue'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
-import { createBiomeTexture } from '../helpers/texture.helper'
+import { createBiomeTexture, createSurfaceTexture } from '../helpers/texture.helper'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -89,6 +90,7 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
   const geometry = createGeometryComponent(GeometryType.SPHERE)
   geometry.computeTangents()
 
+  const surfaceTex = createSurfaceTexture(SURFACE_TEXTURE_SIZE, data.planetSurfaceColorRamp.definedSteps)
   const biomeTex = createBiomeTexture(BIOME_TEXTURE_SIZE, data.biomesParams)
 
   const material = createShaderMaterialComponent(
@@ -119,6 +121,7 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
           oct: data.planetSurfaceNoise.octaves,
         },
       },
+      u_surface_tex: { value: surfaceTex },
       u_cr_colors: { value: data.planetSurfaceColorRamp.colors },
       u_cr_positions: { value: data.planetSurfaceColorRamp.factors },
       u_cr_size: { value: data.planetSurfaceColorRampSize },
@@ -153,7 +156,7 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
   mesh.name = LG_NAME_PLANET
-  return { mesh, texs: [biomeTex] }
+  return { mesh, texs: [surfaceTex, biomeTex] }
 }
 
 export function createClouds(data: PlanetData): THREE.Mesh {

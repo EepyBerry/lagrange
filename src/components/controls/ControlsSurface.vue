@@ -1,5 +1,9 @@
 <template>
   <ParameterGrid>
+    <button class="lg debug" style="padding: 0 0.5rem" @click="DebugUtils.getRawSurfaceData">
+      <iconify-icon icon="material-symbols:code-rounded" aria-hidden="true" />
+      get tex
+    </button>
     <ParameterCategory top>{{ $t('editor.controls.surface.bumpmap') }}</ParameterCategory>
     <ParameterCheckbox
       v-model="LG_PLANET_DATA.planetSurfaceShowBumps"
@@ -52,4 +56,5 @@ import ParameterCategory from '@components/parameters/ParameterCategory.vue'
 import ParameterColorRamp from '@components/parameters/ParameterColorRamp.vue'
 import ParameterDivider from '@components/parameters/ParameterDivider.vue'
 import type { ColorRamp } from '@/core/models/color-ramp.model'
+import { DebugUtils } from '@/utils/debug-utils'
 </script>

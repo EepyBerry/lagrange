@@ -48,10 +48,6 @@ export function normalizeUInt8ArrayPixels(buffer: Uint8Array, w: number, h: numb
   return result
 }
 
-export function lerp(start: number, end: number, fac: number): number {
-  return (1 - fac) * start + fac * end
-}
-
 export function isWithinRect(rect: Rect, x: number, y: number): boolean {
   return x >= rect.x && y >= rect.y && x < (rect.x+rect.w) && y < (rect.y+rect.h)
 }

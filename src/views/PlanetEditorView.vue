@@ -29,6 +29,7 @@ import {
   LG_NAME_AMBLIGHT,
   SUN_INIT_POS,
   BIOME_TEXTURE_SIZE,
+  SURFACE_TEXTURE_SIZE,
 } from '@core/globals'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
@@ -63,7 +64,8 @@ import WebGL from 'three/addons/capabilities/WebGL.js'
 import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
 import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
 import { DebugUtils } from '@/utils/debug-utils'
-import { recalculateBiomeTexture } from '@/core/helpers/texture.helper'
+import { recalculateBiomeTexture, recalculateSurfaceTexture } from '@/core/helpers/texture.helper'
+import type { ColorRampStep } from '@/core/models/color-ramp.model'
 
 const route = useRoute()
 const router = useRouter()
@@ -104,6 +106,8 @@ let _ambLight: THREE.AmbientLight
 let _lensFlare: LensFlareEffect
 
 // DataTextures
+let _surfaceData: Uint8Array
+let _surfaceDataTex: THREE.DataTexture
 let _biomeData: Uint8Array
 let _biomeDataTex: THREE.DataTexture
 
@@ -227,8 +231,10 @@ function initPlanet(): void {
   _planetGroup = pivot
 
   // Set datatextures + data
-  _biomeData = planet.texs[0].data
-  _biomeDataTex = planet.texs[0].texture
+  _surfaceData = planet.texs[0].data
+  _surfaceDataTex = planet.texs[0].texture
+  _biomeData = planet.texs[1].data
+  _biomeDataTex = planet.texs[1].texture
 
   // Set initial rotations
   _planetGroup.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
@@ -565,11 +571,14 @@ function updatePlanet() {
       }
       case '_planetSurfaceColorRamp': {
         const v = LG_PLANET_DATA.value.planetSurfaceColorRamp
-        setShaderMaterialUniforms(
+        /* setShaderMaterialUniforms(
           planetMaterial,
           ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
           [v.definedSteps.length, v.colors, v.factors],
-        )
+        ) */
+        recalculateSurfaceTexture(_surfaceData, SURFACE_TEXTURE_SIZE, v.definedSteps as ColorRampStep[])
+        _surfaceDataTex.needsUpdate = true
+        DebugUtils.surfaceData.set(_surfaceData, 0)
         break
       }
 

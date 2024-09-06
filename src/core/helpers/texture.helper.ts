@@ -3,32 +3,44 @@ import type { Rect, DataTextureWrapper } from '@/core/types'
 import { findRectOverlaps, isWithinRect } from '@/utils/math-utils'
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
-import { saveAs } from 'file-saver'
+import { lerp } from 'three/src/math/MathUtils.js'
 
-export function createRampTexture(w: number, steps: ColorRampStep[]) {
+export function createSurfaceTexture(w: number, steps: ColorRampStep[]): DataTextureWrapper {
   const data = new Uint8Array(w * 4)
   if (steps.length > 0) {
-    fillRamp(data, w, steps)
+    fillSurface(data, w, steps)
   }
+  const dt = new DataTexture(data, w, 1)
+  dt.needsUpdate = true
+  return { texture: dt, data }
 }
 
-function fillRamp(data: Uint8Array, w: number, steps: ColorRampStep[]) {
+export function recalculateSurfaceTexture(data: Uint8Array, w: number, steps: ColorRampStep[]): void {
+  if (steps.length === 0) {
+    return
+  }
+  data.fill(0)
+  fillSurface(data, w, steps)
+}
+
+function fillSurface(data: Uint8Array, w: number, steps: ColorRampStep[]) {
   let stride = 0
   for (let i = 0; i < steps.length-1; i++) {
-    const step = steps[i]
-    const nextStep = steps[i+1]
+    const step = steps[i].clone()
+    const nextStep = steps[i+1].clone()
 
     const stepX = parseFloat((step.factor * w).toFixed(4))
     const nextStepX = parseFloat((nextStep.factor * w).toFixed(4))
-    const totalPixels = (nextStepX-stepX) * 4
+    const totalPixels = Math.ceil(nextStepX-stepX)
 
-    let currentColor: Color = step.color
+    const currentColor: Color = step.color
     const nextColor: Color = nextStep.color
+    let lerpColor = currentColor
     for (let px = 0; px < totalPixels; px++) {
-      currentColor = currentColor.lerp(nextColor, 1.0)
-      data[stride] = currentColor.r * 255
-      data[stride + 1] = currentColor.g * 255
-      data[stride + 2] = currentColor.b * 255
+      lerpColor = nextColor
+      data[stride] = 1 * 255
+      data[stride + 1] = 0 * 255
+      data[stride + 2] = 0 * 255
       data[stride + 3] = 255
       stride += 4
     }
