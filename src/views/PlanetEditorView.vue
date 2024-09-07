@@ -64,7 +64,7 @@ import WebGL from 'three/addons/capabilities/WebGL.js'
 import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
 import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
 import { DebugUtils } from '@/utils/debug-utils'
-import { recalculateBiomeTexture, recalculateSurfaceTexture } from '@/core/helpers/texture.helper'
+import { recalculateBiomeTexture, recalculateRampTexture } from '@/core/helpers/texture.helper'
 import type { ColorRampStep } from '@/core/models/color-ramp.model'
 
 const route = useRoute()
@@ -108,6 +108,8 @@ let _lensFlare: LensFlareEffect
 // DataTextures
 let _surfaceData: Uint8Array
 let _surfaceDataTex: THREE.DataTexture
+let _cloudsData: Uint8Array
+let _cloudsDataTex: THREE.DataTexture
 let _biomeData: Uint8Array
 let _biomeDataTex: THREE.DataTexture
 
@@ -222,17 +224,19 @@ function initPlanet(): void {
   const atmosphere = createAtmosphere(LG_PLANET_DATA.value as PlanetData, _sunLight.position)
   const pivot = new THREE.Group()
   pivot.add(planet.mesh)
-  pivot.add(clouds)
+  pivot.add(clouds.mesh)
   pivot.add(atmosphere)
   $se.scene.add(pivot)
   _planet = planet.mesh
-  _clouds = clouds
+  _clouds = clouds.mesh
   _atmosphere = atmosphere
   _planetGroup = pivot
 
   // Set datatextures + data
   _surfaceData = planet.texs[0].data
   _surfaceDataTex = planet.texs[0].texture
+  _cloudsData = clouds.texs[0].data
+  _cloudsDataTex = clouds.texs[0].texture
   _biomeData = planet.texs[1].data
   _biomeDataTex = planet.texs[1].texture
 
@@ -514,11 +518,10 @@ function updatePlanet() {
         break
       }
       case '_planetWaterLevel': {
-        setShaderMaterialUniform(
-          planetMaterial,
-          'u_water_level',
-          LG_PLANET_DATA.value.planetWaterLevel,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_pbr_params', {
+          ...planetMaterial.uniforms['u_pbr_params'].value,
+          wlevel: LG_PLANET_DATA.value.planetWaterLevel,
+        })
         break
       }
 
@@ -571,12 +574,7 @@ function updatePlanet() {
       }
       case '_planetSurfaceColorRamp': {
         const v = LG_PLANET_DATA.value.planetSurfaceColorRamp
-        /* setShaderMaterialUniforms(
-          planetMaterial,
-          ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
-          [v.definedSteps.length, v.colors, v.factors],
-        ) */
-        recalculateSurfaceTexture(_surfaceData, SURFACE_TEXTURE_SIZE, v.definedSteps as ColorRampStep[])
+        recalculateRampTexture(_surfaceData, SURFACE_TEXTURE_SIZE, v.steps as ColorRampStep[])
         _surfaceDataTex.needsUpdate = true
         DebugUtils.surfaceData.set(_surfaceData, 0)
         break
@@ -720,11 +718,9 @@ function updatePlanet() {
       }
       case '_cloudsColorRamp': {
         const v = LG_PLANET_DATA.value.cloudsColorRamp
-        setShaderMaterialUniforms(
-          cloudsMaterial,
-          ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
-          [v.definedSteps.length, v.colors, v.factors],
-        )
+        recalculateRampTexture(_cloudsData, SURFACE_TEXTURE_SIZE, v.steps as ColorRampStep[])
+        _cloudsDataTex.needsUpdate = true
+        DebugUtils.cloudsData.set(_surfaceData, 0)
         break
       }
 

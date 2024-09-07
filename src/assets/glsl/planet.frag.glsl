@@ -11,14 +11,14 @@ struct NoiseParameters {
     int oct;
 };
 struct PBRParameters {
+    float wlevel;
     float wrough;
     float wmetal;
     float grough;
     float gmetal;
 };
 
-// Water & roughness/metalness uniforms
-uniform float u_water_level;
+// Water level & roughness/metalness
 uniform PBRParameters u_pbr_params;
 
 // Noise uniforms
@@ -37,16 +37,10 @@ uniform NoiseParameters u_temp_noise;
 uniform NoiseParameters u_humi_noise;
 uniform sampler2D u_biomes_tex;
 
-// Color ramp uniforms
-uniform float[16] u_cr_positions;
-uniform vec3[16] u_cr_colors;
-uniform int u_cr_size;
-
 // Packed varyings (uv, position, tangent, bitangent)
 in mat4 vTransform;
 
 @import functions/fbm;
-@import functions/color_utils;
 @import functions/normal_utils;
 
 // Biome function
@@ -92,13 +86,12 @@ void main() {
 
     // Initial heightmap & flags
     float height = fbm3(vPos, u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
-    float FLAG_LAND = step(u_water_level, height);
+    float FLAG_LAND = step(u_pbr_params.wlevel, height);
     float FLAG_BIOMES = FLAG_LAND * float(u_biomes);
 
     // Render noise as color
     color += height;
-    color = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, color.x);
-    //color = texture2D(u_surface_tex, vec2(height, 0.5)).xyz;
+    color = texture2D(u_surface_tex, vec2(color.x, 0.5)).xyz;
 
     // Render biomes
     color = mix(color, apply_biomes(tHeight, hHeight, color), FLAG_BIOMES);

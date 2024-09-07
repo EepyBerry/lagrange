@@ -34,4 +34,5 @@ export const AXIS_NZ = new Vector3(0, 0, -1)
 // Miscellaneous
 export const SUN_INIT_POS = new Vector3(0, 0, 4e3)
 export const SURFACE_TEXTURE_SIZE = 512
+export const CLOUDS_TEXTURE_SIZE = 512
 export const BIOME_TEXTURE_SIZE = 512

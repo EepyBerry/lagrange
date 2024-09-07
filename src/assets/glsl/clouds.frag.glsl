@@ -11,14 +11,9 @@ struct NoiseParameters {
 };
 
 // Main uniforms
-uniform int u_octaves;
 uniform NoiseParameters u_noise;
 uniform vec3 u_color;
-
-// Color ramp uniforms
-uniform float[16] u_cr_positions;
-uniform vec3[16] u_cr_colors;
-uniform int u_cr_size;
+uniform sampler2D u_opacity_tex;
 
 in vec3 vPos;
 
@@ -40,8 +35,8 @@ void main() {
         discard;
     }
     opacity += fbm3(vPos + wOpacity, u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct);
+    opacity = texture2D(u_opacity_tex, vec2(opacity.x, 0.5)).xyz;
 
-    opacity = color_ramp(u_cr_colors, u_cr_positions, u_cr_size, opacity.x);
     csm_Metalness = 0.5;
     csm_Roughness = 1.0;
     csm_DiffuseColor = vec4(u_color, opacity.x);

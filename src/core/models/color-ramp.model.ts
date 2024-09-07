@@ -86,17 +86,14 @@ export class ColorRamp extends ChangeTracker {
 
   clone(): ColorRamp {
     const clonedSteps: ColorRampStep[] = []
-    this.definedSteps.forEach((s) => clonedSteps.push(s.clone()))
+    this.steps.forEach((s) => clonedSteps.push(s.clone()))
     return new ColorRamp([], this._changePrefix, clonedSteps, this._maxSize, this._lockedSize)
   }
 
-  public get steps() {
-    return this.computeSteps()
+  public get steps(): ColorRampStep[] {
+    return this._steps
   }
-  public set steps(steps: ColorRampStep[]) {
-    this._steps.splice(0)
-    this._steps.push(...steps)
-  }
+
   public get maxSize() {
     return this._maxSize
   }
@@ -107,34 +104,7 @@ export class ColorRamp extends ChangeTracker {
     this._lockedSize = value
   }
 
-  public get colors() {
-    return this.computeSteps().map((s) => s.color)
-  }
-
-  public get factors() {
-    return this.computeSteps().map((s) => s.factor)
-  }
-
-  public get definedSteps(): ColorRampStep[] {
-    return this._steps
-  }
-
-  public get definedColors() {
-    return this._steps.map((s) => s.color)
-  }
-
-  public get definedFactors() {
-    return this._steps.map((s) => s.factor)
-  }
-
   // Utility functions
-
-  private computeSteps() {
-    const maxStep = this._steps.find((s) => numberEquals(s.factor, 1))
-    const computed = Array.from(this._steps).sort((a, b) => a.factor - b.factor)
-    computed.push(...Array(this._maxSize - this._steps.length).fill(maxStep))
-    return computed
-  }
 
   public sortSteps() {
     this._steps.sort((a, b) => a.factor - b.factor)

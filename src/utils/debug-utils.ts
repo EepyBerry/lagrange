@@ -1,4 +1,4 @@
-import { BIOME_TEXTURE_SIZE, SURFACE_TEXTURE_SIZE } from "@/core/globals"
+import { BIOME_TEXTURE_SIZE, CLOUDS_TEXTURE_SIZE, SURFACE_TEXTURE_SIZE } from "@/core/globals"
 import { saveAs } from "file-saver"
 
 /**
@@ -7,6 +7,7 @@ import { saveAs } from "file-saver"
 export class DebugUtils {
   
   static surfaceData: Uint8Array = new Uint8Array(SURFACE_TEXTURE_SIZE * 4)
+  static cloudsData: Uint8Array = new Uint8Array(CLOUDS_TEXTURE_SIZE * 4)
   static biomeData: Uint8Array = new Uint8Array(BIOME_TEXTURE_SIZE * BIOME_TEXTURE_SIZE * 4)
 
   /**

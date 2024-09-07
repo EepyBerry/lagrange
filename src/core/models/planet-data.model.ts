@@ -239,7 +239,7 @@ export default class PlanetData extends ChangeTracker {
     this.markForChange('_planetSurfaceColorRamp')
   }
   public get planetSurfaceColorRampSize() {
-    return this._planetSurfaceColorRamp.definedSteps.length
+    return this._planetSurfaceColorRamp.steps.length
   }
 
   // --------------------------------------------------
@@ -351,7 +351,7 @@ export default class PlanetData extends ChangeTracker {
     return this._cloudsColorRamp
   }
   public get cloudsColorRampSize(): number {
-    return this._cloudsColorRamp.definedSteps.length
+    return this._cloudsColorRamp.steps.length
   }
 
   // --------------------------------------------------

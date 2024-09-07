@@ -34,7 +34,6 @@
           <span>{{ getBiomeHumidityType() }}</span>
         </div>
       </div>
-      <hr class="info-divider" />
       <ParameterDivider />
       <ParameterSlider v-model="lgParam!.tempMin" :id="lgParam!.id + '-b-tmin'" :step="0.005" :min="0" :max="1">
         {{ $t('editor.controls.biomes.temperature_min') }}
@@ -160,6 +159,8 @@ function getPartialId() {
       grid-column: span 2;
       display: flex;
       align-items: center;
+      justify-content: center;
+      text-align: center;
       gap: 0.5rem;
 
       span {
@@ -176,7 +177,7 @@ function getPartialId() {
   }
   hr.info-divider {
     grid-column: span 2;
-    margin: 1rem 0;
+    margin: 0.75rem 0;
   }
   hr.action-divider {
     height: 1.25rem;
@@ -205,7 +206,6 @@ strong {
     .biome-content {
       .biome-type {
         font-size: 1rem;
-        justify-content: center;
         flex-wrap: wrap;
       }
     }

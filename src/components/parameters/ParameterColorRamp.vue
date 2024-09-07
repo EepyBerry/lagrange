@@ -4,7 +4,7 @@
   </p>
   <div class="container">
     <div ref="htmlColorRamp" class="color-ramp" @click="togglePanel">
-      <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
+      <template v-for="step of lgColorRamp?.steps" :key="step.id">
         <span
           ref="htmlColorSteps"
           class="color-step"
@@ -28,7 +28,7 @@
     </button>
   </div>
   <table v-show="panelOpen" class="panel-table">
-    <template v-for="step of lgColorRamp?.definedSteps" :key="step.id">
+    <template v-for="step of lgColorRamp?.steps" :key="step.id">
       <tr>
         <td class="action">
           <button
@@ -147,7 +147,7 @@ const pickerIdInitColor = ref('')
 
 const $props = defineProps<{ mode?: 'rgb' | 'rgba' | 'opacity' }>()
 watch(
-  () => lgColorRamp.value?.definedSteps,
+  () => lgColorRamp.value?.steps,
   () => updateRamp(),
 )
 onMounted(() => updateRamp())
@@ -158,8 +158,8 @@ function updateRamp() {
   }
   const gradient: string[] = []
   const alphaGradient: string[] = []
-  for (let i = 0; i < lgColorRamp.value!.definedSteps.length; i++) {
-    const step = lgColorRamp.value!.definedSteps[i]
+  for (let i = 0; i < lgColorRamp.value!.steps.length; i++) {
+    const step = lgColorRamp.value!.steps[i]
     const rgb = step.color.getHexString()
     const a = Math.ceil(step.alpha * 255).toString(16)
     gradient.push(`#${rgb} ${step.factor * 100.0}%`)

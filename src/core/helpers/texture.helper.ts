@@ -3,44 +3,42 @@ import type { Rect, DataTextureWrapper } from '@/core/types'
 import { findRectOverlaps, isWithinRect } from '@/utils/math-utils'
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
-import { lerp } from 'three/src/math/MathUtils.js'
 
-export function createSurfaceTexture(w: number, steps: ColorRampStep[]): DataTextureWrapper {
+export function createRampTexture(w: number, steps: ColorRampStep[]): DataTextureWrapper {
   const data = new Uint8Array(w * 4)
   if (steps.length > 0) {
-    fillSurface(data, w, steps)
+    fillRamp(data, w, steps)
   }
   const dt = new DataTexture(data, w, 1)
   dt.needsUpdate = true
   return { texture: dt, data }
 }
 
-export function recalculateSurfaceTexture(data: Uint8Array, w: number, steps: ColorRampStep[]): void {
+export function recalculateRampTexture(data: Uint8Array, w: number, steps: ColorRampStep[]): void {
   if (steps.length === 0) {
     return
   }
   data.fill(0)
-  fillSurface(data, w, steps)
+  fillRamp(data, w, steps)
 }
 
-function fillSurface(data: Uint8Array, w: number, steps: ColorRampStep[]) {
+function fillRamp(data: Uint8Array, w: number, steps: ColorRampStep[]) {
   let stride = 0
+  let currentStep, nextStep
   for (let i = 0; i < steps.length-1; i++) {
-    const step = steps[i].clone()
-    const nextStep = steps[i+1].clone()
+    currentStep = steps[i].clone()
+    nextStep = steps[i+1].clone()
 
-    const stepX = parseFloat((step.factor * w).toFixed(4))
+    const currentStepX = parseFloat((currentStep.factor * w).toFixed(4))
     const nextStepX = parseFloat((nextStep.factor * w).toFixed(4))
-    const totalPixels = Math.ceil(nextStepX-stepX)
-
-    const currentColor: Color = step.color
-    const nextColor: Color = nextStep.color
-    let lerpColor = currentColor
+    const totalPixels = Math.ceil(nextStepX - currentStepX)
+    
+    const lerpColor = new Color(0x0)
     for (let px = 0; px < totalPixels; px++) {
-      lerpColor = nextColor
-      data[stride] = 1 * 255
-      data[stride + 1] = 0 * 255
-      data[stride + 2] = 0 * 255
+      lerpColor.lerpColors(currentStep.color, nextStep.color, parseFloat((px/totalPixels).toFixed(4)))
+      data[stride] = Math.floor(lerpColor.r * 255.0)
+      data[stride + 1] = Math.floor(lerpColor.g * 255.0)
+      data[stride + 2] = Math.floor(lerpColor.b * 255.0)
       data[stride + 3] = 255
       stride += 4
     }
