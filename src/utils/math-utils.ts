@@ -52,6 +52,13 @@ export function isWithinRect(rect: Rect, x: number, y: number): boolean {
   return x >= rect.x && y >= rect.y && x < (rect.x+rect.w) && y < (rect.y+rect.h)
 }
 
+export function findRectDistance(rect: Rect, x: number, y: number): number {
+  return Math.hypot(x,y,
+    Math.max(rect.x, Math.min(x, rect.x+rect.w)),
+    Math.max(rect.y, Math.min(y, rect.y+rect.h))
+  )
+}
+
 /**
  * Finds overlaps on a given w*h plane's borders with a given Rect
  * @param w 

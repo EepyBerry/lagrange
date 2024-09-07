@@ -235,7 +235,8 @@
         "temperature_min": "Min. temperature",
         "temperature_max": "Max. temperature",
         "humidity_min": "Min. humidity",
-        "humidity_max": "Max. humidity"
+        "humidity_max": "Max. humidity",
+        "smoothness": "Smoothness"
       },
       "clouds": {
         "$title": "Clouds",

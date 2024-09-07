@@ -238,7 +238,8 @@
         "temperature_min": "Min. tempewatuwe",
         "temperature_max": "Max. tempewatuwe",
         "humidity_min": "Min. humidity",
-        "humidity_max": "Max. humidity"
+        "humidity_max": "Max. humidity",
+        "smoothness": "Smoothnyess"
       },
       "clouds": {
         "$title": "Cwouds",

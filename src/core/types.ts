@@ -28,6 +28,10 @@ export type Rect = {
   w: number
   h: number
 }
+export type Point = {
+  x: number
+  y: number
+}
 
 export type DataTextureWrapper = {
   texture: DataTexture
