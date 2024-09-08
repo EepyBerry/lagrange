@@ -27,6 +27,15 @@ export function avg(...values: number[]) {
 }
 
 /**
+ * Simple float truncating function
+ * @param a the number to truncate
+ * @param multPrecision the precision as an integer (e.g. 10000 => .toFixed(4))
+ */
+export function truncateTo(a: number, multPrecision: number): number {
+  return Math.trunc(a*multPrecision)/multPrecision
+}
+
+/**
  * Simple clamp function.
  * @param n the number to clamp
  * @param min minimum value

@@ -1,6 +1,6 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import type { Rect, DataTextureWrapper, Point } from '@/core/types'
-import { avg, findMinDistanceToRect, findRectOverlaps } from '@/utils/math-utils'
+import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 
@@ -29,13 +29,13 @@ function fillRamp(data: Uint8Array, w: number, steps: ColorRampStep[]) {
     currentStep = steps[i].clone()
     nextStep = steps[i+1].clone()
 
-    const currentStepX = parseFloat((currentStep.factor * w).toFixed(4))
-    const nextStepX = parseFloat((nextStep.factor * w).toFixed(4))
+    const currentStepX = truncateTo(currentStep.factor * w, 1e4)
+    const nextStepX = truncateTo(nextStep.factor * w, 1e4)
     const totalPixels = Math.ceil(nextStepX - currentStepX)
 
     const lerpColor = new Color(0x0)
     for (let px = 0; px < totalPixels; px++) {
-      lerpColor.lerpColors(currentStep.color, nextStep.color, parseFloat((px/totalPixels).toFixed(4)))
+      lerpColor.lerpColors(currentStep.color, nextStep.color, truncateTo(px/totalPixels, 1e4))
       data[stride] = Math.floor(lerpColor.r * 255.0)
       data[stride + 1] = Math.floor(lerpColor.g * 255.0)
       data[stride + 2] = Math.floor(lerpColor.b * 255.0)
@@ -102,7 +102,7 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
       data[lineStride + cellStride + 2] = b
       data[lineStride + cellStride + 3] = rectDistance >= biomeAvgSmoothness
         ? data[lineStride + cellStride + 3] = 255
-        : parseFloat((rectDistance/biomeAvgSmoothness).toFixed(4)) * 255.0
+        : truncateTo(rectDistance/biomeAvgSmoothness, 1e4) * 255.0
 
       cellStride += 4
       pixelCoords.x++
