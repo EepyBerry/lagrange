@@ -23,6 +23,7 @@ export class BiomeParameters extends ChangeTracker {
     changePrefix: string,
     dims: BiomeDimensions,
     color: Color,
+    smoothness: number,
   ) {
     super(changedPropsRef, changePrefix)
     this._id = nanoid()
@@ -31,6 +32,7 @@ export class BiomeParameters extends ChangeTracker {
     this._humiMin = dims.humidityMin
     this._humiMax = dims.humidityMax
     this._color = new Color(color)
+    this._smoothness = smoothness
   }
 
   clone(): BiomeParameters {
@@ -44,6 +46,7 @@ export class BiomeParameters extends ChangeTracker {
         humidityMax: this._humiMax,
       },
       this._color.clone(),
+      this._smoothness
     )
   }
 

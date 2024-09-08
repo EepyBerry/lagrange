@@ -234,10 +234,6 @@ export default class PlanetData extends ChangeTracker {
   public get planetSurfaceColorRamp(): ColorRamp {
     return this._planetSurfaceColorRamp
   }
-  public set planetSurfaceColorRamp(ramp: ColorRamp) {
-    this._planetSurfaceColorRamp.steps = ramp.steps
-    this.markForChange('_planetSurfaceColorRamp')
-  }
   public get planetSurfaceColorRampSize() {
     return this._planetSurfaceColorRamp.steps.length
   }
@@ -460,7 +456,7 @@ export default class PlanetData extends ChangeTracker {
     this._planetGeometryType = GeometryType.SPHERE
     this._planetMeshQuality = 48.0
     this._planetRadius = 1.0
-    this._planetAxialTilt = 15.0
+    this._planetAxialTilt = -15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
     this._planetWaterMetalness = 0.5
@@ -507,10 +503,10 @@ export default class PlanetData extends ChangeTracker {
       this._changedProps,
       '_biomesHumidityNoise',
       NoiseType.FBM,
-      3.5,
-      1.25,
-      3.0,
-      3,
+      2.25,
+      0.95,
+      2.25,
+      4,
     )
     this._biomesParams = [
       new BiomeParameters(
@@ -519,10 +515,11 @@ export default class PlanetData extends ChangeTracker {
         {
           temperatureMin: 0.0,
           temperatureMax: 0.08,
-          humidityMin: 0.85,
+          humidityMin: 0.7,
           humidityMax: 1.0
         },
-        new Color(0xffffff)
+        new Color(0xffffff),
+        0.25
       ),
       new BiomeParameters(
         this._changedProps,
@@ -533,7 +530,8 @@ export default class PlanetData extends ChangeTracker {
           humidityMin: 0.0,
           humidityMax: 0.25
         },
-        new Color(0xbaa345)
+        new Color(0xbaa345),
+        0.25
       ),
     ]
 
@@ -576,7 +574,7 @@ export default class PlanetData extends ChangeTracker {
     this._planetGeometryType = GeometryType.SPHERE
     this._planetMeshQuality = 48.0
     this._planetRadius = 1.0
-    this._planetAxialTilt = 15.0
+    this._planetAxialTilt = -15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
     this._planetWaterMetalness = 0.5
@@ -609,7 +607,7 @@ export default class PlanetData extends ChangeTracker {
     this._biomesTemperatureNoise.lacunarity = 2.5
     this._biomesTemperatureNoise.octaves = 4
     this._biomesHumidityNoise.frequency = 2.25
-    this._biomesHumidityNoise.amplitude = 1.5
+    this._biomesHumidityNoise.amplitude = 0.95
     this._biomesHumidityNoise.lacunarity = 2.25
     this._biomesHumidityNoise.octaves = 4
     this._biomesParams.splice(0)
@@ -621,10 +619,11 @@ export default class PlanetData extends ChangeTracker {
           {
             temperatureMin: 0.0,
             temperatureMax: 0.08,
-            humidityMin: 0.85,
-            humidityMax: 1.0
+            humidityMin: 0.7,
+            humidityMax: 1.0,
           },
-          new Color(0xffffff)
+          new Color(0xffffff),
+          0.25
         ),
         new BiomeParameters(
           this._changedProps,
@@ -633,9 +632,10 @@ export default class PlanetData extends ChangeTracker {
             temperatureMin: 0.6,
             temperatureMax: 1.0,
             humidityMin: 0.0,
-            humidityMax: 0.25
+            humidityMax: 0.65
           },
-          new Color(0xbaa345)
+          new Color(0xbaa345),
+          0.25
         ),
       ],
     )
@@ -682,7 +682,7 @@ export default class PlanetData extends ChangeTracker {
 
     // Planet & Rendering
     this._planetRadius = data._planetRadius ?? 1.0
-    this._planetAxialTilt = data._planetAxialTilt ?? 15.0
+    this._planetAxialTilt = data._planetAxialTilt ?? -15.0
     this._planetRotation = data._planetRotation ?? 0.0
     this._planetWaterRoughness = data._planetWaterRoughness ?? 0.55
     this._planetWaterMetalness = data._planetWaterMetalness ?? 0.5
@@ -720,7 +720,7 @@ export default class PlanetData extends ChangeTracker {
     this._biomesTemperatureNoise.octaves = data._biomesTemperatureNoise?._octaves ?? 2
     this._biomesHumidityMode = data._biomesHumidityMode ?? GradientMode.REALISTIC
     this._biomesHumidityNoise.frequency = data._biomesHumidityNoise?._frequency ?? 2.25
-    this._biomesHumidityNoise.amplitude = data._biomesHumidityNoise?._amplitude ?? 1.5
+    this._biomesHumidityNoise.amplitude = data._biomesHumidityNoise?._amplitude ?? 0.95
     this._biomesHumidityNoise.lacunarity =  data._biomesHumidityNoise?._lacunarity ?? 2.25
     this._biomesHumidityNoise.octaves =  data._biomesHumidityNoise?._octaves ?? 4
     this._biomesParams.splice(0)
@@ -733,9 +733,10 @@ export default class PlanetData extends ChangeTracker {
             temperatureMin: rbp._tempMin ?? 0.0,
             temperatureMax: rbp._tempMax ?? 0.5,
             humidityMin: rbp._humiMin ?? 0.0,
-            humidityMax: rbp._humiMax ?? 0.5,
+            humidityMax: rbp._humiMax ?? 1.0,
           },
-          new Color(rbp._color)
+          new Color(rbp._color),
+          rbp._smoothness ?? 0.25
         )
         nbp.id = rbp._id ? rbp._id : nbp.id
         return nbp

@@ -15,6 +15,18 @@ export function isNumeric(n: string | number | boolean): boolean {
 }
 
 /**
+ * Simple average function
+ * @param values the values to average
+ * @returns the average of the given values
+ */
+export function avg(...values: number[]) {
+  if (values.length === 0) {
+    return 0
+  }
+  return values.reduce((prev, cur) => prev + cur, 0) / values.length
+}
+
+/**
  * Simple clamp function.
  * @param n the number to clamp
  * @param min minimum value
@@ -89,11 +101,4 @@ export function findMinDistanceToRect(rect: Rect, x: number, y: number, overlaps
     overlaps[2] > 0 ? 1e3 : rh-y
   ]
   return Math.min(...distances)
-}
-
-export function avg(...values: number[]) {
-  if (values.length === 0) {
-    return 0
-  }
-  return values.reduce((prev, cur) => prev + cur, 0) / values.length
 }
