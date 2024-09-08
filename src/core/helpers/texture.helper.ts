@@ -1,6 +1,6 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
-import type { Rect, DataTextureWrapper } from '@/core/types'
-import { findRectDistance, findRectOverlaps, isWithinRect } from '@/utils/math-utils'
+import type { Rect, DataTextureWrapper, Point } from '@/core/types'
+import { avg, findMinDistanceToRect, findRectOverlaps } from '@/utils/math-utils'
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 
@@ -80,15 +80,8 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
     const maxBiomeX = (biomeRect.x + biomeRect.w) * 4
 
     // Pre-calculate smoothing data
-    const biomeSmoothing = [biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness]
+    const biomeAvgSmoothness = avg(...[biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness])
     const biomeOverlaps = findRectOverlaps(w, w, biomeRect)
-    const biomeOpaqueZone: Rect = {
-      x: biomeRect.x + biomeSmoothing[0] * (1 - biomeOverlaps[3]),
-      y: biomeRect.y + biomeSmoothing[1] * (1 - biomeOverlaps[0]),
-      w: biomeRect.w - biomeSmoothing[0] * (2 - biomeOverlaps[3]) * (1 - biomeOverlaps[1]),
-      h: biomeRect.h - biomeSmoothing[1] * (2 - biomeOverlaps[0]) * (1 - biomeOverlaps[2]),
-    }
-    //const maxBiomeOpaqueZoneDistance = Math.hypot(biomeRect.x, biomeRect.y, biomeOpaqueZone.x, biomeOpaqueZone.y)
 
     // Adjust strides depending on starting temp & humi
     cellStride = biomeRect.x * 4
@@ -99,30 +92,26 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
     const g = Math.floor(biome.color.g * 255.0)
     const b = Math.floor(biome.color.b * 255.0)
 
-    const pixelCoords = [biomeRect.x, biomeRect.y]
-    //let biomeOpaqueZoneDistance, relativeSmoothness
-    for (let biomePx = 0; biomePx < totalPixels; biomePx++) {
-      if (isWithinRect(biomeOpaqueZone, pixelCoords[0], pixelCoords[1])) {
-        data[lineStride + cellStride] = r
-        data[lineStride + cellStride + 1] = g
-        data[lineStride + cellStride + 2] = b
-        data[lineStride + cellStride + 3] = 255
-      } else {
-        //biomeOpaqueZoneDistance = findRectDistance(biomeOpaqueZone, pixelCoords[0], pixelCoords[1])
-        //relativeSmoothness = parseFloat((biomeOpaqueZoneDistance/maxBiomeOpaqueZoneDistance).toFixed(4)) * 255.0
-        data[lineStride + cellStride] = r
-        data[lineStride + cellStride + 1] = g
-        data[lineStride + cellStride + 2] = b
-        data[lineStride + cellStride + 3] = 127
-      }
+    // Iterate through every single pixel inside the biome rect
+    const pixelCoords: Point = { x: biomeRect.x, y: biomeRect.y}
+    let rectDistance: number
+    for (let biomePx = 0; biomePx < totalPixels; biomePx++) {      
+      rectDistance = findMinDistanceToRect(biomeRect, pixelCoords.x, pixelCoords.y, biomeOverlaps)
+      data[lineStride + cellStride] = r
+      data[lineStride + cellStride + 1] = g
+      data[lineStride + cellStride + 2] = b
+      data[lineStride + cellStride + 3] = rectDistance >= biomeAvgSmoothness
+        ? data[lineStride + cellStride + 3] = 255
+        : parseFloat((rectDistance/biomeAvgSmoothness).toFixed(4)) * 255.0
+
       cellStride += 4
-      pixelCoords[0]++
+      pixelCoords.x++
 
       if (cellStride >= maxBiomeX) {
         lineStride += w * 4
         cellStride = biomeRect.x * 4
-        pixelCoords[0] = biomeRect.x
-        pixelCoords[1]++
+        pixelCoords.x = biomeRect.x
+        pixelCoords.y++
       }
     }
   }

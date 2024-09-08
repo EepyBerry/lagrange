@@ -52,13 +52,6 @@ export function isWithinRect(rect: Rect, x: number, y: number): boolean {
   return x >= rect.x && y >= rect.y && x < (rect.x+rect.w) && y < (rect.y+rect.h)
 }
 
-export function findRectDistance(rect: Rect, x: number, y: number): number {
-  return Math.hypot(x,y,
-    Math.max(rect.x, Math.min(x, rect.x+rect.w)),
-    Math.max(rect.y, Math.min(y, rect.y+rect.h))
-  )
-}
-
 /**
  * Finds overlaps on a given w*h plane's borders with a given Rect
  * @param w 
@@ -74,4 +67,33 @@ export function findRectOverlaps(w: number, h: number, rect: Rect): number[] {
   borderOverlaps[2] = rect.y + rect.h >= h ? 1 : 0
   borderOverlaps[3] = rect.x === 0 ? 1 : 0
   return borderOverlaps
+}
+
+/**
+ * Finds the nearest point on a rect from the given (x,y) coordinates within that rect
+ * @param rect the rect to find the point on
+ * @param x point x
+ * @param y point y
+ * @returns the coordinates of the nearest rect point from (x,y)
+ */
+export function findMinDistanceToRect(rect: Rect, x: number, y: number, overlaps: number[]): number {
+  if (!isWithinRect(rect, x, y)) {
+    throw new Error('Cannot find distance of point outside rect!')
+  }
+  const rl = rect.x + rect.w
+  const rh = rect.y + rect.h
+  const distances: number[] = [
+    overlaps[3] > 0 ? 1e3 : x-rect.x,
+    overlaps[0] > 0 ? 1e3 : y-rect.y,
+    overlaps[1] > 0 ? 1e3 : rl-x,
+    overlaps[2] > 0 ? 1e3 : rh-y
+  ]
+  return Math.min(...distances)
+}
+
+export function avg(...values: number[]) {
+  if (values.length === 0) {
+    return 0
+  }
+  return values.reduce((prev, cur) => prev + cur, 0) / values.length
 }

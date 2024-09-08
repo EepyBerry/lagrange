@@ -1,5 +1,7 @@
 import type { DataTexture } from 'three'
 
+export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
+
 export enum GeometryType {
   SPHERE,
   TORUS,
@@ -19,8 +21,6 @@ export enum GradientMode {
   POLE_TO_POLE = 1,
   FULLNOISE = 2,
 }
-
-export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
 export type Rect = {
   x: number
