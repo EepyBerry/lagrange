@@ -1,5 +1,5 @@
 import { clamp } from 'three/src/math/MathUtils.js'
-import { ChangeTracker } from './change-tracker.model'
+import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import type { NoiseType } from '@core/types'
 
 export class NoiseParameters extends ChangeTracker {
@@ -10,7 +10,7 @@ export class NoiseParameters extends ChangeTracker {
   private _octaves: number = 2
 
   constructor(
-    changedPropsRef: string[],
+    changedPropsRef: ChangedProp[],
     changePrefix: string,
     noiseType: NoiseType,
     freq?: number,

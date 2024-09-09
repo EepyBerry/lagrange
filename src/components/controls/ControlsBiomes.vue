@@ -177,7 +177,8 @@ function addBiome() {
       humidityMin: 0.0,
       humidityMax: 1.0
     },
-    new Color(0xffffff)
+    new Color(0xffffff),
+    0.2
   )
   LG_PLANET_DATA.value.biomesParams.push(newBiome)
   LG_PLANET_DATA.value.markForChange('_biomesParameters')

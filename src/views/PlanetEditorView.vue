@@ -406,7 +406,11 @@ function updatePlanet() {
   const planetMaterial = _planet.material as CustomShaderMaterial
   const atmosphereMaterial = _atmosphere.material as CustomShaderMaterial
   const cloudsMaterial = _clouds.material as CustomShaderMaterial
-  for (let key of LG_PLANET_DATA.value.changedProps) {
+  for (let changedProp of LG_PLANET_DATA.value.changedProps) {
+    if (!changedProp.prop) {
+      continue
+    }
+    let key = changedProp.prop
 
     // Check for additional info, separated by |
     let biomeId = undefined

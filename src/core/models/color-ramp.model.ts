@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { ChangeTracker } from './change-tracker.model'
+import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import { numberEquals } from '@/utils/utils'
 import { nanoid } from 'nanoid'
 
@@ -71,7 +71,7 @@ export class ColorRamp extends ChangeTracker {
   private _lockedSize: boolean = true
 
   constructor(
-    changedPropsRef: string[],
+    changedPropsRef: ChangedProp[],
     changePrefix: string,
     steps: ColorRampStep[],
     maxSize: number = 16,

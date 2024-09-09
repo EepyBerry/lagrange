@@ -1,5 +1,5 @@
 import { Color } from 'three'
-import { ChangeTracker } from './change-tracker.model'
+import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import { nanoid } from 'nanoid'
 import { clamp } from 'three/src/math/MathUtils.js'
 
@@ -19,7 +19,7 @@ export class BiomeParameters extends ChangeTracker {
   private _color: Color
 
   constructor(
-    changedPropsRef: string[],
+    changedPropsRef: ChangedProp[],
     changePrefix: string,
     dims: BiomeDimensions,
     color: Color,

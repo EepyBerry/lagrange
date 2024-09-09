@@ -424,11 +424,8 @@ export default class PlanetData extends ChangeTracker {
   public get changedProps() {
     return this._changedProps
   }
-  public markForChange(prop: string) {
-    this._changedProps.push(prop)
-  }
   public markAllForChange() {
-    this._changedProps.push(...Object.keys(this))
+    this._changedProps.push(...Object.keys(this).map(o => ({ prop: o })))
   }
   public clearChangedProps() {
     this._changedProps.splice(0)
