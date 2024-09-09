@@ -1,4 +1,5 @@
-import type { Rect } from "@/core/types"
+import type { RawRGBA, Rect } from "@/core/types"
+import type { Color } from "three"
 
 /**
  * Simple numeric checking function.
@@ -57,6 +58,30 @@ export function epsilonClamp(n: number, min: number, max: number): number {
   return Math.max(min + Number.EPSILON, Math.min(n, max - Number.EPSILON))
 }
 
+/**
+ * Mixes colours together, including their alpha channel
+ * See https://stackoverflow.com/questions/726549/algorithm-for-additive-color-mixing-for-rgb-values
+ * @param c1 first color
+ * @param c2 second color
+ * @returns the mixed color as {r,g,b,a}
+ */
+export function mixColors(c1: RawRGBA, c2: RawRGBA): RawRGBA {
+  const a = c1.a + c2.a*(1-c1.a)
+  return {
+    r: (c1.r * c1.a + c2.r * c2.a * (1 - c1.a)) / a,
+    g: (c1.g * c1.a + c2.g * c2.a * (1 - c1.a)) / a,
+    b: (c1.b * c1.a + c2.b * c2.a * (1 - c1.a)) / a,
+    a: a
+  }
+}
+
+/**
+ * Flips a UInt8Array's pixels vertically to have a normalized +X/+Y image
+ * @param buffer the data buffer
+ * @param w width of the resulting image
+ * @param h height of the resulting image
+ * @returns 
+ */
 export function normalizeUInt8ArrayPixels(buffer: Uint8Array, w: number, h: number): Uint8Array {
   const length = w * h * 4
   const row = w * 4
@@ -69,17 +94,23 @@ export function normalizeUInt8ArrayPixels(buffer: Uint8Array, w: number, h: numb
   return result
 }
 
+/**
+ * Checks if a given point is withing a rect
+ * @param rect the rect to check on
+ * @param x point x
+ * @param y point y
+ * @returns true if the given point is within the rect, false otherwise
+ */
 export function isWithinRect(rect: Rect, x: number, y: number): boolean {
   return x >= rect.x && y >= rect.y && x < (rect.x+rect.w) && y < (rect.y+rect.h)
 }
 
 /**
  * Finds overlaps on a given w*h plane's borders with a given Rect
- * @param w 
- * @param h 
- * @param rect1 
- * @param rect2 
- * @returns 
+ * @param w total plane width
+ * @param h total plane height
+ * @param rect rect to check overlaps on
+ * @returns an array containing overlaps for the top, right, bottom & left sides, in that order
  */
 export function findRectOverlaps(w: number, h: number, rect: Rect): number[] {
   const borderOverlaps = [0,0,0,0]

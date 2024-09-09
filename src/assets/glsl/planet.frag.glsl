@@ -18,11 +18,13 @@ struct PBRParameters {
     float gmetal;
 };
 
+// Planet size
+uniform float u_radius;
+
 // Water level & roughness/metalness
 uniform PBRParameters u_pbr_params;
 
 // Noise uniforms
-uniform float u_radius;
 uniform NoiseParameters u_surface_noise;
 uniform sampler2D u_surface_tex;
 
