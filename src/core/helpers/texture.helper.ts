@@ -1,6 +1,6 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import type { Rect, DataTextureWrapper, Point, RawRGBA } from '@/core/types'
-import { avg, findMinDistanceToRect, findRectOverlaps, mixColors, truncateTo } from '@/utils/math-utils'
+import { avg, findMinDistanceToRect, findRectOverlaps, mixColors, mixRawRGBAChannel, iv01, truncateTo, mixRawRGBAAlpha } from '@/utils/math-utils'
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
@@ -92,31 +92,27 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
     const r = Math.floor(biome.color.r * 255.0)
     const g = Math.floor(biome.color.g * 255.0)
     const b = Math.floor(biome.color.b * 255.0)
-    let a = 255.0
+    let a = 1.0
 
     // Iterate through every single pixel inside the biome rect
     const pixelCoords: Point = { x: biomeRect.x, y: biomeRect.y}
-    let mixedColor: RawRGBA = { r: 0, g: 0, b: 0, a: 0 }
+    // let mixedColor: RawRGBA = { r: 0, g: 0, b: 0, a: 0 }
     let rectDistance: number, dataIdx: number
     for (let biomePx = 0; biomePx < totalPixels; biomePx++) {     
       dataIdx = lineStride + cellStride
       rectDistance = findMinDistanceToRect(biomeRect, pixelCoords.x, pixelCoords.y, biomeOverlaps)
-      a = truncateTo(clamp(rectDistance/biomeAvgSmoothness, 0, 1), 1e4) * 255.0
-      
+      a = truncateTo(clamp(rectDistance/biomeAvgSmoothness, 0, 1), 1e4)
+
       if (data[dataIdx + 3] > 0) {
-        mixedColor = mixColors(
-          { r: data[dataIdx]/255.0, g: data[dataIdx + 1]/255.0, b: data[dataIdx + 2]/255.0, a: data[dataIdx + 3]/255.0 },
-          { r: biome.color.r, g: biome.color.g, b: biome.color.b, a: a/255.0 }
-        )
-        data[dataIdx] = Math.floor(mixedColor.r * 255.0)
-        data[dataIdx + 1] = Math.floor(mixedColor.g * 255.0)
-        data[dataIdx + 2] = Math.floor(mixedColor.b * 255.0)
-        data[dataIdx + 3] = Math.floor(mixedColor.a * 255.0)
+        data[dataIdx] =     mixRawRGBAChannel(iv01(data[dataIdx]),     biome.color.r, iv01(data[dataIdx + 3]), a) * 255.0
+        data[dataIdx + 1] = mixRawRGBAChannel(iv01(data[dataIdx + 1]), biome.color.g, iv01(data[dataIdx + 3]), a) * 255.0
+        data[dataIdx + 2] = mixRawRGBAChannel(iv01(data[dataIdx + 2]), biome.color.b, iv01(data[dataIdx + 3]), a) * 255.0
+        data[dataIdx + 3] = mixRawRGBAAlpha(iv01(data[dataIdx + 3]), a) * 255.0
       } else {
         data[dataIdx] = r
         data[dataIdx + 1] = g
         data[dataIdx + 2] = b
-        data[dataIdx + 3] = a
+        data[dataIdx + 3] = a * 255.0
       }
       
       cellStride += 4

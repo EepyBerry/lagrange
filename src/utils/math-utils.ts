@@ -1,5 +1,4 @@
 import type { RawRGBA, Rect } from "@/core/types"
-import type { Color } from "three"
 
 /**
  * Simple numeric checking function.
@@ -37,17 +36,6 @@ export function truncateTo(a: number, multPrecision: number): number {
 }
 
 /**
- * Simple clamp function.
- * @param n the number to clamp
- * @param min minimum value
- * @param max maximum value
- * @returns `n`, so that `min <= n <= max`
- */
-export function clamp(n: number, min: number, max: number): number {
-  return Math.max(min, Math.min(n, max))
-}
-
-/**
  * Simple clamp function, but with `Number.EPSILON` (ε) added to the mix.
  * @param n the number to clamp
  * @param min minimum value
@@ -66,13 +54,20 @@ export function epsilonClamp(n: number, min: number, max: number): number {
  * @returns the mixed color as {r,g,b,a}
  */
 export function mixColors(c1: RawRGBA, c2: RawRGBA): RawRGBA {
-  const a = c1.a + c2.a*(1-c1.a)
   return {
-    r: (c1.r * c1.a + c2.r * c2.a * (1 - c1.a)) / a,
-    g: (c1.g * c1.a + c2.g * c2.a * (1 - c1.a)) / a,
-    b: (c1.b * c1.a + c2.b * c2.a * (1 - c1.a)) / a,
-    a: a
+    r: (c1.r * c1.a + c2.r * c2.a * (1 - c1.a)) / (c1.a + c2.a*(1-c1.a)),
+    g: (c1.g * c1.a + c2.g * c2.a * (1 - c1.a)) / (c1.a + c2.a*(1-c1.a)),
+    b: (c1.b * c1.a + c2.b * c2.a * (1 - c1.a)) / (c1.a + c2.a*(1-c1.a)),
+    a: (c1.a + c2.a*(1-c1.a))
   }
+}
+
+export function iv01(n: number) { return n/255.0 }
+export function mixRawRGBAChannel(c1: number, c2: number, a1: number, a2: number) {
+  return (c1 * a1 + c2 * a2 * (1 - a1)) / (a1 + a2*(1-a1))
+}
+export function mixRawRGBAAlpha(a1: number, a2: number) {
+  return a1 + a2*(1-a1)
 }
 
 /**
@@ -129,16 +124,10 @@ export function findRectOverlaps(w: number, h: number, rect: Rect): number[] {
  * @returns the coordinates of the nearest rect point from (x,y)
  */
 export function findMinDistanceToRect(rect: Rect, x: number, y: number, overlaps: number[]): number {
-  if (!isWithinRect(rect, x, y)) {
-    throw new Error('Cannot find distance of point outside rect!')
-  }
-  const rl = rect.x + rect.w
-  const rh = rect.y + rect.h
-  const distances: number[] = [
+  return Math.min(
     overlaps[3] > 0 ? 1e3 : x-rect.x,
     overlaps[0] > 0 ? 1e3 : y-rect.y,
-    overlaps[1] > 0 ? 1e3 : rl-x,
-    overlaps[2] > 0 ? 1e3 : rh-y
-  ]
-  return Math.min(...distances)
+    overlaps[1] > 0 ? 1e3 : rect.x + rect.w-x,
+    overlaps[2] > 0 ? 1e3 : rect.y + rect.h-y
+  )
 }

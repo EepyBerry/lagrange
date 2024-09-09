@@ -1,7 +1,7 @@
 import { Color } from 'three'
 import { ChangeTracker } from './change-tracker.model'
 import { nanoid } from 'nanoid'
-import { clamp } from '@/utils/math-utils'
+import { clamp } from 'three/src/math/MathUtils.js'
 
 export class BiomeDimensions {
   temperatureMin: number = 0.0

@@ -1,4 +1,4 @@
-import { clamp } from '@/utils/math-utils'
+import { clamp } from 'three/src/math/MathUtils.js'
 import { ChangeTracker } from './change-tracker.model'
 import type { NoiseType } from '@core/types'
 
