@@ -36,3 +36,8 @@ export const SUN_INIT_POS = new Vector3(0, 0, 4e3)
 export const SURFACE_TEXTURE_SIZE = 512
 export const CLOUDS_TEXTURE_SIZE = 512
 export const BIOME_TEXTURE_SIZE = 512
+
+/**
+ * Approximately equal to 1/255.0 (3.92156862e-3)
+ */
+export const INT8_TO_UNIT_MUL = 3.92e-3

@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
-import { numberEquals } from '@/utils/utils'
 import { nanoid } from 'nanoid'
 
 export class ColorRampStep {

@@ -1,9 +1,14 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
-import type { Rect, DataTextureWrapper, Point, RawRGBA } from '@/core/types'
-import { avg, findMinDistanceToRect, findRectOverlaps, mixColors, mixRawRGBAChannel, iv01, truncateTo, mixRawRGBAAlpha } from '@/utils/math-utils'
+import type { Rect, DataTextureWrapper, Point } from '@/core/types'
+import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo, mixHexColors } from '@/utils/math-utils'
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
-import { clamp, lerp } from 'three/src/math/MathUtils.js'
+import { clamp } from 'three/src/math/MathUtils.js'
+import { Colord, colord, extend } from "colord";
+import mixPlugin from "colord/plugins/mix";
+import { numberToHex } from '@/utils/utils'
+
+extend([mixPlugin]);
 
 export function createRampTexture(w: number, steps: ColorRampStep[]): DataTextureWrapper {
   const data = new Uint8Array(w * 4)
@@ -95,19 +100,34 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
     let a = 1.0
 
     // Iterate through every single pixel inside the biome rect
-    const pixelCoords: Point = { x: biomeRect.x, y: biomeRect.y}
+    const pixelCoords: Point = { x: biomeRect.x, y: biomeRect.y }
+    const biomeColor: Colord = colord({ r, g, b, a })
+    const pixelColor: Colord = colord('#000000')
+
     // let mixedColor: RawRGBA = { r: 0, g: 0, b: 0, a: 0 }
-    let rectDistance: number, dataIdx: number
+    let rectDistance: number, dataIdx: number, mixedColorHex: number // , totalAlpha: number
     for (let biomePx = 0; biomePx < totalPixels; biomePx++) {     
       dataIdx = lineStride + cellStride
+      pixelColor.rgba.r = data[dataIdx]
+      pixelColor.rgba.g = data[dataIdx + 1]
+      pixelColor.rgba.b = data[dataIdx + 2]
+      pixelColor.rgba.a = data[dataIdx + 3]
+
       rectDistance = findMinDistanceToRect(biomeRect, pixelCoords.x, pixelCoords.y, biomeOverlaps)
       a = truncateTo(clamp(rectDistance/biomeAvgSmoothness, 0, 1), 1e4)
+      // totalAlpha = clamp(pixelRGBA.a + a, 0, 1)
 
+      /* if(totalAlpha === 1) {
+        data[dataIdx] = lerp(pixelRGBA.r, r, Math.max(pixelRGBA.a, a))
+        data[dataIdx + 1] = lerp(pixelRGBA.g, g, Math.max(pixelRGBA.a, a))
+        data[dataIdx + 2] = lerp(pixelRGBA.b, b, Math.max(pixelRGBA.a, a))
+        data[dataIdx + 3] = 255
+      }
+      else  */
       if (data[dataIdx + 3] > 0) {
-        data[dataIdx] =     mixRawRGBAChannel(iv01(data[dataIdx]),     biome.color.r, iv01(data[dataIdx + 3]), a) * 255.0
-        data[dataIdx + 1] = mixRawRGBAChannel(iv01(data[dataIdx + 1]), biome.color.g, iv01(data[dataIdx + 3]), a) * 255.0
-        data[dataIdx + 2] = mixRawRGBAChannel(iv01(data[dataIdx + 2]), biome.color.b, iv01(data[dataIdx + 3]), a) * 255.0
-        data[dataIdx + 3] = mixRawRGBAAlpha(iv01(data[dataIdx + 3]), a) * 255.0
+        /* mixedColorHex = mixHexColors(Number(pixelColor.toHex().slice(1)), Number(biomeColor.toHex().slice(1)))
+        console.log(numberToHex(mixedColorHex))
+        data[dataIdx + 3] = clamp(data[dataIdx + 3]+(a*255.0), 0, 255) */
       } else {
         data[dataIdx] = r
         data[dataIdx + 1] = g

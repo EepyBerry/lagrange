@@ -1,4 +1,4 @@
-import type { RawRGBA, Rect } from "@/core/types"
+import type { Rect } from "@/core/types"
 
 /**
  * Simple numeric checking function.
@@ -47,27 +47,14 @@ export function epsilonClamp(n: number, min: number, max: number): number {
 }
 
 /**
- * Mixes colours together, including their alpha channel
- * See https://stackoverflow.com/questions/726549/algorithm-for-additive-color-mixing-for-rgb-values
- * @param c1 first color
- * @param c2 second color
- * @returns the mixed color as {r,g,b,a}
+ * Mixes hex colours together
+ * See https://www.reddit.com/r/algorithms/comments/ami4r9/fast_color_operations/
+ * @param c1 first color in hex
+ * @param c2 second color in hex
+ * @returns the mixed color in hex
  */
-export function mixColors(c1: RawRGBA, c2: RawRGBA): RawRGBA {
-  return {
-    r: (c1.r * c1.a + c2.r * c2.a * (1 - c1.a)) / (c1.a + c2.a*(1-c1.a)),
-    g: (c1.g * c1.a + c2.g * c2.a * (1 - c1.a)) / (c1.a + c2.a*(1-c1.a)),
-    b: (c1.b * c1.a + c2.b * c2.a * (1 - c1.a)) / (c1.a + c2.a*(1-c1.a)),
-    a: (c1.a + c2.a*(1-c1.a))
-  }
-}
-
-export function iv01(n: number) { return n/255.0 }
-export function mixRawRGBAChannel(c1: number, c2: number, a1: number, a2: number) {
-  return (c1 * a1 + c2 * a2 * (1 - a1)) / (a1 + a2*(1-a1))
-}
-export function mixRawRGBAAlpha(a1: number, a2: number) {
-  return a1 + a2*(1-a1)
+export function mixHexColors(a: number, b: number): number {
+  return (((a ^ b) >> 1 & 0x7f7f7f7f)+ (a & b))
 }
 
 /**
