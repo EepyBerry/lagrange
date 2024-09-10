@@ -6,7 +6,7 @@ import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp } from 'three/src/math/MathUtils.js'
 import { Colord, colord, extend } from "colord";
 import mixPlugin from "colord/plugins/mix";
-import { hexToNumber, toHexNumber } from '@/utils/utils'
+import { toHexNumber } from '@/utils/utils'
 import { INT8_TO_UNIT_MUL } from '../globals'
 
 extend([mixPlugin]);
@@ -123,9 +123,9 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
           toHexNumber(biomeColor.toHex()),
           1 - (data[dataIdx + 3]*INT8_TO_UNIT_MUL)
         ).toString(16)
-        data[dataIdx] = hexToNumber(mixedColorHex.slice(0, 2))
-        data[dataIdx + 1] = hexToNumber(mixedColorHex.slice(2, 4))
-        data[dataIdx + 2] = hexToNumber(mixedColorHex.slice(4, 6))
+        data[dataIdx] = clamp(toHexNumber(mixedColorHex.slice(0, 2)), 0, 255)
+        data[dataIdx + 1] = clamp(toHexNumber(mixedColorHex.slice(2, 4)), 0, 255)
+        data[dataIdx + 2] = clamp(toHexNumber(mixedColorHex.slice(4, 6)), 0, 255)
         data[dataIdx + 3] = clamp(data[dataIdx + 3]+(a*255.0), 0, 255)
       } else {
         data[dataIdx] = r
