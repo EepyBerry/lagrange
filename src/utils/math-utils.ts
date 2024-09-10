@@ -36,25 +36,17 @@ export function truncateTo(a: number, multPrecision: number): number {
 }
 
 /**
- * Simple clamp function, but with `Number.EPSILON` (ε) added to the mix.
- * @param n the number to clamp
- * @param min minimum value
- * @param max maximum value
- * @returns `n`, so that `(min + ε) <= n <= (max - ε)`
- */
-export function epsilonClamp(n: number, min: number, max: number): number {
-  return Math.max(min + Number.EPSILON, Math.min(n, max - Number.EPSILON))
-}
-
-/**
- * Mixes hex colours together
- * See https://www.reddit.com/r/algorithms/comments/ami4r9/fast_color_operations/
+ * Ultra-fast hex colour lerping with factor
+ * @see {@link https://stackoverflow.com/a/4787257}
  * @param c1 first color in hex
  * @param c2 second color in hex
  * @returns the mixed color in hex
  */
-export function mixHexColors(a: number, b: number): number {
-  return (((a ^ b) >> 1 & 0x7f7f7f7f)+ (a & b))
+export function lerpHexColors(a: number, b: number, factor: number) {
+  const f2 = 256 * factor
+  const f1 = 256 - f2
+  return (((((a & 0xff00ff) * f1) + ((b & 0xff00ff) * f2 )) >> 8) & 0xff00ff) 
+       | (((((a & 0x00ff00) * f1) + ((b & 0x00ff00) * f2 )) >> 8) & 0x00ff00)
 }
 
 /**

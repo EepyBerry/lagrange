@@ -1,12 +1,13 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import type { Rect, DataTextureWrapper, Point } from '@/core/types'
-import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo, mixHexColors } from '@/utils/math-utils'
+import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo, lerpHexColors } from '@/utils/math-utils'
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp } from 'three/src/math/MathUtils.js'
 import { Colord, colord, extend } from "colord";
 import mixPlugin from "colord/plugins/mix";
-import { numberToHex } from '@/utils/utils'
+import { hexToNumber, toHexNumber } from '@/utils/utils'
+import { INT8_TO_UNIT_MUL } from '../globals'
 
 extend([mixPlugin]);
 
@@ -105,7 +106,7 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
     const pixelColor: Colord = colord('#000000')
 
     // let mixedColor: RawRGBA = { r: 0, g: 0, b: 0, a: 0 }
-    let rectDistance: number, dataIdx: number, mixedColorHex: number // , totalAlpha: number
+    let rectDistance: number, dataIdx: number, mixedColorHex: string // , totalAlpha: number
     for (let biomePx = 0; biomePx < totalPixels; biomePx++) {     
       dataIdx = lineStride + cellStride
       pixelColor.rgba.r = data[dataIdx]
@@ -115,19 +116,17 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
 
       rectDistance = findMinDistanceToRect(biomeRect, pixelCoords.x, pixelCoords.y, biomeOverlaps)
       a = truncateTo(clamp(rectDistance/biomeAvgSmoothness, 0, 1), 1e4)
-      // totalAlpha = clamp(pixelRGBA.a + a, 0, 1)
-
-      /* if(totalAlpha === 1) {
-        data[dataIdx] = lerp(pixelRGBA.r, r, Math.max(pixelRGBA.a, a))
-        data[dataIdx + 1] = lerp(pixelRGBA.g, g, Math.max(pixelRGBA.a, a))
-        data[dataIdx + 2] = lerp(pixelRGBA.b, b, Math.max(pixelRGBA.a, a))
-        data[dataIdx + 3] = 255
-      }
-      else  */
+      
       if (data[dataIdx + 3] > 0) {
-        /* mixedColorHex = mixHexColors(Number(pixelColor.toHex().slice(1)), Number(biomeColor.toHex().slice(1)))
-        console.log(numberToHex(mixedColorHex))
-        data[dataIdx + 3] = clamp(data[dataIdx + 3]+(a*255.0), 0, 255) */
+        mixedColorHex = lerpHexColors(
+          toHexNumber(pixelColor.toHex()),
+          toHexNumber(biomeColor.toHex()),
+          1 - (data[dataIdx + 3]*INT8_TO_UNIT_MUL)
+        ).toString(16)
+        data[dataIdx] = hexToNumber(mixedColorHex.slice(0, 2))
+        data[dataIdx + 1] = hexToNumber(mixedColorHex.slice(2, 4))
+        data[dataIdx + 2] = hexToNumber(mixedColorHex.slice(4, 6))
+        data[dataIdx + 3] = clamp(data[dataIdx + 3]+(a*255.0), 0, 255)
       } else {
         data[dataIdx] = r
         data[dataIdx + 1] = g
