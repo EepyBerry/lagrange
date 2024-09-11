@@ -1,13 +1,13 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
-import type { Rect, DataTextureWrapper, Point } from '@/core/types'
-import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo, lerpHexColors } from '@/utils/math-utils'
+import type { Rect, DataTextureWrapper, Coordinates2D } from '@/core/types'
+import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo, lerpHexColors, isWithinRect } from '@/utils/math-utils'
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp } from 'three/src/math/MathUtils.js'
 import { Colord, colord, extend } from "colord";
 import mixPlugin from "colord/plugins/mix";
 import { toHexNumber } from '@/utils/utils'
-import { INT8_TO_UNIT_MUL } from '../globals'
+import { BIOME_TEXTURE_SIZE, INT8_TO_UNIT_MUL } from '../globals'
 
 extend([mixPlugin]);
 
@@ -75,7 +75,7 @@ export function recalculateBiomeTexture(data: Uint8Array, w: number, biomes: Bio
 function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
   let lineStride = 0
   let cellStride = (Math.ceil(biomes[0].humiMin * w) + (biomes[0].tempMin * w)) * 4
-  for (let i = 0; i < biomes.length; i++) {
+  for (let i = 0; i < biomes.toReversed().length; i++) {
     const biome = biomes[i]
     const biomeRect: Rect = {
       x: Math.floor(biome.humiMin * w),
@@ -101,7 +101,7 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
     let a = 1.0
 
     // Iterate through every single pixel inside the biome rect
-    const pixelCoords: Point = { x: biomeRect.x, y: biomeRect.y }
+    const pixelCoords: Coordinates2D = { x: biomeRect.x, y: biomeRect.y }
     const biomeColor: Colord = colord({ r, g, b, a })
     const pixelColor: Colord = colord('#000000')
 
@@ -145,4 +145,38 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
       }
     }
   }
+}
+
+export function getChunksToRecalculate(totalWidth: number, biome: BiomeParameters, chunkSize: number): Coordinates2D[] {
+  if (totalWidth % chunkSize !== 0) {
+    throw new Error('Cannot compute chunks: totalWidth not divisible by chunkSize !')
+  }
+  const biomeRect: Rect = {
+    x: Math.floor(biome.humiMin * totalWidth),
+    y: Math.floor(biome.tempMin * totalWidth),
+    w: Math.ceil((biome.humiMax - biome.humiMin) * totalWidth),
+    h: Math.ceil((biome.tempMax - biome.tempMin) * totalWidth)
+  }
+
+  const chunks: Coordinates2D[] = []
+  for (let y = 0; y < totalWidth/chunkSize; y++) {
+    for(let x = 0; x < totalWidth/chunkSize; x++) {
+      const chunkRect: Rect = {
+        x: x*chunkSize,
+        y: y*chunkSize,
+        w: chunkSize,
+        h: chunkSize
+      }
+      const isBiomeCornerChunk: boolean =
+        isWithinRect(chunkRect, biomeRect.x, biomeRect.y)
+        || isWithinRect(chunkRect, biomeRect.x, biomeRect.y+biomeRect.h-1)
+        || isWithinRect(chunkRect, biomeRect.x+biomeRect.w-1, biomeRect.y)
+        || isWithinRect(chunkRect, biomeRect.x+biomeRect.w-1, biomeRect.y+biomeRect.h-1)
+
+      if (isBiomeCornerChunk) {
+        chunks.push({x: x*chunkSize, y: y*chunkSize})
+      }
+    }
+  }
+  return chunks
 }

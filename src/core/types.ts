@@ -28,7 +28,7 @@ export type Rect = {
   w: number
   h: number
 }
-export type Point = {
+export type Coordinates2D = {
   x: number
   y: number
 }

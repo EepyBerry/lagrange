@@ -64,7 +64,7 @@ import WebGL from 'three/addons/capabilities/WebGL.js'
 import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
 import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
 import { DebugUtils } from '@/utils/debug-utils'
-import { recalculateBiomeTexture, recalculateRampTexture } from '@/core/helpers/texture.helper'
+import { getChunksToRecalculate, recalculateBiomeTexture, recalculateRampTexture } from '@/core/helpers/texture.helper'
 import type { ColorRampStep } from '@/core/models/color-ramp.model'
 
 const route = useRoute()
@@ -666,9 +666,18 @@ function updatePlanet() {
         break
       }
       case '_biomesParameters': {
-        recalculateBiomeTexture(_biomeData, BIOME_TEXTURE_SIZE, LG_PLANET_DATA.value.biomesParams as BiomeParameters[])
+        recalculateBiomeTexture(
+          _biomeData,
+          BIOME_TEXTURE_SIZE,
+          LG_PLANET_DATA.value.biomesParams as BiomeParameters[]
+        )
         DebugUtils.biomeData.set(_biomeData, 0)
         _biomeDataTex.needsUpdate = true
+
+        const b = LG_PLANET_DATA.value.biomesParams.find(b => b.id === biomeId)
+        if (b) {
+          getChunksToRecalculate(BIOME_TEXTURE_SIZE, b as BiomeParameters, 128)
+        }
         break
       }
 
