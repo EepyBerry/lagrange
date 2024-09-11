@@ -676,7 +676,7 @@ function updatePlanet() {
 
         const b = LG_PLANET_DATA.value.biomesParams.find(b => b.id === biomeId)
         if (b) {
-          getChunksToRecalculate(BIOME_TEXTURE_SIZE, b as BiomeParameters, 128)
+          getChunksToRecalculate(BIOME_TEXTURE_SIZE, b as BiomeParameters, changedProp)
         }
         break
       }

@@ -4,7 +4,8 @@ import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo, isWithinRect 
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp } from 'three/src/math/MathUtils.js'
-import { INT8_TO_UNIT_MUL } from '../globals'
+import { BIOME_TEXTURE_CHUNK_SIZE, INT8_TO_UNIT_MUL } from '../globals'
+import type { ChangedProp } from '../models/change-tracker.model'
 
 export function createRampTexture(w: number, steps: ColorRampStep[]): DataTextureWrapper {
   const data = new Uint8Array(w * 4)
@@ -141,8 +142,8 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
   }
 }
 
-export function getChunksToRecalculate(totalWidth: number, biome: BiomeParameters, chunkSize: number): Rect[] {
-  if (totalWidth % chunkSize !== 0) {
+export function getChunksToRecalculate(totalWidth: number, biome: BiomeParameters, changedProp: ChangedProp): Rect[] {
+  if (totalWidth % BIOME_TEXTURE_CHUNK_SIZE !== 0) {
     throw new Error('Cannot compute chunks: totalWidth not divisible by chunkSize !')
   }
   const biomeRect: Rect = {
@@ -153,13 +154,13 @@ export function getChunksToRecalculate(totalWidth: number, biome: BiomeParameter
   }
 
   const chunks: Rect[] = []
-  for (let y = 0; y < totalWidth/chunkSize; y++) {
-    for(let x = 0; x < totalWidth/chunkSize; x++) {
+  for (let y = 0; y < totalWidth/BIOME_TEXTURE_CHUNK_SIZE; y++) {
+    for(let x = 0; x < totalWidth/BIOME_TEXTURE_CHUNK_SIZE; x++) {
       const chunkRect: Rect = {
-        x: x*chunkSize,
-        y: y*chunkSize,
-        w: chunkSize,
-        h: chunkSize
+        x: x*BIOME_TEXTURE_CHUNK_SIZE,
+        y: y*BIOME_TEXTURE_CHUNK_SIZE,
+        w: BIOME_TEXTURE_CHUNK_SIZE,
+        h: BIOME_TEXTURE_CHUNK_SIZE
       }
       const isBiomeCornerChunk: boolean =
         isWithinRect(chunkRect, biomeRect.x, biomeRect.y)
