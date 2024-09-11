@@ -1,7 +1,11 @@
 import { LOCALE_MAP } from '@core/globals'
 import type { Composer } from 'vue-i18n'
 
-export function toHexNumber(n: string): number {
+export function hexNumberToString(n: number, hash?: boolean): string {
+  return (hash ? '#' : '') + n.toString(16).padStart(6, '0')
+}
+
+export function strToHexNumber(n: string): number {
   return Number('0x' + n.substring(+(n.startsWith('#'))))
 }
 

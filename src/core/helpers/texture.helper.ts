@@ -1,15 +1,10 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import type { Rect, DataTextureWrapper, Coordinates2D } from '@/core/types'
-import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo, lerpHexColors, isWithinRect } from '@/utils/math-utils'
+import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo, isWithinRect } from '@/utils/math-utils'
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp } from 'three/src/math/MathUtils.js'
-import { Colord, colord, extend } from "colord";
-import mixPlugin from "colord/plugins/mix";
-import { toHexNumber } from '@/utils/utils'
-import { BIOME_TEXTURE_SIZE, INT8_TO_UNIT_MUL } from '../globals'
-
-extend([mixPlugin]);
+import { INT8_TO_UNIT_MUL } from '../globals'
 
 export function createRampTexture(w: number, steps: ColorRampStep[]): DataTextureWrapper {
   const data = new Uint8Array(w * 4)
@@ -102,30 +97,29 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
 
     // Iterate through every single pixel inside the biome rect
     const pixelCoords: Coordinates2D = { x: biomeRect.x, y: biomeRect.y }
-    const biomeColor: Colord = colord({ r, g, b, a })
-    const pixelColor: Colord = colord('#000000')
+    const pixelColor: Color = new Color('#000000')
+    const tmpColor: Color = new Color('#000000')
+    let pixelAlpha = 0.0
 
     // let mixedColor: RawRGBA = { r: 0, g: 0, b: 0, a: 0 }
-    let rectDistance: number, dataIdx: number, mixedColorHex: string // , totalAlpha: number
+    let rectDistance: number, dataIdx: number // , totalAlpha: number
     for (let biomePx = 0; biomePx < totalPixels; biomePx++) {     
       dataIdx = lineStride + cellStride
-      pixelColor.rgba.r = data[dataIdx]
-      pixelColor.rgba.g = data[dataIdx + 1]
-      pixelColor.rgba.b = data[dataIdx + 2]
-      pixelColor.rgba.a = data[dataIdx + 3]
+      pixelColor.setRGB(
+        data[dataIdx]*INT8_TO_UNIT_MUL,
+        data[dataIdx + 1]*INT8_TO_UNIT_MUL,
+        data[dataIdx + 2]*INT8_TO_UNIT_MUL
+      )
+      pixelAlpha = data[dataIdx + 3]*INT8_TO_UNIT_MUL
 
       rectDistance = findMinDistanceToRect(biomeRect, pixelCoords.x, pixelCoords.y, biomeOverlaps)
       a = truncateTo(clamp(rectDistance/biomeAvgSmoothness, 0, 1), 1e4)
       
-      if (data[dataIdx + 3] > 0) {
-        mixedColorHex = lerpHexColors(
-          toHexNumber(pixelColor.toHex()),
-          toHexNumber(biomeColor.toHex()),
-          1 - (data[dataIdx + 3]*INT8_TO_UNIT_MUL)
-        ).toString(16)
-        data[dataIdx] = clamp(toHexNumber(mixedColorHex.slice(0, 2)), 0, 255)
-        data[dataIdx + 1] = clamp(toHexNumber(mixedColorHex.slice(2, 4)), 0, 255)
-        data[dataIdx + 2] = clamp(toHexNumber(mixedColorHex.slice(4, 6)), 0, 255)
+      if (pixelAlpha > 0) {
+        tmpColor.lerpColors(pixelColor, biome.color, 1 - pixelAlpha)
+        data[dataIdx] = tmpColor.r*255.0
+        data[dataIdx + 1] = tmpColor.g*255.0
+        data[dataIdx + 2] = tmpColor.b*255.0
         data[dataIdx + 3] = clamp(data[dataIdx + 3]+(a*255.0), 0, 255)
       } else {
         data[dataIdx] = r
@@ -147,7 +141,7 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
   }
 }
 
-export function getChunksToRecalculate(totalWidth: number, biome: BiomeParameters, chunkSize: number): Coordinates2D[] {
+export function getChunksToRecalculate(totalWidth: number, biome: BiomeParameters, chunkSize: number): Rect[] {
   if (totalWidth % chunkSize !== 0) {
     throw new Error('Cannot compute chunks: totalWidth not divisible by chunkSize !')
   }
@@ -158,7 +152,7 @@ export function getChunksToRecalculate(totalWidth: number, biome: BiomeParameter
     h: Math.ceil((biome.tempMax - biome.tempMin) * totalWidth)
   }
 
-  const chunks: Coordinates2D[] = []
+  const chunks: Rect[] = []
   for (let y = 0; y < totalWidth/chunkSize; y++) {
     for(let x = 0; x < totalWidth/chunkSize; x++) {
       const chunkRect: Rect = {
@@ -174,7 +168,7 @@ export function getChunksToRecalculate(totalWidth: number, biome: BiomeParameter
         || isWithinRect(chunkRect, biomeRect.x+biomeRect.w-1, biomeRect.y+biomeRect.h-1)
 
       if (isBiomeCornerChunk) {
-        chunks.push({x: x*chunkSize, y: y*chunkSize})
+        chunks.push(chunkRect)
       }
     }
   }
