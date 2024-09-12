@@ -38,7 +38,7 @@ export const SUN_INIT_POS = new Vector3(0, 0, 4e3)
 export const SURFACE_TEXTURE_SIZE = 512
 export const CLOUDS_TEXTURE_SIZE = 512
 export const BIOME_TEXTURE_SIZE = 512
-export const BIOME_TEXTURE_CHUNK_SIZE = 128
+export const BIOME_TEXTURE_CHUNK_SIZE = 64
 
 /**
  * Equal to 1/256.0

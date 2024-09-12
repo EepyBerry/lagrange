@@ -1,10 +1,10 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import type { Rect, DataTextureWrapper, Coordinates2D } from '@/core/types'
-import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo, isWithinRect } from '@/utils/math-utils'
+import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp } from 'three/src/math/MathUtils.js'
-import { BIOME_TEXTURE_CHUNK_SIZE, INT8_TO_UNIT_MUL } from '../globals'
+import { BIOME_TEXTURE_CHUNK_SIZE, BIOME_TEXTURE_SIZE, INT8_TO_UNIT_MUL } from '../globals'
 import type { ChangedProp } from '../models/change-tracker.model'
 
 export function createRampTexture(w: number, steps: ColorRampStep[]): DataTextureWrapper {
@@ -60,12 +60,18 @@ export function createBiomeTexture(w: number, biomes: BiomeParameters[]): DataTe
   return { texture: dt, data }
 }
 
-export function recalculateBiomeTexture(data: Uint8Array, w: number, biomes: BiomeParameters[]): void {
+export function recalculateBiomeTexture(data: Uint8Array, w: number, biomes: BiomeParameters[], changedProp: ChangedProp): void {
   if (biomes.length === 0) {
     return
   }
   data.fill(0)
-  fillBiomes(data, w, biomes)
+  const changedBiome = biomes.find(b => b.id === changedProp.prop.split('|')[1])
+  if (changedBiome) {
+    const chunks = getChunksToRecalculate(BIOME_TEXTURE_SIZE, changedBiome, changedProp)
+    console.log(chunks)
+  } else {
+    fillBiomes(data, w, biomes)
+  }
 }
 
 function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
@@ -90,20 +96,20 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
     cellStride = biomeRect.x * 4
     lineStride = biomeRect.y * w * 4
 
-    // Calculate color
+    // Calculate biome color
     const r = Math.floor(biome.color.r * 255.0)
     const g = Math.floor(biome.color.g * 255.0)
     const b = Math.floor(biome.color.b * 255.0)
     let a = 1.0
 
-    // Iterate through every single pixel inside the biome rect
+    // Prepare coords and pixel/temp colors
     const pixelCoords: Coordinates2D = { x: biomeRect.x, y: biomeRect.y }
     const pixelColor: Color = new Color('#000000')
     const tmpColor: Color = new Color('#000000')
     let pixelAlpha = 0.0
 
-    // let mixedColor: RawRGBA = { r: 0, g: 0, b: 0, a: 0 }
-    let rectDistance: number, dataIdx: number // , totalAlpha: number
+    // Iterate through every single pixel inside the biome rect
+    let rectDistance: number, dataIdx: number
     for (let biomePx = 0; biomePx < totalPixels; biomePx++) {     
       dataIdx = lineStride + cellStride
       pixelColor.setRGB(
@@ -142,18 +148,28 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
   }
 }
 
-export function getChunksToRecalculate(totalWidth: number, biome: BiomeParameters, changedProp: ChangedProp): Rect[] {
+function updateBiomeChunks(data: Uint8Array, w: number, biomes: BiomeParameters[], chunks: Rect[]) {
+  // TODO: implement this function
+}
+
+export function getChunksToRecalculate(totalWidth: number, changedBiome: BiomeParameters, changedProp: ChangedProp): Rect[] {
   if (totalWidth % BIOME_TEXTURE_CHUNK_SIZE !== 0) {
     throw new Error('Cannot compute chunks: totalWidth not divisible by chunkSize !')
   }
   const biomeRect: Rect = {
-    x: Math.floor(biome.humiMin * totalWidth),
-    y: Math.floor(biome.tempMin * totalWidth),
-    w: Math.ceil((biome.humiMax - biome.humiMin) * totalWidth),
-    h: Math.ceil((biome.tempMax - biome.tempMin) * totalWidth)
+    x: Math.floor(changedBiome.tempMin * totalWidth),
+    y: Math.floor(changedBiome.humiMin * totalWidth),
+    w: Math.ceil((changedBiome.tempMax - changedBiome.tempMin) * totalWidth),
+    h: Math.ceil((changedBiome.humiMax - changedBiome.humiMin) * totalWidth),
   }
 
   const chunks: Rect[] = []
+  changedProp.oldValue!.value *= BIOME_TEXTURE_SIZE
+  changedProp.newValue!.value *= BIOME_TEXTURE_SIZE
+
+  const isTempChange = changedProp.oldValue?.key.startsWith('temp')
+  const isHumiChange = changedProp.oldValue?.key.startsWith('humi')
+
   for (let y = 0; y < totalWidth/BIOME_TEXTURE_CHUNK_SIZE; y++) {
     for(let x = 0; x < totalWidth/BIOME_TEXTURE_CHUNK_SIZE; x++) {
       const chunkRect: Rect = {
@@ -162,16 +178,20 @@ export function getChunksToRecalculate(totalWidth: number, biome: BiomeParameter
         w: BIOME_TEXTURE_CHUNK_SIZE,
         h: BIOME_TEXTURE_CHUNK_SIZE
       }
-      const isBiomeCornerChunk: boolean =
-        isWithinRect(chunkRect, biomeRect.x, biomeRect.y)
-        || isWithinRect(chunkRect, biomeRect.x, biomeRect.y+biomeRect.h-1)
-        || isWithinRect(chunkRect, biomeRect.x+biomeRect.w-1, biomeRect.y)
-        || isWithinRect(chunkRect, biomeRect.x+biomeRect.w-1, biomeRect.y+biomeRect.h-1)
 
-      if (isBiomeCornerChunk) {
+      const isTempDifferenceAroundChunk = 
+        (changedProp.oldValue?.value < chunkRect.x+chunkRect.w && changedProp.newValue?.value >= chunkRect.x)
+        || (changedProp.newValue?.value < chunkRect.x+chunkRect.w && changedProp.oldValue?.value >= chunkRect.x)
+      const isHumiDifferenceAroundChunk = 
+        (changedProp.oldValue?.value < chunkRect.y+chunkRect.h && changedProp.newValue?.value >= chunkRect.y)
+        || (changedProp.newValue?.value < chunkRect.y+chunkRect.h && changedProp.oldValue?.value >= chunkRect.y)
+
+      if (isTempChange && isTempDifferenceAroundChunk) {
+        chunks.push(chunkRect)
+      } else if (isHumiChange && isHumiDifferenceAroundChunk) {
         chunks.push(chunkRect)
       }
     }
   }
-  return chunks
+  return chunks.sort((a,b) => a.x - b.x)
 }

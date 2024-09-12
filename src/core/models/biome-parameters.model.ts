@@ -61,8 +61,8 @@ export class BiomeParameters extends ChangeTracker {
     return this._tempMin
   }
   public set tempMin(value: number) {
-    const oldValue: ChangedPropPair = { 'tempMin': this._tempMin.valueOf() }
-    const newValue: ChangedPropPair = { 'tempMin': value.valueOf() }
+    const oldValue: ChangedPropPair = { key: 'tempMin', value: this._tempMin.valueOf() }
+    const newValue: ChangedPropPair = { key: 'tempMin', value: value.valueOf() }
     this._tempMin = clamp(value, 0.0, 1.0)
     this._tempMax = clamp(this._tempMax, this._tempMin, 1)
     this.markForChange(`${this._changePrefix}|${this._id}`, oldValue, newValue)
@@ -71,8 +71,8 @@ export class BiomeParameters extends ChangeTracker {
     return this._tempMax
   }
   public set tempMax(value: number) {
-    const oldValue: ChangedPropPair = { 'tempMax': this._tempMax.valueOf() }
-    const newValue: ChangedPropPair = { 'tempMax': value.valueOf() }
+    const oldValue: ChangedPropPair = { key: 'tempMax', value: this._tempMax.valueOf() }
+    const newValue: ChangedPropPair = { key: 'tempMax', value: value.valueOf() }
     this._tempMax = clamp(value, 0.0, 1.0)
     this._tempMin = clamp(this._tempMin, 0, this._tempMax)
     this.markForChange(`${this._changePrefix}|${this._id}`, oldValue, newValue)
@@ -82,8 +82,8 @@ export class BiomeParameters extends ChangeTracker {
     return this._humiMin
   }
   public set humiMin(value: number) {
-    const oldValue: ChangedPropPair = { 'humiMin': this._humiMin.valueOf() }
-    const newValue: ChangedPropPair = { 'humiMin': value.valueOf() }
+    const oldValue: ChangedPropPair = { key: 'humiMin', value: this._humiMin.valueOf() }
+    const newValue: ChangedPropPair = { key: 'humiMin', value: value.valueOf() }
     this._humiMin = clamp(value, 0.0, 1.0)
     this._humiMax = clamp(this._humiMax, this._humiMin, 1)
     this.markForChange(`${this._changePrefix}|${this._id}`, oldValue, newValue)
@@ -92,8 +92,8 @@ export class BiomeParameters extends ChangeTracker {
     return this._humiMax
   }
   public set humiMax(value: number) {
-    const oldValue: ChangedPropPair = { 'humiMax': this._humiMax.valueOf() }
-    const newValue: ChangedPropPair = { 'humiMax': value.valueOf() }
+    const oldValue: ChangedPropPair = { key: 'humiMax', value: this._humiMax.valueOf() }
+    const newValue: ChangedPropPair = { key: 'humiMax', value: value.valueOf() }
     this._humiMax = clamp(value, 0.0, 1.0)
     this._humiMin = clamp(this._humiMin, 0, this._humiMax)
     this.markForChange(`${this._changePrefix}|${this._id}`, oldValue, newValue)
@@ -103,8 +103,8 @@ export class BiomeParameters extends ChangeTracker {
     return this._color
   }
   public set color(value: Color) {
-    const oldValue: ChangedPropPair = { 'color': this._color.clone() }
-    const newValue: ChangedPropPair = { 'color': value.clone() }
+    const oldValue: ChangedPropPair = { key: 'color', value: this._color.clone() }
+    const newValue: ChangedPropPair = { key: 'color', value: value.clone() }
     this._color.set(value)
     this.markForChange(`${this._changePrefix}|${this._id}`, oldValue, newValue)
   }
@@ -113,8 +113,8 @@ export class BiomeParameters extends ChangeTracker {
     return this._smoothness
   }
   public set smoothness(value: number) {
-    const oldValue: ChangedPropPair = { 'smoothness': this._smoothness.valueOf() }
-    const newValue: ChangedPropPair = { 'smoothness': value.valueOf() }
+    const oldValue: ChangedPropPair = { key: 'smoothness', value: this._smoothness.valueOf() }
+    const newValue: ChangedPropPair = { key: 'smoothness', value: value.valueOf() }
     this._smoothness = clamp(value, 0.0, 1.0)
     this.markForChange(`${this._changePrefix}|${this._id}`, oldValue, newValue)
   }

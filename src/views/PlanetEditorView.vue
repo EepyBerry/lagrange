@@ -669,15 +669,11 @@ function updatePlanet() {
         recalculateBiomeTexture(
           _biomeData,
           BIOME_TEXTURE_SIZE,
-          LG_PLANET_DATA.value.biomesParams as BiomeParameters[]
+          LG_PLANET_DATA.value.biomesParams as BiomeParameters[],
+          changedProp
         )
         DebugUtils.biomeData.set(_biomeData, 0)
         _biomeDataTex.needsUpdate = true
-
-        const b = LG_PLANET_DATA.value.biomesParams.find(b => b.id === biomeId)
-        if (b) {
-          getChunksToRecalculate(BIOME_TEXTURE_SIZE, b as BiomeParameters, changedProp)
-        }
         break
       }
 
