@@ -70,8 +70,9 @@ export function recalculateBiomeTexture(data: Uint8Array, w: number, biomes: Bio
     const chunks = getChunksToRecalculate(BIOME_TEXTURE_SIZE, changedBiome, changedProp)
     console.log(chunks)
   } else {
-    fillBiomes(data, w, biomes)
+    //fillBiomes(data, w, biomes)
   }
+  fillBiomes(data, w, biomes)
 }
 
 function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
@@ -162,6 +163,8 @@ export function getChunksToRecalculate(totalWidth: number, changedBiome: BiomePa
     w: Math.ceil((changedBiome.tempMax - changedBiome.tempMin) * totalWidth),
     h: Math.ceil((changedBiome.humiMax - changedBiome.humiMin) * totalWidth),
   }
+  biomeRect.r = biomeRect.x + biomeRect.w
+  biomeRect.b = biomeRect.y + biomeRect.h
 
   const chunks: Rect[] = []
   changedProp.oldValue!.value *= BIOME_TEXTURE_SIZE
@@ -178,7 +181,6 @@ export function getChunksToRecalculate(totalWidth: number, changedBiome: BiomePa
         w: BIOME_TEXTURE_CHUNK_SIZE,
         h: BIOME_TEXTURE_CHUNK_SIZE
       }
-
       const isTempDifferenceAroundChunk = 
         (changedProp.oldValue?.value < chunkRect.x+chunkRect.w && changedProp.newValue?.value >= chunkRect.x)
         || (changedProp.newValue?.value < chunkRect.x+chunkRect.w && changedProp.oldValue?.value >= chunkRect.x)
@@ -186,9 +188,18 @@ export function getChunksToRecalculate(totalWidth: number, changedBiome: BiomePa
         (changedProp.oldValue?.value < chunkRect.y+chunkRect.h && changedProp.newValue?.value >= chunkRect.y)
         || (changedProp.newValue?.value < chunkRect.y+chunkRect.h && changedProp.oldValue?.value >= chunkRect.y)
 
-      if (isTempChange && isTempDifferenceAroundChunk) {
+      const isChunkWithinTemperatureBounds = 
+        (biomeRect.x >= chunkRect.x)
+        || (biomeRect.x+biomeRect.w < chunkRect.x+chunkRect.w)
+        || (biomeRect.x < chunkRect.x && biomeRect.x+biomeRect.w >=chunkRect.x+chunkRect.w)
+      const isChunkWithinHumidityBounds = 
+        (biomeRect.y >= chunkRect.y && biomeRect.y < (biomeRect.y+biomeRect.h))
+        || ((biomeRect.y+biomeRect.h) > chunkRect.y && (biomeRect.y+biomeRect.h) < chunkRect.y+chunkRect.h)
+        || (biomeRect.y < chunkRect.y && biomeRect.y+biomeRect.h >=chunkRect.y+chunkRect.h)
+
+      if (isTempChange && isTempDifferenceAroundChunk && isChunkWithinHumidityBounds) {
         chunks.push(chunkRect)
-      } else if (isHumiChange && isHumiDifferenceAroundChunk) {
+      } else if (isHumiChange && isHumiDifferenceAroundChunk && isChunkWithinTemperatureBounds) {
         chunks.push(chunkRect)
       }
     }
