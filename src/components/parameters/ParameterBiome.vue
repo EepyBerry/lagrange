@@ -49,7 +49,7 @@
         {{ $t('editor.controls.biomes.humidity_max') }}
       </ParameterSlider>
       <ParameterDivider />
-      <ParameterSlider v-model="lgParam!.smoothness" :id="lgParam!.id + '-b-smoo'" :step="0.005" :min="0" :max="1">
+      <ParameterSlider v-model="lgParam!.smoothness" :id="lgParam!.id + '-b-smoo'" :step="0.005" :min="0" :max="0.5">
         {{ $t('editor.controls.biomes.smoothness') }}
       </ParameterSlider>
       <ParameterColor v-model="lgParam!.color">

@@ -4,8 +4,7 @@ import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/util
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp } from 'three/src/math/MathUtils.js'
-import { BIOME_TEXTURE_CHUNK_SIZE, BIOME_TEXTURE_SIZE, INT8_TO_UNIT_MUL } from '../globals'
-import type { ChangedProp } from '../models/change-tracker.model'
+import { INT8_TO_UNIT_MUL } from '../globals'
 
 export function createRampTexture(w: number, steps: ColorRampStep[]): DataTextureWrapper {
   const data = new Uint8Array(w * 4)
@@ -60,18 +59,11 @@ export function createBiomeTexture(w: number, biomes: BiomeParameters[]): DataTe
   return { texture: dt, data }
 }
 
-export function recalculateBiomeTexture(data: Uint8Array, w: number, biomes: BiomeParameters[], changedProp: ChangedProp): void {
+export function recalculateBiomeTexture(data: Uint8Array, w: number, biomes: BiomeParameters[]): void {
   if (biomes.length === 0) {
     return
   }
   data.fill(0)
-  const changedBiome = biomes.find(b => b.id === changedProp.prop.split('|')[1])
-  if (changedBiome) {
-    const chunks = getChunksToRecalculate(BIOME_TEXTURE_SIZE, changedBiome, changedProp)
-    console.log(chunks)
-  } else {
-    //fillBiomes(data, w, biomes)
-  }
   fillBiomes(data, w, biomes)
 }
 
@@ -147,62 +139,4 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
       }
     }
   }
-}
-
-function updateBiomeChunks(data: Uint8Array, w: number, biomes: BiomeParameters[], chunks: Rect[]) {
-  // TODO: implement this function
-}
-
-export function getChunksToRecalculate(totalWidth: number, changedBiome: BiomeParameters, changedProp: ChangedProp): Rect[] {
-  if (totalWidth % BIOME_TEXTURE_CHUNK_SIZE !== 0) {
-    throw new Error('Cannot compute chunks: totalWidth not divisible by chunkSize !')
-  }
-  const biomeRect: Rect = {
-    x: Math.floor(changedBiome.tempMin * totalWidth),
-    y: Math.floor(changedBiome.humiMin * totalWidth),
-    w: Math.ceil((changedBiome.tempMax - changedBiome.tempMin) * totalWidth),
-    h: Math.ceil((changedBiome.humiMax - changedBiome.humiMin) * totalWidth),
-  }
-  biomeRect.r = biomeRect.x + biomeRect.w
-  biomeRect.b = biomeRect.y + biomeRect.h
-
-  const chunks: Rect[] = []
-  changedProp.oldValue!.value *= BIOME_TEXTURE_SIZE
-  changedProp.newValue!.value *= BIOME_TEXTURE_SIZE
-
-  const isTempChange = changedProp.oldValue?.key.startsWith('temp')
-  const isHumiChange = changedProp.oldValue?.key.startsWith('humi')
-
-  for (let y = 0; y < totalWidth/BIOME_TEXTURE_CHUNK_SIZE; y++) {
-    for(let x = 0; x < totalWidth/BIOME_TEXTURE_CHUNK_SIZE; x++) {
-      const chunkRect: Rect = {
-        x: x*BIOME_TEXTURE_CHUNK_SIZE,
-        y: y*BIOME_TEXTURE_CHUNK_SIZE,
-        w: BIOME_TEXTURE_CHUNK_SIZE,
-        h: BIOME_TEXTURE_CHUNK_SIZE
-      }
-      const isTempDifferenceAroundChunk = 
-        (changedProp.oldValue?.value < chunkRect.x+chunkRect.w && changedProp.newValue?.value >= chunkRect.x)
-        || (changedProp.newValue?.value < chunkRect.x+chunkRect.w && changedProp.oldValue?.value >= chunkRect.x)
-      const isHumiDifferenceAroundChunk = 
-        (changedProp.oldValue?.value < chunkRect.y+chunkRect.h && changedProp.newValue?.value >= chunkRect.y)
-        || (changedProp.newValue?.value < chunkRect.y+chunkRect.h && changedProp.oldValue?.value >= chunkRect.y)
-
-      const isChunkWithinTemperatureBounds = 
-        (biomeRect.x >= chunkRect.x)
-        || (biomeRect.x+biomeRect.w < chunkRect.x+chunkRect.w)
-        || (biomeRect.x < chunkRect.x && biomeRect.x+biomeRect.w >=chunkRect.x+chunkRect.w)
-      const isChunkWithinHumidityBounds = 
-        (biomeRect.y >= chunkRect.y && biomeRect.y < (biomeRect.y+biomeRect.h))
-        || ((biomeRect.y+biomeRect.h) > chunkRect.y && (biomeRect.y+biomeRect.h) < chunkRect.y+chunkRect.h)
-        || (biomeRect.y < chunkRect.y && biomeRect.y+biomeRect.h >=chunkRect.y+chunkRect.h)
-
-      if (isTempChange && isTempDifferenceAroundChunk && isChunkWithinHumidityBounds) {
-        chunks.push(chunkRect)
-      } else if (isHumiChange && isHumiDifferenceAroundChunk && isChunkWithinTemperatureBounds) {
-        chunks.push(chunkRect)
-      }
-    }
-  }
-  return chunks.sort((a,b) => a.x - b.x)
 }

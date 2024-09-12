@@ -79,6 +79,5 @@ import ControlsSurface from './ControlsSurface.vue'
 import ControlsBiomes from './ControlsBiomes.vue'
 import ControlsClouds from './ControlsClouds.vue'
 import ControlsAtmosphere from './ControlsAtmosphere.vue'
-import { LG_PLANET_DATA } from '@/core/services/planet-editor.service'
 defineProps<{ compactMode: boolean }>()
 </script>
