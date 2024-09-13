@@ -43,6 +43,11 @@ function select() {
   justify-content: center;
   gap: 0.25rem;
   cursor: pointer;
+  
+  iconify-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
 }
 .radio-button.selected {
   background: var(--lg-button-active);
