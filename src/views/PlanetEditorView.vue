@@ -281,6 +281,7 @@ function disposeScene() {
   LG_BUFFER_CLOUDS.fill(0)
   _surfaceDataTex.dispose()
   _biomeDataTex.dispose()
+  _cloudsDataTex.dispose()
   _planetGroup.clear()
 
   $se.scene.children.forEach((c) => $se.scene.remove(c))
