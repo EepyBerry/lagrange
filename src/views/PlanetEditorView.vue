@@ -314,7 +314,7 @@ async function handleKeyboardEvent(event: KeyboardEvent) {
       break
     case KeyBindingAction.TakeScreenshot: {
       $se.renderer.domElement.toBlob((blob) => {
-        saveAs(blob!, `${LG_PLANET_DATA.value.planetName}-${new Date().toISOString()}.png`)
+        saveAs(blob!, `${LG_PLANET_DATA.value.planetName.replaceAll(' ', '_')}-${new Date().toISOString()}.png`)
       }, 'image/png')
       break
     }
