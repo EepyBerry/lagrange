@@ -38,9 +38,9 @@ export function truncateTo(a: number, multPrecision: number): number {
 /**
  * Mixes two RGBA colours with their alpha components
  * @see https://stackoverflow.com/questions/726549/algorithm-for-additive-color-mixing-for-rgb-values
- * @param c1 first color in hex
- * @param c2 second color in hex
- * @returns the mixed color in hex
+ * @param c1 first color in RGBA form (0-1)
+ * @param c2 second color in RGBA form (0-1)
+ * @returns the alpha-blended color in RGBA form (0-1)
  */
 export function alphaBlendColors(c1: RawRGBA, c2: RawRGBA): RawRGBA {
   return {
