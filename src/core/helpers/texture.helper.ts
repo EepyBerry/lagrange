@@ -1,6 +1,6 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import type { Rect, DataTextureWrapper, Coordinates2D } from '@/core/types'
-import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
+import { avg, findMinDistanceToRect, findRectOverlaps, mixRawRGBAAlpha, mixRawRGBAChannel, truncateTo } from '@/utils/math-utils'
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp } from 'three/src/math/MathUtils.js'
@@ -52,7 +52,7 @@ function fillRamp(data: Uint8Array, w: number, steps: ColorRampStep[]) {
 export function createBiomeTexture(w: number, biomes: BiomeParameters[]): DataTextureWrapper {
   const data = new Uint8Array(w * w * 4)
   if (biomes.length > 0) {
-    fillBiomes(data, w, biomes)
+    fillBiomes(data, w, biomes.toReversed())
   }
   const dt = new DataTexture(data, w, w)
   dt.needsUpdate = true
@@ -64,13 +64,13 @@ export function recalculateBiomeTexture(data: Uint8Array, w: number, biomes: Bio
     return
   }
   data.fill(0)
-  fillBiomes(data, w, biomes)
+  fillBiomes(data, w, biomes.toReversed())
 }
 
 function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
   let lineStride = 0
   let cellStride = (Math.ceil(biomes[0].humiMin * w) + (biomes[0].tempMin * w)) * 4
-  for (let i = 0; i < biomes.toReversed().length; i++) {
+  for (let i = 0; i < biomes.length; i++) {
     const biome = biomes[i]
     const biomeRect: Rect = {
       x: Math.floor(biome.humiMin * w),
@@ -89,43 +89,33 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
     cellStride = biomeRect.x * 4
     lineStride = biomeRect.y * w * 4
 
-    // Calculate biome color
-    const r = Math.floor(biome.color.r * 255.0)
-    const g = Math.floor(biome.color.g * 255.0)
-    const b = Math.floor(biome.color.b * 255.0)
-    let a = 1.0
-
-    // Prepare coords and pixel/temp colors
+    // Prepare coords and pixel/biome colors
     const pixelCoords: Coordinates2D = { x: biomeRect.x, y: biomeRect.y }
-    const pixelColor: Color = new Color('#000000')
-    const tmpColor: Color = new Color('#000000')
-    let pixelAlpha = 0.0
+    const pixelRGBA = { r: 0, g: 0, b: 0, a: 0 }
+    const biomeRGBA = { r: biome.color.r, g: biome.color.g, b: biome.color.b, a: 1 }
 
     // Iterate through every single pixel inside the biome rect
     let rectDistance: number, dataIdx: number
     for (let biomePx = 0; biomePx < totalPixels; biomePx++) {     
       dataIdx = lineStride + cellStride
-      pixelColor.setRGB(
-        data[dataIdx]*INT8_TO_UNIT_MUL,
-        data[dataIdx + 1]*INT8_TO_UNIT_MUL,
-        data[dataIdx + 2]*INT8_TO_UNIT_MUL
-      )
-      pixelAlpha = data[dataIdx + 3]*INT8_TO_UNIT_MUL
+      pixelRGBA.r = data[dataIdx]*INT8_TO_UNIT_MUL
+      pixelRGBA.g = data[dataIdx + 1]*INT8_TO_UNIT_MUL
+      pixelRGBA.b = data[dataIdx + 2]*INT8_TO_UNIT_MUL
+      pixelRGBA.a = data[dataIdx + 3]*INT8_TO_UNIT_MUL
 
       rectDistance = findMinDistanceToRect(biomeRect, pixelCoords.x, pixelCoords.y, biomeOverlaps)
-      a = truncateTo(clamp(rectDistance/biomeAvgSmoothness, 0, 1), 1e4)
+      biomeRGBA.a = truncateTo(clamp(rectDistance/biomeAvgSmoothness, 0, 1), 1e4)
       
-      if (pixelAlpha > 0) {
-        tmpColor.lerpColors(pixelColor, biome.color, 1 - pixelAlpha)
-        data[dataIdx] = tmpColor.r*255.0
-        data[dataIdx + 1] = tmpColor.g*255.0
-        data[dataIdx + 2] = tmpColor.b*255.0
-        data[dataIdx + 3] = clamp(data[dataIdx + 3]+(a*255.0), 0, 255)
+      if (pixelRGBA.a > 0) {
+        data[dataIdx] = mixRawRGBAChannel(pixelRGBA.r, biomeRGBA.r, pixelRGBA.a, biomeRGBA.a)*255.0
+        data[dataIdx + 1] = mixRawRGBAChannel(pixelRGBA.g, biomeRGBA.g, pixelRGBA.a, biomeRGBA.a)*255.0
+        data[dataIdx + 2] = mixRawRGBAChannel(pixelRGBA.b, biomeRGBA.b, pixelRGBA.a, biomeRGBA.a)*255.0
+        data[dataIdx + 3] = mixRawRGBAAlpha(pixelRGBA.a, biomeRGBA.a)*255.0
       } else {
-        data[dataIdx] = r
-        data[dataIdx + 1] = g
-        data[dataIdx + 2] = b
-        data[dataIdx + 3] = a * 255.0
+        data[dataIdx] = biomeRGBA.r * 255.0
+        data[dataIdx + 1] = biomeRGBA.g * 255.0
+        data[dataIdx + 2] = biomeRGBA.b * 255.0
+        data[dataIdx + 3] = biomeRGBA.a * 255.0
       }
       
       cellStride += 4

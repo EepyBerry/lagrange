@@ -36,17 +36,17 @@ export function truncateTo(a: number, multPrecision: number): number {
 }
 
 /**
- * Ultra-fast hex colour lerping with factor
- * @see {@link https://stackoverflow.com/a/4787257}
+ * Mixes two RGBA colours with their alpha components
+ * @see https://stackoverflow.com/questions/726549/algorithm-for-additive-color-mixing-for-rgb-values
  * @param c1 first color in hex
  * @param c2 second color in hex
  * @returns the mixed color in hex
  */
-export function lerpHexColors(a: number, b: number, factor: number) {
-  const f2 = 256 * factor
-  const f1 = 256 - f2
-  return (((((a & 0xff00ff) * f1) + ((b & 0xff00ff) * f2 )) >> 8) & 0xff00ff) 
-       | (((((a & 0x00ff00) * f1) + ((b & 0x00ff00) * f2 )) >> 8) & 0x00ff00)
+export function mixRawRGBAChannel(c1: number, c2: number, a1: number, a2: number) {
+  return (c1 * a1 + c2 * a2 * (1 - a1)) / mixRawRGBAAlpha(a1, a2)
+}
+export function mixRawRGBAAlpha(a1: number, a2: number) {
+  return a1 + a2*(1-a1)
 }
 
 /**
