@@ -115,7 +115,11 @@
         "02_title": "Update 0.2 - World Collector",
         "02_codex": "Introduces the [Codex]: list, import and export planets easily and entirely within your browser!",
         "02_ui": "New dialog boxes, toasts & settings, and new editor parameters (radius, atmosphere)",
-        "02_a11y": "Accessibility features & improvements"
+        "02_a11y": "Accessibility features & improvements",
+        "03_title": "Update 0.3 - Ecosystems",
+        "03_biomes": "Introduces a fully fledged [Biome system], using temperature- & humidity-based positioning!",
+        "03_linux": "Surface noise now works properly Linux-based browsers!",
+        "03_fixes": "Smaller performance fixes all around, including fewer GLSL uniforms & varyings!"
       },
 
       "built_with_love": "Built with 🏳️‍🌈 & ❤️",

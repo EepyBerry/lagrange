@@ -115,7 +115,11 @@
         "02_title": "Update 0.2 - Wowwd Cowwectow",
         "02_codex": "I-intwoduces the [Codex]: wist, impowt and expowt pwanyets easiwy a-and entiwewy within youw bwowsew!!!",
         "02_ui": "New diawog boxes, toasts & settings, a-and new editow pawametews (wadius, a-atmosphewe)!!!",
-        "02_a11y": "Accessibiwity featuwes & impwovements!!!"
+        "02_a11y": "Accessibiwity featuwes & impwovements!!!",
+        "03_title": "Update 0.3 - Ecosystems ",
+        "03_biomes": "Intwoduces a f-fuwwy fwedged [Biome system], using tempewatuwe- & humidity-based p-posishoning!!!",
+        "03_linux": "Suwface noise n-now wowks propewly on Winyux-b-based bwowsews!!!",
+        "03_fixes": "S-smawwew pewfowmance fixes aaaaww awound, incwuding fewew GLSL unifowms & vawyings!!!"
       },
 
       "built_with_love": "Buiwt with 🏳️‍🌈 & ❤️",
