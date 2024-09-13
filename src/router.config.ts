@@ -1,4 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import CodexView from './views/CodexView.vue'
+import PlanetEditorView from './views/PlanetEditorView.vue'
+import PageNotFoundView from './views/PageNotFoundView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -10,7 +13,7 @@ const router = createRouter({
     {
       path: '/codex',
       name: 'codex',
-      component: () => import('./views/CodexView.vue'),
+      component: CodexView,
       meta: { title: 'Codex' },
     },
     {
@@ -20,13 +23,13 @@ const router = createRouter({
     {
       path: '/planet-editor/:id',
       name: 'planet-editor',
-      component: () => import('./views/PlanetEditorView.vue'),
+      component: PlanetEditorView,
       meta: { title: 'Planet Editor' },
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'page-not-found',
-      component: () => import('./views/PageNotFoundView.vue'),
+      component: PageNotFoundView,
       meta: { title: 'Page Not Found' },
     },
   ],

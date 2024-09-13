@@ -17,6 +17,7 @@ import {
   BIOME_TEXTURE_SIZE,
   SURFACE_TEXTURE_SIZE,
   CLOUDS_TEXTURE_SIZE,
+  ATMOSPHERE_HEIGHT_DIVIDER,
 } from '@core/globals'
 import { ColorMode, GeometryType, type DataTextureWrapper } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
@@ -36,7 +37,11 @@ import { createBiomeTexture, createRampTexture } from '../helpers/texture.helper
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
-export const LG_HEIGHT_DIVIDER = 200.0
+
+// Buffers
+export const LG_BUFFER_SURFACE = new Uint8Array(SURFACE_TEXTURE_SIZE * 4)
+export const LG_BUFFER_BIOME = new Uint8Array(BIOME_TEXTURE_SIZE * BIOME_TEXTURE_SIZE * 4)
+export const LG_BUFFER_CLOUDS = new Uint8Array(BIOME_TEXTURE_SIZE * BIOME_TEXTURE_SIZE * 4)
 
 // ----------------------------------------------------------------------------------------------------------------------
 // SCENE FUNCTIONS
@@ -91,8 +96,8 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
   const geometry = createGeometryComponent(GeometryType.SPHERE)
   geometry.computeTangents()
 
-  const surfaceTex = createRampTexture(SURFACE_TEXTURE_SIZE, data.planetSurfaceColorRamp.steps)
-  const biomeTex = createBiomeTexture(BIOME_TEXTURE_SIZE, data.biomesParams)
+  const surfaceTex = createRampTexture(LG_BUFFER_SURFACE, SURFACE_TEXTURE_SIZE, data.planetSurfaceColorRamp.steps)
+  const biomeTex = createBiomeTexture(LG_BUFFER_BIOME, BIOME_TEXTURE_SIZE, data.biomesParams)
 
   const material = createShaderMaterialComponent(
     planetVertShader,
@@ -158,9 +163,9 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
 }
 
 export function createClouds(data: PlanetData): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
-  const cloudHeight = data.cloudsHeight / LG_HEIGHT_DIVIDER
+  const cloudHeight = data.cloudsHeight / ATMOSPHERE_HEIGHT_DIVIDER
   const geometry = createGeometryComponent(GeometryType.SPHERE, cloudHeight)
-  const opacityTex = createRampTexture(CLOUDS_TEXTURE_SIZE, data.cloudsColorRamp.steps)
+  const opacityTex = createRampTexture(LG_BUFFER_CLOUDS, CLOUDS_TEXTURE_SIZE, data.cloudsColorRamp.steps)
 
   const material = createShaderMaterialComponent(
     cloudsVertShader,
@@ -191,8 +196,8 @@ export function createClouds(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
 }
 
 export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE.Mesh {
-  const atmosHeight = data.atmosphereHeight / LG_HEIGHT_DIVIDER
-  const atmosDensity = data.atmosphereDensityScale / LG_HEIGHT_DIVIDER
+  const atmosHeight = data.atmosphereHeight / ATMOSPHERE_HEIGHT_DIVIDER
+  const atmosDensity = data.atmosphereDensityScale / ATMOSPHERE_HEIGHT_DIVIDER
   const geometry = createGeometryComponent(GeometryType.SPHERE, atmosHeight)
   const material = createShaderMaterialComponent(
     atmosphereVertShader,

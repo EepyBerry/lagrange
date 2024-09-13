@@ -61,6 +61,9 @@ defineExpose({ openWithError })
     margin-top: 1rem;
     opacity: 0.5;
   }
+  .error-info {
+    text-align: center;
+  }
   .error-container {
     min-height: 2rem;
     text-align: center;

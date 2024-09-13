@@ -1,4 +1,4 @@
-import { BIOME_TEXTURE_SIZE, CLOUDS_TEXTURE_SIZE, SURFACE_TEXTURE_SIZE } from "@/core/globals"
+import { LG_BUFFER_BIOME, LG_BUFFER_SURFACE } from "@/core/services/planet-editor.service"
 import { saveAs } from "file-saver"
 
 /**
@@ -6,21 +6,17 @@ import { saveAs } from "file-saver"
  */
 export class DebugUtils {
   
-  static surfaceData: Uint8Array = new Uint8Array(SURFACE_TEXTURE_SIZE * 4)
-  static cloudsData: Uint8Array = new Uint8Array(CLOUDS_TEXTURE_SIZE * 4)
-  static biomeData: Uint8Array = new Uint8Array(BIOME_TEXTURE_SIZE * BIOME_TEXTURE_SIZE * 4)
-
   /**
    * Downloads the current surface data in RAW format (32 BPP format)
    */
   static getRawSurfaceData() {
-    saveAs(new Blob([DebugUtils.surfaceData]), 'surface-map.raw')
+    saveAs(new Blob([LG_BUFFER_SURFACE]), 'surface-map.raw')
   }
 
   /**
    * Downloads the current biome data in RAW format (32 BPP format)
    */
   static getRawBiomeData() {
-    saveAs(new Blob([DebugUtils.biomeData]), 'biome-map.raw')
+    saveAs(new Blob([LG_BUFFER_BIOME]), 'biome-map.raw')
   }
 }

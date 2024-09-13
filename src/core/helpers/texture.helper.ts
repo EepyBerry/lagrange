@@ -6,25 +6,24 @@ import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp } from 'three/src/math/MathUtils.js'
 import { INT8_TO_UNIT_MUL } from '../globals'
 
-export function createRampTexture(w: number, steps: ColorRampStep[]): DataTextureWrapper {
-  const data = new Uint8Array(w * 4)
+export function createRampTexture(buffer: Uint8Array, w: number, steps: ColorRampStep[]): DataTextureWrapper {
   if (steps.length > 0) {
-    fillRamp(data, w, steps)
+    fillRamp(buffer, w, steps)
   }
-  const dt = new DataTexture(data, w, 1)
+  const dt = new DataTexture(buffer, w, 1)
   dt.needsUpdate = true
-  return { texture: dt, data }
+  return { texture: dt, data: buffer }
 }
 
-export function recalculateRampTexture(data: Uint8Array, w: number, steps: ColorRampStep[]): void {
+export function recalculateRampTexture(buffer: Uint8Array, w: number, steps: ColorRampStep[]): void {
   if (steps.length === 0) {
     return
   }
-  data.fill(0)
-  fillRamp(data, w, steps)
+  buffer.fill(0)
+  fillRamp(buffer, w, steps)
 }
 
-function fillRamp(data: Uint8Array, w: number, steps: ColorRampStep[]) {
+function fillRamp(buffer: Uint8Array, w: number, steps: ColorRampStep[]) {
   let stride = 0
   let currentStep, nextStep
   for (let i = 0; i < steps.length-1; i++) {
@@ -38,10 +37,10 @@ function fillRamp(data: Uint8Array, w: number, steps: ColorRampStep[]) {
     const lerpColor = new Color(0x0)
     for (let px = 0; px < totalPixels; px++) {
       lerpColor.lerpColors(currentStep.color, nextStep.color, truncateTo(px/totalPixels, 1e4))
-      data[stride] = Math.floor(lerpColor.r * 255.0)
-      data[stride + 1] = Math.floor(lerpColor.g * 255.0)
-      data[stride + 2] = Math.floor(lerpColor.b * 255.0)
-      data[stride + 3] = 255
+      buffer[stride] = Math.floor(lerpColor.r * 255.0)
+      buffer[stride + 1] = Math.floor(lerpColor.g * 255.0)
+      buffer[stride + 2] = Math.floor(lerpColor.b * 255.0)
+      buffer[stride + 3] = 255
       stride += 4
     }
   }
@@ -49,25 +48,24 @@ function fillRamp(data: Uint8Array, w: number, steps: ColorRampStep[]) {
 
 // ------------------------------------------------------------------------------------------------
 
-export function createBiomeTexture(w: number, biomes: BiomeParameters[]): DataTextureWrapper {
-  const data = new Uint8Array(w * w * 4)
+export function createBiomeTexture(buffer: Uint8Array, w: number, biomes: BiomeParameters[]): DataTextureWrapper {
   if (biomes.length > 0) {
-    fillBiomes(data, w, biomes)
+    fillBiomes(buffer, w, biomes)
   }
-  const dt = new DataTexture(data, w, w)
+  const dt = new DataTexture(buffer, w, w)
   dt.needsUpdate = true
-  return { texture: dt, data }
+  return { texture: dt, data: buffer }
 }
 
-export function recalculateBiomeTexture(data: Uint8Array, w: number, biomes: BiomeParameters[]): void {
+export function recalculateBiomeTexture(buffer: Uint8Array, w: number, biomes: BiomeParameters[]): void {
   if (biomes.length === 0) {
     return
   }
-  data.fill(0)
-  fillBiomes(data, w, biomes)
+  buffer.fill(0)
+  fillBiomes(buffer, w, biomes)
 }
 
-function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
+function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
   let lineStride = 0
   let cellStride = (Math.ceil(biomes[0].humiMin * w) + (biomes[0].tempMin * w)) * 4
   for (let i = 0; i < biomes.length; i++) {
@@ -95,28 +93,28 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
     const biomeRGBA = { r: biome.color.r, g: biome.color.g, b: biome.color.b, a: 1 }
 
     // Iterate through every single pixel inside the biome rect
-    let rectDistance: number, dataIdx: number, blendedColor: RawRGBA
+    let rectDistance: number, bufferIdx: number, blendedColor: RawRGBA
     for (let biomePx = 0; biomePx < totalPixels; biomePx++) {     
-      dataIdx = lineStride + cellStride
-      pixelRGBA.r = data[dataIdx]*INT8_TO_UNIT_MUL
-      pixelRGBA.g = data[dataIdx + 1]*INT8_TO_UNIT_MUL
-      pixelRGBA.b = data[dataIdx + 2]*INT8_TO_UNIT_MUL
-      pixelRGBA.a = data[dataIdx + 3]*INT8_TO_UNIT_MUL
+      bufferIdx = lineStride + cellStride
+      pixelRGBA.r = buffer[bufferIdx]*INT8_TO_UNIT_MUL
+      pixelRGBA.g = buffer[bufferIdx + 1]*INT8_TO_UNIT_MUL
+      pixelRGBA.b = buffer[bufferIdx + 2]*INT8_TO_UNIT_MUL
+      pixelRGBA.a = buffer[bufferIdx + 3]*INT8_TO_UNIT_MUL
 
       rectDistance = findMinDistanceToRect(biomeRect, pixelCoords.x, pixelCoords.y, biomeOverlaps)
       biomeRGBA.a = truncateTo(clamp(rectDistance/biomeAvgSmoothness, 0, 1), 1e4)
       
       if (pixelRGBA.a > 0) {
         blendedColor = alphaBlendColors(pixelRGBA, biomeRGBA)
-        data[dataIdx] = blendedColor.r * 255.0
-        data[dataIdx + 1] = blendedColor.g * 255.0
-        data[dataIdx + 2] = blendedColor.b * 255.0
-        data[dataIdx + 3] = blendedColor.a * 255.0
+        buffer[bufferIdx] = blendedColor.r * 255.0
+        buffer[bufferIdx + 1] = blendedColor.g * 255.0
+        buffer[bufferIdx + 2] = blendedColor.b * 255.0
+        buffer[bufferIdx + 3] = blendedColor.a * 255.0
       } else {
-        data[dataIdx] = biomeRGBA.r * 255.0
-        data[dataIdx + 1] = biomeRGBA.g * 255.0
-        data[dataIdx + 2] = biomeRGBA.b * 255.0
-        data[dataIdx + 3] = biomeRGBA.a * 255.0
+        buffer[bufferIdx] = biomeRGBA.r * 255.0
+        buffer[bufferIdx + 1] = biomeRGBA.g * 255.0
+        buffer[bufferIdx + 2] = biomeRGBA.b * 255.0
+        buffer[bufferIdx + 3] = biomeRGBA.a * 255.0
       }
       
       cellStride += 4

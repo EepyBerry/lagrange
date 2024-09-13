@@ -30,6 +30,7 @@ import {
   SUN_INIT_POS,
   BIOME_TEXTURE_SIZE,
   SURFACE_TEXTURE_SIZE,
+  ATMOSPHERE_HEIGHT_DIVIDER,
 } from '@core/globals'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
@@ -52,7 +53,9 @@ import {
   createScene,
   createSun,
   exportPlanetPreview,
-  LG_HEIGHT_DIVIDER,
+  LG_BUFFER_BIOME,
+  LG_BUFFER_CLOUDS,
+  LG_BUFFER_SURFACE,
   LG_PLANET_DATA,
 } from '@/core/services/planet-editor.service'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
@@ -63,7 +66,6 @@ import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import WebGL from 'three/addons/capabilities/WebGL.js'
 import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
 import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
-import { DebugUtils } from '@/utils/debug-utils'
 import { recalculateBiomeTexture, recalculateRampTexture } from '@/core/helpers/texture.helper'
 import type { ColorRampStep } from '@/core/models/color-ramp.model'
 
@@ -106,11 +108,8 @@ let _ambLight: THREE.AmbientLight
 let _lensFlare: LensFlareEffect
 
 // DataTextures
-let _surfaceData: Uint8Array
 let _surfaceDataTex: THREE.DataTexture
-let _cloudsData: Uint8Array
 let _cloudsDataTex: THREE.DataTexture
-let _biomeData: Uint8Array
 let _biomeDataTex: THREE.DataTexture
 
 onMounted(async () => {
@@ -194,7 +193,6 @@ async function initCanvas() {
   initPlanet()
   initRendering(effectiveWidth, effectiveHeight)
   createControlsComponent($se.camera, $se.renderer.domElement)
-  //$se.camera.setRotationFromAxisAngle(AXIS_Y, degToRad(-60))
   EventBus.registerWindowEventListener('resize', onWindowResize)
   EventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
   showSpinner.value = false
@@ -233,12 +231,9 @@ function initPlanet(): void {
   _planetGroup = pivot
 
   // Set datatextures + data
-  _surfaceData = planet.texs[0].data
   _surfaceDataTex = planet.texs[0].texture
-  _cloudsData = clouds.texs[0].data
-  _cloudsDataTex = clouds.texs[0].texture
-  _biomeData = planet.texs[1].data
   _biomeDataTex = planet.texs[1].texture
+  _cloudsDataTex = clouds.texs[0].texture
 
   // Set initial rotations
   _planetGroup.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
@@ -281,7 +276,10 @@ function disposeScene() {
   ;(_atmosphere.material as THREE.Material).dispose()
   _atmosphere.geometry.dispose()
 
-  _biomeData.fill(0)
+  LG_BUFFER_SURFACE.fill(0)
+  LG_BUFFER_BIOME.fill(0)
+  LG_BUFFER_CLOUDS.fill(0)
+  _surfaceDataTex.dispose()
   _biomeDataTex.dispose()
   _planetGroup.clear()
 
@@ -469,7 +467,7 @@ function updatePlanet() {
       // --------------------------------------------------
       case '_planetRadius': {
         const v = LG_PLANET_DATA.value.planetRadius
-        const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / LG_HEIGHT_DIVIDER
+        const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / ATMOSPHERE_HEIGHT_DIVIDER
         _planetGroup.scale.set(v, v, v)
         setShaderMaterialUniform(planetMaterial, 'u_radius', v)
         setShaderMaterialUniforms(
@@ -578,9 +576,8 @@ function updatePlanet() {
       }
       case '_planetSurfaceColorRamp': {
         const v = LG_PLANET_DATA.value.planetSurfaceColorRamp
-        recalculateRampTexture(_surfaceData, SURFACE_TEXTURE_SIZE, v.steps as ColorRampStep[])
+        recalculateRampTexture(LG_BUFFER_SURFACE, SURFACE_TEXTURE_SIZE, v.steps as ColorRampStep[])
         _surfaceDataTex.needsUpdate = true
-        DebugUtils.surfaceData.set(_surfaceData, 0)
         break
       }
 
@@ -667,11 +664,10 @@ function updatePlanet() {
       }
       case '_biomesParameters': {
         recalculateBiomeTexture(
-          _biomeData,
+          LG_BUFFER_BIOME,
           BIOME_TEXTURE_SIZE,
           LG_PLANET_DATA.value.biomesParams as BiomeParameters[]
         )
-        DebugUtils.biomeData.set(_biomeData, 0)
         _biomeDataTex.needsUpdate = true
         break
       }
@@ -726,9 +722,8 @@ function updatePlanet() {
       }
       case '_cloudsColorRamp': {
         const v = LG_PLANET_DATA.value.cloudsColorRamp
-        recalculateRampTexture(_cloudsData, SURFACE_TEXTURE_SIZE, v.steps as ColorRampStep[])
+        recalculateRampTexture(LG_BUFFER_CLOUDS, SURFACE_TEXTURE_SIZE, v.steps as ColorRampStep[])
         _cloudsDataTex.needsUpdate = true
-        DebugUtils.cloudsData.set(_surfaceData, 0)
         break
       }
 
@@ -741,7 +736,7 @@ function updatePlanet() {
         break
       }
       case '_atmosphereHeight': {
-        const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / LG_HEIGHT_DIVIDER
+        const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / ATMOSPHERE_HEIGHT_DIVIDER
         setShaderMaterialUniform(
           atmosphereMaterial,
           'u_radius',
@@ -753,7 +748,7 @@ function updatePlanet() {
         setShaderMaterialUniform(
           atmosphereMaterial,
           'u_density',
-          LG_PLANET_DATA.value.atmosphereDensityScale / LG_HEIGHT_DIVIDER,
+          LG_PLANET_DATA.value.atmosphereDensityScale / ATMOSPHERE_HEIGHT_DIVIDER,
         )
         break
       }
