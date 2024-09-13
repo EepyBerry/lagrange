@@ -52,7 +52,7 @@ function fillRamp(data: Uint8Array, w: number, steps: ColorRampStep[]) {
 export function createBiomeTexture(w: number, biomes: BiomeParameters[]): DataTextureWrapper {
   const data = new Uint8Array(w * w * 4)
   if (biomes.length > 0) {
-    fillBiomes(data, w, biomes.toReversed())
+    fillBiomes(data, w, biomes)
   }
   const dt = new DataTexture(data, w, w)
   dt.needsUpdate = true
@@ -64,7 +64,7 @@ export function recalculateBiomeTexture(data: Uint8Array, w: number, biomes: Bio
     return
   }
   data.fill(0)
-  fillBiomes(data, w, biomes.toReversed())
+  fillBiomes(data, w, biomes)
 }
 
 function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
