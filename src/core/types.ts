@@ -34,6 +34,12 @@ export type Coordinates2D = {
   x: number
   y: number
 }
+export type RawRGBA = {
+  r: number
+  g: number
+  b: number
+  a: number
+}
 
 export type DataTextureWrapper = {
   texture: DataTexture

@@ -1,6 +1,6 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
-import type { Rect, DataTextureWrapper, Coordinates2D } from '@/core/types'
-import { avg, findMinDistanceToRect, findRectOverlaps, mixRawRGBAAlpha, mixRawRGBAChannel, truncateTo } from '@/utils/math-utils'
+import type { Rect, DataTextureWrapper, Coordinates2D, RawRGBA } from '@/core/types'
+import { alphaBlendColors, avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp } from 'three/src/math/MathUtils.js'
@@ -95,7 +95,7 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
     const biomeRGBA = { r: biome.color.r, g: biome.color.g, b: biome.color.b, a: 1 }
 
     // Iterate through every single pixel inside the biome rect
-    let rectDistance: number, dataIdx: number
+    let rectDistance: number, dataIdx: number, blendedColor: RawRGBA
     for (let biomePx = 0; biomePx < totalPixels; biomePx++) {     
       dataIdx = lineStride + cellStride
       pixelRGBA.r = data[dataIdx]*INT8_TO_UNIT_MUL
@@ -107,10 +107,11 @@ function fillBiomes(data: Uint8Array, w: number, biomes: BiomeParameters[]) {
       biomeRGBA.a = truncateTo(clamp(rectDistance/biomeAvgSmoothness, 0, 1), 1e4)
       
       if (pixelRGBA.a > 0) {
-        data[dataIdx] = mixRawRGBAChannel(pixelRGBA.r, biomeRGBA.r, pixelRGBA.a, biomeRGBA.a)*255.0
-        data[dataIdx + 1] = mixRawRGBAChannel(pixelRGBA.g, biomeRGBA.g, pixelRGBA.a, biomeRGBA.a)*255.0
-        data[dataIdx + 2] = mixRawRGBAChannel(pixelRGBA.b, biomeRGBA.b, pixelRGBA.a, biomeRGBA.a)*255.0
-        data[dataIdx + 3] = mixRawRGBAAlpha(pixelRGBA.a, biomeRGBA.a)*255.0
+        blendedColor = alphaBlendColors(pixelRGBA, biomeRGBA)
+        data[dataIdx] = blendedColor.r * 255.0
+        data[dataIdx + 1] = blendedColor.g * 255.0
+        data[dataIdx + 2] = blendedColor.b * 255.0
+        data[dataIdx + 3] = blendedColor.a * 255.0
       } else {
         data[dataIdx] = biomeRGBA.r * 255.0
         data[dataIdx + 1] = biomeRGBA.g * 255.0

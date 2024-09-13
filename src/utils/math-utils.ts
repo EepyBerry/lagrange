@@ -1,4 +1,4 @@
-import type { Rect } from "@/core/types"
+import type { RawRGBA, Rect } from "@/core/types"
 
 /**
  * Simple numeric checking function.
@@ -42,10 +42,18 @@ export function truncateTo(a: number, multPrecision: number): number {
  * @param c2 second color in hex
  * @returns the mixed color in hex
  */
-export function mixRawRGBAChannel(c1: number, c2: number, a1: number, a2: number) {
+export function alphaBlendColors(c1: RawRGBA, c2: RawRGBA): RawRGBA {
+  return {
+    r: mixRawRGBAChannel(c1.r, c2.r, c1.a, c2.a),
+    g: mixRawRGBAChannel(c1.g, c2.g, c1.a, c2.a),
+    b: mixRawRGBAChannel(c1.b, c2.b, c1.a, c2.a),
+    a: mixRawRGBAAlpha(c1.a, c2.a)
+  }
+}
+function mixRawRGBAChannel(c1: number, c2: number, a1: number, a2: number) {
   return (c1 * a1 + c2 * a2 * (1 - a1)) / mixRawRGBAAlpha(a1, a2)
 }
-export function mixRawRGBAAlpha(a1: number, a2: number) {
+function mixRawRGBAAlpha(a1: number, a2: number) {
   return a1 + a2*(1-a1)
 }
 
