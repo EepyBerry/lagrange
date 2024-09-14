@@ -26,6 +26,7 @@
             :id="'0'"
             :value="ColorMode.REALISTIC"
             :ariaLabel="$t('a11y.editor_atmosphere_rgba_mode_realistic')"
+            :title="$t('tooltip.rgba_mode_realistic')"
           >
             {{ $t('editor.controls.atmosphere.rgba_mode_realistic') }}
           </ParameterRadioOption>
@@ -36,6 +37,7 @@
             :id="'1'"
             :value="ColorMode.DIRECT"
             :ariaLabel="$t('a11y.editor_atmosphere_rgba_mode_direct')"
+            :title="$t('tooltip.rgba_mode_direct')"
           >
             {{ $t('editor.controls.atmosphere.rgba_mode_direct') }}
           </ParameterRadioOption>
@@ -46,6 +48,7 @@
             :id="'1'"
             :value="ColorMode.MIXED"
             :ariaLabel="$t('a11y.editor_atmosphere_rgba_mode_mixed')"
+            :title="$t('tooltip.rgba_mode_mixed')"
           >
             {{ $t('editor.controls.atmosphere.rgba_mode_mixed') }}
           </ParameterRadioOption>

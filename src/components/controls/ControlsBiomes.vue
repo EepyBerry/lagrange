@@ -20,6 +20,7 @@
             :id="'0'"
             :value="GradientMode.REALISTIC"
             :ariaLabel="$t('a11y.editor_biome_gradient_mode_realistic')"
+            :title="$t('tooltip.gradient_mode_realistic')"
           >
             {{ $t('editor.controls.biomes.gradient_mode_realistic') }}
           </ParameterRadioOption>
@@ -30,6 +31,7 @@
             :id="'1'"
             :value="GradientMode.POLE_TO_POLE"
             :ariaLabel="$t('a11y.editor_biome_gradient_mode_poletopole')"
+            :title="$t('tooltip.gradient_mode_poletopole')"
           >
             {{ $t('editor.controls.biomes.gradient_mode_poletopole') }}
           </ParameterRadioOption>
@@ -40,6 +42,7 @@
             :id="'2'"
             :value="GradientMode.FULLNOISE"
             :ariaLabel="$t('a11y.editor_biome_gradient_mode_fullnoise')"
+            :title="$t('tooltip.gradient_mode_fullnoise')"
           >
             {{ $t('editor.controls.biomes.gradient_mode_fullnoise') }}
           </ParameterRadioOption>
@@ -81,6 +84,7 @@
             :id="'0'"
             :value="GradientMode.REALISTIC"
             :ariaLabel="$t('a11y.editor_biome_gradient_mode_realistic')"
+            :title="$t('tooltip.gradient_mode_realistic')"
           >
             {{ $t('editor.controls.biomes.gradient_mode_realistic') }}
           </ParameterRadioOption>
@@ -91,6 +95,7 @@
             :id="'1'"
             :value="GradientMode.POLE_TO_POLE"
             :ariaLabel="$t('a11y.editor_biome_gradient_mode_poletopole')"
+            :title="$t('tooltip.gradient_mode_poletopole')"
           >
             {{ $t('editor.controls.biomes.gradient_mode_poletopole') }}
           </ParameterRadioOption>
@@ -101,6 +106,7 @@
             :id="'2'"
             :value="GradientMode.FULLNOISE"
             :ariaLabel="$t('a11y.editor_biome_gradient_mode_fullnoise')"
+            :title="$t('tooltip.gradient_mode_fullnoise')"
           >
             {{ $t('editor.controls.biomes.gradient_mode_fullnoise') }}
           </ParameterRadioOption>

@@ -113,11 +113,11 @@
       "changelogs": {
         "$title": "Main featuwe changewogs",
         "02_title": "Update 0.2 - Wowwd Cowwectow",
-        "02_codex": "I-intwoduces the [Codex]: wist, impowt and expowt pwanyets easiwy a-and entiwewy within youw bwowsew!!!",
+        "02_codex": "I-intwoduces the Codex: wist, impowt and expowt pwanyets easiwy a-and entiwewy within youw bwowsew!!!",
         "02_ui": "New diawog boxes, toasts & settings, a-and new editow pawametews (wadius, a-atmosphewe)!!!",
         "02_a11y": "Accessibiwity featuwes & impwovements!!!",
         "03_title": "Update 0.3 - Ecosystems ",
-        "03_biomes": "Intwoduces a f-fuwwy fwedged [Biome system], using tempewatuwe- & humidity-based p-posishoning!!!",
+        "03_biomes": "Intwoduces a f-fuwwy fwedged biome system, using tempewatuwe- & humidity-based p-posishoning!!!",
         "03_linux": "Suwface noise n-now wowks propewly on Winyux-b-based bwowsews!!!",
         "03_fixes": "S-smawwew pewfowmance fixes aaaaww awound, incwuding fewew GLSL unifowms & vawyings!!!"
       },
@@ -307,6 +307,14 @@
     "topbar_import": "Impowt pwanyet fiwe",
     "topbar_export": "Expowt pwanyet fiwe",
     "topbar_export_all": "Expowt aww pwanyets as .zip!!!",
+
+    "gradient_mode_realistic": "W-wowew vawues on powes, highew vawues awong the e-equatow!!!",
+    "gradient_mode_poletopole": "W-wowew vawues on nowth p-powe, highew vawues on south powe!!!",
+    "gradient_mode_fullnoise": "Fuwwy noisy vawues, l-liek suwface nyoise!!!",
+
+    "rgba_mode_realistic": "Waw Waweigh & Mie scattewing cawcuwashons with hue s-shifting",
+    "rgba_mode_direct": "Appwies a singwe cowow o-on top of cawcuwashons",
+    "rgba_mode_mixed": "Appwies diwect mode cowow as a t-tint on top of the s-sewected hue",
 
     "footer_github": "GitHub wepositowy!!! (opens in nyew tab OwO)",
     "footer_settings": "Settings",

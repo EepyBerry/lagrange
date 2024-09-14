@@ -113,11 +113,11 @@
       "changelogs": {
         "$title": "Main feature changelogs",
         "02_title": "Update 0.2 - World Collector",
-        "02_codex": "Introduces the [Codex]: list, import and export planets easily and entirely within your browser!",
+        "02_codex": "Introduces the Codex: list, import and export planets easily and entirely within your browser!",
         "02_ui": "New dialog boxes, toasts & settings, and new editor parameters (radius, atmosphere)",
         "02_a11y": "Accessibility features & improvements",
         "03_title": "Update 0.3 - Ecosystems",
-        "03_biomes": "Introduces a fully fledged [Biome system], using temperature- & humidity-based positioning!",
+        "03_biomes": "Introduces a fully fledged biome system, using temperature- & humidity-based positioning!",
         "03_linux": "Surface noise now works properly Linux-based browsers!",
         "03_fixes": "Smaller performance fixes all around, including fewer GLSL uniforms & varyings!"
       },
@@ -304,6 +304,14 @@
     "topbar_import": "Import planet file",
     "topbar_export": "Export planet file",
     "topbar_export_all": "Export all planets as .zip",
+
+    "gradient_mode_realistic": "Lower values on poles, higher values along the equator",
+    "gradient_mode_poletopole": "Lower values on north pole, higher values on south pole",
+    "gradient_mode_fullnoise": "Fully noisy values, akin to surface noise",
+
+    "rgba_mode_realistic": "Raw Raleigh & Mie scattering calculations with hue shifting",
+    "rgba_mode_direct": "Applies a single color on top of calculations",
+    "rgba_mode_mixed": "Applies direct mode color as a tint on top of the selected hue",
 
     "footer_github": "GitHub repository (opens in new tab)",
     "footer_settings": "Settings",
