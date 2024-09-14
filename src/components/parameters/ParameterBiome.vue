@@ -88,7 +88,7 @@ const humidityTypeTable: BiomeType[] = [
 ]
 
 defineEmits(['moveup', 'movedown', 'delete'])
-const _props = defineProps<{ index: number, maxIndex: number, expand?: boolean }>()
+const _props = defineProps<{ index: number; maxIndex: number; expand?: boolean }>()
 onMounted(() => (_expanded.value = _props.expand ?? true))
 
 function toggleExpand() {
@@ -118,7 +118,6 @@ function getBiomeHumidityType(): string {
 function getPartialId() {
   return lgParam.value?.id.substring(0, 6)
 }
-
 </script>
 <style scoped lang="scss">
 .biome-grid {
@@ -146,7 +145,8 @@ function getPartialId() {
     .biome-index {
       font-weight: 400;
     }
-    .biome-info, .biome-actions {
+    .biome-info,
+    .biome-actions {
       display: flex;
       align-items: center;
       gap: 8px;

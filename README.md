@@ -34,7 +34,6 @@ _(**note:** this is something I am working on during my free time, which means t
   <img width="33%" src="https://github.com/user-attachments/assets/476c8706-88a7-49c2-a6d2-2cd152207496" title="Xu'Alatl" alt="planet:Xu'Alatl">
 </div>
 
-
 ## ⚠️ Requirements
 
 **IMPORTANT:** to properly run the application, [**WebGL 2.0 browser support**](https://get.webgl.org/webgl2/) is required! <br>

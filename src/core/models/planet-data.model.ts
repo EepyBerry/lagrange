@@ -425,7 +425,7 @@ export default class PlanetData extends ChangeTracker {
     return this._changedProps
   }
   public markAllForChange() {
-    this._changedProps.push(...Object.keys(this).map(o => ({ prop: o })))
+    this._changedProps.push(...Object.keys(this).map((o) => ({ prop: o })))
   }
   public clearChangedProps() {
     this._changedProps.splice(0)
@@ -514,10 +514,10 @@ export default class PlanetData extends ChangeTracker {
           temperatureMin: 0.0,
           temperatureMax: 0.08,
           humidityMin: 0.7,
-          humidityMax: 1.0
+          humidityMax: 1.0,
         },
         new Color(0xffffff),
-        0.25
+        0.25,
       ),
       new BiomeParameters(
         this._changedProps,
@@ -526,10 +526,10 @@ export default class PlanetData extends ChangeTracker {
           temperatureMin: 0.6,
           temperatureMax: 1.0,
           humidityMin: 0.0,
-          humidityMax: 0.25
+          humidityMax: 0.25,
         },
         new Color(0xbaa345),
-        0.25
+        0.25,
       ),
     ]
 
@@ -621,7 +621,7 @@ export default class PlanetData extends ChangeTracker {
             humidityMax: 1.0,
           },
           new Color(0xffffff),
-          0.25
+          0.25,
         ),
         new BiomeParameters(
           this._changedProps,
@@ -630,10 +630,10 @@ export default class PlanetData extends ChangeTracker {
             temperatureMin: 0.6,
             temperatureMax: 1.0,
             humidityMin: 0.0,
-            humidityMax: 0.65
+            humidityMax: 0.65,
           },
           new Color(0xbaa345),
-          0.25
+          0.25,
         ),
       ],
     )
@@ -719,8 +719,8 @@ export default class PlanetData extends ChangeTracker {
     this._biomesHumidityMode = data._biomesHumidityMode ?? GradientMode.REALISTIC
     this._biomesHumidityNoise.frequency = data._biomesHumidityNoise?._frequency ?? 2.25
     this._biomesHumidityNoise.amplitude = data._biomesHumidityNoise?._amplitude ?? 0.95
-    this._biomesHumidityNoise.lacunarity =  data._biomesHumidityNoise?._lacunarity ?? 2.25
-    this._biomesHumidityNoise.octaves =  data._biomesHumidityNoise?._octaves ?? 4
+    this._biomesHumidityNoise.lacunarity = data._biomesHumidityNoise?._lacunarity ?? 2.25
+    this._biomesHumidityNoise.octaves = data._biomesHumidityNoise?._octaves ?? 4
     this._biomesParams.splice(0)
     this._biomesParams.push(
       ...(data._biomesParams ?? []).map((rbp: any) => {
@@ -734,7 +734,7 @@ export default class PlanetData extends ChangeTracker {
             humidityMax: rbp._humiMax ?? 1.0,
           },
           new Color(rbp._color),
-          rbp._smoothness ?? 0.25
+          rbp._smoothness ?? 0.25,
         )
         nbp.id = rbp._id ? rbp._id : nbp.id
         return nbp

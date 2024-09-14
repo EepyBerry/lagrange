@@ -21,7 +21,7 @@ export abstract class ChangeTracker {
 }
 
 export type ChangedPropPair = {
-  key: string,
+  key: string
   value: any
 }
 export type ChangedProp = {

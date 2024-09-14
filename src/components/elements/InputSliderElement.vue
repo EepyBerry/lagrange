@@ -188,7 +188,8 @@ input.lg[type='range'] {
 }
 
 @media screen and (max-width: 567px) {
-  .lg-input-wrapper, .lg-input-wrapper-slider {
+  .lg-input-wrapper,
+  .lg-input-wrapper-slider {
     width: 100%;
   }
   input.lg[type='range'] {

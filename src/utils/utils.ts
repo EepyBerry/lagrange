@@ -6,7 +6,7 @@ export function hexNumberToString(n: number, hash?: boolean): string {
 }
 
 export function strToHexNumber(n: string): number {
-  return Number('0x' + n.substring(+(n.startsWith('#'))))
+  return Number('0x' + n.substring(+n.startsWith('#')))
 }
 
 export function mapLocale(locale: string): string {

@@ -295,9 +295,15 @@ async function handleKeyboardEvent(event: KeyboardEvent) {
   const keyBinds = await idb.keyBindings.toArray()
   const kb = keyBinds.find((k) => k.key === event.key.toUpperCase())
   if (!kb) return
-  if (event.shiftKey && kb.key !== 'SHIFT') { return }
-  if (event.ctrlKey && kb.key !== 'CONTROL') { return }
-  if (event.altKey && kb.key !== 'ALT') { return }
+  if (event.shiftKey && kb.key !== 'SHIFT') {
+    return
+  }
+  if (event.ctrlKey && kb.key !== 'CONTROL') {
+    return
+  }
+  if (event.altKey && kb.key !== 'ALT') {
+    return
+  }
 
   switch (kb.action) {
     case KeyBindingAction.ToggleLensFlare:
@@ -471,11 +477,7 @@ function updatePlanet() {
         const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / ATMOSPHERE_HEIGHT_DIVIDER
         _planetGroup.scale.set(v, v, v)
         setShaderMaterialUniform(planetMaterial, 'u_radius', v)
-        setShaderMaterialUniforms(
-          atmosphereMaterial,
-          ['u_surface_radius', 'u_radius'],
-          [v, v + atmosHeight],
-        )
+        setShaderMaterialUniforms(atmosphereMaterial, ['u_surface_radius', 'u_radius'], [v, v + atmosHeight])
         break
       }
       case '_planetAxialTilt': {
@@ -532,19 +534,11 @@ function updatePlanet() {
       // |                Surface settings                |
       // --------------------------------------------------
       case '_planetSurfaceShowBumps': {
-        setShaderMaterialUniform(
-          planetMaterial,
-          'u_bump',
-          LG_PLANET_DATA.value.planetSurfaceShowBumps,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_bump', LG_PLANET_DATA.value.planetSurfaceShowBumps)
         break
       }
       case '_planetSurfaceBumpStrength': {
-        setShaderMaterialUniform(
-          planetMaterial,
-          'u_bump_strength',
-          LG_PLANET_DATA.value.planetSurfaceBumpStrength,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_bump_strength', LG_PLANET_DATA.value.planetSurfaceBumpStrength)
         break
       }
       case '_planetSurfaceNoise._frequency': {
@@ -586,11 +580,7 @@ function updatePlanet() {
       // |                 Biome settings                 |
       // --------------------------------------------------
       case '_biomesEnabled': {
-        setShaderMaterialUniform(
-          planetMaterial,
-          'u_biomes',
-          LG_PLANET_DATA.value.biomesEnabled,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_biomes', LG_PLANET_DATA.value.biomesEnabled)
         break
       }
       case '_biomesTemperatureMode': {
@@ -667,7 +657,7 @@ function updatePlanet() {
         recalculateBiomeTexture(
           LG_BUFFER_BIOME,
           BIOME_TEXTURE_SIZE,
-          LG_PLANET_DATA.value.biomesParams as BiomeParameters[]
+          LG_PLANET_DATA.value.biomesParams as BiomeParameters[],
         )
         _biomeDataTex.needsUpdate = true
         break
@@ -738,11 +728,7 @@ function updatePlanet() {
       }
       case '_atmosphereHeight': {
         const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / ATMOSPHERE_HEIGHT_DIVIDER
-        setShaderMaterialUniform(
-          atmosphereMaterial,
-          'u_radius',
-          LG_PLANET_DATA.value.planetRadius + atmosHeight,
-        )
+        setShaderMaterialUniform(atmosphereMaterial, 'u_radius', LG_PLANET_DATA.value.planetRadius + atmosHeight)
         break
       }
       case '_atmosphereDensityScale': {
@@ -754,35 +740,19 @@ function updatePlanet() {
         break
       }
       case '_atmosphereIntensity': {
-        setShaderMaterialUniform(
-          atmosphereMaterial,
-          'u_intensity',
-          LG_PLANET_DATA.value.atmosphereIntensity,
-        )
+        setShaderMaterialUniform(atmosphereMaterial, 'u_intensity', LG_PLANET_DATA.value.atmosphereIntensity)
         break
       }
       case '_atmosphereColorMode': {
-        setShaderMaterialUniform(
-          atmosphereMaterial,
-          'u_color_mode',
-          LG_PLANET_DATA.value.atmosphereColorMode,
-        )
+        setShaderMaterialUniform(atmosphereMaterial, 'u_color_mode', LG_PLANET_DATA.value.atmosphereColorMode)
         break
       }
       case '_atmosphereHue': {
-        setShaderMaterialUniform(
-          atmosphereMaterial,
-          'u_hue',
-          LG_PLANET_DATA.value.atmosphereHue,
-        )
+        setShaderMaterialUniform(atmosphereMaterial, 'u_hue', LG_PLANET_DATA.value.atmosphereHue)
         break
       }
       case '_atmosphereTint': {
-        setShaderMaterialUniform(
-          atmosphereMaterial,
-          'u_tint',
-          LG_PLANET_DATA.value.atmosphereTint,
-        )
+        setShaderMaterialUniform(atmosphereMaterial, 'u_tint', LG_PLANET_DATA.value.atmosphereTint)
         break
       }
     }

@@ -26,9 +26,9 @@ export function recalculateRampTexture(buffer: Uint8Array, w: number, steps: Col
 function fillRamp(buffer: Uint8Array, w: number, steps: ColorRampStep[]) {
   let stride = 0
   let currentStep, nextStep
-  for (let i = 0; i < steps.length-1; i++) {
+  for (let i = 0; i < steps.length - 1; i++) {
     currentStep = steps[i].clone()
-    nextStep = steps[i+1].clone()
+    nextStep = steps[i + 1].clone()
 
     const currentStepX = truncateTo(currentStep.factor * w, 1e4)
     const nextStepX = truncateTo(nextStep.factor * w, 1e4)
@@ -36,7 +36,7 @@ function fillRamp(buffer: Uint8Array, w: number, steps: ColorRampStep[]) {
 
     const lerpColor = new Color(0x0)
     for (let px = 0; px < totalPixels; px++) {
-      lerpColor.lerpColors(currentStep.color, nextStep.color, truncateTo(px/totalPixels, 1e4))
+      lerpColor.lerpColors(currentStep.color, nextStep.color, truncateTo(px / totalPixels, 1e4))
       buffer[stride] = Math.floor(lerpColor.r * 255.0)
       buffer[stride + 1] = Math.floor(lerpColor.g * 255.0)
       buffer[stride + 2] = Math.floor(lerpColor.b * 255.0)
@@ -67,14 +67,14 @@ export function recalculateBiomeTexture(buffer: Uint8Array, w: number, biomes: B
 
 function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
   let lineStride = 0
-  let cellStride = (Math.ceil(biomes[0].humiMin * w) + (biomes[0].tempMin * w)) * 4
+  let cellStride = (Math.ceil(biomes[0].humiMin * w) + biomes[0].tempMin * w) * 4
   for (let i = 0; i < biomes.length; i++) {
     const biome = biomes[i]
     const biomeRect: Rect = {
       x: Math.floor(biome.humiMin * w),
       y: Math.floor(biome.tempMin * w),
       w: Math.ceil((biome.humiMax - biome.humiMin) * w),
-      h: Math.ceil((biome.tempMax - biome.tempMin) * w)
+      h: Math.ceil((biome.tempMax - biome.tempMin) * w),
     }
     const totalPixels = biomeRect.w * biomeRect.h
     const maxBiomeX = (biomeRect.x + biomeRect.w) * 4
@@ -94,16 +94,16 @@ function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
 
     // Iterate through every single pixel inside the biome rect
     let rectDistance: number, bufferIdx: number, blendedColor: RawRGBA
-    for (let biomePx = 0; biomePx < totalPixels; biomePx++) {     
+    for (let biomePx = 0; biomePx < totalPixels; biomePx++) {
       bufferIdx = lineStride + cellStride
-      pixelRGBA.r = buffer[bufferIdx]*INT8_TO_UNIT_MUL
-      pixelRGBA.g = buffer[bufferIdx + 1]*INT8_TO_UNIT_MUL
-      pixelRGBA.b = buffer[bufferIdx + 2]*INT8_TO_UNIT_MUL
-      pixelRGBA.a = buffer[bufferIdx + 3]*INT8_TO_UNIT_MUL
+      pixelRGBA.r = buffer[bufferIdx] * INT8_TO_UNIT_MUL
+      pixelRGBA.g = buffer[bufferIdx + 1] * INT8_TO_UNIT_MUL
+      pixelRGBA.b = buffer[bufferIdx + 2] * INT8_TO_UNIT_MUL
+      pixelRGBA.a = buffer[bufferIdx + 3] * INT8_TO_UNIT_MUL
 
       rectDistance = findMinDistanceToRect(biomeRect, pixelCoords.x, pixelCoords.y, biomeOverlaps)
-      biomeRGBA.a = truncateTo(clamp(rectDistance/biomeAvgSmoothness, 0, 1), 1e4)
-      
+      biomeRGBA.a = truncateTo(clamp(rectDistance / biomeAvgSmoothness, 0, 1), 1e4)
+
       if (pixelRGBA.a > 0) {
         blendedColor = alphaBlendColors(pixelRGBA, biomeRGBA)
         buffer[bufferIdx] = blendedColor.r * 255.0
@@ -116,7 +116,7 @@ function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
         buffer[bufferIdx + 2] = biomeRGBA.b * 255.0
         buffer[bufferIdx + 3] = biomeRGBA.a * 255.0
       }
-      
+
       cellStride += 4
       pixelCoords.x++
 
