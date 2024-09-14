@@ -17,7 +17,7 @@ _(**note:** this is something I am working on during my free time, which means t
 
 <ul>
   <li>⭐ Introduces a fully fledged <strong>biome system</strong>, using temperature- & humidity-based positioning!</li>
-  <li>⭐ Surface noise now works properly Linux-based browsers!</li>
+  <li>⭐ Surface noise now works properly in Linux-based browsers!</li>
   <li>⭐ Smaller performance fixes all around, including fewer GLSL uniforms & varyings!</li>
 </ul>
 
