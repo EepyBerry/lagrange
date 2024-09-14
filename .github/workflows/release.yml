@@ -22,8 +22,11 @@ jobs:
         run: npm ci
       - name: Build application
         run: npm run build --if-present
-      - name: Archive production artifacts
+      - name: Get current NPM package version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: lagrange-${{ steps.package-version.outputs.current-version}}-${{ github.sha }}
           path: dist
