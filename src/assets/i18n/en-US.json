@@ -40,8 +40,8 @@
     "init": {
       "$title": "Welcome to @:main.$title",
       "introduction": "Lagrange is a fully procedural planet builder, perfect for worldbuilding and tying your lore to a proper planet, solar system or even an entire galaxy!",
-      "update_title": "Update 0.2 - World Collector!",
-      "update_brief": "You can now save your planets in the Codex, as well as share them with the new import/export functions! Also includes a lot of UI additions & improvements!",
+      "update_title": "Update 0.3 - Ecosystems!",
+      "update_brief": "Adds a complete, layer-based biome system for you to spice up your planets with! Adjust their temperature & humidity in real-time and bring more variety to your worlds!",
       "$tmp_wip": "Currently work-in-progress. More features are planned for the next versions!",
 
       "shortcuts": "Shortcuts",
