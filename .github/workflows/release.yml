@@ -28,5 +28,5 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lagrange-${{ steps.package-version.outputs.current-version}}-${{ github.sha }}
+          name: lagrange-${{ steps.package-version.outputs.current-version}}-SNAPSHOT-${{ github.sha }}
           path: dist
