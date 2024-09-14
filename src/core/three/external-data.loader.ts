@@ -34,11 +34,3 @@ export function loadTextureFromUrl(url: string, colorSpace: THREE.ColorSpace) {
   }
   return texture
 }
-
-/**
- * Loads a texture from a raw data-string
- * @param data the image as a string
- */
-export function loadTextureFromData(data: string) {
-  // TODO
-}

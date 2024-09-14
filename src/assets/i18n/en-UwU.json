@@ -9,14 +9,39 @@
     "nav": {
       "codex": "Codex",
       "editor": "Editow"
+    },
+
+    "planet_data": {
+      "biome": "Biome",
+      "biome_type_arctic": "Awctic",
+      "biome_type_tundra": "Tundwa",
+      "biome_type_temperate": "Tempewate",
+      "biome_type_subtropical": "Subtwopical",
+      "biome_type_tropical": "Twopical",
+      "biome_type_volcanic": "Vowcanic",
+      "biome_type_various": "Vawious",
+
+      "biome_type_arid": "Awid",
+      "biome_type_dry": "Dwy",
+      "biome_type_semihumid": "Semihumid",
+      "biome_type_humid": "Humid"
     }
   },
   "dialog": {
+    "webglerror": {
+      "$title": "Faiwed to stawt the Pwanyet Editow!!! ;;w;;",
+      "brief": "T-the WebGL context faiwed to initiawize p-pwopewwy... See bewow for e-error infowmation :c"
+    },
+    "planeterror": {
+      "$title": "Faiwed to stawt the Pwanyet Editow!!! ;;w;;",
+      "brief": "P-pwanyet faiwed to woad p-pwopewwy... See bewow for e-error infowmation :c",
+      "reporting": "If you can, p-pwease check youw bwowsew c-consowe and open an issue on GitHub!!! (^-^)"
+    },
     "init": {
       "$title": "Wewcome :3 t-to @:main.$title",
       "introduction": "Wagwange is a fuwwy pwoceduwaw pwanyet buiwdew, pewfect fow wowwdbuiwding and tying youw wowe t-to a pwopew pwanyet, sowaw system o-ow even an entiwe gawaxy! (・`ω´・)",
-      "update_title": "Update 0.2 - Worwd Cowwector!",
-      "update_brief": "You can now s-save your pwanyets in the Codex, a-as weww as shawe them with the new impowt/expowt functions!!! Awso incwudes a wot of UI additions & impwovemyents!!! ^w^",
+      "update_title": "Update 0.3 - Ecosystems!",
+      "update_brief": "A-adds a compwete, wayer-based biome system fow you to s-shpice up youw pwanyets with!!! >w< Adjust theiw tempewatuwe & humidity IN WEAW-TIME and bwing mowe vawiety to youw wowwds!!! ٩(ˊᗜˋ*)و",
       "$tmp_wip": "Cuwwentwy wowk-in-pwogwess. M-Mowe featuwes awe pwannyed fow the nyext vewsions! x3",
 
       "shortcuts": "Showtcuts",
@@ -88,9 +113,13 @@
       "changelogs": {
         "$title": "Main featuwe changewogs",
         "02_title": "Update 0.2 - Wowwd Cowwectow",
-        "02_codex": "I-intwoduces the [Codex]: wist, impowt and expowt pwanyets easiwy a-and entiwewy within youw bwowsew!!!",
+        "02_codex": "I-intwoduces the Codex: wist, impowt and expowt pwanyets easiwy a-and entiwewy within youw bwowsew!!!",
         "02_ui": "New diawog boxes, toasts & settings, a-and new editow pawametews (wadius, a-atmosphewe)!!!",
-        "02_a11y": "Accessibiwity featuwes & impwovements!!!"
+        "02_a11y": "Accessibiwity featuwes & impwovements!!!",
+        "03_title": "Update 0.3 - Ecosystems ",
+        "03_biomes": "Intwoduces a f-fuwwy fwedged biome system, using tempewatuwe- & humidity-based p-posishoning!!!",
+        "03_linux": "Suwface noise n-now wowks propewly on Winyux-b-based bwowsews!!!",
+        "03_fixes": "S-smawwew pewfowmance fixes aaaaww awound, incwuding fewew GLSL unifowms & vawyings!!!"
       },
 
       "built_with_love": "Buiwt with 🏳️‍🌈 & ❤️",
@@ -136,6 +165,16 @@
     "$action_sort": "Sowt",
     "$action_add": "Add",
 
+    "general": {
+      "noise_fbm_frequency": "Fwequency",
+      "noise_fbm_amplitude": "Ampwitude",
+      "noise_fbm_lacunarity": "Wacunawity",
+      "noise_fbm_octaves": "Octaves",
+
+      "noise_color": "Cowow",
+      "noise_rgbramp": "Cowow wamp",
+      "noise_rgbaramp": "Cowow/awpha wamp"
+    },
     "controls": {
       "lighting": {
         "$title": "Wighting",
@@ -185,7 +224,26 @@
       "biomes": {
         "$title": "Biomes",
         "biomes_show": "Show biomes :3",
-        "poles_show": "Show powes :3"
+
+        "texture_resolution": "Wesowution",
+        "temperature": "Tempewatuwe gwadient",
+        "humidity": "Humidity gwadient",
+
+        "gradient_mode": "Gwadient mode",
+        "gradient_mode_realistic": "Weawistic",
+        "gradient_mode_poletopole": "Powe-to-powe",
+        "gradient_mode_fullnoise": "Fuww nyoise",
+
+        "biome_list": "Biomes",
+        "biome_type": "Type",
+
+        "height_min": "Min. height",
+        "height_max": "Max. height",
+        "temperature_min": "Min. tempewatuwe",
+        "temperature_max": "Max. tempewatuwe",
+        "humidity_min": "Min. humidity",
+        "humidity_max": "Max. humidity",
+        "smoothness": "Smoothnyess"
       },
       "clouds": {
         "$title": "Cwouds",
@@ -227,11 +285,12 @@
     "text_01": "Nyothing uvw hewe, sowwyyyy...",
     "text_02": "\"This sectow is c-compwetewy empty, Captain! :O\"",
     "text_03": "Oh nyooo ;;w;; Took a wwong tuwn sumwhewe...",
-    "text_04": "PAGE\u00A0IS\u00A0MISSING! STATUS\u00A0IS\u00A0404!! SPACE\u00A0IS\u00A0VOID!!! x3",
+    "text_04": "PAGE\u00A0IS\u00A0MISSING! STATUS\u00A0IS\u00A0404!! SPACE\u00A0IS\u00A0EMPTY!!! x3",
     "subtext": "The wequested page c-couwd nyot be found :c"
   },
   "toast": {
     "storage_success": "Pewsistent stowage enyabwed!",
+    "storage_failure_none": "P-pewsistent stowage not suppowted o-on this bwowsew ;w;",
     "storage_failure_rules": "C-couwd not enyabwe pewsistent stowage d-due to bwowsew wules ;w;",
     "delete_success": "Deweted pwanyet successfuwwy! ÒwÓ",
     "delete_failure": "Couwd nyot dewete pwanyet ;;w;;",
@@ -249,6 +308,14 @@
     "topbar_export": "Expowt pwanyet fiwe",
     "topbar_export_all": "Expowt aww pwanyets as .zip!!!",
 
+    "gradient_mode_realistic": "W-wowew vawues on powes, highew vawues awong the e-equatow!!!",
+    "gradient_mode_poletopole": "W-wowew vawues on nowth p-powe, highew vawues on south powe!!!",
+    "gradient_mode_fullnoise": "Fuwwy noisy vawues, l-liek suwface nyoise!!!",
+
+    "rgba_mode_realistic": "Waw Waweigh & Mie scattewing cawcuwashons with hue s-shifting",
+    "rgba_mode_direct": "Appwies a singwe cowow o-on top of cawcuwashons",
+    "rgba_mode_mixed": "Appwies diwect mode cowow as a t-tint on top of the s-sewected hue",
+
     "footer_github": "GitHub wepositowy!!! (opens in nyew tab OwO)",
     "footer_settings": "Settings",
     "footer_about": "About @:main.$title"
@@ -258,6 +325,8 @@
     "logo_alt": "Secwet Wagwange wogo!",
     "logo_update_codex": "Wowwd Cowwectow update!",
 
+    "dialog_webgl_error": "WebGL ewwow diawog",
+    "dialog_planet_error": "Pwanyet ewwow diawog",
     "dialog_init": "Intwoduction diawog",
     "dialog_settings": "Settings diawog",
     "dialog_about": "About @:main.$title diawog",
@@ -282,6 +351,9 @@
     "general_theme_voyager": "Set Voyagew theme (owange)",
 
     "editor_generic_input": "Pawametew vawue",
+    "editor_biome_gradient_mode_realistic": "Weawistic tempewature gwadient",
+    "editor_biome_gradient_mode_poletopole": "Powe-to-powe tempewatuwe gwadient",
+    "editor_biome_gradient_mode_fullnoise": "Fuwwy nyoisy tempewature gwadient",
     "editor_atmosphere_rgba_mode_realistic": "Weawistic atmosphewe",
     "editor_atmosphere_rgba_mode_direct": "Diwect tone atmosphewe",
     "editor_atmosphere_rgba_mode_mixed": "Mixed atmosphewe",

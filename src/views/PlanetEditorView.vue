@@ -12,6 +12,8 @@
 
   <div ref="sceneRoot" id="scene-root"></div>
   <OverlaySpinner :load="showSpinner" />
+  <AppWebGLErrorDialog ref="webglErrorDialogRef" @close="redirectToCodex" />
+  <AppPlanetErrorDialog ref="planetErrorDialogRef" @close="redirectToCodex" />
 </template>
 
 <script setup lang="ts">
@@ -20,26 +22,28 @@ import PlanetInfoControls from '@components/controls/PlanetInfoControls.vue'
 import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue'
 import * as THREE from 'three'
 import {
-  AXIS_NX,
   AXIS_X,
   MD_WIDTH_THRESHOLD,
   XS_WIDTH_THRESHOLD,
   SM_WIDTH_THRESHOLD,
   LG_NAME_AMBLIGHT,
   SUN_INIT_POS,
+  BIOME_TEXTURE_SIZE,
+  SURFACE_TEXTURE_SIZE,
+  ATMOSPHERE_HEIGHT_DIVIDER,
 } from '@core/globals'
 import { degToRad } from 'three/src/math/MathUtils.js'
-import type CustomShaderMaterial from 'three-custom-shader-material/dist/declarations/src/vanilla'
+import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import { createControlsComponent } from '@core/three/component.builder'
 import { useHead } from '@unhead/vue'
 import type { SceneElements } from '@core/models/scene-elements.model'
 import type { LensFlareEffect } from '@core/three/lens-flare.effect'
 import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config'
-import { EventBus } from '@/core/services/event-bus'
+import { EventBus } from '@/core/event-bus'
 import { useI18n } from 'vue-i18n'
 import AppNavigation from '@/components/main/AppNavigation.vue'
 import { setShaderMaterialUniform, setShaderMaterialUniforms } from '@/utils/three-utils'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import PlanetData from '@/core/models/planet-data.model'
 import {
   createAtmosphere,
@@ -49,20 +53,34 @@ import {
   createScene,
   createSun,
   exportPlanetPreview,
-  LG_HEIGHT_DIVIDER,
+  LG_BUFFER_BIOME,
+  LG_BUFFER_CLOUDS,
+  LG_BUFFER_SURFACE,
   LG_PLANET_DATA,
 } from '@/core/services/planet-editor.service'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { getPlanetMetaTitle } from '@/utils/utils'
 import { saveAs } from 'file-saver'
 import { nanoid } from 'nanoid'
+import type { BiomeParameters } from '@/core/models/biome-parameters.model'
+import WebGL from 'three/addons/capabilities/WebGL.js'
+import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
+import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
+import { recalculateBiomeTexture, recalculateRampTexture } from '@/core/helpers/texture.helper'
+import type { ColorRampStep } from '@/core/models/color-ramp.model'
 
 const route = useRoute()
+const router = useRouter()
 const i18n = useI18n()
 const head = useHead({
   title: i18n.t('editor.$title') + ' · ' + i18n.t('main.$title'),
   meta: [{ name: 'description', content: 'Planet editor' }],
 })!
+
+// Warnings
+const webglErrorDialogRef: Ref<{ openWithError: Function } | null> = ref(null)
+const planetErrorDialogRef: Ref<{ openWithError: Function } | null> = ref(null)
+let loadedCorrectly = false
 
 // Data
 const $planetEntityId: Ref<string> = ref('')
@@ -89,15 +107,51 @@ let _sunLight: THREE.DirectionalLight
 let _ambLight: THREE.AmbientLight
 let _lensFlare: LensFlareEffect
 
+// DataTextures
+let _surfaceDataTex: THREE.DataTexture
+let _cloudsDataTex: THREE.DataTexture
+let _biomeDataTex: THREE.DataTexture
+
 onMounted(async () => {
-  await initData()
-  await initCanvas()
+  await bootstrapEditor()
 })
 onUnmounted(() => {
-  disposeScene()
+  if (loadedCorrectly) {
+    disposeScene()
+  }
   EventBus.deregisterWindowEventListener('resize', onWindowResize)
   EventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
 })
+
+async function bootstrapEditor() {
+  try {
+    if (WebGL.isWebGL2Available()) {
+      await initData()
+      await initCanvas()
+      loadedCorrectly = true
+    } else {
+      showSpinner.value = false
+      const error = WebGL.getWebGL2ErrorMessage()
+      error.style.margin = ''
+      error.style.background = ''
+      error.style.color = ''
+      error.style.fontFamily = ''
+      error.style.fontSize = ''
+      error.style.width = ''
+      ;(error.lastChild as HTMLLinkElement).style.color = ''
+      webglErrorDialogRef.value!.openWithError(error)
+    }
+  } catch (error: any) {
+    console.error(error)
+    showSpinner.value = false
+    planetErrorDialogRef.value!.openWithError(error, error.stack)
+  }
+}
+
+function redirectToCodex() {
+  showSpinner.value = true
+  router.push('/codex')
+}
 
 async function initData() {
   // https://stackoverflow.com/questions/3891641/regex-test-only-works-every-other-time
@@ -106,7 +160,7 @@ async function initData() {
     if (!idbPlanetData) {
       console.warn(`Cannot find planet with ID: ${route.params.id}`)
       LG_PLANET_DATA.value.reset()
-      return
+      throw new Error(`Planet with ID [${route.params.id}] doesn't exist.`)
     }
     $planetEntityId.value = idbPlanetData.id
     LG_PLANET_DATA.value.loadData(idbPlanetData.data)
@@ -139,7 +193,6 @@ async function initCanvas() {
   initPlanet()
   initRendering(effectiveWidth, effectiveHeight)
   createControlsComponent($se.camera, $se.renderer.domElement)
-  //$se.camera.setRotationFromAxisAngle(AXIS_Y, degToRad(-60))
   EventBus.registerWindowEventListener('resize', onWindowResize)
   EventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
   showSpinner.value = false
@@ -168,17 +221,22 @@ function initPlanet(): void {
   const clouds = createClouds(LG_PLANET_DATA.value as PlanetData)
   const atmosphere = createAtmosphere(LG_PLANET_DATA.value as PlanetData, _sunLight.position)
   const pivot = new THREE.Group()
-  pivot.add(planet)
-  pivot.add(clouds)
+  pivot.add(planet.mesh)
+  pivot.add(clouds.mesh)
   pivot.add(atmosphere)
   $se.scene.add(pivot)
-  _planet = planet
-  _clouds = clouds
+  _planet = planet.mesh
+  _clouds = clouds.mesh
   _atmosphere = atmosphere
   _planetGroup = pivot
 
+  // Set datatextures + data
+  _surfaceDataTex = planet.texs[0].texture
+  _biomeDataTex = planet.texs[1].texture
+  _cloudsDataTex = clouds.texs[0].texture
+
   // Set initial rotations
-  _planetGroup.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+  _planetGroup.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
   _planet.setRotationFromAxisAngle(_planet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
   _clouds.setRotationFromAxisAngle(
     _clouds.up,
@@ -218,6 +276,12 @@ function disposeScene() {
   ;(_atmosphere.material as THREE.Material).dispose()
   _atmosphere.geometry.dispose()
 
+  LG_BUFFER_SURFACE.fill(0)
+  LG_BUFFER_BIOME.fill(0)
+  LG_BUFFER_CLOUDS.fill(0)
+  _surfaceDataTex.dispose()
+  _biomeDataTex.dispose()
+  _cloudsDataTex.dispose()
   _planetGroup.clear()
 
   $se.scene.children.forEach((c) => $se.scene.remove(c))
@@ -231,6 +295,15 @@ async function handleKeyboardEvent(event: KeyboardEvent) {
   const keyBinds = await idb.keyBindings.toArray()
   const kb = keyBinds.find((k) => k.key === event.key.toUpperCase())
   if (!kb) return
+  if (event.shiftKey && kb.key !== 'SHIFT') {
+    return
+  }
+  if (event.ctrlKey && kb.key !== 'CONTROL') {
+    return
+  }
+  if (event.altKey && kb.key !== 'ALT') {
+    return
+  }
 
   switch (kb.action) {
     case KeyBindingAction.ToggleLensFlare:
@@ -247,7 +320,7 @@ async function handleKeyboardEvent(event: KeyboardEvent) {
       break
     case KeyBindingAction.TakeScreenshot: {
       $se.renderer.domElement.toBlob((blob) => {
-        saveAs(blob!, `${LG_PLANET_DATA.value.planetName}-${new Date().toISOString()}.png`)
+        saveAs(blob!, `${LG_PLANET_DATA.value.planetName.replaceAll(' ', '_')}-${new Date().toISOString()}.png`)
       }, 'image/png')
       break
     }
@@ -334,7 +407,24 @@ function updatePlanet() {
   if (LG_PLANET_DATA.value.changedProps.length === 0) {
     return
   }
-  for (const key of LG_PLANET_DATA.value.changedProps) {
+
+  const planetMaterial = _planet.material as CustomShaderMaterial
+  const atmosphereMaterial = _atmosphere.material as CustomShaderMaterial
+  const cloudsMaterial = _clouds.material as CustomShaderMaterial
+  for (let changedProp of LG_PLANET_DATA.value.changedProps) {
+    if (!changedProp.prop) {
+      continue
+    }
+    let key = changedProp.prop
+
+    // Check for additional info, separated by |
+    //let biomeId = undefined
+    if (key.includes('|')) {
+      // biomeId = (key.startsWith('_biomesParameters') ? key.split('|')[1] : undefined)
+      key = key.split('|')[0]
+    }
+
+    // Loop on changed props
     switch (key) {
       // --------------------------------------------------
       // |               Lighting settings                |
@@ -384,19 +474,15 @@ function updatePlanet() {
       // --------------------------------------------------
       case '_planetRadius': {
         const v = LG_PLANET_DATA.value.planetRadius
-        const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / LG_HEIGHT_DIVIDER
+        const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / ATMOSPHERE_HEIGHT_DIVIDER
         _planetGroup.scale.set(v, v, v)
-        setShaderMaterialUniform(_planet.material as CustomShaderMaterial, 'u_radius', v)
-        setShaderMaterialUniforms(
-          _atmosphere.material as CustomShaderMaterial,
-          ['u_surface_radius', 'u_radius'],
-          [v, v + atmosHeight],
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_radius', v)
+        setShaderMaterialUniforms(atmosphereMaterial, ['u_surface_radius', 'u_radius'], [v, v + atmosHeight])
         break
       }
       case '_planetAxialTilt': {
         const v = degToRad(isNaN(LG_PLANET_DATA.value.planetAxialTilt) ? 0 : LG_PLANET_DATA.value.planetAxialTilt)
-        _planetGroup.setRotationFromAxisAngle(AXIS_NX, v)
+        _planetGroup.setRotationFromAxisAngle(AXIS_X, v)
         break
       }
       case '_planetRotation': {
@@ -409,43 +495,38 @@ function updatePlanet() {
         break
       }
       case '_planetWaterRoughness': {
-        setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
-          'u_water_roughness',
-          LG_PLANET_DATA.value.planetWaterRoughness,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_pbr_params', {
+          ...planetMaterial.uniforms['u_pbr_params'].value,
+          wrough: LG_PLANET_DATA.value.planetWaterRoughness,
+        })
         break
       }
       case '_planetWaterMetalness': {
-        setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
-          'u_water_metalness',
-          LG_PLANET_DATA.value.planetWaterMetalness,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_pbr_params', {
+          ...planetMaterial.uniforms['u_pbr_params'].value,
+          wmetal: LG_PLANET_DATA.value.planetWaterMetalness,
+        })
         break
       }
       case '_planetGroundRoughness': {
-        setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
-          'u_ground_roughness',
-          LG_PLANET_DATA.value.planetGroundRoughness,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_pbr_params', {
+          ...planetMaterial.uniforms['u_pbr_params'].value,
+          grough: LG_PLANET_DATA.value.planetGroundRoughness,
+        })
         break
       }
       case '_planetGroundMetalness': {
-        setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
-          'u_ground_metalness',
-          LG_PLANET_DATA.value.planetGroundMetalness,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_pbr_params', {
+          ...planetMaterial.uniforms['u_pbr_params'].value,
+          gmetal: LG_PLANET_DATA.value.planetGroundMetalness,
+        })
         break
       }
       case '_planetWaterLevel': {
-        setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
-          'u_water_level',
-          LG_PLANET_DATA.value.planetWaterLevel,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_pbr_params', {
+          ...planetMaterial.uniforms['u_pbr_params'].value,
+          wlevel: LG_PLANET_DATA.value.planetWaterLevel,
+        })
         break
       }
 
@@ -453,52 +534,45 @@ function updatePlanet() {
       // |                Surface settings                |
       // --------------------------------------------------
       case '_planetSurfaceShowBumps': {
-        setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
-          'u_bump',
-          LG_PLANET_DATA.value.planetSurfaceShowBumps,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_bump', LG_PLANET_DATA.value.planetSurfaceShowBumps)
         break
       }
       case '_planetSurfaceBumpStrength': {
-        setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
-          'u_bump_strength',
-          LG_PLANET_DATA.value.planetSurfaceBumpStrength,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_bump_strength', LG_PLANET_DATA.value.planetSurfaceBumpStrength)
         break
       }
       case '_planetSurfaceNoise._frequency': {
-        setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
-          'u_frequency',
-          LG_PLANET_DATA.value.planetSurfaceNoise.frequency,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_surface_noise', {
+          ...planetMaterial.uniforms['u_surface_noise'].value,
+          freq: LG_PLANET_DATA.value.planetSurfaceNoise.frequency,
+        })
         break
       }
       case '_planetSurfaceNoise._amplitude': {
-        setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
-          'u_amplitude',
-          LG_PLANET_DATA.value.planetSurfaceNoise.amplitude,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_surface_noise', {
+          ...planetMaterial.uniforms['u_surface_noise'].value,
+          amp: LG_PLANET_DATA.value.planetSurfaceNoise.amplitude,
+        })
         break
       }
       case '_planetSurfaceNoise._lacunarity': {
-        setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
-          'u_lacunarity',
-          LG_PLANET_DATA.value.planetSurfaceNoise.lacunarity,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_surface_noise', {
+          ...planetMaterial.uniforms['u_surface_noise'].value,
+          lac: LG_PLANET_DATA.value.planetSurfaceNoise.lacunarity,
+        })
+        break
+      }
+      case '_planetSurfaceNoise._octaves': {
+        setShaderMaterialUniform(planetMaterial, 'u_surface_noise', {
+          ...planetMaterial.uniforms['u_surface_noise'].value,
+          oct: LG_PLANET_DATA.value.planetSurfaceNoise.octaves,
+        })
         break
       }
       case '_planetSurfaceColorRamp': {
         const v = LG_PLANET_DATA.value.planetSurfaceColorRamp
-        setShaderMaterialUniforms(
-          _planet.material as CustomShaderMaterial,
-          ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
-          [v.definedSteps.length, v.colors, v.factors],
-        )
+        recalculateRampTexture(LG_BUFFER_SURFACE, SURFACE_TEXTURE_SIZE, v.steps as ColorRampStep[])
+        _surfaceDataTex.needsUpdate = true
         break
       }
 
@@ -506,19 +580,86 @@ function updatePlanet() {
       // |                 Biome settings                 |
       // --------------------------------------------------
       case '_biomesEnabled': {
-        setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
-          'u_biomes',
-          LG_PLANET_DATA.value.biomesEnabled,
-        )
+        setShaderMaterialUniform(planetMaterial, 'u_biomes', LG_PLANET_DATA.value.biomesEnabled)
         break
       }
-      case '_biomePolesEnabled': {
-        setShaderMaterialUniform(
-          _planet.material as CustomShaderMaterial,
-          'u_show_poles',
-          LG_PLANET_DATA.value.biomePolesEnabled,
+      case '_biomesTemperatureMode': {
+        setShaderMaterialUniform(planetMaterial, 'u_temp_noise', {
+          ...planetMaterial.uniforms['u_temp_noise'].value,
+          mode: LG_PLANET_DATA.value.biomesTemperatureMode,
+        })
+        break
+      }
+      case '_biomesTemperatureNoise._frequency': {
+        setShaderMaterialUniform(planetMaterial, 'u_temp_noise', {
+          ...planetMaterial.uniforms['u_temp_noise'].value,
+          lac: LG_PLANET_DATA.value.biomesTemperatureNoise.frequency,
+        })
+        break
+      }
+      case '_biomesTemperatureNoise._amplitude': {
+        setShaderMaterialUniform(planetMaterial, 'u_temp_noise', {
+          ...planetMaterial.uniforms['u_temp_noise'].value,
+          amp: LG_PLANET_DATA.value.biomesTemperatureNoise.amplitude,
+        })
+        break
+      }
+      case '_biomesTemperatureNoise._lacunarity': {
+        setShaderMaterialUniform(planetMaterial, 'u_temp_noise', {
+          ...planetMaterial.uniforms['u_temp_noise'].value,
+          lac: LG_PLANET_DATA.value.biomesTemperatureNoise.lacunarity,
+        })
+        break
+      }
+      case '_biomesTemperatureNoise._octaves': {
+        setShaderMaterialUniform(planetMaterial, 'u_temp_noise', {
+          ...planetMaterial.uniforms['u_temp_noise'].value,
+          oct: LG_PLANET_DATA.value.biomesTemperatureNoise.octaves,
+        })
+        break
+      }
+      case '_biomesHumidityMode': {
+        setShaderMaterialUniform(planetMaterial, 'u_humi_noise', {
+          ...planetMaterial.uniforms['u_humi_noise'].value,
+          mode: LG_PLANET_DATA.value.biomesHumidityMode,
+        })
+        break
+      }
+      case '_biomesHumidityNoise._frequency': {
+        setShaderMaterialUniform(planetMaterial, 'u_humi_noise', {
+          ...planetMaterial.uniforms['u_humi_noise'].value,
+          lac: LG_PLANET_DATA.value.biomesHumidityNoise.frequency,
+        })
+        break
+      }
+      case '_biomesHumidityNoise._amplitude': {
+        setShaderMaterialUniform(planetMaterial, 'u_humi_noise', {
+          ...planetMaterial.uniforms['u_humi_noise'].value,
+          amp: LG_PLANET_DATA.value.biomesHumidityNoise.amplitude,
+        })
+        break
+      }
+      case '_biomesHumidityNoise._lacunarity': {
+        setShaderMaterialUniform(planetMaterial, 'u_humi_noise', {
+          ...planetMaterial.uniforms['u_humi_noise'].value,
+          lac: LG_PLANET_DATA.value.biomesHumidityNoise.lacunarity,
+        })
+        break
+      }
+      case '_biomesHumidityNoise._octaves': {
+        setShaderMaterialUniform(planetMaterial, 'u_humi_noise', {
+          ...planetMaterial.uniforms['u_humi_noise'].value,
+          oct: LG_PLANET_DATA.value.biomesHumidityNoise.octaves,
+        })
+        break
+      }
+      case '_biomesParameters': {
+        recalculateBiomeTexture(
+          LG_BUFFER_BIOME,
+          BIOME_TEXTURE_SIZE,
+          LG_PLANET_DATA.value.biomesParams as BiomeParameters[],
         )
+        _biomeDataTex.needsUpdate = true
         break
       }
 
@@ -539,40 +680,41 @@ function updatePlanet() {
         break
       }
       case '_cloudsNoise._frequency': {
-        setShaderMaterialUniform(
-          _clouds.material as CustomShaderMaterial,
-          'u_frequency',
-          LG_PLANET_DATA.value.cloudsNoise.frequency,
-        )
+        setShaderMaterialUniform(cloudsMaterial, 'u_noise', {
+          ...cloudsMaterial.uniforms['u_noise'].value,
+          freq: LG_PLANET_DATA.value.cloudsNoise.frequency,
+        })
         break
       }
       case '_cloudsNoise._amplitude': {
-        setShaderMaterialUniform(
-          _clouds.material as CustomShaderMaterial,
-          'u_amplitude',
-          LG_PLANET_DATA.value.cloudsNoise.amplitude,
-        )
+        setShaderMaterialUniform(cloudsMaterial, 'u_noise', {
+          ...cloudsMaterial.uniforms['u_noise'].value,
+          amp: LG_PLANET_DATA.value.cloudsNoise.amplitude,
+        })
         break
       }
       case '_cloudsNoise._lacunarity': {
-        setShaderMaterialUniform(
-          _clouds.material as CustomShaderMaterial,
-          'u_lacunarity',
-          LG_PLANET_DATA.value.cloudsNoise.lacunarity,
-        )
+        setShaderMaterialUniform(cloudsMaterial, 'u_noise', {
+          ...cloudsMaterial.uniforms['u_noise'].value,
+          lac: LG_PLANET_DATA.value.cloudsNoise.lacunarity,
+        })
+        break
+      }
+      case '_cloudsNoise._octaves': {
+        setShaderMaterialUniform(cloudsMaterial, 'u_noise', {
+          ...cloudsMaterial.uniforms['u_noise'].value,
+          oct: LG_PLANET_DATA.value.cloudsNoise.octaves,
+        })
         break
       }
       case '_cloudsColor': {
-        setShaderMaterialUniform(_clouds.material as CustomShaderMaterial, 'u_color', LG_PLANET_DATA.value.cloudsColor)
+        setShaderMaterialUniform(cloudsMaterial, 'u_color', LG_PLANET_DATA.value.cloudsColor)
         break
       }
       case '_cloudsColorRamp': {
         const v = LG_PLANET_DATA.value.cloudsColorRamp
-        setShaderMaterialUniforms(
-          _clouds.material as CustomShaderMaterial,
-          ['u_cr_size', 'u_cr_colors', 'u_cr_positions'],
-          [v.definedSteps.length, v.colors, v.factors],
-        )
+        recalculateRampTexture(LG_BUFFER_CLOUDS, SURFACE_TEXTURE_SIZE, v.steps as ColorRampStep[])
+        _cloudsDataTex.needsUpdate = true
         break
       }
 
@@ -585,52 +727,32 @@ function updatePlanet() {
         break
       }
       case '_atmosphereHeight': {
-        const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / LG_HEIGHT_DIVIDER
-        setShaderMaterialUniform(
-          _atmosphere.material as CustomShaderMaterial,
-          'u_radius',
-          LG_PLANET_DATA.value.planetRadius + atmosHeight,
-        )
+        const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / ATMOSPHERE_HEIGHT_DIVIDER
+        setShaderMaterialUniform(atmosphereMaterial, 'u_radius', LG_PLANET_DATA.value.planetRadius + atmosHeight)
         break
       }
       case '_atmosphereDensityScale': {
         setShaderMaterialUniform(
-          _atmosphere.material as CustomShaderMaterial,
+          atmosphereMaterial,
           'u_density',
-          LG_PLANET_DATA.value.atmosphereDensityScale / LG_HEIGHT_DIVIDER,
+          LG_PLANET_DATA.value.atmosphereDensityScale / ATMOSPHERE_HEIGHT_DIVIDER,
         )
         break
       }
       case '_atmosphereIntensity': {
-        setShaderMaterialUniform(
-          _atmosphere.material as CustomShaderMaterial,
-          'u_intensity',
-          LG_PLANET_DATA.value.atmosphereIntensity,
-        )
+        setShaderMaterialUniform(atmosphereMaterial, 'u_intensity', LG_PLANET_DATA.value.atmosphereIntensity)
         break
       }
       case '_atmosphereColorMode': {
-        setShaderMaterialUniform(
-          _atmosphere.material as CustomShaderMaterial,
-          'u_color_mode',
-          LG_PLANET_DATA.value.atmosphereColorMode,
-        )
+        setShaderMaterialUniform(atmosphereMaterial, 'u_color_mode', LG_PLANET_DATA.value.atmosphereColorMode)
         break
       }
       case '_atmosphereHue': {
-        setShaderMaterialUniform(
-          _atmosphere.material as CustomShaderMaterial,
-          'u_hue',
-          LG_PLANET_DATA.value.atmosphereHue,
-        )
+        setShaderMaterialUniform(atmosphereMaterial, 'u_hue', LG_PLANET_DATA.value.atmosphereHue)
         break
       }
       case '_atmosphereTint': {
-        setShaderMaterialUniform(
-          _atmosphere.material as CustomShaderMaterial,
-          'u_tint',
-          LG_PLANET_DATA.value.atmosphereTint,
-        )
+        setShaderMaterialUniform(atmosphereMaterial, 'u_tint', LG_PLANET_DATA.value.atmosphereTint)
         break
       }
     }

@@ -1,26 +1,22 @@
 <template>
-  <tr>
-    <td>
-      <div class="keybind">
-        <div class="keybinds-label">
-          <iconify-icon :icon="icon" width="1.5rem" aria-hidden="true" />
-          <slot></slot>
-        </div>
-        <div class="keybinds-key" :class="{ unset: keyBind?.key === '[unset]' }">
-          <iconify-icon
-            v-if="tryGetKeyRepresentation(keyBind?.key)"
-            :icon="tryGetKeyRepresentation(keyBind?.key)"
-            width="1.25rem"
-          />
-          <span v-else>{{ selected ? '.....' : keyBind?.key }}</span>
-        </div>
-        <button class="lg" :aria-label="$t('a11y.action_edit_keybind')" @click="$emit('toggle')">
-          <iconify-icon v-if="selected" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
-          <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-        </button>
-      </div>
-    </td>
-  </tr>
+  <div class="keybinds-label">
+    <iconify-icon :icon="icon" width="1.5rem" aria-hidden="true" />
+    <slot></slot>
+  </div>
+  <div class="keybinds-key-wrapper">
+    <div class="keybinds-key" :class="{ unset: keyBind?.key === '[unset]' }">
+      <iconify-icon
+        v-if="tryGetKeyRepresentation(keyBind?.key)"
+        :icon="tryGetKeyRepresentation(keyBind?.key)"
+        width="1.25rem"
+      />
+      <span v-else>{{ selected ? '.....' : keyBind?.key }}</span>
+    </div>
+    <button class="lg" :aria-label="$t('a11y.action_edit_keybind')" @click="$emit('toggle')">
+      <iconify-icon v-if="selected" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+      <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
+    </button>
+  </div>
 </template>
 <script setup lang="ts">
 import type { IDBKeyBinding } from '@/dexie.config'
@@ -55,17 +51,26 @@ function tryGetKeyRepresentation(key?: string) {
   gap: 0.5rem;
 }
 .keybinds-label {
+  grid-column: 1;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding-right: 0.5rem;
   flex: 1;
 }
+
+.keybinds-key-wrapper {
+  grid-column: 2;
+  justify-self: end;
+  display: flex;
+  gap: 8px;
+}
+
 .keybinds-key {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 6rem;
+  width: 6rem;
   min-height: 2rem;
   background: var(--lg-panel);
   border: 1px solid var(--lg-accent);

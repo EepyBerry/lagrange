@@ -1,12 +1,12 @@
 <template>
-  <tr>
-    <td colspan="3"></td>
-  </tr>
+  <hr />
 </template>
 
 <style scoped lang="scss">
-td {
+hr {
+  grid-column: span 2;
   text-align: center;
   height: 0.5rem;
+  border: none;
 }
 </style>

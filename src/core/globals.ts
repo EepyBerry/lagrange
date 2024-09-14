@@ -13,11 +13,9 @@ export const LOCALE_MAP: { [k: string]: string } = {
 }
 
 // Accessibility
-
 export const A11Y_ANIMATE = ref(true)
 
 // Scene object names
-
 export const LG_NAME_PLANET = 'lg:planet'
 export const LG_NAME_CLOUDS = 'lg:planet:clouds'
 export const LG_NAME_ATMOSPHERE = 'lg:planet:atmosphere'
@@ -35,3 +33,14 @@ export const AXIS_NZ = new Vector3(0, 0, -1)
 
 // Miscellaneous
 export const SUN_INIT_POS = new Vector3(0, 0, 4e3)
+export const ATMOSPHERE_HEIGHT_DIVIDER = 200.0
+
+// Textures
+export const SURFACE_TEXTURE_SIZE = 512
+export const CLOUDS_TEXTURE_SIZE = 512
+export const BIOME_TEXTURE_SIZE = 256
+
+/**
+ * Equal to 1/256.0
+ */
+export const INT8_TO_UNIT_MUL = 3.90625e-3

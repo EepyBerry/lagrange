@@ -13,9 +13,13 @@ import {
   LG_NAME_ATMOSPHERE,
   LG_NAME_SUN,
   AXIS_Y,
-  AXIS_NX,
+  AXIS_X,
+  BIOME_TEXTURE_SIZE,
+  SURFACE_TEXTURE_SIZE,
+  CLOUDS_TEXTURE_SIZE,
+  ATMOSPHERE_HEIGHT_DIVIDER,
 } from '@core/globals'
-import { ColorMode, GeometryType } from '@core/types'
+import { ColorMode, GeometryType, type DataTextureWrapper } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
 import {
   createAmbientightComponent,
@@ -29,10 +33,15 @@ import { LensFlareEffect } from '@core/three/lens-flare.effect'
 import PlanetData from '@core/models/planet-data.model'
 import { ref } from 'vue'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
+import { createBiomeTexture, createRampTexture } from '../helpers/texture.helper'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
-export const LG_HEIGHT_DIVIDER = 200.0
+
+// Buffers
+export const LG_BUFFER_SURFACE = new Uint8Array(SURFACE_TEXTURE_SIZE * 4)
+export const LG_BUFFER_BIOME = new Uint8Array(BIOME_TEXTURE_SIZE * BIOME_TEXTURE_SIZE * 4)
+export const LG_BUFFER_CLOUDS = new Uint8Array(BIOME_TEXTURE_SIZE * BIOME_TEXTURE_SIZE * 4)
 
 // ----------------------------------------------------------------------------------------------------------------------
 // SCENE FUNCTIONS
@@ -83,33 +92,65 @@ export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THR
   })
 }
 
-export function createPlanet(data: PlanetData): THREE.Mesh {
+export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
   const geometry = createGeometryComponent(GeometryType.SPHERE)
   geometry.computeTangents()
+
+  const surfaceTex = createRampTexture(LG_BUFFER_SURFACE, SURFACE_TEXTURE_SIZE, data.planetSurfaceColorRamp.steps)
+  const biomeTex = createBiomeTexture(LG_BUFFER_BIOME, BIOME_TEXTURE_SIZE, data.biomesParams)
 
   const material = createShaderMaterialComponent(
     planetVertShader,
     planetFragShader,
     {
+      // Planet & Rendering
       u_radius: { value: 1.0 },
-      u_octaves: { value: 6 },
-      u_frequency: { value: data.planetSurfaceNoise.frequency },
-      u_amplitude: { value: data.planetSurfaceNoise.amplitude },
-      u_lacunarity: { value: data.planetSurfaceNoise.lacunarity },
-      u_water_roughness: { value: data.planetWaterRoughness },
-      u_water_metalness: { value: data.planetWaterMetalness },
-      u_ground_roughness: { value: data.planetGroundRoughness },
-      u_ground_metalness: { value: data.planetGroundMetalness },
-      u_water_level: { value: data.planetWaterLevel },
+      u_pbr_params: {
+        value: {
+          wlevel: data.planetWaterLevel,
+          wrough: data.planetWaterRoughness,
+          wmetal: data.planetWaterMetalness,
+          grough: data.planetGroundRoughness,
+          gmetal: data.planetGroundMetalness,
+        },
+      },
+      // Surface
       u_bump: { value: data.planetSurfaceShowBumps },
       u_bump_strength: { value: data.planetSurfaceBumpStrength },
       u_bump_offset: { value: 0.005 },
+      u_surface_noise: {
+        value: {
+          type: data.planetSurfaceNoise.noiseType,
+          freq: data.planetSurfaceNoise.frequency,
+          amp: data.planetSurfaceNoise.amplitude,
+          lac: data.planetSurfaceNoise.lacunarity,
+          oct: data.planetSurfaceNoise.octaves,
+        },
+      },
+      u_surface_tex: { value: surfaceTex.texture },
+      // Biomes
       u_biomes: { value: data.biomesEnabled },
-      u_show_poles: { value: data.biomePolesEnabled },
-      u_pole_limit: { value: 0.8 },
-      u_cr_colors: { value: data.planetSurfaceColorRamp.colors },
-      u_cr_positions: { value: data.planetSurfaceColorRamp.factors },
-      u_cr_size: { value: data.planetSurfaceColorRampSize },
+      u_biomes_tex: { value: biomeTex.texture },
+      u_temp_noise: {
+        value: {
+          mode: data.biomesTemperatureMode,
+          type: data.biomesTemperatureNoise.noiseType,
+          freq: data.biomesTemperatureNoise.frequency,
+          amp: data.biomesTemperatureNoise.amplitude,
+          lac: data.biomesTemperatureNoise.lacunarity,
+          oct: data.biomesTemperatureNoise.octaves,
+        },
+      },
+      u_humi_noise: {
+        value: {
+          mode: data.biomesHumidityMode,
+          type: data.biomesHumidityNoise.noiseType,
+          freq: data.biomesHumidityNoise.frequency,
+          amp: data.biomesHumidityNoise.amplitude,
+          lac: data.biomesHumidityNoise.lacunarity,
+          oct: data.biomesHumidityNoise.octaves,
+        },
+      },
     },
     THREE.MeshStandardMaterial,
   )
@@ -118,24 +159,29 @@ export function createPlanet(data: PlanetData): THREE.Mesh {
   const mesh = new THREE.Mesh(geometry, material)
   mesh.receiveShadow = true
   mesh.name = LG_NAME_PLANET
-  return mesh
+  return { mesh, texs: [surfaceTex, biomeTex] }
 }
 
-export function createClouds(data: PlanetData): THREE.Mesh {
-  const cloudHeight = data.cloudsHeight / LG_HEIGHT_DIVIDER
+export function createClouds(data: PlanetData): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
+  const cloudHeight = data.cloudsHeight / ATMOSPHERE_HEIGHT_DIVIDER
   const geometry = createGeometryComponent(GeometryType.SPHERE, cloudHeight)
+  const opacityTex = createRampTexture(LG_BUFFER_CLOUDS, CLOUDS_TEXTURE_SIZE, data.cloudsColorRamp.steps)
+
   const material = createShaderMaterialComponent(
     cloudsVertShader,
     cloudsFragShader,
     {
-      u_octaves: { value: 4 },
-      u_frequency: { value: data.cloudsNoise.frequency },
-      u_amplitude: { value: data.cloudsNoise.amplitude },
-      u_lacunarity: { value: data.cloudsNoise.lacunarity },
+      u_noise: {
+        value: {
+          type: data.cloudsNoise.noiseType,
+          freq: data.cloudsNoise.frequency,
+          amp: data.cloudsNoise.amplitude,
+          lac: data.cloudsNoise.lacunarity,
+          oct: data.cloudsNoise.octaves,
+        },
+      },
       u_color: { value: data.cloudsColor },
-      u_cr_colors: { value: data.cloudsColorRamp.colors },
-      u_cr_positions: { value: data.cloudsColorRamp.factors },
-      u_cr_size: { value: data.cloudsColorRampSize },
+      u_opacity_tex: { value: opacityTex.texture },
     },
     THREE.MeshStandardMaterial,
   )
@@ -146,12 +192,12 @@ export function createClouds(data: PlanetData): THREE.Mesh {
   mesh.name = LG_NAME_CLOUDS
   mesh.receiveShadow = true
   mesh.castShadow = true
-  return mesh
+  return { mesh, texs: [opacityTex] }
 }
 
 export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE.Mesh {
-  const atmosHeight = data.atmosphereHeight / LG_HEIGHT_DIVIDER
-  const atmosDensity = data.atmosphereDensityScale / LG_HEIGHT_DIVIDER
+  const atmosHeight = data.atmosphereHeight / ATMOSPHERE_HEIGHT_DIVIDER
+  const atmosDensity = data.atmosphereDensityScale / ATMOSPHERE_HEIGHT_DIVIDER
   const geometry = createGeometryComponent(GeometryType.SPHERE, atmosHeight)
   const material = createShaderMaterialComponent(
     atmosphereVertShader,
@@ -224,7 +270,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
   const r = LG_PLANET_DATA.value.planetRadius
   pivot.scale.set(r, r, r)
-  pivot.setRotationFromAxisAngle(AXIS_NX, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+  pivot.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
 
   // ---------------------------- Setup renderer & render -----------------------------
 

@@ -5,15 +5,15 @@ precision highp float;
 // Populated by ThreeJS via BufferGeometry#computeTangents()
 attribute vec3 tangent;
 
-out vec2 vUv;
-out vec3 vPos;
-out vec3 vTangent;
-out vec3 vBitangent;
+// Packed varyings (uv, position, tangent, bitangent)
+out mat4 vTransform;
 
 void main() {
-    vUv = uv;
-    vPos = position;
-    vTangent = tangent;
-    vBitangent = cross(normal, tangent);
+    vTransform = mat4(
+        vec4(vec3(uv, 0.0), 0.0),
+        vec4(position, 0.0),
+        vec4(tangent, 0.0),
+        vec4(cross(normal, tangent), 0.0)
+    );
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }

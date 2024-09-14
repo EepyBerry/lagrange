@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { EventBus } from '@core/services/event-bus'
+import { EventBus } from '@core/event-bus'
 import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue'
 
 const dialog: Ref<HTMLDialogElement | null> = ref(null)
@@ -90,6 +90,7 @@ dialog[open].lg {
     .dialog-title {
       font-weight: 600;
       padding-bottom: 1rem;
+      padding-right: 2rem;
     }
 
     button.dialog-close {

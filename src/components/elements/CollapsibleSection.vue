@@ -38,7 +38,6 @@ function toggleExpand() {
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
   border-radius: 4px;
-  width: 100%;
   min-width: 26rem;
 
   display: flex;
@@ -80,6 +79,10 @@ function toggleExpand() {
       font-size: 0.75rem;
     }
   }
+}
+.collapsible-section.warn {
+  background: var(--lg-warn-panel);
+  border: 1px solid var(--lg-warn);
 }
 
 @media screen and (max-width: 1199px) {

@@ -1,22 +1,16 @@
 <template>
-  <tr class="field">
-    <td>
-      <label :for="id">
-        <slot>ParameterName</slot>
-      </label>
-    </td>
-    <td>
-      <input
-        type="checkbox"
-        class="lg"
-        :id="id"
-        :true-value="trueValue"
-        :false-value="falseValue"
-        :disabled="disabled"
-        v-model="lgParam"
-      />
-    </td>
-  </tr>
+  <label :for="id">
+    <slot>ParameterName</slot>
+  </label>
+  <input
+    type="checkbox"
+    class="lg"
+    :id="id"
+    :true-value="trueValue"
+    :false-value="falseValue"
+    :disabled="disabled"
+    v-model="lgParam"
+  />
 </template>
 
 <script setup lang="ts">
@@ -26,27 +20,12 @@ defineProps<{ id: string; trueValue: AcceptedType; falseValue: AcceptedType; dis
 </script>
 
 <style scoped lang="scss">
-tr.field {
-  width: 100%;
-
-  td {
-    text-wrap: nowrap;
-  }
-  td:first-of-type {
-    white-space: nowrap;
-  }
-  td:last-of-type {
-    width: 100%;
-    min-width: 10px;
-    padding-left: 4px;
-    text-align: end;
-  }
-
-  td.unit {
-    font-size: 0.75rem;
-  }
+label {
+  grid-column: 1;
 }
 input.lg {
+  grid-column: 2;
+  justify-self: end;
   text-align: end;
 }
 </style>

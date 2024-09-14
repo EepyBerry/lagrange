@@ -9,14 +9,39 @@
     "nav": {
       "codex": "Codex",
       "editor": "Editor"
+    },
+
+    "planet_data": {
+      "biome": "Biome",
+      "biome_type_arctic": "Arctic",
+      "biome_type_tundra": "Tundra",
+      "biome_type_temperate": "Temperate",
+      "biome_type_subtropical": "Subtropical",
+      "biome_type_tropical": "Tropical",
+      "biome_type_volcanic": "Volcanic",
+      "biome_type_various": "Various",
+
+      "biome_type_arid": "Arid",
+      "biome_type_dry": "Dry",
+      "biome_type_semihumid": "Semihumid",
+      "biome_type_humid": "Humid"
     }
   },
   "dialog": {
+    "webglerror": {
+      "$title": "Failed to start the Planet Editor!",
+      "brief": "The WebGL context failed to initialize properly. See below for error information."
+    },
+    "planeterror": {
+      "$title": "Failed to start the Planet Editor!",
+      "brief": "Planet failed to load properly. See below for error information.",
+      "reporting": "If you can, please check your browser console and open an issue on GitHub!"
+    },
     "init": {
       "$title": "Welcome to @:main.$title",
       "introduction": "Lagrange is a fully procedural planet builder, perfect for worldbuilding and tying your lore to a proper planet, solar system or even an entire galaxy!",
-      "update_title": "Update 0.2 - World Collector!",
-      "update_brief": "You can now save your planets in the Codex, as well as share them with the new import/export functions! Also includes a lot of UI additions & improvements!",
+      "update_title": "Update 0.3 - Ecosystems!",
+      "update_brief": "Adds a complete, layer-based biome system for you to spice up your planets with! Adjust their temperature & humidity in real-time and bring more variety to your worlds!",
       "$tmp_wip": "Currently work-in-progress. More features are planned for the next versions!",
 
       "shortcuts": "Shortcuts",
@@ -88,9 +113,13 @@
       "changelogs": {
         "$title": "Main feature changelogs",
         "02_title": "Update 0.2 - World Collector",
-        "02_codex": "Introduces the [Codex]: list, import and export planets easily and entirely within your browser!",
+        "02_codex": "Introduces the Codex: list, import and export planets easily and entirely within your browser!",
         "02_ui": "New dialog boxes, toasts & settings, and new editor parameters (radius, atmosphere)",
-        "02_a11y": "Accessibility features & improvements"
+        "02_a11y": "Accessibility features & improvements",
+        "03_title": "Update 0.3 - Ecosystems",
+        "03_biomes": "Introduces a fully fledged biome system, using temperature- & humidity-based positioning!",
+        "03_linux": "Surface noise now works properly Linux-based browsers!",
+        "03_fixes": "Smaller performance fixes all around, including fewer GLSL uniforms & varyings!"
       },
 
       "built_with_love": "Built with 🏳️‍🌈 & ❤️",
@@ -135,6 +164,17 @@
     "default_planet_name": "New planet",
     "$action_sort": "Sort",
     "$action_add": "Add",
+
+    "general": {
+      "noise_fbm_frequency": "Frequency",
+      "noise_fbm_amplitude": "Amplitude",
+      "noise_fbm_lacunarity": "Lacunarity",
+      "noise_fbm_octaves": "Octaves",
+
+      "noise_color": "Color",
+      "noise_rgbramp": "Color ramp",
+      "noise_rgbaramp": "Color/alpha ramp"
+    },
     "controls": {
       "lighting": {
         "$title": "Lighting",
@@ -176,15 +216,31 @@
         "bumpmap_strength": "Bump strength",
 
         "noise": "Noise parameters",
-        "noise_fbm_frequency": "Frequency",
-        "noise_fbm_amplitude": "Amplitude",
-        "noise_fbm_lacunarity": "Lacunarity",
         "noise_colorramp": "Color ramp"
       },
       "biomes": {
         "$title": "Biomes",
         "biomes_show": "Show biomes",
-        "poles_show": "Show poles"
+
+        "texture_resolution": "Resolution",
+        "temperature": "Temperature gradient",
+        "humidity": "Humidity gradient",
+
+        "gradient_mode": "Gradient mode",
+        "gradient_mode_realistic": "Realistic",
+        "gradient_mode_poletopole": "Pole-to-pole",
+        "gradient_mode_fullnoise": "Full noise",
+
+        "biome_list": "Biomes",
+        "biome_type": "Type",
+
+        "height_min": "Min. height",
+        "height_max": "Max. height",
+        "temperature_min": "Min. temperature",
+        "temperature_max": "Max. temperature",
+        "humidity_min": "Min. humidity",
+        "humidity_max": "Max. humidity",
+        "smoothness": "Smoothness"
       },
       "clouds": {
         "$title": "Clouds",
@@ -226,11 +282,12 @@
     "text_01": "Nothing over here, sorry!",
     "text_02": "\"This sector is completely empty, Captain!\"",
     "text_03": "Huh. Must've taken a wrong turn somewhere...",
-    "text_04": "PAGE\u00A0IS\u00A0MISSING. STATUS\u00A0IS\u00A0404. SPACE\u00A0IS\u00A0VOID.",
+    "text_04": "PAGE\u00A0IS\u00A0MISSING. STATUS\u00A0IS\u00A0404. SPACE\u00A0IS\u00A0EMPTY.",
     "subtext": "The requested page could not be found."
   },
   "toast": {
     "storage_success": "Persistent storage enabled!",
+    "storage_failure_none": "Persistent storage not supported on this browser!",
     "storage_failure_rules": "Could not enable persistent storage due to browser rules!",
     "delete_success": "Deleted planet successfully!",
     "delete_failure": "Could not delete planet",
@@ -248,6 +305,14 @@
     "topbar_export": "Export planet file",
     "topbar_export_all": "Export all planets as .zip",
 
+    "gradient_mode_realistic": "Lower values on poles, higher values along the equator",
+    "gradient_mode_poletopole": "Lower values on north pole, higher values on south pole",
+    "gradient_mode_fullnoise": "Fully noisy values, akin to surface noise",
+
+    "rgba_mode_realistic": "Raw Raleigh & Mie scattering calculations with hue shifting",
+    "rgba_mode_direct": "Applies a single color on top of calculations",
+    "rgba_mode_mixed": "Applies direct mode color as a tint on top of the selected hue",
+
     "footer_github": "GitHub repository (opens in new tab)",
     "footer_settings": "Settings",
     "footer_about": "About @:main.$title"
@@ -257,6 +322,8 @@
     "logo_alt": "Secret Lagrange logo!",
     "logo_update_codex": "World Collector update",
 
+    "dialog_webgl_error": "WebGL error dialog",
+    "dialog_planet_error": "Planet error dialog",
     "dialog_init": "Introduction dialog",
     "dialog_settings": "Settings dialog",
     "dialog_about": "About @:main.$title dialog",
@@ -281,6 +348,9 @@
     "general_theme_voyager": "Set Voyager theme (orange)",
 
     "editor_generic_input": "Parameter value",
+    "editor_biome_gradient_mode_realistic": "Realistic temperature gradient",
+    "editor_biome_gradient_mode_poletopole": "Pole-to-pole temperature gradient",
+    "editor_biome_gradient_mode_fullnoise": "Fully noisy temperature gradient",
     "editor_atmosphere_rgba_mode_realistic": "Realistic atmosphere",
     "editor_atmosphere_rgba_mode_direct": "Direct tone atmosphere",
     "editor_atmosphere_rgba_mode_mixed": "Mixed atmosphere",

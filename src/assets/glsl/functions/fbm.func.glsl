@@ -1,12 +1,13 @@
 // Sourced from Yi-wen LIN:
 // https://github.com/yiwenl/glsl-fbm/blob/master/3d.glsl
 // ------------------------------------------------------------------------------------------------
+// 3D fractional Brownian motion
 
 float mod289(float x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
 vec4 mod289(vec4 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
 vec4 perm(vec4 x){return mod289(((x * 34.0) + 1.0) * x);}
 
-float noise(vec3 p){
+float noise3(vec3 p){
     vec3 a = floor(p);
     vec3 d = p - a;
     d = d * d * (3.0 - 2.0 * d);
@@ -30,10 +31,9 @@ float noise(vec3 p){
 
 float fbm3(vec3 x, float freq, float amp, float lac, int octaves) {
 	float val = 0.0;
-	vec3 shift = vec3(100);
 	for (int i = 0; i < octaves; ++i) {
-		val += amp * noise(x*freq);
-		x = x * lac + shift;
+		val += amp * noise3(x*freq);
+		freq *= lac;
 		amp *= 0.5;
 	}
 	return val;

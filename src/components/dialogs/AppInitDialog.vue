@@ -205,6 +205,9 @@ function doClose() {
         text-align: end;
       }
     }
+    .collapsible-section {
+      width: 100%;
+    }
   }
   .intro {
     padding: 1rem 0;

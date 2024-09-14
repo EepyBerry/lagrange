@@ -28,3 +28,6 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# rollup-plugin-visualizer output
+stats.html

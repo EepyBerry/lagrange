@@ -58,7 +58,7 @@
 import AppResetConfirmDialog from '../dialogs/AppResetConfirmDialog.vue'
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
 import { ref, type Ref } from 'vue'
-import { EventBus } from '@/core/services/event-bus'
+import { EventBus } from '@/core/event-bus'
 
 const editMode: Ref<boolean> = ref(false)
 
