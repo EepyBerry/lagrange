@@ -187,7 +187,7 @@
 }
 
 .cls-5 {
-  stroke: #3d474c;
+  stroke: var(--lg-logo);
   stroke-miterlimit: 10;
 }
 
