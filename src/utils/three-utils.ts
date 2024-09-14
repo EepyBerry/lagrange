@@ -1,4 +1,4 @@
-import type { ShaderMaterial } from 'three'
+import { type ShaderMaterial } from 'three'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 
 export function setShaderMaterialUniform(mat: CustomShaderMaterial | ShaderMaterial, uname: string, uvalue: any): void {

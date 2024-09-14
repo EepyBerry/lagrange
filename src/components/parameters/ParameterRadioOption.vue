@@ -10,7 +10,7 @@
     v-model="lgParam"
   />
 
-  <button class="lg radio-button" :class="{ selected: value === lgParam }" @click="select()" :aria-label="ariaLabel">
+  <button class="lg radio-button" :class="{ selected: value === lgParam }" @click="select()" :aria-label="ariaLabel" :title="title">
     <iconify-icon v-if="icon" :icon="icon" width="1.25rem" aria-hidden="true" />
     <slot></slot>
   </button>
@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue'
 
-defineProps<{ name: string; id: string; value: any; icon?: string; ariaLabel: string }>()
+defineProps<{ name: string; id: string; value: any; icon?: string; ariaLabel: string, title?: string }>()
 const lgParam = defineModel<string | number | boolean>()
 const htmlRadio: Ref<HTMLInputElement | null> = ref(null)
 
@@ -43,6 +43,11 @@ function select() {
   justify-content: center;
   gap: 0.25rem;
   cursor: pointer;
+  
+  iconify-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
 }
 .radio-button.selected {
   background: var(--lg-button-active);

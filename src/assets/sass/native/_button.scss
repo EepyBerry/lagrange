@@ -33,15 +33,6 @@ button.lg:disabled {
   background: var(--lg-button-disabled);
   color: var(--lg-text-disabled);
 }
-button.lg.menu-expanded {
-  background: var(--lg-button-menu-expanded);
-}
-button.lg.menu-expanded:hover {
-  background: var(--lg-button-menu-expanded-hover);
-}
-button.lg.menu-expanded:active {
-  background: var(--lg-button-menu-expanded-active);
-}
 
 // nav button
 button.lg.nav {
@@ -125,4 +116,21 @@ a.lg.link-button:visited:active {
   background: var(--lg-button-active);
   color: var(--lg-text);
   text-decoration: none;
+}
+
+// Debug button
+button.lg.debug {
+  display: none;
+  position: relative;
+  background: var(--lg-primary);
+  border: 2px dotted var(--lg-info);
+  min-width: 2rem;
+  min-height: 2rem;
+  font-size: 1rem;
+  font-family: monospace;
+  overflow: hidden;
+
+  iconify-icon {
+    padding-top: 0.125rem;
+  }
 }

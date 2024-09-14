@@ -43,9 +43,19 @@
               <template v-slot:title>{{ $t('dialog.about.changelogs.02_title') }}</template>
               <template v-slot:content>
                 <ul style="list-style-type: disc; margin-left: 1rem">
-                  <li>{{ $t('dialog.about.changelogs.02_codex') }}</li>
+                  <li starred>{{ $t('dialog.about.changelogs.02_codex') }}</li>
                   <li>{{ $t('dialog.about.changelogs.02_ui') }}</li>
                   <li>{{ $t('dialog.about.changelogs.02_a11y') }}</li>
+                </ul>
+              </template>
+            </CollapsibleSection>
+            <CollapsibleSection class="about-update-inner" icon="mingcute:planet-line">
+              <template v-slot:title>{{ $t('dialog.about.changelogs.03_title') }}</template>
+              <template v-slot:content>
+                <ul style="list-style-type: disc; margin-left: 1rem">
+                  <li starred>{{ $t('dialog.about.changelogs.03_biomes') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.03_linux') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.03_fixes') }}</li>
                 </ul>
               </template>
             </CollapsibleSection>

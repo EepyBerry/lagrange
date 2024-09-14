@@ -1,10 +1,10 @@
 <template>
-  <ParameterTable>
+  <ParameterGrid>
     <ParameterCategory top>{{ $t('editor.controls.planet_rendering.transform') }}</ParameterCategory>
     <ParameterSlider v-model="LG_PLANET_DATA.planetRadius" id="p-tilt" :step="0.01" :min="0.5" :max="1">
       {{ $t('editor.controls.planet_rendering.transform_radius') }}
     </ParameterSlider>
-    <ParameterSlider v-model="LG_PLANET_DATA.planetAxialTilt" id="p-tilt" :step="1" :min="0" :max="180">
+    <ParameterSlider v-model="LG_PLANET_DATA.planetAxialTilt" id="p-tilt" :step="1" :min="-180" :max="180">
       {{ $t('editor.controls.planet_rendering.transform_axialtilt') }} <sup>(°)</sup>
     </ParameterSlider>
     <ParameterSlider v-model="LG_PLANET_DATA.planetRotation" id="p-rot" :step="1" :min="0" :max="360">
@@ -28,11 +28,11 @@
     <ParameterSlider v-model="LG_PLANET_DATA.planetGroundMetalness" id="p-gmetal" :step="0.01" :min="0" :max="1">
       {{ $t('editor.controls.planet_rendering.pbr_groundmetalness') }}
     </ParameterSlider>
-  </ParameterTable>
+  </ParameterGrid>
 </template>
 <script setup lang="ts">
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
-import ParameterTable from '@components/parameters/ParameterTable.vue'
+import ParameterGrid from '@components/parameters/ParameterGrid.vue'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'
 import ParameterCategory from '@components/parameters/ParameterCategory.vue'
 import ParameterDivider from '@components/parameters/ParameterDivider.vue'

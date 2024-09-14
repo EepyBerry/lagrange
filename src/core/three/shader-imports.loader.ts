@@ -5,7 +5,6 @@ import normalUtils from '@assets/glsl/functions/normal_utils.func.glsl?raw'
 import atmosphereUtils from '@assets/glsl/functions/atmosphere_utils.func.glsl?raw'
 
 const IMPORT_TOKEN = '@import'
-
 const IMPORT_MAP: { [k: string]: string } = {
   'functions/fbm': fbm,
   'functions/voronoise': voronoise,

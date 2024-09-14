@@ -3,7 +3,7 @@
 // ------------------------------------------------------------------------------------------------
 
 // Perturbs a surface normal from computed heights
-vec3 perturbNormal(vec3 pos, vec3 dx, vec3 dy,
+vec3 perturb_normal(vec3 pos, vec3 dx, vec3 dy,
                    float height, float dxHeight, float dyHeight,
                    float radius, float bumpStrength) {
     vec3 hPos = pos * (radius + height);

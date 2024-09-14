@@ -1,5 +1,5 @@
 import { ref, type Ref } from 'vue'
-import type { InfoLevel } from '../types'
+import type { InfoLevel } from './types'
 
 /**
  * Defines options to pass when registering a window event-listener:

@@ -57,14 +57,14 @@ import { useHead } from '@unhead/vue'
 import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
-import { EventBus } from '@/core/services/event-bus'
+import { EventBus } from '@/core/event-bus'
 import { MD_WIDTH_THRESHOLD, SM_WIDTH_THRESHOLD } from '@/core/globals'
 import pako from 'pako'
 import { saveAs } from 'file-saver'
 import PlanetData from '@/core/models/planet-data.model'
 import JSZip from 'jszip'
 import NewCardElement from '@/components/elements/NewCardElement.vue'
-import { readFileData } from '@/core/import.helper'
+import { readFileData } from '@/core/helpers/import.helper'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
@@ -217,6 +217,7 @@ async function deleteTargetedPlanet() {
   backdrop-filter: blur(8px) brightness(50%);
   inset: 0 0 auto 0;
 
+  inset: auto 1rem;
   padding: 1rem;
   margin: 0;
   display: flex;
@@ -290,7 +291,11 @@ async function deleteTargetedPlanet() {
     background-image: url('/background/space-960w.jpg');
   }
   #codex-header {
+    inset: auto 0;
     padding: 0.5rem;
+    :deep(aside) {
+      left: 3.875rem;
+    }
     #codex-header-controls {
       justify-content: flex-end;
     }
@@ -301,6 +306,12 @@ async function deleteTargetedPlanet() {
   }
 }
 @media screen and (max-width: 767px) {
+  #codex-header {
+    :deep(aside) {
+      left: unset;
+      top: 3.75rem;
+    }
+  }
   #codex-background {
     background-image: url('/background/space-540w.jpg');
   }
