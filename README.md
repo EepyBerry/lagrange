@@ -80,6 +80,7 @@ Vite copies the output to the `dist` folder, creating it first if need be.
 
 ## ⏰ Planned features
 
+- Dark side lighting!
 - Cracks & Craters!
 - Gas Giants!
 - Rings & Asteroid belts!
