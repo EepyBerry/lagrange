@@ -141,11 +141,12 @@
       <template v-for="(b, index) in LG_PLANET_DATA.biomesParams" :key="b.id">
         <ParameterBiome
           :index="index"
-          :max-index="LG_PLANET_DATA.biomesParams.length-1"
+          :max-index="LG_PLANET_DATA.biomesParams.length - 1"
           v-model="(LG_PLANET_DATA.biomesParams[index] as BiomeParameters)"
           @moveup="moveBiome(index, -1)"
           @movedown="moveBiome(index, 1)"
-          @delete="deleteBiome" />
+          @delete="deleteBiome"
+        />
       </template>
       <button class="lg action-add" @click="addBiome">
         <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
@@ -167,9 +168,9 @@ import { Color } from 'three'
 import { DebugUtils } from '@/utils/debug-utils'
 
 function moveBiome(idx: number, diff: 1 | -1) {
-  var element = LG_PLANET_DATA.value.biomesParams[idx];
-  LG_PLANET_DATA.value.biomesParams.splice(idx, 1);
-  LG_PLANET_DATA.value.biomesParams.splice(idx + diff, 0, element);
+  var element = LG_PLANET_DATA.value.biomesParams[idx]
+  LG_PLANET_DATA.value.biomesParams.splice(idx, 1)
+  LG_PLANET_DATA.value.biomesParams.splice(idx + diff, 0, element)
   LG_PLANET_DATA.value.markForChange('_biomesParameters')
 }
 
@@ -181,10 +182,10 @@ function addBiome() {
       temperatureMin: 0.0,
       temperatureMax: 1.0,
       humidityMin: 0.0,
-      humidityMax: 1.0
+      humidityMax: 1.0,
     },
     new Color(0xffffff),
-    0.2
+    0.2,
   )
   LG_PLANET_DATA.value.biomesParams.push(newBiome)
   LG_PLANET_DATA.value.markForChange('_biomesParameters')

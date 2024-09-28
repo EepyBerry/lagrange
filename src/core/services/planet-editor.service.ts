@@ -111,8 +111,8 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
           wrough: data.planetWaterRoughness,
           wmetal: data.planetWaterMetalness,
           grough: data.planetGroundRoughness,
-          gmetal: data.planetGroundMetalness
-        }
+          gmetal: data.planetGroundMetalness,
+        },
       },
       // Surface
       u_bump: { value: data.planetSurfaceShowBumps },

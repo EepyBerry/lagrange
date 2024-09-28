@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue, { Options } from '@vitejs/plugin-vue'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 const vuePluginConfig: Options = {
   template: {
@@ -14,9 +15,18 @@ const vuePluginConfig: Options = {
 // https://vitejs.dev/config/
 export default defineConfig({
   assetsInclude: ['**/*.glsl', '**/*.ico', '**/*.ttf'],
-  plugins: [vue(vuePluginConfig)],
+  plugins: [vue(vuePluginConfig), visualizer()],
   build: {
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vue: ['vue', 'vue-router', 'vue-accessible-color-picker', '@unhead/vue', 'vue-i18n'],
+          three: ['three'],
+          export: ['pako', 'jszip', 'file-saver'],
+        },
+      },
+    },
   },
   define: {
     'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),

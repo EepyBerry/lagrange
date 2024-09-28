@@ -19,7 +19,7 @@ import InputSliderElement from '../elements/InputSliderElement.vue'
 const lgParam = defineModel<string | number | boolean>()
 
 type SliderExtras = 'rgb' | undefined
-;defineProps<{ id: string; step?: number; min?: number; max?: number; extras?: SliderExtras; disabled?: boolean }>()
+defineProps<{ id: string; step?: number; min?: number; max?: number; extras?: SliderExtras; disabled?: boolean }>()
 </script>
 
 <style scoped lang="scss">

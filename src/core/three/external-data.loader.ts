@@ -34,4 +34,3 @@ export function loadTextureFromUrl(url: string, colorSpace: THREE.ColorSpace) {
   }
   return texture
 }
-

@@ -39,14 +39,14 @@ export class BiomeParameters extends ChangeTracker {
     return new BiomeParameters(
       this._changedProps,
       this._changePrefix,
-      { 
+      {
         temperatureMin: this._tempMin,
         temperatureMax: this._tempMax,
         humidityMin: this._humiMin,
         humidityMax: this._humiMax,
       },
       this._color.clone(),
-      this._smoothness
+      this._smoothness,
     )
   }
 
@@ -56,7 +56,7 @@ export class BiomeParameters extends ChangeTracker {
   public set id(id: string) {
     this._id = id
   }
-  
+
   public get tempMin(): number {
     return this._tempMin
   }

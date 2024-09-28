@@ -1,4 +1,4 @@
-import type { RawRGBA, Rect } from "@/core/types"
+import type { RawRGBA, Rect } from '@/core/types'
 
 /**
  * Simple numeric checking function.
@@ -32,7 +32,7 @@ export function avg(...values: number[]) {
  * @param multPrecision the precision as an integer (e.g. 10000 => .toFixed(4))
  */
 export function truncateTo(a: number, multPrecision: number): number {
-  return Math.trunc(a*multPrecision)/multPrecision
+  return Math.trunc(a * multPrecision) / multPrecision
 }
 
 /**
@@ -47,14 +47,14 @@ export function alphaBlendColors(c1: RawRGBA, c2: RawRGBA): RawRGBA {
     r: mixRawRGBAChannel(c1.r, c2.r, c1.a, c2.a),
     g: mixRawRGBAChannel(c1.g, c2.g, c1.a, c2.a),
     b: mixRawRGBAChannel(c1.b, c2.b, c1.a, c2.a),
-    a: mixRawRGBAAlpha(c1.a, c2.a)
+    a: mixRawRGBAAlpha(c1.a, c2.a),
   }
 }
 function mixRawRGBAChannel(c1: number, c2: number, a1: number, a2: number) {
   return (c1 * a1 + c2 * a2 * (1 - a1)) / mixRawRGBAAlpha(a1, a2)
 }
 function mixRawRGBAAlpha(a1: number, a2: number) {
-  return a1 + a2*(1-a1)
+  return a1 + a2 * (1 - a1)
 }
 
 /**
@@ -62,7 +62,7 @@ function mixRawRGBAAlpha(a1: number, a2: number) {
  * @param buffer the data buffer
  * @param w width of the resulting image
  * @param h height of the resulting image
- * @returns 
+ * @returns
  */
 export function normalizeUInt8ArrayPixels(buffer: Uint8Array, w: number, h: number): Uint8Array {
   const length = w * h * 4
@@ -84,7 +84,7 @@ export function normalizeUInt8ArrayPixels(buffer: Uint8Array, w: number, h: numb
  * @returns true if the given point is within the rect, false otherwise
  */
 export function isWithinRect(rect: Rect, x: number, y: number): boolean {
-  return x >= rect.x && y >= rect.y && x < (rect.x+rect.w) && y < (rect.y+rect.h)
+  return x >= rect.x && y >= rect.y && x < rect.x + rect.w && y < rect.y + rect.h
 }
 
 /**
@@ -95,7 +95,7 @@ export function isWithinRect(rect: Rect, x: number, y: number): boolean {
  * @returns an array containing overlaps for the top, right, bottom & left sides, in that order
  */
 export function findRectOverlaps(w: number, h: number, rect: Rect): number[] {
-  const borderOverlaps = [0,0,0,0]
+  const borderOverlaps = [0, 0, 0, 0]
   borderOverlaps[0] = rect.y === 0 ? 1 : 0
   borderOverlaps[1] = rect.x + rect.w >= w ? 1 : 0
   borderOverlaps[2] = rect.y + rect.h >= h ? 1 : 0
@@ -112,9 +112,9 @@ export function findRectOverlaps(w: number, h: number, rect: Rect): number[] {
  */
 export function findMinDistanceToRect(rect: Rect, x: number, y: number, overlaps: number[]): number {
   return Math.min(
-    overlaps[3] > 0 ? 1e3 : x-rect.x,
-    overlaps[0] > 0 ? 1e3 : y-rect.y,
-    overlaps[1] > 0 ? 1e3 : rect.x + rect.w-x,
-    overlaps[2] > 0 ? 1e3 : rect.y + rect.h-y
+    overlaps[3] > 0 ? 1e3 : x - rect.x,
+    overlaps[0] > 0 ? 1e3 : y - rect.y,
+    overlaps[1] > 0 ? 1e3 : rect.x + rect.w - x,
+    overlaps[2] > 0 ? 1e3 : rect.y + rect.h - y,
   )
 }

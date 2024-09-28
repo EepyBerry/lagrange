@@ -49,7 +49,7 @@
                 </ul>
               </template>
             </CollapsibleSection>
-            <CollapsibleSection class="about-update-inner" icon="mingcute:planet-line">
+            <CollapsibleSection class="about-update-inner" icon="mingcute:mountain-2-line">
               <template v-slot:title>{{ $t('dialog.about.changelogs.03_title') }}</template>
               <template v-slot:content>
                 <ul style="list-style-type: disc; margin-left: 1rem">
