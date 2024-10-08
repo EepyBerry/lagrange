@@ -41,7 +41,7 @@ void main() {
 
     // something went horribly wrong so set the pixel transparent
     if ( e.x > e.y ) {
-        csm_DiffuseColor = vec4(0.0);
+        gl_FragColor = vec4(0.0);
         return;
     }
 
@@ -55,10 +55,10 @@ void main() {
     vec4 tint = vec4(u_tint, 1.0);
     
     if (u_color_mode == 0) {
-        csm_DiffuseColor = I_shifted * u_intensity;
+        gl_FragColor = I_shifted * u_intensity;
     } else if (u_color_mode == 1) {
-        csm_DiffuseColor = whitescale(I_gamma) * tint_to_matrix(tint) * u_intensity;
+        gl_FragColor = whitescale(I_gamma) * tint_to_matrix(tint) * u_intensity;
     } else {
-        csm_DiffuseColor = I_shifted * tint * u_intensity;
+        gl_FragColor = I_shifted * tint * u_intensity;
     }
 }
