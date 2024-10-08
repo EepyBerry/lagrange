@@ -106,7 +106,6 @@ export function createCustomShaderMaterialComponent<T extends MaterialConstructo
     vertexShader,
     fragmentShader: fragmentShader ? resolveImports(fragmentShader) : undefined,
     uniforms,
-    silent: true,
   })
   return mat
 }
@@ -119,7 +118,7 @@ export function createShaderMaterialComponent(
   return new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader: fragmentShader ? resolveImports(fragmentShader) : undefined,
-    uniforms
+    uniforms,
   })
 }
 

@@ -35,7 +35,7 @@
     "nanoid": "^5.0.7",
     "pako": "^2.1.0",
     "three": "^0.169.0",
-    "three-custom-shader-material": "^5.4.0",
+    "three-custom-shader-material": "^6.0.13",
     "vue": "^3.5.11",
     "vue-accessible-color-picker": "^5.0.1",
     "vue-i18n": "^10.0.4",
