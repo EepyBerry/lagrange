@@ -200,21 +200,17 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
   const atmosHeight = data.atmosphereHeight / ATMOSPHERE_HEIGHT_DIVIDER
   const atmosDensity = data.atmosphereDensityScale / ATMOSPHERE_HEIGHT_DIVIDER
   const geometry = createGeometryComponent(GeometryType.SPHERE, atmosHeight)
-  const material = createShaderMaterialComponent(
-    atmosphereVertShader,
-    atmosphereFragShader,
-    {
-      u_light_position: { value: sunPos },
-      u_light_intensity: { value: data.sunLightIntensity },
-      u_surface_radius: { value: 1.0 },
-      u_radius: { value: 1.0 + atmosHeight },
-      u_density: { value: atmosDensity },
-      u_intensity: { value: data.atmosphereIntensity },
-      u_color_mode: { value: ColorMode.REALISTIC },
-      u_hue: { value: data.atmosphereHue },
-      u_tint: { value: data.atmosphereTint },
-    },
-  )
+  const material = createShaderMaterialComponent(atmosphereVertShader, atmosphereFragShader, {
+    u_light_position: { value: sunPos },
+    u_light_intensity: { value: data.sunLightIntensity },
+    u_surface_radius: { value: 1.0 },
+    u_radius: { value: 1.0 + atmosHeight },
+    u_density: { value: atmosDensity },
+    u_intensity: { value: data.atmosphereIntensity },
+    u_color_mode: { value: ColorMode.REALISTIC },
+    u_hue: { value: data.atmosphereHue },
+    u_tint: { value: data.atmosphereTint },
+  })
   material.transparent = true
 
   const mesh = new THREE.Mesh(geometry, material)

@@ -119,7 +119,7 @@ export function createShaderMaterialComponent(
   return new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader: fragmentShader ? resolveImports(fragmentShader) : undefined,
-    uniforms
+    uniforms,
   })
 }
 
