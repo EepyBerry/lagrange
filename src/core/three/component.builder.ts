@@ -95,7 +95,7 @@ export function createGeometryComponent(type: GeometryType, addtlRadius: number 
  * @param baseMaterial (optional) base material to use
  * @returns the RawShaderMaterial instance
  */
-export function createShaderMaterialComponent<T extends MaterialConstructor>(
+export function createCustomShaderMaterialComponent<T extends MaterialConstructor>(
   vertexShader: string,
   fragmentShader?: string,
   uniforms?: { [uniform: string]: THREE.IUniform<any> },
@@ -103,12 +103,24 @@ export function createShaderMaterialComponent<T extends MaterialConstructor>(
 ): CustomShaderMaterial<T> {
   const mat = new CustomShaderMaterial({
     baseMaterial: baseMaterial ?? THREE.MeshStandardMaterial,
-    vertexShader: vertexShader,
+    vertexShader,
     fragmentShader: fragmentShader ? resolveImports(fragmentShader) : undefined,
     uniforms,
     silent: true,
   })
   return mat
+}
+
+export function createShaderMaterialComponent(
+  vertexShader: string,
+  fragmentShader?: string,
+  uniforms?: { [uniform: string]: THREE.IUniform<any> },
+): THREE.ShaderMaterial {
+  return new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader: fragmentShader ? resolveImports(fragmentShader) : undefined,
+    uniforms,
+  })
 }
 
 /**

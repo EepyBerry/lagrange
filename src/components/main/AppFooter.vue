@@ -54,6 +54,7 @@ footer {
   align-self: center;
   gap: 1rem;
   z-index: 5;
+  backdrop-filter: blur(8px) brightness(50%);
 
   #footer-nav {
     display: flex;

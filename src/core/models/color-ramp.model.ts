@@ -26,7 +26,7 @@ export class ColorRampStep {
     isBound: boolean = false,
   ): ColorRampStep {
     const step = new ColorRampStep(color, factor, isBound)
-    step.alpha = alpha
+    step.alpha = alpha ?? 1.0
     return step
   }
 
@@ -107,6 +107,7 @@ export class ColorRamp extends ChangeTracker {
 
   public sortSteps() {
     this._steps.sort((a, b) => a.factor - b.factor)
+    this.markForChange(this._changePrefix)
   }
 
   public addStep() {

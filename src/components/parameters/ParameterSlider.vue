@@ -2,6 +2,7 @@
   <label :for="id">
     <slot>ParameterName</slot>
   </label>
+  <!-- prettier-ignore-attribute -->
   <InputSliderElement
     class="lg"
     :class="extras"

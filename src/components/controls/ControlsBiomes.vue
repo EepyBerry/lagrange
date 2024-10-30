@@ -139,6 +139,7 @@
 
       <ParameterCategory>{{ $t('editor.controls.biomes.biome_list') }}</ParameterCategory>
       <template v-for="(b, index) in LG_PLANET_DATA.biomesParams" :key="b.id">
+        <!-- prettier-ignore-attribute -->
         <ParameterBiome
           :index="index"
           :max-index="LG_PLANET_DATA.biomesParams.length - 1"
