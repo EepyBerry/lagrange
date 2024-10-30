@@ -44,7 +44,7 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.10.4",
     "@types/file-saver": "^2.0.7",
-    "@types/node": "^22.8.2",
+    "@types/node": "^22.8.4",
     "@types/pako": "^2.0.3",
     "@types/three": "^0.169.0",
     "@vitejs/plugin-vue": "^5.1.4",
@@ -53,13 +53,13 @@
     "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-vue": "^9.30.0",
-    "npm-run-all2": "^6.2.6",
+    "npm-run-all2": "^7.0.1",
     "prettier": "^3.3.3",
     "rollup-plugin-visualizer": "^5.12.0",
-    "sass": "^1.80.4",
+    "sass": "^1.80.5",
     "typescript": "~5.6.3",
     "vite": "^5.4.10",
-    "vite-plugin-vue-devtools": "^7.5.4",
+    "vite-plugin-vue-devtools": "^7.5.6",
     "vue-tsc": "^2.1.8"
   }
 }
