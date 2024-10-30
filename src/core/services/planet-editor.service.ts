@@ -219,6 +219,19 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
   return mesh
 }
 
+export function createRing(data: PlanetData): THREE.Mesh {
+  const geometry = createGeometryComponent(GeometryType.RING)
+  const material = createShaderMaterialComponent(atmosphereVertShader, atmosphereFragShader, {
+    // TODO
+  })
+  material.transparent = true
+
+  const mesh = new THREE.Mesh(geometry, material)
+  mesh.userData.lens = 'no-occlusion'
+  mesh.name = LG_NAME_ATMOSPHERE
+  return mesh
+}
+
 // ----------------------------------------------------------------------------------------------------------------------
 // DATA FUNCTIONS
 

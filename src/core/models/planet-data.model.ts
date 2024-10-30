@@ -417,6 +417,49 @@ export default class PlanetData extends ChangeTracker {
     this.markForChange('_atmosphereTint')
   }
 
+  
+  // --------------------------------------------------
+  // |                 Ring settings                  |
+  // --------------------------------------------------
+
+  private _ringEnabled: boolean
+  private _ringInnerRadius: number
+  private _ringOuterRadius: number
+  private _ringColorRamp: ColorRamp
+
+  // --------------------------------------------------
+
+  public get ringEnabled(): boolean {
+    return this._ringEnabled
+  }
+  public set ringEnabled(value: boolean) {
+    this._ringEnabled = value
+    this.markForChange('_ringEnabled')
+  }
+
+  public get ringInnerRadius(): number {
+    return this._ringInnerRadius
+  }
+  public set ringInnerRadius(value: number) {
+    this._ringInnerRadius = Math.max(1.0, value)
+    this.markForChange('_ringInnerRadius')
+  }
+
+  public get ringOuterRadius(): number {
+    return this._ringOuterRadius
+  }
+  public set ringOuterRadius(value: number) {
+    this._ringOuterRadius =  Math.max(this._ringInnerRadius, value)
+    this.markForChange('_ringOuterRadius')
+  }
+  
+  public get ringColorRamp(): ColorRamp {
+    return this._ringColorRamp
+  }
+  public get ringColorRampSize() {
+    return this._ringColorRamp.steps.length
+  }
+
   // --------------------------------------------------
   // |                  Utils & misc                  |
   // --------------------------------------------------
@@ -553,6 +596,16 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereColorMode = ColorMode.REALISTIC
     this._atmosphereHue = 0.0
     this._atmosphereTint = new Color(0xffffff)
+
+    // Ring
+    this._ringEnabled = false
+    this._ringInnerRadius = 1.25
+    this._ringOuterRadius = 1.5
+    this._ringColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
+      new ColorRampStep(0x856f4e, 0.0, true),
+      new ColorRampStep(0xe6bc7a, 0.5, false),
+      new ColorRampStep(0xbf9a5e, 1.0, true),
+    ])
   }
 
   public reset() {

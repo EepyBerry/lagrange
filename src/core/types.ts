@@ -6,6 +6,7 @@ export enum GeometryType {
   SPHERE,
   TORUS,
   BOX,
+  RING
 }
 export enum NoiseType {
   FBM,

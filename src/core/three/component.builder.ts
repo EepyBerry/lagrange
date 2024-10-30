@@ -83,6 +83,11 @@ export function createGeometryComponent(type: GeometryType, addtlRadius: number 
       )
     case GeometryType.BOX:
       return new THREE.BoxGeometry(1.0 * 1.5 + addtlRadius, 1.0 * 1.5 + addtlRadius, 1.0 * 1.5 + addtlRadius)
+    case GeometryType.RING:
+      return new THREE.RingGeometry(
+        1.0 + addtlRadius,
+        1.5
+      )
   }
 }
 
