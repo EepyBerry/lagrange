@@ -26,6 +26,7 @@ import {
   createGeometryComponent,
   createPerspectiveCameraComponent,
   createRendererComponent,
+  createCustomShaderMaterialComponent,
   createShaderMaterialComponent,
 } from '@core/three/component.builder'
 import { SceneElements } from '@core/models/scene-elements.model'
@@ -99,7 +100,7 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
   const surfaceTex = createRampTexture(LG_BUFFER_SURFACE, SURFACE_TEXTURE_SIZE, data.planetSurfaceColorRamp.steps)
   const biomeTex = createBiomeTexture(LG_BUFFER_BIOME, BIOME_TEXTURE_SIZE, data.biomesParams)
 
-  const material = createShaderMaterialComponent(
+  const material = createCustomShaderMaterialComponent(
     planetVertShader,
     planetFragShader,
     {
@@ -167,7 +168,7 @@ export function createClouds(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
   const geometry = createGeometryComponent(GeometryType.SPHERE, cloudHeight)
   const opacityTex = createRampTexture(LG_BUFFER_CLOUDS, CLOUDS_TEXTURE_SIZE, data.cloudsColorRamp.steps)
 
-  const material = createShaderMaterialComponent(
+  const material = createCustomShaderMaterialComponent(
     cloudsVertShader,
     cloudsFragShader,
     {
@@ -213,7 +214,6 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
       u_hue: { value: data.atmosphereHue },
       u_tint: { value: data.atmosphereTint },
     },
-    THREE.ShaderMaterial,
   )
   material.transparent = true
 

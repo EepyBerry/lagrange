@@ -16,6 +16,13 @@ const vuePluginConfig: Options = {
 export default defineConfig({
   assetsInclude: ['**/*.glsl', '**/*.ico', '**/*.ttf'],
   plugins: [vue(vuePluginConfig), visualizer()],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler',
+      },
+    },
+  },
   build: {
     sourcemap: true,
     rollupOptions: {
