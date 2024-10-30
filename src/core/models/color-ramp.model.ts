@@ -26,7 +26,7 @@ export class ColorRampStep {
     isBound: boolean = false,
   ): ColorRampStep {
     const step = new ColorRampStep(color, factor, isBound)
-    step.alpha = alpha
+    step.alpha = alpha ?? 1.0
     return step
   }
 
