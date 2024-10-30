@@ -28,10 +28,11 @@
     </div>
   </div>
   <div v-if="planets.length > 0" id="codex-grid">
+    <!-- prettier-ignore-attribute -->
     <PlanetCardElement
       v-for="planet of planets"
       :key="planet.id"
-      :planet="planet as IDBPlanet"
+      :planet="(planet as IDBPlanet)"
       @export="exportPlanet(planet as IDBPlanet)"
       @delete="openDeleteConfirmDialog(planet as IDBPlanet)"
     />

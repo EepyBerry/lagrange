@@ -38,9 +38,10 @@
       {{ $t('editor.general.noise_fbm_octaves') }}
     </ParameterSlider>
     <ParameterDivider />
+    <!-- prettier-ignore-attribute -->
     <ParameterColorRamp
       mode="rgb"
-      v-model="LG_PLANET_DATA.planetSurfaceColorRamp as ColorRamp"
+      v-model="(LG_PLANET_DATA.planetSurfaceColorRamp as ColorRamp)"
       :key="LG_PLANET_DATA.planetName"
     >
       {{ $t('editor.controls.surface.noise_colorramp') }}
