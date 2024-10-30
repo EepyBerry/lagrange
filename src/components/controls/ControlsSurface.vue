@@ -40,7 +40,7 @@
     <ParameterDivider />
     <ParameterColorRamp
       mode="rgb"
-      v-model="(LG_PLANET_DATA.planetSurfaceColorRamp as ColorRamp)"
+      v-model="LG_PLANET_DATA.planetSurfaceColorRamp as ColorRamp"
       :key="LG_PLANET_DATA.planetName"
     >
       {{ $t('editor.controls.surface.noise_colorramp') }}

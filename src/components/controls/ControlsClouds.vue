@@ -27,7 +27,7 @@
       </ParameterColor>
       <ParameterColorRamp
         mode="opacity"
-        v-model="(LG_PLANET_DATA.cloudsColorRamp as ColorRamp)"
+        v-model="LG_PLANET_DATA.cloudsColorRamp as ColorRamp"
         :key="LG_PLANET_DATA.planetName"
       >
         {{ $t('editor.controls.clouds.rgba_opacityramp') }}

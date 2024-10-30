@@ -31,9 +31,9 @@
     <PlanetCardElement
       v-for="planet of planets"
       :key="planet.id"
-      :planet="planet"
-      @export="exportPlanet(planet)"
-      @delete="openDeleteConfirmDialog(planet)"
+      :planet="planet as IDBPlanet"
+      @export="exportPlanet(planet as IDBPlanet)"
+      @delete="openDeleteConfirmDialog(planet as IDBPlanet)"
     />
     <NewCardElement />
   </div>

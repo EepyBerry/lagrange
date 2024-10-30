@@ -96,7 +96,7 @@
             default-format="hex"
             :alpha-channel="mode === 'rgba' ? 'show' : 'hide'"
             :color="pickerIdInitColor"
-            @color-change="updateStepColor(step, $event.colors.hex)"
+            @color-change="updateStepColor(step as ColorRampStep, $event.colors.hex)"
           >
             <template #hue-range-input-label>
               <span class="visually-hidden">Hue</span>

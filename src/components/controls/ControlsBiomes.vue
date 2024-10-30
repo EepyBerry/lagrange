@@ -142,7 +142,7 @@
         <ParameterBiome
           :index="index"
           :max-index="LG_PLANET_DATA.biomesParams.length - 1"
-          v-model="(LG_PLANET_DATA.biomesParams[index] as BiomeParameters)"
+          v-model="LG_PLANET_DATA.biomesParams[index] as BiomeParameters"
           @moveup="moveBiome(index, -1)"
           @movedown="moveBiome(index, 1)"
           @delete="deleteBiome"

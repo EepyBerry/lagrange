@@ -10,7 +10,7 @@
     :max="max ?? 10"
     :step="step ?? 1"
     :disabled="disabled"
-    v-model="(lgParam as number)"
+    v-model="lgParam as number"
   />
 </template>
 
