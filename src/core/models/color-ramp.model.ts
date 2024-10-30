@@ -107,6 +107,7 @@ export class ColorRamp extends ChangeTracker {
 
   public sortSteps() {
     this._steps.sort((a, b) => a.factor - b.factor)
+    this.markForChange(this._changePrefix)
   }
 
   public addStep() {
