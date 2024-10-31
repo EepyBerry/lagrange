@@ -198,6 +198,7 @@ export function createClouds(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.name = LG_NAME_CLOUDS
+  mesh.receiveShadow = true
   mesh.castShadow = true
   return { mesh, texs: [opacityTex] }
 }
@@ -234,7 +235,6 @@ export function createRing(data: PlanetData): THREE.Mesh {
   material.transparent = true
 
   const mesh = new THREE.Mesh(geometry, material)
-  mesh.userData.lens = 'no-occlusion'
   mesh.name = LG_NAME_ATMOSPHERE
   mesh.receiveShadow = true
   mesh.castShadow = true

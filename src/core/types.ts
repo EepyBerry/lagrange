@@ -4,8 +4,6 @@ export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
 export enum GeometryType {
   SPHERE,
-  TORUS,
-  BOX,
   RING
 }
 export enum NoiseType {

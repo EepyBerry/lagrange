@@ -252,6 +252,9 @@ function initPlanet(): void {
   )
   _ringAnchor.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
   _ring.setRotationFromAxisAngle(_ring.up, degToRad(LG_PLANET_DATA.value.ringRotation))
+
+  // Set lighting target
+  _sunLight.target = _planetGroup
 }
 
 function initRendering(width: number, height: number) {

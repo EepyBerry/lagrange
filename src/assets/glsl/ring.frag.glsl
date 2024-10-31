@@ -8,6 +8,5 @@ in mat4 vTransform;
 uniform sampler2D u_ring_tex;
 
 void main() {
-  vec3 color = vec3(1.0, 1.0, 1.0);
-  csm_FragColor = vec4(color, 0.5);
+  csm_DiffuseColor = vec4(vTransform[0].xyz, 0.75);
 }
