@@ -1,12 +1,8 @@
 <template>
   <div id="editor-header" :class="{ compact: !!showCompactNavigation }">
     <AppNavigation :compact-mode="showCompactNavigation" />
-    <PlanetInfoControls
-      :compact-mode="showCompactInfo"
-      @rename="patchMetaHead"
-      @save="savePlanet"
-      @reset="resetPlanet"
-    />
+    <PlanetInfoControls :compact-mode="showCompactInfo" @rename="patchMetaHead" @save="savePlanet"
+      @reset="resetPlanet" />
   </div>
   <PlanetEditorControls :compact-mode="showCompactControls" />
 
@@ -50,6 +46,7 @@ import {
   createClouds,
   createLensFlare,
   createPlanet,
+  createRing,
   createScene,
   createSun,
   exportPlanetPreview,
@@ -100,9 +97,12 @@ const clock = new THREE.Clock()
 // Main THREE objects
 let $se: SceneElements
 let _planetGroup: THREE.Group
+let _ringAnchor: THREE.Group
+
 let _planet: THREE.Mesh
 let _clouds: THREE.Mesh
 let _atmosphere: THREE.Mesh
+let _ring: THREE.Mesh
 let _sunLight: THREE.DirectionalLight
 let _ambLight: THREE.AmbientLight
 let _lensFlare: LensFlareEffect
@@ -138,7 +138,7 @@ async function bootstrapEditor() {
       error.style.fontFamily = ''
       error.style.fontSize = ''
       error.style.width = ''
-      ;(error.lastChild as HTMLLinkElement).style.color = ''
+        ; (error.lastChild as HTMLLinkElement).style.color = ''
       webglErrorDialogRef.value!.openWithError(error)
     }
   } catch (error: any) {
@@ -220,15 +220,23 @@ function initPlanet(): void {
   const planet = createPlanet(LG_PLANET_DATA.value as PlanetData)
   const clouds = createClouds(LG_PLANET_DATA.value as PlanetData)
   const atmosphere = createAtmosphere(LG_PLANET_DATA.value as PlanetData, _sunLight.position)
-  const pivot = new THREE.Group()
-  pivot.add(planet.mesh)
-  pivot.add(clouds.mesh)
-  pivot.add(atmosphere)
-  $se.scene.add(pivot)
+  const ring = createRing(LG_PLANET_DATA.value as PlanetData)
+  const planetGroup = new THREE.Group()
+  planetGroup.add(planet.mesh)
+  planetGroup.add(clouds.mesh)
+  planetGroup.add(atmosphere)
+
+  const ringAnchor = new THREE.Group()
+  ringAnchor.add(ring)
+  planetGroup.add(ringAnchor)
+
+  $se.scene.add(planetGroup)
   _planet = planet.mesh
   _clouds = clouds.mesh
   _atmosphere = atmosphere
-  _planetGroup = pivot
+  _ring = ring
+  _planetGroup = planetGroup
+  _ringAnchor = ringAnchor
 
   // Set datatextures + data
   _surfaceDataTex = planet.texs[0].texture
@@ -242,6 +250,8 @@ function initPlanet(): void {
     _clouds.up,
     degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation),
   )
+  _ringAnchor.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
+  _ring.setRotationFromAxisAngle(_ring.up, degToRad(LG_PLANET_DATA.value.ringRotation))
 }
 
 function initRendering(width: number, height: number) {
@@ -269,12 +279,14 @@ function disposeScene() {
 
   _lensFlare.material.dispose()
   _lensFlare.mesh.geometry.dispose()
-  ;(_planet.material as THREE.Material).dispose()
+    ; (_planet.material as THREE.Material).dispose()
   _planet.geometry.dispose()
-  ;(_clouds.material as THREE.Material).dispose()
+    ; (_clouds.material as THREE.Material).dispose()
   _clouds.geometry.dispose()
-  ;(_atmosphere.material as THREE.Material).dispose()
+    ; (_atmosphere.material as THREE.Material).dispose()
   _atmosphere.geometry.dispose()
+    ; (_ring.material as THREE.Material).dispose()
+  _ring.geometry.dispose()
 
   LG_BUFFER_SURFACE.fill(0)
   LG_BUFFER_BIOME.fill(0)
@@ -782,7 +794,7 @@ function updatePlanet() {
   box-shadow: black 5px 10px 10px;
   z-index: 5;
 
-  & > canvas {
+  &>canvas {
     background: transparent;
   }
 }

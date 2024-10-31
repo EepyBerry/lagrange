@@ -18,6 +18,7 @@ export function createRendererComponent(width: number, height: number, pixelRati
   }
   renderer.setSize(width, height)
   renderer.setClearColor(0x000000, 0)
+  renderer.setTransparentSort((a, b) => a.z - b.z) // Invert trnasparent sorting to have a "filter" effect for transparent objects (atmos/ring)
   renderer.shadowMap.enabled = true
   renderer.shadowMap.autoUpdate = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
@@ -84,10 +85,7 @@ export function createGeometryComponent(type: GeometryType, addtlRadius: number 
     case GeometryType.BOX:
       return new THREE.BoxGeometry(1.0 * 1.5 + addtlRadius, 1.0 * 1.5 + addtlRadius, 1.0 * 1.5 + addtlRadius)
     case GeometryType.RING:
-      return new THREE.RingGeometry(
-        1.0 + addtlRadius,
-        1.5
-      )
+      return new THREE.RingGeometry(1.25, 1.75)
   }
 }
 

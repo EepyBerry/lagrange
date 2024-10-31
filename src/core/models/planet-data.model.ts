@@ -417,12 +417,13 @@ export default class PlanetData extends ChangeTracker {
     this.markForChange('_atmosphereTint')
   }
 
-  
   // --------------------------------------------------
   // |                 Ring settings                  |
   // --------------------------------------------------
 
   private _ringEnabled: boolean
+  private _ringAxialTilt: number
+  private _ringRotation: number
   private _ringInnerRadius: number
   private _ringOuterRadius: number
   private _ringColorRamp: ColorRamp
@@ -437,6 +438,22 @@ export default class PlanetData extends ChangeTracker {
     this.markForChange('_ringEnabled')
   }
 
+  public get ringAxialTilt() {
+    return this._ringAxialTilt
+  }
+  public set ringAxialTilt(tilt: number) {
+    this._ringAxialTilt = isNumeric(tilt) ? clamp(tilt, -180, 180) : 0
+    this.markForChange('_ringAxialTilt')
+  }
+
+  public get ringRotation() {
+    return this._ringRotation
+  }
+  public set ringRotation(rot: number) {
+    this._ringRotation = isNumeric(rot) ? clamp(rot, 0, 360) : 0
+    this.markForChange('_ringRotation')
+  }
+
   public get ringInnerRadius(): number {
     return this._ringInnerRadius
   }
@@ -449,10 +466,10 @@ export default class PlanetData extends ChangeTracker {
     return this._ringOuterRadius
   }
   public set ringOuterRadius(value: number) {
-    this._ringOuterRadius =  Math.max(this._ringInnerRadius, value)
+    this._ringOuterRadius = Math.max(this._ringInnerRadius, value)
     this.markForChange('_ringOuterRadius')
   }
-  
+
   public get ringColorRamp(): ColorRamp {
     return this._ringColorRamp
   }
@@ -599,11 +616,13 @@ export default class PlanetData extends ChangeTracker {
 
     // Ring
     this._ringEnabled = false
+    this._ringAxialTilt = 90.0
+    this._ringRotation = 0.0
     this._ringInnerRadius = 1.25
     this._ringOuterRadius = 1.5
     this._ringColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
       new ColorRampStep(0x856f4e, 0.0, true),
-      new ColorRampStep(0xe6bc7a, 0.5, false),
+      new ColorRampStep(0xe6bc7a, 0.5),
       new ColorRampStep(0xbf9a5e, 1.0, true),
     ])
   }
@@ -715,6 +734,18 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereHue = 0
     this._atmosphereTint = new Color(0xffffff)
 
+    // Ring
+    this._ringEnabled = false
+    this._ringAxialTilt = 90.0
+    this._ringRotation = 0.0
+    this._ringInnerRadius = 1.25
+    this._ringOuterRadius = 1.5
+    this._ringColorRamp.loadFromSteps([
+      new ColorRampStep(0x856f4e, 0.0, true),
+      new ColorRampStep(0xe6bc7a, 0.5),
+      new ColorRampStep(0xbf9a5e, 1.0, true),
+    ])
+
     this.markAllForChange()
   }
 
@@ -820,6 +851,24 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereColorMode = data._atmosphereColorMode ?? ColorMode.REALISTIC
     this._atmosphereHue = data._atmosphereHue ?? 0.0
     this._atmosphereTint.set(data._atmosphereTint ?? 0xffffff)
+
+    // Ring
+    this._ringEnabled = data._ringEnabled ?? false
+    this._ringAxialTilt = data._ringAxialTilt ?? 90.0
+    this._ringRotation = data._ringRotation ?? 15.0
+    this._ringInnerRadius = data._ringInnerRadius ?? 1.25
+    this._ringOuterRadius = data._ringOuterRadius ?? 1.5
+    this._ringColorRamp.loadFromSteps(
+      data._ringColorRamp
+        ? data._ringColorRamp.steps
+        : [
+            new ColorRampStep(0x856f4e, 0.0, true),
+            new ColorRampStep(0xe6bc7a, 0.5),
+            new ColorRampStep(0xbf9a5e, 1.0, true),
+          ],
+    )
+
+    // Mark all for change
     this.markAllForChange()
   }
 

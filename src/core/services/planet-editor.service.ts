@@ -5,6 +5,8 @@ import cloudsFragShader from '@assets/glsl/clouds.frag.glsl?raw'
 import cloudsVertShader from '@assets/glsl/clouds.vert.glsl?raw'
 import atmosphereFragShader from '@assets/glsl/atmosphere.frag.glsl?raw'
 import atmosphereVertShader from '@assets/glsl/atmosphere.vert.glsl?raw'
+import ringFragShader from '@assets/glsl/ring.frag.glsl?raw'
+import ringVertShader from '@assets/glsl/ring.vert.glsl?raw'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import {
   LG_NAME_CLOUDS,
@@ -80,6 +82,11 @@ export function createSun(data: PlanetData) {
   sun.frustumCulled = false
   sun.userData.lens = 'no-occlusion'
   sun.name = LG_NAME_SUN
+  sun.castShadow = true
+  sun.shadow.camera.far = 1e4
+  sun.shadow.mapSize.width = 4096
+  sun.shadow.mapSize.height = 4096
+  sun.shadow.bias = -0.00003
   return sun
 }
 
@@ -155,9 +162,10 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
     },
     THREE.MeshStandardMaterial,
   )
-  material.depthTest = false
+  material.shadowSide = THREE.DoubleSide
 
   const mesh = new THREE.Mesh(geometry, material)
+  mesh.castShadow = true
   mesh.receiveShadow = true
   mesh.name = LG_NAME_PLANET
   return { mesh, texs: [surfaceTex, biomeTex] }
@@ -187,11 +195,9 @@ export function createClouds(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
     THREE.MeshStandardMaterial,
   )
   material.transparent = true
-  material.shadowSide = THREE.DoubleSide
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.name = LG_NAME_CLOUDS
-  mesh.receiveShadow = true
   mesh.castShadow = true
   return { mesh, texs: [opacityTex] }
 }
@@ -212,23 +218,26 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
     u_tint: { value: data.atmosphereTint },
   })
   material.transparent = true
+  material.depthWrite = false
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.userData.lens = 'no-occlusion'
   mesh.name = LG_NAME_ATMOSPHERE
+  mesh.castShadow = true
   return mesh
 }
 
 export function createRing(data: PlanetData): THREE.Mesh {
   const geometry = createGeometryComponent(GeometryType.RING)
-  const material = createShaderMaterialComponent(atmosphereVertShader, atmosphereFragShader, {
-    // TODO
-  })
+  const material = createCustomShaderMaterialComponent(ringVertShader, ringFragShader, {}, THREE.MeshStandardMaterial)
+  material.side = THREE.DoubleSide
   material.transparent = true
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.userData.lens = 'no-occlusion'
   mesh.name = LG_NAME_ATMOSPHERE
+  mesh.receiveShadow = true
+  mesh.castShadow = true
   return mesh
 }
 
