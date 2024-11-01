@@ -330,7 +330,7 @@
   "a11y": {
     "logo": "Lagrange logo",
     "logo_alt": "Secret Lagrange logo!",
-    "logo_update_codex": "World Collector update",
+    "logo_update_codex": "Update logo",
 
     "dialog_webgl_error": "WebGL error dialog",
     "dialog_planet_error": "Planet error dialog",
