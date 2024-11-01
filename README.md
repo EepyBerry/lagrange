@@ -77,13 +77,14 @@ Vite copies the output to the `dist` folder, creating it first if need be.
 - ⛰️ **Biome parameters!** (temperature/humidity mapping, per-biome min/max values & color)
 - ☁️ **Clouds parameters!** (transform, color, opacity ramp)
 - 🌈 **Atmosphere parameters!** (density, color mixing modes)
+- 🪐 **Ring System parameters!** (radii, color ramp)
 
 ## ⏰ Planned features
 
 - Dark side "night lights"!
 - Cracks & Craters!
 - Gas Giants!
-- Rings & Asteroid belts!
+- Asteroid belts!
 - _Galactic Map_, to organize them around stars!
 
 ## ✨ Inspirations
@@ -95,17 +96,17 @@ This project is heavily inspired by the awesome projects below:
 
 ## 📓 Licensing
 
-Original assets and source code from this project are provided under a BSD 3-Clause "New" or "Revised" License.<br>
+Original assets and source code from this project are provided under an ISTSL No-Resale License.<br>
 Please consult the [license file](LICENSE) for full information.
 
 Content from other parties is provided under their respective license, and attribution is given at the top of the aforementioned content.
 
 ## 🤝 Contributing
 
-If you want to contribute code, feel free to submit your PRs!
+If you'd like to contribute code, feel free to submit your PRs!
 
-Please make sure to respect the following:
+This project makes heavy use of the "Gitflow" branching model. To ensure proper branching, please make sure to respect the following steps:
 
-1. [fork the project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project)
-2. create a branch from `develop`
-3. request your branch to be merged into `develop`
+1. [Fork the project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project)
+2. Create a branch from `develop`
+3. Request your branch to be merged into `develop`
