@@ -18,6 +18,7 @@ import {
   AXIS_X,
   ATMOSPHERE_HEIGHT_DIVIDER,
   TEXTURE_SIZES,
+  LG_NAME_RING,
 } from '@core/globals'
 import { ColorMode, GeometryType, type DataTextureWrapper } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
@@ -241,7 +242,7 @@ export function createRing(data: PlanetData): { mesh: THREE.Mesh; texs: DataText
   material.transparent = true
 
   const mesh = new THREE.Mesh(geometry, material)
-  mesh.name = LG_NAME_ATMOSPHERE
+  mesh.name = LG_NAME_RING
   mesh.receiveShadow = true
   mesh.castShadow = true
   return { mesh, texs: [rgbaTex] }
