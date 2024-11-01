@@ -215,11 +215,7 @@
         "bumpmap_show": "Show bumps :3",
         "bumpmap_strength": "Bump stwength",
 
-        "noise": "Nyoise p-pawametews",
-        "noise_fbm_frequency": "Fwequency",
-        "noise_fbm_amplitude": "Ampwitude",
-        "noise_fbm_lacunarity": "Wacunyawity",
-        "noise_colorramp": "Cowow wamp"
+        "noise": "Nyoise p-pawametews"
       },
       "biomes": {
         "$title": "Biomes",
@@ -258,7 +254,6 @@
         "noise_fbm_lacunarity": "Wacunyawity",
 
         "rgba": "Cowow & opacity",
-        "rgba_color": "Cowow",
         "rgba_opacityramp": "Opacity wamp"
       },
       "atmosphere": {

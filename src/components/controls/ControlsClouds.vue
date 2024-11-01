@@ -23,7 +23,7 @@
       </ParameterSlider>
       <ParameterCategory>{{ $t('editor.controls.clouds.rgba') }}</ParameterCategory>
       <ParameterColor v-model="LG_PLANET_DATA.cloudsColor">
-        {{ $t('editor.controls.clouds.rgba_color') }}
+        {{ $t('editor.general.noise_color') }}
       </ParameterColor>
       <!-- prettier-ignore-attribute -->
       <ParameterColorRamp

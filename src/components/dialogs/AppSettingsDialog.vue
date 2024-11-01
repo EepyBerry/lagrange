@@ -22,6 +22,7 @@
                 <template v-slot:options>
                   <option value="en-US">English [en-US]</option>
                   <option value="en-UwU">Uwuish [en-UwU]</option>
+                  <option value="fr-FR">Français [fr-FR]</option>
                   <option value="_" disabled>{{ $t('main.more_coming_soon') }}</option>
                 </template>
               </ParameterSelect>

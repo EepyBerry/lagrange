@@ -215,8 +215,7 @@
         "bumpmap_show": "Show bumps",
         "bumpmap_strength": "Bump strength",
 
-        "noise": "Noise parameters",
-        "noise_colorramp": "Color ramp"
+        "noise": "Noise parameters"
       },
       "biomes": {
         "$title": "Biomes",
@@ -255,7 +254,6 @@
         "noise_fbm_lacunarity": "Lacunarity",
 
         "rgba": "Color & opacity",
-        "rgba_color": "Color",
         "rgba_opacityramp": "Opacity ramp"
       },
       "atmosphere": {

@@ -19,7 +19,7 @@
       <!-- prettier-ignore-attribute -->
       <ParameterColorRamp mode="rgba" v-model="(LG_PLANET_DATA.ringColorRamp as ColorRamp)"
         :key="LG_PLANET_DATA.planetName">
-        {{ $t('editor.controls.ring.rgba_colorramp') }}
+        {{ $t('editor.general.noise_rgbaramp') }}
       </ParameterColorRamp>
     </template>
   </ParameterGrid>
