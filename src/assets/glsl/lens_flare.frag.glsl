@@ -1,5 +1,7 @@
 // Sourced from Anderson Mancini:
+// https://github.com/ektogamat/lensflare-threejs-vanilla
 // https://codesandbox.io/s/lens-flare-vanilla-threejs-pt4fwr
+// Note: rleased under the Creative Commons CC0 1.0 Universal license
 // ------------------------------------------------------------------------------------------------
 
 #ifdef GL_ES
@@ -7,6 +9,7 @@ precision highp float;
 #endif
 
 // Based on https://www.shadertoy.com/view/4sX3Rs
+// Note: released under the Unlicense
 uniform float iTime;
 uniform vec2 lensPosition;
 uniform vec2 iResolution;
