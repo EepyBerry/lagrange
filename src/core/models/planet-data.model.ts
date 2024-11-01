@@ -624,7 +624,7 @@ export default class PlanetData extends ChangeTracker {
     this._ringRotation = 0.0
     this._ringInnerRadius = 1.25
     this._ringOuterRadius = 1.5
-    this._ringColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
+    this._ringColorRamp = new ColorRamp(this._changedProps, '_ringColorRamp', [
       new ColorRampStep(0x856f4e, 0.0, true),
       new ColorRampStep(0xe6bc7a, 0.5),
       new ColorRampStep(0xbf9a5e, 1.0, true),

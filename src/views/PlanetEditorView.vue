@@ -50,6 +50,7 @@ import {
   exportPlanetPreview,
   LG_BUFFER_BIOME,
   LG_BUFFER_CLOUDS,
+  LG_BUFFER_RING,
   LG_BUFFER_SURFACE,
   LG_PLANET_DATA,
 } from '@/core/services/planet-editor.service'
@@ -239,14 +240,14 @@ function initPlanet(): void {
   planetGroup.add(atmosphere)
 
   const ringAnchor = new THREE.Group()
-  ringAnchor.add(ring)
+  ringAnchor.add(ring.mesh)
   planetGroup.add(ringAnchor)
 
   $se.scene.add(planetGroup)
   _planet = planet.mesh
   _clouds = clouds.mesh
   _atmosphere = atmosphere
-  _ring = ring
+  _ring = ring.mesh
   _planetGroup = planetGroup
   _ringAnchor = ringAnchor
 
@@ -254,6 +255,7 @@ function initPlanet(): void {
   _surfaceDataTex = planet.texs[0].texture
   _biomeDataTex = planet.texs[1].texture
   _cloudsDataTex = clouds.texs[0].texture
+  _ringDataTex = ring.texs[0].texture
 
   // Set initial rotations
   _planetGroup.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
@@ -441,6 +443,14 @@ function registerRingDataUpdates(): void {
   $dataUpdateMap.set('_ringInnerRadius', () => {
     _ring.geometry.dispose()
     _ring.geometry = createRingGeometryComponent(LG_PLANET_DATA.value.ringInnerRadius, LG_PLANET_DATA.value.ringOuterRadius)
+    setMeshUniform(_ring, 'u_inner_radius', LG_PLANET_DATA.value.ringInnerRadius)
+  })
+  
+  $dataUpdateMap.set('_ringOuterRadius', () => setMeshUniform(_ring, 'u_outer_radius', LG_PLANET_DATA.value.ringOuterRadius))
+  $dataUpdateMap.set('_ringColorRamp', () => {
+    const v = LG_PLANET_DATA.value.ringColorRamp
+    recalculateRampTexture(LG_BUFFER_RING, TEXTURE_SIZES.RING, v.steps as ColorRampStep[])
+    _ringDataTex.needsUpdate = true
   })
 }
 

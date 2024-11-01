@@ -37,10 +37,11 @@ function fillRamp(buffer: Uint8Array, w: number, steps: ColorRampStep[]) {
     const lerpColor = new Color(0x0)
     for (let px = 0; px < totalPixels; px++) {
       lerpColor.lerpColors(currentStep.color, nextStep.color, truncateTo(px / totalPixels, 1e4))
+
       buffer[stride] = Math.floor(lerpColor.r * 255.0)
       buffer[stride + 1] = Math.floor(lerpColor.g * 255.0)
       buffer[stride + 2] = Math.floor(lerpColor.b * 255.0)
-      buffer[stride + 3] = 255
+      buffer[stride + 3] = Math.floor(currentStep.alpha * 255.0)
       stride += 4
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <ParameterGrid>
-    <button class="lg debug" style="padding: 0 0.5rem" @click="DebugUtils.getRawSurfaceData">
+    <button class="lg debug" style="padding: 0 0.5rem" @click="DebugUtils.getRawRingData">
       <iconify-icon icon="material-symbols:code-rounded" aria-hidden="true" />
       get tex
     </button>
@@ -31,7 +31,6 @@ import ParameterSlider from '@components/parameters/ParameterSlider.vue'
 import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
 import ParameterCategory from '@components/parameters/ParameterCategory.vue'
 import ParameterColorRamp from '@components/parameters/ParameterColorRamp.vue'
-import ParameterDivider from '@components/parameters/ParameterDivider.vue'
 import type { ColorRamp } from '@/core/models/color-ramp.model'
 import { DebugUtils } from '@/utils/debug-utils'
 </script>

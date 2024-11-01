@@ -229,9 +229,14 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
   return mesh
 }
 
-export function createRing(data: PlanetData): THREE.Mesh {
+export function createRing(data: PlanetData): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
+  const rgbaTex = createRampTexture(LG_BUFFER_RING, TEXTURE_SIZES.RING, data.ringColorRamp.steps)
   const geometry = createRingGeometryComponent(data.ringInnerRadius, data.ringOuterRadius)
-  const material = createCustomShaderMaterialComponent(ringVertShader, ringFragShader, {}, THREE.MeshStandardMaterial)
+  const material = createCustomShaderMaterialComponent(ringVertShader, ringFragShader, {
+    u_inner_radius: { value: LG_PLANET_DATA.value.ringInnerRadius },
+    u_outer_radius: { value: LG_PLANET_DATA.value.ringOuterRadius },
+    u_ring_tex: { value: rgbaTex.texture },
+  }, THREE.MeshStandardMaterial)
   material.side = THREE.DoubleSide
   material.transparent = true
 
@@ -239,7 +244,7 @@ export function createRing(data: PlanetData): THREE.Mesh {
   mesh.name = LG_NAME_ATMOSPHERE
   mesh.receiveShadow = true
   mesh.castShadow = true
-  return mesh
+  return { mesh, texs: [rgbaTex] }
 }
 
 // ----------------------------------------------------------------------------------------------------------------------
