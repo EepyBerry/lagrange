@@ -296,6 +296,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
   planetGroup.scale.setScalar(LG_PLANET_DATA.value.planetRadius)
   planetGroup.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+  ringAnchor.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
 
   // ---------------------------- Setup renderer & render -----------------------------
 
