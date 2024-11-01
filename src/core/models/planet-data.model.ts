@@ -626,7 +626,7 @@ export default class PlanetData extends ChangeTracker {
     this._ringOuterRadius = 1.5
     this._ringColorRamp = new ColorRamp(this._changedProps, '_ringColorRamp', [
       new ColorRampStep(0x856f4e, 0.0, true),
-      new ColorRampStep(0xe6bc7a, 0.5),
+      new ColorRampStep(0x000000, 0.5),
       new ColorRampStep(0xbf9a5e, 1.0, true),
     ])
   }
@@ -746,7 +746,7 @@ export default class PlanetData extends ChangeTracker {
     this._ringOuterRadius = 1.5
     this._ringColorRamp.loadFromSteps([
       new ColorRampStep(0x856f4e, 0.0, true),
-      new ColorRampStep(0xe6bc7a, 0.5),
+      new ColorRampStep(0x000000, 0.5),
       new ColorRampStep(0xbf9a5e, 1.0, true),
     ])
 
@@ -864,10 +864,10 @@ export default class PlanetData extends ChangeTracker {
     this._ringOuterRadius = data._ringOuterRadius ?? 1.5
     this._ringColorRamp.loadFromSteps(
       data._ringColorRamp
-        ? data._ringColorRamp.steps
+        ? data._ringColorRamp._steps
         : [
             new ColorRampStep(0x856f4e, 0.0, true),
-            new ColorRampStep(0xe6bc7a, 0.5),
+            new ColorRampStep(0x000000, 0.5),
             new ColorRampStep(0xbf9a5e, 1.0, true),
           ],
     )

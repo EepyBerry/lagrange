@@ -167,6 +167,7 @@ async function initData() {
     $planetEntityId.value = idbPlanetData.id
     LG_PLANET_DATA.value.loadData(idbPlanetData.data)
     console.info(`Loaded planet [${LG_PLANET_DATA.value.planetName}] with ID: ${$planetEntityId.value}`)
+    console.debug(toRaw(LG_PLANET_DATA.value))
   } else {
     console.warn('No planet ID found in the URL, assuming new planet')
     LG_PLANET_DATA.value.reset()
@@ -308,6 +309,7 @@ function disposeScene() {
   LG_BUFFER_SURFACE.fill(0)
   LG_BUFFER_BIOME.fill(0)
   LG_BUFFER_CLOUDS.fill(0)
+  LG_BUFFER_RING.fill(0)
   _surfaceDataTex.dispose()
   _biomeDataTex.dispose()
   _cloudsDataTex.dispose()
@@ -554,6 +556,7 @@ async function savePlanet() {
   _lensFlare.mesh.visible = true
 
   // ----------- Save planet data ------------ //
+  console.debug(toRaw(LG_PLANET_DATA.value))
   const localData = toRaw(JSON.stringify(LG_PLANET_DATA.value))
   const idbData: IDBPlanet = {
     id: $planetEntityId.value.length > 0 ? $planetEntityId.value : nanoid(),
