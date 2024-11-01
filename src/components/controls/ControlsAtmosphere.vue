@@ -19,37 +19,20 @@
       <ParameterRadio>
         <template v-slot:title> {{ $t('editor.controls.atmosphere.rgba_mode') }}: </template>
         <template v-slot:options>
-          <ParameterRadioOption
-            v-model="LG_PLANET_DATA.atmosphereColorMode"
-            icon="mingcute:photo-album-line"
-            name="atmos-mode"
-            :id="'0'"
-            :value="ColorMode.REALISTIC"
-            :ariaLabel="$t('a11y.editor_atmosphere_rgba_mode_realistic')"
-            :title="$t('tooltip.rgba_mode_realistic')"
-          >
+          <ParameterRadioOption v-model="LG_PLANET_DATA.atmosphereColorMode" icon="mingcute:photo-album-line"
+            name="atmos-mode" :id="'0'" :value="ColorMode.REALISTIC"
+            :ariaLabel="$t('editor.controls.atmosphere.rgba_mode_realistic')"
+            :title="$t('tooltip.rgba_mode_realistic')">
             {{ $t('editor.controls.atmosphere.rgba_mode_realistic') }}
           </ParameterRadioOption>
-          <ParameterRadioOption
-            v-model="LG_PLANET_DATA.atmosphereColorMode"
-            icon="mingcute:color-picker-line"
-            name="atmos-mode"
-            :id="'1'"
-            :value="ColorMode.DIRECT"
-            :ariaLabel="$t('a11y.editor_atmosphere_rgba_mode_direct')"
-            :title="$t('tooltip.rgba_mode_direct')"
-          >
+          <ParameterRadioOption v-model="LG_PLANET_DATA.atmosphereColorMode" icon="mingcute:color-picker-line"
+            name="atmos-mode" :id="'1'" :value="ColorMode.DIRECT"
+            :ariaLabel="$t('editor.controls.atmosphere.rgba_mode_direct')" :title="$t('tooltip.rgba_mode_direct')">
             {{ $t('editor.controls.atmosphere.rgba_mode_direct') }}
           </ParameterRadioOption>
-          <ParameterRadioOption
-            v-model="LG_PLANET_DATA.atmosphereColorMode"
-            icon="mingcute:color-filter-line"
-            name="atmos-mode"
-            :id="'1'"
-            :value="ColorMode.MIXED"
-            :ariaLabel="$t('a11y.editor_atmosphere_rgba_mode_mixed')"
-            :title="$t('tooltip.rgba_mode_mixed')"
-          >
+          <ParameterRadioOption v-model="LG_PLANET_DATA.atmosphereColorMode" icon="mingcute:color-filter-line"
+            name="atmos-mode" :id="'1'" :value="ColorMode.MIXED"
+            :ariaLabel="$t('editor.controls.atmosphere.rgba_mode_mixed')" :title="$t('tooltip.rgba_mode_mixed')">
             {{ $t('editor.controls.atmosphere.rgba_mode_mixed') }}
           </ParameterRadioOption>
         </template>

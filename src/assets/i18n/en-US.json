@@ -118,7 +118,7 @@
         "02_a11y": "Accessibility features & improvements",
         "03_title": "Update 0.3 - Ecosystems",
         "03_biomes": "Introduces a fully fledged biome system, using temperature- & humidity-based positioning!",
-        "03_linux": "Surface noise now works properly Linux-based browsers!",
+        "03_linux": "Surface noise now works properly in Linux-based browsers!",
         "03_fixes": "Smaller performance fixes all around, including fewer GLSL uniforms & varyings!"
       },
 
@@ -274,6 +274,18 @@
         "rgba_mode_mixed": "Mixed",
         "rgba_hue": "Hue",
         "rgba_tint": "Tint"
+      },
+      "ring": {
+        "$title": "Ring System",
+        "ring_show": "Show ring system",
+
+        "transform": "Transform",
+        "transform_radius_inner": "Inner radius",
+        "transform_radius_outer": "Outer radius",
+
+        "rgba": "Color & opacity",
+        "rgba_opacity": "Opacity",
+        "rgba_colorramp": "Color ramp (RGBA)"
       }
     }
   },
@@ -348,12 +360,6 @@
     "general_theme_voyager": "Set Voyager theme (orange)",
 
     "editor_generic_input": "Parameter value",
-    "editor_biome_gradient_mode_realistic": "Realistic temperature gradient",
-    "editor_biome_gradient_mode_poletopole": "Pole-to-pole temperature gradient",
-    "editor_biome_gradient_mode_fullnoise": "Fully noisy temperature gradient",
-    "editor_atmosphere_rgba_mode_realistic": "Realistic atmosphere",
-    "editor_atmosphere_rgba_mode_direct": "Direct tone atmosphere",
-    "editor_atmosphere_rgba_mode_mixed": "Mixed atmosphere",
 
     "action_nav_toggle": "Toggle navigation menu",
     "action_nav_codex": "Codex link",

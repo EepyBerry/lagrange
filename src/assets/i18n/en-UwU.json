@@ -277,6 +277,18 @@
         "rgba_mode_mixed": "Mixed",
         "rgba_hue": "Hue",
         "rgba_tint": "Tint"
+      },
+      "ring": {
+        "$title": "Wing Systyem",
+        "ring_show": "Show wing systyem",
+
+        "transform": "Twansfowm",
+        "transform_radius_inner": "Innyew wadius",
+        "transform_radius_outer": "Outew wadius",
+
+        "rgba": "Cowow & opacity",
+        "rgba_opacity": "Opacity",
+        "rgba_colorramp": "Cowow wamp (RGBA)"
       }
     }
   },
@@ -351,12 +363,6 @@
     "general_theme_voyager": "Set Voyagew theme (owange)",
 
     "editor_generic_input": "Pawametew vawue",
-    "editor_biome_gradient_mode_realistic": "Weawistic tempewature gwadient",
-    "editor_biome_gradient_mode_poletopole": "Powe-to-powe tempewatuwe gwadient",
-    "editor_biome_gradient_mode_fullnoise": "Fuwwy nyoisy tempewature gwadient",
-    "editor_atmosphere_rgba_mode_realistic": "Weawistic atmosphewe",
-    "editor_atmosphere_rgba_mode_direct": "Diwect tone atmosphewe",
-    "editor_atmosphere_rgba_mode_mixed": "Mixed atmosphewe",
 
     "action_nav_toggle": "Toggwe nyavigation menyu",
     "action_nav_codex": "Codex wink",

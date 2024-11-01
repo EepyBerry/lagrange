@@ -458,16 +458,20 @@ export default class PlanetData extends ChangeTracker {
     return this._ringInnerRadius
   }
   public set ringInnerRadius(value: number) {
-    this._ringInnerRadius = Math.max(1.0, value)
+    this._ringInnerRadius = clamp(value, 1.0, 5.0)
+    this._ringOuterRadius = clamp(this._ringOuterRadius, this._ringInnerRadius, 10)
     this.markForChange('_ringInnerRadius')
+    this.markForChange('_ringOuterRadius')
   }
 
   public get ringOuterRadius(): number {
     return this._ringOuterRadius
   }
   public set ringOuterRadius(value: number) {
-    this._ringOuterRadius = Math.max(this._ringInnerRadius, value)
+    this._ringOuterRadius = clamp(value, 1.0, 5.0)
+    this._ringInnerRadius = clamp(this._ringInnerRadius, 1.0, this._ringOuterRadius)
     this.markForChange('_ringOuterRadius')
+    this.markForChange('_ringInnerRadius')
   }
 
   public get ringColorRamp(): ColorRamp {
@@ -855,7 +859,7 @@ export default class PlanetData extends ChangeTracker {
     // Ring
     this._ringEnabled = data._ringEnabled ?? false
     this._ringAxialTilt = data._ringAxialTilt ?? 90.0
-    this._ringRotation = data._ringRotation ?? 15.0
+    this._ringRotation = data._ringRotation ?? 0.0
     this._ringInnerRadius = data._ringInnerRadius ?? 1.25
     this._ringOuterRadius = data._ringOuterRadius ?? 1.5
     this._ringColorRamp.loadFromSteps(

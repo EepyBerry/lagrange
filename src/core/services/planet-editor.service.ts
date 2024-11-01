@@ -16,10 +16,8 @@ import {
   LG_NAME_SUN,
   AXIS_Y,
   AXIS_X,
-  BIOME_TEXTURE_SIZE,
-  SURFACE_TEXTURE_SIZE,
-  CLOUDS_TEXTURE_SIZE,
   ATMOSPHERE_HEIGHT_DIVIDER,
+  TEXTURE_SIZES,
 } from '@core/globals'
 import { ColorMode, GeometryType, type DataTextureWrapper } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
@@ -30,6 +28,8 @@ import {
   createRendererComponent,
   createCustomShaderMaterialComponent,
   createShaderMaterialComponent,
+  createSphereGeometryComponent,
+  createRingGeometryComponent,
 } from '@core/three/component.builder'
 import { SceneElements } from '@core/models/scene-elements.model'
 import { LensFlareEffect } from '@core/three/lens-flare.effect'
@@ -42,9 +42,10 @@ import { createBiomeTexture, createRampTexture } from '../helpers/texture.helper
 export const LG_PLANET_DATA = ref(new PlanetData())
 
 // Buffers
-export const LG_BUFFER_SURFACE = new Uint8Array(SURFACE_TEXTURE_SIZE * 4)
-export const LG_BUFFER_BIOME = new Uint8Array(BIOME_TEXTURE_SIZE * BIOME_TEXTURE_SIZE * 4)
-export const LG_BUFFER_CLOUDS = new Uint8Array(BIOME_TEXTURE_SIZE * BIOME_TEXTURE_SIZE * 4)
+export const LG_BUFFER_SURFACE = new Uint8Array(TEXTURE_SIZES.SURFACE * 4)
+export const LG_BUFFER_BIOME = new Uint8Array(TEXTURE_SIZES.BIOME * TEXTURE_SIZES.BIOME * 4)
+export const LG_BUFFER_CLOUDS = new Uint8Array(TEXTURE_SIZES.CLOUDS * TEXTURE_SIZES.CLOUDS * 4)
+export const LG_BUFFER_RING = new Uint8Array(TEXTURE_SIZES.RING * TEXTURE_SIZES.RING * 4)
 
 // ----------------------------------------------------------------------------------------------------------------------
 // SCENE FUNCTIONS
@@ -101,11 +102,11 @@ export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THR
 }
 
 export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
-  const geometry = createGeometryComponent(GeometryType.SPHERE)
+  const geometry = createSphereGeometryComponent()
   geometry.computeTangents()
 
-  const surfaceTex = createRampTexture(LG_BUFFER_SURFACE, SURFACE_TEXTURE_SIZE, data.planetSurfaceColorRamp.steps)
-  const biomeTex = createBiomeTexture(LG_BUFFER_BIOME, BIOME_TEXTURE_SIZE, data.biomesParams)
+  const surfaceTex = createRampTexture(LG_BUFFER_SURFACE, TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
+  const biomeTex = createBiomeTexture(LG_BUFFER_BIOME, TEXTURE_SIZES.BIOME, data.biomesParams)
 
   const material = createCustomShaderMaterialComponent(
     planetVertShader,
@@ -173,8 +174,8 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
 
 export function createClouds(data: PlanetData): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
   const cloudHeight = data.cloudsHeight / ATMOSPHERE_HEIGHT_DIVIDER
-  const geometry = createGeometryComponent(GeometryType.SPHERE, cloudHeight)
-  const opacityTex = createRampTexture(LG_BUFFER_CLOUDS, CLOUDS_TEXTURE_SIZE, data.cloudsColorRamp.steps)
+  const geometry = createSphereGeometryComponent(cloudHeight)
+  const opacityTex = createRampTexture(LG_BUFFER_CLOUDS, TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
   const material = createCustomShaderMaterialComponent(
     cloudsVertShader,
@@ -206,7 +207,7 @@ export function createClouds(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
 export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE.Mesh {
   const atmosHeight = data.atmosphereHeight / ATMOSPHERE_HEIGHT_DIVIDER
   const atmosDensity = data.atmosphereDensityScale / ATMOSPHERE_HEIGHT_DIVIDER
-  const geometry = createGeometryComponent(GeometryType.SPHERE, atmosHeight)
+  const geometry = createSphereGeometryComponent(atmosHeight)
   const material = createShaderMaterialComponent(atmosphereVertShader, atmosphereFragShader, {
     u_light_position: { value: sunPos },
     u_light_intensity: { value: data.sunLightIntensity },
@@ -229,7 +230,7 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
 }
 
 export function createRing(data: PlanetData): THREE.Mesh {
-  const geometry = createGeometryComponent(GeometryType.RING)
+  const geometry = createRingGeometryComponent(data.ringInnerRadius, data.ringOuterRadius)
   const material = createCustomShaderMaterialComponent(ringVertShader, ringFragShader, {}, THREE.MeshStandardMaterial)
   material.side = THREE.DoubleSide
   material.transparent = true
@@ -250,7 +251,9 @@ export type PlanetPreviewData = {
   planet: THREE.Mesh
   clouds: THREE.Mesh
   atmosphere: THREE.Mesh
+  ring: THREE.Mesh
 }
+
 export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData): string {
   const initialSize = new THREE.Vector2()
   $se.renderer.getSize(initialSize)
@@ -278,17 +281,21 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
   // ---------------------- Add cloned objects to preview scene -----------------------
 
-  const pivot = new THREE.Group()
-  pivot.add(data.planet)
-  pivot.add(data.clouds)
-  pivot.add(data.atmosphere)
-  previewScene.add(pivot)
+  const planetGroup = new THREE.Group()
+  planetGroup.add(data.planet)
+  planetGroup.add(data.clouds)
+  planetGroup.add(data.atmosphere)
+
+  const ringAnchor = new THREE.Group()
+  ringAnchor.add(data.ring)
+  planetGroup.add(ringAnchor)
+
+  previewScene.add(planetGroup)
   previewScene.add(data.sun)
   previewScene.add(data.ambientLight)
 
-  const r = LG_PLANET_DATA.value.planetRadius
-  pivot.scale.set(r, r, r)
-  pivot.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+  planetGroup.scale.setScalar(LG_PLANET_DATA.value.planetRadius)
+  planetGroup.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
 
   // ---------------------------- Setup renderer & render -----------------------------
 
@@ -318,16 +325,19 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
   // ------------------------------- Clean-up resources -------------------------------
 
-  pivot.clear()
+  ringAnchor.clear()
+  planetGroup.clear()
   data.sun.dispose()
   data.ambientLight.dispose()
   ;(data.clouds.material as THREE.Material).dispose()
   ;(data.atmosphere.material as THREE.Material).dispose()
   ;(data.planet.material as THREE.Material).dispose()
+  ;(data.ring.material as THREE.Material).dispose()
 
   data.clouds.geometry.dispose()
   data.atmosphere.geometry.dispose()
   data.planet.geometry.dispose()
+  data.ring.geometry.dispose()
 
   previewRenderTarget.dispose()
   previewScene.clear()
