@@ -275,9 +275,9 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
     50,
     w / h,
     0.1,
-    1e6,
+    1e4,
     new THREE.Spherical(
-      LG_PLANET_DATA.value.initCamDistance - 1.5,
+      LG_PLANET_DATA.value.initCamDistance - (LG_PLANET_DATA.value.ringEnabled ? 0.75 : 1.5),
       Math.PI / 2.0,
       degToRad(LG_PLANET_DATA.value.initCamAngle),
     ),
