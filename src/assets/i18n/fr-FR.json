@@ -121,6 +121,13 @@
         "03_linux": "Le bruit de surface est corrigé sur les navigateurs tournant sous Linux !",
         "03_fixes": "Quelques correctifs mineurs, ainsi qu'une réduction du nombre de varyings dans le code GLSL !"
       },
+      "credits": {
+        "$title": "Mentions et remerciements",
+        "glsl_terrestrial": "Code GLSL type terrestre: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphère), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
+        "glsl_gaseous": "Code GLSL additionnel type gazeux: TBD",
+        "glsl_misc": "Code GLSL divers: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
+        "contributors": "<b>Un grand merci à toustes les contributeur·ices de ce projet ❤️</b>"
+      },
 
       "built_with_love": "Créé avec 🏳️‍🌈 & ❤️",
       "license": "Licence BSD 3-Clause"

@@ -10,14 +10,14 @@ vec3 hash3d(vec3 p) {
       43758.5453);
 }
 
-// Function from Iñigo Quiles
+// Function from Iñigo Quilez
 // www.iquilezles.org/www/articles/functions/functions.htm
 // for visual demo, go to https://thebookofshaders.com/edit.php#05/parabola.frag
 float parabola( float x, float k ){
     return pow(4.*x*(1.-x), k);
 }
 
-// Function from Iñigo Quiles
+// Function from Iñigo Quilez
 // www.iquilezles.org/www/articles/functions/functions.htm
 // for visual demo, go to https://thebookofshaders.com/edit.php#05/pcurve.frag
 float pcurve( float x, float a, float b ){

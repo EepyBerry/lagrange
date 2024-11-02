@@ -1,4 +1,4 @@
-// Slightly ajusted from Daniel Greenheck (huge thanks!):
+// Slightly ajusted from Daniel Greenheck:
 // https://github.com/dgreenheck/threejs-procedural-planets
 /*
 MIT License

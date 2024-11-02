@@ -1,5 +1,6 @@
-// Sourced from Yi-wen LIN:
+// Sourced from Yi-wen LIN, using code from Iñigo Quilez:
 // https://github.com/yiwenl/glsl-fbm/blob/master/3d.glsl
+// https://iquilezles.org/articles/fbm/
 // ------------------------------------------------------------------------------------------------
 // 3D fractional Brownian motion
 

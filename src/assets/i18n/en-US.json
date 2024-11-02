@@ -121,6 +121,13 @@
         "03_linux": "Surface noise now works properly in Linux-based browsers!",
         "03_fixes": "Smaller performance fixes all around, including fewer GLSL uniforms & varyings!"
       },
+      "credits": {
+        "$title": "Credits & attribution",
+        "glsl_terrestrial": "Terrestrial-type GLSL code: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
+        "glsl_gaseous": "Additional gaseous-type GLSL code: TBD",
+        "glsl_misc": "Miscellaneous GLSL code: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
+        "contributors": "<b>Special thanks to all contributors of this project ❤️</b>"
+      },
 
       "built_with_love": "Built with 🏳️‍🌈 & ❤️",
       "license": "BSD 3-Clause License"

@@ -61,6 +61,17 @@
             </CollapsibleSection>
           </template>
         </CollapsibleSection>
+        <CollapsibleSection class="about-credits" icon="mingcute:bling-line">
+          <template v-slot:title>{{ $t('dialog.about.credits.$title') }}</template>
+          <template v-slot:content>
+            <ul style="list-style-type: disc; margin-left: 1rem">
+              <li v-html="$t('dialog.about.credits.glsl_terrestrial')"></li>
+              <li v-html="$t('dialog.about.credits.glsl_gaseous')"></li>
+              <li v-html="$t('dialog.about.credits.glsl_misc')"></li>
+              <li v-html="$t('dialog.about.credits.contributors')"></li>
+            </ul>
+          </template>
+        </CollapsibleSection>
       </div>
       <span id="app-version">{{ version }}</span>
     </template>
@@ -89,6 +100,7 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
       'logo text'
       'logo tech'
       'updt updt'
+      'cdts cdts'
       'crgt crgt';
     gap: 1rem;
 
@@ -133,9 +145,16 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
     .about-updates {
       min-width: 0;
       grid-area: updt;
-      margin: 1rem 0;
+      margin-top: 1rem;
       .about-update-inner {
         margin-top: 0.75rem;
+        min-width: 0;
+      }
+    }
+    .about-credits {
+      min-width: 0;
+      grid-area: cdts;
+      .about-update-inner {
         min-width: 0;
       }
     }
@@ -169,6 +188,7 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
         'text'
         'tech'
         'updt'
+        'cdts'
         'crgt';
       gap: 1.5rem 0;
       .about-text {
