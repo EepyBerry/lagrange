@@ -16,14 +16,14 @@
             <iconify-icon mode="svg" icon="simple-icons:vuedotjs" width="3rem" style="fill: var(--lg-text)" />
             <div>
               <p>{{ $t('dialog.about.prefix_framework') }} <span class="highlight nowrap">Vue + Vite</span></p>
-              <ChipElement>3.4.21</ChipElement> <ChipElement>5.2.8</ChipElement>
+              <ChipElement>3.5.12</ChipElement> <ChipElement>5.4.10</ChipElement>
             </div>
           </div>
           <div class="tech-block">
             <iconify-icon mode="svg" icon="logos:threejs" width="3rem" style="fill: var(--lg-text)" />
             <div>
               <p>{{ $t('dialog.about.prefix_engine') }} <span class="highlight">three.js</span></p>
-              <ChipElement>r166</ChipElement>
+              <ChipElement>r169</ChipElement>
             </div>
           </div>
         </div>
