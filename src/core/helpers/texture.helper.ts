@@ -3,7 +3,7 @@ import type { Rect, DataTextureWrapper, Coordinates2D, RawRGBA } from '@/core/ty
 import { alphaBlendColors, avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
-import { clamp } from 'three/src/math/MathUtils.js'
+import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { INT8_TO_UNIT_MUL } from '../globals'
 
 export function createRampTexture(buffer: Uint8Array, w: number, steps: ColorRampStep[]): DataTextureWrapper {
@@ -35,13 +35,15 @@ function fillRamp(buffer: Uint8Array, w: number, steps: ColorRampStep[]) {
     const totalPixels = Math.ceil(nextStepX - currentStepX)
 
     const lerpColor = new Color(0x0)
+    let lerpAlpha = currentStep.alpha
     for (let px = 0; px < totalPixels; px++) {
       lerpColor.lerpColors(currentStep.color, nextStep.color, truncateTo(px / totalPixels, 1e4))
+      lerpAlpha = lerp(currentStep.alpha, nextStep.alpha, truncateTo(px / totalPixels, 1e4))
 
       buffer[stride] = Math.floor(lerpColor.r * 255.0)
       buffer[stride + 1] = Math.floor(lerpColor.g * 255.0)
       buffer[stride + 2] = Math.floor(lerpColor.b * 255.0)
-      buffer[stride + 3] = Math.floor(currentStep.alpha * 255.0)
+      buffer[stride + 3] = Math.floor(lerpAlpha * 255.0)
       stride += 4
     }
   }
