@@ -92,16 +92,24 @@ Vite copies the output to the `dist` folder, creating it first if need be.
 - Asteroid belts!
 - _Galactic Map_, to organize them around stars!
 
-## ✨ Inspirations
+## ✨ Inspirations & credits
 
 This project is heavily inspired by the awesome projects below:
 
 - [PlanetMaker Chrome Experiment](https://planetmaker.apoapsys.com) (2013, Kevin M. Gill)
 - [NASA's Eye on Exoplanets](https://eyes.nasa.gov/apps/exo/#/) (Unknown date, NASA)
 
+**Special thanks** to the awesome people below, without whom this project would likely not exist:
+<ul>
+  <li>Main GLSL code snippets: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)</li>
+  <li>Miscellaneous GLSL code: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)</li>
+</ul>
+
 ## 📓 Licensing
 
-Original assets and source code from this project are provided under an ISTSL No-Resale License.<br>
+The "Lagrange" logo, including *every* update variant, is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International license ([CC BY-NC-SA 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/))
+
+Original assets and source code from this project are provided under the "I'm So Tired" Software License 1.0 - No-Resale version ([ISTSL-NR 1.0](https://olmewe.com/istsl-nr/)).<br>
 Please consult the [license file](LICENSE) for full information.
 
 Content from other parties is provided under their respective license, and attribution is given at the top of the aforementioned content.
