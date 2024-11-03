@@ -1,3 +1,8 @@
+
+<div align="center">
+  <img width="356" alt="update_logo" src="https://github.com/user-attachments/assets/0b99f5f2-e781-4b21-9a3d-8f989d922b87">
+</div>
+
 # Lagrange - Procedural Planet Builder 🪐
 
 <p>
