@@ -378,6 +378,11 @@ function registerSurfaceDataUpdates(): void {
   $dataUpdateMap.set('_planetSurfaceNoise._amplitude',  () => patchMeshUniform(_planet, 'u_surface_noise', { amp: LG_PLANET_DATA.value.planetSurfaceNoise.amplitude }))
   $dataUpdateMap.set('_planetSurfaceNoise._lacunarity', () => patchMeshUniform(_planet, 'u_surface_noise', { lac: LG_PLANET_DATA.value.planetSurfaceNoise.lacunarity }))
   $dataUpdateMap.set('_planetSurfaceNoise._octaves',    () => patchMeshUniform(_planet, 'u_surface_noise', { oct: LG_PLANET_DATA.value.planetSurfaceNoise.octaves }))
+  $dataUpdateMap.set('_planetSurfaceNoise._warpFactor', () => patchMeshUniform(_planet, 'u_surface_noise', {
+    xwarp: LG_PLANET_DATA.value.planetSurfaceNoise.xWarpFactor,
+    ywarp: LG_PLANET_DATA.value.planetSurfaceNoise.yWarpFactor,
+    zwarp: LG_PLANET_DATA.value.planetSurfaceNoise.zWarpFactor
+  }))
   $dataUpdateMap.set('_planetSurfaceColorRamp',         () => {
     const v = LG_PLANET_DATA.value.planetSurfaceColorRamp
     recalculateRampTexture(LG_BUFFER_SURFACE, TEXTURE_SIZES.SURFACE, v.steps as ColorRampStep[])
@@ -416,6 +421,11 @@ function registerCloudDataUpdates(): void {
   $dataUpdateMap.set('_cloudsNoise._amplitude',  () => patchMeshUniform(_clouds, 'u_noise', { amp: LG_PLANET_DATA.value.cloudsNoise.amplitude }))
   $dataUpdateMap.set('_cloudsNoise._lacunarity', () => patchMeshUniform(_clouds, 'u_noise', { lac: LG_PLANET_DATA.value.cloudsNoise.lacunarity }))
   $dataUpdateMap.set('_cloudsNoise._octaves',    () => patchMeshUniform(_clouds, 'u_noise', { oct: LG_PLANET_DATA.value.cloudsNoise.octaves }))
+  $dataUpdateMap.set('_cloudsNoise._warpFactor', () => patchMeshUniform(_clouds, 'u_noise', {
+    xwarp: LG_PLANET_DATA.value.cloudsNoise.xWarpFactor,
+    ywarp: LG_PLANET_DATA.value.cloudsNoise.yWarpFactor,
+    zwarp: LG_PLANET_DATA.value.cloudsNoise.zWarpFactor,
+  }))
   $dataUpdateMap.set('_cloudsColor',             () =>  setMeshUniform(_clouds, 'u_color', LG_PLANET_DATA.value.cloudsColor))
   $dataUpdateMap.set('_cloudsColorRamp',         () =>  {
     const v = LG_PLANET_DATA.value.cloudsColorRamp

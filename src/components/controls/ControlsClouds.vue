@@ -9,6 +9,16 @@
         {{ $t('editor.controls.clouds.transform_rotation') }} <sup>(°)</sup>
       </ParameterSlider>
       <ParameterCategory>{{ $t('editor.controls.clouds.noise') }}</ParameterCategory>
+      <ParameterSlider v-model="LG_PLANET_DATA.cloudsNoise.xWarpFactor" id="c-xwarp" :step="0.01" :max="8">
+        {{ $t('editor.general.noise_xwarp') }}
+      </ParameterSlider>
+      <ParameterSlider v-model="LG_PLANET_DATA.cloudsNoise.yWarpFactor" id="c-ywarp" :step="0.01" :max="8">
+        {{ $t('editor.general.noise_ywarp') }}
+      </ParameterSlider>
+      <ParameterSlider v-model="LG_PLANET_DATA.cloudsNoise.zWarpFactor" id="c-zwarp" :step="0.01" :max="8">
+        {{ $t('editor.general.noise_zwarp') }}
+      </ParameterSlider>
+      <ParameterDivider />
       <ParameterSlider v-model="LG_PLANET_DATA.cloudsNoise.frequency" id="c-freq" :step="0.01" :max="5">
         {{ $t('editor.general.noise_fbm_frequency') }}
       </ParameterSlider>

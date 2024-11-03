@@ -130,11 +130,14 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
       u_bump_offset: { value: 0.005 },
       u_surface_noise: {
         value: {
-          type: data.planetSurfaceNoise.noiseType,
           freq: data.planetSurfaceNoise.frequency,
           amp: data.planetSurfaceNoise.amplitude,
           lac: data.planetSurfaceNoise.lacunarity,
           oct: data.planetSurfaceNoise.octaves,
+          layers: data.planetSurfaceNoise.layers,
+          xwarp: data.planetSurfaceNoise.xWarpFactor,
+          ywarp: data.planetSurfaceNoise.yWarpFactor,
+          zwarp: data.planetSurfaceNoise.zWarpFactor,
         },
       },
       u_surface_tex: { value: surfaceTex.texture },
@@ -144,7 +147,6 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
       u_temp_noise: {
         value: {
           mode: data.biomesTemperatureMode,
-          type: data.biomesTemperatureNoise.noiseType,
           freq: data.biomesTemperatureNoise.frequency,
           amp: data.biomesTemperatureNoise.amplitude,
           lac: data.biomesTemperatureNoise.lacunarity,
@@ -154,7 +156,6 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
       u_humi_noise: {
         value: {
           mode: data.biomesHumidityMode,
-          type: data.biomesHumidityNoise.noiseType,
           freq: data.biomesHumidityNoise.frequency,
           amp: data.biomesHumidityNoise.amplitude,
           lac: data.biomesHumidityNoise.lacunarity,
@@ -189,6 +190,10 @@ export function createClouds(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
           amp: data.cloudsNoise.amplitude,
           lac: data.cloudsNoise.lacunarity,
           oct: data.cloudsNoise.octaves,
+          layers: data.cloudsNoise.layers,
+          xwarp: data.cloudsNoise.xWarpFactor,
+          ywarp: data.cloudsNoise.yWarpFactor,
+          zwarp: data.cloudsNoise.zWarpFactor,
         },
       },
       u_color: { value: data.cloudsColor },

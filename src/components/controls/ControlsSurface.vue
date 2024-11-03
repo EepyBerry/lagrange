@@ -25,6 +25,16 @@
       </ParameterSlider>
     </template>
     <ParameterCategory>{{ $t('editor.controls.surface.noise') }}</ParameterCategory>
+    <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceNoise.xWarpFactor" id="s-xwarp" :step="0.01" :max="8">
+      {{ $t('editor.general.noise_xwarp') }}
+    </ParameterSlider>
+    <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceNoise.yWarpFactor" id="s-ywarp" :step="0.01" :max="8">
+      {{ $t('editor.general.noise_ywarp') }}
+    </ParameterSlider>
+    <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceNoise.zWarpFactor" id="s-zwarp" :step="0.01" :max="8">
+      {{ $t('editor.general.noise_zwarp') }}
+    </ParameterSlider>
+    <ParameterDivider />
     <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceNoise.frequency" id="s-freq" :step="0.01" :max="10">
       {{ $t('editor.general.noise_fbm_frequency') }}
     </ParameterSlider>

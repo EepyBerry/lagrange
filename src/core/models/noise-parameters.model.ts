@@ -1,6 +1,7 @@
 import { clamp } from 'three/src/math/MathUtils.js'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import type { NoiseType } from '@core/types'
+import { Vector3 } from 'three'
 
 export class NoiseParameters extends ChangeTracker {
   private _noiseType: NoiseType
@@ -8,6 +9,9 @@ export class NoiseParameters extends ChangeTracker {
   private _amplitude: number = 0.5
   private _lacunarity: number = 2
   private _octaves: number = 2
+  
+  private _layers: number = 1
+  private _warpFactor: Vector3 = new Vector3(1.0)
 
   constructor(
     changedPropsRef: ChangedProp[],
@@ -63,5 +67,38 @@ export class NoiseParameters extends ChangeTracker {
   public set octaves(value: number) {
     this._octaves = value
     this.markForChange(`${this._changePrefix}._octaves`)
+  }
+
+  public get layers(): number {
+    return this._layers
+  }
+  public set layers(value: number) {
+    this._layers = Math.round(value)
+  }
+
+  public get warpFactor(): Vector3 {
+    return this._warpFactor
+  }
+  
+  public get xWarpFactor(): number {
+    return this._warpFactor.x
+  }
+  public set xWarpFactor(value: number) {
+    this._warpFactor.x = value
+    this.markForChange(`${this._changePrefix}._warpFactor`)
+  }
+  public get yWarpFactor(): number {
+    return this._warpFactor.y
+  }
+  public set yWarpFactor(value: number) {
+    this._warpFactor.y = value
+    this.markForChange(`${this._changePrefix}._warpFactor`)
+  }
+  public get zWarpFactor(): number {
+    return this._warpFactor.z
+  }
+  public set zWarpFactor(value: number) {
+    this._warpFactor.z = value
+    this.markForChange(`${this._changePrefix}._warpFactor`)
   }
 }

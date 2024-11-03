@@ -12,6 +12,7 @@ type IntlSupportedLangs = (typeof I18N_SUPPORTED_LANGS)[number]
 const i18n = createI18n<[IntlSchema], IntlSupportedLangs>({
   legacy: false,
   fallbackLocale: 'en-US',
+  warnHtmlMessage: false,
   messages: {
     en: enUS,
     'en-US': enUS,

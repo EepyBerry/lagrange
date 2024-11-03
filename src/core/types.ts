@@ -2,6 +2,10 @@ import type { DataTexture } from 'three'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
+export enum PlanetType {
+  TELLURIC,
+  GASEOUS
+}
 export enum GeometryType {
   SPHERE,
   RING

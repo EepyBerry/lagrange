@@ -4,11 +4,15 @@ precision highp float;
 
 struct NoiseParameters {
     int mode;
-    int type;
     float freq;
     float amp;
     float lac;
     int oct;
+
+    int layers;
+    float xwarp;
+    float ywarp;
+    float zwarp;
 };
 struct PBRParameters {
     float wlevel;
@@ -45,6 +49,25 @@ in mat4 vTransform;
 @import functions/fbm;
 @import functions/normal_utils;
 
+// Temeprature function
+float apply_temperature(vec3 vPos) {
+    float FLAG_POLAR_TEMP = step(0.5, float(u_temp_noise.mode));
+    float FLAG_NOISE_TEMP = step(1.5, float(u_temp_noise.mode));
+    float ty = mix(abs(vPos.y), vPos.y, FLAG_POLAR_TEMP);
+    float adjustedTy = smoothstep(1.0, -FLAG_POLAR_TEMP, ty);
+    float tHeight = mix(adjustedTy, 1.0, FLAG_NOISE_TEMP);
+    return tHeight * fbm3(vPos, u_temp_noise.freq, u_temp_noise.amp, u_temp_noise.lac, u_temp_noise.oct);
+}
+
+float apply_humidity(vec3 vPos) {
+    float FLAG_POLAR_HUMI = step(0.5, float(u_humi_noise.mode));
+    float FLAG_NOISE_HUMI = step(1.5, float(u_humi_noise.mode));
+    float hy = mix(abs(vPos.y), vPos.y, FLAG_POLAR_HUMI);
+    float adjustedHy = smoothstep(-FLAG_POLAR_HUMI, 1.0, hy);
+    float hHeight = mix(adjustedHy, 1.0, FLAG_NOISE_HUMI);
+    return hHeight * fbm3(vPos, u_humi_noise.freq, u_humi_noise.amp, u_humi_noise.lac, u_humi_noise.oct);
+}
+
 // Biome function
 vec3 apply_biomes(float t, float h, vec3 color) {
     vec3 biomeColor = color;
@@ -66,30 +89,22 @@ vec3 apply_bump(float height) {
 }
 
 void main() {
-    // Initial values
-    vec3 vPos = vTransform[1].xyz;
     vec3 color = vec3(0.0);
+    vec3 vPos = vTransform[1].xyz;
 
-    // Temperature
-    float FLAG_POLAR_TEMP = step(0.5, float(u_temp_noise.mode));
-    float FLAG_NOISE_TEMP = step(1.5, float(u_temp_noise.mode));
-    float ty = mix(abs(vPos.y), vPos.y, FLAG_POLAR_TEMP);
-    float adjustedTy = smoothstep(1.0, -FLAG_POLAR_TEMP, ty);
-    float tHeight = mix(adjustedTy, 1.0, FLAG_NOISE_TEMP);
-    tHeight *= fbm3(vPos, u_temp_noise.freq, u_temp_noise.amp, u_temp_noise.lac, u_temp_noise.oct);
+    // Warping
+    vPos.x *= u_surface_noise.xwarp;
+    vPos.y *= u_surface_noise.ywarp;
+    vPos.z *= u_surface_noise.zwarp;
 
-    // Humidity
-    float FLAG_POLAR_HUMI = step(0.5, float(u_humi_noise.mode));
-    float FLAG_NOISE_HUMI = step(1.5, float(u_humi_noise.mode));
-    float hy = mix(abs(vPos.y), vPos.y, FLAG_POLAR_HUMI);
-    float adjustedHy = smoothstep(-FLAG_POLAR_HUMI, 1.0, hy);
-    float hHeight = mix(adjustedHy, 1.0, FLAG_NOISE_HUMI);
-    hHeight *= fbm3(vPos, u_humi_noise.freq, u_humi_noise.amp, u_humi_noise.lac, u_humi_noise.oct);
-
-    // Initial heightmap & flags
+    // Heightmap & global flags
     float height = fbm3(vPos, u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
     float FLAG_LAND = step(u_pbr_params.wlevel, height);
     float FLAG_BIOMES = FLAG_LAND * float(u_biomes);
+
+    // Temperature & humidity
+    float tHeight = mix(0.0, apply_temperature(vPos), FLAG_BIOMES);
+    float hHeight = mix(0.0, apply_humidity(vPos), FLAG_BIOMES);
 
     // Render noise as color
     color += height;

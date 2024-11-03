@@ -1,12 +1,13 @@
 // Sourced from Yi-wen LIN, using code from Iñigo Quilez:
-// https://github.com/yiwenl/glsl-fbm/blob/master/3d.glsl
+// https://github.com/yiwenl/glsl-fbm/blob/master
 // https://iquilezles.org/articles/fbm/
 // ------------------------------------------------------------------------------------------------
-// 3D fractional Brownian motion
 
-float mod289(float x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
-vec4 mod289(vec4 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
-vec4 perm(vec4 x){return mod289(((x * 34.0) + 1.0) * x);}
+// 3D version
+
+float mod289(float x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec4 perm(vec4 x) { return mod289(((x * 34.0) + 1.0) * x); }
 
 float noise3(vec3 p){
     vec3 a = floor(p);
@@ -34,6 +35,26 @@ float fbm3(vec3 x, float freq, float amp, float lac, int octaves) {
 	float val = 0.0;
 	for (int i = 0; i < octaves; ++i) {
 		val += amp * noise3(x*freq);
+		freq *= lac;
+		amp *= 0.5;
+	}
+	return val;
+}
+
+// 1D version
+
+float rand(float n){return fract(sin(n) * 43758.5453123);}
+
+float noise1(float p){
+	float fl = floor(p);
+  float fc = fract(p);
+	return mix(rand(fl), rand(fl + 1.0), fc);
+}
+
+float fbm1(float x, float freq, float amp, float lac, int octaves) {
+	float val = 0.0;
+	for (int i = 0; i < octaves; ++i) {
+		val += amp * noise1(x*freq);
 		freq *= lac;
 		amp *= 0.5;
 	}

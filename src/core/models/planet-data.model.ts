@@ -1,5 +1,5 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
-import { ColorMode, GeometryType, GradientMode, NoiseType } from '@core/types'
+import { ColorMode, GradientMode, NoiseType, PlanetType } from '@core/types'
 import { isNumeric } from '@/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
@@ -112,7 +112,7 @@ export default class PlanetData extends ChangeTracker {
   // |                Planet settings                 |
   // --------------------------------------------------
 
-  private _planetGeometryType: GeometryType = GeometryType.SPHERE
+  private _planetType: PlanetType = PlanetType.TELLURIC
   private _planetMeshQuality: number
 
   private _planetRadius: number
@@ -126,12 +126,12 @@ export default class PlanetData extends ChangeTracker {
 
   // --------------------------------------------------
 
-  public get planetGeometryType() {
-    return this._planetGeometryType
+  public get planetType() {
+    return this._planetType
   }
-  public set planetGeometryType(gtype: GeometryType) {
-    this._planetGeometryType = gtype
-    this.markForChange('_planetGeometryType')
+  public set planetType(ptype: PlanetType) {
+    this._planetType = ptype
+    this.markForChange('_planetType')
   }
   public get planetMeshQuality() {
     return this._planetMeshQuality
@@ -515,7 +515,7 @@ export default class PlanetData extends ChangeTracker {
     this._ambLightIntensity = 0.02
 
     // Planet & Rendering
-    this._planetGeometryType = GeometryType.SPHERE
+    this._planetType = PlanetType.TELLURIC
     this._planetMeshQuality = 48.0
     this._planetRadius = 1.0
     this._planetAxialTilt = -15.0
@@ -645,7 +645,7 @@ export default class PlanetData extends ChangeTracker {
     this._ambLightIntensity = 0.02
 
     // Planet & Rendering
-    this._planetGeometryType = GeometryType.SPHERE
+    this._planetType = PlanetType.TELLURIC
     this._planetMeshQuality = 48.0
     this._planetRadius = 1.0
     this._planetAxialTilt = -15.0
@@ -663,6 +663,8 @@ export default class PlanetData extends ChangeTracker {
     this._planetSurfaceNoise.amplitude = 0.53
     this._planetSurfaceNoise.lacunarity = 2.16
     this._planetSurfaceNoise.octaves = 6
+    this._planetSurfaceNoise.layers = 1
+    this._planetSurfaceNoise.warpFactor.setScalar(1.0)
     this._planetSurfaceColorRamp.loadFromSteps([
       new ColorRampStep(0x000000, 0, true),
       new ColorRampStep(0x0b1931, 0.4),
@@ -723,6 +725,8 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsNoise.amplitude = 0.6
     this._cloudsNoise.lacunarity = 1.75
     this._cloudsNoise.octaves = 4
+    this._cloudsNoise.layers = 1
+    this._cloudsNoise.warpFactor.setScalar(1.0)
     this._cloudsColorRamp.loadFromSteps([
       new ColorRampStep(0x000000, 0.0, true),
       new ColorRampStep(0x000000, 0.6),
@@ -767,6 +771,7 @@ export default class PlanetData extends ChangeTracker {
     this._ambLightIntensity = data._ambLightIntensity ?? 0.02
 
     // Planet & Rendering
+    this._planetType = data._planetType ?? PlanetType.TELLURIC
     this._planetRadius = data._planetRadius ?? 1.0
     this._planetAxialTilt = data._planetAxialTilt ?? -15.0
     this._planetRotation = data._planetRotation ?? 0.0
@@ -783,6 +788,10 @@ export default class PlanetData extends ChangeTracker {
     this._planetSurfaceNoise.frequency = data._planetSurfaceNoise?._frequency ?? 0.53
     this._planetSurfaceNoise.lacunarity = data._planetSurfaceNoise?._lacunarity ?? 2.16
     this._planetSurfaceNoise.octaves = data._planetSurfaceNoise._octaves ?? 6
+    this._planetSurfaceNoise.layers =  data._planetSurfaceNoise._layers ?? 1
+    this._planetSurfaceNoise.xWarpFactor = data._planetSurfaceNoise._warpFactor ? data._planetSurfaceNoise._warpFactor.x : 1.0
+    this._planetSurfaceNoise.yWarpFactor = data._planetSurfaceNoise._warpFactor ? data._planetSurfaceNoise._warpFactor.y : 1.0
+    this._planetSurfaceNoise.zWarpFactor = data._planetSurfaceNoise._warpFactor ? data._planetSurfaceNoise._warpFactor.z : 1.0
     this._planetSurfaceColorRamp.loadFromSteps(
       data._planetSurfaceColorRamp
         ? data._planetSurfaceColorRamp._steps
@@ -836,6 +845,9 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsNoise.frequency = data._cloudsNoise?._frequency ?? 0.6
     this._cloudsNoise.lacunarity = data._cloudsNoise?._lacunarity ?? 1.75
     this._cloudsNoise.octaves = data._cloudsNoise._octaves ?? 4
+    this._cloudsNoise.xWarpFactor = data._cloudsNoise._warpFactor ? data._cloudsNoise._warpFactor.x : 1.0
+    this._cloudsNoise.yWarpFactor = data._cloudsNoise._warpFactor ? data._cloudsNoise._warpFactor.y : 1.0
+    this._cloudsNoise.zWarpFactor = data._cloudsNoise._warpFactor ? data._cloudsNoise._warpFactor.z : 1.0
     this._cloudsColor.set(data._cloudsColor ?? 0xffffff)
     this._cloudsColorRamp.loadFromSteps(
       data._cloudsColorRamp
