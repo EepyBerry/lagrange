@@ -1,6 +1,6 @@
 
 <div align="center">
-  <img alt="update-logo" src="https://github.com/user-attachments/assets/ec71bcd0-e9d2-4023-a7af-8556a80b2e3e">
+  <img alt="update-logo" src="https://github.com/user-attachments/assets/948848d9-f173-4e61-a6c2-6a9f98af11c5">
 </div>
 
 
