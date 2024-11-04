@@ -73,7 +73,8 @@ export class NoiseParameters extends ChangeTracker {
     return this._layers
   }
   public set layers(value: number) {
-    this._layers = Math.round(value)
+    this._layers = Math.round(clamp(value, 1, 3))
+    this.markForChange(`${this._changePrefix}._layers`)
   }
 
   public get warpFactor(): Vector3 {

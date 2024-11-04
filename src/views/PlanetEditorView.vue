@@ -378,6 +378,7 @@ function registerSurfaceDataUpdates(): void {
   $dataUpdateMap.set('_planetSurfaceNoise._amplitude',  () => patchMeshUniform(_planet, 'u_surface_noise', { amp: LG_PLANET_DATA.value.planetSurfaceNoise.amplitude }))
   $dataUpdateMap.set('_planetSurfaceNoise._lacunarity', () => patchMeshUniform(_planet, 'u_surface_noise', { lac: LG_PLANET_DATA.value.planetSurfaceNoise.lacunarity }))
   $dataUpdateMap.set('_planetSurfaceNoise._octaves',    () => patchMeshUniform(_planet, 'u_surface_noise', { oct: LG_PLANET_DATA.value.planetSurfaceNoise.octaves }))
+  $dataUpdateMap.set('_planetSurfaceNoise._layers',     () => patchMeshUniform(_planet, 'u_surface_noise', { layers: LG_PLANET_DATA.value.planetSurfaceNoise.layers }))
   $dataUpdateMap.set('_planetSurfaceNoise._warpFactor', () => patchMeshUniform(_planet, 'u_surface_noise', {
     xwarp: LG_PLANET_DATA.value.planetSurfaceNoise.xWarpFactor,
     ywarp: LG_PLANET_DATA.value.planetSurfaceNoise.yWarpFactor,
