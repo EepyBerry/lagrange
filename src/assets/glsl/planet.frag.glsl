@@ -99,8 +99,8 @@ vec3 apply_bump(vec3 vPos, float height) {
         vTransform[3].y * u_surface_noise.ywarp,
         vTransform[3].z * u_surface_noise.zwarp
     ) * u_bump_offset;
-    float dxHeight = fbm3(vPos + dx, u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
-    float dyHeight = fbm3(vPos + dy, u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
+    float dxHeight = compute_height_warp(vPos + dx);
+    float dyHeight = compute_height_warp(vPos + dy);
     return perturb_normal(vPos, dx, dy, height, dxHeight, dyHeight, u_radius, u_bump_strength);
 }
 
