@@ -5,10 +5,10 @@
     </ParameterCheckbox>
     <template v-if="LG_PLANET_DATA.atmosphereEnabled">
       <ParameterCategory>{{ $t('editor.controls.atmosphere.transform') }}</ParameterCategory>
-      <ParameterSlider v-model="LG_PLANET_DATA.atmosphereHeight" id="a-height" :step="0.1" :min="1" :max="8">
+      <ParameterSlider v-model="LG_PLANET_DATA.atmosphereHeight" id="a-height" :step="0.05" :min="0.25" :max="8">
         {{ $t('editor.controls.atmosphere.transform_height') }}
       </ParameterSlider>
-      <ParameterSlider v-model="LG_PLANET_DATA.atmosphereDensityScale" id="a-density" :step="0.01" :min="1" :max="10">
+      <ParameterSlider v-model="LG_PLANET_DATA.atmosphereDensityScale" id="a-density" :step="0.05" :min="0.25" :max="10">
         {{ $t('editor.controls.atmosphere.transform_density') }}
       </ParameterSlider>
       <ParameterCategory>{{ $t('editor.controls.atmosphere.rgba') }}</ParameterCategory>

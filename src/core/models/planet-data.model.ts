@@ -377,14 +377,14 @@ export default class PlanetData extends ChangeTracker {
     return this._atmosphereHeight
   }
   public set atmosphereHeight(value: number) {
-    this._atmosphereHeight = clamp(value, 1.0, 8.0)
+    this._atmosphereHeight = clamp(value, 0.25, 8.0)
     this.markForChange('_atmosphereHeight')
   }
   public get atmosphereDensityScale(): number {
     return this._atmosphereDensityScale
   }
   public set atmosphereDensityScale(value: number) {
-    this._atmosphereDensityScale = clamp(value, 1.0, 10.0)
+    this._atmosphereDensityScale = clamp(value, 0.25, 10.0)
     this.markForChange('_atmosphereDensityScale')
   }
 
