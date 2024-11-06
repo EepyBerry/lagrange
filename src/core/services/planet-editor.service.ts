@@ -128,6 +128,17 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
       u_bump: { value: data.planetSurfaceShowBumps },
       u_bump_strength: { value: data.planetSurfaceBumpStrength },
       u_bump_offset: { value: 0.005 },
+      u_surface_distortion: {
+        value: {
+          freq: data.planetSurfaceNoise.frequency,
+          amp: data.planetSurfaceNoise.amplitude,
+          lac: data.planetSurfaceNoise.lacunarity,
+          oct: data.planetSurfaceNoise.octaves,
+          eps: data.planetSurfaceDistortion.epsilon,
+          mul: data.planetSurfaceDistortion.multiplier,
+          fac: data.planetSurfaceDistortion.factor,
+        },
+      },
       u_surface_noise: {
         value: {
           freq: data.planetSurfaceNoise.frequency,
@@ -185,7 +196,6 @@ export function createClouds(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
     {
       u_noise: {
         value: {
-          type: data.cloudsNoise.noiseType,
           freq: data.cloudsNoise.frequency,
           amp: data.cloudsNoise.amplitude,
           lac: data.cloudsNoise.lacunarity,

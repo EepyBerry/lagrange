@@ -10,10 +10,6 @@ export enum GeometryType {
   SPHERE,
   RING
 }
-export enum NoiseType {
-  FBM,
-  PERLIN,
-}
 export enum ColorMode {
   REALISTIC,
   DIRECT,

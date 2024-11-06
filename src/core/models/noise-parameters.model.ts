@@ -1,10 +1,8 @@
 import { clamp } from 'three/src/math/MathUtils.js'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
-import type { NoiseType } from '@core/types'
 import { Vector3 } from 'three'
 
 export class NoiseParameters extends ChangeTracker {
-  private _noiseType: NoiseType
   private _frequency: number = 3
   private _amplitude: number = 0.5
   private _lacunarity: number = 2
@@ -16,25 +14,18 @@ export class NoiseParameters extends ChangeTracker {
   constructor(
     changedPropsRef: ChangedProp[],
     changePrefix: string,
-    noiseType: NoiseType,
     freq?: number,
     amp?: number,
     lac?: number,
     oct?: number,
   ) {
     super(changedPropsRef, changePrefix)
-    this._noiseType = noiseType
-    this._frequency = clamp(freq ?? this._frequency, 0, 255)
-    this._amplitude = clamp(amp ?? this._amplitude, 0, 255)
-    this._lacunarity = clamp(lac ?? this._lacunarity, 0, 255)
+    this._frequency = clamp(freq ?? this._frequency, 0, 10)
+    this._amplitude = clamp(amp ?? this._amplitude, 0, 10)
+    this._lacunarity = clamp(lac ?? this._lacunarity, 0, 10)
     this._octaves = clamp(oct ?? this._octaves, 0, 8)
-  }
-
-  public get noiseType(): NoiseType {
-    return this._noiseType
-  }
-  public set noiseType(value: NoiseType) {
-    this._noiseType = value
+    this._layers = 1.0
+    this._warpFactor.setScalar(1.0)
   }
 
   public get frequency(): number {
@@ -101,5 +92,27 @@ export class NoiseParameters extends ChangeTracker {
   public set zWarpFactor(value: number) {
     this._warpFactor.z = value
     this.markForChange(`${this._changePrefix}._warpFactor`)
+  }
+
+  public loadData(data?: NoiseParameters) {
+    this.frequency = clamp(data?._frequency ?? this._frequency, 0, 10)
+    this.amplitude = clamp(data?._amplitude ?? this._amplitude, 0, 10)
+    this.lacunarity = clamp(data?._lacunarity ?? this._lacunarity, 0, 10)
+    this.octaves = clamp(data?._octaves ?? this._octaves, 0, 8)
+    this.layers = clamp(data?._layers ?? 1, 1, 3)
+    this.xWarpFactor = data?._warpFactor ? data._warpFactor.x : 1.0
+    this.yWarpFactor = data?._warpFactor ? data._warpFactor.y : 1.0
+    this.zWarpFactor = data?._warpFactor ? data._warpFactor.z : 1.0
+  }
+
+  public reset(freq: number, amp: number, lac: number, oct: number, layers?: number, warpScalar?: number): void {
+    this.frequency = clamp(freq, 0, 10)
+    this.amplitude = clamp(amp, 0, 10)
+    this.lacunarity = clamp(lac, 0, 10)
+    this.octaves = clamp(oct, 0, 8)
+    this.layers = clamp(layers ?? 1, 1, 3)
+    this.xWarpFactor = 1.0
+    this.yWarpFactor = 1.0
+    this.zWarpFactor = 1.0
   }
 }

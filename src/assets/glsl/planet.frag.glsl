@@ -2,6 +2,16 @@
 precision highp float;
 #endif
 
+struct DistortionParameters {
+    float eps;
+    float mul;
+    float fac;
+
+    float freq;
+    float amp;
+    float lac;
+    int oct;
+};
 struct NoiseParameters {
     int mode;
     float freq;
@@ -29,6 +39,7 @@ uniform float u_radius;
 uniform PBRParameters u_pbr_params;
 
 // Noise uniforms
+uniform DistortionParameters u_surface_distortion;
 uniform NoiseParameters u_surface_noise;
 uniform sampler2D u_surface_tex;
 
@@ -58,19 +69,19 @@ float compute_height_warp(vec3 vPos) {
 }
 
 vec3 compute_curl(vec3 vPos) {
-    float eps = 0.001;
-    float mul = 1.20;
+    float eps = u_surface_distortion.eps;
+    float mul = u_surface_distortion.mul;
 
-    float n1 = fbm3(vec3(vPos.x + eps, vPos.y, vPos.z), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
-    float n2 = fbm3(vec3(vPos.x - eps, vPos.y, vPos.z), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
+    float n1 = fbm3(vec3(vPos.x + eps, vPos.y, vPos.z), u_surface_distortion.freq, u_surface_distortion.amp, u_surface_distortion.lac, u_surface_distortion.oct);
+    float n2 = fbm3(vec3(vPos.x - eps, vPos.y, vPos.z), u_surface_distortion.freq, u_surface_distortion.amp, u_surface_distortion.lac, u_surface_distortion.oct);
     float dx = (n1 - n2) / (mul * eps);
 
-    n1 = fbm3(vec3(vPos.x, vPos.y + eps, vPos.z), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
-    n2 = fbm3(vec3(vPos.x, vPos.y - eps, vPos.z), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
+    n1 = fbm3(vec3(vPos.x, vPos.y + eps, vPos.z), u_surface_distortion.freq, u_surface_distortion.amp, u_surface_distortion.lac, u_surface_distortion.oct);
+    n2 = fbm3(vec3(vPos.x, vPos.y - eps, vPos.z), u_surface_distortion.freq, u_surface_distortion.amp, u_surface_distortion.lac, u_surface_distortion.oct);
     float dy = (n1 - n2) / (mul * eps);
 
-    n1 = fbm3(vec3(vPos.x, vPos.y, vPos.z + eps), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
-    n2 = fbm3(vec3(vPos.x, vPos.y, vPos.z - eps), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
+    n1 = fbm3(vec3(vPos.x, vPos.y, vPos.z + eps), u_surface_distortion.freq, u_surface_distortion.amp, u_surface_distortion.lac, u_surface_distortion.oct);
+    n2 = fbm3(vec3(vPos.x, vPos.y, vPos.z - eps), u_surface_distortion.freq, u_surface_distortion.amp, u_surface_distortion.lac, u_surface_distortion.oct);
     float dz = (n1 - n2) / (mul * eps);
 
     //Curl
@@ -134,7 +145,7 @@ void main() {
     vPos.z *= u_surface_noise.zwarp;
 
     // Curl
-    vPos = mix(vPos, compute_curl(vPos), 0.5);
+    //vPos = mix(vPos, compute_curl(vPos), u_surface_distortion.fac);
 
     // Heightmap & global flags
     float height = compute_height_warp(vPos);
