@@ -58,19 +58,20 @@ float compute_height_warp(vec3 vPos) {
 }
 
 vec3 compute_curl(vec3 vPos) {
-    float eps = 0.005;
+    float eps = 0.001;
+    float mul = 1.20;
 
     float n1 = fbm3(vec3(vPos.x + eps, vPos.y, vPos.z), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
     float n2 = fbm3(vec3(vPos.x - eps, vPos.y, vPos.z), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
-    float dx = (n1 - n2) / (2.0 * eps);
+    float dx = (n1 - n2) / (mul * eps);
 
     n1 = fbm3(vec3(vPos.x, vPos.y + eps, vPos.z), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
     n2 = fbm3(vec3(vPos.x, vPos.y - eps, vPos.z), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
-    float dy = (n1 - n2) / (2.0 * eps);
+    float dy = (n1 - n2) / (mul * eps);
 
     n1 = fbm3(vec3(vPos.x, vPos.y, vPos.z + eps), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
     n2 = fbm3(vec3(vPos.x, vPos.y, vPos.z - eps), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
-    float dz = (n1 - n2) / (2.0 * eps);
+    float dz = (n1 - n2) / (mul * eps);
 
     //Curl
     return vec3(dx, dy, dz);
@@ -133,7 +134,7 @@ void main() {
     vPos.z *= u_surface_noise.zwarp;
 
     // Curl
-    vPos = compute_curl(vPos);
+    vPos = mix(vPos, compute_curl(vPos), 0.5);
 
     // Heightmap & global flags
     float height = compute_height_warp(vPos);
