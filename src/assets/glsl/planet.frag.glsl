@@ -57,6 +57,25 @@ float compute_height_warp(vec3 vPos) {
     return height;
 }
 
+vec3 compute_curl(vec3 vPos) {
+    float eps = 0.005;
+
+    float n1 = fbm3(vec3(vPos.x + eps, vPos.y, vPos.z), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
+    float n2 = fbm3(vec3(vPos.x - eps, vPos.y, vPos.z), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
+    float dx = (n1 - n2) / (2.0 * eps);
+
+    n1 = fbm3(vec3(vPos.x, vPos.y + eps, vPos.z), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
+    n2 = fbm3(vec3(vPos.x, vPos.y - eps, vPos.z), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
+    float dy = (n1 - n2) / (2.0 * eps);
+
+    n1 = fbm3(vec3(vPos.x, vPos.y, vPos.z + eps), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
+    n2 = fbm3(vec3(vPos.x, vPos.y, vPos.z - eps), u_surface_noise.freq, u_surface_noise.amp, u_surface_noise.lac, u_surface_noise.oct);
+    float dz = (n1 - n2) / (2.0 * eps);
+
+    //Curl
+    return vec3(dx, dy, dz);
+}
+
 // Temperature function
 float apply_temperature(vec3 vPos) {
     float FLAG_POLAR_TEMP = step(0.5, float(u_temp_noise.mode));
@@ -112,6 +131,9 @@ void main() {
     vPos.x *= u_surface_noise.xwarp;
     vPos.y *= u_surface_noise.ywarp;
     vPos.z *= u_surface_noise.zwarp;
+
+    // Curl
+    vPos = compute_curl(vPos);
 
     // Heightmap & global flags
     float height = compute_height_warp(vPos);
