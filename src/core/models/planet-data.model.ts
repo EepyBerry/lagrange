@@ -641,16 +641,10 @@ export default class PlanetData extends ChangeTracker {
       new ColorRampStep(0xbf9a5e, 1.0, true),
     ])
   }
-
-  public reset() {
-    Object.assign(this, new PlanetData())
-    this._planetSurfaceDistortion.reset(2.45, 0.53, 2.16, 6)
-    this._planetSurfaceNoise.reset(2.45, 0.53, 2.16, 6, 1, 1.0)
-    this._biomesTemperatureNoise.reset(2.5, 1.25, 2.5, 4)
-    this._biomesHumidityNoise.reset(2.25, 0.95, 2.25, 4)
-    this._cloudsNoise.reset(4.0, 0.6, 1.75, 4, 1, 1.0)
-    this.markAllForChange()
-  }
+  
+  // --------------------------------------------------
+  // |                  Load/reset                    |
+  // --------------------------------------------------
 
   public loadData(data: any) {
     this.planetName = data._planetName?.replaceAll('_', ' ') ?? this._defaultPlanetName
@@ -762,6 +756,20 @@ export default class PlanetData extends ChangeTracker {
     )
   }
 
+  public reset() {
+    Object.assign(this, new PlanetData())
+    this._planetSurfaceDistortion.reset(2.45, 0.53, 2.16, 6)
+    this._planetSurfaceNoise.reset(2.45, 0.53, 2.16, 6, 1, 1.0)
+    this._biomesTemperatureNoise.reset(2.5, 1.25, 2.5, 4)
+    this._biomesHumidityNoise.reset(2.25, 0.95, 2.25, 4)
+    this._cloudsNoise.reset(4.0, 0.6, 1.75, 4, 1, 1.0)
+    this.markAllForChange()
+  }
+  
+  // --------------------------------------------------
+  // |               Static functions                 |
+  // --------------------------------------------------
+  
   public static createFrom(data: any) {
     const planetData = new PlanetData()
     planetData.loadData(data)
