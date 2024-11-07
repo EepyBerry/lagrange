@@ -21,7 +21,7 @@ import AppInitDialog from '@components/dialogs/AppInitDialog.vue'
 import { useI18n } from 'vue-i18n'
 import { mapLocale } from './utils/utils'
 import { useHead } from '@unhead/vue'
-import { A11Y_ANIMATE } from './core/globals'
+import { A11Y_ANIMATE, EXTRAS_HOLOGRAM_MODE } from './core/globals'
 import AppToastBar from './components/main/AppToastBar.vue'
 import { EventBus } from './core/event-bus'
 
@@ -56,6 +56,7 @@ onMounted(async () => {
 
   // Set initial global values
   A11Y_ANIMATE.value = settings.value?.enableAnimations!
+  EXTRAS_HOLOGRAM_MODE.value = settings.value?.extrasHologramMode!
 
   // Open init dialog if necessary
   if (settings.value?.showInitDialog) {

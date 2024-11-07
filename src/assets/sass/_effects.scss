@@ -23,6 +23,11 @@
   -webkit-animation: crtscroll var(--duration) infinite linear forwards;
   -moz-animation: crtscroll var(--duration) infinite linear forwards;
 }
+.extra-hologram {
+  img {
+    filter: sepia(100%) saturate(250%) hue-rotate(180deg);
+  }
+}
 
 // keyframe animations
 

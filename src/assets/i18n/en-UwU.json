@@ -5,6 +5,9 @@
     "language": "Uwuish",
     "more_coming_soon": "Mowe coming s-soon!",
     "test_message": "pancake hehe :3",
+    "unit": "unit",
+    "units": "units",
+    "unknown_value": "[UNKNOWN]",
 
     "nav": {
       "codex": "Codex",
@@ -69,6 +72,21 @@
 
       "$action_confirm": "Get s-stawted!"
     },
+    "planetinfo": {
+      "$title": "Pwanyet information :3",
+      "name": "Name",
+      "radius": "Wadius",
+      "axialtilt": "Axiaw tiwt",
+      "clouded": "Has cwouds",
+      "atmospheric": "Has atmosphewe",
+      "ringed": "Has wing systyem",
+
+      "biomes": "Biome composition",
+      "biomes_temp": "Tempewature",
+      "biomes_humi": "Humidity",
+      "biomes_mode": "mode",
+      "biomes_none": "T-this pwanyet has nyo defined biomes... （＞人＜；）"
+    },
     "settings": {
       "$title": "Settings",
 
@@ -90,6 +108,9 @@
       "a11y": "Accessibiwity !!!",
       "a11y_effects": "Enyabwe visuaw effects",
       "a11y_animations": "Enyabwe animations",
+
+      "extras": "Extwas",
+      "extras_hologram_mode": "Howogwam mode",
 
       "advanced": "Advanced Settings",
       "advanced_persist": "Pewsist IndexedDB stowage",
@@ -355,6 +376,7 @@
     "dialog_webgl_error": "WebGL ewwow diawog",
     "dialog_planet_error": "Pwanyet ewwow diawog",
     "dialog_init": "Intwoduction diawog",
+    "dialog_planetinfo": "Pwanyet info diawog",
     "dialog_settings": "Settings diawog",
     "dialog_about": "About @:main.$title diawog",
     "dialog_reset": "Confiwm weset diawog",

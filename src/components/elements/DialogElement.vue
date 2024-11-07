@@ -73,6 +73,7 @@ dialog[open].lg {
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
   border-radius: 4px;
+  box-shadow: 0 0 32px 16px var(--black);
   padding: 1rem;
   margin: auto;
   color: var(--lg-text);
@@ -114,7 +115,7 @@ dialog[open].lg {
   }
 }
 dialog[open].lg::backdrop {
-  background: rgb(0 0 0 / 37.5%);
+  background: rgb(0 0 0 / 40%);
 }
 
 @media screen and (max-width: 767px) {

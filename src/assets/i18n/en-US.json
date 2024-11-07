@@ -5,6 +5,9 @@
     "language": "English",
     "more_coming_soon": "More coming soon!",
     "test_message": "pancake hehe :3",
+    "unit": "unit",
+    "units": "units",
+    "unknown_value": "[UNKNOWN]",
 
     "nav": {
       "codex": "Codex",
@@ -69,6 +72,21 @@
 
       "$action_confirm": "Get started!"
     },
+    "planetinfo": {
+      "$title": "Planet information",
+      "name": "Name",
+      "radius": "Radius",
+      "axialtilt": "Axial tilt",
+      "clouded": "Has clouds",
+      "atmospheric": "Has atmosphere",
+      "ringed": "Has ring system",
+
+      "biomes": "Biome composition",
+      "biomes_temp": "Temperature",
+      "biomes_humi": "Humidity",
+      "biomes_mode": "mode",
+      "biomes_none": "This planet has no defined biomes"
+    },
     "settings": {
       "$title": "Settings",
 
@@ -90,6 +108,9 @@
       "a11y": "Accessibility",
       "a11y_effects": "Enable visual effects",
       "a11y_animations": "Enable animations",
+
+      "extras": "Extras",
+      "extras_hologram_mode": "Hologram mode",
 
       "advanced": "Advanced Settings",
       "advanced_persist": "Persist IndexedDB storage",
@@ -355,6 +376,7 @@
     "dialog_webgl_error": "WebGL error dialog",
     "dialog_planet_error": "Planet error dialog",
     "dialog_init": "Introduction dialog",
+    "dialog_planetinfo": "Planet info dialog",
     "dialog_settings": "Settings dialog",
     "dialog_about": "About @:main.$title dialog",
     "dialog_reset": "Confirm reset dialog",

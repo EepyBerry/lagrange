@@ -5,6 +5,9 @@
     "language": "Français",
     "more_coming_soon": "D'autres langues à venir !",
     "test_message": "pancake hehe :3",
+    "unit": "unité",
+    "units": "unités",
+    "unknown_value": "[INCONNU]",
 
     "nav": {
       "codex": "Codex",
@@ -69,6 +72,21 @@
 
       "$action_confirm": "C'est parti!"
     },
+    "planetinfo": {
+      "$title": "Informations planète",
+      "name": "Nom",
+      "radius": "Rayon",
+      "axialtilt": "Inclinaison",
+      "clouded": "Présence de nuages",
+      "atmospheric": "Présence d'atmosphère",
+      "ringed": "Présence d'anneaux",
+
+      "biomes": "Composition des biomes",
+      "biomes_temp": "Température",
+      "biomes_humi": "Humidité",
+      "biomes_mode": "mode",
+      "biomes_none": "Cette planète n'a aucun biome défini"
+    },
     "settings": {
       "$title": "Paramètres",
 
@@ -90,6 +108,9 @@
       "a11y": "Accessibilité",
       "a11y_effects": "Activer les effets visuels",
       "a11y_animations": "Activer les animations",
+
+      "extras": "Extras",
+      "extras_hologram_mode": "Mode hologramme",
 
       "advanced": "Paramètres avancés",
       "advanced_persist": "Persister le stockage IndexedDB",
@@ -355,6 +376,7 @@
     "dialog_webgl_error": "Modale d'erreur WebGL",
     "dialog_planet_error": "Modale d'erreur de planète",
     "dialog_init": "Modale d'introduction",
+    "dialog_planetinfo": "Modale d'information sur la planète",
     "dialog_settings": "Modale de paramètres",
     "dialog_about": "Modale d'information sur @:main.$title",
     "dialog_reset": "Modale de confirmation de réinitialisation",

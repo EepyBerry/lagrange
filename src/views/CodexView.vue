@@ -33,6 +33,7 @@
       v-for="planet of planets"
       :key="planet.id"
       :planet="(planet as IDBPlanet)"
+      @info="openPlanetInfoDialog(planet as IDBPlanet)"
       @export="exportPlanet(planet as IDBPlanet)"
       @delete="openDeleteConfirmDialog(planet as IDBPlanet)"
     />
@@ -45,6 +46,7 @@
   <div v-if="showInlineFooter" id="codex-footer">
     <InlineFooter />
   </div>
+  <AppPlanetInfoDialog ref="planetInfoDialogRef" />
   <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="deleteTargetedPlanet" />
 </template>
 
@@ -52,6 +54,7 @@
 import PlanetCardElement from '@/components/elements/PlanetCardElement.vue'
 import AppNavigation from '@/components/main/AppNavigation.vue'
 import InlineFooter from '@/components/main/InlineFooter.vue'
+import AppPlanetInfoDialog from '@/components/dialogs/AppPlanetInfoDialog.vue'
 import AppDeleteConfirmDialog from '@components/dialogs/AppDeleteConfirmDialog.vue'
 import { idb, type IDBPlanet } from '@/dexie.config'
 import { useHead } from '@unhead/vue'
@@ -70,6 +73,8 @@ import { readFileData } from '@/core/helpers/import.helper'
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const planets: Ref<IDBPlanet[]> = ref([])
+
+const planetInfoDialogRef: Ref<{ open: Function } | null> = ref(null)
 
 const deleteTarget: Ref<IDBPlanet | null> = ref(null)
 const deleteDialogRef: Ref<{ open: Function } | null> = ref(null)
@@ -183,6 +188,10 @@ function exportPlanet(planet: IDBPlanet) {
   const gzipParams = pako.deflate(jsonParams)
   const planetFilename = planet.data.planetName.replaceAll(' ', '_')
   saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
+}
+
+async function openPlanetInfoDialog(planet: IDBPlanet) {
+  planetInfoDialogRef.value?.open(planet)
 }
 
 async function openDeleteConfirmDialog(planet: IDBPlanet) {

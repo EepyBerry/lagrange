@@ -156,6 +156,26 @@
           </template>
         </CollapsibleSection>
 
+        <CollapsibleSection icon="mingcute:star-2-line" class="section-a11y">
+          <template v-slot:title>
+            {{ $t('dialog.settings.extras') }}
+          </template>
+          <template v-slot:content>
+            <div class="settings-extras">
+              <ParameterGrid>
+                <ParameterCheckbox
+                  id="settings-hologram-mode"
+                  :true-value="true"
+                  :false-value="false"
+                  v-model="appSettings.extrasHologramMode"
+                >
+                  {{ $t('dialog.settings.extras_hologram_mode') }}:
+                </ParameterCheckbox>
+              </ParameterGrid>
+            </div>
+          </template>
+        </CollapsibleSection>
+
         <CollapsibleSection icon="mingcute:alert-diamond-line" class="section-advanced">
           <template v-slot:title>
             {{ $t('dialog.settings.advanced') }}
@@ -207,7 +227,7 @@ import { useI18n } from 'vue-i18n'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
 import { mapLocale } from '@/utils/utils'
 import ParameterKeyBinding from '../parameters/ParameterKeyBinding.vue'
-import { A11Y_ANIMATE } from '@/core/globals'
+import { A11Y_ANIMATE, EXTRAS_HOLOGRAM_MODE } from '@/core/globals'
 import NotificationElement from '../elements/NotificationElement.vue'
 import ParameterCategory from '../parameters/ParameterCategory.vue'
 import AppClearDataConfirmDialog from './AppClearDataConfirmDialog.vue'
@@ -226,6 +246,7 @@ const appSettings: Ref<IDBSettings> = ref({
   font: '',
   enableAnimations: true,
   enableEffects: true,
+  extrasHologramMode: false,
 })
 const persistStorage: Ref<boolean> = ref(false)
 const selectedAction: Ref<string | null> = ref(null)
@@ -301,6 +322,7 @@ async function updateSettings() {
   document.documentElement.setAttribute('data-font', appSettings.value!.font)
   document.documentElement.setAttribute('data-effects', appSettings.value!.enableEffects ? 'on' : 'off')
   A11Y_ANIMATE.value = appSettings.value!.enableAnimations!
+  EXTRAS_HOLOGRAM_MODE.value = appSettings.value!.extrasHologramMode!
 
   await idb.settings.update(appSettings.value!.id, {
     locale: mapLocale(appSettings.value!.locale),
@@ -308,6 +330,7 @@ async function updateSettings() {
     font: appSettings.value!.font,
     enableEffects: appSettings.value!.enableEffects,
     enableAnimations: appSettings.value!.enableAnimations,
+    extrasHologramMode: appSettings.value!.extrasHologramMode
   })
 }
 
