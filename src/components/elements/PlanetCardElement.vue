@@ -1,5 +1,8 @@
 <template>
   <div class="planet-card" ref="cardRoot">
+    <span class="deco-polygon">
+      <span class="hole"></span>
+    </span>
     <div class="planet-preview">
       <img
         v-if="planet.preview"
@@ -71,6 +74,7 @@ function emitDeleteEvent() {
 
 <style scoped lang="scss">
 .planet-card {
+  position: relative;
   padding: 1rem;
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
@@ -88,6 +92,26 @@ function emitDeleteEvent() {
 
   &.animated {
     opacity: 1;
+  }
+
+  .deco-polygon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 48px;
+    height: 16px;
+    background: var(--lg-accent);
+    clip-path: polygon(0 0, 100% 0, 75% 100%, 0 100%);
+
+    .hole {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 11px;
+      height: 11px;
+      border-radius: 4px;
+      background: var(--lg-primary);
+    }
   }
 
   .planet-preview {

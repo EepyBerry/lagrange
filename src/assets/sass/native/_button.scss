@@ -120,7 +120,7 @@ a.lg.link-button:visited:active {
 
 // Debug button
 button.lg.debug {
-  //display: none;
+  display: none;
   position: relative;
   background: var(--lg-primary);
   border: 2px dotted var(--lg-info);
