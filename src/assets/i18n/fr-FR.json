@@ -158,6 +158,7 @@
     "$title": "Codex Planétaire",
     "$action_add": "Nouv. planète",
     "$action_edit": "Modifier {planet}",
+    "$action_info": "Infos {planet}",
     "$action_export": "Exporter {planet}",
     "$action_delete": "Supprimer {planet}",
 

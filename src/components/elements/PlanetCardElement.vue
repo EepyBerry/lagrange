@@ -19,6 +19,14 @@
     </div>
     <p class="planet-name">{{ planet.data.planetName }}</p>
     <div class="actions">
+      <button
+        class="lg"
+        style="flex: 0;"
+        :aria-label="$t('codex.$action_info', { planet: planet.data.planetName })"
+        :title="$t('codex.$action_info', { planet: planet.data.planetName })"
+      >
+        <iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true" />
+      </button>
       <RouterLink
         :to="'/planet-editor/' + planet.id"
         class="lg link-button"
@@ -26,7 +34,6 @@
         :title="$t('codex.$action_edit', { planet: planet.data.planetName })"
       >
         <iconify-icon icon="mingcute:edit-2-line" width="1.5rem" aria-hidden="true" />
-        {{ $t('codex.$action_edit') }}
       </RouterLink>
       <button
         class="lg"
@@ -35,7 +42,6 @@
         @click="emitExportEvent"
       >
         <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
-        {{ $t('codex.$action_export') }}
       </button>
       <hr />
       <button
