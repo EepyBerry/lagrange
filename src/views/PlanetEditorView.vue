@@ -372,14 +372,26 @@ function registerPlanetRenderingDataUpdates(): void {
 
 // prettier-ignore
 function registerSurfaceDataUpdates(): void {
-  $dataUpdateMap.set('_planetSurfaceShowBumps',         () => setMeshUniform(_planet, 'u_bump', LG_PLANET_DATA.value.planetSurfaceShowBumps))
-  $dataUpdateMap.set('_planetSurfaceBumpStrength',      () => setMeshUniform(_planet, 'u_bump_strength', LG_PLANET_DATA.value.planetSurfaceBumpStrength))
-  $dataUpdateMap.set('_planetSurfaceNoise._frequency',  () => patchMeshUniform(_planet, 'u_surface_noise', { freq: LG_PLANET_DATA.value.planetSurfaceNoise.frequency }))
-  $dataUpdateMap.set('_planetSurfaceNoise._amplitude',  () => patchMeshUniform(_planet, 'u_surface_noise', { amp: LG_PLANET_DATA.value.planetSurfaceNoise.amplitude }))
-  $dataUpdateMap.set('_planetSurfaceNoise._lacunarity', () => patchMeshUniform(_planet, 'u_surface_noise', { lac: LG_PLANET_DATA.value.planetSurfaceNoise.lacunarity }))
-  $dataUpdateMap.set('_planetSurfaceNoise._octaves',    () => patchMeshUniform(_planet, 'u_surface_noise', { oct: LG_PLANET_DATA.value.planetSurfaceNoise.octaves }))
-  $dataUpdateMap.set('_planetSurfaceNoise._layers',     () => patchMeshUniform(_planet, 'u_surface_noise', { layers: LG_PLANET_DATA.value.planetSurfaceNoise.layers }))
-  $dataUpdateMap.set('_planetSurfaceNoise._warpFactor', () => patchMeshUniform(_planet, 'u_surface_noise', {
+  $dataUpdateMap.set('_planetSurfaceShowBumps',                () => setMeshUniform(_planet,   'u_bump', LG_PLANET_DATA.value.planetSurfaceShowBumps))
+  $dataUpdateMap.set('_planetSurfaceBumpStrength',             () => setMeshUniform(_planet,   'u_bump_strength', LG_PLANET_DATA.value.planetSurfaceBumpStrength))
+  // Displacement
+  $dataUpdateMap.set('_planetSurfaceShowDisplacement',         () => setMeshUniform(_planet,   'u_displace', LG_PLANET_DATA.value.planetSurfaceShowDisplacement))
+  $dataUpdateMap.set('_planetSurfaceDisplacement._factor',     () => patchMeshUniform(_planet, 'u_surface_displacement', { fac: LG_PLANET_DATA.value.planetSurfaceDisplacement.factor }))
+  $dataUpdateMap.set('_planetSurfaceDisplacement._epsilon',    () => patchMeshUniform(_planet, 'u_surface_displacement', { eps: LG_PLANET_DATA.value.planetSurfaceDisplacement.epsilon }))
+  $dataUpdateMap.set('_planetSurfaceDisplacement._multiplier', () => patchMeshUniform(_planet, 'u_surface_displacement', { mul: LG_PLANET_DATA.value.planetSurfaceDisplacement.multiplier }))
+  $dataUpdateMap.set('_planetSurfaceDisplacement._frequency',  () => patchMeshUniform(_planet, 'u_surface_displacement', { freq: LG_PLANET_DATA.value.planetSurfaceDisplacement.frequency }))
+  $dataUpdateMap.set('_planetSurfaceDisplacement._amplitude',  () => patchMeshUniform(_planet, 'u_surface_displacement', { amp: LG_PLANET_DATA.value.planetSurfaceDisplacement.amplitude }))
+  $dataUpdateMap.set('_planetSurfaceDisplacement._lacunarity', () => patchMeshUniform(_planet, 'u_surface_displacement', { lac: LG_PLANET_DATA.value.planetSurfaceDisplacement.lacunarity }))
+  $dataUpdateMap.set('_planetSurfaceDisplacement._octaves',    () => patchMeshUniform(_planet, 'u_surface_displacement', { oct: LG_PLANET_DATA.value.planetSurfaceDisplacement.octaves }))
+  // Noise
+  $dataUpdateMap.set('_planetSurfaceNoise._frequency',         () => patchMeshUniform(_planet, 'u_surface_noise', { freq: LG_PLANET_DATA.value.planetSurfaceNoise.frequency }))
+  $dataUpdateMap.set('_planetSurfaceNoise._amplitude',         () => patchMeshUniform(_planet, 'u_surface_noise', { amp: LG_PLANET_DATA.value.planetSurfaceNoise.amplitude }))
+  $dataUpdateMap.set('_planetSurfaceNoise._lacunarity',        () => patchMeshUniform(_planet, 'u_surface_noise', { lac: LG_PLANET_DATA.value.planetSurfaceNoise.lacunarity }))
+  $dataUpdateMap.set('_planetSurfaceNoise._octaves',           () => patchMeshUniform(_planet, 'u_surface_noise', { oct: LG_PLANET_DATA.value.planetSurfaceNoise.octaves }))
+  $dataUpdateMap.set('_planetSurfaceNoise._layers',            () => patchMeshUniform(_planet, 'u_surface_noise', { layers: LG_PLANET_DATA.value.planetSurfaceNoise.layers }))
+  // Warping
+  $dataUpdateMap.set('_planetSurfaceShowWarping',              () => setMeshUniform(_planet,   'u_warp', LG_PLANET_DATA.value.planetSurfaceShowWarping))
+  $dataUpdateMap.set('_planetSurfaceNoise._warpFactor',        () => patchMeshUniform(_planet, 'u_surface_noise', {
     xwarp: LG_PLANET_DATA.value.planetSurfaceNoise.xWarpFactor,
     ywarp: LG_PLANET_DATA.value.planetSurfaceNoise.yWarpFactor,
     zwarp: LG_PLANET_DATA.value.planetSurfaceNoise.zWarpFactor
@@ -394,11 +406,13 @@ function registerSurfaceDataUpdates(): void {
 // prettier-ignore
 function registerBiomeDataUpdates(): void {
   $dataUpdateMap.set('_biomesEnabled',                      () => setMeshUniform(_planet, 'u_biomes', LG_PLANET_DATA.value.biomesEnabled))
+  // Temperature
   $dataUpdateMap.set('_biomesTemperatureMode',              () => patchMeshUniform(_planet, 'u_temp_noise', { mode: LG_PLANET_DATA.value.biomesTemperatureMode }))
   $dataUpdateMap.set('_biomesTemperatureNoise._frequency',  () => patchMeshUniform(_planet, 'u_temp_noise', { lac: LG_PLANET_DATA.value.biomesTemperatureNoise.frequency }))
   $dataUpdateMap.set('_biomesTemperatureNoise._amplitude',  () => patchMeshUniform(_planet, 'u_temp_noise', { amp: LG_PLANET_DATA.value.biomesTemperatureNoise.amplitude }))
   $dataUpdateMap.set('_biomesTemperatureNoise._lacunarity', () => patchMeshUniform(_planet, 'u_temp_noise', { lac: LG_PLANET_DATA.value.biomesTemperatureNoise.lacunarity }))
   $dataUpdateMap.set('_biomesTemperatureNoise._octaves',    () => patchMeshUniform(_planet, 'u_temp_noise', { oct: LG_PLANET_DATA.value.biomesTemperatureNoise.octaves }))
+  // Humidity
   $dataUpdateMap.set('_biomesHumidityMode',                 () => patchMeshUniform(_planet, 'u_humi_noise', { mode: LG_PLANET_DATA.value.biomesHumidityMode }))
   $dataUpdateMap.set('_biomesHumidityNoise._frequency',     () => patchMeshUniform(_planet, 'u_humi_noise', { lac: LG_PLANET_DATA.value.biomesHumidityNoise.frequency }))
   $dataUpdateMap.set('_biomesHumidityNoise._amplitude',     () => patchMeshUniform(_planet, 'u_humi_noise', { amp: LG_PLANET_DATA.value.biomesHumidityNoise.amplitude }))

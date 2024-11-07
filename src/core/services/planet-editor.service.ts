@@ -128,15 +128,17 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
       u_bump: { value: data.planetSurfaceShowBumps },
       u_bump_strength: { value: data.planetSurfaceBumpStrength },
       u_bump_offset: { value: 0.005 },
-      u_surface_distortion: {
+      u_warp: { value: data.planetSurfaceShowWarping },
+      u_displace: { value: data.planetSurfaceShowDisplacement },
+      u_surface_displacement: {
         value: {
-          freq: data.planetSurfaceNoise.frequency,
-          amp: data.planetSurfaceNoise.amplitude,
-          lac: data.planetSurfaceNoise.lacunarity,
-          oct: data.planetSurfaceNoise.octaves,
-          eps: data.planetSurfaceDistortion.epsilon,
-          mul: data.planetSurfaceDistortion.multiplier,
-          fac: data.planetSurfaceDistortion.factor,
+          freq: data.planetSurfaceDisplacement.frequency,
+          amp: data.planetSurfaceDisplacement.amplitude,
+          lac: data.planetSurfaceDisplacement.lacunarity,
+          oct: data.planetSurfaceDisplacement.octaves,
+          eps: data.planetSurfaceDisplacement.epsilon,
+          mul: data.planetSurfaceDisplacement.multiplier,
+          fac: data.planetSurfaceDisplacement.factor,
         },
       },
       u_surface_noise: {

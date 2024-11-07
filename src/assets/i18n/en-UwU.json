@@ -173,10 +173,14 @@
     "$action_add": "Add",
 
     "general": {
+      "displacement_factor": "Factow",
+      "displacement_epsilon": "Epsiwon",
+      "displacement_multiplier": "Muwtipliew",
+
       "noise_layers": "Wayews",
-      "noise_xwarp": "X wawping factow",
-      "noise_ywarp": "Y wawping factow",
-      "noise_zwarp": "Z wawping factow",
+      "noise_xwarp": "X wawping",
+      "noise_ywarp": "Y wawping",
+      "noise_zwarp": "Z wawping",
       "noise_fbm_frequency": "Fwequency",
       "noise_fbm_amplitude": "Ampwitude",
       "noise_fbm_lacunarity": "Wacunawity",
@@ -226,6 +230,10 @@
         "bumpmap_show": "Show bumps :3",
         "bumpmap_strength": "Bump stwength",
 
+        "warping": "Wawping",
+        "warping_show": "Show wawping :3",
+        "displacement": "Dispwacement",
+        "displacement_show": "Show dispwacement :3",
         "noise": "Nyoise p-pawametews"
       },
       "biomes": {

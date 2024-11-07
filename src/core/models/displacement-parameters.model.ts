@@ -1,7 +1,7 @@
 import { clamp } from 'three/src/math/MathUtils.js'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 
-export class DistortionParameters extends ChangeTracker {
+export class DisplacementParameters extends ChangeTracker {
   private _epsilon: number = 0.001
   private _multiplier: number = 2.0
   private _factor: number = 0.25
@@ -26,8 +26,8 @@ export class DistortionParameters extends ChangeTracker {
     this._amplitude = clamp(amp ?? this._amplitude, 0, 255)
     this._lacunarity = clamp(lac ?? this._lacunarity, 0, 255)
     this._octaves = clamp(oct ?? this._octaves, 0, 8)
-    this._epsilon = clamp(epsilon ?? 0.001, 0.0, 2.0)
-    this._multiplier = clamp(multiplier ?? 2.0, 0.0, 5.0)
+    this._epsilon = clamp(epsilon ?? 0.001, 0.0, 1.0)
+    this._multiplier = clamp(multiplier ?? 2.0, 0.0, 3.0)
     this._factor = clamp(factor ?? 0.25, 0.0, 1.0)
   }
   
@@ -85,13 +85,14 @@ export class DistortionParameters extends ChangeTracker {
     this.markForChange(`${this._changePrefix}._octaves`)
   }
 
-  public loadData(data?: DistortionParameters) {
+  public loadData(data?: DisplacementParameters) {
     this.frequency = clamp(data?._frequency ?? this._frequency, 0, 10)
     this.amplitude = clamp(data?._amplitude ?? this._amplitude, 0, 10)
     this.lacunarity = clamp(data?._lacunarity ?? this._lacunarity, 0, 10)
     this.octaves = clamp(data?._octaves ?? this._octaves, 0, 8)
-    this.epsilon = clamp(data?._epsilon ?? this._epsilon, 0.0, 2.0)
-    this.multiplier = clamp(data?._multiplier ?? this._multiplier, 1, 5.0)
+    this.factor = clamp(data?._factor ?? this._factor, 0.0, 1.0)
+    this.epsilon = clamp(data?._epsilon ?? this._epsilon, 0.0, 0.25)
+    this.multiplier = clamp(data?._multiplier ?? this._multiplier, 0.0, 3.0)
   }
 
   public reset(freq: number, amp: number, lac: number, oct: number, eps?: number, mul?: number, fac?: number): void {

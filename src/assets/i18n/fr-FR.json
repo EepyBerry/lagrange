@@ -156,7 +156,7 @@
   },
   "codex": {
     "$title": "Codex Planétaire",
-    "$action_add": "Nouvelle planète",
+    "$action_add": "Nouv. planète",
     "$action_edit": "Modifier {planet}",
     "$action_export": "Exporter {planet}",
     "$action_delete": "Supprimer {planet}",
@@ -173,10 +173,14 @@
     "$action_add": "Ajouter",
 
     "general": {
+      "displacement_factor": "Facteur",
+      "displacement_epsilon": "Epsilon",
+      "displacement_multiplier": "Multiplicateur",
+
       "noise_layers": "Nb. de couches",
-      "noise_xwarp": "Facteur de déformation X",
-      "noise_ywarp": "Facteur de déformation Y",
-      "noise_zwarp": "Facteur de déformation Z",
+      "noise_xwarp": "Déformation X",
+      "noise_ywarp": "Déformation Y",
+      "noise_zwarp": "Déformation Z",
       "noise_fbm_frequency": "Fréquence",
       "noise_fbm_amplitude": "Amplitude",
       "noise_fbm_lacunarity": "Lacunarité",
@@ -226,6 +230,10 @@
         "bumpmap_show": "Afficher les bumps",
         "bumpmap_strength": "Intensité des bumps",
 
+        "warping": "Déformation",
+        "warping_show": "Afficher déformation",
+        "displacement": "Perturbation",
+        "displacement_show": "Afficher perturbation",
         "noise": "Paramètres de bruit"
       },
       "biomes": {
@@ -315,7 +323,7 @@
     "import_success": "Planète·s importé·es !",
     "import_partial": "Attention: certaines planètes n'ont pas pu être importées",
     "import_failure": "Impossible d'importer les planètes. Vérifiez que les bons fichiers ont été sélectionnés, puis essayez à nouveau",
-    "save_success": "Planéte sauvegardée !"
+    "save_success": "Planète sauvegardée !"
   },
   "tooltip": {
     "topbar_rename": "Renommer la planète",

@@ -6,7 +6,7 @@ import { NoiseParameters } from './noise-parameters.model'
 import { ChangeTracker } from './change-tracker.model'
 import { BiomeParameters } from './biome-parameters.model'
 import { clamp } from 'three/src/math/MathUtils.js'
-import { DistortionParameters } from './distortion-parameters.model'
+import { DisplacementParameters } from './displacement-parameters.model'
 
 export default class PlanetData extends ChangeTracker {
   // --------------------------------------------------
@@ -209,7 +209,9 @@ export default class PlanetData extends ChangeTracker {
 
   private _planetSurfaceShowBumps: boolean
   private _planetSurfaceBumpStrength: number
-  private _planetSurfaceDistortion: DistortionParameters
+  private _planetSurfaceShowWarping: boolean
+  private _planetSurfaceShowDisplacement: boolean
+  private _planetSurfaceDisplacement: DisplacementParameters
   private _planetSurfaceNoise: NoiseParameters
   private _planetSurfaceColorRamp: ColorRamp
 
@@ -230,8 +232,23 @@ export default class PlanetData extends ChangeTracker {
     this.markForChange('_planetSurfaceBumpStrength')
   }
 
-  public get planetSurfaceDistortion(): DistortionParameters {
-    return this._planetSurfaceDistortion
+  public get planetSurfaceShowWarping(): boolean {
+    return this._planetSurfaceShowWarping
+  }
+  public set planetSurfaceShowWarping(value: boolean) {
+    this._planetSurfaceShowWarping = value
+    this.markForChange('_planetSurfaceShowWarping')
+  }
+  public get planetSurfaceShowDisplacement(): boolean {
+    return this._planetSurfaceShowDisplacement
+  }
+  public set planetSurfaceShowDisplacement(value: boolean) {
+    this._planetSurfaceShowDisplacement = value
+    this.markForChange('_planetSurfaceShowDisplacement')
+  }
+
+  public get planetSurfaceDisplacement(): DisplacementParameters {
+    return this._planetSurfaceDisplacement
   }
 
   public get planetSurfaceNoise(): NoiseParameters {
@@ -535,9 +552,11 @@ export default class PlanetData extends ChangeTracker {
     // Surface
     this._planetSurfaceShowBumps = true
     this._planetSurfaceBumpStrength = 0.12
-    this._planetSurfaceDistortion = new DistortionParameters(
+    this._planetSurfaceShowWarping = false
+    this._planetSurfaceShowDisplacement = false
+    this._planetSurfaceDisplacement = new DisplacementParameters(
       this._changedProps,
-      '_planetSurfaceDistortion',
+      '_planetSurfaceDisplacement',
       2.45,
       0.53,
       2.16,
@@ -673,7 +692,9 @@ export default class PlanetData extends ChangeTracker {
     // Surface
     this.planetSurfaceShowBumps = data._planetSurfaceShowBumps ?? true
     this.planetSurfaceBumpStrength = data._planetSurfaceBumpStrength ?? 0.0875
-    this.planetSurfaceDistortion.loadData(data._planetSurfaceDistortion)
+    this.planetSurfaceShowWarping = data._planetSurfaceShowWarping ?? false
+    this.planetSurfaceShowDisplacement = data._planetSurfaceShowDisplacement ?? false
+    this.planetSurfaceDisplacement.loadData(data._planetSurfaceDisplacement)
     this.planetSurfaceNoise.loadData(data._planetSurfaceNoise)
     this.planetSurfaceColorRamp.loadFromSteps(
       data._planetSurfaceColorRamp
@@ -758,7 +779,7 @@ export default class PlanetData extends ChangeTracker {
 
   public reset() {
     Object.assign(this, new PlanetData())
-    this._planetSurfaceDistortion.reset(2.45, 0.53, 2.16, 6)
+    this._planetSurfaceDisplacement.reset(2.45, 0.53, 2.16, 6)
     this._planetSurfaceNoise.reset(2.45, 0.53, 2.16, 6, 1, 1.0)
     this._biomesTemperatureNoise.reset(2.5, 1.25, 2.5, 4)
     this._biomesHumidityNoise.reset(2.25, 0.95, 2.25, 4)
