@@ -43,8 +43,8 @@
     "init": {
       "$title": "Bienvenue dans @:main.$title",
       "introduction": "Lagrange est un outils de création de planètes entièrement procédural, parfait pour vos besoins narratifs autour de planètes, systèmes solaires, ou même de galaxies entières !",
-      "update_title": "Mise à jour 0.3 - Ecosystems!",
-      "update_brief": "Ajoute un système procédural de biomes par couche à vos planètes! Ajustez leur température et/ou humidité en temps réel et apportez de la variété à vos mondes !",
+      "update_title": "Mise à jour 0.4 - Jovian Expansion !",
+      "update_brief": "Ajoute des paramètres supplémentaires pour diversifier vos mondes, comme la déformation XYZ, les perturbations de surface et les anneaux ! Vous pouvez maintenant (re)créer des géantes gazeuses à souhait !",
       "$tmp_wip": "En cours de développement. Nouvelles fonctionnalités à venir dans les prochaines versions !",
 
       "shortcuts": "Raccourcis",
@@ -67,10 +67,10 @@
       "footer_settings": "Paramètres",
       "footer_about": "À propos de @:main.$title",
 
-      "show_next_time": "Afficher cette introduction au prochain démarrage?",
-      "enable_persistence": "Activer la persistance des données pour cette application?",
+      "show_next_time": "Afficher cette introduction au prochain démarrage ?",
+      "enable_persistence": "Activer la persistance des données pour cette application ?",
 
-      "$action_confirm": "C'est parti!"
+      "$action_confirm": "C'est parti !"
     },
     "planetinfo": {
       "$title": "Informations planète",
@@ -97,6 +97,7 @@
       "general_theme_supernova": "Supernova",
       "general_theme_voyager": "Voyager",
       "general_monospace": "Police à largeur fixe (monospace)",
+      "general_init_dialog": "Afficher l'introduction au chargement",
 
       "editor": "Éditeur",
       "editor_lensflare": "@:dialog.init.shortcuts_lensflare",
@@ -140,7 +141,11 @@
         "03_title": "Mise à jour 0.3 - Ecosystems",
         "03_biomes": "Ajoute un système de biomes complet, réglables via leur température et humidité !",
         "03_linux": "Le bruit de surface est corrigé sur les navigateurs tournant sous Linux !",
-        "03_fixes": "Quelques correctifs mineurs, ainsi qu'une réduction du nombre de varyings dans le code GLSL !"
+        "03_fixes": "Quelques correctifs mineurs, ainsi qu'une réduction du nombre de varyings dans le code GLSL !",
+        "04_title": "Mise à jour 0.4 - Jovian Expansion",
+        "04_params": "Ajoute des nouveaux paramètres pour vos mondes: déformation XYZ, perturbations de surface, et anneaux !",
+        "04_ui": "Nouvelle boite de dialogue dans le cas où l'éditeur va se fermer sans avoir sauvegardé, ainsi que divers ajustements et améliorations",
+        "04_misc": "Ajoute la traduction fr-FR, et change la licence du projet vers la ISTSL-NR 1.0"
       },
       "credits": {
         "$title": "Mentions et remerciements",
@@ -263,7 +268,7 @@
         "bumpmap_show": "Afficher les bumps",
         "bumpmap_strength": "Intensité des bumps",
 
-        "displacement": "Perturbation",
+        "displacement": "Perturbation de surface",
         "displacement_show": "Afficher perturbation",
         "noise": "Paramètres de bruit"
       },

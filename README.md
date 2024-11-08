@@ -17,12 +17,12 @@ Lagrange is a browser application to help you create your own planets, using pro
 
 _(**note:** this is something I am working on during my free time, which means that update frequency will vary!)_
 
-## 🚀 Latest version: "Ecosystems"!
+## 🚀 Latest version: "Jovian Expansion"!
 
 <ul>
-  <li>⭐ Introduces a fully fledged <strong>biome system</strong>, using temperature- & humidity-based positioning!</li>
-  <li>⭐ Surface noise now works properly in Linux-based browsers!</li>
-  <li>⭐ Smaller performance fixes all around, including fewer GLSL uniforms & varyings!</li>
+  <li>⭐ Adds <strong>new parameters</strong> for your worlds: XYZ warping, displacement and ring systems!</li>
+  <li>⭐ New dialog box when trying to leave the Editor without saving first, along with many minor touch-ups & improvements!</li>
+  <li>⭐ Adds fr-FR translation, and changes project license to ISTSL-NR 1.0!</li>
 </ul>
 
 ## 🖼️ Showcase
@@ -75,11 +75,11 @@ Vite copies the output to the `dist` folder, creating it first if need be.
 
 ### Editor
 
-- ☀️ **Lighting parameters!** (sunlight, ambient light)
+- ☀️ **Lighting parameters!** (sunlight, ambient light, color)
 - 🌍 **Planet & Rendering parameters!** (transform, water level, PBR settings)
-- 🗺️ **Surface parameters!** (bump mapping, noise settings, color ramp)
+- 🗺️ **Surface parameters!** (bump mapping, warping, displacement, noise settings, color ramp)
 - ⛰️ **Biome parameters!** (temperature/humidity mapping, per-biome min/max values & color)
-- ☁️ **Clouds parameters!** (transform, color, opacity ramp)
+- ☁️ **Clouds parameters!** (transform, warping, noise settings, color, opacity ramp)
 - 🌈 **Atmosphere parameters!** (density, color mixing modes)
 - 🪐 **Ring System parameters!** (radii, color ramp)
 

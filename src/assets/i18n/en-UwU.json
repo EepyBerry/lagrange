@@ -43,9 +43,9 @@
     "init": {
       "$title": "Wewcome :3 t-to @:main.$title",
       "introduction": "Wagwange is a fuwwy pwoceduwaw pwanyet buiwdew, pewfect fow wowwdbuiwding and tying youw wowe t-to a pwopew pwanyet, sowaw system o-ow even an entiwe gawaxy! (・`ω´・)",
-      "update_title": "Update 0.3 - Ecosystems!",
-      "update_brief": "A-adds a compwete, wayer-based biome system fow you to s-shpice up youw pwanyets with!!! >w< Adjust theiw tempewatuwe & humidity IN WEAW-TIME and bwing mowe vawiety to youw wowwds!!! ٩(ˊᗜˋ*)و",
-      "$tmp_wip": "Cuwwentwy wowk-in-pwogwess. M-Mowe featuwes awe pwannyed fow the nyext vewsions! x3",
+      "update_title": "Update 0.4 - Jovian Expansion!",
+      "update_brief": "A-adds MOWE pawametews to divewsify youw wowwds, l-like XYZ wawping, dispwacemyent, a-and wing systems!!! Gas giants c-can now be (we)cweated at wiww!!! o(^▽^)o",
+      "$tmp_wip": "Cuwwentwy wowk-in-pwogwess. M-Mowe featuwes awe pwanned fow the nyext vewsions! x3",
 
       "shortcuts": "Showtcuts",
       "shortcuts_note": "Key bindings c-can be weassignyed in the app s-settings!",
@@ -97,6 +97,7 @@
       "general_theme_supernova": "Supewnyova",
       "general_theme_voyager": "Voyagew",
       "general_monospace": "Enyabwe monyospace font",
+      "general_init_dialog": "Show init diawog on woad",
 
       "editor": "Editow ^w^",
       "editor_lensflare": "@:dialog.init.shortcuts_lensflare",
@@ -137,10 +138,14 @@
         "02_codex": "I-intwoduces the Codex: wist, impowt and expowt pwanyets easiwy a-and entiwewy within youw bwowsew!!!",
         "02_ui": "New diawog boxes, toasts & settings, a-and new editow pawametews (wadius, a-atmosphewe)!!!",
         "02_a11y": "Accessibiwity featuwes & impwovements!!!",
-        "03_title": "Update 0.3 - Ecosystems ",
+        "03_title": "Update 0.3 - Ecosystems",
         "03_biomes": "Intwoduces a f-fuwwy fwedged biome system, using tempewatuwe- & humidity-based p-posishoning!!!",
         "03_linux": "Suwface noise n-now wowks propewly on Winyux-b-based bwowsews!!!",
-        "03_fixes": "S-smawwew pewfowmance fixes aaaaww awound, incwuding fewew GLSL unifowms & vawyings!!!"
+        "03_fixes": "S-smawwew pewfowmance fixes aaaaww awound, incwuding fewew GLSL unifowms & vawyings!!!",
+        "04_title": "Update 0.4 - Jovian Expansion",
+        "04_params": "Adds nyew p-pawametews fow youw wowwds: XYZ wawping, dispwacement a-and wing systems!!!",
+        "04_ui": "New diawog box w-when twying to weave the Editow wi-without saving fiwst, awong with MANY minow touchie-upsies & impwovements!!!",
+        "04_misc": "Adds fr-FR twanswation, and changes pwoject wicense to ISTSL-NR 1.0!!!"
       },
       "credits": {
         "$title": "Cwedits & attwibushon",

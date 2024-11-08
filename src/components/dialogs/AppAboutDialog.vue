@@ -39,7 +39,7 @@
         <CollapsibleSection class="about-updates" icon="mingcute:news-line">
           <template v-slot:title>{{ $t('dialog.about.changelogs.$title') }}</template>
           <template v-slot:content>
-            <CollapsibleSection class="about-update-inner" icon="mingcute:planet-line">
+            <CollapsibleSection class="about-update-inner" icon="mingcute:world-2-line">
               <template v-slot:title>{{ $t('dialog.about.changelogs.02_title') }}</template>
               <template v-slot:content>
                 <ul style="list-style-type: disc; margin-left: 1rem">
@@ -56,6 +56,16 @@
                   <li starred>{{ $t('dialog.about.changelogs.03_biomes') }}</li>
                   <li>{{ $t('dialog.about.changelogs.03_linux') }}</li>
                   <li>{{ $t('dialog.about.changelogs.03_fixes') }}</li>
+                </ul>
+              </template>
+            </CollapsibleSection>
+            <CollapsibleSection class="about-update-inner" icon="mingcute:planet-line">
+              <template v-slot:title>{{ $t('dialog.about.changelogs.04_title') }}</template>
+              <template v-slot:content>
+                <ul style="list-style-type: disc; margin-left: 1rem">
+                  <li starred>{{ $t('dialog.about.changelogs.04_params') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.04_ui') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.04_misc') }}</li>
                 </ul>
               </template>
             </CollapsibleSection>

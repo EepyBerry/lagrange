@@ -43,8 +43,8 @@
     "init": {
       "$title": "Welcome to @:main.$title",
       "introduction": "Lagrange is a fully procedural planet builder, perfect for worldbuilding and tying your lore to a proper planet, solar system or even an entire galaxy!",
-      "update_title": "Update 0.3 - Ecosystems!",
-      "update_brief": "Adds a complete, layer-based biome system for you to spice up your planets with! Adjust their temperature & humidity in real-time and bring more variety to your worlds!",
+      "update_title": "Update 0.4 - Jovian Expansion!",
+      "update_brief": "Adds more parameters to diversify your worlds, such as XYZ warping, displacement, and ring systems. Gas giants can now be (re)created at will!",
       "$tmp_wip": "Currently work-in-progress. More features are planned for the next versions!",
 
       "shortcuts": "Shortcuts",
@@ -97,6 +97,7 @@
       "general_theme_supernova": "Supernova",
       "general_theme_voyager": "Voyager",
       "general_monospace": "Enable monospace font",
+      "general_init_dialog": "Show init dialog on load",
 
       "editor": "Editor",
       "editor_lensflare": "@:dialog.init.shortcuts_lensflare",
@@ -140,7 +141,11 @@
         "03_title": "Update 0.3 - Ecosystems",
         "03_biomes": "Introduces a fully fledged biome system, using temperature- & humidity-based positioning!",
         "03_linux": "Surface noise now works properly in Linux-based browsers!",
-        "03_fixes": "Smaller performance fixes all around, including fewer GLSL uniforms & varyings!"
+        "03_fixes": "Smaller performance fixes all around, including fewer GLSL uniforms & varyings!",
+        "04_title": "Update 0.4 - Jovian Expansion",
+        "04_params": "Adds new parameters for your worlds: XYZ warping, displacement and ring systems!",
+        "04_ui": "New dialog box when trying to leave the Editor without saving first, along with many minor touch-ups & improvements",
+        "04_misc": "Adds fr-FR translation, and changes project license to ISTSL-NR 1.0"
       },
       "credits": {
         "$title": "Credits & attribution",

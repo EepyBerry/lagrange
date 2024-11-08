@@ -71,6 +71,14 @@
               >
                 {{ $t('dialog.settings.general_monospace') }}:
               </ParameterCheckbox>
+              <ParameterCheckbox
+                id="settings-init"
+                :true-value="true"
+                :false-value="false"
+                v-model="appSettings.showInitDialog"
+              >
+                {{ $t('dialog.settings.general_init_dialog') }}:
+              </ParameterCheckbox>
             </ParameterGrid>
           </template>
         </CollapsibleSection>
@@ -244,6 +252,7 @@ const appSettings: Ref<IDBSettings> = ref({
   locale: 'en-US',
   theme: '',
   font: '',
+  showInitDialog: true,
   enableAnimations: true,
   enableEffects: true,
   extrasHologramMode: false,
@@ -328,6 +337,7 @@ async function updateSettings() {
     locale: mapLocale(appSettings.value!.locale),
     theme: appSettings.value!.theme,
     font: appSettings.value!.font,
+    showInitDialog: appSettings.value!.showInitDialog,
     enableEffects: appSettings.value!.enableEffects,
     enableAnimations: appSettings.value!.enableAnimations,
     extrasHologramMode: appSettings.value!.extrasHologramMode
