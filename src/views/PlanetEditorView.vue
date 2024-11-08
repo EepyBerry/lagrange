@@ -432,6 +432,7 @@ function registerCloudDataUpdates(): void {
     const v = degToRad(isNaN(LG_PLANET_DATA.value.cloudsRotation) ? 0 : LG_PLANET_DATA.value.cloudsRotation)
     _clouds.setRotationFromAxisAngle(_clouds.up, planetRotation + v)
   })
+  $dataUpdateMap.set('_cloudsShowWarping',       () => setMeshUniform(_clouds,   'u_warp', LG_PLANET_DATA.value.cloudsShowWarping))
   $dataUpdateMap.set('_cloudsNoise._frequency',  () => patchMeshUniform(_clouds, 'u_noise', { freq: LG_PLANET_DATA.value.cloudsNoise.frequency }))
   $dataUpdateMap.set('_cloudsNoise._amplitude',  () => patchMeshUniform(_clouds, 'u_noise', { amp: LG_PLANET_DATA.value.cloudsNoise.amplitude }))
   $dataUpdateMap.set('_cloudsNoise._lacunarity', () => patchMeshUniform(_clouds, 'u_noise', { lac: LG_PLANET_DATA.value.cloudsNoise.lacunarity }))

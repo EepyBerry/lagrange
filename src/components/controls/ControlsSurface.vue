@@ -25,24 +25,24 @@
       </ParameterSlider>
     </template>
 
-    <ParameterCategory>{{ $t('editor.controls.surface.warping') }}</ParameterCategory>
+    <ParameterCategory>{{ $t('editor.general.warping') }}</ParameterCategory>
     <ParameterCheckbox
       v-model="LG_PLANET_DATA.planetSurfaceShowWarping"
       id="s-warp"
       :true-value="true"
       :false-value="false"
     >
-      {{ $t('editor.controls.surface.warping_show') }}
+      {{ $t('editor.general.warping_show') }}
     </ParameterCheckbox>
     <template v-if="LG_PLANET_DATA.planetSurfaceShowWarping">
       <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceNoise.xWarpFactor" id="s-xwarp" :step="0.01" :max="8">
-        {{ $t('editor.general.noise_xwarp') }}
+        {{ $t('editor.general.warping_x') }}
       </ParameterSlider>
       <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceNoise.yWarpFactor" id="s-ywarp" :step="0.01" :max="8">
-        {{ $t('editor.general.noise_ywarp') }}
+        {{ $t('editor.general.warping_y') }}
       </ParameterSlider>
       <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceNoise.zWarpFactor" id="s-zwarp" :step="0.01" :max="8">
-        {{ $t('editor.general.noise_zwarp') }}
+        {{ $t('editor.general.warping_z') }}
       </ParameterSlider>
     </template>
 

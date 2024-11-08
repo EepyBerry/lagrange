@@ -196,6 +196,7 @@ export function createClouds(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
     cloudsVertShader,
     cloudsFragShader,
     {
+      u_warp: { value: data.cloudsShowWarping },
       u_noise: {
         value: {
           freq: data.cloudsNoise.frequency,

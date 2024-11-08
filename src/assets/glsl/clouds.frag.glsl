@@ -15,6 +15,7 @@ struct NoiseParameters {
 };
 
 // Main uniforms
+uniform bool u_warp;
 uniform NoiseParameters u_noise;
 uniform vec3 u_color;
 uniform sampler2D u_opacity_tex;
@@ -31,9 +32,9 @@ const vec3 DVEC_B = vec3(0.2, 0.2, 0.0);
 void main() {
     // Warping
     vec3 wPos = vec3(
-        vPos.x * u_noise.xwarp,
-        vPos.y * u_noise.ywarp,
-        vPos.z * u_noise.zwarp
+        vPos.x * mix(1.0, u_noise.xwarp, float(u_warp)),
+        vPos.y * mix(1.0, u_noise.ywarp, float(u_warp)),
+        vPos.z * mix(1.0, u_noise.zwarp, float(u_warp))
     );
 
     // Clouds

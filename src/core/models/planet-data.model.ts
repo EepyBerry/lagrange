@@ -321,6 +321,7 @@ export default class PlanetData extends ChangeTracker {
   private _cloudsEnabled: boolean
   private _cloudsRotation: number
   private _cloudsHeight: number
+  private _cloudsShowWarping: boolean
   private _cloudsNoise: NoiseParameters
   private _cloudsColor: Color
   private _cloudsColorRamp: ColorRamp
@@ -349,6 +350,14 @@ export default class PlanetData extends ChangeTracker {
   public set cloudsHeight(height: number) {
     this._cloudsHeight = clamp(height, 0, 10)
     this.markForChange('_cloudsHeight')
+  }
+
+  public get cloudsShowWarping(): boolean {
+    return this._cloudsShowWarping
+  }
+  public set cloudsShowWarping(value: boolean) {
+    this._cloudsShowWarping = value
+    this.markForChange('_cloudsShowWarping')
   }
 
   public get cloudsNoise(): NoiseParameters {
@@ -631,6 +640,7 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsEnabled = true
     this._cloudsRotation = 0.0
     this._cloudsHeight = 1.0
+    this._cloudsShowWarping = false
     this._cloudsNoise = new NoiseParameters(this._changedProps, '_cloudsNoise', 4.0, 0.6, 1.75, 4)
     this._cloudsColor = new Color(0xffffff)
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
@@ -739,6 +749,7 @@ export default class PlanetData extends ChangeTracker {
     // Clouds
     this.cloudsEnabled = data._cloudsEnabled ?? true
     this.cloudsRotation = data._cloudsRotation ?? 0.0
+    this.cloudsShowWarping = data._cloudsShowWarping ?? false
     this.cloudsNoise.loadData(data._cloudsNoise)
     this.cloudsColor.set(data._cloudsColor ?? 0xffffff)
     this.cloudsColorRamp.loadFromSteps(

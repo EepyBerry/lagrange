@@ -199,10 +199,13 @@
       "displacement_epsilon": "Epsilon",
       "displacement_multiplier": "Multiplier",
 
+      "warping": "Warping",
+      "warping_show": "Show warping",
+      "warping_x": "X warping",
+      "warping_y": "Y warping",
+      "warping_z": "Z warping",
+
       "noise_layers": "Layers",
-      "noise_xwarp": "X warping",
-      "noise_ywarp": "Y warping",
-      "noise_zwarp": "Z warping",
       "noise_fbm_frequency": "Frequency",
       "noise_fbm_amplitude": "Amplitude",
       "noise_fbm_lacunarity": "Lacunarity",
@@ -252,8 +255,6 @@
         "bumpmap_show": "Show bumps",
         "bumpmap_strength": "Bump strength",
 
-        "warping": "Warping",
-        "warping_show": "Show warping",
         "displacement": "Displacement",
         "displacement_show": "Show displacement",
         "noise": "Noise parameters"

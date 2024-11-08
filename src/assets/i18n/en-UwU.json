@@ -199,10 +199,13 @@
       "displacement_epsilon": "Epsiwon",
       "displacement_multiplier": "Muwtipliew",
 
+      "warping": "Wawping",
+      "warping_show": "Show wawping :3",
+      "warping_x": "X wawping",
+      "warping_y": "Y wawping",
+      "warping_z": "Z wawping",
+
       "noise_layers": "Wayews",
-      "noise_xwarp": "X wawping",
-      "noise_ywarp": "Y wawping",
-      "noise_zwarp": "Z wawping",
       "noise_fbm_frequency": "Fwequency",
       "noise_fbm_amplitude": "Ampwitude",
       "noise_fbm_lacunarity": "Wacunawity",
@@ -252,8 +255,6 @@
         "bumpmap_show": "Show bumps :3",
         "bumpmap_strength": "Bump stwength",
 
-        "warping": "Wawping",
-        "warping_show": "Show wawping :3",
         "displacement": "Dispwacement",
         "displacement_show": "Show dispwacement :3",
         "noise": "Nyoise p-pawametews"

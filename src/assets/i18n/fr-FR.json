@@ -199,10 +199,13 @@
       "displacement_epsilon": "Epsilon",
       "displacement_multiplier": "Multiplicateur",
 
+      "warping": "Déformation",
+      "warping_show": "Afficher déformation",
+      "warping_x": "Déformation X",
+      "warping_y": "Déformation Y",
+      "warping_z": "Déformation Z",
+
       "noise_layers": "Nb. de couches",
-      "noise_xwarp": "Déformation X",
-      "noise_ywarp": "Déformation Y",
-      "noise_zwarp": "Déformation Z",
       "noise_fbm_frequency": "Fréquence",
       "noise_fbm_amplitude": "Amplitude",
       "noise_fbm_lacunarity": "Lacunarité",
@@ -252,8 +255,6 @@
         "bumpmap_show": "Afficher les bumps",
         "bumpmap_strength": "Intensité des bumps",
 
-        "warping": "Déformation",
-        "warping_show": "Afficher déformation",
         "displacement": "Perturbation",
         "displacement_show": "Afficher perturbation",
         "noise": "Paramètres de bruit"
