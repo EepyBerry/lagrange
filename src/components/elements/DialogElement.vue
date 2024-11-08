@@ -67,8 +67,6 @@ defineExpose({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open })
 <style scoped lang="scss">
 dialog[open].lg {
   position: fixed;
-  scrollbar-color: var(--lg-accent) transparent;
-  scrollbar-width: thin;
 
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);

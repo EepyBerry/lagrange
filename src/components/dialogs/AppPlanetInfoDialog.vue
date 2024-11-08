@@ -171,6 +171,7 @@ function getMode(value: number|undefined) {
     padding-top: 1.5rem;
 
     border-top: 2px solid var(--lg-accent);
+    border-top-left-radius: 4px;
     font-size: 1.05rem;
 
     table#planet-basic-data {
@@ -185,6 +186,7 @@ function getMode(value: number|undefined) {
     padding-top: 1rem;
 
     border-top: 2px solid var(--lg-accent);
+    border-top-left-radius: 4px;
     font-size: 1.05rem;
 
     display: flex;

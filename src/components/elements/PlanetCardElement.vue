@@ -94,6 +94,9 @@ onMounted(() => setTimeout(() => cardRoot.value?.classList.add('animated')))
     opacity: 1;
   }
 
+  .deco-polygon {
+    left: -1px;
+  }
   .planet-preview {
     position: relative;
     color: var(--lg-text);

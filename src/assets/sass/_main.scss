@@ -3,9 +3,7 @@
 *::after {
   box-sizing: border-box;
   margin: 0;
-
-  scrollbar-color: var(--lg-accent) transparent;
-  scrollbar-width: thin;
+  scrollbar-color: var(--lg-logo) var(--lg-input);
 }
 
 html {
@@ -60,6 +58,7 @@ hr {
   width: 48px;
   height: 16px;
   background: var(--lg-accent);
+  border-bottom-left-radius: 2px;
   clip-path: polygon(0 0, 100% 0, 75% 100%, 0 100%);
 
   .hole {
