@@ -1,5 +1,5 @@
 <template>
-  <footer>
+  <footer :class="{ transparent: $route.name !== 'codex' }">
     <div id="footer-nav">
       <button
         class="lg dark"
@@ -54,7 +54,6 @@ footer {
   align-self: center;
   gap: 1rem;
   z-index: 5;
-  backdrop-filter: blur(8px) brightness(50%);
 
   #footer-nav {
     display: flex;
@@ -69,15 +68,21 @@ footer {
     }
   }
 }
+footer:not(.transparent) {
+  backdrop-filter: blur(8px) brightness(25%);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
 @media screen and (max-width: 1199px) {
-  footer {
+  footer, footer:not(.transparent) {
     padding: 0.5rem;
     align-self: flex-end;
+    border-top-right-radius: 0;
   }
 }
 
 @media screen and (max-width: 767px) {
-  footer {
+  footer, footer:not(.transparent) {
     display: none;
   }
 }
