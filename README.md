@@ -29,12 +29,12 @@ _(**note:** this is something I am working on during my free time, which means t
 
 <div align="center">
   <img width="30%" src="https://github.com/user-attachments/assets/937ec6c2-6969-49fa-a32c-856a759524f0" title="Kormeg" alt="planet:Kormeg">
-  <img width="30%" src="https://github.com/user-attachments/assets/73345f0a-43d9-4055-9366-3150f499502f" title="Meriana" alt="planet:Meriana">
+  <img width="30%" src="https://github.com/user-attachments/assets/27988862-2186-4704-97e3-5c1b579a1a8d" title="Meriana" alt="planet:Meriana">
   <img width="30%" src="https://github.com/user-attachments/assets/7f20e7d1-a390-4050-8df6-3e8b5f1a6145" title="Hoven" alt="planet:Hoven">
 </div>
 <div align="center">
   <img width="30%" src="https://github.com/user-attachments/assets/94951339-dc6f-4f68-9ef2-259cc7b585eb" title="Rakken IV" alt="planet:Rakken IV">
-  <img width="30%" src="https://github.com/user-attachments/assets/9309ad14-6de0-4dc8-a37b-5b617395baf4" title="Rilgar" alt="planet:Rilgar">
+  <img width="30%" src="https://github.com/user-attachments/assets/6535c328-5765-4e19-8fb0-b50e547dc54e" title="Hermeus Major" alt="planet:Hermeus Major">
   <img width="30%" src="https://github.com/user-attachments/assets/476c8706-88a7-49c2-a6d2-2cd152207496" title="Xu'Alatl" alt="planet:Xu'Alatl">
 </div>
 
@@ -87,8 +87,8 @@ Vite copies the output to the `dist` folder, creating it first if need be.
 
 - Dark side "night lights"!
 - Cracks & Craters!
-- Gas Giants!
 - Asteroid belts!
+- Planet animations!
 - _Galactic Map_, to organize them around stars!
 
 ## ✨ Inspirations & credits
