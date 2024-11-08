@@ -129,7 +129,7 @@ onUnmounted(() => {
   EventBus.deregisterWindowEventListener('resize', onWindowResize)
   EventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
 })
-onBeforeRouteLeave((to, from, next) => {
+onBeforeRouteLeave((_to, _from, next) => {
   if (hasPlanetBeenEdited.value) {
     next(false)
     warnSaveDialogRef.value?.open()
