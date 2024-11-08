@@ -339,11 +339,12 @@
   },
   "404": {
     "$title": "Page Non Trouvée",
-    "text_01": "Rien par ici, désolée!",
+    "text_01": "Rien par ici, désolé!",
     "text_02": "\"Ce secteur est entièrement vide, Capitaine!\"",
-    "text_03": "Oh. J'ai dû rater un virage quelque part...",
-    "text_04": "PAGE\u00A0EST\u00A0MANQUANTE. STATUT\u00A0EST\u00A0404. ESPACE\u00A0EST\u00A0VIDE.",
-    "subtext": "La page demandée n'a pas pu être trouvée."
+    "text_03": "Oh. Vous avez dû rater un virage quelque part...",
+    "text_04": "PAGE\u00A0=\u00A0MANQUANTE. STATUT\u00A0=\u00A0404. ESPACE\u00A0=\u00A0VIDE.",
+    "subtext": "La page demandée n'a pas pu être trouvée.",
+    "link": "Retour au codex"
   },
   "toast": {
     "storage_success": "Stockage persistant activé !",

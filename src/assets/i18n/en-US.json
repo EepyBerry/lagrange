@@ -343,7 +343,8 @@
     "text_02": "\"This sector is completely empty, Captain!\"",
     "text_03": "Huh. Must've taken a wrong turn somewhere...",
     "text_04": "PAGE\u00A0IS\u00A0MISSING. STATUS\u00A0IS\u00A0404. SPACE\u00A0IS\u00A0EMPTY.",
-    "subtext": "The requested page could not be found."
+    "subtext": "The requested page could not be found.",
+    "link": "Back to codex"
   },
   "toast": {
     "storage_success": "Persistent storage enabled!",

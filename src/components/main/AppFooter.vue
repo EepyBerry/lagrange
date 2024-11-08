@@ -1,5 +1,5 @@
 <template>
-  <footer :class="{ transparent: $route.name !== 'codex' }">
+  <footer :class="{ transparent: $route.name !== 'codex' }" v-show="$route.name !== 'page-not-found'">
     <div id="footer-nav">
       <button
         class="lg dark"
