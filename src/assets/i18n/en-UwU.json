@@ -167,6 +167,14 @@
       "$action_cancel": "Cancew",
       "$action_confirm": "Confiwm"
     },
+    "warnsave": {
+      "$title": "Unsaved pwanyet wawning",
+      "message": "The c-cuwwent pwanyet has not been s-saved yet... Weave the Editow anyway? ⊙﹏⊙∥",
+      "warning": "Aww unsaved data wiww be wost!",
+      "$action_cancel": "Cancew",
+      "$action_saveconfirm": "Save and confiwm",
+      "$action_confirm": "Confiwm"
+    },
     "clear_data": {
       "$title": "Cweaw Wagwange data",
       "message": "A-are you suwe you want to c-cweaw aww appwication data? (っ- ‸ - ς)",
@@ -382,6 +390,7 @@
     "dialog_about": "About @:main.$title diawog",
     "dialog_reset": "Confiwm weset diawog",
     "dialog_delete": "Confiwm dewete diawog",
+    "dialog_warn_save": "Unsaved data wawning diawog",
     "dialog_clear_data": "Confiwm data cweaw diawog",
 
     "topbar_rename": "@:tooltip.topbar_rename",

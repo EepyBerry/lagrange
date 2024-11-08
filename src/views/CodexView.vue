@@ -1,7 +1,7 @@
 <template>
   <span id="codex-background"></span>
   <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
-    <AppNavigation :compact-mode="showCompactNavigation" />
+    <AppNavigation :compact-mode="showCompactNavigation" :block-navigation="false" />
     <div id="codex-header-controls">
       <RouterLink class="lg dark create-planet" to="/planet-editor/new" :title="$t('codex.$action_add')">
         <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />

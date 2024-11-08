@@ -1,31 +1,36 @@
 <template>
   <DialogElement
     ref="dialogRef"
-    id="dialog-clear-data-confirm"
+    id="dialog-warn-save"
     :showTitle="true"
     :showActions="true"
-    :aria-label="$t('a11y.dialog_clear_data')"
+    :prevent-click-close="true"
+    :aria-label="$t('a11y.dialog_warn_save')"
   >
     <template v-slot:title>
       <iconify-icon icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
-      {{ $t('dialog.clear_data.$title') }}
+      {{ $t('dialog.warnsave.$title') }}
     </template>
     <template v-slot:content>
-      <div class="clear-data-text">
-        <p>{{ $t('dialog.clear_data.message') }}</p>
+      <div class="warn-text">
+        <p>{{ $t('dialog.warnsave.message') }}</p>
         <p>
-          <strong>{{ $t('dialog.clear_data.warning') }}</strong>
+          <b>{{ $t('dialog.warnsave.warning') }}</b>
         </p>
       </div>
     </template>
     <template v-slot:actions>
-      <button class="lg" @click="cancelAndClose" autofocus>
+      <button class="lg" @click="dialogRef?.close()" autofocus>
         <iconify-icon icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
-        {{ $t('dialog.clear_data.$action_cancel') }}
+        {{ $t('dialog.warnsave.$action_cancel') }}
+      </button>
+      <button class="lg success" @click="saveConfirmClose" autofocus>
+        <iconify-icon icon="mingcute:save-2-line" width="1.25rem" aria-hidden="true" />
+        {{ $t('dialog.warnsave.$action_saveconfirm') }}
       </button>
       <button class="lg warn" @click="confirmAndClose">
-        <iconify-icon icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
-        {{ $t('dialog.clear_data.$action_confirm') }}
+        <iconify-icon icon="mingcute:exit-line" width="1.25rem" aria-hidden="true" />
+        {{ $t('dialog.warnsave.$action_confirm') }}
       </button>
     </template>
   </DialogElement>
@@ -35,15 +40,11 @@ import DialogElement from '../elements/DialogElement.vue'
 import { ref, type Ref } from 'vue'
 
 const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
+const $emit = defineEmits(['save-confirm', 'confirm'])
+defineExpose({ open: () => dialogRef.value?.open() })
 
-const $emit = defineEmits(['confirm'])
-defineExpose({
-  open: () => {
-    dialogRef.value?.open()
-  },
-})
-
-function cancelAndClose() {
+function saveConfirmClose() {
+  $emit('save-confirm')
   dialogRef.value?.close()
 }
 
@@ -54,16 +55,15 @@ function confirmAndClose() {
 </script>
 
 <style scoped lang="scss">
-#dialog-clear-data-confirm {
-  z-index: 20;
+#dialog-warn-save {
   min-width: 24rem;
-  .clear-data-text {
+  .warn-text {
     text-align: center;
     font-size: 1rem;
   }
 }
 @media screen and (max-width: 567px) {
-  #dialog-clear-data-confirm {
+  #dialog-warn-save {
     width: 100%;
     min-width: 0;
   }

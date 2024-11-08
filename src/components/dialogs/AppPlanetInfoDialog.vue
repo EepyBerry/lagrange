@@ -266,6 +266,7 @@ function getMode(value: number|undefined) {
 @media screen and (max-width: 567px) {
   #dialog-planet-info {
     width: 100%;
+    min-width: 0;
   }
 }
 </style>

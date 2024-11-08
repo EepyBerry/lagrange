@@ -167,6 +167,14 @@
       "$action_cancel": "Cancel",
       "$action_confirm": "Confirm"
     },
+    "warnsave": {
+      "$title": "Unsaved planet warning",
+      "message": "The current planet has not been saved yet. Leave the Editor anyway?",
+      "warning": "All unsaved data will be lost!",
+      "$action_cancel": "Cancel",
+      "$action_saveconfirm": "Save and confirm",
+      "$action_confirm": "Confirm"
+    },
     "clear_data": {
       "$title": "Clear Lagrange data",
       "message": "Are you sure you want to clear all application data?",
@@ -382,6 +390,7 @@
     "dialog_about": "About @:main.$title dialog",
     "dialog_reset": "Confirm reset dialog",
     "dialog_delete": "Confirm delete dialog",
+    "dialog_warn_save": "Unsaved data warning dialog",
     "dialog_clear_data": "Confirm data clear dialog",
 
     "topbar_rename": "@:tooltip.topbar_rename",

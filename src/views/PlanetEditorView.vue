@@ -1,6 +1,9 @@
 <template>
   <div id="editor-header" :class="{ compact: !!showCompactNavigation }">
-    <AppNavigation :compact-mode="showCompactNavigation" />
+    <AppNavigation 
+      :compact-mode="showCompactNavigation"
+      :block-navigation="hasPlanetBeenEdited"
+      @navigation-blocked="warnSaveDialogRef?.open()" />
     <PlanetInfoControls :compact-mode="showCompactInfo" @rename="patchMetaHead" @save="savePlanet"
       @reset="resetPlanet" />
   </div>
@@ -10,6 +13,7 @@
   <OverlaySpinner :load="showSpinner" />
   <AppWebGLErrorDialog ref="webglErrorDialogRef" @close="redirectToCodex" />
   <AppPlanetErrorDialog ref="planetErrorDialogRef" @close="redirectToCodex" />
+  <AppWarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
 </template>
 
 <script setup lang="ts">
@@ -64,7 +68,7 @@ import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
 import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
 import { recalculateBiomeTexture, recalculateRampTexture } from '@/core/helpers/texture.helper'
 import type { ColorRampStep } from '@/core/models/color-ramp.model'
-import { GeometryType } from '@/core/types'
+import AppWarnSaveDialog from '@/components/dialogs/AppWarnSaveDialog.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -77,12 +81,15 @@ const head = useHead({
 // Warnings
 const webglErrorDialogRef: Ref<{ openWithError: Function } | null> = ref(null)
 const planetErrorDialogRef: Ref<{ openWithError: Function } | null> = ref(null)
+const warnSaveDialogRef: Ref<{ open: Function } | null> = ref(null)
 let loadedCorrectly = false
 
 // Data
 const $dataUpdateMap: Map<string, Function> = new Map<string, Function>()
 const $planetEntityId: Ref<string> = ref('')
 let enableEditorRendering = true
+let watchForPlanetUpdates = false
+let hasPlanetBeenEdited: Ref<boolean> = ref(false)
 
 // Responsiveness
 const centerInfoControls: Ref<boolean> = ref(true)
@@ -148,6 +155,11 @@ async function bootstrapEditor() {
     showSpinner.value = false
     planetErrorDialogRef.value!.openWithError(error, error.stack)
   }
+}
+
+async function saveAndRedirectToCodex() {
+  await savePlanet()
+  redirectToCodex()
 }
 
 function redirectToCodex() {
@@ -532,6 +544,7 @@ function renderFrame(stats: Stats) {
   }
   stats.update()
   updatePlanet()
+  watchForPlanetUpdates = true
   _lensFlare.update($se.renderer, $se.scene, $se.camera, clock)
   $se.renderer.render($se.scene, $se.camera)
 }
@@ -566,6 +579,7 @@ async function resetPlanet() {
 }
 
 async function savePlanet() {
+  hasPlanetBeenEdited.value = false
   showSpinner.value = true
 
   // -------- Generate planet preview -------- //
@@ -599,6 +613,10 @@ async function savePlanet() {
 }
 
 function updatePlanet() {
+  if (watchForPlanetUpdates && LG_PLANET_DATA.value.changedProps.length > 0) {
+    hasPlanetBeenEdited.value = true
+    console.debug('Planet has been edited, warning user in case of unsaved data')
+  }
   for (let changedProp of LG_PLANET_DATA.value.changedProps.filter(ch => !!ch.prop)) {
     let key = changedProp.prop
     // Check for additional info, separated by |

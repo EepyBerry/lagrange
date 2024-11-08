@@ -156,7 +156,7 @@
     "reset": {
       "$title": "Réinitialiser",
       "message": "Réinitialiser la planète en cours ?",
-      "warning": "Tout changement non sauvegardé sera perdu !",
+      "warning": "Toute modification non enregistrée sera perdue !",
       "$action_cancel": "Annuler",
       "$action_confirm": "Confirmer"
     },
@@ -165,6 +165,14 @@
       "message": "Confirmer la suppression de cette planète?",
       "warning": "Cette action ne peut pas être annulée!",
       "$action_cancel": "Annuler",
+      "$action_confirm": "Confirmer"
+    },
+    "warnsave": {
+      "$title": "Attention: planète non enregistrée",
+      "message": "Cette planète n'a pas encore été enregistrée. Quitter l'Éditeur quand même?",
+      "warning": "Toute modification non enregistrée sera perdue !",
+      "$action_cancel": "Annuler",
+      "$action_saveconfirm": "Enregistrer et confirmer",
       "$action_confirm": "Confirmer"
     },
     "clear_data": {
@@ -346,13 +354,13 @@
     "import_success": "Planète·s importé·es !",
     "import_partial": "Attention: certaines planètes n'ont pas pu être importées",
     "import_failure": "Impossible d'importer les planètes. Vérifiez que les bons fichiers ont été sélectionnés, puis essayez à nouveau",
-    "save_success": "Planète sauvegardée !"
+    "save_success": "Planète enregistrée !"
   },
   "tooltip": {
     "topbar_rename": "Renommer la planète",
     "topbar_rename_confirm": "Confirmer le nom",
     "topbar_reset": "Réinitialiser",
-    "topbar_save": "Sauvegarder",
+    "topbar_save": "Enregistrer",
     "topbar_import": "Importer un fichier de planète",
     "topbar_export": "Exporter la planète en fichier",
     "topbar_export_all": "Exporter toutes les planètes au format .zip",
@@ -382,6 +390,7 @@
     "dialog_about": "Modale d'information sur @:main.$title",
     "dialog_reset": "Modale de confirmation de réinitialisation",
     "dialog_delete": "Modale de confirmation de suppression",
+    "dialog_warn_save": "Modale d'avertissement de données non enregistrées",
     "dialog_clear_data": "Modale de confirmation de vidage des données",
 
     "topbar_rename": "@:tooltip.topbar_rename",

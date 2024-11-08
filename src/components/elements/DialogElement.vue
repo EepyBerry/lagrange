@@ -126,6 +126,12 @@ dialog[open].lg::backdrop {
 @media screen and (max-width: 567px) {
   dialog[open].lg {
     width: 100%;
+    min-width: 0;
+
+    .dialog-actions {
+      flex-direction: column;
+      gap: 1rem;
+    }
   }
 }
 </style>

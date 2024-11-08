@@ -5,38 +5,53 @@
       <iconify-icon v-else icon="material-symbols:menu-rounded" width="1.75rem" aria-hidden="true" />
     </button>
 
-    <aside id="nav-compact" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
+    <aside id="nav-compact" ref="sidebar":class="{ open: isOpen }" @click="handleClick">
       <nav>
         <hr />
-        <RouterLink class="lg nav" to="/codex" :aria-label="$t('a11y.action_nav_codex')">
+        <a
+          class="lg nav"
+          :class="{ 'router-link-active': route.name === 'codex' }"
+          :aria-label="$t('a11y.action_nav_codex')"
+          @click="handleCodexClick"
+        >
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
-        </RouterLink>
+        </a>
         <hr />
-        <RouterLink
+        <a
           class="lg nav"
           :class="{ 'router-link-active': !!route.params.id }"
-          to="/planet-editor/new"
           :aria-label="$t('a11y.action_nav_editor')"
+          @click="router.push('/planet-editor/new')"
         >
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
-        </RouterLink>
+      </a>
       </nav>
     </aside>
   </template>
   <template v-else>
     <aside id="nav-full" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
       <nav>
-        <RouterLink class="lg nav" to="/codex">
+        <a 
+          class="lg nav"
+          :class="{ 'router-link-active': route.name === 'codex' }"
+          :aria-label="$t('a11y.action_nav_codex')"
+          @click="handleCodexClick"
+        >
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
-        </RouterLink>
+        </a>
         <hr />
-        <RouterLink class="lg nav" :class="{ 'router-link-active': !!route.params.id }" to="/planet-editor/new">
+        <a
+          class="lg nav"
+          :class="{ 'router-link-active': !!route.params.id }"
+          :aria-label="$t('a11y.action_nav_editor')"
+          @click="router.push('/planet-editor/new')"
+        >
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
-        </RouterLink>
+        </a>
       </nav>
     </aside>
   </template>
@@ -45,14 +60,16 @@
 <script setup lang="ts">
 import { EventBus } from '@/core/event-bus'
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
+const router = useRouter()
 const route = useRoute()
 const buttonOpen: Ref<HTMLElement | null> = ref(null)
 const sidebar: Ref<HTMLElement | null> = ref(null)
 const isOpen: Ref<boolean> = ref(false)
 
-defineProps<{ compactMode: boolean }>()
+const $emit = defineEmits(['navigation-blocked'])
+const $props = defineProps<{ compactMode: boolean, blockNavigation: boolean }>()
 onMounted(async () => {
   EventBus.registerWindowEventListener('click', handleClick)
   EventBus.registerWindowEventListener('keydown', handleKey)
@@ -67,6 +84,17 @@ function handleClick(evt: MouseEvent) {
     isOpen.value = !isOpen.value
   } else if (evt.target !== sidebar.value && isOpen.value) {
     isOpen.value = false
+  }
+}
+
+function handleCodexClick(evt: MouseEvent) {
+  if ($props.blockNavigation) {
+    evt.preventDefault()
+    evt.stopPropagation()
+    evt.stopImmediatePropagation()
+    $emit('navigation-blocked')
+  } else {
+    router.push('/codex')
   }
 }
 
