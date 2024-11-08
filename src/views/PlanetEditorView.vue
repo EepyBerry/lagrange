@@ -1,9 +1,7 @@
 <template>
   <div id="editor-header" :class="{ compact: !!showCompactNavigation }">
     <AppNavigation 
-      :compact-mode="showCompactNavigation"
-      :block-navigation="hasPlanetBeenEdited"
-      @navigation-blocked="warnSaveDialogRef?.open()" />
+      :compact-mode="showCompactNavigation" />
     <PlanetInfoControls :compact-mode="showCompactInfo" @rename="patchMetaHead" @save="savePlanet"
       @reset="resetPlanet" />
   </div>
@@ -41,7 +39,7 @@ import { EventBus } from '@/core/event-bus'
 import { useI18n } from 'vue-i18n'
 import AppNavigation from '@/components/main/AppNavigation.vue'
 import { patchMeshUniform, setMatUniform, setMeshUniform, setMeshUniforms } from '@/utils/three-utils'
-import { useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import PlanetData from '@/core/models/planet-data.model'
 import {
   createAtmosphere,
@@ -130,6 +128,14 @@ onUnmounted(() => {
   }
   EventBus.deregisterWindowEventListener('resize', onWindowResize)
   EventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
+})
+onBeforeRouteLeave((to, from, next) => {
+  if (hasPlanetBeenEdited.value) {
+    next(false)
+    warnSaveDialogRef.value?.open()
+  } else {
+    next()
+  }
 })
 
 async function bootstrapEditor() {

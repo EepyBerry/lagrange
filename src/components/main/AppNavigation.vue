@@ -8,17 +8,17 @@
     <aside id="nav-compact" ref="sidebar":class="{ open: isOpen }" @click="handleClick">
       <nav>
         <hr />
-        <a
+        <RouterLink
+          to="/codex"
           class="lg nav"
-          :class="{ 'router-link-active': route.name === 'codex' }"
           :aria-label="$t('a11y.action_nav_codex')"
-          @click="handleCodexClick"
         >
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
-        </a>
+        </RouterLink>
         <hr />
-        <a
+        <RouterLink
+          to="/planet-editor/new"
           class="lg nav"
           :class="{ 'router-link-active': !!route.params.id }"
           :aria-label="$t('a11y.action_nav_editor')"
@@ -26,24 +26,24 @@
         >
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
-      </a>
+        </RouterLink>
       </nav>
     </aside>
   </template>
   <template v-else>
     <aside id="nav-full" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
       <nav>
-        <a 
+        <RouterLink 
+          to="/codex"
           class="lg nav"
-          :class="{ 'router-link-active': route.name === 'codex' }"
           :aria-label="$t('a11y.action_nav_codex')"
-          @click="handleCodexClick"
         >
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
-        </a>
+        </RouterLink>
         <hr />
-        <a
+        <RouterLink
+          to="/planet-editor/new"
           class="lg nav"
           :class="{ 'router-link-active': !!route.params.id }"
           :aria-label="$t('a11y.action_nav_editor')"
@@ -51,7 +51,7 @@
         >
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
-        </a>
+        </RouterLink>
       </nav>
     </aside>
   </template>
@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { EventBus } from '@/core/event-bus'
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
@@ -68,8 +68,7 @@ const buttonOpen: Ref<HTMLElement | null> = ref(null)
 const sidebar: Ref<HTMLElement | null> = ref(null)
 const isOpen: Ref<boolean> = ref(false)
 
-const $emit = defineEmits(['navigation-blocked'])
-const $props = defineProps<{ compactMode: boolean, blockNavigation: boolean }>()
+defineProps<{ compactMode: boolean }>()
 onMounted(async () => {
   EventBus.registerWindowEventListener('click', handleClick)
   EventBus.registerWindowEventListener('keydown', handleKey)
@@ -84,17 +83,6 @@ function handleClick(evt: MouseEvent) {
     isOpen.value = !isOpen.value
   } else if (evt.target !== sidebar.value && isOpen.value) {
     isOpen.value = false
-  }
-}
-
-function handleCodexClick(evt: MouseEvent) {
-  if ($props.blockNavigation) {
-    evt.preventDefault()
-    evt.stopPropagation()
-    evt.stopImmediatePropagation()
-    $emit('navigation-blocked')
-  } else {
-    router.push('/codex')
   }
 }
 
