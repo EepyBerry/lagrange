@@ -32,6 +32,6 @@ vec3 perturb_normal(vec3 pos, vec3 dx, vec3 dy,
     vec3 hPos = pos * (radius + height);
     vec3 dxPos = (pos + dx) * (radius + dxHeight);
     vec3 dyPos = (pos + dy) * (radius + dyHeight);
-    vec3 bumpN = normalize(cross(dxPos - hPos, dyPos - hPos));
+    vec3 bumpN = normalize(cross(dyPos - hPos, dxPos - hPos));
     return normalize(mix(vNormal, bumpN, bumpStrength));
 }
