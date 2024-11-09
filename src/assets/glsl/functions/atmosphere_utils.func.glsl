@@ -1,10 +1,10 @@
 // Sourced from Brian Jackson (@jaxzin), using code from GLtracy:
 // https://glitch.com/~polite-playful-wool
-// https://www.shadertoy.com/view/lslXDr
 // ------------------------------------------------------------------------------------------------
 
 // Written by GLtracy
 // Credit: https://www.shadertoy.com/view/lslXDr
+// Note: original code licensed under CC BY-NC-SA 3.0 Unported license (see: atmosphere_utils.func.glsl_LICENSE)
 
 // math const
 const float PI = 3.14159265359;

@@ -55,6 +55,7 @@ function confirmAndClose() {
 @media screen and (max-width: 567px) {
   #dialog-reset-confirm {
     width: 100%;
+    min-width: 0;
   }
 }
 </style>

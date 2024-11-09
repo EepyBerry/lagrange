@@ -1,6 +1,6 @@
 {
   "name": "lagrange",
-  "version": "0.3.1",
+  "version": "0.4.0-SNAPSHOT",
   "private": true,
   "type": "module",
   "scripts": {
@@ -24,7 +24,7 @@
     "threejs"
   ],
   "author": "EepyBerry",
-  "license": "BSD-3-Clause",
+  "license": "ISTSL-NR 1.0",
   "dependencies": {
     "@floating-ui/vue": "^1.1.5",
     "@unhead/vue": "^1.11.10",

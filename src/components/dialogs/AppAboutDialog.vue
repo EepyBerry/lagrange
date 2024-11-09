@@ -16,14 +16,14 @@
             <iconify-icon mode="svg" icon="simple-icons:vuedotjs" width="3rem" style="fill: var(--lg-text)" />
             <div>
               <p>{{ $t('dialog.about.prefix_framework') }} <span class="highlight nowrap">Vue + Vite</span></p>
-              <ChipElement>3.4.21</ChipElement> <ChipElement>5.2.8</ChipElement>
+              <ChipElement>3.5.12</ChipElement> <ChipElement>5.4.10</ChipElement>
             </div>
           </div>
           <div class="tech-block">
             <iconify-icon mode="svg" icon="logos:threejs" width="3rem" style="fill: var(--lg-text)" />
             <div>
               <p>{{ $t('dialog.about.prefix_engine') }} <span class="highlight">three.js</span></p>
-              <ChipElement>r166</ChipElement>
+              <ChipElement>r169</ChipElement>
             </div>
           </div>
         </div>
@@ -39,7 +39,7 @@
         <CollapsibleSection class="about-updates" icon="mingcute:news-line">
           <template v-slot:title>{{ $t('dialog.about.changelogs.$title') }}</template>
           <template v-slot:content>
-            <CollapsibleSection class="about-update-inner" icon="mingcute:planet-line">
+            <CollapsibleSection class="about-update-inner" icon="mingcute:world-2-line">
               <template v-slot:title>{{ $t('dialog.about.changelogs.02_title') }}</template>
               <template v-slot:content>
                 <ul style="list-style-type: disc; margin-left: 1rem">
@@ -59,6 +59,26 @@
                 </ul>
               </template>
             </CollapsibleSection>
+            <CollapsibleSection class="about-update-inner" icon="mingcute:planet-line">
+              <template v-slot:title>{{ $t('dialog.about.changelogs.04_title') }}</template>
+              <template v-slot:content>
+                <ul style="list-style-type: disc; margin-left: 1rem">
+                  <li starred>{{ $t('dialog.about.changelogs.04_params') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.04_ui') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.04_misc') }}</li>
+                </ul>
+              </template>
+            </CollapsibleSection>
+          </template>
+        </CollapsibleSection>
+        <CollapsibleSection class="about-credits" icon="mingcute:bling-line">
+          <template v-slot:title>{{ $t('dialog.about.credits.$title') }}</template>
+          <template v-slot:content>
+            <ul style="list-style-type: disc; margin-left: 1rem">
+              <li v-html="$t('dialog.about.credits.glsl_terrestrial')"></li>
+              <li v-html="$t('dialog.about.credits.glsl_misc')"></li>
+              <li v-html="$t('dialog.about.credits.contributors')"></li>
+            </ul>
           </template>
         </CollapsibleSection>
       </div>
@@ -89,6 +109,7 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
       'logo text'
       'logo tech'
       'updt updt'
+      'cdts cdts'
       'crgt crgt';
     gap: 1rem;
 
@@ -133,9 +154,16 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
     .about-updates {
       min-width: 0;
       grid-area: updt;
-      margin: 1rem 0;
+      margin-top: 1rem;
       .about-update-inner {
         margin-top: 0.75rem;
+        min-width: 0;
+      }
+    }
+    .about-credits {
+      min-width: 0;
+      grid-area: cdts;
+      .about-update-inner {
         min-width: 0;
       }
     }
@@ -169,6 +197,7 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION))
         'text'
         'tech'
         'updt'
+        'cdts'
         'crgt';
       gap: 1.5rem 0;
       .about-text {

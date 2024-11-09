@@ -18,6 +18,7 @@ export function createRendererComponent(width: number, height: number, pixelRati
   }
   renderer.setSize(width, height)
   renderer.setClearColor(0x000000, 0)
+  renderer.setTransparentSort((a, b) => a.z - b.z) // Invert transparent sorting to have a "filter" effect for transparent objects (atmos/ring)
   renderer.shadowMap.enabled = true
   renderer.shadowMap.autoUpdate = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
@@ -74,16 +75,21 @@ export function createGeometryComponent(type: GeometryType, addtlRadius: number 
         LG_PLANET_DATA.value.planetMeshQuality,
         LG_PLANET_DATA.value.planetMeshQuality / 2.0,
       )
-    case GeometryType.TORUS:
-      return new THREE.TorusGeometry(
-        1.0 + addtlRadius / 4.0,
-        1.0 / 2.0 + addtlRadius * 2.0,
-        LG_PLANET_DATA.value.planetMeshQuality * 2.0,
-        LG_PLANET_DATA.value.planetMeshQuality * 4.0,
-      )
-    case GeometryType.BOX:
-      return new THREE.BoxGeometry(1.0 * 1.5 + addtlRadius, 1.0 * 1.5 + addtlRadius, 1.0 * 1.5 + addtlRadius)
+    case GeometryType.RING:
+      return new THREE.RingGeometry(1.25, 1.75, LG_PLANET_DATA.value.planetMeshQuality)
   }
+}
+
+export function createSphereGeometryComponent(addtlRadius: number = 0): THREE.SphereGeometry {
+  return new THREE.SphereGeometry(
+    1.0 + addtlRadius,
+    LG_PLANET_DATA.value.planetMeshQuality,
+    LG_PLANET_DATA.value.planetMeshQuality / 2.0,
+  )
+}
+
+export function createRingGeometryComponent(innerRadius: number = 1.25, outerRadius: number = 1.75): THREE.RingGeometry {
+  return new THREE.RingGeometry(innerRadius,outerRadius, LG_PLANET_DATA.value.planetMeshQuality)
 }
 
 /**

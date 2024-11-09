@@ -15,10 +15,14 @@ export const LOCALE_MAP: { [k: string]: string } = {
 // Accessibility
 export const A11Y_ANIMATE = ref(true)
 
+// Extras
+export const EXTRAS_HOLOGRAM_MODE = ref(true)
+
 // Scene object names
 export const LG_NAME_PLANET = 'lg:planet'
 export const LG_NAME_CLOUDS = 'lg:planet:clouds'
 export const LG_NAME_ATMOSPHERE = 'lg:planet:atmosphere'
+export const LG_NAME_RING = 'lg:planet:ring'
 export const LG_NAME_SUN = 'lg:sun'
 export const LG_NAME_SUNLIGHT = 'lg:sun:light'
 export const LG_NAME_AMBLIGHT = 'lg:ambient'
@@ -36,9 +40,12 @@ export const SUN_INIT_POS = new Vector3(0, 0, 4e3)
 export const ATMOSPHERE_HEIGHT_DIVIDER = 200.0
 
 // Textures
-export const SURFACE_TEXTURE_SIZE = 512
-export const CLOUDS_TEXTURE_SIZE = 512
-export const BIOME_TEXTURE_SIZE = 256
+export const TEXTURE_SIZES = {
+  SURFACE: 512,
+  CLOUDS: 256,
+  BIOME: 256,
+  RING: 256,
+}
 
 /**
  * Equal to 1/256.0

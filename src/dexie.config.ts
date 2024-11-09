@@ -24,6 +24,7 @@ interface IDBSettings {
   showInitDialog?: boolean
   enableEffects?: boolean
   enableAnimations?: boolean
+  extrasHologramMode?: boolean
 }
 
 interface IDBPlanet {

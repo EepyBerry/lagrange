@@ -68,6 +68,7 @@ function confirmAndClose() {
 @media screen and (max-width: 567px) {
   #dialog-delete-confirm {
     width: 100%;
+    min-width: 0;
   }
 }
 </style>

@@ -67,12 +67,11 @@ defineExpose({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open })
 <style scoped lang="scss">
 dialog[open].lg {
   position: fixed;
-  scrollbar-color: var(--lg-accent) transparent;
-  scrollbar-width: thin;
 
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
   border-radius: 4px;
+  box-shadow: 0 0 32px 16px var(--black);
   padding: 1rem;
   margin: auto;
   color: var(--lg-text);
@@ -114,12 +113,11 @@ dialog[open].lg {
   }
 }
 dialog[open].lg::backdrop {
-  background: rgb(0 0 0 / 37.5%);
+  background: rgb(0 0 0 / 40%);
 }
 
 @media screen and (max-width: 767px) {
   dialog[open].lg {
-    box-shadow: 0 0 1rem #000;
     max-width: calc(100% - 1rem);
     padding: 0.75rem;
   }
@@ -127,6 +125,12 @@ dialog[open].lg::backdrop {
 @media screen and (max-width: 567px) {
   dialog[open].lg {
     width: 100%;
+    min-width: 0;
+
+    .dialog-actions {
+      flex-direction: column;
+      gap: 1rem;
+    }
   }
 }
 </style>

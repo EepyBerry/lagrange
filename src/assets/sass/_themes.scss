@@ -1,4 +1,6 @@
 :root {
+  --black: #000;
+  
   --lg-text: #f7f7f7;
   --lg-text-disabled: #b6b6b6;
   --lg-primary: #070f13;
@@ -163,4 +165,17 @@
 .lg.warn:not(:disabled):active {
   background: var(--lg-warn-active);
   background: var(--lg-warn-active);
+}
+
+.lg.contrast {
+  background: var(--lg-contrast);
+  background: var(--lg-contrast);
+}
+.lg.contrast:not(:disabled):hover {
+  background: var(--lg-contrast-focus);
+  background: var(--lg-contrast-focus);
+}
+.lg.contrast:not(:disabled):active {
+  background: var(--lg-contrast-medium);
+  background: var(--lg-contrast-medium);
 }

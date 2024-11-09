@@ -1,5 +1,11 @@
+import type { RawRGBA } from '@/core/types'
 import { LOCALE_MAP } from '@core/globals'
+import type { Color } from 'three'
 import type { Composer } from 'vue-i18n'
+
+export function toRawRGBA(color: Color, a: number): RawRGBA {
+  return { r: color.r, g: color.g, b: color.b, a }
+}
 
 export function hexNumberToString(n: number, hash?: boolean): string {
   return (hash ? '#' : '') + n.toString(16).padStart(6, '0')

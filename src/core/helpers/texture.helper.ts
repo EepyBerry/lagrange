@@ -3,8 +3,9 @@ import type { Rect, DataTextureWrapper, Coordinates2D, RawRGBA } from '@/core/ty
 import { alphaBlendColors, avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
-import { clamp } from 'three/src/math/MathUtils.js'
+import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { INT8_TO_UNIT_MUL } from '../globals'
+import { toRawRGBA } from '@/utils/utils'
 
 export function createRampTexture(buffer: Uint8Array, w: number, steps: ColorRampStep[]): DataTextureWrapper {
   if (steps.length > 0) {
@@ -35,12 +36,11 @@ function fillRamp(buffer: Uint8Array, w: number, steps: ColorRampStep[]) {
     const totalPixels = Math.ceil(nextStepX - currentStepX)
 
     const lerpColor = new Color(0x0)
+    let lerpAlpha = currentStep.alpha
     for (let px = 0; px < totalPixels; px++) {
       lerpColor.lerpColors(currentStep.color, nextStep.color, truncateTo(px / totalPixels, 1e4))
-      buffer[stride] = Math.floor(lerpColor.r * 255.0)
-      buffer[stride + 1] = Math.floor(lerpColor.g * 255.0)
-      buffer[stride + 2] = Math.floor(lerpColor.b * 255.0)
-      buffer[stride + 3] = 255
+      lerpAlpha = lerp(currentStep.alpha, nextStep.alpha, truncateTo(px / totalPixels, 1e4))
+      _writeToBuffer(buffer, stride, toRawRGBA(lerpColor, lerpAlpha), 255.0)
       stride += 4
     }
   }
@@ -96,25 +96,16 @@ function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
     let rectDistance: number, bufferIdx: number, blendedColor: RawRGBA
     for (let biomePx = 0; biomePx < totalPixels; biomePx++) {
       bufferIdx = lineStride + cellStride
-      pixelRGBA.r = buffer[bufferIdx] * INT8_TO_UNIT_MUL
-      pixelRGBA.g = buffer[bufferIdx + 1] * INT8_TO_UNIT_MUL
-      pixelRGBA.b = buffer[bufferIdx + 2] * INT8_TO_UNIT_MUL
-      pixelRGBA.a = buffer[bufferIdx + 3] * INT8_TO_UNIT_MUL
+      _writeToRawRGBA(pixelRGBA, buffer, bufferIdx, INT8_TO_UNIT_MUL)
 
       rectDistance = findMinDistanceToRect(biomeRect, pixelCoords.x, pixelCoords.y, biomeOverlaps)
       biomeRGBA.a = truncateTo(clamp(rectDistance / biomeAvgSmoothness, 0, 1), 1e4)
 
       if (pixelRGBA.a > 0) {
         blendedColor = alphaBlendColors(pixelRGBA, biomeRGBA)
-        buffer[bufferIdx] = blendedColor.r * 255.0
-        buffer[bufferIdx + 1] = blendedColor.g * 255.0
-        buffer[bufferIdx + 2] = blendedColor.b * 255.0
-        buffer[bufferIdx + 3] = blendedColor.a * 255.0
+        _writeToBuffer(buffer, bufferIdx, blendedColor, 255.0)
       } else {
-        buffer[bufferIdx] = biomeRGBA.r * 255.0
-        buffer[bufferIdx + 1] = biomeRGBA.g * 255.0
-        buffer[bufferIdx + 2] = biomeRGBA.b * 255.0
-        buffer[bufferIdx + 3] = biomeRGBA.a * 255.0
+        _writeToBuffer(buffer, bufferIdx, biomeRGBA, 255.0)
       }
 
       cellStride += 4
@@ -128,4 +119,18 @@ function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
       }
     }
   }
+}
+
+function _writeToRawRGBA(rgba: RawRGBA, buffer: Uint8Array, index: number, multiplier: number = 1) {
+  rgba.r = clamp(buffer[index] * multiplier, 0, 1)
+  rgba.g = clamp(buffer[index + 1] * multiplier, 0, 1)
+  rgba.b = clamp(buffer[index + 2] * multiplier, 0, 1)
+  rgba.a = clamp(buffer[index + 3] * multiplier, 0, 1)
+}
+
+function _writeToBuffer(buffer: Uint8Array, index: number, rgba: RawRGBA, multiplier: number = 1) {
+  buffer[index] = clamp(rgba.r * multiplier, 0, 255)
+  buffer[index + 1] = clamp(rgba.g * multiplier, 0, 255)
+  buffer[index + 2] = clamp(rgba.b * multiplier, 0, 255)
+  buffer[index + 3] = clamp(rgba.a * multiplier, 0, 255)
 }

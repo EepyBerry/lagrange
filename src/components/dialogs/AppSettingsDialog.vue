@@ -22,6 +22,7 @@
                 <template v-slot:options>
                   <option value="en-US">English [en-US]</option>
                   <option value="en-UwU">Uwuish [en-UwU]</option>
+                  <option value="fr-FR">Français [fr-FR]</option>
                   <option value="_" disabled>{{ $t('main.more_coming_soon') }}</option>
                 </template>
               </ParameterSelect>
@@ -69,6 +70,14 @@
                 v-model="appSettings.font"
               >
                 {{ $t('dialog.settings.general_monospace') }}:
+              </ParameterCheckbox>
+              <ParameterCheckbox
+                id="settings-init"
+                :true-value="true"
+                :false-value="false"
+                v-model="appSettings.showInitDialog"
+              >
+                {{ $t('dialog.settings.general_init_dialog') }}:
               </ParameterCheckbox>
             </ParameterGrid>
           </template>
@@ -155,6 +164,26 @@
           </template>
         </CollapsibleSection>
 
+        <CollapsibleSection icon="mingcute:star-2-line" class="section-a11y">
+          <template v-slot:title>
+            {{ $t('dialog.settings.extras') }}
+          </template>
+          <template v-slot:content>
+            <div class="settings-extras">
+              <ParameterGrid>
+                <ParameterCheckbox
+                  id="settings-hologram-mode"
+                  :true-value="true"
+                  :false-value="false"
+                  v-model="appSettings.extrasHologramMode"
+                >
+                  {{ $t('dialog.settings.extras_hologram_mode') }}:
+                </ParameterCheckbox>
+              </ParameterGrid>
+            </div>
+          </template>
+        </CollapsibleSection>
+
         <CollapsibleSection icon="mingcute:alert-diamond-line" class="section-advanced">
           <template v-slot:title>
             {{ $t('dialog.settings.advanced') }}
@@ -206,7 +235,7 @@ import { useI18n } from 'vue-i18n'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
 import { mapLocale } from '@/utils/utils'
 import ParameterKeyBinding from '../parameters/ParameterKeyBinding.vue'
-import { A11Y_ANIMATE } from '@/core/globals'
+import { A11Y_ANIMATE, EXTRAS_HOLOGRAM_MODE } from '@/core/globals'
 import NotificationElement from '../elements/NotificationElement.vue'
 import ParameterCategory from '../parameters/ParameterCategory.vue'
 import AppClearDataConfirmDialog from './AppClearDataConfirmDialog.vue'
@@ -223,8 +252,10 @@ const appSettings: Ref<IDBSettings> = ref({
   locale: 'en-US',
   theme: '',
   font: '',
+  showInitDialog: true,
   enableAnimations: true,
   enableEffects: true,
+  extrasHologramMode: false,
 })
 const persistStorage: Ref<boolean> = ref(false)
 const selectedAction: Ref<string | null> = ref(null)
@@ -300,13 +331,16 @@ async function updateSettings() {
   document.documentElement.setAttribute('data-font', appSettings.value!.font)
   document.documentElement.setAttribute('data-effects', appSettings.value!.enableEffects ? 'on' : 'off')
   A11Y_ANIMATE.value = appSettings.value!.enableAnimations!
+  EXTRAS_HOLOGRAM_MODE.value = appSettings.value!.extrasHologramMode!
 
   await idb.settings.update(appSettings.value!.id, {
     locale: mapLocale(appSettings.value!.locale),
     theme: appSettings.value!.theme,
     font: appSettings.value!.font,
+    showInitDialog: appSettings.value!.showInitDialog,
     enableEffects: appSettings.value!.enableEffects,
     enableAnimations: appSettings.value!.enableAnimations,
+    extrasHologramMode: appSettings.value!.extrasHologramMode
   })
 }
 

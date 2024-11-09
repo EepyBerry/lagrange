@@ -3,9 +3,7 @@
 *::after {
   box-sizing: border-box;
   margin: 0;
-
-  scrollbar-color: var(--lg-accent) transparent;
-  scrollbar-width: thin;
+  scrollbar-color: var(--lg-logo) var(--lg-input);
 }
 
 html {
@@ -51,4 +49,25 @@ body {
 
 hr {
   border: 1px solid var(--lg-accent);
+}
+
+.deco-polygon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 48px;
+  height: 16px;
+  background: var(--lg-accent);
+  border-bottom-left-radius: 2px;
+  clip-path: polygon(0 0, 100% 0, 75% 100%, 0 100%);
+
+  .hole {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: var(--lg-primary);
+  }
 }

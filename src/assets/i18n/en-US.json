@@ -5,6 +5,9 @@
     "language": "English",
     "more_coming_soon": "More coming soon!",
     "test_message": "pancake hehe :3",
+    "unit": "unit",
+    "units": "units",
+    "unknown_value": "[UNKNOWN]",
 
     "nav": {
       "codex": "Codex",
@@ -40,8 +43,8 @@
     "init": {
       "$title": "Welcome to @:main.$title",
       "introduction": "Lagrange is a fully procedural planet builder, perfect for worldbuilding and tying your lore to a proper planet, solar system or even an entire galaxy!",
-      "update_title": "Update 0.3 - Ecosystems!",
-      "update_brief": "Adds a complete, layer-based biome system for you to spice up your planets with! Adjust their temperature & humidity in real-time and bring more variety to your worlds!",
+      "update_title": "Update 0.4 - Jovian Expansion!",
+      "update_brief": "Adds more parameters to diversify your worlds, such as XYZ warping, displacement, and ring systems. Gas giants can now be (re)created at will!",
       "$tmp_wip": "Currently work-in-progress. More features are planned for the next versions!",
 
       "shortcuts": "Shortcuts",
@@ -69,6 +72,21 @@
 
       "$action_confirm": "Get started!"
     },
+    "planetinfo": {
+      "$title": "Planet information",
+      "name": "Name",
+      "radius": "Radius",
+      "axialtilt": "Axial tilt",
+      "clouded": "Has clouds",
+      "atmospheric": "Has atmosphere",
+      "ringed": "Has ring system",
+
+      "biomes": "Biome composition",
+      "biomes_temp": "Temperature",
+      "biomes_humi": "Humidity",
+      "biomes_mode": "mode",
+      "biomes_none": "This planet has no defined biomes"
+    },
     "settings": {
       "$title": "Settings",
 
@@ -79,6 +97,7 @@
       "general_theme_supernova": "Supernova",
       "general_theme_voyager": "Voyager",
       "general_monospace": "Enable monospace font",
+      "general_init_dialog": "Show init dialog on load",
 
       "editor": "Editor",
       "editor_lensflare": "@:dialog.init.shortcuts_lensflare",
@@ -90,6 +109,9 @@
       "a11y": "Accessibility",
       "a11y_effects": "Enable visual effects",
       "a11y_animations": "Enable animations",
+
+      "extras": "Extras",
+      "extras_hologram_mode": "Hologram mode",
 
       "advanced": "Advanced Settings",
       "advanced_persist": "Persist IndexedDB storage",
@@ -118,12 +140,22 @@
         "02_a11y": "Accessibility features & improvements",
         "03_title": "Update 0.3 - Ecosystems",
         "03_biomes": "Introduces a fully fledged biome system, using temperature- & humidity-based positioning!",
-        "03_linux": "Surface noise now works properly Linux-based browsers!",
-        "03_fixes": "Smaller performance fixes all around, including fewer GLSL uniforms & varyings!"
+        "03_linux": "Surface noise now works properly in Linux-based browsers!",
+        "03_fixes": "Smaller performance fixes all around, including fewer GLSL uniforms & varyings!",
+        "04_title": "Update 0.4 - Jovian Expansion",
+        "04_params": "Adds new parameters for your worlds: XYZ warping, displacement and ring systems!",
+        "04_ui": "New dialog box when trying to leave the Editor without saving first, along with many touch-ups & improvements",
+        "04_misc": "Adds fr-FR translation, and changes project license to ISTSL-NR 1.0"
+      },
+      "credits": {
+        "$title": "Credits & attribution",
+        "glsl_terrestrial": "Terrestrial-type GLSL code: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
+        "glsl_misc": "Miscellaneous GLSL code: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
+        "contributors": "<b>Special thanks to all contributors of this project ❤️</b>"
       },
 
       "built_with_love": "Built with 🏳️‍🌈 & ❤️",
-      "license": "BSD 3-Clause License"
+      "license": "ISTSL-NR 1.0 License"
     },
     "reset": {
       "$title": "Confirm reset",
@@ -139,6 +171,14 @@
       "$action_cancel": "Cancel",
       "$action_confirm": "Confirm"
     },
+    "warnsave": {
+      "$title": "Unsaved planet warning",
+      "message": "The current planet has not been saved yet. Leave the Editor anyway?",
+      "warning": "All unsaved data will be lost!",
+      "$action_cancel": "Cancel",
+      "$action_saveconfirm": "Save and confirm",
+      "$action_confirm": "Confirm"
+    },
     "clear_data": {
       "$title": "Clear Lagrange data",
       "message": "Are you sure you want to clear all application data?",
@@ -151,6 +191,7 @@
     "$title": "Planetary Codex",
     "$action_add": "New planet",
     "$action_edit": "Edit {planet}",
+    "$action_info": "About {planet}",
     "$action_export": "Export {planet}",
     "$action_delete": "Delete {planet}",
 
@@ -166,6 +207,17 @@
     "$action_add": "Add",
 
     "general": {
+      "displacement_factor": "Factor",
+      "displacement_epsilon": "Epsilon",
+      "displacement_multiplier": "Multiplier",
+
+      "warping": "Warping",
+      "warping_show": "Show warping",
+      "warping_x": "X warping",
+      "warping_y": "Y warping",
+      "warping_z": "Z warping",
+
+      "noise_layers": "Layers",
       "noise_fbm_frequency": "Frequency",
       "noise_fbm_amplitude": "Amplitude",
       "noise_fbm_lacunarity": "Lacunarity",
@@ -215,8 +267,9 @@
         "bumpmap_show": "Show bumps",
         "bumpmap_strength": "Bump strength",
 
-        "noise": "Noise parameters",
-        "noise_colorramp": "Color ramp"
+        "displacement": "Displacement",
+        "displacement_show": "Show displacement",
+        "noise": "Noise parameters"
       },
       "biomes": {
         "$title": "Biomes",
@@ -255,7 +308,6 @@
         "noise_fbm_lacunarity": "Lacunarity",
 
         "rgba": "Color & opacity",
-        "rgba_color": "Color",
         "rgba_opacityramp": "Opacity ramp"
       },
       "atmosphere": {
@@ -274,6 +326,18 @@
         "rgba_mode_mixed": "Mixed",
         "rgba_hue": "Hue",
         "rgba_tint": "Tint"
+      },
+      "ring": {
+        "$title": "Ring System",
+        "ring_show": "Show ring system",
+
+        "transform": "Transform",
+        "transform_radius_inner": "Inner radius",
+        "transform_radius_outer": "Outer radius",
+
+        "rgba": "Color & opacity",
+        "rgba_opacity": "Opacity",
+        "rgba_colorramp": "Color ramp (RGBA)"
       }
     }
   },
@@ -283,7 +347,8 @@
     "text_02": "\"This sector is completely empty, Captain!\"",
     "text_03": "Huh. Must've taken a wrong turn somewhere...",
     "text_04": "PAGE\u00A0IS\u00A0MISSING. STATUS\u00A0IS\u00A0404. SPACE\u00A0IS\u00A0EMPTY.",
-    "subtext": "The requested page could not be found."
+    "subtext": "The requested page could not be found.",
+    "link": "Back to codex"
   },
   "toast": {
     "storage_success": "Persistent storage enabled!",
@@ -320,15 +385,17 @@
   "a11y": {
     "logo": "Lagrange logo",
     "logo_alt": "Secret Lagrange logo!",
-    "logo_update_codex": "World Collector update",
+    "logo_update_codex": "Update logo",
 
     "dialog_webgl_error": "WebGL error dialog",
     "dialog_planet_error": "Planet error dialog",
     "dialog_init": "Introduction dialog",
+    "dialog_planetinfo": "Planet info dialog",
     "dialog_settings": "Settings dialog",
     "dialog_about": "About @:main.$title dialog",
     "dialog_reset": "Confirm reset dialog",
     "dialog_delete": "Confirm delete dialog",
+    "dialog_warn_save": "Unsaved data warning dialog",
     "dialog_clear_data": "Confirm data clear dialog",
 
     "topbar_rename": "@:tooltip.topbar_rename",
@@ -348,12 +415,6 @@
     "general_theme_voyager": "Set Voyager theme (orange)",
 
     "editor_generic_input": "Parameter value",
-    "editor_biome_gradient_mode_realistic": "Realistic temperature gradient",
-    "editor_biome_gradient_mode_poletopole": "Pole-to-pole temperature gradient",
-    "editor_biome_gradient_mode_fullnoise": "Fully noisy temperature gradient",
-    "editor_atmosphere_rgba_mode_realistic": "Realistic atmosphere",
-    "editor_atmosphere_rgba_mode_direct": "Direct tone atmosphere",
-    "editor_atmosphere_rgba_mode_mixed": "Mixed atmosphere",
 
     "action_nav_toggle": "Toggle navigation menu",
     "action_nav_codex": "Codex link",

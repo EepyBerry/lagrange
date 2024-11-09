@@ -22,9 +22,9 @@ defineProps<{ showUpdate?: boolean }>()
   max-width: 16rem;
   align-self: center;
 }
-#app-logo-codex {
+#app-logo-update {
   position: absolute;
-  bottom: 10px;
+  bottom: 16px;
   width: 180px;
   margin: 0 auto;
   max-width: 16rem;

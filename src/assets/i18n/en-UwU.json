@@ -5,6 +5,9 @@
     "language": "Uwuish",
     "more_coming_soon": "Mowe coming s-soon!",
     "test_message": "pancake hehe :3",
+    "unit": "unit",
+    "units": "units",
+    "unknown_value": "[UNKNOWN]",
 
     "nav": {
       "codex": "Codex",
@@ -40,9 +43,9 @@
     "init": {
       "$title": "Wewcome :3 t-to @:main.$title",
       "introduction": "Wagwange is a fuwwy pwoceduwaw pwanyet buiwdew, pewfect fow wowwdbuiwding and tying youw wowe t-to a pwopew pwanyet, sowaw system o-ow even an entiwe gawaxy! (・`ω´・)",
-      "update_title": "Update 0.3 - Ecosystems!",
-      "update_brief": "A-adds a compwete, wayer-based biome system fow you to s-shpice up youw pwanyets with!!! >w< Adjust theiw tempewatuwe & humidity IN WEAW-TIME and bwing mowe vawiety to youw wowwds!!! ٩(ˊᗜˋ*)و",
-      "$tmp_wip": "Cuwwentwy wowk-in-pwogwess. M-Mowe featuwes awe pwannyed fow the nyext vewsions! x3",
+      "update_title": "Update 0.4 - Jovian Expansion!",
+      "update_brief": "A-adds MOWE pawametews to divewsify youw wowwds, l-like XYZ wawping, dispwacemyent, a-and wing systems!!! Gas giants c-can now be (we)cweated at wiww!!! o(^▽^)o",
+      "$tmp_wip": "Cuwwentwy wowk-in-pwogwess. M-Mowe featuwes awe pwanned fow the nyext vewsions! x3",
 
       "shortcuts": "Showtcuts",
       "shortcuts_note": "Key bindings c-can be weassignyed in the app s-settings!",
@@ -69,6 +72,21 @@
 
       "$action_confirm": "Get s-stawted!"
     },
+    "planetinfo": {
+      "$title": "Pwanyet information :3",
+      "name": "Name",
+      "radius": "Wadius",
+      "axialtilt": "Axiaw tiwt",
+      "clouded": "Has cwouds",
+      "atmospheric": "Has atmosphewe",
+      "ringed": "Has wing systyem",
+
+      "biomes": "Biome composition",
+      "biomes_temp": "Tempewature",
+      "biomes_humi": "Humidity",
+      "biomes_mode": "mode",
+      "biomes_none": "T-this pwanyet has nyo defined biomes... （＞人＜；）"
+    },
     "settings": {
       "$title": "Settings",
 
@@ -79,6 +97,7 @@
       "general_theme_supernova": "Supewnyova",
       "general_theme_voyager": "Voyagew",
       "general_monospace": "Enyabwe monyospace font",
+      "general_init_dialog": "Show init diawog on woad",
 
       "editor": "Editow ^w^",
       "editor_lensflare": "@:dialog.init.shortcuts_lensflare",
@@ -90,6 +109,9 @@
       "a11y": "Accessibiwity !!!",
       "a11y_effects": "Enyabwe visuaw effects",
       "a11y_animations": "Enyabwe animations",
+
+      "extras": "Extwas",
+      "extras_hologram_mode": "Howogwam mode",
 
       "advanced": "Advanced Settings",
       "advanced_persist": "Pewsist IndexedDB stowage",
@@ -116,14 +138,24 @@
         "02_codex": "I-intwoduces the Codex: wist, impowt and expowt pwanyets easiwy a-and entiwewy within youw bwowsew!!!",
         "02_ui": "New diawog boxes, toasts & settings, a-and new editow pawametews (wadius, a-atmosphewe)!!!",
         "02_a11y": "Accessibiwity featuwes & impwovements!!!",
-        "03_title": "Update 0.3 - Ecosystems ",
+        "03_title": "Update 0.3 - Ecosystems",
         "03_biomes": "Intwoduces a f-fuwwy fwedged biome system, using tempewatuwe- & humidity-based p-posishoning!!!",
         "03_linux": "Suwface noise n-now wowks propewly on Winyux-b-based bwowsews!!!",
-        "03_fixes": "S-smawwew pewfowmance fixes aaaaww awound, incwuding fewew GLSL unifowms & vawyings!!!"
+        "03_fixes": "S-smawwew pewfowmance fixes aaaaww awound, incwuding fewew GLSL unifowms & vawyings!!!",
+        "04_title": "Update 0.4 - Jovian Expansion",
+        "04_params": "Adds nyew p-pawametews fow youw wowwds: XYZ wawping, dispwacement a-and wing systems!!!",
+        "04_ui": "New diawog box w-when twying to weave the Editow wi-without saving fiwst, awong with MANY touchie-upsies & impwovements!!!",
+        "04_misc": "Adds fr-FR twanswation, and changes pwoject wicense to ISTSL-NR 1.0!!!"
+      },
+      "credits": {
+        "$title": "Cwedits & attwibushon",
+        "glsl_terrestrial": "T-tewwestwial-type GLSL code: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Vowonoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphewe), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (wens fware)",
+        "glsl_misc": "Miscewwanyeous GLSL code: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
+        "contributors": "<b>Speciaw thanks to a-aww contwibutows of this pwoject !!! (✿ﾟ▽ﾟ) ❤️</b>"
       },
 
       "built_with_love": "Buiwt with 🏳️‍🌈 & ❤️",
-      "license": "BSD 3-Cwause Wicense"
+      "license": "ISTSL-NR 1.0 Wicense"
     },
     "reset": {
       "$title": "Confiwm weset",
@@ -139,6 +171,14 @@
       "$action_cancel": "Cancew",
       "$action_confirm": "Confiwm"
     },
+    "warnsave": {
+      "$title": "Unsaved pwanyet wawning",
+      "message": "The c-cuwwent pwanyet has not been s-saved yet... Weave the Editow anyway? ⊙﹏⊙∥",
+      "warning": "Aww unsaved data wiww be wost!",
+      "$action_cancel": "Cancew",
+      "$action_saveconfirm": "Save and confiwm",
+      "$action_confirm": "Confiwm"
+    },
     "clear_data": {
       "$title": "Cweaw Wagwange data",
       "message": "A-are you suwe you want to c-cweaw aww appwication data? (っ- ‸ - ς)",
@@ -151,6 +191,7 @@
     "$title": "Pwanyetawy Codex >:3",
     "$action_add": "Nyew pwanyet !!!",
     "$action_edit": "Edit {planet} x3",
+    "$action_info": "About {planet} :3",
     "$action_export": "Expowt {planet} :O",
     "$action_delete": "Dewete {planet} ;w;",
 
@@ -166,6 +207,17 @@
     "$action_add": "Add",
 
     "general": {
+      "displacement_factor": "Factow",
+      "displacement_epsilon": "Epsiwon",
+      "displacement_multiplier": "Muwtipliew",
+
+      "warping": "Wawping",
+      "warping_show": "Show wawping :3",
+      "warping_x": "X wawping",
+      "warping_y": "Y wawping",
+      "warping_z": "Z wawping",
+
+      "noise_layers": "Wayews",
       "noise_fbm_frequency": "Fwequency",
       "noise_fbm_amplitude": "Ampwitude",
       "noise_fbm_lacunarity": "Wacunawity",
@@ -215,11 +267,9 @@
         "bumpmap_show": "Show bumps :3",
         "bumpmap_strength": "Bump stwength",
 
-        "noise": "Nyoise p-pawametews",
-        "noise_fbm_frequency": "Fwequency",
-        "noise_fbm_amplitude": "Ampwitude",
-        "noise_fbm_lacunarity": "Wacunyawity",
-        "noise_colorramp": "Cowow wamp"
+        "displacement": "Dispwacement",
+        "displacement_show": "Show dispwacement :3",
+        "noise": "Nyoise p-pawametews"
       },
       "biomes": {
         "$title": "Biomes",
@@ -258,7 +308,6 @@
         "noise_fbm_lacunarity": "Wacunyawity",
 
         "rgba": "Cowow & opacity",
-        "rgba_color": "Cowow",
         "rgba_opacityramp": "Opacity wamp"
       },
       "atmosphere": {
@@ -277,6 +326,18 @@
         "rgba_mode_mixed": "Mixed",
         "rgba_hue": "Hue",
         "rgba_tint": "Tint"
+      },
+      "ring": {
+        "$title": "Wing Systyem",
+        "ring_show": "Show wing systyem",
+
+        "transform": "Twansfowm",
+        "transform_radius_inner": "Innyew wadius",
+        "transform_radius_outer": "Outew wadius",
+
+        "rgba": "Cowow & opacity",
+        "rgba_opacity": "Opacity",
+        "rgba_colorramp": "Cowow wamp (RGBA)"
       }
     }
   },
@@ -286,7 +347,8 @@
     "text_02": "\"This sectow is c-compwetewy empty, Captain! :O\"",
     "text_03": "Oh nyooo ;;w;; Took a wwong tuwn sumwhewe...",
     "text_04": "PAGE\u00A0IS\u00A0MISSING! STATUS\u00A0IS\u00A0404!! SPACE\u00A0IS\u00A0EMPTY!!! x3",
-    "subtext": "The wequested page c-couwd nyot be found :c"
+    "subtext": "The wequested page c-couwd nyot be found :c",
+    "link": "Back to codex!!!"
   },
   "toast": {
     "storage_success": "Pewsistent stowage enyabwed!",
@@ -323,15 +385,17 @@
   "a11y": {
     "logo": "Wagwange wogo",
     "logo_alt": "Secwet Wagwange wogo!",
-    "logo_update_codex": "Wowwd Cowwectow update!",
+    "logo_update_codex": "Update wogo!",
 
     "dialog_webgl_error": "WebGL ewwow diawog",
     "dialog_planet_error": "Pwanyet ewwow diawog",
     "dialog_init": "Intwoduction diawog",
+    "dialog_planetinfo": "Pwanyet info diawog",
     "dialog_settings": "Settings diawog",
     "dialog_about": "About @:main.$title diawog",
     "dialog_reset": "Confiwm weset diawog",
     "dialog_delete": "Confiwm dewete diawog",
+    "dialog_warn_save": "Unsaved data wawning diawog",
     "dialog_clear_data": "Confiwm data cweaw diawog",
 
     "topbar_rename": "@:tooltip.topbar_rename",
@@ -351,12 +415,6 @@
     "general_theme_voyager": "Set Voyagew theme (owange)",
 
     "editor_generic_input": "Pawametew vawue",
-    "editor_biome_gradient_mode_realistic": "Weawistic tempewature gwadient",
-    "editor_biome_gradient_mode_poletopole": "Powe-to-powe tempewatuwe gwadient",
-    "editor_biome_gradient_mode_fullnoise": "Fuwwy nyoisy tempewature gwadient",
-    "editor_atmosphere_rgba_mode_realistic": "Weawistic atmosphewe",
-    "editor_atmosphere_rgba_mode_direct": "Diwect tone atmosphewe",
-    "editor_atmosphere_rgba_mode_mixed": "Mixed atmosphewe",
 
     "action_nav_toggle": "Toggwe nyavigation menyu",
     "action_nav_codex": "Codex wink",
