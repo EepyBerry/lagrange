@@ -21,7 +21,7 @@ _(**note:** this is something I am working on during my free time, which means t
 
 <ul>
   <li>⭐ Adds <strong>new parameters</strong> for your worlds: XYZ warping, displacement and ring systems!</li>
-  <li>⭐ New dialog box when trying to leave the Editor without saving first, along with many minor touch-ups & improvements!</li>
+  <li>⭐ New dialog box when trying to leave the Editor without saving first, along with many touch-ups & improvements!</li>
   <li>⭐ Adds fr-FR translation, and changes project license to ISTSL-NR 1.0!</li>
 </ul>
 

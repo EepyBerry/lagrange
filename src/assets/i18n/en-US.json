@@ -144,7 +144,7 @@
         "03_fixes": "Smaller performance fixes all around, including fewer GLSL uniforms & varyings!",
         "04_title": "Update 0.4 - Jovian Expansion",
         "04_params": "Adds new parameters for your worlds: XYZ warping, displacement and ring systems!",
-        "04_ui": "New dialog box when trying to leave the Editor without saving first, along with many minor touch-ups & improvements",
+        "04_ui": "New dialog box when trying to leave the Editor without saving first, along with many touch-ups & improvements",
         "04_misc": "Adds fr-FR translation, and changes project license to ISTSL-NR 1.0"
       },
       "credits": {
