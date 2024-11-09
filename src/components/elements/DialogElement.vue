@@ -118,7 +118,6 @@ dialog[open].lg::backdrop {
 
 @media screen and (max-width: 767px) {
   dialog[open].lg {
-    box-shadow: 0 0 1rem #000;
     max-width: calc(100% - 1rem);
     padding: 0.75rem;
   }
