@@ -8,16 +8,17 @@
     <aside id="nav-compact" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
       <nav>
         <hr />
-        <RouterLink class="lg nav" to="/codex" :aria-label="$t('a11y.action_nav_codex')">
+        <RouterLink to="/codex" class="lg nav" :aria-label="$t('a11y.action_nav_codex')">
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
         </RouterLink>
         <hr />
         <RouterLink
+          to="/planet-editor/new"
           class="lg nav"
           :class="{ 'router-link-active': !!route.params.id }"
-          to="/planet-editor/new"
           :aria-label="$t('a11y.action_nav_editor')"
+          @click="router.push('/planet-editor/new')"
         >
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
@@ -28,12 +29,18 @@
   <template v-else>
     <aside id="nav-full" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
       <nav>
-        <RouterLink class="lg nav" to="/codex">
+        <RouterLink to="/codex" class="lg nav" :aria-label="$t('a11y.action_nav_codex')">
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
         </RouterLink>
         <hr />
-        <RouterLink class="lg nav" :class="{ 'router-link-active': !!route.params.id }" to="/planet-editor/new">
+        <RouterLink
+          to="/planet-editor/new"
+          class="lg nav"
+          :class="{ 'router-link-active': !!route.params.id }"
+          :aria-label="$t('a11y.action_nav_editor')"
+          @click="router.push('/planet-editor/new')"
+        >
           <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.editor') }}
         </RouterLink>
@@ -45,8 +52,9 @@
 <script setup lang="ts">
 import { EventBus } from '@/core/event-bus'
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 
+const router = useRouter()
 const route = useRoute()
 const buttonOpen: Ref<HTMLElement | null> = ref(null)
 const sidebar: Ref<HTMLElement | null> = ref(null)
@@ -80,7 +88,7 @@ function handleKey(evt: KeyboardEvent) {
 <style scoped lang="scss">
 #nav-full {
   position: absolute;
-  left: 0;
+  left: 1rem;
 }
 
 #nav-compact {

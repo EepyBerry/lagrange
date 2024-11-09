@@ -1,0 +1,431 @@
+{
+  "main": {
+    "$title": "Lagrange",
+    "locale": "fr-FR",
+    "language": "Français",
+    "more_coming_soon": "D'autres langues à venir !",
+    "test_message": "pancake hehe :3",
+    "unit": "unité",
+    "units": "unités",
+    "unknown_value": "[INCONNU]",
+
+    "nav": {
+      "codex": "Codex",
+      "editor": "Éditeur"
+    },
+
+    "planet_data": {
+      "biome": "Biome",
+      "biome_type_arctic": "Arctique",
+      "biome_type_tundra": "Toundra",
+      "biome_type_temperate": "Tempéré",
+      "biome_type_subtropical": "Subtropical",
+      "biome_type_tropical": "Tropical",
+      "biome_type_volcanic": "Volcanique",
+      "biome_type_various": "Varié",
+
+      "biome_type_arid": "Aride",
+      "biome_type_dry": "Sec",
+      "biome_type_semihumid": "Semi-humide",
+      "biome_type_humid": "Humide"
+    }
+  },
+  "dialog": {
+    "webglerror": {
+      "$title": "Impossible de démarrer l'Éditeur!",
+      "brief": "Échec d'initilisation du contexte WebGL. Consulter l'erreur affichée ci-dessous."
+    },
+    "planeterror": {
+      "$title": "Impossible de démarrer l'Éditeur!",
+      "brief": "Échec de chargement de la planète. Consulter l'erreur affichée ci-dessous.",
+      "reporting": "Si possible, vérifiez la console du navigateur et ouvrez un ticket sur GitHub !"
+    },
+    "init": {
+      "$title": "Bienvenue dans @:main.$title",
+      "introduction": "Lagrange est un outils de création de planètes entièrement procédural, parfait pour vos besoins narratifs autour de planètes, systèmes solaires, ou même de galaxies entières !",
+      "update_title": "Mise à jour 0.4 - Jovian Expansion !",
+      "update_brief": "Ajoute des paramètres supplémentaires pour diversifier vos mondes, comme la déformation XYZ, les perturbations de surface et les anneaux ! Vous pouvez maintenant (re)créer des géantes gazeuses à souhait !",
+      "$tmp_wip": "En cours de développement. Nouvelles fonctionnalités à venir dans les prochaines versions !",
+
+      "shortcuts": "Raccourcis",
+      "shortcuts_note": "Les raccourcis sont modifiables dans les paramètres !",
+      "shortcuts_lensflare": "Afficher/cacher la lens flare",
+      "shortcuts_biomes": "Afficher/cacher les biomes",
+      "shortcuts_clouds": "Afficher/cacher les nuages",
+      "shortcuts_atmosphere": "Afficher/cacher l'atmosphere",
+      "shortcuts_screenshot": "Capture d'écran",
+
+      "topbar": "Barre du haut - Nommage et données",
+      "topbar_rename": "Renommer la planète",
+      "topbar_reset": "Réinitialiser",
+      "topbar_import": "Importer une planète",
+      "topbar_export": "Exporter une planète",
+      "topbar_export_all": "Export full codex",
+
+      "footer": "Footer - Divers",
+      "footer_github": "Page GitHub",
+      "footer_settings": "Paramètres",
+      "footer_about": "À propos de @:main.$title",
+
+      "show_next_time": "Afficher cette introduction au prochain démarrage ?",
+      "enable_persistence": "Activer la persistance des données pour cette application ?",
+
+      "$action_confirm": "C'est parti !"
+    },
+    "planetinfo": {
+      "$title": "Informations planète",
+      "name": "Nom",
+      "radius": "Rayon",
+      "axialtilt": "Inclinaison",
+      "clouded": "Présence de nuages",
+      "atmospheric": "Présence d'atmosphère",
+      "ringed": "Présence d'anneaux",
+
+      "biomes": "Composition des biomes",
+      "biomes_temp": "Température",
+      "biomes_humi": "Humidité",
+      "biomes_mode": "mode",
+      "biomes_none": "Cette planète n'a aucun biome défini"
+    },
+    "settings": {
+      "$title": "Paramètres",
+
+      "general": "Général",
+      "general_language": "Langue",
+      "general_theme": "Choisir le thème",
+      "general_theme_default": "Comet",
+      "general_theme_supernova": "Supernova",
+      "general_theme_voyager": "Voyager",
+      "general_monospace": "Police à largeur fixe (monospace)",
+      "general_init_dialog": "Afficher l'introduction au chargement",
+
+      "editor": "Éditeur",
+      "editor_lensflare": "@:dialog.init.shortcuts_lensflare",
+      "editor_biomes": "@:dialog.init.shortcuts_biomes",
+      "editor_clouds": "@:dialog.init.shortcuts_clouds",
+      "editor_atmosphere": "@:dialog.init.shortcuts_atmosphere",
+      "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
+
+      "a11y": "Accessibilité",
+      "a11y_effects": "Activer les effets visuels",
+      "a11y_animations": "Activer les animations",
+
+      "extras": "Extras",
+      "extras_hologram_mode": "Mode hologramme",
+
+      "advanced": "Paramètres avancés",
+      "advanced_persist": "Persister le stockage IndexedDB",
+      "advanced_persist_prompt": "Activer",
+      "advanced_persist_success": "Persisté !",
+      "advanced_persist_failure": "Persistance impossible!",
+      "advanced_persist_info": "La persistance des données dépend des règles du navigateur; celles-ci pourraient être supprimées si désactivée (par ex. en cas d'espace disque faible)",
+      "advanced_danger_zone": "Zone Rouge!",
+      "advanced_clear_data": "Supprimer les données",
+
+      "shortcuts": "@:dialog.init.shortcuts"
+    },
+    "about": {
+      "description": "Une application de création de planètes procédurales.",
+      "motivation": "Projet ayant pour objectif de matérialiser mon émerveillement concernant l'espace et les planètes !",
+
+      "tech": "Outils et librairies principales derrière ce projet",
+      "prefix_framework": "Framework: ",
+      "prefix_engine": "Moteur 3D: ",
+
+      "changelogs": {
+        "$title": "Changelogs des mises à jour",
+        "02_title": "Mise à jour 0.2 - World Collector",
+        "02_codex": "Ajoute le Codex: listez, importez et exportez vos planètes depuis votre navigateur !",
+        "02_ui": "Ajoute des boîtes de dialogue, des notifications, un menu de paramétrage, ainsi que des nouvelles variables dans l'Éditeur (rayon, atmosphère)",
+        "02_a11y": "Améliorations d'accessibilité et de performance",
+        "03_title": "Mise à jour 0.3 - Ecosystems",
+        "03_biomes": "Ajoute un système de biomes complet, réglables via leur température et humidité !",
+        "03_linux": "Le bruit de surface est corrigé sur les navigateurs tournant sous Linux !",
+        "03_fixes": "Quelques correctifs mineurs, ainsi qu'une réduction du nombre de varyings dans le code GLSL !",
+        "04_title": "Mise à jour 0.4 - Jovian Expansion",
+        "04_params": "Ajoute des nouveaux paramètres pour vos mondes: déformation XYZ, perturbations de surface, et anneaux !",
+        "04_ui": "Nouvelle boite de dialogue dans le cas où l'éditeur va se fermer sans avoir sauvegardé, ainsi que divers ajustements et améliorations",
+        "04_misc": "Ajoute la traduction fr-FR, et change la licence du projet vers la ISTSL-NR 1.0"
+      },
+      "credits": {
+        "$title": "Mentions et remerciements",
+        "glsl_terrestrial": "Code GLSL type terrestre: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphère), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
+        "glsl_misc": "Code GLSL divers: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
+        "contributors": "<b>Un grand merci à toustes les contributeur·ices de ce projet ❤️</b>"
+      },
+
+      "built_with_love": "Créé avec 🏳️‍🌈 & ❤️",
+      "license": "Licence ISTSL-NR 1.0"
+    },
+    "reset": {
+      "$title": "Réinitialiser",
+      "message": "Réinitialiser la planète en cours ?",
+      "warning": "Toute modification non enregistrée sera perdue !",
+      "$action_cancel": "Annuler",
+      "$action_confirm": "Confirmer"
+    },
+    "delete": {
+      "$title": "Supprimer [{planet}]",
+      "message": "Confirmer la suppression de cette planète?",
+      "warning": "Cette action ne peut pas être annulée!",
+      "$action_cancel": "Annuler",
+      "$action_confirm": "Confirmer"
+    },
+    "warnsave": {
+      "$title": "Attention: planète non enregistrée",
+      "message": "Cette planète n'a pas encore été enregistrée. Quitter l'Éditeur quand même?",
+      "warning": "Toute modification non enregistrée sera perdue !",
+      "$action_cancel": "Annuler",
+      "$action_saveconfirm": "Enregistrer et confirmer",
+      "$action_confirm": "Confirmer"
+    },
+    "clear_data": {
+      "$title": "Vider les données Lagrange",
+      "message": "Confirmer la suppression de toutes les données ?",
+      "warning": "Cette action ne peut pas être annulée!",
+      "$action_cancel": "Annuler",
+      "$action_confirm": "Confirmer"
+    }
+  },
+  "codex": {
+    "$title": "Codex Planétaire",
+    "$action_add": "Nouv. planète",
+    "$action_edit": "Modifier {planet}",
+    "$action_info": "Infos {planet}",
+    "$action_export": "Exporter {planet}",
+    "$action_delete": "Supprimer {planet}",
+
+    "no_planets": "Aucune planète trouvée. Vous pouvez en créer une via le bouton en haut !",
+
+    "topbar_import": "Importer une planète depuis un fichier",
+    "topbar_export": "Exporter toutes les planètes"
+  },
+  "editor": {
+    "$title": "Éditeur de Planètes",
+    "default_planet_name": "Nouvelle planète",
+    "$action_sort": "Trier",
+    "$action_add": "Ajouter",
+
+    "general": {
+      "displacement_factor": "Facteur",
+      "displacement_epsilon": "Epsilon",
+      "displacement_multiplier": "Multiplicateur",
+
+      "warping": "Déformation",
+      "warping_show": "Afficher déformation",
+      "warping_x": "Déformation X",
+      "warping_y": "Déformation Y",
+      "warping_z": "Déformation Z",
+
+      "noise_layers": "Nb. de couches",
+      "noise_fbm_frequency": "Fréquence",
+      "noise_fbm_amplitude": "Amplitude",
+      "noise_fbm_lacunarity": "Lacunarité",
+      "noise_fbm_octaves": "Octaves",
+
+      "noise_color": "Couleur",
+      "noise_rgbramp": "Rampe de couleurs",
+      "noise_rgbaramp": "Rampe de couleurs (RGBA)"
+    },
+    "controls": {
+      "lighting": {
+        "$title": "Luminosité",
+
+        "lensflare": "Lens Flare",
+        "lensflare_show": "Afficher la lens flare",
+        "lensflare_points_intensity": "Intensité des points",
+        "lensflare_glare_intensity": "Intensité d'éblouissement",
+
+        "sunlight": "Lumière de l'étoile",
+        "sunlight_angle": "Angle",
+        "sunlight_intensity": "Intensité",
+        "sunlight_color": "Couleur",
+
+        "amblight": "Lumière ambiante",
+        "amblight_intensity": "Intensité",
+        "amblight_color": "Couleur"
+      },
+      "planet_rendering": {
+        "$title": "Planète & Rendu",
+
+        "transform": "Transform",
+        "transform_radius": "Rayon",
+        "transform_axialtilt": "Inclinaison axiale",
+        "transform_rotation": "Rotation",
+
+        "pbr": "Paramètres PBR",
+        "pbr_waterlevel": "Niveau de mer",
+        "pbr_waterroughness": "Rugosité du liquide",
+        "pbr_watermetalness": "Métallicité du liquide",
+        "pbr_groundroughness": "Rugosité du sol",
+        "pbr_groundmetalness": "Métallicité du sol"
+      },
+      "surface": {
+        "$title": "Surface",
+
+        "bumpmap": "Bump mapping",
+        "bumpmap_show": "Afficher les bumps",
+        "bumpmap_strength": "Intensité des bumps",
+
+        "displacement": "Perturbation de surface",
+        "displacement_show": "Afficher perturbation",
+        "noise": "Paramètres de bruit"
+      },
+      "biomes": {
+        "$title": "Biomes",
+        "biomes_show": "Afficher biomes",
+
+        "texture_resolution": "Résolution",
+        "temperature": "Gradient de température",
+        "humidity": "Gradient d'humidité",
+
+        "gradient_mode": "Mode de gradient",
+        "gradient_mode_realistic": "Réaliste",
+        "gradient_mode_poletopole": "Pôle-à-pôle",
+        "gradient_mode_fullnoise": "Bruit",
+
+        "biome_list": "Biomes",
+        "biome_type": "Type",
+
+        "height_min": "Hauteur min.",
+        "height_max": "Hauteur max.",
+        "temperature_min": "Température min.",
+        "temperature_max": "Température max.",
+        "humidity_min": "Humidité min.",
+        "humidity_max": "Humidité max.",
+        "smoothness": "Facteur de lissage"
+      },
+      "clouds": {
+        "$title": "Nuages",
+        "clouds_show": "Afficher nuages",
+
+        "transform": "Transform",
+        "transform_rotation": "Rotation",
+
+        "noise": "Paramètres de bruit",
+        "noise_fbm_frequency": "Frequency",
+        "noise_fbm_amplitude": "Amplitude",
+        "noise_fbm_lacunarity": "Lacunarity",
+
+        "rgba": "Couleur & transparence",
+        "rgba_opacityramp": "Rampe de transparence"
+      },
+      "atmosphere": {
+        "$title": "Atmosphère",
+        "atmosphere_show": "Afficher atmosphère",
+
+        "transform": "Transform",
+        "transform_height": "Hauteur",
+        "transform_density": "Densité",
+
+        "rgba": "Couleur & intensité",
+        "rgba_intensity": "Intensité",
+        "rgba_mode": "Mode de coloration",
+        "rgba_mode_realistic": "Réaliste",
+        "rgba_mode_direct": "Direct",
+        "rgba_mode_mixed": "Mixe",
+        "rgba_hue": "Teinte",
+        "rgba_tint": "Couleur"
+      },
+      "ring": {
+        "$title": "Anneau",
+        "ring_show": "Afficher anneau",
+
+        "transform": "Transform",
+        "transform_radius_inner": "Rayon interne",
+        "transform_radius_outer": "Rayon externe",
+
+        "rgba": "Couleur & transparence",
+        "rgba_opacity": "Transparence",
+        "rgba_colorramp": "Rampe de couleurs (RGBA)"
+      }
+    }
+  },
+  "404": {
+    "$title": "Page Non Trouvée",
+    "text_01": "Rien par ici, désolé!",
+    "text_02": "\"Ce secteur est entièrement vide, Capitaine!\"",
+    "text_03": "Oh. Vous avez dû rater un virage quelque part...",
+    "text_04": "PAGE\u00A0=\u00A0MANQUANTE. STATUT\u00A0=\u00A0404. ESPACE\u00A0=\u00A0VIDE.",
+    "subtext": "La page demandée n'a pas pu être trouvée.",
+    "link": "Retour au codex"
+  },
+  "toast": {
+    "storage_success": "Stockage persistant activé !",
+    "storage_failure_none": "Persistance des données non prise en charge sur ce navigateur !",
+    "storage_failure_rules": "Persistance des données bloquée par les règles du navigateur !",
+    "delete_success": "Planète supprimée !",
+    "delete_failure": "Impossible de supprimer la planète",
+    "import_success": "Planète·s importé·es !",
+    "import_partial": "Attention: certaines planètes n'ont pas pu être importées",
+    "import_failure": "Impossible d'importer les planètes. Vérifiez que les bons fichiers ont été sélectionnés, puis essayez à nouveau",
+    "save_success": "Planète enregistrée !"
+  },
+  "tooltip": {
+    "topbar_rename": "Renommer la planète",
+    "topbar_rename_confirm": "Confirmer le nom",
+    "topbar_reset": "Réinitialiser",
+    "topbar_save": "Enregistrer",
+    "topbar_import": "Importer un fichier de planète",
+    "topbar_export": "Exporter la planète en fichier",
+    "topbar_export_all": "Exporter toutes les planètes au format .zip",
+
+    "gradient_mode_realistic": "Valeurs faibles aux pôles, élevées à l'équateur",
+    "gradient_mode_poletopole": "Valeurs faibles au pôle nord, élevées au pôle sud",
+    "gradient_mode_fullnoise": "Valeurs entièrement gérées par du bruit, similaire à la surface",
+
+    "rgba_mode_realistic": "Calculs bruts de diffusion atmosphérique Raleigh & Mie avec teinte",
+    "rgba_mode_direct": "Applique une couleur unique directe après les calculs",
+    "rgba_mode_mixed": "Applique une couleur unique par-dessus la teinte sélectionnée",
+
+    "footer_github": "Dépôt GitHub repository (dans un nouvel onglet)",
+    "footer_settings": "Paramètres",
+    "footer_about": "À propos de @:main.$title"
+  },
+  "a11y": {
+    "logo": "Logo Lagrange",
+    "logo_alt": "Logo Lagrange secret !",
+    "logo_update_codex": "Logo de mise à jour",
+
+    "dialog_webgl_error": "Modale d'erreur WebGL",
+    "dialog_planet_error": "Modale d'erreur de planète",
+    "dialog_init": "Modale d'introduction",
+    "dialog_planetinfo": "Modale d'information sur la planète",
+    "dialog_settings": "Modale de paramètres",
+    "dialog_about": "Modale d'information sur @:main.$title",
+    "dialog_reset": "Modale de confirmation de réinitialisation",
+    "dialog_delete": "Modale de confirmation de suppression",
+    "dialog_warn_save": "Modale d'avertissement de données non enregistrées",
+    "dialog_clear_data": "Modale de confirmation de vidage des données",
+
+    "topbar_rename": "@:tooltip.topbar_rename",
+    "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
+    "topbar_reset": "@:tooltip.topbar_reset",
+    "topbar_save": "@:tooltip.topbar_save",
+    "topbar_import": "@:tooltip.topbar_import",
+    "topbar_export": "@:tooltip.topbar_export",
+    "topbar_export_all": "@:tooltip.topbar_export_all",
+
+    "footer_github": "@:tooltip.footer_github",
+    "footer_settings": "@:tooltip.footer_settings",
+    "footer_about": "@:tooltip.footer_about",
+
+    "general_theme_default": "Appliquer le thème Comet (bleu)",
+    "general_theme_supernova": "Appliquer le thème Supernova (violet)",
+    "general_theme_voyager": "Appliquer le thème Voyager (orange)",
+
+    "editor_generic_input": "Valeur du paramètre",
+
+    "action_nav_toggle": "Afficher/cacher le menu de navigation",
+    "action_nav_codex": "Lien vers le Codex",
+    "action_nav_editor": "Lien vers l'Éditeur",
+
+    "action_edit_keybind": "Changer la touche",
+    "action_edit_ramp": "Modifier la rampe",
+    "action_open_colorpanel": "Ouvrir le panneau de couleur",
+    "action_add_colorstep": "Ajouter un point",
+    "action_sort_colorsteps": "Trier les points",
+    "action_close_dialog": "Fermer la boîte de dialogue",
+    "action_close_toast": "Fermer la notification"
+  }
+}

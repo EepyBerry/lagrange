@@ -1,7 +1,7 @@
 <template>
   <span id="codex-background"></span>
   <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
-    <AppNavigation :compact-mode="showCompactNavigation" />
+    <AppNavigation :compact-mode="showCompactNavigation" :block-navigation="false" />
     <div id="codex-header-controls">
       <RouterLink class="lg dark create-planet" to="/planet-editor/new" :title="$t('codex.$action_add')">
         <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
@@ -33,6 +33,7 @@
       v-for="planet of planets"
       :key="planet.id"
       :planet="(planet as IDBPlanet)"
+      @info="openPlanetInfoDialog(planet as IDBPlanet)"
       @export="exportPlanet(planet as IDBPlanet)"
       @delete="openDeleteConfirmDialog(planet as IDBPlanet)"
     />
@@ -45,6 +46,7 @@
   <div v-if="showInlineFooter" id="codex-footer">
     <InlineFooter />
   </div>
+  <AppPlanetInfoDialog ref="planetInfoDialogRef" />
   <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="deleteTargetedPlanet" />
 </template>
 
@@ -52,6 +54,7 @@
 import PlanetCardElement from '@/components/elements/PlanetCardElement.vue'
 import AppNavigation from '@/components/main/AppNavigation.vue'
 import InlineFooter from '@/components/main/InlineFooter.vue'
+import AppPlanetInfoDialog from '@/components/dialogs/AppPlanetInfoDialog.vue'
 import AppDeleteConfirmDialog from '@components/dialogs/AppDeleteConfirmDialog.vue'
 import { idb, type IDBPlanet } from '@/dexie.config'
 import { useHead } from '@unhead/vue'
@@ -70,6 +73,8 @@ import { readFileData } from '@/core/helpers/import.helper'
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const planets: Ref<IDBPlanet[]> = ref([])
+
+const planetInfoDialogRef: Ref<{ open: Function } | null> = ref(null)
 
 const deleteTarget: Ref<IDBPlanet | null> = ref(null)
 const deleteDialogRef: Ref<{ open: Function } | null> = ref(null)
@@ -185,6 +190,10 @@ function exportPlanet(planet: IDBPlanet) {
   saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
 }
 
+async function openPlanetInfoDialog(planet: IDBPlanet) {
+  planetInfoDialogRef.value?.open(planet)
+}
+
 async function openDeleteConfirmDialog(planet: IDBPlanet) {
   deleteTarget.value = planet
   deleteDialogRef.value?.open(deleteTarget.value.data.planetName)
@@ -215,10 +224,9 @@ async function deleteTargetedPlanet() {
 #codex-header {
   z-index: 15;
   position: fixed;
-  backdrop-filter: blur(8px) brightness(50%);
+  backdrop-filter: blur(8px) brightness(25%);
   inset: 0 0 auto 0;
 
-  inset: auto 1rem;
   padding: 1rem;
   margin: 0;
   display: flex;

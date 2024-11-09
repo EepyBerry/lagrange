@@ -8,7 +8,9 @@
     :ariaLabel="$t('editor.controls.lighting.$title')"
   >
     <template v-slot:title>{{ $t('editor.controls.lighting.$title') }}</template>
-    <template v-slot:content><ControlsLighting /></template>
+    <template v-slot:content>
+      <ControlsLighting />
+    </template>
   </CollapsibleSection>
 
   <!-- Planet & Rendering -->
@@ -20,19 +22,23 @@
     :ariaLabel="$t('editor.controls.planet_rendering.$title')"
   >
     <template v-slot:title>{{ $t('editor.controls.planet_rendering.$title') }}</template>
-    <template v-slot:content><ControlsRendering /></template>
+    <template v-slot:content>
+      <ControlsRendering />
+    </template>
   </CollapsibleSection>
 
   <!-- Surface -->
   <CollapsibleSection
-    icon="mingcute:planet-line"
+    icon="mingcute:grass-line"
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
     :ariaLabel="$t('editor.controls.surface.$title')"
   >
     <template v-slot:title>{{ $t('editor.controls.surface.$title') }}</template>
-    <template v-slot:content><ControlsSurface /></template>
+    <template v-slot:content>
+      <ControlsSurface />
+    </template>
   </CollapsibleSection>
 
   <!-- Biomes -->
@@ -44,7 +50,9 @@
     :ariaLabel="$t('editor.controls.biomes.$title')"
   >
     <template v-slot:title>{{ $t('editor.controls.biomes.$title') }}</template>
-    <template v-slot:content><ControlsBiomes /></template>
+    <template v-slot:content>
+      <ControlsBiomes />
+    </template>
   </CollapsibleSection>
 
   <!-- Clouds -->
@@ -56,7 +64,9 @@
     :ariaLabel="$t('editor.controls.clouds.$title')"
   >
     <template v-slot:title>{{ $t('editor.controls.clouds.$title') }}</template>
-    <template v-slot:content><ControlsClouds /></template>
+    <template v-slot:content>
+      <ControlsClouds />
+    </template>
   </CollapsibleSection>
 
   <!-- Atmosphere -->
@@ -68,7 +78,23 @@
     :ariaLabel="$t('editor.controls.atmosphere.$title')"
   >
     <template v-slot:title>{{ $t('editor.controls.atmosphere.$title') }}</template>
-    <template v-slot:content><ControlsAtmosphere /></template>
+    <template v-slot:content>
+      <ControlsAtmosphere />
+    </template>
+  </CollapsibleSection>
+
+  <!-- Ring -->
+  <CollapsibleSection
+    icon="mingcute:planet-line"
+    :expand="false"
+    :compact-mode="compactMode"
+    :allow-icon-mode="true"
+    :ariaLabel="$t('editor.controls.atmosphere.$title')"
+  >
+    <template v-slot:title>{{ $t('editor.controls.ring.$title') }}</template>
+    <template v-slot:content>
+      <ControlsRing />
+    </template>
   </CollapsibleSection>
 </template>
 <script setup lang="ts">
@@ -79,5 +105,6 @@ import ControlsSurface from './ControlsSurface.vue'
 import ControlsBiomes from './ControlsBiomes.vue'
 import ControlsClouds from './ControlsClouds.vue'
 import ControlsAtmosphere from './ControlsAtmosphere.vue'
+import ControlsRing from './ControlsRing.vue'
 defineProps<{ compactMode: boolean }>()
 </script>

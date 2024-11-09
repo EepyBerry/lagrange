@@ -2,14 +2,13 @@ import type { DataTexture } from 'three'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
+export enum PlanetType {
+  TELLURIC,
+  GASEOUS,
+}
 export enum GeometryType {
   SPHERE,
-  TORUS,
-  BOX,
-}
-export enum NoiseType {
-  FBM,
-  PERLIN,
+  RING,
 }
 export enum ColorMode {
   REALISTIC,

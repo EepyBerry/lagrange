@@ -1,11 +1,12 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
-import { ColorMode, GeometryType, GradientMode, NoiseType } from '@core/types'
+import { ColorMode, GradientMode, PlanetType } from '@core/types'
 import { isNumeric } from '@/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeTracker } from './change-tracker.model'
 import { BiomeParameters } from './biome-parameters.model'
 import { clamp } from 'three/src/math/MathUtils.js'
+import { DisplacementParameters } from './displacement-parameters.model'
 
 export default class PlanetData extends ChangeTracker {
   // --------------------------------------------------
@@ -112,7 +113,7 @@ export default class PlanetData extends ChangeTracker {
   // |                Planet settings                 |
   // --------------------------------------------------
 
-  private _planetGeometryType: GeometryType = GeometryType.SPHERE
+  private _planetType: PlanetType = PlanetType.TELLURIC
   private _planetMeshQuality: number
 
   private _planetRadius: number
@@ -126,12 +127,12 @@ export default class PlanetData extends ChangeTracker {
 
   // --------------------------------------------------
 
-  public get planetGeometryType() {
-    return this._planetGeometryType
+  public get planetType() {
+    return this._planetType
   }
-  public set planetGeometryType(gtype: GeometryType) {
-    this._planetGeometryType = gtype
-    this.markForChange('_planetGeometryType')
+  public set planetType(ptype: PlanetType) {
+    this._planetType = ptype
+    this.markForChange('_planetType')
   }
   public get planetMeshQuality() {
     return this._planetMeshQuality
@@ -208,6 +209,9 @@ export default class PlanetData extends ChangeTracker {
 
   private _planetSurfaceShowBumps: boolean
   private _planetSurfaceBumpStrength: number
+  private _planetSurfaceShowWarping: boolean
+  private _planetSurfaceShowDisplacement: boolean
+  private _planetSurfaceDisplacement: DisplacementParameters
   private _planetSurfaceNoise: NoiseParameters
   private _planetSurfaceColorRamp: ColorRamp
 
@@ -228,7 +232,26 @@ export default class PlanetData extends ChangeTracker {
     this.markForChange('_planetSurfaceBumpStrength')
   }
 
-  public get planetSurfaceNoise() {
+  public get planetSurfaceShowWarping(): boolean {
+    return this._planetSurfaceShowWarping
+  }
+  public set planetSurfaceShowWarping(value: boolean) {
+    this._planetSurfaceShowWarping = value
+    this.markForChange('_planetSurfaceShowWarping')
+  }
+  public get planetSurfaceShowDisplacement(): boolean {
+    return this._planetSurfaceShowDisplacement
+  }
+  public set planetSurfaceShowDisplacement(value: boolean) {
+    this._planetSurfaceShowDisplacement = value
+    this.markForChange('_planetSurfaceShowDisplacement')
+  }
+
+  public get planetSurfaceDisplacement(): DisplacementParameters {
+    return this._planetSurfaceDisplacement
+  }
+
+  public get planetSurfaceNoise(): NoiseParameters {
     return this._planetSurfaceNoise
   }
 
@@ -298,6 +321,7 @@ export default class PlanetData extends ChangeTracker {
   private _cloudsEnabled: boolean
   private _cloudsRotation: number
   private _cloudsHeight: number
+  private _cloudsShowWarping: boolean
   private _cloudsNoise: NoiseParameters
   private _cloudsColor: Color
   private _cloudsColorRamp: ColorRamp
@@ -326,6 +350,14 @@ export default class PlanetData extends ChangeTracker {
   public set cloudsHeight(height: number) {
     this._cloudsHeight = clamp(height, 0, 10)
     this.markForChange('_cloudsHeight')
+  }
+
+  public get cloudsShowWarping(): boolean {
+    return this._cloudsShowWarping
+  }
+  public set cloudsShowWarping(value: boolean) {
+    this._cloudsShowWarping = value
+    this.markForChange('_cloudsShowWarping')
   }
 
   public get cloudsNoise(): NoiseParameters {
@@ -377,14 +409,14 @@ export default class PlanetData extends ChangeTracker {
     return this._atmosphereHeight
   }
   public set atmosphereHeight(value: number) {
-    this._atmosphereHeight = clamp(value, 1.0, 8.0)
+    this._atmosphereHeight = clamp(value, 0.25, 8.0)
     this.markForChange('_atmosphereHeight')
   }
   public get atmosphereDensityScale(): number {
     return this._atmosphereDensityScale
   }
   public set atmosphereDensityScale(value: number) {
-    this._atmosphereDensityScale = clamp(value, 1.0, 10.0)
+    this._atmosphereDensityScale = clamp(value, 0.25, 10.0)
     this.markForChange('_atmosphereDensityScale')
   }
 
@@ -415,6 +447,70 @@ export default class PlanetData extends ChangeTracker {
   public set atmosphereTint(value: Color) {
     this._atmosphereTint.set(value)
     this.markForChange('_atmosphereTint')
+  }
+
+  // --------------------------------------------------
+  // |                 Ring settings                  |
+  // --------------------------------------------------
+
+  private _ringEnabled: boolean
+  private _ringAxialTilt: number
+  private _ringRotation: number
+  private _ringInnerRadius: number
+  private _ringOuterRadius: number
+  private _ringColorRamp: ColorRamp
+
+  // --------------------------------------------------
+
+  public get ringEnabled(): boolean {
+    return this._ringEnabled
+  }
+  public set ringEnabled(value: boolean) {
+    this._ringEnabled = value
+    this.markForChange('_ringEnabled')
+  }
+
+  public get ringAxialTilt() {
+    return this._ringAxialTilt
+  }
+  public set ringAxialTilt(tilt: number) {
+    this._ringAxialTilt = isNumeric(tilt) ? clamp(tilt, -180, 180) : 0
+    this.markForChange('_ringAxialTilt')
+  }
+
+  public get ringRotation() {
+    return this._ringRotation
+  }
+  public set ringRotation(rot: number) {
+    this._ringRotation = isNumeric(rot) ? clamp(rot, 0, 360) : 0
+    this.markForChange('_ringRotation')
+  }
+
+  public get ringInnerRadius(): number {
+    return this._ringInnerRadius
+  }
+  public set ringInnerRadius(value: number) {
+    this._ringInnerRadius = clamp(value, 1.0, 5.0)
+    this._ringOuterRadius = clamp(this._ringOuterRadius, this._ringInnerRadius, 10)
+    this.markForChange('_ringInnerRadius')
+    this.markForChange('_ringOuterRadius')
+  }
+
+  public get ringOuterRadius(): number {
+    return this._ringOuterRadius
+  }
+  public set ringOuterRadius(value: number) {
+    this._ringOuterRadius = clamp(value, 1.0, 5.0)
+    this._ringInnerRadius = clamp(this._ringInnerRadius, 1.0, this._ringOuterRadius)
+    this.markForChange('_ringOuterRadius')
+    this.markForChange('_ringInnerRadius')
+  }
+
+  public get ringColorRamp(): ColorRamp {
+    return this._ringColorRamp
+  }
+  public get ringColorRampSize() {
+    return this._ringColorRamp.steps.length
   }
 
   // --------------------------------------------------
@@ -451,10 +547,10 @@ export default class PlanetData extends ChangeTracker {
     this._ambLightIntensity = 0.02
 
     // Planet & Rendering
-    this._planetGeometryType = GeometryType.SPHERE
+    this._planetType = PlanetType.TELLURIC
     this._planetMeshQuality = 48.0
     this._planetRadius = 1.0
-    this._planetAxialTilt = -15.0
+    this._planetAxialTilt = 15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
     this._planetWaterMetalness = 0.5
@@ -465,15 +561,17 @@ export default class PlanetData extends ChangeTracker {
     // Surface
     this._planetSurfaceShowBumps = true
     this._planetSurfaceBumpStrength = 0.12
-    this._planetSurfaceNoise = new NoiseParameters(
+    this._planetSurfaceShowWarping = false
+    this._planetSurfaceShowDisplacement = false
+    this._planetSurfaceDisplacement = new DisplacementParameters(
       this._changedProps,
-      '_planetSurfaceNoise',
-      NoiseType.FBM,
-      2.45,
-      0.53,
-      2.16,
+      '_planetSurfaceDisplacement',
+      2.0,
+      0.2,
+      2.0,
       6,
     )
+    this._planetSurfaceNoise = new NoiseParameters(this._changedProps, '_planetSurfaceNoise', 2.45, 0.53, 2.16, 6)
     this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
       new ColorRampStep(0x000000, 0, true),
       new ColorRampStep(0x0b1931, 0.4),
@@ -487,25 +585,9 @@ export default class PlanetData extends ChangeTracker {
     // Biomes
     this._biomesEnabled = true
     this._biomesTemperatureMode = GradientMode.REALISTIC
-    this._biomesTemperatureNoise = new NoiseParameters(
-      this._changedProps,
-      '_biomesTemperatureNoise',
-      NoiseType.FBM,
-      2.5,
-      1.25,
-      2.5,
-      4,
-    )
+    this._biomesTemperatureNoise = new NoiseParameters(this._changedProps, '_biomesTemperatureNoise', 2.5, 1.25, 2.5, 4)
     this._biomesHumidityMode = GradientMode.REALISTIC
-    this._biomesHumidityNoise = new NoiseParameters(
-      this._changedProps,
-      '_biomesHumidityNoise',
-      NoiseType.FBM,
-      2.25,
-      0.95,
-      2.25,
-      4,
-    )
+    this._biomesHumidityNoise = new NoiseParameters(this._changedProps, '_biomesHumidityNoise', 2.25, 0.95, 2.25, 4)
     this._biomesParams = [
       new BiomeParameters(
         this._changedProps,
@@ -537,7 +619,8 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsEnabled = true
     this._cloudsRotation = 0.0
     this._cloudsHeight = 1.0
-    this._cloudsNoise = new NoiseParameters(this._changedProps, '_cloudsNoise', NoiseType.FBM, 4.0, 0.6, 1.75, 4)
+    this._cloudsShowWarping = false
+    this._cloudsNoise = new NoiseParameters(this._changedProps, '_cloudsNoise', 4.0, 0.6, 1.75, 4)
     this._cloudsColor = new Color(0xffffff)
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
       new ColorRampStep(0x000000, 0.0, true),
@@ -553,149 +636,56 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereColorMode = ColorMode.REALISTIC
     this._atmosphereHue = 0.0
     this._atmosphereTint = new Color(0xffffff)
+
+    // Ring
+    this._ringEnabled = false
+    this._ringAxialTilt = 90.0
+    this._ringRotation = 0.0
+    this._ringInnerRadius = 1.25
+    this._ringOuterRadius = 1.5
+    this._ringColorRamp = new ColorRamp(this._changedProps, '_ringColorRamp', [
+      new ColorRampStep(0x856f4e, 0.0, true),
+      new ColorRampStep(0x000000, 0.5),
+      new ColorRampStep(0xbf9a5e, 1.0, true),
+    ])
   }
 
-  public reset() {
-    this._planetName = this._defaultPlanetName
-
-    // Lighting
-    this._lensFlareEnabled = true
-    this._lensFlarePointsIntensity = 0.25
-    this._lensFlareGlareIntensity = 0.4
-    this._sunLightAngle = -15.0
-    this._sunLightColor.set(0xfff6e8)
-    this._sunLightIntensity = 10.0
-    this._ambLightColor.set(0xffffff)
-    this._ambLightIntensity = 0.02
-
-    // Planet & Rendering
-    this._planetGeometryType = GeometryType.SPHERE
-    this._planetMeshQuality = 48.0
-    this._planetRadius = 1.0
-    this._planetAxialTilt = -15.0
-    this._planetRotation = 0.0
-    this._planetWaterRoughness = 0.55
-    this._planetWaterMetalness = 0.5
-    this._planetGroundRoughness = 0.8
-    this._planetGroundMetalness = 0.1
-    this._planetWaterLevel = 0.5
-
-    // Surface
-    this._planetSurfaceShowBumps = true
-    this._planetSurfaceBumpStrength = 0.12
-    this._planetSurfaceNoise.frequency = 2.45
-    this._planetSurfaceNoise.amplitude = 0.53
-    this._planetSurfaceNoise.lacunarity = 2.16
-    this._planetSurfaceNoise.octaves = 6
-    this._planetSurfaceColorRamp.loadFromSteps([
-      new ColorRampStep(0x000000, 0, true),
-      new ColorRampStep(0x0b1931, 0.4),
-      new ColorRampStep(0x2d4265, 0.495),
-      new ColorRampStep(0x2f2e10, 0.5),
-      new ColorRampStep(0x446611, 0.525),
-      new ColorRampStep(0x223b05, 0.65),
-      new ColorRampStep(0x223b05, 1, true),
-    ])
-
-    // Biomes
-    this._biomesEnabled = true
-    this._biomesTemperatureMode = GradientMode.REALISTIC
-    this._biomesTemperatureNoise.frequency = 2.5
-    this._biomesTemperatureNoise.amplitude = 1.25
-    this._biomesTemperatureNoise.lacunarity = 2.5
-    this._biomesTemperatureNoise.octaves = 4
-    this._biomesHumidityNoise.frequency = 2.25
-    this._biomesHumidityNoise.amplitude = 0.95
-    this._biomesHumidityNoise.lacunarity = 2.25
-    this._biomesHumidityNoise.octaves = 4
-    this._biomesParams.splice(0)
-    this._biomesParams.push(
-      ...[
-        new BiomeParameters(
-          this._changedProps,
-          '_biomesParameters',
-          {
-            temperatureMin: 0.0,
-            temperatureMax: 0.08,
-            humidityMin: 0.7,
-            humidityMax: 1.0,
-          },
-          new Color(0xffffff),
-          0.25,
-        ),
-        new BiomeParameters(
-          this._changedProps,
-          '_biomesParameters',
-          {
-            temperatureMin: 0.6,
-            temperatureMax: 1.0,
-            humidityMin: 0.0,
-            humidityMax: 0.65,
-          },
-          new Color(0xbaa345),
-          0.25,
-        ),
-      ],
-    )
-
-    // Clouds
-    this._cloudsEnabled = true
-    this._cloudsRotation = 0.0
-    this._cloudsHeight = 1.0
-    this._cloudsColor.set(0xffffff)
-    this._cloudsNoise.frequency = 4.0
-    this._cloudsNoise.amplitude = 0.6
-    this._cloudsNoise.lacunarity = 1.75
-    this._cloudsNoise.octaves = 4
-    this._cloudsColorRamp.loadFromSteps([
-      new ColorRampStep(0x000000, 0.0, true),
-      new ColorRampStep(0x000000, 0.6),
-      new ColorRampStep(0xbbbbbb, 1.0, true),
-    ])
-
-    // Atmosphere
-    this._atmosphereEnabled = true
-    this._atmosphereHeight = 8.0
-    this._atmosphereDensityScale = 3.0
-    this._atmosphereIntensity = 1.35
-    this._atmosphereColorMode = ColorMode.REALISTIC
-    this._atmosphereHue = 0
-    this._atmosphereTint = new Color(0xffffff)
-
-    this.markAllForChange()
-  }
+  // --------------------------------------------------
+  // |                  Load/reset                    |
+  // --------------------------------------------------
 
   public loadData(data: any) {
-    this._planetName = data._planetName?.replaceAll('_', ' ') ?? this._defaultPlanetName
+    this.planetName = data._planetName?.replaceAll('_', ' ') ?? this._defaultPlanetName
 
     // Lighting
-    this._lensFlareEnabled = data._lensFlareEnabled ?? true
-    this._lensFlarePointsIntensity = data._lensFlarePointsIntensity ?? 0.25
-    this._lensFlareGlareIntensity = data._lensFlareGlareIntensity ?? 0.4
-    this._sunLightAngle = data._sunLightAngle ?? -15.0
-    this._sunLightColor.set(data._sunLightColor ?? 0xfff6e8)
-    this._sunLightIntensity = data._sunLightIntensity ?? 10.0
-    this._ambLightColor.set(data._ambLightColor ?? 0xffffff)
-    this._ambLightIntensity = data._ambLightIntensity ?? 0.02
+    this.lensFlareEnabled = data._lensFlareEnabled ?? true
+    this.lensFlarePointsIntensity = data._lensFlarePointsIntensity ?? 0.25
+    this.lensFlareGlareIntensity = data._lensFlareGlareIntensity ?? 0.4
+    this.sunLightAngle = data._sunLightAngle ?? -15.0
+    this.sunLightColor.set(data._sunLightColor ?? 0xfff6e8)
+    this.sunLightIntensity = data._sunLightIntensity ?? 10.0
+    this.ambLightColor.set(data._ambLightColor ?? 0xffffff)
+    this.ambLightIntensity = data._ambLightIntensity ?? 0.02
 
     // Planet & Rendering
-    this._planetRadius = data._planetRadius ?? 1.0
-    this._planetAxialTilt = data._planetAxialTilt ?? -15.0
-    this._planetRotation = data._planetRotation ?? 0.0
-    this._planetWaterRoughness = data._planetWaterRoughness ?? 0.55
-    this._planetWaterMetalness = data._planetWaterMetalness ?? 0.5
-    this._planetGroundRoughness = data._planetGroundRoughness ?? 0.8
-    this._planetGroundMetalness = data._planetGroundMetalness ?? 0.1
-    this._planetWaterLevel = data._planetWaterLevel ?? 0.5
+    this.planetType = data._planetType ?? PlanetType.TELLURIC
+    this.planetRadius = data._planetRadius ?? 1.0
+    this.planetAxialTilt = data._planetAxialTilt ?? 15.0
+    this.planetRotation = data._planetRotation ?? 0.0
+    this.planetWaterRoughness = data._planetWaterRoughness ?? 0.55
+    this.planetWaterMetalness = data._planetWaterMetalness ?? 0.5
+    this.planetGroundRoughness = data._planetGroundRoughness ?? 0.8
+    this.planetGroundMetalness = data._planetGroundMetalness ?? 0.1
+    this.planetWaterLevel = data._planetWaterLevel ?? 0.5
 
     // Surface
-    this._planetSurfaceShowBumps = data._planetSurfaceShowBumps ?? true
-    this._planetSurfaceBumpStrength = data._planetSurfaceBumpStrength ?? 0.0875
-    this._planetSurfaceNoise.amplitude = data._planetSurfaceNoise?._amplitude ?? 2.45
-    this._planetSurfaceNoise.frequency = data._planetSurfaceNoise?._frequency ?? 0.53
-    this._planetSurfaceNoise.lacunarity = data._planetSurfaceNoise?._lacunarity ?? 2.16
-    this._planetSurfaceNoise.octaves = data._planetSurfaceNoise._octaves ?? 6
-    this._planetSurfaceColorRamp.loadFromSteps(
+    this.planetSurfaceShowBumps = data._planetSurfaceShowBumps ?? true
+    this.planetSurfaceBumpStrength = data._planetSurfaceBumpStrength ?? 0.0875
+    this.planetSurfaceShowWarping = data._planetSurfaceShowWarping ?? false
+    this.planetSurfaceShowDisplacement = data._planetSurfaceShowDisplacement ?? false
+    this.planetSurfaceDisplacement.loadData(data._planetSurfaceDisplacement)
+    this.planetSurfaceNoise.loadData(data._planetSurfaceNoise)
+    this.planetSurfaceColorRamp.loadFromSteps(
       data._planetSurfaceColorRamp
         ? data._planetSurfaceColorRamp._steps
         : [
@@ -710,19 +700,13 @@ export default class PlanetData extends ChangeTracker {
     )
 
     // Biomes
-    this._biomesEnabled = data._biomesEnabled ?? true
-    this._biomesTemperatureMode = data._biomesTemperatureMode ?? GradientMode.REALISTIC
-    this._biomesTemperatureNoise.frequency = data._biomesTemperatureNoise?._frequency ?? 2.5
-    this._biomesTemperatureNoise.amplitude = data._biomesTemperatureNoise?._amplitude ?? 1.25
-    this._biomesTemperatureNoise.lacunarity = data._biomesTemperatureNoise?._lacunarity ?? 2.5
-    this._biomesTemperatureNoise.octaves = data._biomesTemperatureNoise?._octaves ?? 2
-    this._biomesHumidityMode = data._biomesHumidityMode ?? GradientMode.REALISTIC
-    this._biomesHumidityNoise.frequency = data._biomesHumidityNoise?._frequency ?? 2.25
-    this._biomesHumidityNoise.amplitude = data._biomesHumidityNoise?._amplitude ?? 0.95
-    this._biomesHumidityNoise.lacunarity = data._biomesHumidityNoise?._lacunarity ?? 2.25
-    this._biomesHumidityNoise.octaves = data._biomesHumidityNoise?._octaves ?? 4
-    this._biomesParams.splice(0)
-    this._biomesParams.push(
+    this.biomesEnabled = data._biomesEnabled ?? true
+    this.biomesTemperatureMode = data._biomesTemperatureMode ?? GradientMode.REALISTIC
+    this.biomesTemperatureNoise.loadData(data._biomesTemperatureNoise)
+    this.biomesHumidityMode = data._biomesHumidityMode ?? GradientMode.REALISTIC
+    this.biomesHumidityNoise.loadData(data._biomesHumidityNoise)
+    this.biomesParams.splice(0)
+    this.biomesParams.push(
       ...(data._biomesParams ?? []).map((rbp: any) => {
         const nbp = new BiomeParameters(
           this.changedProps,
@@ -742,14 +726,12 @@ export default class PlanetData extends ChangeTracker {
     )
 
     // Clouds
-    this._cloudsEnabled = data._cloudsEnabled ?? true
-    this._cloudsRotation = data._cloudsRotation ?? 0.0
-    this._cloudsNoise.amplitude = data._cloudsNoise?._amplitude ?? 4.0
-    this._cloudsNoise.frequency = data._cloudsNoise?._frequency ?? 0.6
-    this._cloudsNoise.lacunarity = data._cloudsNoise?._lacunarity ?? 1.75
-    this._cloudsNoise.octaves = data._cloudsNoise._octaves ?? 4
-    this._cloudsColor.set(data._cloudsColor ?? 0xffffff)
-    this._cloudsColorRamp.loadFromSteps(
+    this.cloudsEnabled = data._cloudsEnabled ?? true
+    this.cloudsRotation = data._cloudsRotation ?? 0.0
+    this.cloudsShowWarping = data._cloudsShowWarping ?? false
+    this.cloudsNoise.loadData(data._cloudsNoise)
+    this.cloudsColor.set(data._cloudsColor ?? 0xffffff)
+    this.cloudsColorRamp.loadFromSteps(
       data._cloudsColorRamp
         ? data._cloudsColorRamp._steps
         : [
@@ -760,15 +742,44 @@ export default class PlanetData extends ChangeTracker {
     )
 
     // Atmosphere
-    this._atmosphereEnabled = data._atmosphereEnabled ?? true
-    this._atmosphereHeight = data._atmosphereHeight ?? 8.0
-    this._atmosphereDensityScale = data._atmosphereDensityScale ?? 3.0
-    this._atmosphereIntensity = data._atmosphereIntensity ?? 1.35
-    this._atmosphereColorMode = data._atmosphereColorMode ?? ColorMode.REALISTIC
-    this._atmosphereHue = data._atmosphereHue ?? 0.0
-    this._atmosphereTint.set(data._atmosphereTint ?? 0xffffff)
+    this.atmosphereEnabled = data._atmosphereEnabled ?? true
+    this.atmosphereHeight = data._atmosphereHeight ?? 8.0
+    this.atmosphereDensityScale = data._atmosphereDensityScale ?? 3.0
+    this.atmosphereIntensity = data._atmosphereIntensity ?? 1.35
+    this.atmosphereColorMode = data._atmosphereColorMode ?? ColorMode.REALISTIC
+    this.atmosphereHue = data._atmosphereHue ?? 0.0
+    this.atmosphereTint.set(data._atmosphereTint ?? 0xffffff)
+
+    // Ring
+    this.ringEnabled = data._ringEnabled ?? false
+    this.ringAxialTilt = data._ringAxialTilt ?? 90.0
+    this.ringRotation = data._ringRotation ?? 0.0
+    this.ringInnerRadius = data._ringInnerRadius ?? 1.25
+    this.ringOuterRadius = data._ringOuterRadius ?? 1.5
+    this.ringColorRamp.loadFromSteps(
+      data._ringColorRamp
+        ? data._ringColorRamp._steps
+        : [
+            new ColorRampStep(0x856f4e, 0.0, true),
+            new ColorRampStep(0x000000, 0.5),
+            new ColorRampStep(0xbf9a5e, 1.0, true),
+          ],
+    )
+  }
+
+  public reset() {
+    Object.assign(this, new PlanetData())
+    this._planetSurfaceDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05)
+    this._planetSurfaceNoise.reset(2.45, 0.53, 2.16, 6, 1, 1.0)
+    this._biomesTemperatureNoise.reset(2.5, 1.25, 2.5, 4)
+    this._biomesHumidityNoise.reset(2.25, 0.95, 2.25, 4)
+    this._cloudsNoise.reset(4.0, 0.6, 1.75, 4, 1, 1.0)
     this.markAllForChange()
   }
+
+  // --------------------------------------------------
+  // |               Static functions                 |
+  // --------------------------------------------------
 
   public static createFrom(data: any) {
     const planetData = new PlanetData()

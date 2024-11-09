@@ -30,12 +30,13 @@ defineProps<{ compactMode: boolean }>()
   .sidebar {
     width: 100%;
     padding: 1rem;
+    padding-right: 1.5rem;
     margin-top: 3.875rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    overflow: auto;
+    overflow-y: auto;
 
     user-select: none;
     direction: rtl;

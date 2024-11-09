@@ -9,6 +9,10 @@
       <h1 v-if="msgVariant === 3" class="title">{{ $t('404.text_03') }}</h1>
       <h1 class="title ultra" v-if="msgVariant === 4">{{ $t('404.text_04') }}</h1>
       <p class="subtitle">{{ $t('404.subtext') }}</p>
+      <a class="home-link lg link-button" href="/">
+        <iconify-icon icon="mingcute:book-2-line" height="1.5rem" />
+        {{ $t('404.link') }}
+      </a>
     </div>
   </div>
 </template>
@@ -75,6 +79,9 @@ onMounted(() => {
   }
   .ultra {
     font-family: VCR OSD Mono;
+  }
+  .home-link {
+    padding: 0.5rem;
   }
 }
 </style>

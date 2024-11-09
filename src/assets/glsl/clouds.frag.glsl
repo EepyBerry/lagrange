@@ -8,9 +8,14 @@ struct NoiseParameters {
     float amp;
     float lac;
     int oct;
+
+    float xwarp;
+    float ywarp;
+    float zwarp;
 };
 
 // Main uniforms
+uniform bool u_warp;
 uniform NoiseParameters u_noise;
 uniform vec3 u_color;
 uniform sampler2D u_opacity_tex;
@@ -25,16 +30,24 @@ const vec3 DVEC_A = vec3(0.1, 0.1, 0.0);
 const vec3 DVEC_B = vec3(0.2, 0.2, 0.0);
 
 void main() {
+    // Warping
+    vec3 wPos = vec3(
+        vPos.x * mix(1.0, u_noise.xwarp, float(u_warp)),
+        vPos.y * mix(1.0, u_noise.ywarp, float(u_warp)),
+        vPos.z * mix(1.0, u_noise.zwarp, float(u_warp))
+    );
+
+    // Clouds
     vec3 opacity = vec3(0.0);
     vec3 wOpacity = vec3(
-        fbm3(vPos,               u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct),
-        fbm3(vPos + DVEC_A,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct),
-        fbm3(vPos + DVEC_B,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct)
+        fbm3(wPos,               u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct),
+        fbm3(wPos + DVEC_A,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct),
+        fbm3(wPos + DVEC_B,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct)
     );
     if (wOpacity.x < 0.1) {
         discard;
     }
-    opacity += fbm3(vPos + wOpacity, u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct);
+    opacity += fbm3(wPos + wOpacity, u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct);
     opacity = texture2D(u_opacity_tex, vec2(opacity.x, 0.5)).xyz;
 
     csm_Metalness = 0.5;

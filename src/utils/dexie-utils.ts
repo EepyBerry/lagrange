@@ -10,6 +10,7 @@ export async function addDefaultSettings(): Promise<any> {
     showInitDialog: true,
     enableEffects: !prefersReducedMotion(),
     enableAnimations: !prefersReducedMotion(),
+    extrasHologramMode: false,
   })
 }
 
@@ -32,6 +33,7 @@ export async function clearData(): Promise<any> {
     showInitDialog: true,
     enableEffects: !prefersReducedMotion(),
     enableAnimations: !prefersReducedMotion(),
+    extrasHologramMode: false,
   })
   await idb.keyBindings.clear()
   await addDefaultKeyBindings()
