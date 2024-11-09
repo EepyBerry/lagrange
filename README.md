@@ -109,7 +109,7 @@ This project is heavily inspired by the awesome projects below:
 
 The "Lagrange" logo, including *every* update variant, is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International license ([CC BY-NC-SA 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/))
 
-Original assets and source code from this project are provided under the "I'm So Tired" Software License 1.0 - No-Resale version ([ISTSL-NR 1.0](https://olmewe.com/istsl-nr/)).<br>
+Original assets and source code from this project are provided under the "I'm So Tired" Software License 1.0 - No-Resale version.<br>
 Please consult the [license file](LICENSE) for full information.
 
 Content from other parties is provided under their respective license, and attribution is given at the top of the aforementioned content.

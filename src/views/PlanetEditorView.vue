@@ -639,7 +639,7 @@ function updatePlanet() {
   z-index: 15;
   position: absolute;
   inset: 0 0 auto 0;
-  margin: 1rem;
+  margin: 1rem 0;
 
   display: flex;
   align-items: center;
