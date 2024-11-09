@@ -12,16 +12,13 @@
         :alt="planet.data.planetName"
       />
       <iconify-icon v-else icon="ph:planet-thin" width="auto" />
-      <span
-        class="crt"
-        :class="{ animated: A11Y_ANIMATE }"
-      ></span>
+      <span class="crt" :class="{ animated: A11Y_ANIMATE }"></span>
     </div>
     <p class="planet-name">{{ planet.data.planetName }}</p>
     <div class="actions">
       <button
         class="lg contrast"
-        style="flex: 0;"
+        style="flex: 0"
         :aria-label="$t('codex.$action_info', { planet: planet.data.planetName })"
         :title="$t('codex.$action_info', { planet: planet.data.planetName })"
         @click="$emit('info')"

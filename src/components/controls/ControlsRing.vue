@@ -17,8 +17,11 @@
       </ParameterSlider>
       <ParameterCategory>{{ $t('editor.controls.ring.rgba') }}</ParameterCategory>
       <!-- prettier-ignore-attribute -->
-      <ParameterColorRamp mode="rgba" v-model="(LG_PLANET_DATA.ringColorRamp as ColorRamp)"
-        :key="LG_PLANET_DATA.planetName">
+      <ParameterColorRamp
+        mode="rgba"
+        v-model="(LG_PLANET_DATA.ringColorRamp as ColorRamp)"
+        :key="LG_PLANET_DATA.planetName"
+      >
         {{ $t('editor.general.noise_rgbaramp') }}
       </ParameterColorRamp>
     </template>

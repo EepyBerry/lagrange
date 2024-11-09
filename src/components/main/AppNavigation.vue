@@ -5,14 +5,10 @@
       <iconify-icon v-else icon="material-symbols:menu-rounded" width="1.75rem" aria-hidden="true" />
     </button>
 
-    <aside id="nav-compact" ref="sidebar":class="{ open: isOpen }" @click="handleClick">
+    <aside id="nav-compact" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
       <nav>
         <hr />
-        <RouterLink
-          to="/codex"
-          class="lg nav"
-          :aria-label="$t('a11y.action_nav_codex')"
-        >
+        <RouterLink to="/codex" class="lg nav" :aria-label="$t('a11y.action_nav_codex')">
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
         </RouterLink>
@@ -33,11 +29,7 @@
   <template v-else>
     <aside id="nav-full" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
       <nav>
-        <RouterLink 
-          to="/codex"
-          class="lg nav"
-          :aria-label="$t('a11y.action_nav_codex')"
-        >
+        <RouterLink to="/codex" class="lg nav" :aria-label="$t('a11y.action_nav_codex')">
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
         </RouterLink>

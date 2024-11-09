@@ -340,7 +340,7 @@ async function updateSettings() {
     showInitDialog: appSettings.value!.showInitDialog,
     enableEffects: appSettings.value!.enableEffects,
     enableAnimations: appSettings.value!.enableAnimations,
-    extrasHologramMode: appSettings.value!.extrasHologramMode
+    extrasHologramMode: appSettings.value!.extrasHologramMode,
   })
 }
 

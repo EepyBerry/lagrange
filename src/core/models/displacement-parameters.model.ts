@@ -28,9 +28,9 @@ export class DisplacementParameters extends ChangeTracker {
     this._octaves = clamp(oct ?? this._octaves, 0, 8)
     this._epsilon = clamp(epsilon ?? 0.001, 0.0, 1.0)
     this._multiplier = clamp(multiplier ?? 2.0, 0.0, 3.0)
-    this._factor = clamp(factor ?? 0.25, 0.0, 1.0)
+    this._factor = clamp(factor ?? 0.05, 0.0, 1.0)
   }
-  
+
   public get epsilon(): number {
     return this._epsilon
   }
@@ -102,6 +102,6 @@ export class DisplacementParameters extends ChangeTracker {
     this.octaves = clamp(oct, 0, 8)
     this.epsilon = clamp(eps ?? 0.001, 0.0, 2.0)
     this.multiplier = clamp(mul ?? 2.0, 0.0, 5.0)
-    this.factor = clamp(fac ?? 0.25, 0.0, 1.0)
+    this.factor = clamp(fac ?? 0.05, 0.0, 1.0)
   }
 }

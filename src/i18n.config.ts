@@ -19,7 +19,7 @@ const i18n = createI18n<[IntlSchema], IntlSupportedLangs>({
     'en-UwU': enUwU,
 
     fr: frFR,
-    'fr-FR': frFR
+    'fr-FR': frFR,
   },
 })
 
