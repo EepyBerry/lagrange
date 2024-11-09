@@ -74,12 +74,24 @@
           </span>
           <template v-if="planet?.data.biomesParams.length && planet?.data.biomesParams.length > 0">
             <h3>{{ $t('dialog.planetinfo.biomes') }}</h3>
+            <table class="compact-header">
+              <tbody>
+                <tr>
+                  <td name>{{ $t('dialog.planetinfo.biomes_temp') }}:</td>
+                  <td>{{ $t(getMode(planet?.data.biomesTemperatureMode)).toLocaleLowerCase() }}</td>
+                </tr>
+                <tr>
+                  <td name>{{ $t('dialog.planetinfo.biomes_humi') }}:</td>
+                  <td>{{ $t(getMode(planet?.data.biomesHumidityMode)).toLocaleLowerCase() }}</td>
+                </tr>
+              </tbody>
+            </table>
             <table id="planet-biome-data">
               <thead>
                 <tr>
                   <th aria-hidden="true"></th>
-                  <th>{{ $t('dialog.planetinfo.biomes_temp') }} - {{ $t(getMode(planet?.data.biomesTemperatureMode)).toLocaleLowerCase() }}</th>
-                  <th>{{ $t('dialog.planetinfo.biomes_humi') }} - {{ $t(getMode(planet?.data.biomesHumidityMode)).toLocaleLowerCase() }}</th>
+                  <th>&nbsp;{{ $t('dialog.planetinfo.biomes_temp') }} - {{ $t(getMode(planet?.data.biomesTemperatureMode)).toLocaleLowerCase() }}&nbsp;</th>
+                  <th>&nbsp;{{ $t('dialog.planetinfo.biomes_humi') }} - {{ $t(getMode(planet?.data.biomesHumidityMode)).toLocaleLowerCase() }}&nbsp;</th>
                 </tr>
               </thead>
               <tbody>
@@ -134,6 +146,7 @@ function getMode(value: number|undefined) {
 <style scoped lang="scss">
 #dialog-planet-info {
   min-width: 24rem;
+  overflow-y: auto;
   
   .info-grid {
     margin: 1rem;
@@ -193,6 +206,15 @@ function getMode(value: number|undefined) {
     flex-direction: column;
     align-items: center;
 
+    table.compact-header {
+      display: none;
+      margin-top: 1rem;
+      width: 100%;
+      text-align: start;
+      [name] { font-weight: 600; }
+      td:nth-child(2) { padding-left: 1rem; }
+      td { width: 50%; }
+    }
     table#planet-biome-data {
       width: 100%;
       margin-top: 1rem;
@@ -261,12 +283,32 @@ function getMode(value: number|undefined) {
     .planet-preview {
       justify-self: center;
     }
+    .planet-details {
+      .biome-color {
+        width: 2rem;
+      }
+      table#planet-biome-data {
+        tr > td:first-child { width: 2rem; }
+      }
+    }
   }
 }
 @media screen and (max-width: 567px) {
   #dialog-planet-info {
     width: 100%;
     min-width: 0;
+    
+    .planet-details {
+      table.compact-header {
+        display: block;
+      }
+      table#planet-biome-data {
+        margin: 0;
+        thead {
+          display: none;
+        }
+      }
+    }
   }
 }
 </style>
