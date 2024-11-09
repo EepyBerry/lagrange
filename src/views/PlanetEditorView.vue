@@ -38,7 +38,7 @@ import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config'
 import { EventBus } from '@/core/event-bus'
 import { useI18n } from 'vue-i18n'
 import AppNavigation from '@/components/main/AppNavigation.vue'
-import { patchMeshUniform, setMatUniform, setMeshUniform, setMeshUniforms } from '@/utils/three-utils'
+import { patchMeshUniform, setMeshUniform, setMeshUniforms } from '@/utils/three-utils'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import PlanetData from '@/core/models/planet-data.model'
 import {
@@ -88,6 +88,7 @@ const $planetEntityId: Ref<string> = ref('')
 let enableEditorRendering = true
 let watchForPlanetUpdates = false
 let hasPlanetBeenEdited: Ref<boolean> = ref(false)
+let forceLeavePage: boolean = false
 
 // Responsiveness
 const centerInfoControls: Ref<boolean> = ref(true)
@@ -130,7 +131,7 @@ onUnmounted(() => {
   EventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
 })
 onBeforeRouteLeave((_to, _from, next) => {
-  if (hasPlanetBeenEdited.value) {
+  if (hasPlanetBeenEdited.value && !forceLeavePage) {
     next(false)
     warnSaveDialogRef.value?.open()
   } else {
@@ -169,8 +170,9 @@ async function saveAndRedirectToCodex() {
 }
 
 function redirectToCodex() {
-  showSpinner.value = true
-  router.push('/codex')
+  //showSpinner.value = true
+  forceLeavePage = true
+  router.push('/codex').then(() => console.log('sdfhsdjfl'))
 }
 
 async function initData() {

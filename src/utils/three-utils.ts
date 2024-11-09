@@ -34,11 +34,3 @@ export function setMeshUniforms(mesh: MeshOrLensFlare, unames: string[], uvalues
   }
   mat.needsUpdate = true
 }
-
-/**
- * @deprecated
- */
-export function setMatUniform(mat: MeshMaterial, uname: string, uvalue: any): void {
-  mat.uniforms[uname] = { value: uvalue }
-  mat.needsUpdate = true
-}
