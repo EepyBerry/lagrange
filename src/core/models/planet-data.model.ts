@@ -566,9 +566,9 @@ export default class PlanetData extends ChangeTracker {
     this._planetSurfaceDisplacement = new DisplacementParameters(
       this._changedProps,
       '_planetSurfaceDisplacement',
-      2.45,
-      0.53,
-      2.16,
+      2.0,
+      0.2,
+      2.0,
       6
     )
     this._planetSurfaceNoise = new NoiseParameters(
@@ -790,7 +790,7 @@ export default class PlanetData extends ChangeTracker {
 
   public reset() {
     Object.assign(this, new PlanetData())
-    this._planetSurfaceDisplacement.reset(2.45, 0.53, 2.16, 6)
+    this._planetSurfaceDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05)
     this._planetSurfaceNoise.reset(2.45, 0.53, 2.16, 6, 1, 1.0)
     this._biomesTemperatureNoise.reset(2.5, 1.25, 2.5, 4)
     this._biomesHumidityNoise.reset(2.25, 0.95, 2.25, 4)

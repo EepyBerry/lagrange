@@ -4,11 +4,11 @@ import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 export class DisplacementParameters extends ChangeTracker {
   private _epsilon: number = 0.001
   private _multiplier: number = 2.0
-  private _factor: number = 0.25
-  private _frequency: number = 3
-  private _amplitude: number = 0.5
-  private _lacunarity: number = 2
-  private _octaves: number = 2
+  private _factor: number = 0.05
+  private _frequency: number = 2.0
+  private _amplitude: number = 0.2
+  private _lacunarity: number = 2.0
+  private _octaves: number = 8
 
   constructor(
     changedPropsRef: ChangedProp[],

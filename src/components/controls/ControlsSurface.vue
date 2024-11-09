@@ -56,7 +56,7 @@
       {{ $t('editor.controls.surface.displacement_show') }}
     </ParameterCheckbox>
     <template v-if="LG_PLANET_DATA.planetSurfaceShowDisplacement">
-      <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceDisplacement.factor" id="s-dfac" :step="0.01" :max="1">
+      <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceDisplacement.factor" id="s-dfac" :step="0.005" :max="0.25">
         {{ $t('editor.general.displacement_factor') }}
       </ParameterSlider>
       <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceDisplacement.epsilon" id="s-deps" :step="0.0005" :max="0.25">
@@ -75,7 +75,7 @@
       <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceDisplacement.lacunarity" id="s-dlac" :step="0.01" :min="1" :max="3">
         {{ $t('editor.general.noise_fbm_lacunarity') }}
       </ParameterSlider>
-      <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceDisplacement.octaves" id="s-doct" :step="1" :min="1" :max="6">
+      <ParameterSlider v-model="LG_PLANET_DATA.planetSurfaceDisplacement.octaves" id="s-doct" :step="1" :min="1" :max="8">
         {{ $t('editor.general.noise_fbm_octaves') }}
       </ParameterSlider>
     </template>
