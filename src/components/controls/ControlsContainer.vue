@@ -1,7 +1,12 @@
 <template>
   <!-- Lighting -->
-  <CollapsibleSection icon="mingcute:sun-line" :expand="false" :compact-mode="compactMode" :allow-icon-mode="true"
-    :ariaLabel="$t('editor.controls.lighting.$title')">
+  <CollapsibleSection
+    icon="mingcute:sun-line"
+    :expand="false"
+    :compact-mode="compactMode"
+    :allow-icon-mode="true"
+    :ariaLabel="$t('editor.controls.lighting.$title')"
+  >
     <template v-slot:title>{{ $t('editor.controls.lighting.$title') }}</template>
     <template v-slot:content>
       <ControlsLighting />
@@ -9,8 +14,13 @@
   </CollapsibleSection>
 
   <!-- Planet & Rendering -->
-  <CollapsibleSection icon="tabler:gizmo" :expand="false" :compact-mode="compactMode" :allow-icon-mode="true"
-    :ariaLabel="$t('editor.controls.planet_rendering.$title')">
+  <CollapsibleSection
+    icon="tabler:gizmo"
+    :expand="false"
+    :compact-mode="compactMode"
+    :allow-icon-mode="true"
+    :ariaLabel="$t('editor.controls.planet_rendering.$title')"
+  >
     <template v-slot:title>{{ $t('editor.controls.planet_rendering.$title') }}</template>
     <template v-slot:content>
       <ControlsRendering />
@@ -18,8 +28,13 @@
   </CollapsibleSection>
 
   <!-- Surface -->
-  <CollapsibleSection icon="mingcute:grass-line" :expand="false" :compact-mode="compactMode" :allow-icon-mode="true"
-    :ariaLabel="$t('editor.controls.surface.$title')">
+  <CollapsibleSection
+    icon="mingcute:grass-line"
+    :expand="false"
+    :compact-mode="compactMode"
+    :allow-icon-mode="true"
+    :ariaLabel="$t('editor.controls.surface.$title')"
+  >
     <template v-slot:title>{{ $t('editor.controls.surface.$title') }}</template>
     <template v-slot:content>
       <ControlsSurface />
@@ -27,8 +42,13 @@
   </CollapsibleSection>
 
   <!-- Biomes -->
-  <CollapsibleSection icon="mingcute:mountain-2-line" :expand="false" :compact-mode="compactMode"
-    :allow-icon-mode="true" :ariaLabel="$t('editor.controls.biomes.$title')">
+  <CollapsibleSection
+    icon="mingcute:mountain-2-line"
+    :expand="false"
+    :compact-mode="compactMode"
+    :allow-icon-mode="true"
+    :ariaLabel="$t('editor.controls.biomes.$title')"
+  >
     <template v-slot:title>{{ $t('editor.controls.biomes.$title') }}</template>
     <template v-slot:content>
       <ControlsBiomes />
@@ -36,8 +56,13 @@
   </CollapsibleSection>
 
   <!-- Clouds -->
-  <CollapsibleSection icon="mingcute:clouds-line" :expand="false" :compact-mode="compactMode" :allow-icon-mode="true"
-    :ariaLabel="$t('editor.controls.clouds.$title')">
+  <CollapsibleSection
+    icon="mingcute:clouds-line"
+    :expand="false"
+    :compact-mode="compactMode"
+    :allow-icon-mode="true"
+    :ariaLabel="$t('editor.controls.clouds.$title')"
+  >
     <template v-slot:title>{{ $t('editor.controls.clouds.$title') }}</template>
     <template v-slot:content>
       <ControlsClouds />
@@ -45,8 +70,13 @@
   </CollapsibleSection>
 
   <!-- Atmosphere -->
-  <CollapsibleSection icon="material-symbols:line-curve-rounded" :expand="false" :compact-mode="compactMode"
-    :allow-icon-mode="true" :ariaLabel="$t('editor.controls.atmosphere.$title')">
+  <CollapsibleSection
+    icon="material-symbols:line-curve-rounded"
+    :expand="false"
+    :compact-mode="compactMode"
+    :allow-icon-mode="true"
+    :ariaLabel="$t('editor.controls.atmosphere.$title')"
+  >
     <template v-slot:title>{{ $t('editor.controls.atmosphere.$title') }}</template>
     <template v-slot:content>
       <ControlsAtmosphere />
@@ -54,8 +84,13 @@
   </CollapsibleSection>
 
   <!-- Ring -->
-  <CollapsibleSection icon="mingcute:planet-line" :expand="false" :compact-mode="compactMode" :allow-icon-mode="true"
-    :ariaLabel="$t('editor.controls.atmosphere.$title')">
+  <CollapsibleSection
+    icon="mingcute:planet-line"
+    :expand="false"
+    :compact-mode="compactMode"
+    :allow-icon-mode="true"
+    :ariaLabel="$t('editor.controls.atmosphere.$title')"
+  >
     <template v-slot:title>{{ $t('editor.controls.ring.$title') }}</template>
     <template v-slot:content>
       <ControlsRing />

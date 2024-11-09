@@ -74,7 +74,8 @@ footer:not(.transparent) {
   border-top-right-radius: 4px;
 }
 @media screen and (max-width: 1199px) {
-  footer, footer:not(.transparent) {
+  footer,
+  footer:not(.transparent) {
     padding: 0.5rem;
     align-self: flex-end;
     border-top-right-radius: 0;
@@ -82,7 +83,8 @@ footer:not(.transparent) {
 }
 
 @media screen and (max-width: 767px) {
-  footer, footer:not(.transparent) {
+  footer,
+  footer:not(.transparent) {
     display: none;
   }
 }

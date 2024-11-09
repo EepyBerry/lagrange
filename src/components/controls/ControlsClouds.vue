@@ -10,12 +10,7 @@
       </ParameterSlider>
 
       <ParameterCategory>{{ $t('editor.general.warping') }}</ParameterCategory>
-      <ParameterCheckbox
-        v-model="LG_PLANET_DATA.cloudsShowWarping"
-        id="c-warp"
-        :true-value="true"
-        :false-value="false"
-      >
+      <ParameterCheckbox v-model="LG_PLANET_DATA.cloudsShowWarping" id="c-warp" :true-value="true" :false-value="false">
         {{ $t('editor.general.warping_show') }}
       </ParameterCheckbox>
       <template v-if="LG_PLANET_DATA.cloudsShowWarping">

@@ -569,16 +569,9 @@ export default class PlanetData extends ChangeTracker {
       2.0,
       0.2,
       2.0,
-      6
-    )
-    this._planetSurfaceNoise = new NoiseParameters(
-      this._changedProps,
-      '_planetSurfaceNoise',
-      2.45,
-      0.53,
-      2.16,
       6,
     )
+    this._planetSurfaceNoise = new NoiseParameters(this._changedProps, '_planetSurfaceNoise', 2.45, 0.53, 2.16, 6)
     this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
       new ColorRampStep(0x000000, 0, true),
       new ColorRampStep(0x0b1931, 0.4),
@@ -592,23 +585,9 @@ export default class PlanetData extends ChangeTracker {
     // Biomes
     this._biomesEnabled = true
     this._biomesTemperatureMode = GradientMode.REALISTIC
-    this._biomesTemperatureNoise = new NoiseParameters(
-      this._changedProps,
-      '_biomesTemperatureNoise',
-      2.5,
-      1.25,
-      2.5,
-      4,
-    )
+    this._biomesTemperatureNoise = new NoiseParameters(this._changedProps, '_biomesTemperatureNoise', 2.5, 1.25, 2.5, 4)
     this._biomesHumidityMode = GradientMode.REALISTIC
-    this._biomesHumidityNoise = new NoiseParameters(
-      this._changedProps,
-      '_biomesHumidityNoise',
-      2.25,
-      0.95,
-      2.25,
-      4,
-    )
+    this._biomesHumidityNoise = new NoiseParameters(this._changedProps, '_biomesHumidityNoise', 2.25, 0.95, 2.25, 4)
     this._biomesParams = [
       new BiomeParameters(
         this._changedProps,
@@ -670,7 +649,7 @@ export default class PlanetData extends ChangeTracker {
       new ColorRampStep(0xbf9a5e, 1.0, true),
     ])
   }
-  
+
   // --------------------------------------------------
   // |                  Load/reset                    |
   // --------------------------------------------------
@@ -797,11 +776,11 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsNoise.reset(4.0, 0.6, 1.75, 4, 1, 1.0)
     this.markAllForChange()
   }
-  
+
   // --------------------------------------------------
   // |               Static functions                 |
   // --------------------------------------------------
-  
+
   public static createFrom(data: any) {
     const planetData = new PlanetData()
     planetData.loadData(data)

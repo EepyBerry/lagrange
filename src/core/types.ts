@@ -4,11 +4,11 @@ export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
 export enum PlanetType {
   TELLURIC,
-  GASEOUS
+  GASEOUS,
 }
 export enum GeometryType {
   SPHERE,
-  RING
+  RING,
 }
 export enum ColorMode {
   REALISTIC,

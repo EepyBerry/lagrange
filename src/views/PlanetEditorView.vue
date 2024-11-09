@@ -1,9 +1,12 @@
 <template>
   <div id="editor-header" :class="{ compact: !!showCompactNavigation }">
-    <AppNavigation 
-      :compact-mode="showCompactNavigation" />
-    <PlanetInfoControls :compact-mode="showCompactInfo" @rename="patchMetaHead" @save="savePlanet"
-      @reset="resetPlanet" />
+    <AppNavigation :compact-mode="showCompactNavigation" />
+    <PlanetInfoControls
+      :compact-mode="showCompactInfo"
+      @rename="patchMetaHead"
+      @save="savePlanet"
+      @reset="resetPlanet"
+    />
   </div>
   <PlanetEditorControls :compact-mode="showCompactControls" />
 
@@ -153,7 +156,7 @@ async function bootstrapEditor() {
       error.style.fontFamily = ''
       error.style.fontSize = ''
       error.style.width = ''
-        ; (error.lastChild as HTMLLinkElement).style.color = ''
+      ;(error.lastChild as HTMLLinkElement).style.color = ''
       webglErrorDialogRef.value!.openWithError(error)
     }
   } catch (error: any) {
@@ -316,13 +319,13 @@ function disposeScene() {
 
   _lensFlare.material.dispose()
   _lensFlare.mesh.geometry.dispose()
-    ; (_planet.material as THREE.Material).dispose()
+  ;(_planet.material as THREE.Material).dispose()
   _planet.geometry.dispose()
-    ; (_clouds.material as THREE.Material).dispose()
+  ;(_clouds.material as THREE.Material).dispose()
   _clouds.geometry.dispose()
-    ; (_atmosphere.material as THREE.Material).dispose()
+  ;(_atmosphere.material as THREE.Material).dispose()
   _atmosphere.geometry.dispose()
-    ; (_ring.material as THREE.Material).dispose()
+  ;(_ring.material as THREE.Material).dispose()
   _ring.geometry.dispose()
 
   LG_BUFFER_SURFACE.fill(0)
@@ -483,7 +486,6 @@ function registerAtmosphereDataUpdates(): void {
   $dataUpdateMap.set('_atmosphereTint',         () => setMeshUniform(_atmosphere, 'u_tint', LG_PLANET_DATA.value.atmosphereTint))
 }
 
-
 // prettier-ignore
 function registerRingDataUpdates(): void {
   $dataUpdateMap.set('_ringEnabled', () => _ring.visible = LG_PLANET_DATA.value.ringEnabled)
@@ -598,7 +600,7 @@ async function savePlanet() {
     planet: _planet.clone(),
     clouds: _clouds.clone(),
     atmosphere: _atmosphere.clone(),
-    ring: _ring.clone()
+    ring: _ring.clone(),
   })
   _lensFlare.mesh.visible = true
 
@@ -624,7 +626,7 @@ function updatePlanet() {
     hasPlanetBeenEdited.value = true
     console.debug('Planet has been edited, warning user in case of unsaved data')
   }
-  for (let changedProp of LG_PLANET_DATA.value.changedProps.filter(ch => !!ch.prop)) {
+  for (let changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
     let key = changedProp.prop
     // Check for additional info, separated by |
     key = changedProp.prop.split('|')[0]
@@ -655,7 +657,7 @@ function updatePlanet() {
   box-shadow: black 5px 10px 10px;
   z-index: 5;
 
-  &>canvas {
+  & > canvas {
     background: transparent;
   }
 }

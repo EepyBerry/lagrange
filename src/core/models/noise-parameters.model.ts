@@ -7,7 +7,7 @@ export class NoiseParameters extends ChangeTracker {
   private _amplitude: number = 0.5
   private _lacunarity: number = 2
   private _octaves: number = 2
-  
+
   private _layers: number = 1
   private _warpFactor: Vector3 = new Vector3(1.0)
 
@@ -71,7 +71,7 @@ export class NoiseParameters extends ChangeTracker {
   public get warpFactor(): Vector3 {
     return this._warpFactor
   }
-  
+
   public get xWarpFactor(): number {
     return this._warpFactor.x
   }

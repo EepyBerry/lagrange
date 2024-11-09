@@ -88,8 +88,11 @@ export function createSphereGeometryComponent(addtlRadius: number = 0): THREE.Sp
   )
 }
 
-export function createRingGeometryComponent(innerRadius: number = 1.25, outerRadius: number = 1.75): THREE.RingGeometry {
-  return new THREE.RingGeometry(innerRadius,outerRadius, LG_PLANET_DATA.value.planetMeshQuality)
+export function createRingGeometryComponent(
+  innerRadius: number = 1.25,
+  outerRadius: number = 1.75,
+): THREE.RingGeometry {
+  return new THREE.RingGeometry(innerRadius, outerRadius, LG_PLANET_DATA.value.planetMeshQuality)
 }
 
 /**
