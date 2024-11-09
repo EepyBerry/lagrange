@@ -227,7 +227,6 @@ async function deleteTargetedPlanet() {
   backdrop-filter: blur(8px) brightness(25%);
   inset: 0 0 auto 0;
 
-  inset: auto 1rem;
   padding: 1rem;
   margin: 0;
   display: flex;
