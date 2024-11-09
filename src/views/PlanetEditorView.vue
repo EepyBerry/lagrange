@@ -88,7 +88,6 @@ const $planetEntityId: Ref<string> = ref('')
 let enableEditorRendering = true
 let watchForPlanetUpdates = false
 let hasPlanetBeenEdited: Ref<boolean> = ref(false)
-let forceLeavePage: boolean = false
 
 // Responsiveness
 const centerInfoControls: Ref<boolean> = ref(true)
@@ -131,7 +130,7 @@ onUnmounted(() => {
   EventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
 })
 onBeforeRouteLeave((_to, _from, next) => {
-  if (hasPlanetBeenEdited.value && !forceLeavePage) {
+  if (hasPlanetBeenEdited.value) {
     next(false)
     warnSaveDialogRef.value?.open()
   } else {
@@ -170,8 +169,8 @@ async function saveAndRedirectToCodex() {
 }
 
 function redirectToCodex() {
-  //showSpinner.value = true
-  forceLeavePage = true
+  // set edit flag to false to force exit
+  hasPlanetBeenEdited.value = false
   router.push('/codex').then(() => console.log('sdfhsdjfl'))
 }
 
