@@ -6,6 +6,7 @@
       @rename="patchMetaHead"
       @save="savePlanet"
       @reset="resetPlanet"
+      @gltf="exportPlanetToGltf"
     />
   </div>
   <PlanetEditorControls :compact-mode="showCompactControls" />
@@ -70,6 +71,7 @@ import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
 import { recalculateBiomeTexture, recalculateRampTexture } from '@/core/helpers/texture.helper'
 import type { ColorRampStep } from '@/core/models/color-ramp.model'
 import AppWarnSaveDialog from '@/components/dialogs/AppWarnSaveDialog.vue'
+import { exportToGLTF } from '@/core/helpers/export.helper'
 
 const route = useRoute()
 const router = useRouter()
@@ -619,6 +621,10 @@ async function savePlanet() {
   enableEditorRendering = true
   showSpinner.value = false
   EventBus.sendToastEvent('success', 'toast.save_success', 3000)
+}
+
+async function exportPlanetToGltf() {
+  exportToGLTF($se.scene, LG_PLANET_DATA.value.planetName.replaceAll(' ', '_'))
 }
 
 function updatePlanet() {
