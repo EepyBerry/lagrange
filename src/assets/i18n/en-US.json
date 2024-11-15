@@ -96,7 +96,11 @@
       "general_theme_default": "Comet",
       "general_theme_supernova": "Supernova",
       "general_theme_voyager": "Voyager",
-      "general_monospace": "Enable monospace font",
+      "general_font": "Choose font to use",
+      "general_font_default": "Default - Poppins",
+      "general_font_monospace": "Monospace - JetBrains Mono",
+      "general_font_lowvision": "Low-vision - Atkinson Hyperlegible",
+      "general_font_dyslexia": "Dyslexia - OpenDyslexic",
       "general_init_dialog": "Show init dialog on load",
 
       "editor": "Editor",

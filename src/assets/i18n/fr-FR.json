@@ -96,7 +96,11 @@
       "general_theme_default": "Comet",
       "general_theme_supernova": "Supernova",
       "general_theme_voyager": "Voyager",
-      "general_monospace": "Police à largeur fixe (monospace)",
+      "general_font": "Choisir la police",
+      "general_font_default": "Par défaut - Poppins",
+      "general_font_monospace": "Largeur fixe - JetBrains Mono",
+      "general_font_lowvision": "Malvoyance - Atkinson Hyperlegible",
+      "general_font_dyslexia": "Dyslexie - OpenDyslexic",
       "general_init_dialog": "Afficher l'introduction au chargement",
 
       "editor": "Éditeur",

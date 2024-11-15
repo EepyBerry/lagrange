@@ -27,7 +27,15 @@
                   <option value="_" disabled>{{ $t('main.more_coming_soon') }}</option>
                 </template>
               </ParameterSelect>
-              <ParameterDivider />
+              <ParameterSelect id="settings-font" v-model="appSettings.font">
+                {{ $t('dialog.settings.general_font') }}:
+                <template v-slot:options>
+                  <option value="default">{{ $t('dialog.settings.general_font_default') }}</option>
+                  <option value="monospace">{{ $t('dialog.settings.general_font_monospace') }}</option>
+                  <option value="lowvision">{{ $t('dialog.settings.general_font_lowvision') }}</option>
+                  <option value="dyslexia">{{ $t('dialog.settings.general_font_dyslexia') }}</option>
+                </template>
+              </ParameterSelect>
               <ParameterRadio>
                 <template v-slot:title> {{ $t('dialog.settings.general_theme') }}: </template>
                 <template v-slot:options>
@@ -64,14 +72,6 @@
                 </template>
               </ParameterRadio>
               <ParameterDivider />
-              <ParameterCheckbox
-                id="settings-font"
-                :true-value="'monospace'"
-                :false-value="'default'"
-                v-model="appSettings.font"
-              >
-                {{ $t('dialog.settings.general_monospace') }}:
-              </ParameterCheckbox>
               <ParameterCheckbox
                 id="settings-init"
                 :true-value="true"
