@@ -37,7 +37,8 @@ import { LensFlareEffect } from '@core/three/lens-flare.effect'
 import PlanetData from '@core/models/planet-data.model'
 import { ref } from 'vue'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
-import { createBiomeTexture, createRampTexture } from '../helpers/texture.helper'
+import { bakeTexture, createBiomeTexture, createRampTexture } from '../helpers/texture.helper'
+import { saveAs } from 'file-saver'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -275,8 +276,8 @@ export function createRing(data: PlanetData): { mesh: THREE.Mesh; texs: DataText
 // DATA FUNCTIONS
 
 export type PlanetPreviewData = {
-  sun: THREE.DirectionalLight
-  ambientLight: THREE.AmbientLight
+  sun?: THREE.DirectionalLight
+  ambientLight?: THREE.AmbientLight
   planet: THREE.Mesh
   clouds: THREE.Mesh
   atmosphere: THREE.Mesh
@@ -320,8 +321,8 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   planetGroup.add(ringAnchor)
 
   previewScene.add(planetGroup)
-  previewScene.add(data.sun)
-  previewScene.add(data.ambientLight)
+  previewScene.add(data.sun!)
+  previewScene.add(data.ambientLight!)
 
   planetGroup.scale.setScalar(LG_PLANET_DATA.value.planetRadius)
   planetGroup.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
@@ -357,8 +358,8 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
   ringAnchor.clear()
   planetGroup.clear()
-  data.sun.dispose()
-  data.ambientLight.dispose()
+  data.sun!.dispose()
+  data.ambientLight!.dispose()
   ;(data.clouds.material as THREE.Material).dispose()
   ;(data.atmosphere.material as THREE.Material).dispose()
   ;(data.planet.material as THREE.Material).dispose()
@@ -378,4 +379,22 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   canvas.remove()
 
   return dataURL
+}
+
+export function exportPlanetToGLTF($se: SceneElements, data: PlanetPreviewData) {
+  const w = window.innerWidth, h = window.innerHeight
+  const bakeRenderTarget = new THREE.WebGLRenderTarget(w, h, {
+    colorSpace: THREE.SRGBColorSpace,
+  })
+
+  //$se.renderer.setRenderTarget(bakeRenderTarget)
+  //$se.renderer.render($se.scene, $se.camera)
+  const planetTex = bakeTexture($se, data.planet, { scene: $se.scene, size: 2048, target: null })
+  console.log(planetTex)
+  saveAs(new Blob([planetTex]), 'tex_planet.raw')
+
+  // ------------------------------- Clean-up resources -------------------------------
+  
+  //$se.renderer.setRenderTarget(null)
+  bakeRenderTarget.dispose()
 }

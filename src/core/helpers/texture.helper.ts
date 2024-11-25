@@ -1,11 +1,15 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import type { Rect, DataTextureWrapper, Coordinates2D, RawRGBA } from '@/core/types'
 import { alphaBlendColors, avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
-import { Color, DataTexture } from 'three'
+import { Color, DataTexture, Mesh, Scene } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { INT8_TO_UNIT_MUL } from '../globals'
 import { toRawRGBA } from '@/utils/utils'
+import { getTextureAsDataUrl, ShaderBaker, type BakeOptions } from 'three-shader-baker'
+import type { SceneElements } from '../models/scene-elements.model'
+
+const SHADER_BAKER = new ShaderBaker()
 
 export function createRampTexture(buffer: Uint8Array, w: number, steps: ColorRampStep[]): DataTextureWrapper {
   if (steps.length > 0) {
@@ -133,4 +137,11 @@ function _writeToBuffer(buffer: Uint8Array, index: number, rgba: RawRGBA, multip
   buffer[index + 1] = clamp(rgba.g * multiplier, 0, 255)
   buffer[index + 2] = clamp(rgba.b * multiplier, 0, 255)
   buffer[index + 3] = clamp(rgba.a * multiplier, 0, 255)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+export function bakeTexture($se: SceneElements, mesh: Mesh, parameters: BakeOptions): string {
+  const fbo = SHADER_BAKER.bake($se.renderer, mesh, parameters)
+  return getTextureAsDataUrl($se.renderer, fbo.texture)
 }

@@ -54,6 +54,7 @@ import {
   createScene,
   createSun,
   exportPlanetPreview,
+  exportPlanetToGLTF,
   LG_BUFFER_BIOME,
   LG_BUFFER_CLOUDS,
   LG_BUFFER_RING,
@@ -624,7 +625,13 @@ async function savePlanet() {
 }
 
 async function exportPlanetToGltf() {
-  exportToGLTF($se.scene, LG_PLANET_DATA.value.planetName.replaceAll(' ', '_'))
+  //exportToGLTF($se.scene, LG_PLANET_DATA.value.planetName.replaceAll(' ', '_'))
+  exportPlanetToGLTF($se, {
+    planet: _planet.clone(),
+    clouds: _clouds.clone(),
+    atmosphere: _atmosphere.clone(),
+    ring: _ring.clone(),
+  })
 }
 
 function updatePlanet() {
