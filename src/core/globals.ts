@@ -10,6 +10,7 @@ export const MD_WIDTH_THRESHOLD = 1200
 export const LOCALE_MAP: { [k: string]: string } = {
   en: 'en-US',
   fr: 'fr-FR',
+  de: 'de-DE'
 }
 
 // Accessibility
