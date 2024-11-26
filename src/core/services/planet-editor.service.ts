@@ -276,8 +276,16 @@ export function createRing(data: PlanetData): { mesh: THREE.Mesh; texs: DataText
 // DATA FUNCTIONS
 
 export type PlanetPreviewData = {
-  sun?: THREE.DirectionalLight
-  ambientLight?: THREE.AmbientLight
+  sun: THREE.DirectionalLight
+  ambientLight: THREE.AmbientLight
+  planet: THREE.Mesh
+  clouds: THREE.Mesh
+  atmosphere: THREE.Mesh
+  ring: THREE.Mesh
+}
+export type PlanetGltfData = {
+  sun: THREE.DirectionalLight
+  ambientLight: THREE.AmbientLight
   planet: THREE.Mesh
   clouds: THREE.Mesh
   atmosphere: THREE.Mesh
@@ -381,20 +389,15 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   return dataURL
 }
 
-export function exportPlanetToGLTF($se: SceneElements, data: PlanetPreviewData) {
-  const w = window.innerWidth, h = window.innerHeight
-  const bakeRenderTarget = new THREE.WebGLRenderTarget(w, h, {
-    colorSpace: THREE.SRGBColorSpace,
-  })
-
-  //$se.renderer.setRenderTarget(bakeRenderTarget)
-  //$se.renderer.render($se.scene, $se.camera)
-  const planetTex = bakeTexture($se, data.planet, { scene: $se.scene, size: 2048, target: null })
-  console.log(planetTex)
-  saveAs(new Blob([planetTex]), 'tex_planet.raw')
-
-  // ------------------------------- Clean-up resources -------------------------------
+export function exportPlanetToGLTF($se: SceneElements, data: PlanetGltfData) {
+  const test = new THREE.Mesh(new THREE.SphereGeometry(0.7), new THREE.MeshBasicMaterial({ color: 0xff0000 }))
+  $se.scene.add(test)
   
-  //$se.renderer.setRenderTarget(null)
-  bakeRenderTarget.dispose()
+  data.planet.visible = false
+  data.clouds.visible = false
+  data.ring.visible = false
+  data.atmosphere.visible = false
+  const planetTex = bakeTexture($se, test, { scene: $se.scene, size: 2048 })
+  console.log(planetTex)
+  //saveAs(new Blob([planetTex]), 'tex_planet.raw')
 }

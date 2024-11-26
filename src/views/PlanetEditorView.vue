@@ -627,10 +627,12 @@ async function savePlanet() {
 async function exportPlanetToGltf() {
   //exportToGLTF($se.scene, LG_PLANET_DATA.value.planetName.replaceAll(' ', '_'))
   exportPlanetToGLTF($se, {
-    planet: _planet.clone(),
-    clouds: _clouds.clone(),
-    atmosphere: _atmosphere.clone(),
-    ring: _ring.clone(),
+    sun: _sunLight,
+    ambientLight: _ambLight,
+    planet: _planet,
+    clouds: _clouds,
+    atmosphere: _atmosphere,
+    ring: _ring,
   })
 }
 
