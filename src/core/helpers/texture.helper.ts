@@ -1,13 +1,14 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import type { Rect, DataTextureWrapper, Coordinates2D, RawRGBA } from '@/core/types'
 import { alphaBlendColors, avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
-import { Color, DataTexture, Mesh, Scene } from 'three'
+import { Color, DataTexture, FramebufferTexture, LinearDisplayP3ColorSpace, LinearSRGBColorSpace, Mesh, RGBAFormat, Scene, SRGBColorSpace, Texture, WebGLRenderer, WebGLRenderTarget } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { INT8_TO_UNIT_MUL } from '../globals'
 import { toRawRGBA } from '@/utils/utils'
 import { getTextureAsDataUrl, ShaderBaker, type BakeOptions } from 'three-shader-baker'
 import type { SceneElements } from '../models/scene-elements.model'
+import { render } from 'vue'
 
 const SHADER_BAKER = new ShaderBaker()
 
@@ -141,7 +142,27 @@ function _writeToBuffer(buffer: Uint8Array, index: number, rgba: RawRGBA, multip
 
 // ------------------------------------------------------------------------------------------------
 
-export function bakeTexture($se: SceneElements, mesh: Mesh, parameters: BakeOptions): string {
-  const fbo = SHADER_BAKER.bake($se.renderer, mesh, parameters)
-  return getTextureAsDataUrl($se.renderer, fbo.texture)
+/**
+ * bakes a model's ShaderMaterial into a texture, using a framebuffer & target
+ * texture to properly detach it from the initial WebGLRenderTarget
+ * @param framebufferTexture framebuffer, will be overwritten
+ * @param targetTexture target texture, will be overwritten
+ * @param renderer renderer
+ * @param mesh mesh
+ * @param parameters baking parameters
+ * @returns 
+ */
+export function bakeTexture(
+  renderer: WebGLRenderer,
+  mesh: Mesh,
+  buffer: Uint8Array,
+  size: number
+): DataTexture {
+  buffer.fill(0)
+  const bakedRenderTarget = SHADER_BAKER.bake(renderer, mesh, { size });
+  renderer.outputColorSpace = LinearSRGBColorSpace
+  renderer.readRenderTargetPixels(bakedRenderTarget, 0, 0, size, size, buffer)
+  const tex = new DataTexture(buffer, size, size, RGBAFormat)
+  tex.colorSpace = LinearDisplayP3ColorSpace
+  return tex
 }

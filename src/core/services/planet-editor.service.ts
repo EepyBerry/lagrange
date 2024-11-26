@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import planetFragShader from '@assets/glsl/planet.frag.glsl?raw'
 import planetVertShader from '@assets/glsl/planet.vert.glsl?raw'
+import planetUnlitFragShader from '@assets/glsl/unlit/planet_unlit.frag.glsl?raw'
+import planetUnlitVertShader from '@assets/glsl/unlit/planet_unlit.vert.glsl?raw'
 import cloudsFragShader from '@assets/glsl/clouds.frag.glsl?raw'
 import cloudsVertShader from '@assets/glsl/clouds.vert.glsl?raw'
 import atmosphereFragShader from '@assets/glsl/atmosphere.frag.glsl?raw'
@@ -39,6 +41,9 @@ import { ref } from 'vue'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
 import { bakeTexture, createBiomeTexture, createRampTexture } from '../helpers/texture.helper'
 import { saveAs } from 'file-saver'
+import { downloadTexture } from 'three-shader-baker'
+import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
+import { exportMeshesToGLTF } from '../helpers/export.helper'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -179,7 +184,6 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
     },
     THREE.MeshStandardMaterial,
   )
-  material.shadowSide = THREE.DoubleSide
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.castShadow = true
@@ -270,6 +274,84 @@ export function createRing(data: PlanetData): { mesh: THREE.Mesh; texs: DataText
   mesh.receiveShadow = true
   mesh.castShadow = true
   return { mesh, texs: [rgbaTex] }
+}
+
+// ----------------------------------------------------------------------------------------------------------------------
+// UNLIT FUNCTIONS
+
+export function createUnlitPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
+  const geometry = createSphereGeometryComponent()
+  geometry.computeTangents()
+
+  const surfaceTex = createRampTexture(LG_BUFFER_SURFACE, TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
+  const biomeTex = createBiomeTexture(LG_BUFFER_BIOME, TEXTURE_SIZES.BIOME, data.biomesParams)
+
+  const material = createCustomShaderMaterialComponent(
+    planetUnlitVertShader,
+    planetUnlitFragShader,
+    {
+      // Planet & Rendering
+      u_radius: { value: 1.0 },
+      u_pbr_params: {
+        value: {
+          wlevel: data.planetWaterLevel,
+        },
+      },
+      // Surface
+      u_warp: { value: data.planetSurfaceShowWarping },
+      u_displace: { value: data.planetSurfaceShowDisplacement },
+      u_surface_displacement: {
+        value: {
+          freq: data.planetSurfaceDisplacement.frequency,
+          amp: data.planetSurfaceDisplacement.amplitude,
+          lac: data.planetSurfaceDisplacement.lacunarity,
+          oct: data.planetSurfaceDisplacement.octaves,
+          eps: data.planetSurfaceDisplacement.epsilon,
+          mul: data.planetSurfaceDisplacement.multiplier,
+          fac: data.planetSurfaceDisplacement.factor,
+        },
+      },
+      u_surface_noise: {
+        value: {
+          freq: data.planetSurfaceNoise.frequency,
+          amp: data.planetSurfaceNoise.amplitude,
+          lac: data.planetSurfaceNoise.lacunarity,
+          oct: data.planetSurfaceNoise.octaves,
+          layers: data.planetSurfaceNoise.layers,
+          xwarp: data.planetSurfaceNoise.xWarpFactor,
+          ywarp: data.planetSurfaceNoise.yWarpFactor,
+          zwarp: data.planetSurfaceNoise.zWarpFactor,
+        },
+      },
+      u_surface_tex: { value: surfaceTex.texture },
+      // Biomes
+      u_biomes: { value: data.biomesEnabled },
+      u_biomes_tex: { value: biomeTex.texture },
+      u_temp_noise: {
+        value: {
+          mode: data.biomesTemperatureMode,
+          freq: data.biomesTemperatureNoise.frequency,
+          amp: data.biomesTemperatureNoise.amplitude,
+          lac: data.biomesTemperatureNoise.lacunarity,
+          oct: data.biomesTemperatureNoise.octaves,
+        },
+      },
+      u_humi_noise: {
+        value: {
+          mode: data.biomesHumidityMode,
+          freq: data.biomesHumidityNoise.frequency,
+          amp: data.biomesHumidityNoise.amplitude,
+          lac: data.biomesHumidityNoise.lacunarity,
+          oct: data.biomesHumidityNoise.octaves,
+        },
+      },
+    },
+    THREE.MeshBasicMaterial,
+  )
+
+  const mesh = new THREE.Mesh(geometry, material)
+  mesh.name = LG_NAME_PLANET + '_unlit'
+  return { mesh, texs: [surfaceTex, biomeTex] }
 }
 
 // ----------------------------------------------------------------------------------------------------------------------
@@ -390,14 +472,22 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 }
 
 export function exportPlanetToGLTF($se: SceneElements, data: PlanetGltfData) {
-  const test = new THREE.Mesh(new THREE.SphereGeometry(0.7), new THREE.MeshBasicMaterial({ color: 0xff0000 }))
-  $se.scene.add(test)
-  
-  data.planet.visible = false
-  data.clouds.visible = false
-  data.ring.visible = false
-  data.atmosphere.visible = false
-  const planetTex = bakeTexture($se, test, { scene: $se.scene, size: 2048 })
-  console.log(planetTex)
-  //saveAs(new Blob([planetTex]), 'tex_planet.raw')
+  const bakePlanet = createUnlitPlanet(LG_PLANET_DATA.value as PlanetData).mesh
+  const buffer: Uint8Array = new Uint8Array(4096 * 4096 * 4)
+
+  // ------------------------- Bake textures & swap materials -------------------------
+
+  const planetTexture = bakeTexture($se.renderer, bakePlanet, buffer, 4096)
+
+  ;(bakePlanet.material as CustomShaderMaterial).dispose()
+  bakePlanet.material = new THREE.MeshBasicMaterial({ map: planetTexture })
+
+  // -------------------------- Export and clean-up resources -------------------------
+
+  exportMeshesToGLTF([bakePlanet], LG_PLANET_DATA.value.planetName.replaceAll(' ', '_') + '_unlit')
+
+  ;(bakePlanet.material as CustomShaderMaterial).dispose()
+  bakePlanet.geometry.dispose()
+
+  $se.scene.remove(bakePlanet)
 }

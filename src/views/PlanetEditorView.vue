@@ -72,7 +72,7 @@ import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
 import { recalculateBiomeTexture, recalculateRampTexture } from '@/core/helpers/texture.helper'
 import type { ColorRampStep } from '@/core/models/color-ramp.model'
 import AppWarnSaveDialog from '@/components/dialogs/AppWarnSaveDialog.vue'
-import { exportToGLTF } from '@/core/helpers/export.helper'
+import { exportSceneToGLTF } from '@/core/helpers/export.helper'
 
 const route = useRoute()
 const router = useRouter()
