@@ -160,7 +160,6 @@ export function bakeTexture(
 ): DataTexture {
   buffer.fill(0)
   const bakedRenderTarget = SHADER_BAKER.bake(renderer, mesh, { size });
-  renderer.outputColorSpace = LinearSRGBColorSpace
   renderer.readRenderTargetPixels(bakedRenderTarget, 0, 0, size, size, buffer)
   const tex = new DataTexture(buffer, size, size, RGBAFormat)
   tex.colorSpace = LinearDisplayP3ColorSpace
