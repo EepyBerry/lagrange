@@ -467,7 +467,6 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
   const dataURL = canvas.toDataURL('image/webp')
   canvas.remove()
-
   return dataURL
 }
 
@@ -480,14 +479,12 @@ export function exportPlanetToGLTF($se: SceneElements, data: PlanetGltfData) {
   const planetTexture = bakeTexture($se.renderer, bakePlanet, buffer, 4096)
 
   ;(bakePlanet.material as CustomShaderMaterial).dispose()
-  bakePlanet.material = new THREE.MeshBasicMaterial({ map: planetTexture })
+  bakePlanet.material = new THREE.MeshStandardMaterial({ map: planetTexture })
 
   // -------------------------- Export and clean-up resources -------------------------
 
-  exportMeshesToGLTF([bakePlanet], LG_PLANET_DATA.value.planetName.replaceAll(' ', '_') + '_unlit')
+  exportMeshesToGLTF([bakePlanet], LG_PLANET_DATA.value.planetName.replaceAll(' ', '_'))
 
   ;(bakePlanet.material as CustomShaderMaterial).dispose()
   bakePlanet.geometry.dispose()
-
-  $se.scene.remove(bakePlanet)
 }

@@ -1,14 +1,12 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import type { Rect, DataTextureWrapper, Coordinates2D, RawRGBA } from '@/core/types'
 import { alphaBlendColors, avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
-import { Color, DataTexture, FramebufferTexture, LinearDisplayP3ColorSpace, LinearSRGBColorSpace, Mesh, RGBAFormat, Scene, SRGBColorSpace, Texture, WebGLRenderer, WebGLRenderTarget } from 'three'
+import { Color, DataTexture, Mesh, RGBAFormat, WebGLRenderer } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { INT8_TO_UNIT_MUL } from '../globals'
 import { toRawRGBA } from '@/utils/utils'
-import { getTextureAsDataUrl, ShaderBaker, type BakeOptions } from 'three-shader-baker'
-import type { SceneElements } from '../models/scene-elements.model'
-import { render } from 'vue'
+import { downloadTexture, ShaderBaker } from 'three-shader-baker'
 
 const SHADER_BAKER = new ShaderBaker()
 
@@ -160,8 +158,8 @@ export function bakeTexture(
 ): DataTexture {
   buffer.fill(0)
   const bakedRenderTarget = SHADER_BAKER.bake(renderer, mesh, { size });
+  downloadTexture(renderer, bakedRenderTarget.texture, 'test')
   renderer.readRenderTargetPixels(bakedRenderTarget, 0, 0, size, size, buffer)
   const tex = new DataTexture(buffer, size, size, RGBAFormat)
-  tex.colorSpace = LinearDisplayP3ColorSpace
   return tex
 }
