@@ -484,6 +484,8 @@ export async function exportPlanetToGLTF($se: SceneElements, data: PlanetGltfDat
 
   exportMeshesToGLTF([bakePlanet], LG_PLANET_DATA.value.planetName.replaceAll(' ', '_'))
 
+  planetTexture.dispose()
+  
   ;(bakePlanet.material as CustomShaderMaterial).dispose()
   bakePlanet.geometry.dispose()
 }
