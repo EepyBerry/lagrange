@@ -625,7 +625,7 @@ async function savePlanet() {
 
 async function exportPlanetToGltf() {
   //exportToGLTF($se.scene, LG_PLANET_DATA.value.planetName.replaceAll(' ', '_'))
-  exportPlanetToGLTF($se, {
+  await exportPlanetToGLTF($se, {
     sun: _sunLight,
     ambientLight: _ambLight,
     planet: _planet,

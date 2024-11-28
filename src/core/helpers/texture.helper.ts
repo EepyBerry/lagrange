@@ -1,12 +1,12 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import type { Rect, DataTextureWrapper, Coordinates2D, RawRGBA } from '@/core/types'
 import { alphaBlendColors, avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
-import { Color, DataTexture, Mesh, RGBAFormat, WebGLRenderer } from 'three'
+import { Color, DataTexture, Mesh, Texture, TextureLoader, WebGLRenderer, WebGLRenderTarget } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { INT8_TO_UNIT_MUL } from '../globals'
 import { toRawRGBA } from '@/utils/utils'
-import { downloadTexture, ShaderBaker } from 'three-shader-baker'
+import { getTextureAsDataUrl, ShaderBaker } from 'three-shader-baker'
 
 const SHADER_BAKER = new ShaderBaker()
 
@@ -141,25 +141,18 @@ function _writeToBuffer(buffer: Uint8Array, index: number, rgba: RawRGBA, multip
 // ------------------------------------------------------------------------------------------------
 
 /**
- * bakes a model's ShaderMaterial into a texture, using a framebuffer & target
- * texture to properly detach it from the initial WebGLRenderTarget
- * @param framebufferTexture framebuffer, will be overwritten
- * @param targetTexture target texture, will be overwritten
+ * Asynchronously bakes a model's Material/ShaderMaterial/CustomShaderMaterial into a texture (note: uses three-shader-baker + TextureLoader)
  * @param renderer renderer
- * @param mesh mesh
- * @param parameters baking parameters
- * @returns 
+ * @param mesh mesh to bake
+ * @param size texture size in pixels
+ * @returns a promise containing the mesh's baked texture
  */
-export function bakeTexture(
+export async function bakeTexture(
   renderer: WebGLRenderer,
   mesh: Mesh,
-  buffer: Uint8Array,
   size: number
-): DataTexture {
-  buffer.fill(0)
-  const bakedRenderTarget = SHADER_BAKER.bake(renderer, mesh, { size });
-  downloadTexture(renderer, bakedRenderTarget.texture, 'test')
-  renderer.readRenderTargetPixels(bakedRenderTarget, 0, 0, size, size, buffer)
-  const tex = new DataTexture(buffer, size, size, RGBAFormat)
-  return tex
+): Promise<Texture> {
+  const bakedRenderTarget: WebGLRenderTarget<Texture> = SHADER_BAKER.bake(renderer, mesh, { size })
+  const dataUri = getTextureAsDataUrl(renderer, bakedRenderTarget.texture)
+  return await new TextureLoader().loadAsync(dataUri)
 }

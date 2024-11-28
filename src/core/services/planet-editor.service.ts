@@ -470,13 +470,12 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   return dataURL
 }
 
-export function exportPlanetToGLTF($se: SceneElements, data: PlanetGltfData) {
+export async function exportPlanetToGLTF($se: SceneElements, data: PlanetGltfData) {
   const bakePlanet = createUnlitPlanet(LG_PLANET_DATA.value as PlanetData).mesh
-  const buffer: Uint8Array = new Uint8Array(4096 * 4096 * 4)
 
   // ------------------------- Bake textures & swap materials -------------------------
 
-  const planetTexture = bakeTexture($se.renderer, bakePlanet, buffer, 4096)
+  const planetTexture = await bakeTexture($se.renderer, bakePlanet, 4096)
 
   ;(bakePlanet.material as CustomShaderMaterial).dispose()
   bakePlanet.material = new THREE.MeshStandardMaterial({ map: planetTexture })
