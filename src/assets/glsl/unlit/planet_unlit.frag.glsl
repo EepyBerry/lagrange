@@ -51,7 +51,7 @@ uniform NoiseParameters u_temp_noise;
 uniform NoiseParameters u_humi_noise;
 uniform sampler2D u_biomes_tex;
 
-// Packed varyings (uv, position, tangent, bitangent)
+// Packed varyings (uv, position)
 in mat4 vTransform;
 
 @import functions/fbm;
@@ -71,12 +71,12 @@ void main() {
     vec3 color = vec3(0.0);
     vec3 vPos = vTransform[1].xyz;
 
-    // layering + warping + displacement (LWD) operations
-    float height = compute_layering(vPos, u_surface_noise);
+    // XYZ Warping + displacement
     vPos = compute_warping(vPos, vec3(u_surface_noise.xwarp, u_surface_noise.ywarp, u_surface_noise.zwarp), u_warp);
     vPos = compute_displacement(vPos, u_surface_displacement, u_displace);
 
     // Heightmap & global flags
+    float height = compute_layering(vPos, u_surface_noise);
     float FLAG_LAND = step(u_pbr_params.wlevel, height);
     float FLAG_BIOMES = FLAG_LAND * float(u_biomes);
 
