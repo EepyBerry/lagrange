@@ -1,6 +1,3 @@
-// Slightly ajusted from Daniel Greenheck:
-// https://github.com/dgreenheck/threejs-procedural-planets
-/*
 MIT License
 
 Copyright (c) 2023 Daniel Greenheck
@@ -22,16 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-*/
-// ------------------------------------------------------------------------------------------------
-
-// Perturbs a surface normal from computed heights
-vec3 perturb_normal(vec3 pos, vec3 dx, vec3 dy,
-                   float height, float dxHeight, float dyHeight,
-                   float radius, float bumpStrength) {
-    vec3 hPos = pos * (radius + height);
-    vec3 dxPos = (pos + dx) * (radius + dxHeight);
-    vec3 dyPos = (pos + dy) * (radius + dyHeight);
-    vec3 bumpN = normalize(cross(dyPos - hPos, dxPos - hPos));
-    return normalize(mix(vNormal, bumpN, bumpStrength));
-}

@@ -1,7 +1,7 @@
 import fbm from '@assets/glsl/functions/fbm.func.glsl?raw'
 import voronoise from '@assets/glsl/functions/voronoise.func.glsl?raw'
 import colorUtils from '@assets/glsl/functions/color_utils.func.glsl?raw'
-import normalUtils from '@assets/glsl/functions/normal_utils.func.glsl?raw'
+import bump from '@assets/glsl/functions/bump.func.glsl?raw'
 import atmosphereUtils from '@assets/glsl/functions/atmosphere_utils.func.glsl?raw'
 import lwd from '@assets/glsl/functions/lwd.func.glsl?raw'
 import biomes from '@assets/glsl/functions/biomes.func.glsl?raw'
@@ -11,7 +11,7 @@ const IMPORT_MAP: { [k: string]: string } = {
   'functions/fbm': fbm,
   'functions/voronoise': voronoise,
   'functions/color_utils': colorUtils,
-  'functions/normal_utils': normalUtils,
+  'functions/bump': bump,
   'functions/atmosphere_utils': atmosphereUtils,
   'functions/lwd': lwd,
   'functions/biomes': biomes,
