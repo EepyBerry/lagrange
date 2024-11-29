@@ -102,6 +102,7 @@ This project is heavily inspired by the awesome projects below:
 **Special thanks** to the awesome people below, without whom this project would likely not exist:
 
 <ul>
+  <li>Three.js extensions: <a href=\"https://github.com/FarazzShaikh\" target=\"\"><b>Faraz Shaikh</b></a> (CustomShaderMaterial, Shader Baker)</li>
   <li>Main GLSL code snippets: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)</li>
   <li>Miscellaneous GLSL code: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)</li>
 </ul>

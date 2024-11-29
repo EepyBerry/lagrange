@@ -152,7 +152,7 @@ export async function bakeTexture(
   mesh: Mesh,
   size: number
 ): Promise<Texture> {
-  const bakedRenderTarget: WebGLRenderTarget<Texture> = SHADER_BAKER.bake(renderer, mesh, { size })
+  const bakedRenderTarget: WebGLRenderTarget<Texture> = SHADER_BAKER.bake(renderer, mesh, { size, dilation: 1 })
   const dataUri = getTextureAsDataUrl(renderer, bakedRenderTarget.texture)
   const tex = await new TextureLoader().loadAsync(dataUri)
   tex.flipY = false

@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import { TGALoader } from 'three/addons/loaders/TGALoader.js'
-import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js'
 
 const CUBE_TEXTURE_LOADER = new THREE.CubeTextureLoader()
 const TEXTURE_LOADER = new THREE.TextureLoader()

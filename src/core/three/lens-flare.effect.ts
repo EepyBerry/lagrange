@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { LG_NAME_PLANET, LG_NAME_RING } from '../globals'
-import vertexShader from '@assets/glsl/lens_flare.vert.glsl?raw'
-import fragmentShader from '@assets/glsl/lens_flare.frag.glsl?raw'
+import vertexShader from '@assets/glsl/core/lens_flare.vert.glsl?raw'
+import fragmentShader from '@assets/glsl/core/lens_flare.frag.glsl?raw'
 import { damp } from 'three/src/math/MathUtils.js'
 
 export type LensFlareParams = {

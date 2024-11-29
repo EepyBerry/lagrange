@@ -29,6 +29,7 @@ interface IDBSettings {
 
 interface IDBPlanet {
   id: string
+  timestamp?: number
   version?: string
   preview?: string
   data: PlanetData

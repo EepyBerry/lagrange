@@ -2,6 +2,10 @@ import type { DataTexture } from 'three'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
+export enum ShaderFileType {
+  CORE,
+  BAKING
+}
 export enum PlanetType {
   TELLURIC,
   GASEOUS,

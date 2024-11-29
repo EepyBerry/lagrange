@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-shader-material/vanilla'
 import { GeometryType } from '../types'
 import { LG_PLANET_DATA } from '../services/planet-editor.service'
-import { resolveImports } from './shader-imports.loader'
+import * as ShaderLoader from './shader.loader'
 
 /**
  * Creates a WebGL-based renderer
@@ -113,7 +113,7 @@ export function createCustomShaderMaterialComponent<T extends MaterialConstructo
   const mat = new CustomShaderMaterial({
     baseMaterial: baseMaterial ?? THREE.MeshStandardMaterial,
     vertexShader,
-    fragmentShader: fragmentShader ? resolveImports(fragmentShader) : undefined,
+    fragmentShader: fragmentShader ? ShaderLoader.resolveImports(fragmentShader) : undefined,
     uniforms,
     silent: true,
   })
@@ -127,7 +127,7 @@ export function createShaderMaterialComponent(
 ): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
     vertexShader,
-    fragmentShader: fragmentShader ? resolveImports(fragmentShader) : undefined,
+    fragmentShader: fragmentShader ? ShaderLoader.resolveImports(fragmentShader) : undefined,
     uniforms,
   })
 }

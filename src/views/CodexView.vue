@@ -69,6 +69,7 @@ import PlanetData from '@/core/models/planet-data.model'
 import JSZip from 'jszip'
 import NewCardElement from '@/components/elements/NewCardElement.vue'
 import { readFileData } from '@/core/helpers/import.helper'
+import { nanoid } from 'nanoid'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
@@ -151,11 +152,11 @@ async function importPlanetFile(event: Event) {
       return
     }
 
-    const allAdded = await idb.planets.bulkPut(
+    const allAdded = await idb.planets.bulkAdd(
       newPlanets
         .filter((np) => np.status === 'fulfilled')
         .map((np: PromiseSettledResult<IDBPlanet>) => (np as PromiseFulfilledResult<IDBPlanet>).value)
-        .map((np) => ({ ...np, version: np.version ?? '1' })),
+        .map((np) => ({ ...np, id: nanoid(), timestamp: Date.now(), version: np.version ?? '1' })),
     )
     if (allAdded && rejectedFiles.length === 0) {
       EventBus.sendToastEvent('success', 'toast.import_success', 3000)

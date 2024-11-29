@@ -23,16 +23,7 @@ import PlanetEditorControls from '@components/controls/PlanetEditorControls.vue'
 import PlanetInfoControls from '@components/controls/PlanetInfoControls.vue'
 import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue'
 import * as THREE from 'three'
-import {
-  AXIS_X,
-  MD_WIDTH_THRESHOLD,
-  XS_WIDTH_THRESHOLD,
-  SM_WIDTH_THRESHOLD,
-  LG_NAME_AMBLIGHT,
-  SUN_INIT_POS,
-  ATMOSPHERE_HEIGHT_DIVIDER,
-  TEXTURE_SIZES,
-} from '@core/globals'
+import * as Globals from '@core/globals'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { createControlsComponent, createRingGeometryComponent } from '@core/three/component.builder'
 import { useHead } from '@unhead/vue'
@@ -244,12 +235,12 @@ function initLighting(): void {
   sun.add(lensFlare.mesh)
   $se.scene.add(sun)
   _sunLight = sun
-  _ambLight = $se.scene.getObjectByName(LG_NAME_AMBLIGHT) as THREE.AmbientLight
+  _ambLight = $se.scene.getObjectByName(Globals.LG_NAME_AMBLIGHT) as THREE.AmbientLight
   _lensFlare = lensFlare
 
   // Set initial rotations
-  const pos = SUN_INIT_POS.clone()
-  pos.applyAxisAngle(AXIS_X, degToRad(-15))
+  const pos = Globals.SUN_INIT_POS.clone()
+  pos.applyAxisAngle(Globals.AXIS_X, degToRad(-15))
   _sunLight.position.set(pos.x, pos.y, pos.z)
   _lensFlare.updatePosition(_sunLight.position)
 }
@@ -283,13 +274,13 @@ function initPlanet(): void {
   _ringDataTex = ring.texs[0].texture
 
   // Set initial rotations
-  _planetGroup.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+  _planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
   _planet.setRotationFromAxisAngle(_planet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
   _clouds.setRotationFromAxisAngle(
     _clouds.up,
     degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation),
   )
-  _ringAnchor.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
+  _ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
   _ring.setRotationFromAxisAngle(_ring.up, degToRad(LG_PLANET_DATA.value.ringRotation))
 
   // Set lighting target
@@ -354,7 +345,7 @@ function registerLightingDataUpdates(): void {
   $dataUpdateMap.set('_lensFlareGlareIntensity',  () => setMeshUniform(_lensFlare, 'glareIntensity', LG_PLANET_DATA.value.lensFlareGlareIntensity))
   $dataUpdateMap.set('_sunLightAngle', () => {
     const v = degToRad(isNaN(LG_PLANET_DATA.value.sunLightAngle) ? 0 : LG_PLANET_DATA.value.sunLightAngle)
-    const newPos = SUN_INIT_POS.clone().applyAxisAngle(AXIS_X, v)
+    const newPos = Globals.SUN_INIT_POS.clone().applyAxisAngle(Globals.AXIS_X, v)
     _sunLight.position.set(newPos.x, newPos.y, newPos.z)
   })
   $dataUpdateMap.set('_sunLightColor', () => {
@@ -370,14 +361,14 @@ function registerLightingDataUpdates(): void {
 function registerPlanetRenderingDataUpdates(): void {
   $dataUpdateMap.set('_planetRadius', () => {
     const v = LG_PLANET_DATA.value.planetRadius
-    const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / ATMOSPHERE_HEIGHT_DIVIDER
+    const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
     _planetGroup.scale.setScalar(v)
     setMeshUniform(_planet, 'u_radius', v)
     setMeshUniforms(_atmosphere, ['u_surface_radius', 'u_radius'], [v, v + atmosHeight])
   })
   $dataUpdateMap.set('_planetAxialTilt', () => {
     const v = degToRad(isNaN(LG_PLANET_DATA.value.planetAxialTilt) ? 0 : LG_PLANET_DATA.value.planetAxialTilt)
-    _planetGroup.setRotationFromAxisAngle(AXIS_X, v)
+    _planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, v)
   })
   $dataUpdateMap.set('_planetRotation', () => {
     const vRad = degToRad(isNaN(LG_PLANET_DATA.value.planetRotation) ? 0 : LG_PLANET_DATA.value.planetRotation)
@@ -422,7 +413,7 @@ function registerSurfaceDataUpdates(): void {
   }))
   $dataUpdateMap.set('_planetSurfaceColorRamp',         () => {
     const v = LG_PLANET_DATA.value.planetSurfaceColorRamp
-    recalculateRampTexture(LG_BUFFER_SURFACE, TEXTURE_SIZES.SURFACE, v.steps as ColorRampStep[])
+    recalculateRampTexture(LG_BUFFER_SURFACE, Globals.TEXTURE_SIZES.SURFACE, v.steps as ColorRampStep[])
     _surfaceDataTex.needsUpdate = true
   })
 }
@@ -443,7 +434,7 @@ function registerBiomeDataUpdates(): void {
   $dataUpdateMap.set('_biomesHumidityNoise._lacunarity',    () => patchMeshUniform(_planet, 'u_humi_noise', { lac: LG_PLANET_DATA.value.biomesHumidityNoise.lacunarity }))
   $dataUpdateMap.set('_biomesHumidityNoise._octaves',       () => patchMeshUniform(_planet, 'u_humi_noise', { oct: LG_PLANET_DATA.value.biomesHumidityNoise.octaves }))
   $dataUpdateMap.set('_biomesParameters', () => {
-    recalculateBiomeTexture(LG_BUFFER_BIOME, TEXTURE_SIZES.BIOME, LG_PLANET_DATA.value.biomesParams as BiomeParameters[])
+    recalculateBiomeTexture(LG_BUFFER_BIOME, Globals.TEXTURE_SIZES.BIOME, LG_PLANET_DATA.value.biomesParams as BiomeParameters[])
     _biomeDataTex.needsUpdate = true
   })
 }
@@ -469,7 +460,7 @@ function registerCloudDataUpdates(): void {
   $dataUpdateMap.set('_cloudsColor',             () =>  setMeshUniform(_clouds, 'u_color', LG_PLANET_DATA.value.cloudsColor))
   $dataUpdateMap.set('_cloudsColorRamp',         () =>  {
     const v = LG_PLANET_DATA.value.cloudsColorRamp
-    recalculateRampTexture(LG_BUFFER_CLOUDS, TEXTURE_SIZES.CLOUDS, v.steps as ColorRampStep[])
+    recalculateRampTexture(LG_BUFFER_CLOUDS, Globals.TEXTURE_SIZES.CLOUDS, v.steps as ColorRampStep[])
     _cloudsDataTex.needsUpdate = true
   })
 }
@@ -478,10 +469,10 @@ function registerCloudDataUpdates(): void {
 function registerAtmosphereDataUpdates(): void {
   $dataUpdateMap.set('_atmosphereEnabled', () => _atmosphere.visible = LG_PLANET_DATA.value.atmosphereEnabled)
   $dataUpdateMap.set('_atmosphereHeight',  () => {
-    const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / ATMOSPHERE_HEIGHT_DIVIDER
+    const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
     setMeshUniform(_atmosphere, 'u_radius', LG_PLANET_DATA.value.planetRadius + atmosHeight)
   })
-  $dataUpdateMap.set('_atmosphereDensityScale', () => setMeshUniform(_atmosphere, 'u_density', LG_PLANET_DATA.value.atmosphereDensityScale / ATMOSPHERE_HEIGHT_DIVIDER))
+  $dataUpdateMap.set('_atmosphereDensityScale', () => setMeshUniform(_atmosphere, 'u_density', LG_PLANET_DATA.value.atmosphereDensityScale / Globals.ATMOSPHERE_HEIGHT_DIVIDER))
   $dataUpdateMap.set('_atmosphereIntensity',    () => setMeshUniform(_atmosphere, 'u_intensity', LG_PLANET_DATA.value.atmosphereIntensity))
   $dataUpdateMap.set('_atmosphereColorMode',    () => setMeshUniform(_atmosphere, 'u_color_mode', LG_PLANET_DATA.value.atmosphereColorMode))
   $dataUpdateMap.set('_atmosphereHue',          () => setMeshUniform(_atmosphere, 'u_hue', LG_PLANET_DATA.value.atmosphereHue))
@@ -500,7 +491,7 @@ function registerRingDataUpdates(): void {
   $dataUpdateMap.set('_ringOuterRadius', () => setMeshUniform(_ring, 'u_outer_radius', LG_PLANET_DATA.value.ringOuterRadius))
   $dataUpdateMap.set('_ringColorRamp', () => {
     const v = LG_PLANET_DATA.value.ringColorRamp
-    recalculateRampTexture(LG_BUFFER_RING, TEXTURE_SIZES.RING, v.steps as ColorRampStep[])
+    recalculateRampTexture(LG_BUFFER_RING, Globals.TEXTURE_SIZES.RING, v.steps as ColorRampStep[])
     _ringDataTex.needsUpdate = true
   })
 }
@@ -577,10 +568,10 @@ function onWindowResize() {
 }
 
 function computeResponsiveness() {
-  showCompactInfo.value = window.innerWidth <= XS_WIDTH_THRESHOLD
-  showCompactControls.value = window.innerWidth <= SM_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
-  showCompactNavigation.value = window.innerWidth < MD_WIDTH_THRESHOLD
-  centerInfoControls.value = window.innerWidth > MD_WIDTH_THRESHOLD
+  showCompactInfo.value = window.innerWidth <= Globals.XS_WIDTH_THRESHOLD
+  showCompactControls.value = window.innerWidth <= Globals.SM_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
+  showCompactNavigation.value = window.innerWidth < Globals.MD_WIDTH_THRESHOLD
+  centerInfoControls.value = window.innerWidth > Globals.MD_WIDTH_THRESHOLD
 }
 
 // ------------------------------------------------------------------------------------------------
