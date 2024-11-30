@@ -4,16 +4,17 @@ import { degToRad } from 'three/src/math/MathUtils.js'
 import * as Globals from '@core/globals'
 import * as ShaderLoader from '../three/shader.loader'
 import * as ComponentBuilder from '@core/three/component.builder'
-import { ColorMode, ShaderFileType, type DataTextureWrapper } from '@core/types'
+import { ColorMode, ShaderFileType, type BakingTarget, type DataTextureWrapper } from '@core/types'
 import { loadCubeTexture } from '@core/three/external-data.loader'
 import { SceneElements } from '@core/models/scene-elements.model'
 import { LensFlareEffect } from '@core/three/lens-flare.effect'
 import PlanetData from '@core/models/planet-data.model'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
-import { bakeTexture, createBiomeTexture, createRampTexture } from '../helpers/texture.helper'
+import { createBiomeTexture, createRampTexture } from '../helpers/texture.helper'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import { exportMeshesToGLTF } from '../helpers/export.helper'
-import { createBakingPLanet } from './planet-baker.service'
+import { bakeTexture, createBakingClouds, createBakingPBRMap, createBakingPlanet, createBakingRing, writeTextureAlpha } from './planet-baker.service'
+import { downloadTexture } from 'three-shader-baker'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -366,22 +367,71 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   return dataURL
 }
 
-export async function exportPlanetToGLTF($se: SceneElements, data: PlanetGltfData) {
-  const bakePlanet = createBakingPLanet(LG_PLANET_DATA.value as PlanetData).mesh
+export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, data: PlanetGltfData) {
+  const bakingTargets: BakingTarget[] = []
 
-  // ------------------------- Bake textures & swap materials -------------------------
+  // ----------------------------------- Bake planet ----------------------------------
 
-  const planetTexture = await bakeTexture($se.renderer, bakePlanet, 4096)
-
+  const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value as PlanetData)
+  const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value as PlanetData)
+  const planetBakeRes = await bakeTexture(renderer, bakePlanet, 2048)
+  const pbrBakeRes = await bakeTexture(renderer, bakePBR, 2048)
+  const bakingTgtData = {
+    mesh: bakePlanet,
+    textures: [planetBakeRes, pbrBakeRes]
+  }
+  bakingTargets.push(bakingTgtData)
   ;(bakePlanet.material as CustomShaderMaterial).dispose()
-  bakePlanet.material = new THREE.MeshStandardMaterial({ map: planetTexture })
+  bakePlanet.material = new THREE.MeshStandardMaterial({
+    map: bakingTgtData.textures[0],
+    roughnessMap: bakingTgtData.textures[1],
+    metalnessMap: bakingTgtData.textures[1],
+  })
+
+  // ----------------------------------- Bake clouds ----------------------------------
+
+  if (LG_PLANET_DATA.value.cloudsEnabled) {
+    const bakeClouds = createBakingClouds(LG_PLANET_DATA.value as PlanetData)
+    const bakeRes = await bakeTexture(renderer, bakeClouds, 2048)
+    const bakingTgtData = {
+      mesh: bakeClouds,
+      textures: [await writeTextureAlpha(bakeRes, LG_PLANET_DATA.value.cloudsColor, 2048)]
+    }
+    bakingTargets.push(bakingTgtData)
+    ;(bakeClouds.material as CustomShaderMaterial).dispose()
+    bakeClouds.material = new THREE.MeshStandardMaterial({
+      map: bakingTgtData.textures[0],
+      metalness: 0.5,
+      roughness: 1.0,
+      transparent: true
+    })
+  }
+
+  // --------------------------------- Bake ring system -------------------------------
+
+  if (LG_PLANET_DATA.value.ringEnabled) {
+    const bakeRing = createBakingRing(LG_PLANET_DATA.value as PlanetData)
+    bakeRing.rotateX(degToRad(-90))
+    const bakingTgtData = {
+      mesh: bakeRing,
+      textures: [await bakeTexture(renderer, bakeRing, 2048)]
+    }
+    bakingTargets.push(bakingTgtData)
+    ;(bakeRing.material as CustomShaderMaterial).dispose()
+    bakeRing.material = new THREE.MeshStandardMaterial({
+      map: bakingTgtData.textures[0],
+      side: THREE.DoubleSide,
+      transparent: true
+    })
+  }
 
   // -------------------------- Export and clean-up resources -------------------------
 
-  exportMeshesToGLTF([bakePlanet], LG_PLANET_DATA.value.planetName.replaceAll(' ', '_'))
-
-  planetTexture.dispose()
+  exportMeshesToGLTF(bakingTargets.map(b => b.mesh), LG_PLANET_DATA.value.planetName.replaceAll(' ', '_'))
   
-  ;(bakePlanet.material as CustomShaderMaterial).dispose()
-  bakePlanet.geometry.dispose()
+  bakingTargets.forEach(bt => {
+    bt.textures.forEach(tex => tex.dispose())
+    ;(bt.mesh.material as THREE.MeshStandardMaterial).dispose()
+    bt.mesh.geometry.dispose()
+  })
 }

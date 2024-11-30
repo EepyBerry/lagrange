@@ -1,14 +1,12 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import type { Rect, DataTextureWrapper, Coordinates2D, RawRGBA } from '@/core/types'
 import { alphaBlendColors, avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
-import { Color, DataTexture, Mesh, Texture, TextureLoader, WebGLRenderer, WebGLRenderTarget } from 'three'
+import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { INT8_TO_UNIT_MUL } from '../globals'
 import { toRawRGBA } from '@/utils/utils'
-import { getTextureAsDataUrl, ShaderBaker } from 'three-shader-baker'
 
-const SHADER_BAKER = new ShaderBaker()
 
 export function createRampTexture(buffer: Uint8Array, w: number, steps: ColorRampStep[]): DataTextureWrapper {
   if (steps.length > 0) {
@@ -136,25 +134,4 @@ function _writeToBuffer(buffer: Uint8Array, index: number, rgba: RawRGBA, multip
   buffer[index + 1] = clamp(rgba.g * multiplier, 0, 255)
   buffer[index + 2] = clamp(rgba.b * multiplier, 0, 255)
   buffer[index + 3] = clamp(rgba.a * multiplier, 0, 255)
-}
-
-// ------------------------------------------------------------------------------------------------
-
-/**
- * Asynchronously bakes a model's Material/ShaderMaterial/CustomShaderMaterial into a texture (note: uses three-shader-baker + TextureLoader)
- * @param renderer renderer
- * @param mesh mesh to bake
- * @param size texture size in pixels
- * @returns a promise containing the mesh's baked texture
- */
-export async function bakeTexture(
-  renderer: WebGLRenderer,
-  mesh: Mesh,
-  size: number
-): Promise<Texture> {
-  const bakedRenderTarget: WebGLRenderTarget<Texture> = SHADER_BAKER.bake(renderer, mesh, { size, dilation: 1 })
-  const dataUri = getTextureAsDataUrl(renderer, bakedRenderTarget.texture)
-  const tex = await new TextureLoader().loadAsync(dataUri)
-  tex.flipY = false
-  return tex
 }

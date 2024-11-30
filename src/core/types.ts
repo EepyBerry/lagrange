@@ -1,4 +1,4 @@
-import type { DataTexture } from 'three'
+import type { DataTexture, Mesh, Texture } from 'three'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
@@ -47,4 +47,13 @@ export type RawRGBA = {
 export type DataTextureWrapper = {
   texture: DataTexture
   data: Uint8Array
+}
+
+export type BakingTarget = {
+  mesh: Mesh
+  textures: Texture[]
+}
+export type BakingResult = {
+  texture: Texture
+  pixelData: Uint8Array
 }

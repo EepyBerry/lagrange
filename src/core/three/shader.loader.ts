@@ -2,9 +2,9 @@ import { ShaderFileType } from "../types"
 
 const IMPORT_TOKEN = '@import'
 
-const GLSL_CORE_FILES: Record<string, any> = import.meta.glob(`@assets/glsl/core/*.glsl`, { eager: true, query: '?raw' })
-const GLSL_BAKING_FILES: Record<string, any> = import.meta.glob(`@assets/glsl/baking/*.glsl`, { eager: true, query: '?raw' })
-const GLSL_FUNCTION_FILES: Record<string, any> = import.meta.glob(`@assets/glsl/functions/*.func.glsl`, { eager: true, query: '?raw' })
+const GLSL_CORE_FILES: Record<string, any> = import.meta.glob('@assets/glsl/core/*.glsl', { eager: true, query: '?raw' })
+const GLSL_BAKING_FILES: Record<string, any> = import.meta.glob('@assets/glsl/baking/*.glsl', { eager: true, query: '?raw' })
+const GLSL_FUNCTION_FILES: Record<string, any> = import.meta.glob('@assets/glsl/functions/*.func.glsl', { eager: true, query: '?raw' })
 
 export function resolveImports(shader: string): string {
   const glslFuncUris = Object.keys(GLSL_FUNCTION_FILES)

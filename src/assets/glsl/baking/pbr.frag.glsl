@@ -32,9 +32,6 @@ struct PBRParameters {
     float gmetal;
 };
 
-// Planet size
-uniform float u_radius;
-
 // Water level & roughness/metalness
 uniform PBRParameters u_pbr_params;
 
@@ -43,7 +40,6 @@ uniform bool u_warp;
 uniform bool u_displace;
 uniform DisplacementParameters u_surface_displacement;
 uniform NoiseParameters u_surface_noise;
-uniform sampler2D u_surface_tex;
 
 // Packed varyings (uv, position)
 in mat4 vTransform;
@@ -62,7 +58,6 @@ void main() {
     // Heightmap & global flags
     float height = compute_layering(vPos, u_surface_noise);
     float FLAG_LAND = step(u_pbr_params.wlevel, height);
-    float FLAG_BIOMES = FLAG_LAND * float(u_biomes);
 
     // Render noise as color
     color += height;
