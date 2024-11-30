@@ -6,7 +6,7 @@
       @rename="patchMetaHead"
       @save="savePlanet"
       @reset="resetPlanet"
-      @gltf="exportPlanetToGltf"
+      @gltf="exportPlanetToGLTF($se.renderer)"
     />
   </div>
   <PlanetEditorControls :compact-mode="showCompactControls" />
@@ -612,18 +612,6 @@ async function savePlanet() {
   enableEditorRendering = true
   showSpinner.value = false
   EventBus.sendToastEvent('success', 'toast.save_success', 3000)
-}
-
-async function exportPlanetToGltf() {
-  //exportToGLTF($se.scene, LG_PLANET_DATA.value.planetName.replaceAll(' ', '_'))
-  await exportPlanetToGLTF($se.renderer, {
-    sun: _sunLight,
-    ambientLight: _ambLight,
-    planet: _planet,
-    clouds: _clouds,
-    atmosphere: _atmosphere,
-    ring: _ring,
-  })
 }
 
 function updatePlanet() {

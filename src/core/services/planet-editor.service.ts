@@ -13,7 +13,7 @@ import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
 import { createBiomeTexture, createRampTexture } from '../helpers/texture.helper'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import { exportMeshesToGLTF } from '../helpers/export.helper'
-import { bakeTexture, createBakingClouds, createBakingPBRMap, createBakingPlanet, createBakingRing, writeTextureAlpha } from './planet-baker.service'
+import { bakeTexture, createBakingBumpMap, createBakingClouds, createBakingPBRMap, createBakingPlanet, createBakingRing, writeTextureAlpha } from './planet-baker.service'
 import { downloadTexture } from 'three-shader-baker'
 
 // Editor constants
@@ -367,18 +367,20 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   return dataURL
 }
 
-export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, data: PlanetGltfData) {
+export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer) {
   const bakingTargets: BakingTarget[] = []
 
   // ----------------------------------- Bake planet ----------------------------------
 
   const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value as PlanetData)
   const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value as PlanetData)
+  const bakeBump = createBakingBumpMap(LG_PLANET_DATA.value as PlanetData)
   const planetBakeRes = await bakeTexture(renderer, bakePlanet, 2048)
   const pbrBakeRes = await bakeTexture(renderer, bakePBR, 2048)
+  const bumpBakeRes = await bakeTexture(renderer, bakeBump, 2048)
   const bakingTgtData = {
     mesh: bakePlanet,
-    textures: [planetBakeRes, pbrBakeRes]
+    textures: [planetBakeRes, pbrBakeRes, bumpBakeRes]
   }
   bakingTargets.push(bakingTgtData)
   ;(bakePlanet.material as CustomShaderMaterial).dispose()
@@ -386,12 +388,15 @@ export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, data: Pl
     map: bakingTgtData.textures[0],
     roughnessMap: bakingTgtData.textures[1],
     metalnessMap: bakingTgtData.textures[1],
+    bumpMap: bakingTgtData.textures[2],
+    bumpScale: 1.0
   })
 
   // ----------------------------------- Bake clouds ----------------------------------
 
   if (LG_PLANET_DATA.value.cloudsEnabled) {
     const bakeClouds = createBakingClouds(LG_PLANET_DATA.value as PlanetData)
+    bakeClouds.rotateY(degToRad(LG_PLANET_DATA.value.cloudsRotation))
     const bakeRes = await bakeTexture(renderer, bakeClouds, 2048)
     const bakingTgtData = {
       mesh: bakeClouds,
@@ -401,6 +406,7 @@ export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, data: Pl
     ;(bakeClouds.material as CustomShaderMaterial).dispose()
     bakeClouds.material = new THREE.MeshStandardMaterial({
       map: bakingTgtData.textures[0],
+      opacity: 0.75,
       metalness: 0.5,
       roughness: 1.0,
       transparent: true
