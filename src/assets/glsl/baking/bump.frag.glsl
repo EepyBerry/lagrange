@@ -31,11 +31,17 @@ uniform bool u_displace;
 uniform DisplacementParameters u_surface_displacement;
 uniform NoiseParameters u_surface_noise;
 
+// Bump uniforms
+uniform bool u_bump;
+uniform float u_bump_offset;
+uniform float u_bump_strength;
+
 // Packed varyings (uv, position)
 in mat4 vTransform;
 
 @import functions/fbm;
 @import functions/lwd;
+@import functions/normal;
 
 void main() {
     vec3 color = vec3(0.0);

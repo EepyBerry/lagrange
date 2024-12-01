@@ -147,9 +147,14 @@ export function createBakingBumpMap(data: PlanetData): THREE.Mesh {
 
   const material = ComponentBuilder.createCustomShaderMaterialComponent(
     ShaderLoader.fetch('base.vert.glsl', ShaderFileType.BAKING),
-    ShaderLoader.fetch('normal.frag.glsl', ShaderFileType.BAKING),
+    ShaderLoader.fetch('bump.frag.glsl', ShaderFileType.BAKING),
     {
+      // Planet & Rendering
+      u_radius: { value: 1.0 },
       // Surface
+      u_bump: { value: data.planetSurfaceShowBumps },
+      u_bump_strength: { value: data.planetSurfaceBumpStrength },
+      u_bump_offset: { value: 0.005 },
       u_warp: { value: data.planetSurfaceShowWarping },
       u_displace: { value: data.planetSurfaceShowDisplacement },
       u_surface_displacement: {
@@ -294,4 +299,9 @@ export async function writeTextureAlpha(alphaMap: THREE.Texture, baseColor: THRE
   const tex = await new THREE.TextureLoader().loadAsync(canvas.toDataURL())
   tex.flipY = false
   return tex
+}
+
+export function convertBumpMapToNormalMap(renderer: THREE.WebGLRenderer, bumpMap: THREE.Texture, size: number) {
+  const conversionRenderTarget = new THREE.WebGLRenderTarget(size, size)
+  renderer.setRenderTarget(conversionRenderTarget)
 }

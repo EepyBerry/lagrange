@@ -114,7 +114,7 @@ The "Lagrange" logo, including _every_ update variant, is licensed under the Cre
 Original assets and source code from this project are provided under the "I'm So Tired" Software License 1.0 - No-Resale version.<br>
 Please consult the [license file](LICENSE) for full information.
 
-Content from other parties is provided under their respective license, and attribution is given at the top of the aforementioned content.
+Content from other parties is provided under their respective license, and attribution is given either at the top of the aforementioned content, or in a separate license file.
 
 ## 🤝 Contributing
 

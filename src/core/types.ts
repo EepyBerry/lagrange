@@ -4,7 +4,8 @@ export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
 export enum ShaderFileType {
   CORE,
-  BAKING
+  BAKING,
+  FUNCTION
 }
 export enum PlanetType {
   TELLURIC,
