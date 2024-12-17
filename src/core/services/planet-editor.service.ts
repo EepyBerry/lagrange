@@ -381,7 +381,7 @@ export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progress
   })
   
   progressDialog.setProgress(2)
-  const planetBakeRes = await bakeTexture(renderer, bakePlanet!, 2048)
+  const planetBakeRes = await bakeTexture(renderer, bakePlanet!, 2048, true)
   progressDialog.setProgress(3)
   const pbrBakeRes = await bakeTexture(renderer, bakePBR!, 2048)
   progressDialog.setProgress(4)

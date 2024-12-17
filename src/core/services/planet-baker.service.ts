@@ -9,7 +9,7 @@ import { ShaderFileType, type BakingResult } from "../types";
 import { LG_BUFFER_SURFACE, LG_BUFFER_BIOME, LG_BUFFER_RING, LG_BUFFER_CLOUDS } from "./planet-editor.service";
 import { getTextureAsDataUrl, ShaderBaker } from 'three-shader-baker';
 import { clamp } from 'three/src/math/MathUtils.js';
-import { saveAs } from 'file-saver';
+import { TEXTURE_LOADER } from '../three/external-data.loader';
 
 const SHADER_BAKER = new ShaderBaker()
 
@@ -256,16 +256,19 @@ export function createBakingRing(data: PlanetData): THREE.Mesh {
  * @param renderer renderer
  * @param mesh mesh to bake
  * @param size texture size in pixels
+ * @param applyGaussDilation if true, uses a Gaussian blur pass to dilate the texture cleanly
  * @returns a promise containing the mesh's baked texture
  */
 export async function bakeTexture(
   renderer: THREE.WebGLRenderer,
   mesh: THREE.Mesh,
-  size: number
+  size: number,
+  applyGaussDilation: boolean = false
 ): Promise<THREE.Texture> {
-  const bakedRenderTarget: THREE.WebGLRenderTarget<THREE.Texture> = SHADER_BAKER.bake(renderer, mesh, { size, dilation: 0.1 })
+  // force minimal dilation to "disable" it (using 0 resets it to 0.2, for some reason)
+  const bakedRenderTarget: THREE.WebGLRenderTarget<THREE.Texture> = SHADER_BAKER.bake(renderer, mesh, { size, dilation: 0.01 })
   const dataUri = getTextureAsDataUrl(renderer, bakedRenderTarget.texture)
-  const tex = await new THREE.TextureLoader().loadAsync(dataUri)
+  const tex = await TEXTURE_LOADER.loadAsync(dataUri)
   tex.flipY = false
   return tex
 }
@@ -296,7 +299,7 @@ export async function writeTextureAlpha(alphaMap: THREE.Texture, baseColor: THRE
     pixelStride += 4
   }
   ctx.putImageData(texData, 0, 0)
-  const tex = await new THREE.TextureLoader().loadAsync(canvas.toDataURL())
+  const tex = await TEXTURE_LOADER.loadAsync(canvas.toDataURL())
   tex.flipY = false
   return tex
 }

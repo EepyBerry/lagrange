@@ -3,6 +3,7 @@ import { LG_NAME_PLANET, LG_NAME_RING } from '../globals'
 import vertexShader from '@assets/glsl/core/lens_flare.vert.glsl?raw'
 import fragmentShader from '@assets/glsl/core/lens_flare.frag.glsl?raw'
 import { damp } from 'three/src/math/MathUtils.js'
+import { TEXTURE_LOADER } from './external-data.loader'
 
 export type LensFlareParams = {
   lensPosition: THREE.Vector3
@@ -59,7 +60,7 @@ export class LensFlareEffect {
       starBurst: params.starBurst ?? false,
       ghostScale: params.ghostScale ?? 0.15,
       additionalStreaks: params.additionalStreaks ?? false,
-      lensDirtTexture: params.lensDirtTexture ?? new THREE.TextureLoader().load('/glsl/lens-Dirt-Texture.jpg'),
+      lensDirtTexture: params.lensDirtTexture ?? TEXTURE_LOADER.load('/glsl/lens-Dirt-Texture.jpg'),
     }
     this._internalOpacity = Number(this._params.opacity)
     this._viewport = new THREE.Vector4()
