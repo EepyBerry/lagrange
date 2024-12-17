@@ -4,6 +4,7 @@
     id="dialog-delete-confirm"
     :showTitle="true"
     :showActions="true"
+    :closeable="true"
     :aria-label="$t('a11y.dialog_delete')"
   >
     <template v-slot:title>

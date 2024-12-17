@@ -161,6 +161,19 @@
       "built_with_love": "Built with 🏳️‍🌈 & ❤️",
       "license": "ISTSL-NR 1.0 License"
     },
+    "export_progress": {
+      "$title": "Exporting planet",
+      "step_1": "Loading planet data",
+      "step_2": "Baking surface texture",
+      "step_3": "Baking surface PBR",
+      "step_4": "Baking surface normals",
+      "step_5": "Loading clouds data",
+      "step_6": "Baking clouds texture",
+      "step_7": "Loading ring system data",
+      "step_8": "Baking ring system texture",
+      "step_9": "Finalizing export",
+      "step_10": "Done!"
+    },
     "reset": {
       "$title": "Confirm reset",
       "message": "Discard the current planet?",
@@ -398,6 +411,7 @@
     "dialog_planetinfo": "Planet info dialog",
     "dialog_settings": "Settings dialog",
     "dialog_about": "About @:main.$title dialog",
+    "dialog_export_progress": "Exporting planet",
     "dialog_reset": "Confirm reset dialog",
     "dialog_delete": "Confirm delete dialog",
     "dialog_warn_save": "Unsaved data warning dialog",

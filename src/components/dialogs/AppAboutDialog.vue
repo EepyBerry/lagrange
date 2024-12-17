@@ -1,5 +1,5 @@
 <template>
-  <DialogElement ref="dialogRef" id="dialog-about" :showTitle="false" :aria-label="$t('a11y.dialog_about')">
+  <DialogElement ref="dialogRef" id="dialog-about" :showTitle="false" :closeable="true"  :aria-label="$t('a11y.dialog_about')">
     <template v-slot:content>
       <div class="about-grid">
         <div class="about-logo">

@@ -4,6 +4,7 @@
     id="dialog-warn-save"
     :showTitle="true"
     :showActions="true"
+    :closeable="true"
     :prevent-click-close="true"
     :aria-label="$t('a11y.dialog_warn_save')"
   >

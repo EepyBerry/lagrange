@@ -3,6 +3,7 @@
     ref="dialogRef"
     id="dialog-editor-init"
     :showActions="true"
+    :closeable="true"
     :prevent-click-close="true"
     :aria-label="$t('a11y.dialog_init')"
   >

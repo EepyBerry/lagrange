@@ -161,6 +161,19 @@
       "built_with_love": "Créé avec 🏳️‍🌈 & ❤️",
       "license": "Licence ISTSL-NR 1.0"
     },
+    "export_progress": {
+      "$title": "Export en cours",
+      "step_1": "Chargement des données de la planète",
+      "step_2": "Baking de la surface",
+      "step_3": "Baking des données PBR",
+      "step_4": "Baking des normales",
+      "step_5": "Chargement des données des nuages",
+      "step_6": "Baking des nuages",
+      "step_7": "Chargement des données des anneaux",
+      "step_8": "Baking des anneaux",
+      "step_9": "Finalisation de l'export",
+      "step_10": "Terminé!"
+    },
     "reset": {
       "$title": "Réinitialiser",
       "message": "Réinitialiser la planète en cours ?",

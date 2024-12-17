@@ -3,6 +3,7 @@
     ref="dialogRef"
     id="dialog-error"
     :show-title="true"
+    :closeable="true"
     :prevent-click-close="true"
     :aria-label="$t('a11y.dialog_webgl_error')"
     @close="$emit('close')"

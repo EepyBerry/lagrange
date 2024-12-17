@@ -157,6 +157,19 @@
       "built_with_love": "Erstellt mit 🏳️‍🌈 & ❤️",
       "license": "Lizenz ISTSL-NR 1.0"
     },
+    "export_progress": {
+      "$title": "MISSING_TRANSLATION",
+      "step_1": "MISSING_TRANSLATION",
+      "step_2": "MISSING_TRANSLATION",
+      "step_3": "MISSING_TRANSLATION",
+      "step_4": "MISSING_TRANSLATION",
+      "step_5": "MISSING_TRANSLATION",
+      "step_6": "MISSING_TRANSLATION",
+      "step_7": "MISSING_TRANSLATION",
+      "step_8": "MISSING_TRANSLATION",
+      "step_9": "MISSING_TRANSLATION",
+      "step_10": "MISSING_TRANSLATION"
+    },
     "reset": {
       "$title": "Zurücksetzen",
       "message": "Planeten im Gange zurücksetzen?",

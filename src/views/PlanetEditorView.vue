@@ -6,16 +6,18 @@
       @rename="patchMetaHead"
       @save="savePlanet"
       @reset="resetPlanet"
-      @gltf="exportPlanetToGLTF($se.renderer)"
+      @gltf="exportPlanet"
     />
   </div>
   <PlanetEditorControls :compact-mode="showCompactControls" />
 
   <div ref="sceneRoot" id="scene-root"></div>
   <OverlaySpinner :load="showSpinner" />
+  
   <AppWebGLErrorDialog ref="webglErrorDialogRef" @close="redirectToCodex" />
   <AppPlanetErrorDialog ref="planetErrorDialogRef" @close="redirectToCodex" />
   <AppWarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
+  <AppExportProgressDialog ref="exportProgressDialogRef" />
 </template>
 
 <script setup lang="ts">
@@ -63,6 +65,7 @@ import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
 import { recalculateBiomeTexture, recalculateRampTexture } from '@/core/helpers/texture.helper'
 import type { ColorRampStep } from '@/core/models/color-ramp.model'
 import AppWarnSaveDialog from '@/components/dialogs/AppWarnSaveDialog.vue'
+import AppExportProgressDialog from '@/components/dialogs/AppExportProgressDialog.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -72,10 +75,11 @@ const head = useHead({
   meta: [{ name: 'description', content: 'Planet editor' }],
 })!
 
-// Warnings
+// Dialogs
 const webglErrorDialogRef: Ref<{ openWithError: Function } | null> = ref(null)
 const planetErrorDialogRef: Ref<{ openWithError: Function } | null> = ref(null)
 const warnSaveDialogRef: Ref<{ open: Function } | null> = ref(null)
+const exportProgressDialogRef: Ref<{ open: Function, setProgress: Function } | null> = ref(null)
 let loadedCorrectly = false
 
 // Data
@@ -626,6 +630,12 @@ function updatePlanet() {
     $dataUpdateMap.get(key)?.()
   }
   LG_PLANET_DATA.value.clearChangedProps()
+}
+
+function exportPlanet() {
+  exportProgressDialogRef.value!.open()
+  exportProgressDialogRef.value!.setProgress(1)
+  setTimeout(() => exportPlanetToGLTF($se.renderer, exportProgressDialogRef.value!), 0)
 }
 </script>
 

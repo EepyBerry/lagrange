@@ -3,6 +3,7 @@
     ref="dialogRef"
     id="dialog-settings"
     :showTitle="true"
+    :closeable="true"
     :aria-label="$t('a11y.dialog_settings')"
     style="height: 80%"
   >

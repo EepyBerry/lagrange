@@ -4,6 +4,7 @@
     id="dialog-planet-info"
     :showTitle="true"
     :showActions="false"
+    :closeable="true"
     :aria-label="$t('a11y.dialog_planetinfo')"
   >
     <template v-slot:title>

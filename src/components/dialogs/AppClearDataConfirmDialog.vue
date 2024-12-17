@@ -4,6 +4,7 @@
     id="dialog-clear-data-confirm"
     :showTitle="true"
     :showActions="true"
+    :closeable="true"
     :aria-label="$t('a11y.dialog_clear_data')"
   >
     <template v-slot:title>

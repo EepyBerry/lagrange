@@ -4,6 +4,7 @@
     id="dialog-reset-confirm"
     :showTitle="true"
     :showActions="true"
+    :closeable="true"
     :aria-label="$t('a11y.dialog_reset')"
   >
     <template v-slot:title>
