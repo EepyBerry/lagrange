@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import { nanoid } from 'nanoid'
+import { getColorLuminance, getLinearRGBLuminance } from '@/utils/utils'
+import { lerp } from 'three/src/math/MathUtils.js'
 
 export class ColorRampStep {
   static EMPTY = new ColorRampStep(0x0, 1)
@@ -162,5 +164,24 @@ export class ColorRamp extends ChangeTracker {
     }
     this._steps.splice(0)
     this._steps.push(...data.map((s: any) => ColorRampStep.newWithAlpha(s._color, s._alpha, s._factor, s._isBound)))
+  }
+
+  /**
+   * Gives the relative opacity for a given luminance
+   * @remarks only useful for opacity-based ramps
+   * @param luminance 
+   */
+  public getRelativeLuminance(luminance: number) {
+    // fetch the initial step range
+    let startStepIdx = this._steps.findLastIndex(s => getColorLuminance(s.color) <= luminance)
+    if (startStepIdx === this._steps.length-1) return luminance
+    let endStepIdx = startStepIdx+1
+
+    // get luminances of both steps
+    let startLuminance = getColorLuminance(this._steps[startStepIdx].color)
+    let endLuminance = getColorLuminance(this._steps[endStepIdx].color)
+
+    // interpolate and return
+    return (endLuminance - luminance) / (endLuminance - startLuminance)
   }
 }

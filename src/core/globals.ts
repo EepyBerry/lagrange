@@ -51,4 +51,4 @@ export const TEXTURE_SIZES = {
 /**
  * Equal to 1/256.0
  */
-export const INT8_TO_UNIT_MUL = 3.90625e-3
+export const MUL_INT8_TO_UNIT = 3.90625e-3

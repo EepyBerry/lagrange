@@ -4,7 +4,7 @@ import { alphaBlendColors, avg, findMinDistanceToRect, findRectOverlaps, truncat
 import { Color, DataTexture } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
-import { INT8_TO_UNIT_MUL } from '../globals'
+import { MUL_INT8_TO_UNIT } from '../globals'
 import { toRawRGBA } from '@/utils/utils'
 
 
@@ -97,7 +97,7 @@ function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
     let rectDistance: number, bufferIdx: number, blendedColor: RawRGBA
     for (let biomePx = 0; biomePx < totalPixels; biomePx++) {
       bufferIdx = lineStride + cellStride
-      _writeToRawRGBA(pixelRGBA, buffer, bufferIdx, INT8_TO_UNIT_MUL)
+      _writeToRawRGBA(pixelRGBA, buffer, bufferIdx, MUL_INT8_TO_UNIT)
 
       rectDistance = findMinDistanceToRect(biomeRect, pixelCoords.x, pixelCoords.y, biomeOverlaps)
       biomeRGBA.a = truncateTo(clamp(rectDistance / biomeAvgSmoothness, 0, 1), 1e4)

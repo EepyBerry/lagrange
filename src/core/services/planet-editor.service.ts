@@ -413,7 +413,7 @@ export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progress
       mesh: bakeClouds,
       textures: [await writeTextureAlpha(bakeRes, LG_PLANET_DATA.value.cloudsColor, 2048)]
     }
-    downloadTexture(renderer, bakeRes, 'test-bake')
+    //downloadTexture(renderer, bakeRes, 'test-bake')
     downloadTexture(renderer, bakingTgtData.textures[0], 'test-alpha')
     bakingTargets.push(bakingTgtData)
     ;(bakeClouds.material as CustomShaderMaterial).dispose()

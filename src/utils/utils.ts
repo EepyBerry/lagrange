@@ -1,5 +1,5 @@
 import type { RawRGBA } from '@/core/types'
-import { LOCALE_MAP } from '@core/globals'
+import { LOCALE_MAP, MUL_INT8_TO_UNIT } from '@core/globals'
 import type { Color } from 'three'
 import type { Composer } from 'vue-i18n'
 
@@ -15,13 +15,6 @@ export function strToHexNumber(n: string): number {
   return Number('0x' + n.substring(+n.startsWith('#')))
 }
 
-export function getColorLuminance(color: Color) {
-  return (0.2126 * color.r) + (0.7152 * color.g) + (0.0722 * color.b)
-}
-export function getRGBLuminance(r: number, g: number, b: number) {
-  return (0.2126 * r) + (0.7152 * g) + (0.0722 * b)
-}
-
 export function mapLocale(locale: string): string {
   return locale.length > 2 ? locale : (LOCALE_MAP[locale] ?? 'en-US')
 }
@@ -35,4 +28,16 @@ export function prefersReducedMotion() {
     window.matchMedia(`(prefers-reduced-motion: reduce)`).matches ||
     window.matchMedia(`(prefers-reduced-motion: reduce)`).matches
   )
+}
+
+// ----------------------------------------------------------------------------
+
+export function getColorLuminance(color: Color) {
+  return (0.2126 * color.r) + (0.7152 * color.g) + (0.0722 * color.b)
+}
+export function getLinearRGBLuminance(r: number, g: number, b: number) {
+  return (0.2126 * r) + (0.7152 * g) + (0.0722 * b)
+}
+export function getLinearUint8Luminance(r: number, g: number, b: number) {
+  return (0.2126 * (r * MUL_INT8_TO_UNIT)) + (0.7152 * (g * MUL_INT8_TO_UNIT)) + (0.0722 * (b * MUL_INT8_TO_UNIT))
 }
