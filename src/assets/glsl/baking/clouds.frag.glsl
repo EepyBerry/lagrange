@@ -46,10 +46,10 @@ void main() {
         fbm3(wPos + DVEC_A,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct),
         fbm3(wPos + DVEC_B,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct)
     );
-    if (wOpacity.x < 0.1) {
+    if (wOpacity.x < 0.05) {
         discard;
     }
     opacity += fbm3(wPos + wOpacity, u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct);
     opacity = texture2D(u_opacity_tex, vec2(opacity.x, 0.5)).xyz;
-    csm_DiffuseColor = darken(vec4(1.0), 1.0 - opacity.x);
+    csm_DiffuseColor = vec4(opacity, 1.0);
 }

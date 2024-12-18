@@ -15,6 +15,13 @@ export function strToHexNumber(n: string): number {
   return Number('0x' + n.substring(+n.startsWith('#')))
 }
 
+export function getColorLuminance(color: Color) {
+  return (0.2126 * color.r) + (0.7152 * color.g) + (0.0722 * color.b)
+}
+export function getRGBLuminance(r: number, g: number, b: number) {
+  return (0.2126 * r) + (0.7152 * g) + (0.0722 * b)
+}
+
 export function mapLocale(locale: string): string {
   return locale.length > 2 ? locale : (LOCALE_MAP[locale] ?? 'en-US')
 }

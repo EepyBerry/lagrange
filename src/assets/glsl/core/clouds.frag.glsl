@@ -44,7 +44,7 @@ void main() {
         fbm3(wPos + DVEC_A,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct),
         fbm3(wPos + DVEC_B,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct)
     );
-    if (wOpacity.x < 0.1) {
+    if (wOpacity.x < 0.05) {
         discard;
     }
     opacity += fbm3(wPos + wOpacity, u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct);
