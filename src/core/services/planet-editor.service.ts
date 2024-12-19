@@ -14,7 +14,7 @@ import { createBiomeTexture, createRampTexture } from '../helpers/texture.helper
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import { exportMeshesToGLTF } from '../helpers/export.helper'
 import { bakeTexture, createBakingBumpMap, createBakingClouds, createBakingPBRMap, createBakingPlanet, createBakingRing, writeTextureAlpha } from './planet-baker.service'
-import { downloadTexture } from 'three-shader-baker'
+import type { ColorRamp } from '../models/color-ramp.model'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -411,10 +411,13 @@ export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progress
     const bakeRes = await bakeTexture(renderer, bakeClouds, 2048)
     const bakingTgtData = {
       mesh: bakeClouds,
-      textures: [await writeTextureAlpha(bakeRes, LG_PLANET_DATA.value.cloudsColor, 2048)]
+      textures: [
+        await writeTextureAlpha(
+          bakeRes, LG_PLANET_DATA.value.cloudsColor,
+          LG_PLANET_DATA.value.cloudsColorRamp as ColorRamp, 2048
+        )
+      ]
     }
-    //downloadTexture(renderer, bakeRes, 'test-bake')
-    downloadTexture(renderer, bakingTgtData.textures[0], 'test-alpha')
     bakingTargets.push(bakingTgtData)
     ;(bakeClouds.material as CustomShaderMaterial).dispose()
     bakeClouds.material = new THREE.MeshStandardMaterial({

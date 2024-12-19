@@ -11,7 +11,8 @@ import { getTextureAsDataUrl, ShaderBaker } from 'three-shader-baker';
 import { clamp } from 'three/src/math/MathUtils.js';
 import { TEXTURE_LOADER } from '../three/external-data.loader';
 import { saveAs } from 'file-saver';
-import { getLinearUint8Luminance } from '@/utils/utils';
+import { getColorLuminance, getLinearUint8Luminance } from '@/utils/utils';
+import type { ColorRamp } from '../models/color-ramp.model';
 
 const SHADER_BAKER = new ShaderBaker()
 
@@ -283,7 +284,7 @@ export async function bakeTexture(
  * @param size texture size
  * @returns 
  */
-export async function writeTextureAlpha(alphaMap: THREE.Texture, baseColor: THREE.Color, size: number): Promise<THREE.Texture> {
+export async function writeTextureAlpha(alphaMap: THREE.Texture, baseColor: THREE.Color, opacityRamp: ColorRamp, size: number): Promise<THREE.Texture> {
   const fillColor = baseColor.clone().convertLinearToSRGB()
   const canvas = document.createElement("canvas")
   canvas.width = size
@@ -291,15 +292,12 @@ export async function writeTextureAlpha(alphaMap: THREE.Texture, baseColor: THRE
   const ctx = canvas.getContext("2d")!
   ctx.drawImage(alphaMap.image, 0, 0, size, size)
   const texData = ctx.getImageData(0, 0, size, size, { colorSpace: "srgb" })
-  saveAs(canvas.toDataURL(), 'test.png')
-  
-  let pixelStride = 0
+
+  let maxOpacity = getColorLuminance(opacityRamp.steps[opacityRamp.steps.length-1].color) + 0.1 // add slight modifier to improve render
+  let pixelStride = 0, pxLum = 0
   for (let i = 0; i < texData.data.length; i++) {
-    texData.data[pixelStride + 3] = clamp(getLinearUint8Luminance(
-      texData.data[pixelStride + 0],
-      texData.data[pixelStride + 1],
-      texData.data[pixelStride + 2]
-    ) * 255.0, 0, 255)
+    pxLum = maxOpacity * getLinearUint8Luminance(texData.data[pixelStride + 0], texData.data[pixelStride + 1], texData.data[pixelStride + 2])
+    texData.data[pixelStride + 3] = clamp(pxLum * 255.0, 0, 255)
     texData.data[pixelStride + 0] = clamp(fillColor.r * 255.0, 0, 255)
     texData.data[pixelStride + 1] = clamp(fillColor.g * 255.0, 0, 255)
     texData.data[pixelStride + 2] = clamp(fillColor.b * 255.0, 0, 255)
@@ -308,6 +306,7 @@ export async function writeTextureAlpha(alphaMap: THREE.Texture, baseColor: THRE
   ctx.putImageData(texData, 0, 0)
   const tex = await TEXTURE_LOADER.loadAsync(canvas.toDataURL())
   tex.flipY = false
+  tex.colorSpace = THREE.SRGBColorSpace
   return tex
 }
 
