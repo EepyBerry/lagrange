@@ -124,7 +124,6 @@
                 >
                   {{ $t('dialog.settings.editor_atmosphere') }}
                 </ParameterKeyBinding>
-                <ParameterDivider />
                 <ParameterKeyBinding
                   icon="mingcute:screenshot-line"
                   :key-bind="getKeyBind('take-screenshot')"
@@ -133,6 +132,40 @@
                 >
                   {{ $t('dialog.settings.editor_screenshot') }}
                 </ParameterKeyBinding>
+                <ParameterDivider />
+                <ParameterRadio>
+                  <template v-slot:title> {{ $t('dialog.settings.editor_baking_resolution') }}: </template>
+                  <template v-slot:options>
+                    <ParameterRadioOption
+                      v-model="appSettings.bakingResolution"
+                      name="baking-1k"
+                      :id="'0'"
+                      :value="512"
+                      :ariaLabel="$t('a11y.editor_baking_resolution_512')"
+                    >512</ParameterRadioOption>
+                    <ParameterRadioOption
+                      v-model="appSettings.bakingResolution"
+                      name="baking-1k"
+                      :id="'0'"
+                      :value="1024"
+                      :ariaLabel="$t('a11y.editor_baking_resolution_1k')"
+                    >1024</ParameterRadioOption>
+                    <ParameterRadioOption
+                      v-model="appSettings.bakingResolution"
+                      name="baking-2k"
+                      :id="'1'"
+                      :value="2048"
+                      :ariaLabel="$t('a11y.editor_baking_resolution_2k')"
+                    >2048</ParameterRadioOption>
+                    <ParameterRadioOption
+                      v-model="appSettings.bakingResolution"
+                      name="baking-4k"
+                      :id="'1'"
+                      :value="4096"
+                      :ariaLabel="$t('a11y.editor_baking_resolution_4k')"
+                    >4096</ParameterRadioOption>
+                  </template>
+                </ParameterRadio>
               </ParameterGrid>
             </div>
           </template>
@@ -340,6 +373,7 @@ async function updateSettings() {
     theme: appSettings.value!.theme,
     font: appSettings.value!.font,
     showInitDialog: appSettings.value!.showInitDialog,
+    bakingResolution: appSettings.value!.bakingResolution,
     enableEffects: appSettings.value!.enableEffects,
     enableAnimations: appSettings.value!.enableAnimations,
     extrasHologramMode: appSettings.value!.extrasHologramMode,

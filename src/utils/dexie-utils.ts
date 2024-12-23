@@ -4,12 +4,17 @@ import { I18N_SUPPORTED_LANGS } from '@/i18n.config'
 
 export async function addDefaultSettings(): Promise<any> {
   return idb.settings.put({
+    // general
     theme: 'default',
     locale: I18N_SUPPORTED_LANGS.includes(navigator.language as any) ? navigator.language : 'en-US',
     font: 'default',
     showInitDialog: true,
+    // baking
+    bakingResolution: 2048,
+    // accessibility
     enableEffects: !prefersReducedMotion(),
     enableAnimations: !prefersReducedMotion(),
+    // extras
     extrasHologramMode: false,
   })
 }
@@ -27,12 +32,17 @@ export async function addDefaultKeyBindings(): Promise<any> {
 export async function clearData(): Promise<any> {
   const settings = await idb.settings.limit(1).toArray()
   await idb.settings.update(settings[0].id, {
+    // general
     theme: 'default',
     locale: I18N_SUPPORTED_LANGS.includes(navigator.language as any) ? navigator.language : 'en-US',
     font: 'default',
     showInitDialog: true,
+    // baking
+    bakingResolution: 2048,
+    // accessibility
     enableEffects: !prefersReducedMotion(),
     enableAnimations: !prefersReducedMotion(),
+    // extras
     extrasHologramMode: false,
   })
   await idb.keyBindings.clear()

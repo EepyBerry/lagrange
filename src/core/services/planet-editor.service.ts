@@ -13,6 +13,7 @@ import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
 import { createBiomeTexture, createRampTexture } from '../helpers/texture.helper'
 import { bakeMesh, createBakingBumpMap, createBakingClouds, createBakingPBRMap, createBakingPlanet, createBakingRing } from './planet-baker.service'
 import { exportMeshesToGLTF } from '../helpers/export.helper'
+import { idb } from '@/dexie.config'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -359,7 +360,9 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
 export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progressDialog: { open: Function, setProgress: Function }) {
   const bakingTargets: BakingTarget[] = []
-  const w = 2048, h = 2048
+  const appSettings = await idb.settings.limit(1).first()
+  const w = appSettings?.bakingResolution ?? 2048,
+   h = appSettings?.bakingResolution ?? 2048
 
   // ------------------------------- Setup render scene -------------------------------
   progressDialog.setProgress(1)
@@ -407,6 +410,7 @@ export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progress
       transparent: true
     })
     bakingTargets.push({ mesh: bakeClouds, textures: [bakeCloudsTex] })
+    bakePlanet.add(bakeClouds)
   }
 
   // --------------------------------- Bake ring system -------------------------------
@@ -421,11 +425,13 @@ export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progress
       transparent: true
     })
     bakingTargets.push({ mesh: bakeRing, textures: [bakeRingTex] })
+    bakePlanet.add(bakeRing)
   }
 
   // ---------------------------- Export meshes and clean up ---------------------------
   progressDialog.setProgress(7)
-  exportMeshesToGLTF(bakingTargets.map(b => b.mesh), LG_PLANET_DATA.value.planetName.replaceAll(' ', '_'))
+  bakePlanet.name = LG_PLANET_DATA.value.planetName
+  exportMeshesToGLTF([bakePlanet], LG_PLANET_DATA.value.planetName.replaceAll(' ', '_') + `_${w}`)
   bakingTargets.forEach(bt => {
     bt.textures.forEach(tex => tex.dispose())
     ;(bt.mesh.material as THREE.MeshStandardMaterial).dispose()

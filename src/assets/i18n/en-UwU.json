@@ -109,6 +109,7 @@
       "editor_clouds": "@:dialog.init.shortcuts_clouds",
       "editor_atmosphere": "@:dialog.init.shortcuts_atmosphere",
       "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
+      "editor_baking_resolution": "Baking textuwe wesowution (powews of two)",
 
       "a11y": "Accessibiwity !!!",
       "a11y_effects": "Enyabwe visuaw effects",
@@ -431,6 +432,10 @@
     "general_theme_default": "Set Comet theme (bwue)",
     "general_theme_supernova": "Set Supewnyova theme (puwple)",
     "general_theme_voyager": "Set Voyagew theme (owange)",
+    "editor_baking_resolution_512": "512 by 512 pixews",
+    "editor_baking_resolution_1k": "1024 by 1024 pixews",
+    "editor_baking_resolution_2k": "2048 by 2048 pixews",
+    "editor_baking_resolution_4k": "4096 by 4096 pixews",
 
     "editor_generic_input": "Pawametew vawue",
 

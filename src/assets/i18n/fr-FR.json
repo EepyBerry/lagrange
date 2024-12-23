@@ -109,6 +109,7 @@
       "editor_clouds": "@:dialog.init.shortcuts_clouds",
       "editor_atmosphere": "@:dialog.init.shortcuts_atmosphere",
       "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
+      "editor_baking_resolution": "Résolution texture lors du baking (puissances de deux)",
 
       "a11y": "Accessibilité",
       "a11y_effects": "Activer les effets visuels",
@@ -431,6 +432,10 @@
     "general_theme_default": "Appliquer le thème Comet (bleu)",
     "general_theme_supernova": "Appliquer le thème Supernova (violet)",
     "general_theme_voyager": "Appliquer le thème Voyager (orange)",
+    "editor_baking_resolution_512": "512 par 512 pixels",
+    "editor_baking_resolution_1k": "1024 par 1024 pixels",
+    "editor_baking_resolution_2k": "2048 par 2048 pixels",
+    "editor_baking_resolution_4k": "4096 par 4096 pixels",
 
     "editor_generic_input": "Valeur du paramètre",
 

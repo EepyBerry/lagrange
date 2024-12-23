@@ -22,6 +22,7 @@ interface IDBSettings {
   theme: string
   font: string
   showInitDialog?: boolean
+  bakingResolution?: number
   enableEffects?: boolean
   enableAnimations?: boolean
   extrasHologramMode?: boolean
