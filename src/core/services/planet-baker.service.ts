@@ -260,11 +260,7 @@ export function createBakingRing(data: PlanetData): THREE.Mesh {
  * @returns a promise containing the mesh's baked texture
  */
 export async function bakeMesh(
-  renderer: THREE.WebGLRenderer,
-  renderTarget: THREE.WebGLRenderTarget<THREE.Texture>,
-  mesh: THREE.Mesh,
-  width: number,
-  height: number,
+  renderer: THREE.WebGLRenderer, mesh: THREE.Mesh, width: number, height: number
 ): Promise<THREE.Texture> {
   BAKE_CAMERA.left   = -width/2
   BAKE_CAMERA.right  =  width/2

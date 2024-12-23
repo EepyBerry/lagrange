@@ -138,7 +138,14 @@
                   <template v-slot:options>
                     <ParameterRadioOption
                       v-model="appSettings.bakingResolution"
-                      name="baking-1k"
+                      name="baking-256"
+                      :id="'0'"
+                      :value="256"
+                      :ariaLabel="$t('a11y.editor_baking_resolution_256')"
+                    >256</ParameterRadioOption>
+                    <ParameterRadioOption
+                      v-model="appSettings.bakingResolution"
+                      name="baking-512"
                       :id="'0'"
                       :value="512"
                       :ariaLabel="$t('a11y.editor_baking_resolution_512')"
@@ -166,6 +173,14 @@
                     >4096</ParameterRadioOption>
                   </template>
                 </ParameterRadio>
+                  <ParameterCheckbox
+                  id="settings-baking-pixelize"
+                  :true-value="true"
+                  :false-value="false"
+                  v-model="appSettings.bakingPixelize"
+                >
+                  {{ $t('dialog.settings.editor_baking_pixelize') }}:
+              </ParameterCheckbox>
               </ParameterGrid>
             </div>
           </template>
@@ -288,6 +303,8 @@ const appSettings: Ref<IDBSettings> = ref({
   theme: '',
   font: '',
   showInitDialog: true,
+  bakingResolution: 2048,
+  bakingPixelize: false,
   enableAnimations: true,
   enableEffects: true,
   extrasHologramMode: false,
@@ -374,6 +391,7 @@ async function updateSettings() {
     font: appSettings.value!.font,
     showInitDialog: appSettings.value!.showInitDialog,
     bakingResolution: appSettings.value!.bakingResolution,
+    bakingPixelize: appSettings.value!.bakingPixelize,
     enableEffects: appSettings.value!.enableEffects,
     enableAnimations: appSettings.value!.enableAnimations,
     extrasHologramMode: appSettings.value!.extrasHologramMode,

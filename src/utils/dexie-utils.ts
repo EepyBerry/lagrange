@@ -11,6 +11,7 @@ export async function addDefaultSettings(): Promise<any> {
     showInitDialog: true,
     // baking
     bakingResolution: 2048,
+    bakingPixelize: false,
     // accessibility
     enableEffects: !prefersReducedMotion(),
     enableAnimations: !prefersReducedMotion(),
@@ -39,6 +40,7 @@ export async function clearData(): Promise<any> {
     showInitDialog: true,
     // baking
     bakingResolution: 2048,
+    bakingPixelize: false,
     // accessibility
     enableEffects: !prefersReducedMotion(),
     enableAnimations: !prefersReducedMotion(),

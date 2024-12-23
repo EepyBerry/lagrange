@@ -377,15 +377,18 @@ export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progress
 
   progressDialog.setProgress(2)
   const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value as PlanetData)
-  const bakePlanetSurfaceTex = await bakeMesh(renderer, bakeRenderTarget, bakePlanet, w, h)
+  const bakePlanetSurfaceTex = await bakeMesh(renderer, bakePlanet, w, h)
+  if (appSettings?.bakingPixelize) bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
 
   progressDialog.setProgress(3)
   const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value as PlanetData)
-  const bakePlanetPBRTex = await bakeMesh(renderer, bakeRenderTarget, bakePBR, w, h)
+  const bakePlanetPBRTex = await bakeMesh(renderer, bakePBR, w, h)
+  if (appSettings?.bakingPixelize) bakePlanetPBRTex.magFilter = THREE.NearestFilter
 
   progressDialog.setProgress(4)
   const bakeBump = createBakingBumpMap(LG_PLANET_DATA.value as PlanetData)
-  const bakePlanetBumpTex = await bakeMesh(renderer, bakeRenderTarget, bakeBump, w, h)
+  const bakePlanetBumpTex = await bakeMesh(renderer, bakeBump, w, h)
+  if (appSettings?.bakingPixelize) bakePlanetBumpTex.magFilter = THREE.NearestFilter
 
   bakePlanet.material = new THREE.MeshStandardMaterial({
     map: bakePlanetSurfaceTex,
@@ -400,7 +403,8 @@ export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progress
   if (LG_PLANET_DATA.value.cloudsEnabled) {
     progressDialog.setProgress(5)
     const bakeClouds = createBakingClouds(LG_PLANET_DATA.value as PlanetData)
-    const bakeCloudsTex = await bakeMesh(renderer, bakeRenderTarget, bakeClouds, w, h)
+    const bakeCloudsTex = await bakeMesh(renderer, bakeClouds, w, h)
+    if (appSettings?.bakingPixelize) bakeCloudsTex.magFilter = THREE.NearestFilter
 
     bakeClouds.material = new THREE.MeshStandardMaterial({
       map: bakeCloudsTex,
@@ -417,7 +421,8 @@ export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progress
   if (LG_PLANET_DATA.value.ringEnabled) {
     progressDialog.setProgress(6)
     const bakeRing = createBakingRing(LG_PLANET_DATA.value as PlanetData)
-    const bakeRingTex = await bakeMesh(renderer, bakeRenderTarget, bakeRing, w, h)
+    const bakeRingTex = await bakeMesh(renderer, bakeRing, w, h)
+    if (appSettings?.bakingPixelize) bakeRingTex.magFilter = THREE.NearestFilter
 
     bakeRing.material = new THREE.MeshStandardMaterial({
       map: bakeRingTex,
