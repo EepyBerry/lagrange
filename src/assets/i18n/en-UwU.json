@@ -163,16 +163,14 @@
     },
     "export_progress": {
       "$title": "Expowting pwanyet!!!",
-      "step_1": "Woading pwanyet data",
+      "step_1": "Pwepawing",
       "step_2": "Baking suwface textuwe",
       "step_3": "Baking suwface PBR",
       "step_4": "Baking suwface n-nowmals",
-      "step_5": "Woading cwouds data",
-      "step_6": "Baking cwouds textuwe",
-      "step_7": "Woading wing systyem data",
-      "step_8": "Baking wing systyem textuwe",
-      "step_9": "F-finawizing expowt",
-      "step_10": "Done!!! :3"
+      "step_5": "Baking cwouds textuwe",
+      "step_6": "Baking wing systyem textuwe",
+      "step_7": "F-finawizing",
+      "step_8": "Done!!! :3"
     },
     "reset": {
       "$title": "Confiwm weset",

@@ -1,20 +1,17 @@
 import * as THREE from 'three'
 import * as Globals from '@core/globals'
-import * as ShaderLoader from '../three/shader.loader'
+import * as ShaderLoader from '@core/three/shader.loader'
 import * as ComponentBuilder from '@core/three/component.builder'
 
-import { createRampTexture, createBiomeTexture } from "../helpers/texture.helper";
-import type PlanetData from "../models/planet-data.model";
-import { ShaderFileType } from "../types";
+import { createRampTexture, createBiomeTexture } from "@core/helpers/texture.helper";
+import type PlanetData from "@core/models/planet-data.model";
+import { ShaderFileType } from "@core/types";
 import { LG_BUFFER_SURFACE, LG_BUFFER_BIOME, LG_BUFFER_RING, LG_BUFFER_CLOUDS } from "./planet-editor.service";
-import { getTextureAsDataUrl, ShaderBaker } from 'three-shader-baker';
-import { clamp } from 'three/src/math/MathUtils.js';
+import type CustomShaderMaterial from 'three-custom-shader-material/vanilla';
 import { TEXTURE_LOADER } from '../three/external-data.loader';
-import { saveAs } from 'file-saver';
-import { getColorLuminance, getLinearUint8Luminance } from '@/utils/utils';
-import type { ColorRamp } from '../models/color-ramp.model';
 
-const SHADER_BAKER = new ShaderBaker()
+const BAKE_PATCH_RGX = /gl_Position ?=.*;/gm
+const BAKE_CAMERA = ComponentBuilder.createOrthgraphicCameraComponent(1, 1, 0, 1)
 
 export function createBakingPlanet(data: PlanetData): THREE.Mesh {
   const geometry = ComponentBuilder.createSphereGeometryComponent()
@@ -254,63 +251,63 @@ export function createBakingRing(data: PlanetData): THREE.Mesh {
 // ------------------------------------------------------------------------------------------------
 
 /**
- * Asynchronously bakes a model's Material/ShaderMaterial/CustomShaderMaterial into a texture
- * @remarks Uses three-shader-baker + TextureLoader
+ * Asynchronously bakes a model's Material/CustomShaderMaterial into a texture
+ * @remarks Uses TextureLoader
  * @param renderer renderer
  * @param mesh mesh to bake
  * @param size texture size in pixels
  * @param applyGaussDilation if true, uses a Gaussian blur pass to dilate the texture cleanly
  * @returns a promise containing the mesh's baked texture
  */
-export async function bakeTexture(
+export async function bakeMesh(
   renderer: THREE.WebGLRenderer,
+  renderTarget: THREE.WebGLRenderTarget<THREE.Texture>,
   mesh: THREE.Mesh,
-  size: number,
-  applyGaussDilation: boolean = false
+  width: number,
+  height: number,
 ): Promise<THREE.Texture> {
-  // force minimal dilation to "disable" it (using 0 resets it to 0.2, for some reason)
-  const bakedRenderTarget: THREE.WebGLRenderTarget<THREE.Texture> = SHADER_BAKER.bake(renderer, mesh, { size, dilation: 0.01 })
-  const dataUri = getTextureAsDataUrl(renderer, bakedRenderTarget.texture)
-  const tex = await TEXTURE_LOADER.loadAsync(dataUri)
-  tex.flipY = false
+  BAKE_CAMERA.left   = -width/2
+  BAKE_CAMERA.right  =  width/2
+  BAKE_CAMERA.top    =  height/2
+  BAKE_CAMERA.bottom = -height/2
+  BAKE_CAMERA.updateProjectionMatrix()
+
+  patchMaterialForUnwrapping(mesh.material as CustomShaderMaterial)
+  const preBakeScreenSize = new THREE.Vector2()
+  renderer.getSize(preBakeScreenSize)
+  renderer.setSize(width, height)
+  renderer.render(mesh, BAKE_CAMERA)
+  //saveAs(renderer.domElement.toDataURL(), 'render.png')
+
+  const tex = await TEXTURE_LOADER.loadAsync(renderer.domElement.toDataURL())
+  renderer.setSize(preBakeScreenSize.x, preBakeScreenSize.y)
   return tex
 }
 
-/**
- * Uses the alphaMap's green channel to write a new texture with the given baseColor
- * @remarks This is a workaround to three-shader-baker failing when trying to bake an alpha-based texture
- * @param alphaMap the alpha map
- * @param baseColor the color to apply
- * @param size texture size
- * @returns 
- */
-export async function writeTextureAlpha(alphaMap: THREE.Texture, baseColor: THREE.Color, opacityRamp: ColorRamp, size: number): Promise<THREE.Texture> {
-  const fillColor = baseColor.clone().convertLinearToSRGB()
-  const canvas = document.createElement("canvas")
-  canvas.width = size
-  canvas.height = size
-  const ctx = canvas.getContext("2d")!
-  ctx.drawImage(alphaMap.image, 0, 0, size, size)
-  const texData = ctx.getImageData(0, 0, size, size, { colorSpace: "srgb" })
+export function prepareMeshForExport(mesh: THREE.Mesh, material: THREE.Material) {
+  mesh.material = material
+}
 
-  let maxOpacity = getColorLuminance(opacityRamp.steps[opacityRamp.steps.length-1].color) + 0.1 // add slight modifier to improve render
-  let pixelStride = 0, pxLum = 0
-  for (let i = 0; i < texData.data.length; i++) {
-    pxLum = maxOpacity * getLinearUint8Luminance(texData.data[pixelStride + 0], texData.data[pixelStride + 1], texData.data[pixelStride + 2])
-    texData.data[pixelStride + 3] = clamp(pxLum * 255.0, 0, 255)
-    texData.data[pixelStride + 0] = clamp(fillColor.r * 255.0, 0, 255)
-    texData.data[pixelStride + 1] = clamp(fillColor.g * 255.0, 0, 255)
-    texData.data[pixelStride + 2] = clamp(fillColor.b * 255.0, 0, 255)
-    pixelStride += 4
+// NOTE: modified from three-shader-baker's code (see link)
+// https://github.com/FarazzShaikh/three-shader-baker/blob/main/package/src/index.ts
+// TODO: Not sure why material patching is necessary, need to investigate further (manual edits in GLSL code don't work)
+export function patchMaterialForUnwrapping(material: THREE.Material|CustomShaderMaterial) {
+  const origBeforeCompile = material.onBeforeCompile
+  material.onBeforeCompile = (shader, renderer) => {
+    origBeforeCompile(shader, renderer)
+    if (shader.vertexShader.includes("#include <project_vertex>")) {
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <project_vertex>',
+        `
+          #include <project_vertex>
+          gl_Position = vec4(uv, 0.0, 1.0) * 2.0 - 1.0;
+        `
+      );
+    } else {
+      shader.vertexShader = shader.vertexShader.replace(
+        shader.vertexShader.match(BAKE_PATCH_RGX)![0],
+        "gl_Position = vec4(uv, 0.0, 1.0) * 2.0 - 1.0;"
+      )
+    }
   }
-  ctx.putImageData(texData, 0, 0)
-  const tex = await TEXTURE_LOADER.loadAsync(canvas.toDataURL())
-  tex.flipY = false
-  tex.colorSpace = THREE.SRGBColorSpace
-  return tex
-}
-
-export function convertBumpMapToNormalMap(renderer: THREE.WebGLRenderer, bumpMap: THREE.Texture, size: number) {
-  const conversionRenderTarget = new THREE.WebGLRenderTarget(size, size)
-  renderer.setRenderTarget(conversionRenderTarget)
 }

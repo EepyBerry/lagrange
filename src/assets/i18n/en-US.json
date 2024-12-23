@@ -163,16 +163,14 @@
     },
     "export_progress": {
       "$title": "Exporting planet",
-      "step_1": "Loading planet data",
+      "step_1": "Preparing",
       "step_2": "Baking surface texture",
       "step_3": "Baking surface PBR",
       "step_4": "Baking surface normals",
-      "step_5": "Loading clouds data",
-      "step_6": "Baking clouds texture",
-      "step_7": "Loading ring system data",
-      "step_8": "Baking ring system texture",
-      "step_9": "Finalizing export",
-      "step_10": "Done!"
+      "step_5": "Baking clouds texture",
+      "step_6": "Baking ring system texture",
+      "step_7": "Finalizing",
+      "step_8": "Done!"
     },
     "reset": {
       "$title": "Confirm reset",

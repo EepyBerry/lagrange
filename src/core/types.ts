@@ -11,10 +11,6 @@ export enum PlanetType {
   TELLURIC,
   GASEOUS,
 }
-export enum GeometryType {
-  SPHERE,
-  RING,
-}
 export enum ColorMode {
   REALISTIC,
   DIRECT,

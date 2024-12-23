@@ -27,7 +27,7 @@ import { ref, type Ref } from 'vue'
 import DialogElement from '../elements/DialogElement.vue'
 const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
 
-const bakingSteps = 10
+const bakingSteps = 8
 const _progressStep: Ref<number> = ref(1)
 
 function open() { 
@@ -35,7 +35,7 @@ function open() {
 }
 function setProgress(value: number) {
   _progressStep.value = value
-  if (value === 10) {
+  if (value === bakingSteps) {
     setTimeout(dialogRef.value!.close, 1000)
   }
 }

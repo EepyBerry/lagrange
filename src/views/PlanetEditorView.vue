@@ -620,8 +620,8 @@ async function savePlanet() {
 
 function updatePlanet() {
   if (watchForPlanetUpdates && LG_PLANET_DATA.value.changedProps.length > 0) {
-    hasPlanetBeenEdited.value = true
     console.debug('Planet has been edited, warning user in case of unsaved data')
+    hasPlanetBeenEdited.value = true
   }
   for (let changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
     let key = changedProp.prop

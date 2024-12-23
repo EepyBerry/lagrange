@@ -11,10 +11,8 @@ import { LensFlareEffect } from '@core/three/lens-flare.effect'
 import PlanetData from '@core/models/planet-data.model'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
 import { createBiomeTexture, createRampTexture } from '../helpers/texture.helper'
-import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
+import { bakeMesh, createBakingBumpMap, createBakingClouds, createBakingPBRMap, createBakingPlanet, createBakingRing } from './planet-baker.service'
 import { exportMeshesToGLTF } from '../helpers/export.helper'
-import { bakeTexture, createBakingBumpMap, createBakingClouds, createBakingPBRMap, createBakingPlanet, createBakingRing, writeTextureAlpha } from './planet-baker.service'
-import type { ColorRamp } from '../models/color-ramp.model'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -263,11 +261,8 @@ export type PlanetPreviewData = {
   ring: THREE.Mesh
 }
 export type PlanetGltfData = {
-  sun: THREE.DirectionalLight
-  ambientLight: THREE.AmbientLight
   planet: THREE.Mesh
   clouds: THREE.Mesh
-  atmosphere: THREE.Mesh
   ring: THREE.Mesh
 }
 
@@ -276,8 +271,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   $se.renderer.getSize(initialSize)
 
   // ------------------------------- Setup render scene -------------------------------
-  const w = 384,
-    h = 384
+  const w = 384, h = 384
   const previewRenderTarget = new THREE.WebGLRenderTarget(w, h, {
     colorSpace: THREE.SRGBColorSpace,
   })
@@ -297,7 +291,6 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   previewCamera.updateProjectionMatrix()
 
   // ---------------------- Add cloned objects to preview scene -----------------------
-
   const planetGroup = new THREE.Group()
   planetGroup.add(data.planet)
   planetGroup.add(data.clouds)
@@ -316,7 +309,6 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
 
   // ---------------------------- Setup renderer & render -----------------------------
-
   $se.renderer.clear()
   $se.renderer.setSize(w, h)
   $se.renderer.setRenderTarget(previewRenderTarget)
@@ -329,7 +321,6 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   $se.renderer.setRenderTarget(null)
 
   // ----------------- Create preview canvas & write data from buffer -----------------
-
   const canvas = document.createElement('canvas')
   canvas.width = w
   canvas.height = h
@@ -342,7 +333,6 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   ctx.putImageData(imageData, 0, 0)
 
   // ------------------------------- Clean-up resources -------------------------------
-
   ringAnchor.clear()
   planetGroup.clear()
   data.sun!.dispose()
@@ -367,97 +357,79 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   return dataURL
 }
 
-export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progressDialog: { open: Function, setProgress: Function}) {
+export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progressDialog: { open: Function, setProgress: Function }) {
   const bakingTargets: BakingTarget[] = []
+  const w = 2048, h = 2048
+
+  // ------------------------------- Setup render scene -------------------------------
+  progressDialog.setProgress(1)
+  const bakeRenderTarget = new THREE.WebGLRenderTarget(w, h, { 
+    depthBuffer: false,
+    colorSpace: THREE.SRGBColorSpace
+  })
+  const bakeCamera = ComponentBuilder.createOrthgraphicCameraComponent(w, h, 0, 1)
+  bakeCamera.updateProjectionMatrix()
 
   // ----------------------------------- Bake planet ----------------------------------
 
-  progressDialog.setProgress(1)
-  let bakePlanet: THREE.Mesh, bakePBR: THREE.Mesh, bakeBump: THREE.Mesh
-  await new Promise<void>(resolve => {
-    bakePlanet = createBakingPlanet(LG_PLANET_DATA.value as PlanetData)
-    bakePBR = createBakingPBRMap(LG_PLANET_DATA.value as PlanetData)
-    bakeBump = createBakingBumpMap(LG_PLANET_DATA.value as PlanetData)
-    resolve()
-  })
-  
   progressDialog.setProgress(2)
-  const planetBakeRes = await bakeTexture(renderer, bakePlanet!, 2048, true)
+  const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value as PlanetData)
+  const bakePlanetSurfaceTex = await bakeMesh(renderer, bakeRenderTarget, bakePlanet, w, h)
+
   progressDialog.setProgress(3)
-  const pbrBakeRes = await bakeTexture(renderer, bakePBR!, 2048)
+  const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value as PlanetData)
+  const bakePlanetPBRTex = await bakeMesh(renderer, bakeRenderTarget, bakePBR, w, h)
+
   progressDialog.setProgress(4)
-  const bumpBakeRes = await bakeTexture(renderer, bakeBump!, 2048)
-  const bakingTgtData = {
-    mesh: bakePlanet!,
-    textures: [planetBakeRes, pbrBakeRes, bumpBakeRes]
-  }
-  bakingTargets.push(bakingTgtData)
-  ;(bakePlanet!.material as CustomShaderMaterial).dispose()
-  bakePlanet!.material = new THREE.MeshStandardMaterial({
-    map: bakingTgtData.textures[0],
-    roughnessMap: bakingTgtData.textures[1],
-    metalnessMap: bakingTgtData.textures[1],
-    bumpMap: bakingTgtData.textures[2],
-    bumpScale: 1.0
+  const bakeBump = createBakingBumpMap(LG_PLANET_DATA.value as PlanetData)
+  const bakePlanetBumpTex = await bakeMesh(renderer, bakeRenderTarget, bakeBump, w, h)
+
+  bakePlanet.material = new THREE.MeshStandardMaterial({
+    map: bakePlanetSurfaceTex,
+    roughnessMap: bakePlanetPBRTex,
+    metalnessMap: bakePlanetPBRTex,
+    bumpMap: bakePlanetBumpTex,
+    bumpScale: LG_PLANET_DATA.value.planetSurfaceBumpStrength
   })
+  bakingTargets.push({ mesh: bakePlanet, textures: [bakePlanetSurfaceTex, bakePlanetPBRTex, bakePlanetBumpTex]})
 
   // ----------------------------------- Bake clouds ----------------------------------
-
   if (LG_PLANET_DATA.value.cloudsEnabled) {
     progressDialog.setProgress(5)
     const bakeClouds = createBakingClouds(LG_PLANET_DATA.value as PlanetData)
-    bakeClouds.rotateY(degToRad(LG_PLANET_DATA.value.cloudsRotation))
-    progressDialog.setProgress(6)
-    const bakeRes = await bakeTexture(renderer, bakeClouds, 2048)
-    const bakingTgtData = {
-      mesh: bakeClouds,
-      textures: [
-        await writeTextureAlpha(
-          bakeRes, LG_PLANET_DATA.value.cloudsColor,
-          LG_PLANET_DATA.value.cloudsColorRamp as ColorRamp, 2048
-        )
-      ]
-    }
-    bakingTargets.push(bakingTgtData)
-    ;(bakeClouds.material as CustomShaderMaterial).dispose()
+    const bakeCloudsTex = await bakeMesh(renderer, bakeRenderTarget, bakeClouds, w, h)
+
     bakeClouds.material = new THREE.MeshStandardMaterial({
-      map: bakingTgtData.textures[0],
-      opacity: 0.75,
+      map: bakeCloudsTex,
+      opacity: 1.0,
       metalness: 0.5,
       roughness: 1.0,
       transparent: true
     })
+    bakingTargets.push({ mesh: bakeClouds, textures: [bakeCloudsTex] })
   }
 
   // --------------------------------- Bake ring system -------------------------------
-
   if (LG_PLANET_DATA.value.ringEnabled) {
-    progressDialog.setProgress(7)
+    progressDialog.setProgress(6)
     const bakeRing = createBakingRing(LG_PLANET_DATA.value as PlanetData)
-    bakeRing.rotateX(degToRad(-90))
-    progressDialog.setProgress(8)
-    const bakingTgtData = {
-      mesh: bakeRing,
-      textures: [await bakeTexture(renderer, bakeRing, 2048)]
-    }
-    bakingTargets.push(bakingTgtData)
-    ;(bakeRing.material as CustomShaderMaterial).dispose()
+    const bakeRingTex = await bakeMesh(renderer, bakeRenderTarget, bakeRing, w, h)
+
     bakeRing.material = new THREE.MeshStandardMaterial({
-      map: bakingTgtData.textures[0],
+      map: bakeRingTex,
       side: THREE.DoubleSide,
       transparent: true
     })
+    bakingTargets.push({ mesh: bakeRing, textures: [bakeRingTex] })
   }
 
-  // -------------------------- Export and clean-up resources -------------------------
-
-  progressDialog.setProgress(9)
+  // ---------------------------- Export meshes and clean up ---------------------------
+  progressDialog.setProgress(7)
   exportMeshesToGLTF(bakingTargets.map(b => b.mesh), LG_PLANET_DATA.value.planetName.replaceAll(' ', '_'))
-  
   bakingTargets.forEach(bt => {
     bt.textures.forEach(tex => tex.dispose())
     ;(bt.mesh.material as THREE.MeshStandardMaterial).dispose()
     bt.mesh.geometry.dispose()
   })
-  progressDialog.setProgress(10)
+  progressDialog.setProgress(8)
 }
