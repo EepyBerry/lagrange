@@ -75,7 +75,8 @@
           <template v-slot:title>{{ $t('dialog.about.credits.$title') }}</template>
           <template v-slot:content>
             <ul style="list-style-type: disc; margin-left: 1rem">
-              <li v-html="$t('dialog.about.credits.glsl_terrestrial')"></li>
+              <li v-html="$t('dialog.about.credits.libs')"></li>
+              <li v-html="$t('dialog.about.credits.glsl_main')"></li>
               <li v-html="$t('dialog.about.credits.glsl_misc')"></li>
               <li v-html="$t('dialog.about.credits.contributors')"></li>
             </ul>
