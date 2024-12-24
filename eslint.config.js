@@ -9,7 +9,7 @@ export default typescriptEslint.config(
   {
     extends: [
       eslint.configs.recommended,
-      ...typescriptEslint.configs.recommended,
+      //...typescriptEslint.configs.recommended,
       ...eslintPluginVue.configs['flat/recommended'],
     ],
     files: ['**/*.{ts,vue}'],
@@ -23,11 +23,11 @@ export default typescriptEslint.config(
     },
     rules: {
       'no-undef': 'warn',
-      '@typescript-eslint/no-unused-vars': [
+      'no-unused-vars': [
         'warn',
         {
-          argsIgnorePattern: '^_$',
-          varsIgnorePattern: '^_$',
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '_',
         },
       ],
     }
