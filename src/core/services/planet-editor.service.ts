@@ -11,9 +11,18 @@ import { LensFlareEffect } from '@core/three/lens-flare.effect'
 import PlanetData from '@core/models/planet-data.model'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
 import { createBiomeTexture, createRampTexture } from '../helpers/texture.helper'
-import { bakeMesh, createBakingBumpMap, createBakingClouds, createBakingPBRMap, createBakingPlanet, createBakingRing } from './planet-baker.service'
+import {
+  bakeMesh,
+  createBakingBumpMap,
+  createBakingClouds,
+  createBakingNormalMap,
+  createBakingPBRMap,
+  createBakingPlanet,
+  createBakingRing,
+} from './planet-baker.service'
 import { exportMeshesToGLTF } from '../helpers/export.helper'
 import { idb } from '@/dexie.config'
+import { blurTexture } from '@/utils/utils'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -82,7 +91,11 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
   const geometry = ComponentBuilder.createSphereGeometryComponent()
   geometry.computeTangents()
 
-  const surfaceTex = createRampTexture(LG_BUFFER_SURFACE, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
+  const surfaceTex = createRampTexture(
+    LG_BUFFER_SURFACE,
+    Globals.TEXTURE_SIZES.SURFACE,
+    data.planetSurfaceColorRamp.steps,
+  )
   const biomeTex = createBiomeTexture(LG_BUFFER_BIOME, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
 
   const material = ComponentBuilder.createCustomShaderMaterialComponent(
@@ -215,7 +228,7 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
       u_color_mode: { value: ColorMode.REALISTIC },
       u_hue: { value: data.atmosphereHue },
       u_tint: { value: data.atmosphereTint },
-    }
+    },
   )
   material.transparent = true
   material.depthWrite = false
@@ -272,7 +285,8 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   $se.renderer.getSize(initialSize)
 
   // ------------------------------- Setup render scene -------------------------------
-  const w = 384, h = 384
+  const w = 384,
+    h = 384
   const previewRenderTarget = new THREE.WebGLRenderTarget(w, h, {
     colorSpace: THREE.SRGBColorSpace,
   })
@@ -358,23 +372,17 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   return dataURL
 }
 
-export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progressDialog: { open: Function, setProgress: Function }) {
+export async function exportPlanetToGLTF(
+  renderer: THREE.WebGLRenderer,
+  progressDialog: { open: Function; setProgress: Function },
+) {
+  progressDialog.setProgress(1)
   const bakingTargets: BakingTarget[] = []
   const appSettings = await idb.settings.limit(1).first()
   const w = appSettings?.bakingResolution ?? 2048,
-   h = appSettings?.bakingResolution ?? 2048
-
-  // ------------------------------- Setup render scene -------------------------------
-  progressDialog.setProgress(1)
-  const bakeRenderTarget = new THREE.WebGLRenderTarget(w, h, { 
-    depthBuffer: false,
-    colorSpace: THREE.SRGBColorSpace
-  })
-  const bakeCamera = ComponentBuilder.createOrthgraphicCameraComponent(w, h, 0, 1)
-  bakeCamera.updateProjectionMatrix()
+    h = appSettings?.bakingResolution ?? 2048
 
   // ----------------------------------- Bake planet ----------------------------------
-
   progressDialog.setProgress(2)
   const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value as PlanetData)
   const bakePlanetSurfaceTex = await bakeMesh(renderer, bakePlanet, w, h)
@@ -388,16 +396,23 @@ export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progress
   progressDialog.setProgress(4)
   const bakeBump = createBakingBumpMap(LG_PLANET_DATA.value as PlanetData)
   const bakePlanetBumpTex = await bakeMesh(renderer, bakeBump, w, h)
-  if (appSettings?.bakingPixelize) bakePlanetBumpTex.magFilter = THREE.NearestFilter
+
+  const bakeNormal = createBakingNormalMap(bakePlanetBumpTex, w)
+  let bakePlanetNormalTex = await bakeMesh(renderer, bakeNormal, w, h)
+  bakePlanetNormalTex = await blurTexture(bakePlanetNormalTex, w)
+  if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
 
   bakePlanet.material = new THREE.MeshStandardMaterial({
     map: bakePlanetSurfaceTex,
     roughnessMap: bakePlanetPBRTex,
     metalnessMap: bakePlanetPBRTex,
-    bumpMap: bakePlanetBumpTex,
-    bumpScale: LG_PLANET_DATA.value.planetSurfaceBumpStrength
+    normalMap: bakePlanetNormalTex,
+    normalScale: new THREE.Vector2(
+      LG_PLANET_DATA.value.planetSurfaceBumpStrength,
+      LG_PLANET_DATA.value.planetSurfaceBumpStrength,
+    ),
   })
-  bakingTargets.push({ mesh: bakePlanet, textures: [bakePlanetSurfaceTex, bakePlanetPBRTex, bakePlanetBumpTex]})
+  bakingTargets.push({ mesh: bakePlanet, textures: [bakePlanetSurfaceTex, bakePlanetPBRTex, bakePlanetBumpTex] })
 
   // ----------------------------------- Bake clouds ----------------------------------
   if (LG_PLANET_DATA.value.cloudsEnabled) {
@@ -411,7 +426,7 @@ export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progress
       opacity: 1.0,
       metalness: 0.5,
       roughness: 1.0,
-      transparent: true
+      transparent: true,
     })
     bakingTargets.push({ mesh: bakeClouds, textures: [bakeCloudsTex] })
     bakePlanet.add(bakeClouds)
@@ -427,7 +442,7 @@ export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progress
     bakeRing.material = new THREE.MeshStandardMaterial({
       map: bakeRingTex,
       side: THREE.DoubleSide,
-      transparent: true
+      transparent: true,
     })
     bakingTargets.push({ mesh: bakeRing, textures: [bakeRingTex] })
     bakePlanet.add(bakeRing)
@@ -437,8 +452,8 @@ export async function exportPlanetToGLTF(renderer: THREE.WebGLRenderer, progress
   progressDialog.setProgress(7)
   bakePlanet.name = LG_PLANET_DATA.value.planetName
   exportMeshesToGLTF([bakePlanet], LG_PLANET_DATA.value.planetName.replaceAll(' ', '_') + `_${w}`)
-  bakingTargets.forEach(bt => {
-    bt.textures.forEach(tex => tex.dispose())
+  bakingTargets.forEach((bt) => {
+    bt.textures.forEach((tex) => tex.dispose())
     ;(bt.mesh.material as THREE.MeshStandardMaterial).dispose()
     bt.mesh.geometry.dispose()
   })

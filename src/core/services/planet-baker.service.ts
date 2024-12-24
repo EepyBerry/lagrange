@@ -6,9 +6,16 @@ import * as ComponentBuilder from '@core/three/component.builder'
 import { createRampTexture, createBiomeTexture } from "@core/helpers/texture.helper";
 import type PlanetData from "@core/models/planet-data.model";
 import { ShaderFileType } from "@core/types";
-import { LG_BUFFER_SURFACE, LG_BUFFER_BIOME, LG_BUFFER_RING, LG_BUFFER_CLOUDS } from "./planet-editor.service";
-import type CustomShaderMaterial from 'three-custom-shader-material/vanilla';
-import { TEXTURE_LOADER } from '../three/external-data.loader';
+import {
+  LG_BUFFER_SURFACE,
+  LG_BUFFER_BIOME,
+  LG_BUFFER_RING,
+  LG_BUFFER_CLOUDS,
+  LG_PLANET_DATA,
+} from './planet-editor.service'
+import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
+import { TEXTURE_LOADER } from '../three/external-data.loader'
+import saveAs from 'file-saver'
 
 const BAKE_PATCH_RGX = /gl_Position ?=.*;/gm
 const BAKE_CAMERA = ComponentBuilder.createOrthgraphicCameraComponent(1, 1, 0, 1)
@@ -17,7 +24,11 @@ export function createBakingPlanet(data: PlanetData): THREE.Mesh {
   const geometry = ComponentBuilder.createSphereGeometryComponent()
   geometry.computeTangents()
 
-  const surfaceTex = createRampTexture(LG_BUFFER_SURFACE, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
+  const surfaceTex = createRampTexture(
+    LG_BUFFER_SURFACE,
+    Globals.TEXTURE_SIZES.SURFACE,
+    data.planetSurfaceColorRamp.steps,
+  )
   const biomeTex = createBiomeTexture(LG_BUFFER_BIOME, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
 
   const material = ComponentBuilder.createCustomShaderMaterialComponent(
@@ -157,6 +168,7 @@ export function createBakingBumpMap(data: PlanetData): THREE.Mesh {
       u_bump_offset: { value: 0.005 },
       u_warp: { value: data.planetSurfaceShowWarping },
       u_displace: { value: data.planetSurfaceShowDisplacement },
+      u_water_level: { value: LG_PLANET_DATA.value.planetWaterLevel },
       u_surface_displacement: {
         value: {
           freq: data.planetSurfaceDisplacement.frequency,
@@ -187,6 +199,21 @@ export function createBakingBumpMap(data: PlanetData): THREE.Mesh {
   const mesh = new THREE.Mesh(geometry, material)
   mesh.name = '_BumpMap'
   return mesh
+}
+
+export function createBakingNormalMap(bumpTex: THREE.Texture, resolution: number): THREE.Mesh {
+  return new THREE.Mesh(
+    new THREE.PlaneGeometry(),
+    new THREE.ShaderMaterial({
+      vertexShader: ShaderLoader.fetch('normal.vert.glsl', ShaderFileType.BAKING),
+      fragmentShader: ShaderLoader.fetch('normal.frag.glsl', ShaderFileType.BAKING),
+      uniforms: {
+        u_scale: { value: LG_PLANET_DATA.value.planetSurfaceBumpStrength * 2.0 },
+        u_resolution: { value: resolution },
+        u_bump_tex: { value: bumpTex },
+      },
+    }),
+  )
 }
 
 export function createBakingClouds(data: PlanetData): THREE.Mesh {
@@ -260,12 +287,15 @@ export function createBakingRing(data: PlanetData): THREE.Mesh {
  * @returns a promise containing the mesh's baked texture
  */
 export async function bakeMesh(
-  renderer: THREE.WebGLRenderer, mesh: THREE.Mesh, width: number, height: number
+  renderer: THREE.WebGLRenderer,
+  mesh: THREE.Mesh,
+  width: number,
+  height: number,
 ): Promise<THREE.Texture> {
-  BAKE_CAMERA.left   = -width/2
-  BAKE_CAMERA.right  =  width/2
-  BAKE_CAMERA.top    =  height/2
-  BAKE_CAMERA.bottom = -height/2
+  BAKE_CAMERA.left = -width / 2
+  BAKE_CAMERA.right = width / 2
+  BAKE_CAMERA.top = height / 2
+  BAKE_CAMERA.bottom = -height / 2
   BAKE_CAMERA.updateProjectionMatrix()
 
   patchMaterialForUnwrapping(mesh.material as CustomShaderMaterial)

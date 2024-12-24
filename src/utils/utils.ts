@@ -1,6 +1,8 @@
+import { TEXTURE_LOADER } from '@/core/three/external-data.loader'
 import type { RawRGBA } from '@/core/types'
 import { LOCALE_MAP, MUL_INT8_TO_UNIT } from '@core/globals'
-import type { Color } from 'three'
+import saveAs from 'file-saver'
+import type { Color, Texture } from 'three'
 import type { Composer } from 'vue-i18n'
 
 export function toRawRGBA(color: Color, a: number): RawRGBA {
@@ -33,11 +35,27 @@ export function prefersReducedMotion() {
 // ----------------------------------------------------------------------------
 
 export function getColorLuminance(color: Color) {
-  return (0.2126 * color.r) + (0.7152 * color.g) + (0.0722 * color.b)
+  return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b
 }
 export function getLinearRGBLuminance(r: number, g: number, b: number) {
-  return (0.2126 * r) + (0.7152 * g) + (0.0722 * b)
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
 }
 export function getLinearUint8Luminance(r: number, g: number, b: number) {
-  return (0.2126 * (r * MUL_INT8_TO_UNIT)) + (0.7152 * (g * MUL_INT8_TO_UNIT)) + (0.0722 * (b * MUL_INT8_TO_UNIT))
+  return 0.2126 * (r * MUL_INT8_TO_UNIT) + 0.7152 * (g * MUL_INT8_TO_UNIT) + 0.0722 * (b * MUL_INT8_TO_UNIT)
+}
+
+// ----------------------------------------------------------------------------
+
+export async function blurTexture(tex: Texture, size: number): Promise<Texture> {
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')!
+  ctx.filter = 'blur(2px)'
+  ctx.drawImage(tex.image, 0, 0)
+  saveAs(canvas.toDataURL(), 'normalmap.png')
+
+  const blurTex = await TEXTURE_LOADER.loadAsync(canvas.toDataURL())
+  canvas.remove()
+  return blurTex
 }

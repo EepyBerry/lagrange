@@ -171,7 +171,7 @@ async function saveAndRedirectToCodex() {
 function redirectToCodex() {
   // set edit flag to false to force exit
   hasPlanetBeenEdited.value = false
-  router.push('/codex').then(() => console.log('sdfhsdjfl'))
+  router.push('/codex')
 }
 
 async function initData() {

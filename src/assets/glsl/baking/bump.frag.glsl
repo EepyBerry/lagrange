@@ -35,6 +35,7 @@ uniform NoiseParameters u_surface_noise;
 uniform bool u_bump;
 uniform float u_bump_offset;
 uniform float u_bump_strength;
+uniform float u_water_level;
 
 // Packed varyings (uv, position)
 in mat4 vTransform;
@@ -53,7 +54,8 @@ void main() {
 
     // Heightmap
     float height = compute_layering(vPos, u_surface_noise);
+    float FLAG_LAND =  step(u_water_level, height);
 
     // Set outputs
-    csm_DiffuseColor = vec4(vec3(height), 1.0);
+    csm_DiffuseColor = vec4(mix(vec3(u_water_level), vec3(height), FLAG_LAND), 1.0);
 }
