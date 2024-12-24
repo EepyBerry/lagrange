@@ -14,11 +14,11 @@ import {
   LG_PLANET_DATA,
 } from './planet-editor.service'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
-import { TEXTURE_LOADER } from '../three/external-data.loader'
-import saveAs from 'file-saver'
+import { bufferToTexture } from '@/utils/utils'
 
 const BAKE_PATCH_RGX = /gl_Position ?=.*;/gm
 const BAKE_CAMERA = ComponentBuilder.createOrthgraphicCameraComponent(1, 1, 0, 1)
+const BAKE_RENDER_TARGET = new THREE.WebGLRenderTarget(1, 1, { colorSpace: THREE.SRGBColorSpace })
 
 export function createBakingPlanet(data: PlanetData): THREE.Mesh {
   const geometry = ComponentBuilder.createSphereGeometryComponent()
@@ -292,6 +292,8 @@ export async function bakeMesh(
   width: number,
   height: number,
 ): Promise<THREE.Texture> {
+  BAKE_RENDER_TARGET.setSize(width, height)
+
   BAKE_CAMERA.left = -width / 2
   BAKE_CAMERA.right = width / 2
   BAKE_CAMERA.top = height / 2
@@ -299,15 +301,14 @@ export async function bakeMesh(
   BAKE_CAMERA.updateProjectionMatrix()
 
   patchMaterialForUnwrapping(mesh.material as CustomShaderMaterial)
-  const preBakeScreenSize = new THREE.Vector2()
-  renderer.getSize(preBakeScreenSize)
-  renderer.setSize(width, height)
+  renderer.setRenderTarget(BAKE_RENDER_TARGET)
   renderer.render(mesh, BAKE_CAMERA)
-  //saveAs(renderer.domElement.toDataURL(), 'render.png')
 
-  const tex = await TEXTURE_LOADER.loadAsync(renderer.domElement.toDataURL())
-  renderer.setSize(preBakeScreenSize.x, preBakeScreenSize.y)
-  return tex
+  const renderBuffer = new Uint8Array(width * height * 4)
+  renderer.readRenderTargetPixels(BAKE_RENDER_TARGET, 0, 0, width, height, renderBuffer)
+  renderer.setRenderTarget(null)
+
+  return await bufferToTexture(renderBuffer, width, height)
 }
 
 export function prepareMeshForExport(mesh: THREE.Mesh, material: THREE.Material) {

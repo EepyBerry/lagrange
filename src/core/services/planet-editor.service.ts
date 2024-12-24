@@ -398,8 +398,7 @@ export async function exportPlanetToGLTF(
   const bakePlanetBumpTex = await bakeMesh(renderer, bakeBump, w, h)
 
   const bakeNormal = createBakingNormalMap(bakePlanetBumpTex, w)
-  let bakePlanetNormalTex = await bakeMesh(renderer, bakeNormal, w, h)
-  bakePlanetNormalTex = await blurTexture(bakePlanetNormalTex, w)
+  const bakePlanetNormalTex = await bakeMesh(renderer, bakeNormal, w, h)
   if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
 
   bakePlanet.material = new THREE.MeshStandardMaterial({
@@ -408,8 +407,8 @@ export async function exportPlanetToGLTF(
     metalnessMap: bakePlanetPBRTex,
     normalMap: bakePlanetNormalTex,
     normalScale: new THREE.Vector2(
-      LG_PLANET_DATA.value.planetSurfaceBumpStrength,
-      LG_PLANET_DATA.value.planetSurfaceBumpStrength,
+      LG_PLANET_DATA.value.planetSurfaceBumpStrength * 0.75,
+      LG_PLANET_DATA.value.planetSurfaceBumpStrength * 0.75,
     ),
   })
   bakingTargets.push({ mesh: bakePlanet, textures: [bakePlanetSurfaceTex, bakePlanetPBRTex, bakePlanetBumpTex] })

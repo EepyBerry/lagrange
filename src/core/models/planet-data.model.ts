@@ -548,7 +548,7 @@ export default class PlanetData extends ChangeTracker {
 
     // Planet & Rendering
     this._planetType = PlanetType.TELLURIC
-    this._planetMeshQuality = 48.0
+    this._planetMeshQuality = 64.0
     this._planetRadius = 1.0
     this._planetAxialTilt = 15.0
     this._planetRotation = 0.0

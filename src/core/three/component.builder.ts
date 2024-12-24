@@ -143,7 +143,7 @@ export function createControlsComponent(camera: THREE.Camera, canvas: HTMLCanvas
   controls.enableDamping = false
   controls.dampingFactor = 0.05
   controls.screenSpacePanning = false
-  controls.minDistance = 2.5
+  controls.minDistance = 1.5
   controls.maxDistance = 10
   controls.maxPolarAngle = Math.PI
   controls.rotateSpeed = 0.5
