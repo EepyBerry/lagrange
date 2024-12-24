@@ -152,7 +152,7 @@ export function createBakingPBRMap(data: PlanetData): THREE.Mesh {
   return mesh
 }
 
-export function createBakingBumpMap(data: PlanetData): THREE.Mesh {
+export function createBakingHeightMap(data: PlanetData): THREE.Mesh {
   const geometry = ComponentBuilder.createSphereGeometryComponent()
   geometry.computeTangents()
 
@@ -208,7 +208,7 @@ export function createBakingNormalMap(bumpTex: THREE.Texture, resolution: number
       vertexShader: ShaderLoader.fetch('normal.vert.glsl', ShaderFileType.BAKING),
       fragmentShader: ShaderLoader.fetch('normal.frag.glsl', ShaderFileType.BAKING),
       uniforms: {
-        u_scale: { value: LG_PLANET_DATA.value.planetSurfaceBumpStrength * 2.0 },
+        u_scale: { value: 128 * LG_PLANET_DATA.value.planetSurfaceBumpStrength },
         u_resolution: { value: resolution },
         u_bump_tex: { value: bumpTex },
       },

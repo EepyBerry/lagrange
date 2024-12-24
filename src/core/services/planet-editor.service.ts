@@ -13,7 +13,7 @@ import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
 import { createBiomeTexture, createRampTexture } from '../helpers/texture.helper'
 import {
   bakeMesh,
-  createBakingBumpMap,
+  createBakingHeightMap,
   createBakingClouds,
   createBakingNormalMap,
   createBakingPBRMap,
@@ -22,7 +22,6 @@ import {
 } from './planet-baker.service'
 import { exportMeshesToGLTF } from '../helpers/export.helper'
 import { idb } from '@/dexie.config'
-import { blurTexture } from '@/utils/utils'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -394,10 +393,10 @@ export async function exportPlanetToGLTF(
   if (appSettings?.bakingPixelize) bakePlanetPBRTex.magFilter = THREE.NearestFilter
 
   progressDialog.setProgress(4)
-  const bakeBump = createBakingBumpMap(LG_PLANET_DATA.value as PlanetData)
-  const bakePlanetBumpTex = await bakeMesh(renderer, bakeBump, w, h)
+  const bakeHeight = createBakingHeightMap(LG_PLANET_DATA.value as PlanetData)
+  const bakePlanetHeightTex = await bakeMesh(renderer, bakeHeight, w, h)
 
-  const bakeNormal = createBakingNormalMap(bakePlanetBumpTex, w)
+  const bakeNormal = createBakingNormalMap(bakePlanetHeightTex, w)
   const bakePlanetNormalTex = await bakeMesh(renderer, bakeNormal, w, h)
   if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
 
@@ -407,11 +406,11 @@ export async function exportPlanetToGLTF(
     metalnessMap: bakePlanetPBRTex,
     normalMap: bakePlanetNormalTex,
     normalScale: new THREE.Vector2(
-      LG_PLANET_DATA.value.planetSurfaceBumpStrength * 0.75,
-      LG_PLANET_DATA.value.planetSurfaceBumpStrength * 0.75,
+      2.0 * LG_PLANET_DATA.value.planetSurfaceBumpStrength,
+      2.0 * LG_PLANET_DATA.value.planetSurfaceBumpStrength,
     ),
   })
-  bakingTargets.push({ mesh: bakePlanet, textures: [bakePlanetSurfaceTex, bakePlanetPBRTex, bakePlanetBumpTex] })
+  bakingTargets.push({ mesh: bakePlanet, textures: [bakePlanetSurfaceTex, bakePlanetPBRTex, bakePlanetHeightTex] })
 
   // ----------------------------------- Bake clouds ----------------------------------
   if (LG_PLANET_DATA.value.cloudsEnabled) {

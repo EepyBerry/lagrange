@@ -11,15 +11,23 @@ uniform sampler2D u_bump_tex;
 in vec2 vUv;
 
 void main() {
-  // Sample neighbouring heights & compute diff vectors 
-  float samplingOffset = 1.0/u_resolution;
-  float height = texture2D(u_bump_tex, vUv).y;
-  float dxHeight = texture2D(u_bump_tex, vUv + vec2(samplingOffset, 0.0)).y;
-  float dyHeight = texture2D(u_bump_tex, vUv + vec2(0.0, samplingOffset)).y;
-  vec2 dxy = height - vec2(dxHeight, dyHeight);
+  // Sample neighbouring heights
+  vec3 offset = vec3(-1.0/u_resolution, 0.0, 1.0/u_resolution);
+  float s00 = texture(u_bump_tex, vUv + offset.xx).x;
+  float s10 = texture(u_bump_tex, vUv + offset.yx).x;
+  float s20 = texture(u_bump_tex, vUv + offset.zx).x;
+  float s01 = texture(u_bump_tex, vUv + offset.xy).x;
+  float s21 = texture(u_bump_tex, vUv + offset.zy).x;
+  float s02 = texture(u_bump_tex, vUv + offset.xz).x;
+  float s12 = texture(u_bump_tex, vUv + offset.yz).x;
+  float s22 = texture(u_bump_tex, vUv + offset.zz).x;
 
-  // Calculate & scale normal
-  vec3 N = normalize(vec3(dxy * u_scale / samplingOffset, 1.0));
+  // Calculate normal using Sobel filter
+  vec3 N = normalize(vec3(
+    u_scale * +(s00 - s20 + 2.0*s01 - 2.0*s21 + s02 - s22),
+    u_scale * -(s00 + 2.0*s10 + s20 - s02 - 2.0*s12 - s22),
+    1.0
+  )) * 0.5 + 0.5;
 
   // Set outputs
   gl_FragColor = vec4(N, 1.0);
