@@ -21,6 +21,12 @@
     <ParameterSlider id="p-wmetal" v-model="LG_PLANET_DATA.planetWaterMetalness" :step="0.01" :min="0" :max="1">
       {{ $t('editor.controls.planet_rendering.pbr_watermetalness') }}
     </ParameterSlider>
+    <ParameterColor v-model="LG_PLANET_DATA.planetWaterEmissiveColor">
+      {{ $t('editor.controls.planet_rendering.pbr_wateremissivecolor') }}
+    </ParameterColor>
+    <ParameterSlider id="p-wintensity" v-model="LG_PLANET_DATA.planetWaterEmissiveIntensity" :step="0.01" :min="0" :max="10">
+      {{ $t('editor.controls.planet_rendering.pbr_wateremissiveintensity') }}
+    </ParameterSlider>
     <ParameterDivider />
     <ParameterSlider id="p-grough" v-model="LG_PLANET_DATA.planetGroundRoughness" :step="0.01" :min="0" :max="1">
       {{ $t('editor.controls.planet_rendering.pbr_groundroughness') }}
@@ -36,4 +42,5 @@ import ParameterGrid from '@components/parameters/ParameterGrid.vue'
 import ParameterSlider from '@components/parameters/ParameterSlider.vue'
 import ParameterCategory from '@components/parameters/ParameterCategory.vue'
 import ParameterDivider from '@components/parameters/ParameterDivider.vue'
+import ParameterColor from '@components/parameters/ParameterColor.vue'
 </script>

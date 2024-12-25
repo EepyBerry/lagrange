@@ -1,8 +1,8 @@
-vec4 darken(vec4 color, float t) {
-return color * mat4(
-    vec4(1.0-t, 0.0,   0.0,   0.0),
-    vec4(0.0,   1.0-t, 0.0,   0.0),
-    vec4(0.0,   0.0,   1.0-t, 0.0),
+vec4 lighten(vec4 color, float t) {
+  return color * mat4(
+    vec4(1.0-t, 0.0,   0.0,   t),
+    vec4(0.0,   1.0-t, 0.0,   t),
+    vec4(0.0,   0.0,   1.0-t, t),
     vec4(0.0,   0.0,   0.0,   1.0)
   );
 }

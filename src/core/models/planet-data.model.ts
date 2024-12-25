@@ -121,6 +121,8 @@ export default class PlanetData extends ChangeTracker {
   private _planetRotation: number
   private _planetWaterRoughness: number
   private _planetWaterMetalness: number
+  private _planetWaterEmissiveColor: Color
+  private _planetWaterEmissiveIntensity: number
   private _planetGroundRoughness: number
   private _planetGroundMetalness: number
   private _planetWaterLevel: number
@@ -165,6 +167,13 @@ export default class PlanetData extends ChangeTracker {
     this.markForChange('_planetRotation')
   }
 
+  public get planetWaterRoughness(): number {
+    return this._planetWaterRoughness
+  }
+  public set planetWaterRoughness(value: number) {
+    this._planetWaterRoughness = clamp(value, 0, 1)
+    this.markForChange('_planetWaterRoughness')
+  }
   public get planetWaterMetalness(): number {
     return this._planetWaterMetalness
   }
@@ -172,12 +181,20 @@ export default class PlanetData extends ChangeTracker {
     this._planetWaterMetalness = clamp(value, 0, 1)
     this.markForChange('_planetWaterMetalness')
   }
-  public get planetWaterRoughness(): number {
-    return this._planetWaterRoughness
+
+  public get planetWaterEmissiveColor(): Color {
+    return this._planetWaterEmissiveColor
   }
-  public set planetWaterRoughness(value: number) {
-    this._planetWaterRoughness = clamp(value, 0, 1)
-    this.markForChange('_planetWaterRoughness')
+  public set planetWaterEmissiveColor(value: Color) {
+    this._planetWaterEmissiveColor.set(value)
+    this.markForChange('_planetWaterEmissiveColor')
+  }
+  public get planetWaterEmissiveIntensity(): number {
+    return this._planetWaterEmissiveIntensity
+  }
+  public set planetWaterEmissiveIntensity(value: number) {
+    this._planetWaterEmissiveIntensity = clamp(value, 0, 10)
+    this.markForChange('_planetWaterEmissiveIntensity')
   }
 
   public get planetGroundMetalness(): number {
@@ -554,6 +571,8 @@ export default class PlanetData extends ChangeTracker {
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
     this._planetWaterMetalness = 0.5
+    this._planetWaterEmissiveColor = new Color(0xffffff)
+    this._planetWaterEmissiveIntensity = 0.0
     this._planetGroundRoughness = 0.8
     this._planetGroundMetalness = 0.1
     this._planetWaterLevel = 0.5
@@ -675,6 +694,8 @@ export default class PlanetData extends ChangeTracker {
     this.planetRotation = data._planetRotation ?? 0.0
     this.planetWaterRoughness = data._planetWaterRoughness ?? 0.55
     this.planetWaterMetalness = data._planetWaterMetalness ?? 0.5
+    this.planetWaterEmissiveColor.set(data._planetWaterEmissiveColor ?? 0xffffff)
+    this.planetWaterEmissiveIntensity = data._planetWaterEmissiveIntensity ?? 0.0
     this.planetGroundRoughness = data._planetGroundRoughness ?? 0.8
     this.planetGroundMetalness = data._planetGroundMetalness ?? 0.1
     this.planetWaterLevel = data._planetWaterLevel ?? 0.5

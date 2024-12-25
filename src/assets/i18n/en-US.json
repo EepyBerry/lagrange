@@ -275,6 +275,8 @@
         "pbr_waterlevel": "Water level",
         "pbr_waterroughness": "Water roughness",
         "pbr_watermetalness": "Water metalness",
+        "pbr_wateremissivecolor": "Water emission color",
+        "pbr_wateremissiveintensity": "Water emission intensity",
         "pbr_groundroughness": "Ground roughness",
         "pbr_groundmetalness": "Ground metalness"
       },

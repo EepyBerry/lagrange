@@ -28,6 +28,8 @@ struct PBRParameters {
   float wlevel;
   float wrough;
   float wmetal;
+  vec3 wemicolor;
+  float wemiscale;
   float grough;
   float gmetal;
 };
@@ -63,6 +65,7 @@ in mat4 vTransform;
 @import functions/bump;
 @import functions/lwd;
 @import functions/biomes;
+@import functions/color_utils;
 
 // Biome function
 vec3 apply_biomes(float t, float h, vec3 color) {
@@ -111,4 +114,5 @@ void main() {
   csm_Roughness = mix(u_pbr_params.wrough, u_pbr_params.grough, FLAG_LAND);
   csm_Metalness = mix(u_pbr_params.wmetal, u_pbr_params.gmetal, FLAG_LAND);
   csm_DiffuseColor = vec4(color, 1.0);
+  csm_Emissive = mix(u_pbr_params.wemicolor*u_pbr_params.wemiscale, vec3(0.0), FLAG_LAND);
 }

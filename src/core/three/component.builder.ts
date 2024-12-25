@@ -108,7 +108,8 @@ export function createCustomShaderMaterialComponent<T extends MaterialConstructo
   fragmentShader?: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   uniforms?: { [uniform: string]: THREE.IUniform<any> },
-  baseMaterial?: T,
+  baseMaterial?: T | THREE.Material,
+  materialOptions?: Record<string, unknown>
 ): CustomShaderMaterial<T> {
   const mat = new CustomShaderMaterial({
     baseMaterial: baseMaterial ?? THREE.MeshStandardMaterial,
@@ -116,6 +117,7 @@ export function createCustomShaderMaterialComponent<T extends MaterialConstructo
     fragmentShader: fragmentShader ? ShaderLoader.resolveImports(fragmentShader) : undefined,
     uniforms,
     silent: true,
+    ...materialOptions
   })
   return mat
 }

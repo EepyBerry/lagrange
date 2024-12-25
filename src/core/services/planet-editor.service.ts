@@ -108,6 +108,8 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
           wlevel: data.planetWaterLevel,
           wrough: data.planetWaterRoughness,
           wmetal: data.planetWaterMetalness,
+          wemicolor: data.planetWaterEmissiveColor,
+          wemiscale: data.planetWaterEmissiveIntensity,
           grough: data.planetGroundRoughness,
           gmetal: data.planetGroundMetalness,
         },
@@ -164,7 +166,7 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
         },
       },
     },
-    THREE.MeshStandardMaterial,
+    THREE.MeshStandardMaterial
   )
 
   const mesh = new THREE.Mesh(geometry, material)
