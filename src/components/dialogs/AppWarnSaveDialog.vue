@@ -1,17 +1,18 @@
 <template>
   <DialogElement
-    ref="dialogRef"
     id="dialog-warn-save"
-    :showTitle="true"
-    :showActions="true"
+    ref="dialogRef"
+    :show-title="true"
+    :show-actions="true"
+    :closeable="true"
     :prevent-click-close="true"
     :aria-label="$t('a11y.dialog_warn_save')"
   >
-    <template v-slot:title>
+    <template #title>
       <iconify-icon icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
       {{ $t('dialog.warnsave.$title') }}
     </template>
-    <template v-slot:content>
+    <template #content>
       <div class="warn-text">
         <p>{{ $t('dialog.warnsave.message') }}</p>
         <p>
@@ -19,12 +20,12 @@
         </p>
       </div>
     </template>
-    <template v-slot:actions>
-      <button class="lg" @click="dialogRef?.close()" autofocus>
+    <template #actions>
+      <button class="lg" autofocus @click="dialogRef?.close()">
         <iconify-icon icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.warnsave.$action_cancel') }}
       </button>
-      <button class="lg success" @click="saveConfirmClose" autofocus>
+      <button class="lg success" autofocus @click="saveConfirmClose">
         <iconify-icon icon="mingcute:save-2-line" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.warnsave.$action_saveconfirm') }}
       </button>
@@ -39,7 +40,7 @@
 import DialogElement from '../elements/DialogElement.vue'
 import { ref, type Ref } from 'vue'
 
-const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
+const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 const $emit = defineEmits(['save-confirm', 'confirm'])
 defineExpose({ open: () => dialogRef.value?.open() })
 

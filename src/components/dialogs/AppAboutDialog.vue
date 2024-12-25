@@ -1,6 +1,12 @@
 <template>
-  <DialogElement ref="dialogRef" id="dialog-about" :showTitle="false" :aria-label="$t('a11y.dialog_about')">
-    <template v-slot:content>
+  <DialogElement
+    id="dialog-about"
+    ref="dialogRef"
+    :show-title="false"
+    :closeable="true"
+    :aria-label="$t('a11y.dialog_about')"
+  >
+    <template #content >
       <div class="about-grid">
         <div class="about-logo">
           <AppLogo />
@@ -37,11 +43,11 @@
           </p>
         </div>
         <CollapsibleSection class="about-updates" icon="mingcute:news-line">
-          <template v-slot:title>{{ $t('dialog.about.changelogs.$title') }}</template>
-          <template v-slot:content>
+          <template #title>{{ $t('dialog.about.changelogs.$title') }}</template>
+          <template #content>
             <CollapsibleSection class="about-update-inner" icon="mingcute:world-2-line">
-              <template v-slot:title>{{ $t('dialog.about.changelogs.02_title') }}</template>
-              <template v-slot:content>
+              <template #title>{{ $t('dialog.about.changelogs.02_title') }}</template>
+              <template #content>
                 <ul style="list-style-type: disc; margin-left: 1rem">
                   <li starred>{{ $t('dialog.about.changelogs.02_codex') }}</li>
                   <li>{{ $t('dialog.about.changelogs.02_ui') }}</li>
@@ -50,8 +56,8 @@
               </template>
             </CollapsibleSection>
             <CollapsibleSection class="about-update-inner" icon="mingcute:mountain-2-line">
-              <template v-slot:title>{{ $t('dialog.about.changelogs.03_title') }}</template>
-              <template v-slot:content>
+              <template #title>{{ $t('dialog.about.changelogs.03_title') }}</template>
+              <template #content>
                 <ul style="list-style-type: disc; margin-left: 1rem">
                   <li starred>{{ $t('dialog.about.changelogs.03_biomes') }}</li>
                   <li>{{ $t('dialog.about.changelogs.03_linux') }}</li>
@@ -60,8 +66,8 @@
               </template>
             </CollapsibleSection>
             <CollapsibleSection class="about-update-inner" icon="mingcute:planet-line">
-              <template v-slot:title>{{ $t('dialog.about.changelogs.04_title') }}</template>
-              <template v-slot:content>
+              <template #title>{{ $t('dialog.about.changelogs.04_title') }}</template>
+              <template #content>
                 <ul style="list-style-type: disc; margin-left: 1rem">
                   <li starred>{{ $t('dialog.about.changelogs.04_params') }}</li>
                   <li>{{ $t('dialog.about.changelogs.04_ui') }}</li>
@@ -72,11 +78,16 @@
           </template>
         </CollapsibleSection>
         <CollapsibleSection class="about-credits" icon="mingcute:bling-line">
-          <template v-slot:title>{{ $t('dialog.about.credits.$title') }}</template>
-          <template v-slot:content>
+          <template #title>{{ $t('dialog.about.credits.$title') }}</template>
+          <template #content>
             <ul style="list-style-type: disc; margin-left: 1rem">
-              <li v-html="$t('dialog.about.credits.glsl_terrestrial')"></li>
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <li v-html="$t('dialog.about.credits.libs')"></li>
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <li v-html="$t('dialog.about.credits.glsl_main')"></li>
+              <!-- eslint-disable-next-line vue/no-v-html -->
               <li v-html="$t('dialog.about.credits.glsl_misc')"></li>
+              <!-- eslint-disable-next-line vue/no-v-html -->
               <li v-html="$t('dialog.about.credits.contributors')"></li>
             </ul>
           </template>
@@ -95,7 +106,7 @@ import { onMounted, ref, type Ref } from 'vue'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
 
 const version = ref('UNKNOWN_VERSION')
-const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
+const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 defineExpose({ open: () => dialogRef.value?.open(), close: () => dialogRef.value?.close() })
 
 onMounted(() => (version.value = import.meta.env.APP_VERSION))

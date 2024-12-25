@@ -1,25 +1,26 @@
 <template>
   <DialogElement
-    ref="dialogRef"
     id="dialog-settings"
-    :showTitle="true"
+    ref="dialogRef"
+    :show-title="true"
+    :closeable="true"
     :aria-label="$t('a11y.dialog_settings')"
     style="height: 80%"
   >
-    <template v-slot:title>
+    <template #title>
       <iconify-icon icon="mingcute:settings-3-line" width="1.5rem" aria-hidden="true" />
       {{ $t('dialog.settings.$title') }}
     </template>
-    <template v-slot:content>
+    <template #content>
       <div class="settings-grid">
         <CollapsibleSection icon="mingcute:tool-line" class="section-general" expand>
-          <template v-slot:title>{{ $t('dialog.settings.general') }}</template>
-          <template v-slot:content>
+          <template #title>{{ $t('dialog.settings.general') }}</template>
+          <template #content>
             <ParameterGrid>
               <ParameterDivider />
               <ParameterSelect id="language" v-model="appSettings.locale">
                 {{ $t('dialog.settings.general_language') }}
-                <template v-slot:options>
+                <template #options>
                   <option value="en-US">English [en-US]</option>
                   <option value="en-UwU">Uwuish [en-UwU]</option>
                   <option value="fr-FR">Français [fr-FR]</option>
@@ -27,37 +28,45 @@
                   <option value="_" disabled>{{ $t('main.more_coming_soon') }}</option>
                 </template>
               </ParameterSelect>
-              <ParameterDivider />
+              <ParameterSelect id="settings-font" v-model="appSettings.font">
+                {{ $t('dialog.settings.general_font') }}:
+                <template #options>
+                  <option value="default">{{ $t('dialog.settings.general_font_default') }}</option>
+                  <option value="monospace">{{ $t('dialog.settings.general_font_monospace') }}</option>
+                  <option value="lowvision">{{ $t('dialog.settings.general_font_lowvision') }}</option>
+                  <option value="dyslexia">{{ $t('dialog.settings.general_font_dyslexia') }}</option>
+                </template>
+              </ParameterSelect>
               <ParameterRadio>
-                <template v-slot:title> {{ $t('dialog.settings.general_theme') }}: </template>
-                <template v-slot:options>
+                <template #title> {{ $t('dialog.settings.general_theme') }}: </template>
+                <template #options>
                   <ParameterRadioOption
+                    :id="'0'"
                     v-model="appSettings.theme"
                     name="theme-select"
-                    :id="'0'"
                     value="default"
                     icon="majesticons:comet"
-                    :ariaLabel="$t('a11y.general_theme_default')"
+                    :button-aria-label="$t('a11y.general_theme_default')"
                   >
                     {{ $t('dialog.settings.general_theme_default') }}
                   </ParameterRadioOption>
                   <ParameterRadioOption
+                    :id="'1'"
                     v-model="appSettings.theme"
                     name="theme-select"
-                    :id="'1'"
                     value="supernova"
                     icon="ph:star-four"
-                    :ariaLabel="$t('a11y.general_theme_supernova')"
+                    :button-aria-label="$t('a11y.general_theme_supernova')"
                   >
                     {{ $t('dialog.settings.general_theme_supernova') }}
                   </ParameterRadioOption>
                   <ParameterRadioOption
+                    :id="'1'"
                     v-model="appSettings.theme"
                     name="theme-select"
-                    :id="'1'"
                     value="voyager"
                     icon="hugeicons:satellite-02"
-                    :ariaLabel="$t('a11y.general_theme_voyager')"
+                    :button-aria-label="$t('a11y.general_theme_voyager')"
                   >
                     {{ $t('dialog.settings.general_theme_voyager') }}
                   </ParameterRadioOption>
@@ -65,18 +74,10 @@
               </ParameterRadio>
               <ParameterDivider />
               <ParameterCheckbox
-                id="settings-font"
-                :true-value="'monospace'"
-                :false-value="'default'"
-                v-model="appSettings.font"
-              >
-                {{ $t('dialog.settings.general_monospace') }}:
-              </ParameterCheckbox>
-              <ParameterCheckbox
                 id="settings-init"
+                v-model="appSettings.showInitDialog"
                 :true-value="true"
                 :false-value="false"
-                v-model="appSettings.showInitDialog"
               >
                 {{ $t('dialog.settings.general_init_dialog') }}:
               </ParameterCheckbox>
@@ -85,10 +86,10 @@
         </CollapsibleSection>
 
         <CollapsibleSection icon="mingcute:planet-line" class="section-editor">
-          <template v-slot:title>
+          <template #title>
             {{ $t('dialog.settings.editor') }}
           </template>
-          <template v-slot:content>
+          <template #content>
             <div class="settings-editor">
               <ParameterGrid>
                 <ParameterKeyBinding
@@ -123,7 +124,6 @@
                 >
                   {{ $t('dialog.settings.editor_atmosphere') }}
                 </ParameterKeyBinding>
-                <ParameterDivider />
                 <ParameterKeyBinding
                   icon="mingcute:screenshot-line"
                   :key-bind="getKeyBind('take-screenshot')"
@@ -132,31 +132,85 @@
                 >
                   {{ $t('dialog.settings.editor_screenshot') }}
                 </ParameterKeyBinding>
+                <ParameterDivider />
+                <ParameterRadio>
+                  <template #title> {{ $t('dialog.settings.editor_baking_resolution') }}: </template>
+                  <template #options>
+                    <ParameterRadioOption
+                      :id="'0'"
+                      v-model="appSettings.bakingResolution"
+                      name="baking-256"
+                      :value="256"
+                      :button-aria-label="$t('a11y.editor_baking_resolution_256')"
+                      >256</ParameterRadioOption
+                    >
+                    <ParameterRadioOption
+                      :id="'0'"
+                      v-model="appSettings.bakingResolution"
+                      name="baking-512"
+                      :value="512"
+                      :button-aria-label="$t('a11y.editor_baking_resolution_512')"
+                      >512</ParameterRadioOption
+                    >
+                    <ParameterRadioOption
+                      :id="'0'"
+                      v-model="appSettings.bakingResolution"
+                      name="baking-1k"
+                      :value="1024"
+                      :button-aria-label="$t('a11y.editor_baking_resolution_1k')"
+                      >1024</ParameterRadioOption
+                    >
+                    <ParameterRadioOption
+                      :id="'1'"
+                      v-model="appSettings.bakingResolution"
+                      name="baking-2k"
+                      :value="2048"
+                      :button-aria-label="$t('a11y.editor_baking_resolution_2k')"
+                      >2048</ParameterRadioOption
+                    >
+                    <ParameterRadioOption
+                      :id="'1'"
+                      v-model="appSettings.bakingResolution"
+                      name="baking-4k"
+                      :value="4096"
+                      :button-aria-label="$t('a11y.editor_baking_resolution_4k')"
+                      >4096</ParameterRadioOption
+                    >
+                  </template>
+                </ParameterRadio>
+                <ParameterCheckbox
+                  id="settings-baking-pixelize"
+                  v-model="appSettings.bakingPixelize"
+                  :true-value="true"
+                  :false-value="false"
+                >
+                  {{ $t('dialog.settings.editor_baking_pixelize') }}:
+                </ParameterCheckbox>
               </ParameterGrid>
             </div>
           </template>
         </CollapsibleSection>
 
         <CollapsibleSection icon="material-symbols:accessibility-new-rounded" class="section-a11y">
-          <template v-slot:title>
+          <template #title>
             {{ $t('dialog.settings.a11y') }}
           </template>
-          <template v-slot:content>
+          <template #content>
             <div class="settings-a11y">
               <ParameterGrid>
                 <ParameterCheckbox
                   id="settings-effects"
+                  v-model="appSettings.enableEffects"
                   :true-value="true"
                   :false-value="false"
-                  v-model="appSettings.enableEffects"
                 >
                   {{ $t('dialog.settings.a11y_effects') }}:
                 </ParameterCheckbox>
                 <ParameterCheckbox
                   id="settings-anim"
+                  v-model="appSettings.enableAnimations"
                   :true-value="true"
                   :false-value="false"
-                  v-model="appSettings.enableAnimations"
                 >
                   {{ $t('dialog.settings.a11y_animations') }}:
                 </ParameterCheckbox>
@@ -166,17 +220,17 @@
         </CollapsibleSection>
 
         <CollapsibleSection icon="mingcute:star-2-line" class="section-a11y">
-          <template v-slot:title>
+          <template #title>
             {{ $t('dialog.settings.extras') }}
           </template>
-          <template v-slot:content>
+          <template #content>
             <div class="settings-extras">
               <ParameterGrid>
                 <ParameterCheckbox
                   id="settings-hologram-mode"
+                  v-model="appSettings.extrasHologramMode"
                   :true-value="true"
                   :false-value="false"
-                  v-model="appSettings.extrasHologramMode"
                 >
                   {{ $t('dialog.settings.extras_hologram_mode') }}:
                 </ParameterCheckbox>
@@ -186,10 +240,10 @@
         </CollapsibleSection>
 
         <CollapsibleSection icon="mingcute:alert-diamond-line" class="section-advanced">
-          <template v-slot:title>
+          <template #title> 
             {{ $t('dialog.settings.advanced') }}
           </template>
-          <template v-slot:content>
+          <template #content>
             <div class="settings-advanced">
               <ParameterGrid>
                 <p>{{ $t('dialog.settings.advanced_persist') }}:</p>
@@ -245,8 +299,8 @@ import { EventBus } from '@/core/event-bus'
 
 const i18n = useI18n()
 
-const confirmDialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
-const dialogRef: Ref<{ open: Function; close: Function; ignoreNativeEvents: Function; isOpen: boolean } | null> =
+const confirmDialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
+const dialogRef: Ref<{ open: () => void; close: () => void; ignoreNativeEvents: (v: boolean) => void; isOpen: boolean } | null> =
   ref(null)
 const appSettings: Ref<IDBSettings> = ref({
   id: 0,
@@ -254,6 +308,8 @@ const appSettings: Ref<IDBSettings> = ref({
   theme: '',
   font: '',
   showInitDialog: true,
+  bakingResolution: 2048,
+  bakingPixelize: false,
   enableAnimations: true,
   enableEffects: true,
   extrasHologramMode: false,
@@ -282,7 +338,6 @@ onMounted(async () => {
   }
 })
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 watch(
   [() => appSettings.value, () => dialogRef.value?.isOpen],
   ([_, isDialogOpen]) => {
@@ -300,8 +355,8 @@ watch(
 )
 
 async function loadData() {
-  let settings = await idb.settings.limit(1).first()
-  let kb = await idb.keyBindings.toArray()
+  const settings = await idb.settings.limit(1).first()
+  const kb = await idb.keyBindings.toArray()
   appSettings.value!.locale = i18n.locale.value
   appSettings.value = settings!
   keyBinds.value.splice(0)
@@ -339,6 +394,8 @@ async function updateSettings() {
     theme: appSettings.value!.theme,
     font: appSettings.value!.font,
     showInitDialog: appSettings.value!.showInitDialog,
+    bakingResolution: appSettings.value!.bakingResolution,
+    bakingPixelize: appSettings.value!.bakingPixelize,
     enableEffects: appSettings.value!.enableEffects,
     enableAnimations: appSettings.value!.enableAnimations,
     extrasHologramMode: appSettings.value!.extrasHologramMode,

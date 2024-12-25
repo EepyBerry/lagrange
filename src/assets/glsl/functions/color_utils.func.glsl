@@ -1,3 +1,12 @@
+vec4 darken(vec4 color, float t) {
+return color * mat4(
+    vec4(1.0-t, 0.0,   0.0,   0.0),
+    vec4(0.0,   1.0-t, 0.0,   0.0),
+    vec4(0.0,   0.0,   1.0-t, 0.0),
+    vec4(0.0,   0.0,   0.0,   1.0)
+  );
+}
+
 mat4 tint_to_matrix(vec4 tint) {
   return mat4(
     vec4(tint.x, 0.0,    0.0,    0.0),

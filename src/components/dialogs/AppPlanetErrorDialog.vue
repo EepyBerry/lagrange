@@ -1,17 +1,18 @@
 <template>
   <DialogElement
-    ref="dialogRef"
     id="dialog-error"
+    ref="dialogRef" 
     :show-title="true"
+    :closeable="true"
     :prevent-click-close="true"
     :aria-label="$t('a11y.dialog_planet_error')"
     @close="$emit('close')"
   >
-    <template v-slot:title>
+    <template #title>
       <iconify-icon icon="mingcute:warning-line" width="2rem" aria-hidden="true" />
       <span>{{ $t('dialog.planeterror.$title') }}</span>
     </template>
-    <template v-slot:content>
+    <template #content>
       <div class="error-info">
         <p>{{ $t('dialog.planeterror.brief') }}</p>
         <p>
@@ -21,9 +22,9 @@
       <hr class="error-divider" />
       <p class="error-container">{{ _error }}</p>
       <CollapsibleSection v-show="false" class="warn">
-        <template v-slot:title>Stacktrace</template>
-        <template v-slot:content>
-          <p class="stack-line" v-for="(line, i) of _stack" :key="i">{{ line }}</p>
+        <template #title>Stacktrace</template>
+        <template #content>
+          <p v-for="(line, i) of _stack" :key="i" class="stack-line">{{ line }}</p>
         </template>
       </CollapsibleSection>
     </template>
@@ -33,12 +34,12 @@
 import { ref, type Ref } from 'vue'
 import DialogElement from '../elements/DialogElement.vue'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
-const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
+const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 
 const _error: Ref<string> = ref('')
 const _stack: Ref<string[]> = ref([])
 
-function openWithError(error: string, stack: string) {
+function openWithError(error: string, stack?: string) {
   _error.value = error
   if (stack) {
     _stack.value.push(...stack.replaceAll('\n', ' ').split(' '))

@@ -96,7 +96,11 @@
       "general_theme_default": "Comet",
       "general_theme_supernova": "Supewnyova",
       "general_theme_voyager": "Voyagew",
-      "general_monospace": "Enyabwe monyospace font",
+      "general_font": "Choose font t-to use",
+      "general_font_default": "Defauwt - Poppins",
+      "general_font_monospace": "Monyospace - JetBrains Mono",
+      "general_font_lowvision": "Wow-vision - Atkinson Hyperlegible",
+      "general_font_dyslexia": "Dyswexia - OpenDyslexic",
       "general_init_dialog": "Show init diawog on woad",
 
       "editor": "Editow ^w^",
@@ -105,6 +109,8 @@
       "editor_clouds": "@:dialog.init.shortcuts_clouds",
       "editor_atmosphere": "@:dialog.init.shortcuts_atmosphere",
       "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
+      "editor_baking_resolution": "Baking textuwe wesowution (powews of two)",
+      "editor_baking_pixelize": "Pixewize baking output",
 
       "a11y": "Accessibiwity !!!",
       "a11y_effects": "Enyabwe visuaw effects",
@@ -149,13 +155,25 @@
       },
       "credits": {
         "$title": "Cwedits & attwibushon",
-        "glsl_terrestrial": "T-tewwestwial-type GLSL code: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Vowonoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphewe), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (wens fware)",
-        "glsl_misc": "Miscewwanyeous GLSL code: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
+        "libs": "Main wibrawies: <a href=\"https://www.farazzshaikh.com/\" target=\"_blank\"><b>Faraz Shaikh</b></a> (THREE-CustomShaderMaterial)",
+        "glsl_main": "M-Main GLSL snippets: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Vowonoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphewe), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (wens fware)",
+        "glsl_misc": "Miscewwanyeous GLSL snippets: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
         "contributors": "<b>Speciaw thanks to a-aww contwibutows of this pwoject !!! (✿ﾟ▽ﾟ) ❤️</b>"
       },
 
       "built_with_love": "Buiwt with 🏳️‍🌈 & ❤️",
       "license": "ISTSL-NR 1.0 Wicense"
+    },
+    "export_progress": {
+      "$title": "Expowting pwanyet!!!",
+      "step_1": "Pwepawing",
+      "step_2": "Baking suwface textuwe",
+      "step_3": "Baking suwface PBR",
+      "step_4": "Baking suwface n-nowmals",
+      "step_5": "Baking cwouds textuwe",
+      "step_6": "Baking wing systyem textuwe",
+      "step_7": "F-finawizing",
+      "step_8": "Done!!! :3"
     },
     "reset": {
       "$title": "Confiwm weset",
@@ -366,6 +384,7 @@
     "topbar_rename_confirm": "Confiwm pwanyet nyame",
     "topbar_reset": "Weset t-to defauwts",
     "topbar_save": "S-save pwanyet",
+    "topbar_gltf": "Expowt as glTF",
     "topbar_import": "Impowt pwanyet fiwe",
     "topbar_export": "Expowt pwanyet fiwe",
     "topbar_export_all": "Expowt aww pwanyets as .zip!!!",
@@ -393,6 +412,7 @@
     "dialog_planetinfo": "Pwanyet info diawog",
     "dialog_settings": "Settings diawog",
     "dialog_about": "About @:main.$title diawog",
+    "dialog_export_progress": "Planet expowt diawog",
     "dialog_reset": "Confiwm weset diawog",
     "dialog_delete": "Confiwm dewete diawog",
     "dialog_warn_save": "Unsaved data wawning diawog",
@@ -402,6 +422,7 @@
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
     "topbar_reset": "@:tooltip.topbar_reset",
     "topbar_save": "@:tooltip.topbar_save",
+    "topbar_gltf": "@:tooltip.topbar_gltf",
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
     "topbar_export_all": "@:tooltip.topbar_export_all",
@@ -413,6 +434,12 @@
     "general_theme_default": "Set Comet theme (bwue)",
     "general_theme_supernova": "Set Supewnyova theme (puwple)",
     "general_theme_voyager": "Set Voyagew theme (owange)",
+    "editor_baking_resolution_256": "256 by 256 pixews",
+    "editor_baking_resolution_512": "512 by 512 pixews",
+    "editor_baking_resolution_1k": "1024 by 1024 pixews",
+    "editor_baking_resolution_2k": "2048 by 2048 pixews",
+    "editor_baking_resolution_4k": "4096 by 4096 pixews",
+    "editor_baking_pixelize": "Pixewize baking output textuwes",
 
     "editor_generic_input": "Pawametew vawue",
 

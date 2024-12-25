@@ -1,5 +1,5 @@
 <template>
-  <section
+  <section 
     class="collapsible-section"
     :class="{ expanded: _expanded, compact: compactMode, 'allow-icon-mode': allowIconMode }"
     role="group"
@@ -12,7 +12,7 @@
       </h3>
       <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.25rem" aria-hidden="true" />
     </button>
-    <div class="section-content" v-show="_expanded">
+    <div v-show="_expanded" class="section-content">
       <slot name="content">
         <span class="default">Nothing here yet, sorry :c</span>
       </slot>

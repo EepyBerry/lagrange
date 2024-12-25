@@ -4,23 +4,23 @@
       <iconify-icon icon="material-symbols:code-rounded" aria-hidden="true" />
       get tex
     </button>
-    <ParameterCheckbox v-model="LG_PLANET_DATA.ringEnabled" id="r-show" :true-value="true" :false-value="false">
+    <ParameterCheckbox id="r-show" v-model="LG_PLANET_DATA.ringEnabled" :true-value="true" :false-value="false">
       {{ $t('editor.controls.ring.ring_show') }}
     </ParameterCheckbox>
     <template v-if="LG_PLANET_DATA.ringEnabled">
       <ParameterCategory>{{ $t('editor.controls.ring.transform') }}</ParameterCategory>
-      <ParameterSlider v-model="LG_PLANET_DATA.ringInnerRadius" id="s-freq" :step="0.01" :min="1" :max="5">
+      <ParameterSlider id="s-freq" v-model="LG_PLANET_DATA.ringInnerRadius" :step="0.01" :min="1" :max="5">
         {{ $t('editor.controls.ring.transform_radius_inner') }}
       </ParameterSlider>
-      <ParameterSlider v-model="LG_PLANET_DATA.ringOuterRadius" id="s-amp" :step="0.01" :min="1" :max="5">
+      <ParameterSlider id="s-amp" v-model="LG_PLANET_DATA.ringOuterRadius" :step="0.01" :min="1" :max="5">
         {{ $t('editor.controls.ring.transform_radius_outer') }}
       </ParameterSlider>
       <ParameterCategory>{{ $t('editor.controls.ring.rgba') }}</ParameterCategory>
       <!-- prettier-ignore-attribute -->
       <ParameterColorRamp
-        mode="rgba"
-        v-model="(LG_PLANET_DATA.ringColorRamp as ColorRamp)"
         :key="LG_PLANET_DATA.planetName"
+        v-model="(LG_PLANET_DATA.ringColorRamp as ColorRamp)"
+        mode="rgba"
       >
         {{ $t('editor.general.noise_rgbaramp') }}
       </ParameterColorRamp>

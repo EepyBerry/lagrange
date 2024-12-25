@@ -11,6 +11,7 @@ type ToastMessageEvent = { type: InfoLevel; translationKey: string; millis: numb
 export class EventBus {
   public static clearEvent: Ref<string> = ref('')
   public static toastEvent: Ref<ToastMessageEvent | null> = ref(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private static windowEventRegistry: Map<keyof WindowEventMap, any> = new Map<keyof WindowEventMap, any>()
 
   public static sendDataClearEvent() {
@@ -31,7 +32,7 @@ export class EventBus {
    */
   public static registerWindowEventListener<K extends keyof WindowEventMap>(
     type: K,
-    listener: (this: Window, ev: WindowEventMap[K]) => any,
+    listener: (this: Window, ev: WindowEventMap[K]) => void,
     options?: WindowEventRegistryOptions,
   ) {
     EventBus.windowEventRegistry.set(type, listener)
@@ -42,7 +43,7 @@ export class EventBus {
 
   public static deregisterWindowEventListener<K extends keyof WindowEventMap>(
     type: K,
-    listener: (this: Window, ev: WindowEventMap[K]) => any,
+    listener: (this: Window, ev: WindowEventMap[K]) => void,
   ) {
     EventBus.windowEventRegistry.delete(type)
     window.removeEventListener(type, listener)

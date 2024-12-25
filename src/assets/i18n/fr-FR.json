@@ -96,7 +96,11 @@
       "general_theme_default": "Comet",
       "general_theme_supernova": "Supernova",
       "general_theme_voyager": "Voyager",
-      "general_monospace": "Police à largeur fixe (monospace)",
+      "general_font": "Choisir la police",
+      "general_font_default": "Par défaut - Poppins",
+      "general_font_monospace": "Largeur fixe - JetBrains Mono",
+      "general_font_lowvision": "Malvoyance - Atkinson Hyperlegible",
+      "general_font_dyslexia": "Dyslexie - OpenDyslexic",
       "general_init_dialog": "Afficher l'introduction au chargement",
 
       "editor": "Éditeur",
@@ -105,6 +109,8 @@
       "editor_clouds": "@:dialog.init.shortcuts_clouds",
       "editor_atmosphere": "@:dialog.init.shortcuts_atmosphere",
       "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
+      "editor_baking_resolution": "Résolution des textures lors du baking (puissances de deux)",
+      "editor_baking_pixelize": "Pixéliser les textures lors du baking",
 
       "a11y": "Accessibilité",
       "a11y_effects": "Activer les effets visuels",
@@ -149,13 +155,25 @@
       },
       "credits": {
         "$title": "Mentions et remerciements",
-        "glsl_terrestrial": "Code GLSL type terrestre: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphère), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
-        "glsl_misc": "Code GLSL divers: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
+        "libs": "Dépendances pricipales: <a href=\"https://www.farazzshaikh.com/\" target=\"_blank\"><b>Faraz Shaikh</b></a> (THREE-CustomShaderMaterial)",
+        "glsl_main": "Fragments GLSL principaux: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphère), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
+        "glsl_misc": "Fragments GLSL divers: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
         "contributors": "<b>Un grand merci à toustes les contributeur·ices de ce projet ❤️</b>"
       },
 
       "built_with_love": "Créé avec 🏳️‍🌈 & ❤️",
       "license": "Licence ISTSL-NR 1.0"
+    },
+    "export_progress": {
+      "$title": "Export en cours",
+      "step_1": "Préparation de l'export",
+      "step_2": "Baking de la surface",
+      "step_3": "Baking des données PBR",
+      "step_4": "Baking des normales",
+      "step_5": "Baking des nuages",
+      "step_6": "Baking des anneaux",
+      "step_7": "Finalisation de l'export",
+      "step_8": "Terminé!"
     },
     "reset": {
       "$title": "Réinitialiser",
@@ -366,6 +384,7 @@
     "topbar_rename_confirm": "Confirmer le nom",
     "topbar_reset": "Réinitialiser",
     "topbar_save": "Enregistrer",
+    "topbar_gltf": "Exporter au format glTF",
     "topbar_import": "Importer un fichier de planète",
     "topbar_export": "Exporter la planète en fichier",
     "topbar_export_all": "Exporter toutes les planètes au format .zip",
@@ -393,6 +412,7 @@
     "dialog_planetinfo": "Modale d'information sur la planète",
     "dialog_settings": "Modale de paramètres",
     "dialog_about": "Modale d'information sur @:main.$title",
+    "dialog_export_progress": "Modale d'export de la planète",
     "dialog_reset": "Modale de confirmation de réinitialisation",
     "dialog_delete": "Modale de confirmation de suppression",
     "dialog_warn_save": "Modale d'avertissement de données non enregistrées",
@@ -402,6 +422,7 @@
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
     "topbar_reset": "@:tooltip.topbar_reset",
     "topbar_save": "@:tooltip.topbar_save",
+    "topbar_gltf": "@:tooltip.topbar_gltf",
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
     "topbar_export_all": "@:tooltip.topbar_export_all",
@@ -413,6 +434,12 @@
     "general_theme_default": "Appliquer le thème Comet (bleu)",
     "general_theme_supernova": "Appliquer le thème Supernova (violet)",
     "general_theme_voyager": "Appliquer le thème Voyager (orange)",
+    "editor_baking_resolution_256": "256 par 256 pixels",
+    "editor_baking_resolution_512": "512 par 512 pixels",
+    "editor_baking_resolution_1k": "1024 par 1024 pixels",
+    "editor_baking_resolution_2k": "2048 par 2048 pixels",
+    "editor_baking_resolution_4k": "4096 par 4096 pixels",
+    "editor_baking_pixelize": "Pixéliser les textures de sortie",
 
     "editor_generic_input": "Valeur du paramètre",
 

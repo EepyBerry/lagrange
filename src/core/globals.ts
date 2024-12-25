@@ -10,7 +10,7 @@ export const MD_WIDTH_THRESHOLD = 1200
 export const LOCALE_MAP: { [k: string]: string } = {
   en: 'en-US',
   fr: 'fr-FR',
-  de: 'de-DE'
+  de: 'de-DE',
 }
 
 // Accessibility
@@ -20,13 +20,13 @@ export const A11Y_ANIMATE = ref(true)
 export const EXTRAS_HOLOGRAM_MODE = ref(true)
 
 // Scene object names
-export const LG_NAME_PLANET = 'lg:planet'
-export const LG_NAME_CLOUDS = 'lg:planet:clouds'
-export const LG_NAME_ATMOSPHERE = 'lg:planet:atmosphere'
-export const LG_NAME_RING = 'lg:planet:ring'
-export const LG_NAME_SUN = 'lg:sun'
-export const LG_NAME_SUNLIGHT = 'lg:sun:light'
-export const LG_NAME_AMBLIGHT = 'lg:ambient'
+export const LG_NAME_PLANET = 'Planet'
+export const LG_NAME_CLOUDS = 'Clouds'
+export const LG_NAME_ATMOSPHERE = 'Atmosphere'
+export const LG_NAME_RING = 'RingSystem'
+export const LG_NAME_SUN = 'Sun'
+export const LG_NAME_SUNLIGHT = 'SunLight'
+export const LG_NAME_AMBLIGHT = 'AmbientLight'
 
 // Global threejs axes
 export const AXIS_X = new Vector3(1, 0, 0)
@@ -51,4 +51,4 @@ export const TEXTURE_SIZES = {
 /**
  * Equal to 1/256.0
  */
-export const INT8_TO_UNIT_MUL = 3.90625e-3
+export const MUL_INT8_TO_UNIT = 3.90625e-3

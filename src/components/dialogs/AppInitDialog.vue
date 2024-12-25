@@ -1,12 +1,13 @@
 <template>
   <DialogElement
-    ref="dialogRef"
     id="dialog-editor-init"
-    :showActions="true"
+    ref="dialogRef"
+    :show-actions="true"
+    :closeable="true"
     :prevent-click-close="true"
     :aria-label="$t('a11y.dialog_init')"
   >
-    <template v-slot:content>
+    <template #content>
       <div class="init-container">
         <section class="intro">
           <div class="logo">
@@ -23,8 +24,8 @@
             <br />
 
             <CollapsibleSection icon="mingcute:news-line">
-              <template v-slot:title>{{ $t('dialog.init.update_title') }}</template>
-              <template v-slot:content>
+              <template #title>{{ $t('dialog.init.update_title') }}</template>
+              <template #content>
                 {{ $t('dialog.init.update_brief') }}
               </template>
             </CollapsibleSection>
@@ -35,8 +36,8 @@
         </section>
 
         <CollapsibleSection icon="oui:keyboard-shortcut">
-          <template v-slot:title>{{ $t('dialog.init.shortcuts') }}</template>
-          <template v-slot:content>
+          <template #title>{{ $t('dialog.init.shortcuts') }}</template>
+          <template #content>
             <p>
               {{ $t('dialog.init.shortcuts_note') }}
               <span class="nowrap">
@@ -74,8 +75,8 @@
         </CollapsibleSection>
 
         <CollapsibleSection icon="mingcute:settings-1-line">
-          <template v-slot:title>{{ $t('dialog.init.topbar') }}</template>
-          <template v-slot:content>
+          <template #title>{{ $t('dialog.init.topbar') }}</template>
+          <template #content>
             <ul class="controls">
               <li class="lg">
                 <iconify-icon icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
@@ -98,8 +99,8 @@
         </CollapsibleSection>
 
         <CollapsibleSection icon="mingcute:layout-bottom-close-line">
-          <template v-slot:title>{{ $t('dialog.init.footer') }}</template>
-          <template v-slot:content>
+          <template #title>{{ $t('dialog.init.footer') }}</template>
+          <template #content>
             <ul class="controls">
               <li class="lg">
                 <iconify-icon icon="mingcute:information-line" width="1.25rem" aria-hidden="true" />
@@ -120,17 +121,17 @@
         <div class="init-actions">
           <div class="init-checkbox important">
             <label for="enable-persistence">{{ $t('dialog.init.enable_persistence') }}</label>
-            <input id="enable-persistence" class="lg" type="checkbox" v-model="shouldEnableStoragePersistence" />
+            <input id="enable-persistence" v-model="shouldEnableStoragePersistence" class="lg" type="checkbox" />
           </div>
           <div class="init-checkbox important">
             <label for="show-on-next-visits">{{ $t('dialog.init.show_next_time') }}</label>
-            <input id="show-on-next-visits" class="lg" type="checkbox" v-model="shouldShowOnNextVisits" />
+            <input id="show-on-next-visits" v-model="shouldShowOnNextVisits" class="lg" type="checkbox" />
           </div>
         </div>
       </div>
     </template>
-    <template v-slot:actions>
-      <button class="lg success" @click="doClose" autofocus>
+    <template #actions>
+      <button class="lg success" autofocus @click="doClose">
         <iconify-icon icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.init.$action_confirm') }}
       </button>
@@ -146,7 +147,7 @@ import NotificationElement from '../elements/NotificationElement.vue'
 import { ref, type Ref } from 'vue'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
 
-const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
+const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 const shouldShowOnNextVisits = ref(true)
 const shouldEnableStoragePersistence = ref(true)
 

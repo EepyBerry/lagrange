@@ -6,15 +6,18 @@
       @rename="patchMetaHead"
       @save="savePlanet"
       @reset="resetPlanet"
+      @gltf="exportPlanet"
     />
   </div>
   <PlanetEditorControls :compact-mode="showCompactControls" />
 
-  <div ref="sceneRoot" id="scene-root"></div>
+  <div id="scene-root" ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
+
   <AppWebGLErrorDialog ref="webglErrorDialogRef" @close="redirectToCodex" />
   <AppPlanetErrorDialog ref="planetErrorDialogRef" @close="redirectToCodex" />
   <AppWarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
+  <AppExportProgressDialog ref="exportProgressDialogRef" />
 </template>
 
 <script setup lang="ts">
@@ -22,16 +25,7 @@ import PlanetEditorControls from '@components/controls/PlanetEditorControls.vue'
 import PlanetInfoControls from '@components/controls/PlanetInfoControls.vue'
 import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue'
 import * as THREE from 'three'
-import {
-  AXIS_X,
-  MD_WIDTH_THRESHOLD,
-  XS_WIDTH_THRESHOLD,
-  SM_WIDTH_THRESHOLD,
-  LG_NAME_AMBLIGHT,
-  SUN_INIT_POS,
-  ATMOSPHERE_HEIGHT_DIVIDER,
-  TEXTURE_SIZES,
-} from '@core/globals'
+import * as Globals from '@core/globals'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { createControlsComponent, createRingGeometryComponent } from '@core/three/component.builder'
 import { useHead } from '@unhead/vue'
@@ -53,6 +47,7 @@ import {
   createScene,
   createSun,
   exportPlanetPreview,
+  exportPlanetToGLTF,
   LG_BUFFER_BIOME,
   LG_BUFFER_CLOUDS,
   LG_BUFFER_RING,
@@ -70,6 +65,7 @@ import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
 import { recalculateBiomeTexture, recalculateRampTexture } from '@/core/helpers/texture.helper'
 import type { ColorRampStep } from '@/core/models/color-ramp.model'
 import AppWarnSaveDialog from '@/components/dialogs/AppWarnSaveDialog.vue'
+import AppExportProgressDialog from '@/components/dialogs/AppExportProgressDialog.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -79,18 +75,19 @@ const head = useHead({
   meta: [{ name: 'description', content: 'Planet editor' }],
 })!
 
-// Warnings
-const webglErrorDialogRef: Ref<{ openWithError: Function } | null> = ref(null)
-const planetErrorDialogRef: Ref<{ openWithError: Function } | null> = ref(null)
-const warnSaveDialogRef: Ref<{ open: Function } | null> = ref(null)
+// Dialogs
+const webglErrorDialogRef: Ref<{ openWithError: (error: HTMLElement) => void } | null> = ref(null)
+const planetErrorDialogRef: Ref<{ openWithError: (error: string, stack?: string) => void } | null> = ref(null)
+const warnSaveDialogRef: Ref<{ open: () => void } | null> = ref(null)
+const exportProgressDialogRef: Ref<{ open: () => void; setProgress: (value: number) => void } | null> = ref(null)
 let loadedCorrectly = false
 
 // Data
-const $dataUpdateMap: Map<string, Function> = new Map<string, Function>()
+const $dataUpdateMap: Map<string, () => void> = new Map<string, () => void>()
 const $planetEntityId: Ref<string> = ref('')
 let enableEditorRendering = true
 let watchForPlanetUpdates = false
-let hasPlanetBeenEdited: Ref<boolean> = ref(false)
+const hasPlanetBeenEdited: Ref<boolean> = ref(false)
 
 // Responsiveness
 const centerInfoControls: Ref<boolean> = ref(true)
@@ -99,7 +96,7 @@ const showCompactControls: Ref<boolean> = ref(false)
 const showCompactNavigation: Ref<boolean> = ref(false)
 
 // THREE canvas/scene root
-const sceneRoot: Ref<any> = ref(null)
+const sceneRoot: Ref<HTMLCanvasElement|null> = ref(null)
 const showSpinner: Ref<boolean> = ref(true)
 const clock = new THREE.Clock()
 
@@ -159,10 +156,14 @@ async function bootstrapEditor() {
       ;(error.lastChild as HTMLLinkElement).style.color = ''
       webglErrorDialogRef.value!.openWithError(error)
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error)
     showSpinner.value = false
-    planetErrorDialogRef.value!.openWithError(error, error.stack)
+    if (error instanceof Error) {
+      planetErrorDialogRef.value!.openWithError(error.message, error.stack)
+    } else if (typeof error === 'string') {
+      planetErrorDialogRef.value!.openWithError(error, undefined)
+    }
   }
 }
 
@@ -174,7 +175,7 @@ async function saveAndRedirectToCodex() {
 function redirectToCodex() {
   // set edit flag to false to force exit
   hasPlanetBeenEdited.value = false
-  router.push('/codex').then(() => console.log('sdfhsdjfl'))
+  router.push('/codex')
 }
 
 async function initData() {
@@ -242,12 +243,12 @@ function initLighting(): void {
   sun.add(lensFlare.mesh)
   $se.scene.add(sun)
   _sunLight = sun
-  _ambLight = $se.scene.getObjectByName(LG_NAME_AMBLIGHT) as THREE.AmbientLight
+  _ambLight = $se.scene.getObjectByName(Globals.LG_NAME_AMBLIGHT) as THREE.AmbientLight
   _lensFlare = lensFlare
 
   // Set initial rotations
-  const pos = SUN_INIT_POS.clone()
-  pos.applyAxisAngle(AXIS_X, degToRad(-15))
+  const pos = Globals.SUN_INIT_POS.clone()
+  pos.applyAxisAngle(Globals.AXIS_X, degToRad(-15))
   _sunLight.position.set(pos.x, pos.y, pos.z)
   _lensFlare.updatePosition(_sunLight.position)
 }
@@ -281,13 +282,13 @@ function initPlanet(): void {
   _ringDataTex = ring.texs[0].texture
 
   // Set initial rotations
-  _planetGroup.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+  _planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
   _planet.setRotationFromAxisAngle(_planet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
   _clouds.setRotationFromAxisAngle(
     _clouds.up,
     degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation),
   )
-  _ringAnchor.setRotationFromAxisAngle(AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
+  _ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
   _ring.setRotationFromAxisAngle(_ring.up, degToRad(LG_PLANET_DATA.value.ringRotation))
 
   // Set lighting target
@@ -304,7 +305,7 @@ function initRendering(width: number, height: number) {
   $se.renderer.setSize(width, height)
   $se.renderer.setAnimationLoop(() => renderFrame(stats))
   $se.renderer.domElement.ariaLabel = '3D planet viewer'
-  sceneRoot.value.appendChild($se.renderer.domElement)
+  sceneRoot.value!.appendChild($se.renderer.domElement)
 }
 
 /**
@@ -352,7 +353,7 @@ function registerLightingDataUpdates(): void {
   $dataUpdateMap.set('_lensFlareGlareIntensity',  () => setMeshUniform(_lensFlare, 'glareIntensity', LG_PLANET_DATA.value.lensFlareGlareIntensity))
   $dataUpdateMap.set('_sunLightAngle', () => {
     const v = degToRad(isNaN(LG_PLANET_DATA.value.sunLightAngle) ? 0 : LG_PLANET_DATA.value.sunLightAngle)
-    const newPos = SUN_INIT_POS.clone().applyAxisAngle(AXIS_X, v)
+    const newPos = Globals.SUN_INIT_POS.clone().applyAxisAngle(Globals.AXIS_X, v)
     _sunLight.position.set(newPos.x, newPos.y, newPos.z)
   })
   $dataUpdateMap.set('_sunLightColor', () => {
@@ -368,14 +369,14 @@ function registerLightingDataUpdates(): void {
 function registerPlanetRenderingDataUpdates(): void {
   $dataUpdateMap.set('_planetRadius', () => {
     const v = LG_PLANET_DATA.value.planetRadius
-    const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / ATMOSPHERE_HEIGHT_DIVIDER
+    const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
     _planetGroup.scale.setScalar(v)
     setMeshUniform(_planet, 'u_radius', v)
     setMeshUniforms(_atmosphere, ['u_surface_radius', 'u_radius'], [v, v + atmosHeight])
   })
   $dataUpdateMap.set('_planetAxialTilt', () => {
     const v = degToRad(isNaN(LG_PLANET_DATA.value.planetAxialTilt) ? 0 : LG_PLANET_DATA.value.planetAxialTilt)
-    _planetGroup.setRotationFromAxisAngle(AXIS_X, v)
+    _planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, v)
   })
   $dataUpdateMap.set('_planetRotation', () => {
     const vRad = degToRad(isNaN(LG_PLANET_DATA.value.planetRotation) ? 0 : LG_PLANET_DATA.value.planetRotation)
@@ -420,7 +421,7 @@ function registerSurfaceDataUpdates(): void {
   }))
   $dataUpdateMap.set('_planetSurfaceColorRamp',         () => {
     const v = LG_PLANET_DATA.value.planetSurfaceColorRamp
-    recalculateRampTexture(LG_BUFFER_SURFACE, TEXTURE_SIZES.SURFACE, v.steps as ColorRampStep[])
+    recalculateRampTexture(LG_BUFFER_SURFACE, Globals.TEXTURE_SIZES.SURFACE, v.steps as ColorRampStep[])
     _surfaceDataTex.needsUpdate = true
   })
 }
@@ -441,7 +442,7 @@ function registerBiomeDataUpdates(): void {
   $dataUpdateMap.set('_biomesHumidityNoise._lacunarity',    () => patchMeshUniform(_planet, 'u_humi_noise', { lac: LG_PLANET_DATA.value.biomesHumidityNoise.lacunarity }))
   $dataUpdateMap.set('_biomesHumidityNoise._octaves',       () => patchMeshUniform(_planet, 'u_humi_noise', { oct: LG_PLANET_DATA.value.biomesHumidityNoise.octaves }))
   $dataUpdateMap.set('_biomesParameters', () => {
-    recalculateBiomeTexture(LG_BUFFER_BIOME, TEXTURE_SIZES.BIOME, LG_PLANET_DATA.value.biomesParams as BiomeParameters[])
+    recalculateBiomeTexture(LG_BUFFER_BIOME, Globals.TEXTURE_SIZES.BIOME, LG_PLANET_DATA.value.biomesParams as BiomeParameters[])
     _biomeDataTex.needsUpdate = true
   })
 }
@@ -467,7 +468,7 @@ function registerCloudDataUpdates(): void {
   $dataUpdateMap.set('_cloudsColor',             () =>  setMeshUniform(_clouds, 'u_color', LG_PLANET_DATA.value.cloudsColor))
   $dataUpdateMap.set('_cloudsColorRamp',         () =>  {
     const v = LG_PLANET_DATA.value.cloudsColorRamp
-    recalculateRampTexture(LG_BUFFER_CLOUDS, TEXTURE_SIZES.CLOUDS, v.steps as ColorRampStep[])
+    recalculateRampTexture(LG_BUFFER_CLOUDS, Globals.TEXTURE_SIZES.CLOUDS, v.steps as ColorRampStep[])
     _cloudsDataTex.needsUpdate = true
   })
 }
@@ -476,10 +477,10 @@ function registerCloudDataUpdates(): void {
 function registerAtmosphereDataUpdates(): void {
   $dataUpdateMap.set('_atmosphereEnabled', () => _atmosphere.visible = LG_PLANET_DATA.value.atmosphereEnabled)
   $dataUpdateMap.set('_atmosphereHeight',  () => {
-    const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / ATMOSPHERE_HEIGHT_DIVIDER
+    const atmosHeight = LG_PLANET_DATA.value.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
     setMeshUniform(_atmosphere, 'u_radius', LG_PLANET_DATA.value.planetRadius + atmosHeight)
   })
-  $dataUpdateMap.set('_atmosphereDensityScale', () => setMeshUniform(_atmosphere, 'u_density', LG_PLANET_DATA.value.atmosphereDensityScale / ATMOSPHERE_HEIGHT_DIVIDER))
+  $dataUpdateMap.set('_atmosphereDensityScale', () => setMeshUniform(_atmosphere, 'u_density', LG_PLANET_DATA.value.atmosphereDensityScale / Globals.ATMOSPHERE_HEIGHT_DIVIDER))
   $dataUpdateMap.set('_atmosphereIntensity',    () => setMeshUniform(_atmosphere, 'u_intensity', LG_PLANET_DATA.value.atmosphereIntensity))
   $dataUpdateMap.set('_atmosphereColorMode',    () => setMeshUniform(_atmosphere, 'u_color_mode', LG_PLANET_DATA.value.atmosphereColorMode))
   $dataUpdateMap.set('_atmosphereHue',          () => setMeshUniform(_atmosphere, 'u_hue', LG_PLANET_DATA.value.atmosphereHue))
@@ -498,7 +499,7 @@ function registerRingDataUpdates(): void {
   $dataUpdateMap.set('_ringOuterRadius', () => setMeshUniform(_ring, 'u_outer_radius', LG_PLANET_DATA.value.ringOuterRadius))
   $dataUpdateMap.set('_ringColorRamp', () => {
     const v = LG_PLANET_DATA.value.ringColorRamp
-    recalculateRampTexture(LG_BUFFER_RING, TEXTURE_SIZES.RING, v.steps as ColorRampStep[])
+    recalculateRampTexture(LG_BUFFER_RING, Globals.TEXTURE_SIZES.RING, v.steps as ColorRampStep[])
     _ringDataTex.needsUpdate = true
   })
 }
@@ -575,10 +576,10 @@ function onWindowResize() {
 }
 
 function computeResponsiveness() {
-  showCompactInfo.value = window.innerWidth <= XS_WIDTH_THRESHOLD
-  showCompactControls.value = window.innerWidth <= SM_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
-  showCompactNavigation.value = window.innerWidth < MD_WIDTH_THRESHOLD
-  centerInfoControls.value = window.innerWidth > MD_WIDTH_THRESHOLD
+  showCompactInfo.value = window.innerWidth <= Globals.XS_WIDTH_THRESHOLD
+  showCompactControls.value = window.innerWidth <= Globals.SM_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
+  showCompactNavigation.value = window.innerWidth < Globals.MD_WIDTH_THRESHOLD
+  centerInfoControls.value = window.innerWidth > Globals.MD_WIDTH_THRESHOLD
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -623,16 +624,22 @@ async function savePlanet() {
 
 function updatePlanet() {
   if (watchForPlanetUpdates && LG_PLANET_DATA.value.changedProps.length > 0) {
-    hasPlanetBeenEdited.value = true
     console.debug('Planet has been edited, warning user in case of unsaved data')
+    hasPlanetBeenEdited.value = true
   }
-  for (let changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
+  for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
     let key = changedProp.prop
     // Check for additional info, separated by |
     key = changedProp.prop.split('|')[0]
     $dataUpdateMap.get(key)?.()
   }
   LG_PLANET_DATA.value.clearChangedProps()
+}
+
+function exportPlanet() {
+  exportProgressDialogRef.value!.open()
+  exportProgressDialogRef.value!.setProgress(1)
+  setTimeout(() => exportPlanetToGLTF($se.renderer, exportProgressDialogRef.value!), 0)
 }
 </script>
 

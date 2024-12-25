@@ -1,5 +1,5 @@
 <template>
-  <footer :class="{ transparent: $route.name !== 'codex' }" v-show="$route.name !== 'page-not-found'">
+  <footer v-show="$route.name !== 'page-not-found'" :class="{ transparent: $route.name !== 'codex' }">
     <div id="footer-nav">
       <button
         class="lg dark"
@@ -40,8 +40,8 @@
 import { ref, type Ref } from 'vue'
 import AppAboutDialog from '@components/dialogs/AppAboutDialog.vue'
 import AppSettingsDialog from '@components/dialogs/AppSettingsDialog.vue'
-const infoDialog: Ref<{ open: Function; close: Function } | null> = ref(null)
-const settingsDialog: Ref<{ open: Function; close: Function } | null> = ref(null)
+const infoDialog: Ref<{ open: () => void; close: () => void } | null> = ref(null)
+const settingsDialog: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 </script>
 
 <style lang="scss">

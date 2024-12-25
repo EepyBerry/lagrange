@@ -140,6 +140,16 @@
       monospace;
   }
 }
+:root[data-font='lowvision'] {
+  body * {
+    font-family: Atkinson Hyperlegible;
+  }
+}
+:root[data-font='dyslexia'] {
+  body * {
+    font-family: 'Open-Dyslexic';
+  }
+}
 
 .lg.success {
   background: var(--lg-success);

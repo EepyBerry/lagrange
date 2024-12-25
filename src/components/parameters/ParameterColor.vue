@@ -15,8 +15,8 @@
     </button>
   </div>
   <ColorPicker
-    class="picker"
     v-show="pickerOpen"
+    class="picker"
     alpha-channel="hide"
     default-format="hex"
     :color="pickerInitColor"

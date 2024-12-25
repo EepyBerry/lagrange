@@ -1,16 +1,17 @@
 <template>
   <DialogElement
-    ref="dialogRef"
     id="dialog-planet-info"
-    :showTitle="true"
-    :showActions="false"
+    ref="dialogRef"
+    :show-title="true"
+    :show-actions="false"
+    :closeable="true"
     :aria-label="$t('a11y.dialog_planetinfo')"
   >
-    <template v-slot:title>
+    <template #title>
       <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
       {{ $t('dialog.planetinfo.$title') }}
     </template>
-    <template v-slot:content>
+    <template #content>
       <div class="info-grid">
         <div class="planet-preview" :class="{ 'extra-hologram': !!EXTRAS_HOLOGRAM_MODE }">
           <img
@@ -48,39 +49,39 @@
                 <td name>{{ $t('dialog.planetinfo.atmospheric') }}:</td>
                 <td value>
                   <iconify-icon
-                    inline
                     v-if="planet?.data.atmosphereEnabled"
+                    inline
                     icon="mingcute:check-circle-fill"
                     width="1.5rem"
                     aria-hidden="true"
                   />
-                  <iconify-icon inline v-else icon="mingcute:close-circle-line" width="1.5rem" aria-hidden="true" />
+                  <iconify-icon v-else inline icon="mingcute:close-circle-line" width="1.5rem" aria-hidden="true" />
                 </td>
               </tr>
               <tr>
                 <td name>{{ $t('dialog.planetinfo.clouded') }}:</td>
                 <td value>
                   <iconify-icon
-                    inline
                     v-if="planet?.data.cloudsEnabled"
+                    inline
                     icon="mingcute:check-circle-fill"
                     width="1.5rem"
                     aria-hidden="true"
                   />
-                  <iconify-icon inline v-else icon="mingcute:close-circle-line" width="1.5rem" aria-hidden="true" />
+                  <iconify-icon v-else inline icon="mingcute:close-circle-line" width="1.5rem" aria-hidden="true" />
                 </td>
               </tr>
               <tr>
                 <td name>{{ $t('dialog.planetinfo.ringed') }}:</td>
                 <td value>
                   <iconify-icon
-                    inline
                     v-if="planet?.data.ringEnabled"
+                    inline
                     icon="mingcute:check-circle-fill"
                     width="1.5rem"
                     aria-hidden="true"
                   />
-                  <iconify-icon inline v-else icon="mingcute:close-circle-line" width="1.5rem" aria-hidden="true" />
+                  <iconify-icon v-else inline icon="mingcute:close-circle-line" width="1.5rem" aria-hidden="true" />
                 </td>
               </tr>
             </tbody>
@@ -147,7 +148,7 @@
               </tbody>
             </table>
           </template>
-          <p class="no-biomes" v-else>{{ $t('dialog.planetinfo.biomes_none') }}</p>
+          <p v-else class="no-biomes">{{ $t('dialog.planetinfo.biomes_none') }}</p>
         </div>
       </div>
     </template>
@@ -160,7 +161,7 @@ import { ref, type Ref } from 'vue'
 import { A11Y_ANIMATE, EXTRAS_HOLOGRAM_MODE } from '@/core/globals'
 
 const planet: Ref<IDBPlanet | null> = ref(null)
-const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
+const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 defineExpose({
   open: (p: IDBPlanet) => {
     planet.value = p

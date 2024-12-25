@@ -4,9 +4,9 @@
       <input
         v-if="editMode"
         ref="planetNameInput"
-        class="lg"
-        type="text"
         v-model="LG_PLANET_DATA.planetName"
+        class="lg" 
+        type="text"
         @keyup.enter="toggleEditMode"
       />
       <p v-else @click="toggleEditMode">{{ LG_PLANET_DATA.planetName }}</p>
@@ -45,12 +45,19 @@
       class="lg dark"
       :aria-label="$t('a11y.topbar_save')"
       :title="$t('tooltip.topbar_save')"
-      @click="emitSaveEvent"
+      @click="$emit('save')"
     >
       <iconify-icon icon="mingcute:save-2-line" width="1.5rem" aria-hidden="true" />
     </button>
-
-    <AppResetConfirmDialog ref="resetDialog" @confirm="emitResetEvent" />
+    <button
+      class="lg dark"
+      :aria-label="$t('a11y.topbar_gltf')"
+      :title="$t('tooltip.topbar_gltf')"
+      @click="$emit('gltf')"
+    >
+      <iconify-icon icon="simple-icons:gltf" width="1.5rem" aria-hidden="true" />
+    </button>
+    <AppResetConfirmDialog ref="resetDialog" @confirm="$emit('reset')" />
   </div>
 </template>
 
@@ -63,10 +70,10 @@ import { EventBus } from '@/core/event-bus'
 const editMode: Ref<boolean> = ref(false)
 
 const planetNameInput: Ref<HTMLInputElement | null> = ref(null)
-const resetDialog: Ref<{ open: Function } | null> = ref(null)
+const resetDialog: Ref<{ open: () => void } | null> = ref(null)
 
 defineProps<{ compactMode: boolean }>()
-const $emit = defineEmits(['rename', 'reset', 'save'])
+const $emit = defineEmits(['rename', 'reset', 'save', 'gltf'])
 
 function toggleEditMode() {
   editMode.value = !editMode.value
@@ -77,14 +84,6 @@ function toggleEditMode() {
     EventBus.enableWindowEventListener('keydown')
     $emit('rename')
   }
-}
-
-function emitResetEvent() {
-  $emit('reset')
-}
-
-function emitSaveEvent() {
-  $emit('save')
 }
 </script>
 

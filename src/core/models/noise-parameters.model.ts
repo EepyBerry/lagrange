@@ -111,8 +111,8 @@ export class NoiseParameters extends ChangeTracker {
     this.lacunarity = clamp(lac, 0, 10)
     this.octaves = clamp(oct, 0, 8)
     this.layers = clamp(layers ?? 1, 1, 3)
-    this.xWarpFactor = 1.0
-    this.yWarpFactor = 1.0
-    this.zWarpFactor = 1.0
+    this.xWarpFactor = warpScalar ?? 1.0
+    this.yWarpFactor = warpScalar ?? 1.0
+    this.zWarpFactor = warpScalar ?? 1.0
   }
 }

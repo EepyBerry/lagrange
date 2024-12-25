@@ -1,17 +1,18 @@
 <template>
   <DialogElement
-    ref="dialogRef"
     id="dialog-error"
+    ref="dialogRef"
     :show-title="true"
+    :closeable="true"
     :prevent-click-close="true"
     :aria-label="$t('a11y.dialog_webgl_error')"
     @close="$emit('close')"
   >
-    <template v-slot:title>
+    <template #title>
       <iconify-icon icon="mingcute:warning-line" width="2rem" aria-hidden="true" />
       <span>{{ $t('dialog.webglerror.$title') }}</span>
     </template>
-    <template v-slot:content>
+    <template #content>
       <div class="error-info">
         <p>{{ $t('dialog.webglerror.brief') }}</p>
       </div>
@@ -23,13 +24,10 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue'
 import DialogElement from '../elements/DialogElement.vue'
-const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
-const errorContainerRef: Ref<any | null> = ref(null)
+const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
+const errorContainerRef: Ref<HTMLDivElement | null> = ref(null)
 
-function openWithError(error: any) {
-  if (error.stack) {
-    error += error.stack
-  }
+function openWithError(error: HTMLElement) {
   errorContainerRef.value?.appendChild(error)
   dialogRef.value?.open()
 }

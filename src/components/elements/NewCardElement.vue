@@ -1,7 +1,7 @@
 <template>
   <RouterLink
-    class="planet-card-link"
     ref="cardRoot"
+    class="planet-card-link" 
     to="/planet-editor/new"
     :aria-label="$t('codex.$action_add')"
     :title="$t('codex.$action_add')"

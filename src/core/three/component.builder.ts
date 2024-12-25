@@ -1,9 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-shader-material/vanilla'
-import { GeometryType } from '../types'
 import { LG_PLANET_DATA } from '../services/planet-editor.service'
-import { resolveImports } from './shader-imports.loader'
+import * as ShaderLoader from './shader.loader'
 
 /**
  * Creates a WebGL-based renderer
@@ -22,6 +21,7 @@ export function createRendererComponent(width: number, height: number, pixelRati
   renderer.shadowMap.enabled = true
   renderer.shadowMap.autoUpdate = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
+  renderer.outputColorSpace = THREE.SRGBColorSpace
   return renderer
 }
 
@@ -50,6 +50,24 @@ export function createPerspectiveCameraComponent(
 }
 
 /**
+ * Creates a perspective camera with the given params and optional orbit settings
+ * @param fov Field of View, in degrees
+ * @param ratio aspect ratio, i.e. width/height
+ * @param near closest rendering distance
+ * @param far furthest rendering distance
+ * @param initialOrbit (optional) orbit settings (angle, etc)
+ * @returns the configured camera
+ */
+export function createOrthgraphicCameraComponent(
+  width: number,
+  height: number,
+  near: number,
+  far: number,
+): THREE.OrthographicCamera {
+  return new THREE.OrthographicCamera(-width / 2, width / 2, height / 2, -height / 2, near, far)
+}
+
+/**
  * Creates a simple ambient light
  * @param color light color
  * @param intensity light intensity
@@ -59,25 +77,6 @@ export function createAmbientightComponent(color: THREE.ColorRepresentation, int
   const light = new THREE.AmbientLight(color)
   light.intensity = intensity
   return light
-}
-
-/**
- * Creates the base geometry for the planet
- * @param type type of mesh to use
- * @param addtlRadius additional radius to add, used for clouds and other above-surface elements
- * @returns the geometry instance
- */
-export function createGeometryComponent(type: GeometryType, addtlRadius: number = 0): THREE.BufferGeometry {
-  switch (type) {
-    case GeometryType.SPHERE:
-      return new THREE.SphereGeometry(
-        1.0 + addtlRadius,
-        LG_PLANET_DATA.value.planetMeshQuality,
-        LG_PLANET_DATA.value.planetMeshQuality / 2.0,
-      )
-    case GeometryType.RING:
-      return new THREE.RingGeometry(1.25, 1.75, LG_PLANET_DATA.value.planetMeshQuality)
-  }
 }
 
 export function createSphereGeometryComponent(addtlRadius: number = 0): THREE.SphereGeometry {
@@ -107,13 +106,14 @@ export function createRingGeometryComponent(
 export function createCustomShaderMaterialComponent<T extends MaterialConstructor>(
   vertexShader: string,
   fragmentShader?: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   uniforms?: { [uniform: string]: THREE.IUniform<any> },
   baseMaterial?: T,
 ): CustomShaderMaterial<T> {
   const mat = new CustomShaderMaterial({
     baseMaterial: baseMaterial ?? THREE.MeshStandardMaterial,
     vertexShader,
-    fragmentShader: fragmentShader ? resolveImports(fragmentShader) : undefined,
+    fragmentShader: fragmentShader ? ShaderLoader.resolveImports(fragmentShader) : undefined,
     uniforms,
     silent: true,
   })
@@ -123,11 +123,12 @@ export function createCustomShaderMaterialComponent<T extends MaterialConstructo
 export function createShaderMaterialComponent(
   vertexShader: string,
   fragmentShader?: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   uniforms?: { [uniform: string]: THREE.IUniform<any> },
 ): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
     vertexShader,
-    fragmentShader: fragmentShader ? resolveImports(fragmentShader) : undefined,
+    fragmentShader: fragmentShader ? ShaderLoader.resolveImports(fragmentShader) : undefined,
     uniforms,
   })
 }
@@ -144,7 +145,7 @@ export function createControlsComponent(camera: THREE.Camera, canvas: HTMLCanvas
   controls.enableDamping = false
   controls.dampingFactor = 0.05
   controls.screenSpacePanning = false
-  controls.minDistance = 2.5
+  controls.minDistance = 1.5
   controls.maxDistance = 10
   controls.maxPolarAngle = Math.PI
   controls.rotateSpeed = 0.5
