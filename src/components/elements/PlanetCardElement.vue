@@ -27,7 +27,7 @@
       </button>
       <hr />
       <RouterLink
-        :to="'/planet-editor/' + planet.id"
+        :to="uwuifyPath('/planet-editor/' + planet.id)"
         class="lg link-button"
         :aria-label="$t('codex.$action_edit', { planet: planet.data.planetName })"
         :title="$t('codex.$action_edit', { planet: planet.data.planetName })"
@@ -56,6 +56,7 @@
 </template>
 
 <script setup lang="ts">
+import { uwuifyPath } from '@/core/extras'
 import { A11Y_ANIMATE, EXTRAS_HOLOGRAM_MODE } from '@/core/globals'
 import { type IDBPlanet } from '@/dexie.config'
 import { onMounted, ref, type Ref } from 'vue'

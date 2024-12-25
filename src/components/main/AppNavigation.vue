@@ -8,13 +8,13 @@
     <aside id="nav-compact" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
       <nav>
         <hr />
-        <RouterLink to="/codex" class="lg nav" :aria-label="$t('a11y.action_nav_codex')">
+        <RouterLink :to="uwuifyPath('/codex')" class="lg nav" :aria-label="$t('a11y.action_nav_codex')">
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
         </RouterLink>
         <hr />
         <RouterLink
-          to="/planet-editor/new"
+          :to="uwuifyPath('/planet-editor/new')"
           class="lg nav"
           :class="{ 'router-link-active': !!route.params.id }"
           :aria-label="$t('a11y.action_nav_editor')"
@@ -29,13 +29,13 @@
   <template v-else>
     <aside id="nav-full" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
       <nav>
-        <RouterLink to="/codex" class="lg nav" :aria-label="$t('a11y.action_nav_codex')">
+        <RouterLink :to="uwuifyPath('/codex')" class="lg nav" :aria-label="$t('a11y.action_nav_codex')">
           <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
           {{ $t('main.nav.codex') }}
         </RouterLink>
         <hr />
         <RouterLink
-          to="/planet-editor/new"
+          :to="uwuifyPath('/planet-editor/new')"
           class="lg nav"
           :class="{ 'router-link-active': !!route.params.id }"
           :aria-label="$t('a11y.action_nav_editor')"
@@ -51,6 +51,7 @@
 
 <script setup lang="ts">
 import { EventBus } from '@/core/event-bus'
+import { uwuifyPath } from '@/core/extras'
 import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 

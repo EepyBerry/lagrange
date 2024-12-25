@@ -7,4 +7,14 @@ select.lg {
   min-height: 2rem;
   font-family: Poppins, Inter;
   text-overflow: ellipsis;
+  cursor: pointer;
+
+  & > option:hover {
+    cursor: pointer;
+  }
+}
+select.lg[disabled] {
+  background: var(--lg-input-disabled);
+  border: 1px solid var(--lg-border-disabled);
+  cursor: not-allowed;
 }

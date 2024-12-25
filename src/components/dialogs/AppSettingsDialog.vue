@@ -18,11 +18,17 @@
           <template #content>
             <ParameterGrid>
               <ParameterDivider />
-              <ParameterSelect id="language" v-model="appSettings.locale">
+              <!-- cat mode toggle -->
+              <ParameterSelect v-if="EXTRAS_CAT_MODE" v-model="catModeOverride" id="language-cat" disabled>
+                {{ $t('dialog.settings.general_language') }}
+                <template #options>
+                  <option value="en-UwU" selected>Uwuish [en-UwU]</option>
+                </template>
+              </ParameterSelect>
+              <ParameterSelect v-else id="language" v-model="appSettings.locale">
                 {{ $t('dialog.settings.general_language') }}
                 <template #options>
                   <option value="en-US">English [en-US]</option>
-                  <option value="en-UwU">Uwuish [en-UwU]</option>
                   <option value="fr-FR">Français [fr-FR]</option>
                   <option value="de-DE">Deutsch [de-DE]</option>
                   <option value="_" disabled>{{ $t('main.more_coming_soon') }}</option>
@@ -296,16 +302,14 @@ import ParameterCategory from '../parameters/ParameterCategory.vue'
 import AppClearDataConfirmDialog from './AppClearDataConfirmDialog.vue'
 import { clearData } from '@/utils/dexie-utils'
 import { EventBus } from '@/core/event-bus'
+import { EXTRAS_CAT_MODE } from '@/core/extras'
 
 const i18n = useI18n()
 
 const confirmDialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
-const dialogRef: Ref<{
-  open: () => void
-  close: () => void
-  ignoreNativeEvents: (v: boolean) => void
-  isOpen: boolean
-} | null> = ref(null)
+const dialogRef: Ref<{ open: () => void; close: () => void; ignoreNativeEvents: (v: boolean) => void; isOpen: boolean } | null> =
+  ref(null)
+const catModeOverride = ref('en-UwU')
 const appSettings: Ref<IDBSettings> = ref({
   id: 0,
   locale: 'en-US',

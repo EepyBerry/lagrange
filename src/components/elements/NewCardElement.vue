@@ -1,14 +1,18 @@
 <template>
   <RouterLink
     ref="cardRoot"
-    class="planet-card-link"
-    to="/planet-editor/new"
+    class="planet-card-link" 
+    :to="uwuifyPath('/planet-editor/new')"
     :aria-label="$t('codex.$action_add')"
     :title="$t('codex.$action_add')"
   >
     <iconify-icon icon="mingcute:add-line" width="6rem" aria-hidden="true" />
   </RouterLink>
 </template>
+
+<script setup lang="ts">
+import { uwuifyPath } from '@/core/extras';
+</script>
 
 <style scoped lang="scss">
 .planet-card-link,
