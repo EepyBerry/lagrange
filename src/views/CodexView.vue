@@ -8,7 +8,7 @@
         {{ $t('codex.$action_add') }}
       </RouterLink>
       <hr />
-      <input ref="fileInput" type="file" @change="importPlanetFile" accept=".lagrange" multiple hidden />
+      <input ref="fileInput" type="file" accept=".lagrange" multiple hidden @change="importPlanetFile" />
       <button
         class="lg dark"
         :aria-label="$t('a11y.topbar_import')"
@@ -75,10 +75,10 @@ const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const planets: Ref<IDBPlanet[]> = ref([])
 
-const planetInfoDialogRef: Ref<{ open: Function } | null> = ref(null)
+const planetInfoDialogRef: Ref<{ open: (planet: IDBPlanet) => void } | null> = ref(null)
 
 const deleteTarget: Ref<IDBPlanet | null> = ref(null)
-const deleteDialogRef: Ref<{ open: Function } | null> = ref(null)
+const deleteDialogRef: Ref<{ open: (planetName: string) => void } | null> = ref(null)
 const showCompactNavigation: Ref<boolean> = ref(false)
 const showInlineFooter: Ref<boolean> = ref(false)
 

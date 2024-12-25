@@ -1,41 +1,41 @@
 <template>
   <ParameterGrid>
-    <ParameterCheckbox v-model="LG_PLANET_DATA.cloudsEnabled" id="c-toggle" :true-value="true" :false-value="false">
+    <ParameterCheckbox id="c-toggle" v-model="LG_PLANET_DATA.cloudsEnabled" :true-value="true" :false-value="false">
       {{ $t('editor.controls.clouds.clouds_show') }}
     </ParameterCheckbox>
     <template v-if="LG_PLANET_DATA.cloudsEnabled">
       <ParameterCategory>{{ $t('editor.controls.clouds.transform') }}</ParameterCategory>
-      <ParameterSlider v-model="LG_PLANET_DATA.cloudsRotation" id="c-rot" :step="1" :min="0" :max="360">
+      <ParameterSlider id="c-rot" v-model="LG_PLANET_DATA.cloudsRotation" :step="1" :min="0" :max="360">
         {{ $t('editor.controls.clouds.transform_rotation') }} <sup>(°)</sup>
       </ParameterSlider>
 
       <ParameterCategory>{{ $t('editor.general.warping') }}</ParameterCategory>
-      <ParameterCheckbox v-model="LG_PLANET_DATA.cloudsShowWarping" id="c-warp" :true-value="true" :false-value="false">
+      <ParameterCheckbox id="c-warp" v-model="LG_PLANET_DATA.cloudsShowWarping" :true-value="true" :false-value="false">
         {{ $t('editor.general.warping_show') }}
       </ParameterCheckbox>
       <template v-if="LG_PLANET_DATA.cloudsShowWarping">
-        <ParameterSlider v-model="LG_PLANET_DATA.cloudsNoise.xWarpFactor" id="c-xwarp" :step="0.01" :max="8">
+        <ParameterSlider id="c-xwarp" v-model="LG_PLANET_DATA.cloudsNoise.xWarpFactor" :step="0.01" :max="8">
           {{ $t('editor.general.warping_x') }}
         </ParameterSlider>
-        <ParameterSlider v-model="LG_PLANET_DATA.cloudsNoise.yWarpFactor" id="c-ywarp" :step="0.01" :max="8">
+        <ParameterSlider id="c-ywarp" v-model="LG_PLANET_DATA.cloudsNoise.yWarpFactor" :step="0.01" :max="8">
           {{ $t('editor.general.warping_y') }}
         </ParameterSlider>
-        <ParameterSlider v-model="LG_PLANET_DATA.cloudsNoise.zWarpFactor" id="c-zwarp" :step="0.01" :max="8">
+        <ParameterSlider id="c-zwarp" v-model="LG_PLANET_DATA.cloudsNoise.zWarpFactor" :step="0.01" :max="8">
           {{ $t('editor.general.warping_z') }}
         </ParameterSlider>
       </template>
 
       <ParameterCategory>{{ $t('editor.controls.clouds.noise') }}</ParameterCategory>
-      <ParameterSlider v-model="LG_PLANET_DATA.cloudsNoise.frequency" id="c-freq" :step="0.01" :max="5">
+      <ParameterSlider id="c-freq" v-model="LG_PLANET_DATA.cloudsNoise.frequency" :step="0.01" :max="5">
         {{ $t('editor.general.noise_fbm_frequency') }}
       </ParameterSlider>
-      <ParameterSlider v-model="LG_PLANET_DATA.cloudsNoise.amplitude" id="c-amp" :step="0.01" :min="0" :max="1.25">
+      <ParameterSlider id="c-amp" v-model="LG_PLANET_DATA.cloudsNoise.amplitude" :step="0.01" :min="0" :max="1.25">
         {{ $t('editor.general.noise_fbm_amplitude') }}
       </ParameterSlider>
-      <ParameterSlider v-model="LG_PLANET_DATA.cloudsNoise.lacunarity" id="c-lac" :step="0.01" :min="1" :max="3">
+      <ParameterSlider id="c-lac" v-model="LG_PLANET_DATA.cloudsNoise.lacunarity" :step="0.01" :min="1" :max="3">
         {{ $t('editor.general.noise_fbm_lacunarity') }}
       </ParameterSlider>
-      <ParameterSlider v-model="LG_PLANET_DATA.cloudsNoise.octaves" id="c-oct" :step="1" :min="1" :max="8">
+      <ParameterSlider id="c-oct" v-model="LG_PLANET_DATA.cloudsNoise.octaves" :step="1" :min="1" :max="8">
         {{ $t('editor.general.noise_fbm_octaves') }}
       </ParameterSlider>
 
@@ -45,9 +45,9 @@
       </ParameterColor>
       <!-- prettier-ignore-attribute -->
       <ParameterColorRamp
-        mode="opacity"
-        v-model="(LG_PLANET_DATA.cloudsColorRamp as ColorRamp)"
         :key="LG_PLANET_DATA.planetName"
+        v-model="(LG_PLANET_DATA.cloudsColorRamp as ColorRamp)"
+        mode="opacity"
       >
         {{ $t('editor.controls.clouds.rgba_opacityramp') }}
       </ParameterColorRamp>

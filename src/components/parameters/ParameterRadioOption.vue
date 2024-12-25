@@ -1,21 +1,21 @@
 <template>
   <input
+    :id="`${name}-${id}`"
     ref="htmlRadio"
+    v-model="lgParam"
     class="lg"
     type="radio"
-    :id="`${name}-${id}`"
     :name="name"
     :value="value"
     :checked="value === lgParam"
-    v-model="lgParam"
   />
 
   <button
     class="lg radio-button"
     :class="{ selected: value === lgParam }"
-    @click="select()"
-    :aria-label="ariaLabel"
+    :aria-label="buttonAriaLabel"
     :title="title"
+    @click="select()"
   >
     <iconify-icon v-if="icon" :icon="icon" width="1.25rem" aria-hidden="true" />
     <slot></slot>
@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue'
 
-defineProps<{ name: string; id: string; value: any; icon?: string; ariaLabel: string; title?: string }>()
+defineProps<{ name: string; id: string; value: string|number|boolean|object; icon?: string; buttonAriaLabel: string; title?: string }>()
 const lgParam = defineModel<string | number | boolean>()
 const htmlRadio: Ref<HTMLInputElement | null> = ref(null)
 

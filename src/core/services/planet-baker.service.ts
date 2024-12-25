@@ -3,9 +3,9 @@ import * as Globals from '@core/globals'
 import * as ShaderLoader from '@core/three/shader.loader'
 import * as ComponentBuilder from '@core/three/component.builder'
 
-import { createRampTexture, createBiomeTexture } from "@core/helpers/texture.helper";
-import type PlanetData from "@core/models/planet-data.model";
-import { ShaderFileType } from "@core/types";
+import { createRampTexture, createBiomeTexture } from '@core/helpers/texture.helper'
+import type PlanetData from '@core/models/planet-data.model'
+import { ShaderFileType } from '@core/types'
 import {
   LG_BUFFER_SURFACE,
   LG_BUFFER_BIOME,
@@ -318,22 +318,22 @@ export function prepareMeshForExport(mesh: THREE.Mesh, material: THREE.Material)
 // NOTE: modified from three-shader-baker's code (see link)
 // https://github.com/FarazzShaikh/three-shader-baker/blob/main/package/src/index.ts
 // TODO: Not sure why material patching is necessary, need to investigate further (manual edits in GLSL code don't work)
-export function patchMaterialForUnwrapping(material: THREE.Material|CustomShaderMaterial) {
+export function patchMaterialForUnwrapping(material: THREE.Material | CustomShaderMaterial) {
   const origBeforeCompile = material.onBeforeCompile
   material.onBeforeCompile = (shader, renderer) => {
     origBeforeCompile(shader, renderer)
-    if (shader.vertexShader.includes("#include <project_vertex>")) {
+    if (shader.vertexShader.includes('#include <project_vertex>')) {
       shader.vertexShader = shader.vertexShader.replace(
         '#include <project_vertex>',
         `
           #include <project_vertex>
           gl_Position = vec4(uv, 0.0, 1.0) * 2.0 - 1.0;
-        `
-      );
+        `,
+      )
     } else {
       shader.vertexShader = shader.vertexShader.replace(
         shader.vertexShader.match(BAKE_PATCH_RGX)![0],
-        "gl_Position = vec4(uv, 0.0, 1.0) * 2.0 - 1.0;"
+        'gl_Position = vec4(uv, 0.0, 1.0) * 2.0 - 1.0;',
       )
     }
   }

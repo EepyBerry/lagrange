@@ -412,7 +412,7 @@
     "dialog_planetinfo": "Planet info dialog",
     "dialog_settings": "Settings dialog",
     "dialog_about": "About @:main.$title dialog",
-    "dialog_export_progress": "Exporting planet",
+    "dialog_export_progress": "Planet export dialog",
     "dialog_reset": "Confirm reset dialog",
     "dialog_delete": "Confirm delete dialog",
     "dialog_warn_save": "Unsaved data warning dialog",

@@ -1,11 +1,11 @@
 <template>
   <div id="controls" :class="{ compact: compactMode }">
     <template v-if="compactMode">
-      <ControlsContainer :compactMode="true" />
+      <ControlsContainer :compact-mode="true" />
       <InlineFooter />
     </template>
     <aside v-else class="sidebar">
-      <ControlsContainer :compactMode="false" />
+      <ControlsContainer :compact-mode="false" />
     </aside>
   </div>
 </template>

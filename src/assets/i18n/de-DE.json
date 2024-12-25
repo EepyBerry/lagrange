@@ -96,7 +96,11 @@
       "general_theme_default": "Komet",
       "general_theme_supernova": "Supernova",
       "general_theme_voyager": "Voyager",
-      "general_monospace": "Schriftart mit fester Breite (Monospace)",
+      "general_font": "MISSING_TRANSLATION",
+      "general_font_default": "Standard - Poppins",
+      "general_font_monospace": "Fester Breite - JetBrains Mono",
+      "general_font_lowvision": "Sehschwäche - Atkinson Hyperlegible",
+      "general_font_dyslexia": "Legasthenie - OpenDyslexic",
       "general_init_dialog": "Ladeeinführung anzeigen",
 
       "editor": "Editor",
@@ -105,6 +109,8 @@
       "editor_clouds": "@:dialog.init.shortcuts_clouds",
       "editor_atmosphere": "@:dialog.init.shortcuts_atmosphere",
       "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
+      "editor_baking_resolution": "MISSING_TRANSLATION",
+      "editor_baking_pixelize": "MISSING_TRANSLATION",
 
       "a11y": "Zugänglichkeit",
       "a11y_effects": "Visuelle Effekte aktivieren",
@@ -149,7 +155,8 @@
       },
       "credits": {
         "$title": "Erwähnungen und Dank",
-        "glsl_main": "GLSL-Code für den Landtyp: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
+        "libs": "MISSING_TRANSLATION",
+        "glsl_main": "Haupt-GLSL-Code: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
         "glsl_misc": "Verschiedener GLSL-Code: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
         "contributors": "<b>Ein großes Dankeschön an alle Mitwirkenden an diesem Projekt ❤️</b>"
       },
@@ -379,6 +386,7 @@
     "topbar_rename_confirm": "Den Namen bestätigen",
     "topbar_reset": "Zurücksetzen",
     "topbar_save": "Speichern",
+    "topbar_gltf": "Export als glTF",
     "topbar_import": "Eine Planetendatei importieren",
     "topbar_export": "Eine Planetendatei exportieren",
     "topbar_export_all": "Exportieren Sie alle Planeten im .zip Format",
@@ -406,6 +414,7 @@
     "dialog_planetinfo": "Informationenmodal über den Planeten",
     "dialog_settings": "Parametermodal",
     "dialog_about": "Informationenmodal zu @:main.$title",
+    "dialog_export_progress": "MISSING_TRANSLATION",
     "dialog_reset": "Zurücksetzungbestätigungsmodal",
     "dialog_delete": "Löschungbestätigungsmodal",
     "dialog_warn_save": "Warnmodal für nicht gespeicherte Daten",
@@ -415,6 +424,7 @@
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
     "topbar_reset": "@:tooltip.topbar_reset",
     "topbar_save": "@:tooltip.topbar_save",
+    "topbar_gltf": "@:tooltip.topbar_gltf",
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
     "topbar_export_all": "@:tooltip.topbar_export_all",
@@ -426,6 +436,12 @@
     "general_theme_default": "Das Thema Komet (blau) anwenden",
     "general_theme_supernova": "Das Thema Supernova (lila) anwenden",
     "general_theme_voyager": "Das Thema Voyager (orange) anwenden",
+    "editor_baking_resolution_256": "256 x 256 Pixel",
+    "editor_baking_resolution_512": "512 x 512 Pixel",
+    "editor_baking_resolution_1k": "1024 x 1024 Pixel",
+    "editor_baking_resolution_2k": "2048 x 2048 Pixel",
+    "editor_baking_resolution_4k": "4096 x 4096 Pixel",
+    "editor_baking_pixelize": "MISSING_TRANSLATION",
 
     "editor_generic_input": "Parameterwert",
 

@@ -654,6 +654,7 @@ export default class PlanetData extends ChangeTracker {
   // |                  Load/reset                    |
   // --------------------------------------------------
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public loadData(data: any) {
     this.planetName = data._planetName?.replaceAll('_', ' ') ?? this._defaultPlanetName
 
@@ -707,6 +708,7 @@ export default class PlanetData extends ChangeTracker {
     this.biomesHumidityNoise.loadData(data._biomesHumidityNoise)
     this.biomesParams.splice(0)
     this.biomesParams.push(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...(data._biomesParams ?? []).map((rbp: any) => {
         const nbp = new BiomeParameters(
           this.changedProps,
@@ -781,6 +783,7 @@ export default class PlanetData extends ChangeTracker {
   // |               Static functions                 |
   // --------------------------------------------------
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static createFrom(data: any) {
     const planetData = new PlanetData()
     planetData.loadData(data)

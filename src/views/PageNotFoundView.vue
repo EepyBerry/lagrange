@@ -7,7 +7,7 @@
         <i>{{ $t('404.text_02') }}</i>
       </h1>
       <h1 v-if="msgVariant === 3" class="title">{{ $t('404.text_03') }}</h1>
-      <h1 class="title ultra" v-if="msgVariant === 4">{{ $t('404.text_04') }}</h1>
+      <h1 v-if="msgVariant === 4" class="title ultra">{{ $t('404.text_04') }}</h1>
       <p class="subtitle">{{ $t('404.subtext') }}</p>
       <a class="home-link lg link-button" href="/">
         <iconify-icon icon="mingcute:book-2-line" height="1.5rem" />

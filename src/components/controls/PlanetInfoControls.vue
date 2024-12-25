@@ -4,9 +4,9 @@
       <input
         v-if="editMode"
         ref="planetNameInput"
-        class="lg"
-        type="text"
         v-model="LG_PLANET_DATA.planetName"
+        class="lg" 
+        type="text"
         @keyup.enter="toggleEditMode"
       />
       <p v-else @click="toggleEditMode">{{ LG_PLANET_DATA.planetName }}</p>
@@ -70,7 +70,7 @@ import { EventBus } from '@/core/event-bus'
 const editMode: Ref<boolean> = ref(false)
 
 const planetNameInput: Ref<HTMLInputElement | null> = ref(null)
-const resetDialog: Ref<{ open: Function } | null> = ref(null)
+const resetDialog: Ref<{ open: () => void } | null> = ref(null)
 
 defineProps<{ compactMode: boolean }>()
 const $emit = defineEmits(['rename', 'reset', 'save', 'gltf'])

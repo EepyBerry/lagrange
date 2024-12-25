@@ -1,10 +1,9 @@
 import * as THREE from 'three'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import { nanoid } from 'nanoid'
-import { getColorLuminance, getLinearRGBLuminance } from '@/utils/utils'
-import { lerp } from 'three/src/math/MathUtils.js'
+import { getColorLuminance } from '@/utils/utils'
 
-export type StepLuminance = { factor: number, lumi: number }
+export type StepLuminance = { factor: number; lumi: number }
 export class ColorRampStep {
   static EMPTY = new ColorRampStep(0x0, 1)
 
@@ -159,21 +158,23 @@ export class ColorRamp extends ChangeTracker {
     return this._steps.find((s) => s.id === stepId)?.isBound
   }
 
-  public loadFromSteps(data: ColorRampStep[]) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public loadFromSteps(data: any[]) {
     if (!data) {
       return
     }
     this._steps.splice(0)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this._steps.push(...data.map((s: any) => ColorRampStep.newWithAlpha(s._color, s._alpha, s._factor, s._isBound)))
   }
 
   /**
    * Gets a lookup table for luminance values
    * @remarks only used for opacity-based ramps
-   * @param luminance 
+   * @param luminance
    */
   public getLuminanceLookup(): StepLuminance[] {
-    return this._steps.map(s => ({ factor: s.factor, lumi: getColorLuminance(s.color)}))
+    return this._steps.map((s) => ({ factor: s.factor, lumi: getColorLuminance(s.color) }))
   }
 
   public getRelativeLuminance(startStep: number, endStep: number, relativePct: number): number {

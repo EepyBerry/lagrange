@@ -31,7 +31,7 @@ useHead({
   meta: [{ name: 'description', content: 'A procedural planet-building application!' }],
 })
 
-const dialogInit: Ref<{ open: Function; close: Function } | null> = ref(null)
+const dialogInit: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 const keybinds: Ref<IDBKeyBinding[]> = ref([])
 const settings: Ref<IDBSettings | undefined> = ref(undefined)
 
@@ -47,16 +47,16 @@ onMounted(async () => {
   const queryParams = Object.fromEntries(params)
   if (queryParams.uwu !== undefined) {
     i18n.locale.value = 'en-UwU'
-  } else if (i18n.availableLocales.includes(settings.value?.locale!)) {
-    i18n.locale.value = settings.value?.locale!
+  } else if (i18n.availableLocales.includes(settings.value!.locale)) {
+    i18n.locale.value = settings.value!.locale
   } else {
     i18n.locale.value = 'en-US' // fallback
   }
   await idb.settings.update(settings.value!.id, { locale: mapLocale(i18n.locale.value) })
 
   // Set initial global values
-  A11Y_ANIMATE.value = settings.value?.enableAnimations!
-  EXTRAS_HOLOGRAM_MODE.value = settings.value?.extrasHologramMode!
+  A11Y_ANIMATE.value = settings.value!.enableAnimations ?? true
+  EXTRAS_HOLOGRAM_MODE.value = settings.value!.extrasHologramMode ?? false
 
   // Open init dialog if necessary
   if (settings.value?.showInitDialog) {
@@ -72,7 +72,7 @@ async function initDexie() {
     settings = await idb.settings.limit(1).first()
   }
 
-  let kb = await idb.keyBindings.limit(4).toArray()
+  const kb = await idb.keyBindings.limit(4).toArray()
   if (kb.length === 0) {
     console.debug('No keybinds found in IndexedDB, adding defaults')
     await DexieUtils.addDefaultKeyBindings()

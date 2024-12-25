@@ -1,15 +1,17 @@
-import eslint from '@eslint/js';
-import eslintConfigPrettier from 'eslint-config-prettier';
-import eslintPluginVue from 'eslint-plugin-vue';
-import typescriptEslint from 'typescript-eslint';
-import globals from 'globals';
+import eslint from '@eslint/js'
+import eslintConfigPrettier from 'eslint-config-prettier'
+import eslintPluginVue from 'eslint-plugin-vue'
+import typescriptEslint from 'typescript-eslint'
+import globals from 'globals'
 
 export default typescriptEslint.config(
-  { ignores: ['*.d.ts', '**/coverage', '**/dist'] },
+  { 
+    ignores: ['*.d.ts', 'coverage', 'dist', 'node_modules'],
+  },
   {
     extends: [
       eslint.configs.recommended,
-      //...typescriptEslint.configs.recommended,
+      ...typescriptEslint.configs.recommended,
       ...eslintPluginVue.configs['flat/recommended'],
     ],
     files: ['**/*.{ts,vue}'],
@@ -22,15 +24,21 @@ export default typescriptEslint.config(
       },
     },
     rules: {
-      'no-undef': 'warn',
-      'no-unused-vars': [
+      'no-undef': 'off',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
         'warn',
         {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '_',
-        },
+          "args": "all",
+          "argsIgnorePattern": "^_",
+          "caughtErrors": "all",
+          "caughtErrorsIgnorePattern": "^_",
+          "destructuredArrayIgnorePattern": "^_",
+          "varsIgnorePattern": "^_",
+          "ignoreRestSiblings": true
+        }
       ],
-    }
+    },
   },
-  eslintConfigPrettier
-);
+  eslintConfigPrettier,
+)

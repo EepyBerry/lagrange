@@ -7,7 +7,6 @@ import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { MUL_INT8_TO_UNIT } from '../globals'
 import { toRawRGBA } from '@/utils/utils'
 
-
 export function createRampTexture(buffer: Uint8Array, w: number, steps: ColorRampStep[]): DataTextureWrapper {
   if (steps.length > 0) {
     fillRamp(buffer, w, steps)

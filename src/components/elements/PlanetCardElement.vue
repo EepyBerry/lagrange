@@ -1,5 +1,5 @@
 <template>
-  <div class="planet-card" ref="cardRoot">
+  <div ref="cardRoot" class="planet-card"> 
     <span class="deco-polygon">
       <span class="hole"></span>
     </span>

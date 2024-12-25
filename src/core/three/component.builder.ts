@@ -64,7 +64,7 @@ export function createOrthgraphicCameraComponent(
   near: number,
   far: number,
 ): THREE.OrthographicCamera {
-  return new THREE.OrthographicCamera(-width/2, width/2, height/2, -height/2, near, far)
+  return new THREE.OrthographicCamera(-width / 2, width / 2, height / 2, -height / 2, near, far)
 }
 
 /**
@@ -106,6 +106,7 @@ export function createRingGeometryComponent(
 export function createCustomShaderMaterialComponent<T extends MaterialConstructor>(
   vertexShader: string,
   fragmentShader?: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   uniforms?: { [uniform: string]: THREE.IUniform<any> },
   baseMaterial?: T,
 ): CustomShaderMaterial<T> {
@@ -122,6 +123,7 @@ export function createCustomShaderMaterialComponent<T extends MaterialConstructo
 export function createShaderMaterialComponent(
   vertexShader: string,
   fragmentShader?: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   uniforms?: { [uniform: string]: THREE.IUniform<any> },
 ): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({

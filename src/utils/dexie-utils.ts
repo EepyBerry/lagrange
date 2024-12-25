@@ -2,11 +2,11 @@ import { idb, KeyBindingAction } from '@/dexie.config'
 import { prefersReducedMotion } from './utils'
 import { I18N_SUPPORTED_LANGS } from '@/i18n.config'
 
-export async function addDefaultSettings(): Promise<any> {
-  return idb.settings.put({
+export async function addDefaultSettings(): Promise<void> {
+  idb.settings.put({
     // general
     theme: 'default',
-    locale: I18N_SUPPORTED_LANGS.includes(navigator.language as any) ? navigator.language : 'en-US',
+    locale: (navigator.language in I18N_SUPPORTED_LANGS) ? navigator.language : 'en-US',
     font: 'default',
     showInitDialog: true,
     // baking
@@ -20,8 +20,8 @@ export async function addDefaultSettings(): Promise<any> {
   })
 }
 
-export async function addDefaultKeyBindings(): Promise<any> {
-  return idb.keyBindings.bulkPut([
+export async function addDefaultKeyBindings(): Promise<void> {
+  idb.keyBindings.bulkPut([
     { action: KeyBindingAction.ToggleLensFlare, key: 'L' },
     { action: KeyBindingAction.ToggleBiomes, key: 'B' },
     { action: KeyBindingAction.ToggleClouds, key: 'C' },
@@ -30,12 +30,12 @@ export async function addDefaultKeyBindings(): Promise<any> {
   ])
 }
 
-export async function clearData(): Promise<any> {
+export async function clearData(): Promise<void> {
   const settings = await idb.settings.limit(1).toArray()
   await idb.settings.update(settings[0].id, {
     // general
     theme: 'default',
-    locale: I18N_SUPPORTED_LANGS.includes(navigator.language as any) ? navigator.language : 'en-US',
+    locale: (navigator.language in I18N_SUPPORTED_LANGS) ? navigator.language : 'en-US',
     font: 'default',
     showInitDialog: true,
     // baking
@@ -66,7 +66,7 @@ export async function initStoragePersistence() {
         console.warn('Storage not persisted, user should be prompted first')
         break
     }
-  } catch (error) {
+  } catch (_error) {
     console.error('Failed to persist storage despite granted permission, continuing in best-effort mode.')
   }
 }

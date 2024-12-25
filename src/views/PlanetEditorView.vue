@@ -11,9 +11,9 @@
   </div>
   <PlanetEditorControls :compact-mode="showCompactControls" />
 
-  <div ref="sceneRoot" id="scene-root"></div>
+  <div id="scene-root" ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
-  
+
   <AppWebGLErrorDialog ref="webglErrorDialogRef" @close="redirectToCodex" />
   <AppPlanetErrorDialog ref="planetErrorDialogRef" @close="redirectToCodex" />
   <AppWarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
@@ -76,18 +76,18 @@ const head = useHead({
 })!
 
 // Dialogs
-const webglErrorDialogRef: Ref<{ openWithError: Function } | null> = ref(null)
-const planetErrorDialogRef: Ref<{ openWithError: Function } | null> = ref(null)
-const warnSaveDialogRef: Ref<{ open: Function } | null> = ref(null)
-const exportProgressDialogRef: Ref<{ open: Function, setProgress: Function } | null> = ref(null)
+const webglErrorDialogRef: Ref<{ openWithError: (error: HTMLElement) => void } | null> = ref(null)
+const planetErrorDialogRef: Ref<{ openWithError: (error: string, stack?: string) => void } | null> = ref(null)
+const warnSaveDialogRef: Ref<{ open: () => void } | null> = ref(null)
+const exportProgressDialogRef: Ref<{ open: () => void; setProgress: (value: number) => void } | null> = ref(null)
 let loadedCorrectly = false
 
 // Data
-const $dataUpdateMap: Map<string, Function> = new Map<string, Function>()
+const $dataUpdateMap: Map<string, () => void> = new Map<string, () => void>()
 const $planetEntityId: Ref<string> = ref('')
 let enableEditorRendering = true
 let watchForPlanetUpdates = false
-let hasPlanetBeenEdited: Ref<boolean> = ref(false)
+const hasPlanetBeenEdited: Ref<boolean> = ref(false)
 
 // Responsiveness
 const centerInfoControls: Ref<boolean> = ref(true)
@@ -96,7 +96,7 @@ const showCompactControls: Ref<boolean> = ref(false)
 const showCompactNavigation: Ref<boolean> = ref(false)
 
 // THREE canvas/scene root
-const sceneRoot: Ref<any> = ref(null)
+const sceneRoot: Ref<HTMLCanvasElement|null> = ref(null)
 const showSpinner: Ref<boolean> = ref(true)
 const clock = new THREE.Clock()
 
@@ -156,10 +156,14 @@ async function bootstrapEditor() {
       ;(error.lastChild as HTMLLinkElement).style.color = ''
       webglErrorDialogRef.value!.openWithError(error)
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error)
     showSpinner.value = false
-    planetErrorDialogRef.value!.openWithError(error, error.stack)
+    if (error instanceof Error) {
+      planetErrorDialogRef.value!.openWithError(error.message, error.stack)
+    } else if (typeof error === 'string') {
+      planetErrorDialogRef.value!.openWithError(error, undefined)
+    }
   }
 }
 
@@ -301,7 +305,7 @@ function initRendering(width: number, height: number) {
   $se.renderer.setSize(width, height)
   $se.renderer.setAnimationLoop(() => renderFrame(stats))
   $se.renderer.domElement.ariaLabel = '3D planet viewer'
-  sceneRoot.value.appendChild($se.renderer.domElement)
+  sceneRoot.value!.appendChild($se.renderer.domElement)
 }
 
 /**
@@ -623,7 +627,7 @@ function updatePlanet() {
     console.debug('Planet has been edited, warning user in case of unsaved data')
     hasPlanetBeenEdited.value = true
   }
-  for (let changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
+  for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
     let key = changedProp.prop
     // Check for additional info, separated by |
     key = changedProp.prop.split('|')[0]

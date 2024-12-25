@@ -5,10 +5,10 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :ariaLabel="$t('editor.controls.lighting.$title')"
+    :button-aria-label="$t('editor.controls.lighting.$title')"
   >
-    <template v-slot:title>{{ $t('editor.controls.lighting.$title') }}</template>
-    <template v-slot:content>
+    <template #title>{{ $t('editor.controls.lighting.$title') }}</template>
+    <template #content>
       <ControlsLighting />
     </template>
   </CollapsibleSection>
@@ -19,10 +19,10 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :ariaLabel="$t('editor.controls.planet_rendering.$title')"
+    :button-aria-label="$t('editor.controls.planet_rendering.$title')"
   >
-    <template v-slot:title>{{ $t('editor.controls.planet_rendering.$title') }}</template>
-    <template v-slot:content>
+    <template #title>{{ $t('editor.controls.planet_rendering.$title') }}</template>
+    <template #content>
       <ControlsRendering />
     </template>
   </CollapsibleSection>
@@ -33,10 +33,10 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :ariaLabel="$t('editor.controls.surface.$title')"
+    :button-aria-label="$t('editor.controls.surface.$title')"
   >
-    <template v-slot:title>{{ $t('editor.controls.surface.$title') }}</template>
-    <template v-slot:content>
+    <template #title>{{ $t('editor.controls.surface.$title') }}</template>
+    <template #content>
       <ControlsSurface />
     </template>
   </CollapsibleSection>
@@ -47,10 +47,10 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :ariaLabel="$t('editor.controls.biomes.$title')"
+    :button-aria-label="$t('editor.controls.biomes.$title')"
   >
-    <template v-slot:title>{{ $t('editor.controls.biomes.$title') }}</template>
-    <template v-slot:content>
+    <template #title>{{ $t('editor.controls.biomes.$title') }}</template>
+    <template #content>
       <ControlsBiomes />
     </template>
   </CollapsibleSection>
@@ -61,10 +61,10 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :ariaLabel="$t('editor.controls.clouds.$title')"
+    :button-aria-label="$t('editor.controls.clouds.$title')"
   >
-    <template v-slot:title>{{ $t('editor.controls.clouds.$title') }}</template>
-    <template v-slot:content>
+    <template #title>{{ $t('editor.controls.clouds.$title') }}</template>
+    <template #content>
       <ControlsClouds />
     </template>
   </CollapsibleSection>
@@ -75,10 +75,10 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :ariaLabel="$t('editor.controls.atmosphere.$title')"
+    :button-aria-label="$t('editor.controls.atmosphere.$title')"
   >
-    <template v-slot:title>{{ $t('editor.controls.atmosphere.$title') }}</template>
-    <template v-slot:content>
+    <template #title>{{ $t('editor.controls.atmosphere.$title') }}</template>
+    <template #content>
       <ControlsAtmosphere />
     </template>
   </CollapsibleSection>
@@ -89,10 +89,10 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :ariaLabel="$t('editor.controls.atmosphere.$title')"
+    :button-aria-label="$t('editor.controls.atmosphere.$title')"
   >
-    <template v-slot:title>{{ $t('editor.controls.ring.$title') }}</template>
-    <template v-slot:content>
+    <template #title>{{ $t('editor.controls.ring.$title') }}</template>
+    <template #content>
       <ControlsRing />
     </template>
   </CollapsibleSection>

@@ -1,23 +1,23 @@
 <template>
   <DialogElement
+    id="dialog-exportprogress" 
     ref="dialogRef"
-    id="dialog-exportprogress"
     :show-title="true"
     :closeable="false"
     :prevent-click-close="true"
     :aria-label="$t('a11y.dialog_export_progress')"
   >
-    <template v-slot:title>
+    <template #title>
       <iconify-icon icon="mingcute:sandglass-line" width="2rem" aria-hidden="true" />
       <span>{{ $t('dialog.export_progress.$title') }}</span>
     </template>
-    <template v-slot:content>
+    <template #content>
       <div class="progress-text">
-        <p>{{ $t('dialog.export_progress.step_'+_progressStep) }}</p>
+        <p>{{ $t('dialog.export_progress.step_' + _progressStep) }}</p>
         <p>{{ _progressStep }}/{{ bakingSteps }}</p>
       </div>
       <div class="progress-bar">
-        <span class="progress" :style="{ width: `${(_progressStep*100)/bakingSteps}%` }"></span>
+        <span class="progress" :style="{ width: `${(_progressStep * 100) / bakingSteps}%` }"></span>
       </div>
     </template>
   </DialogElement>
@@ -25,12 +25,12 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue'
 import DialogElement from '../elements/DialogElement.vue'
-const dialogRef: Ref<{ open: Function; close: Function } | null> = ref(null)
+const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 
 const bakingSteps = 8
 const _progressStep: Ref<number> = ref(1)
 
-function open() { 
+function open() {
   dialogRef.value?.open()
 }
 function setProgress(value: number) {

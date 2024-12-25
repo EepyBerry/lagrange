@@ -373,7 +373,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
 export async function exportPlanetToGLTF(
   renderer: THREE.WebGLRenderer,
-  progressDialog: { open: Function; setProgress: Function },
+  progressDialog: { open: () => void; setProgress: (value: number) => void },
 ) {
   progressDialog.setProgress(1)
   const bakingTargets: BakingTarget[] = []

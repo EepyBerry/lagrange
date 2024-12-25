@@ -1,8 +1,8 @@
-<template>
+<template> 
   <label :for="id">
     <slot>ParameterName</slot>
   </label>
-  <select class="lg" :id="id" :disabled="disabled" v-model="lgParam" @change="$emit('change')">
+  <select :id="id" v-model="lgParam" class="lg" :disabled="disabled" @change="$emit('change')">
     <slot name="options"></slot>
   </select>
 </template>

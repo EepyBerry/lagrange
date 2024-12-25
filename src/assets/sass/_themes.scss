@@ -135,7 +135,9 @@
 }
 :root[data-font='monospace'] {
   body * {
-    font-family: Jetbrains Mono, monospace;
+    font-family:
+      Jetbrains Mono,
+      monospace;
   }
 }
 :root[data-font='lowvision'] {
