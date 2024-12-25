@@ -29,6 +29,9 @@
     >
       <iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true" />
     </button>
+    <div v-if="checkSpecialDay()" class="special-day-box" :title="$t(checkSpecialDay()!.translationKey)">
+      <iconify-icon :icon="checkSpecialDay()!.emoji" width="1.75rem" aria-hidden="true" />
+    </div>
   </div>
   <AppAboutDialog ref="infoDialog" />
   <AppSettingsDialog ref="settingsDialog" />
@@ -38,6 +41,7 @@
 import { ref, type Ref } from 'vue'
 import AppAboutDialog from '@components/dialogs/AppAboutDialog.vue'
 import AppSettingsDialog from '@components/dialogs/AppSettingsDialog.vue'
+import { checkSpecialDay } from '@/core/extras';
 const infoDialog: Ref<{ open: () => void } | null> = ref(null)
 const settingsDialog: Ref<{ open: () => void } | null> = ref(null)
 </script>
@@ -50,7 +54,6 @@ hr {
 }
 #footer-nav {
   display: flex;
-  flex-direction: row-reverse;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;

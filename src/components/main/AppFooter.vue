@@ -30,6 +30,9 @@
         <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" />
         <iconify-icon class="link-icon" icon="mingcute:right-small-fill" width="2rem" aria-hidden="true" />
       </a>
+      <div v-if="checkSpecialDay()" class="special-day-box" :title="$t(checkSpecialDay()!.translationKey)">
+        <iconify-icon :icon="checkSpecialDay()!.emoji" width="1.75rem" aria-hidden="true" />
+      </div>
     </div>
   </footer>
   <AppAboutDialog ref="infoDialog" />
@@ -40,6 +43,7 @@
 import { ref, type Ref } from 'vue'
 import AppAboutDialog from '@components/dialogs/AppAboutDialog.vue'
 import AppSettingsDialog from '@components/dialogs/AppSettingsDialog.vue'
+import { checkSpecialDay } from '@/core/extras';
 const infoDialog: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 const settingsDialog: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 </script>

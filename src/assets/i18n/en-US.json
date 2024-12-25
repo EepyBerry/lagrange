@@ -457,5 +457,32 @@
     "action_sort_colorsteps": "Sort color steps",
     "action_close_dialog": "Close dialog",
     "action_close_toast": "Close message"
+  },
+  "extras": {
+    "day_newyear": "Happy New Year!",
+    "day_valentines": "Happy Valentine's Day! ❤️",
+    "day_strawberry": "Happy Strawberry Day! 🍓",
+    "day_pi": "Happy Pi(e) Day! 🥧",
+    "day_transvisibility": "Happy Trans Day of Visibility!",
+    "day_acevisibility": "Happy Asexual Visibility Day!",
+    "day_lesbianvisibility": "Happy Lesbian Visibility Day!",
+    "day_agenderawareness": "Happy Agender Awareness Day!",
+    "day_panawareness": "Happy Pansexual/Panromantic Awareness Day!",
+    "day_arovisibility": "Happy Aromantic Visibility Day!",
+    "day_nonbinary": "Happy Non-Binary Day!",
+    "day_firstrelease": "Happy Birthday, Lagrange! 🪐",
+    "day_biawareness": "Happy Bisexual+ Pride Day!",
+    "day_lesbian": "Happy Lesbian Day!",
+    "day_comingout": "Happy International Coming Out Day! ✨",
+    "day_intersexawareness": "Happy Intersex Awareness Day!",
+    "day_halloween": "Happy Halloween! 🎃",
+    "day_intersexremembrance": "Remembering our fallen intersex siblings this day",
+    "day_transremembrance": "Remembering our fallen trans+ siblings this day",
+    "day_polyamory": "Happy Polyamory Day!",
+
+    "week_biawareness": "Happy Bisexual+ Awareness Week!",
+    "week_genderfluidvisibility": "Happy Genderfluid Visibility Week!",
+    "week_transawareness":  "Happy Trans Awareness Week!",
+    "month_pride": "Happy Pride Month! 🌈"
   }
 }
