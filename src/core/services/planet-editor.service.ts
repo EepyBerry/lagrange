@@ -108,6 +108,7 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
           wlevel: data.planetWaterLevel,
           wrough: data.planetWaterRoughness,
           wmetal: data.planetWaterMetalness,
+          wemimode: data.planetWaterEmissiveMode,
           wemicolor: data.planetWaterEmissiveColor,
           wemiscale: data.planetWaterEmissiveIntensity,
           grough: data.planetGroundRoughness,

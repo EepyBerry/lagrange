@@ -388,6 +388,7 @@ function registerPlanetRenderingDataUpdates(): void {
   })
   $dataUpdateMap.set('_planetWaterRoughness',         () => patchMeshUniform(_planet, 'u_pbr_params', { wrough: LG_PLANET_DATA.value.planetWaterRoughness }))
   $dataUpdateMap.set('_planetWaterMetalness',         () => patchMeshUniform(_planet, 'u_pbr_params', { wmetal: LG_PLANET_DATA.value.planetWaterMetalness }))
+  $dataUpdateMap.set('_planetWaterEmissiveMode',      () => patchMeshUniform(_planet, 'u_pbr_params', { wemimode: LG_PLANET_DATA.value.planetWaterEmissiveMode }))
   $dataUpdateMap.set('_planetWaterEmissiveColor',     () => patchMeshUniform(_planet, 'u_pbr_params', { wemicolor: LG_PLANET_DATA.value.planetWaterEmissiveColor }))
   $dataUpdateMap.set('_planetWaterEmissiveIntensity', () => patchMeshUniform(_planet, 'u_pbr_params', { wemiscale: LG_PLANET_DATA.value.planetWaterEmissiveIntensity }))
   $dataUpdateMap.set('_planetGroundRoughness',        () => patchMeshUniform(_planet, 'u_pbr_params', { grough: LG_PLANET_DATA.value.planetGroundRoughness }))

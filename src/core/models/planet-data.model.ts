@@ -1,5 +1,5 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
-import { ColorMode, GradientMode, PlanetType } from '@core/types'
+import { ColorMode, EmissiveMode, GradientMode, PlanetType } from '@core/types'
 import { isNumeric } from '@/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
@@ -121,6 +121,7 @@ export default class PlanetData extends ChangeTracker {
   private _planetRotation: number
   private _planetWaterRoughness: number
   private _planetWaterMetalness: number
+  private _planetWaterEmissiveMode: EmissiveMode
   private _planetWaterEmissiveColor: Color
   private _planetWaterEmissiveIntensity: number
   private _planetGroundRoughness: number
@@ -182,6 +183,13 @@ export default class PlanetData extends ChangeTracker {
     this.markForChange('_planetWaterMetalness')
   }
 
+  public get planetWaterEmissiveMode(): EmissiveMode {
+    return this._planetWaterEmissiveMode
+  }
+  public set planetWaterEmissiveMode(value: EmissiveMode) {
+    this._planetWaterEmissiveMode = value
+    this.markForChange('_planetWaterEmissiveMode')
+  }
   public get planetWaterEmissiveColor(): Color {
     return this._planetWaterEmissiveColor
   }
@@ -193,7 +201,7 @@ export default class PlanetData extends ChangeTracker {
     return this._planetWaterEmissiveIntensity
   }
   public set planetWaterEmissiveIntensity(value: number) {
-    this._planetWaterEmissiveIntensity = clamp(value, 0, 10)
+    this._planetWaterEmissiveIntensity = clamp(value, 0, 5)
     this.markForChange('_planetWaterEmissiveIntensity')
   }
 
@@ -571,6 +579,7 @@ export default class PlanetData extends ChangeTracker {
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
     this._planetWaterMetalness = 0.5
+    this._planetWaterEmissiveMode = EmissiveMode.CURRENT_COLOR
     this._planetWaterEmissiveColor = new Color(0xffffff)
     this._planetWaterEmissiveIntensity = 0.0
     this._planetGroundRoughness = 0.8
@@ -694,6 +703,7 @@ export default class PlanetData extends ChangeTracker {
     this.planetRotation = data._planetRotation ?? 0.0
     this.planetWaterRoughness = data._planetWaterRoughness ?? 0.55
     this.planetWaterMetalness = data._planetWaterMetalness ?? 0.5
+    this.planetWaterEmissiveMode = data._planetWaterEmissiveMode ?? EmissiveMode.CURRENT_COLOR
     this.planetWaterEmissiveColor.set(data._planetWaterEmissiveColor ?? 0xffffff)
     this.planetWaterEmissiveIntensity = data._planetWaterEmissiveIntensity ?? 0.0
     this.planetGroundRoughness = data._planetGroundRoughness ?? 0.8

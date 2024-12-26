@@ -14,6 +14,10 @@ export enum PlanetType {
   TELLURIC,
   GASEOUS,
 }
+export enum EmissiveMode {
+  CURRENT_COLOR,
+  DIRECT,
+}
 export enum ColorMode {
   REALISTIC,
   DIRECT,

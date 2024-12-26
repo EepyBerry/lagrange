@@ -28,6 +28,7 @@ struct PBRParameters {
   float wlevel;
   float wrough;
   float wmetal;
+  int wemimode;
   vec3 wemicolor;
   float wemiscale;
   float grough;
@@ -109,10 +110,12 @@ void main() {
   float dyHeight = compute_layering(vPos + dy, u_surface_noise);
   vec3 bump = compute_bumpmap(vPos, dx, dy, height, dxHeight, dyHeight, u_radius, u_bump_strength);
 
+  float FLAG_EMISSIVE_CURRENT = step(float(u_pbr_params.wemimode), 0.5);
+
   // Set outputs
+  csm_DiffuseColor = vec4(color, 1.0);
   csm_Bump = mix(vNormal, bump, FLAG_LAND * float(u_bump));
   csm_Roughness = mix(u_pbr_params.wrough, u_pbr_params.grough, FLAG_LAND);
   csm_Metalness = mix(u_pbr_params.wmetal, u_pbr_params.gmetal, FLAG_LAND);
-  csm_DiffuseColor = vec4(color, 1.0);
-  csm_Emissive = mix(u_pbr_params.wemicolor*u_pbr_params.wemiscale, vec3(0.0), FLAG_LAND);
+  csm_Emissive = mix(mix(u_pbr_params.wemicolor, color, FLAG_EMISSIVE_CURRENT)*u_pbr_params.wemiscale, vec3(0.0), FLAG_LAND);
 }
