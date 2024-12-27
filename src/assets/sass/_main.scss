@@ -71,32 +71,3 @@ hr {
     background: var(--lg-primary);
   }
 }
-
-.special-day-box {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 4px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: help;
-
-  iconify-icon {
-    height: 2rem;
-    display: flex;
-    align-items: center;
-  }
-
-  &:hover {
-    animation: bounce 500ms ease-out infinite forwards;
-  }
-}
-@keyframes bounce {
-  0% { transform: translateY(0%); }
-  50% { transform: translateY(-11%); }
-  60% { transform: translateY(-10%); }
-  70% { transform: translateY(-8.75%); }
-  80% { transform: translateY(-6%); }
-  90% { transform: translateY(-2.5%); }
-}
