@@ -11,7 +11,7 @@ export function uwuifyPath(path: string): string {
 
 // prettier-ignore
 export function checkSpecialDay(): SpecialDayInfo | undefined {
-  const now = DateTime.fromISO('2024-04-01')
+  const now = DateTime.now()
   if (now.month === 1  && now.day === 1)                   return { emoji: ['noto:confetti-ball'],                          translationKey: 'extras.day_newyear' }
   if (now.month === 2  && now.day === 14)                  return { emoji: ['noto:heart-with-arrow'],                       translationKey: 'extras.day_valentines' }
   if (now.month === 2  && now.day === 27)                  return { emoji: ['noto:strawberry'],                             translationKey: 'extras.day_strawberry' }
