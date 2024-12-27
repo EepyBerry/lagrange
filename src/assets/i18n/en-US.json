@@ -394,6 +394,9 @@
     "topbar_export": "Export planet file",
     "topbar_export_all": "Export all planets as .zip",
 
+    "pbr_wateremissivemode_current": "Use current texel color as emissive color",
+    "pbr_wateremissivemode_direct": "Use given color as emissive color",
+
     "gradient_mode_realistic": "Lower values on poles, higher values along the equator",
     "gradient_mode_poletopole": "Lower values on north pole, higher values on south pole",
     "gradient_mode_fullnoise": "Fully noisy values, akin to surface noise",
