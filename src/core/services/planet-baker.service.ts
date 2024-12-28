@@ -286,12 +286,12 @@ export function createBakingRing(data: PlanetData): THREE.Mesh {
  * @param applyGaussDilation if true, uses a Gaussian blur pass to dilate the texture cleanly
  * @returns a promise containing the mesh's baked texture
  */
-export async function bakeMesh(
+export function bakeMesh(
   renderer: THREE.WebGLRenderer,
   mesh: THREE.Mesh,
   width: number,
   height: number,
-): Promise<THREE.Texture> {
+): THREE.Texture {
   BAKE_RENDER_TARGET.setSize(width, height)
 
   BAKE_CAMERA.left = -width / 2
@@ -308,7 +308,7 @@ export async function bakeMesh(
   renderer.readRenderTargetPixels(BAKE_RENDER_TARGET, 0, 0, width, height, renderBuffer)
   renderer.setRenderTarget(null)
 
-  return await bufferToTexture(renderBuffer, width, height)
+  return bufferToTexture(renderBuffer, width, height)
 }
 
 export function prepareMeshForExport(mesh: THREE.Mesh, material: THREE.Material) {

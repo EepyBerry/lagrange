@@ -22,6 +22,7 @@ import {
 } from './planet-baker.service'
 import { exportMeshesToGLTF } from '../helpers/export.helper'
 import { idb } from '@/dexie.config'
+import { sleep } from '@/utils/utils'
 
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
@@ -375,6 +376,7 @@ export async function exportPlanetToGLTF(
   renderer: THREE.WebGLRenderer,
   progressDialog: { open: () => void; setProgress: (value: number) => void },
 ) {
+  await sleep(50)
   progressDialog.setProgress(1)
   const bakingTargets: BakingTarget[] = []
   const appSettings = await idb.settings.limit(1).first()
@@ -383,21 +385,24 @@ export async function exportPlanetToGLTF(
 
   // ----------------------------------- Bake planet ----------------------------------
   progressDialog.setProgress(2)
+  await sleep(50)
   const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value as PlanetData)
-  const bakePlanetSurfaceTex = await bakeMesh(renderer, bakePlanet, w, h)
+  const bakePlanetSurfaceTex = bakeMesh(renderer, bakePlanet, w, h)
   if (appSettings?.bakingPixelize) bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
 
   progressDialog.setProgress(3)
+  await sleep(50)
   const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value as PlanetData)
-  const bakePlanetPBRTex = await bakeMesh(renderer, bakePBR, w, h)
+  const bakePlanetPBRTex = bakeMesh(renderer, bakePBR, w, h)
   if (appSettings?.bakingPixelize) bakePlanetPBRTex.magFilter = THREE.NearestFilter
 
   progressDialog.setProgress(4)
+  await sleep(50)
   const bakeHeight = createBakingHeightMap(LG_PLANET_DATA.value as PlanetData)
-  const bakePlanetHeightTex = await bakeMesh(renderer, bakeHeight, w, h)
+  const bakePlanetHeightTex = bakeMesh(renderer, bakeHeight, w, h)
 
   const bakeNormal = createBakingNormalMap(bakePlanetHeightTex, w)
-  const bakePlanetNormalTex = await bakeMesh(renderer, bakeNormal, w, h)
+  const bakePlanetNormalTex = bakeMesh(renderer, bakeNormal, w, h)
   if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
 
   bakePlanet.material = new THREE.MeshStandardMaterial({
@@ -415,8 +420,9 @@ export async function exportPlanetToGLTF(
   // ----------------------------------- Bake clouds ----------------------------------
   if (LG_PLANET_DATA.value.cloudsEnabled) {
     progressDialog.setProgress(5)
+    await sleep(50)
     const bakeClouds = createBakingClouds(LG_PLANET_DATA.value as PlanetData)
-    const bakeCloudsTex = await bakeMesh(renderer, bakeClouds, w, h)
+    const bakeCloudsTex = bakeMesh(renderer, bakeClouds, w, h)
     if (appSettings?.bakingPixelize) bakeCloudsTex.magFilter = THREE.NearestFilter
 
     bakeClouds.material = new THREE.MeshStandardMaterial({
@@ -434,8 +440,9 @@ export async function exportPlanetToGLTF(
   // --------------------------------- Bake ring system -------------------------------
   if (LG_PLANET_DATA.value.ringEnabled) {
     progressDialog.setProgress(6)
+    await sleep(50)
     const bakeRing = createBakingRing(LG_PLANET_DATA.value as PlanetData)
-    const bakeRingTex = await bakeMesh(renderer, bakeRing, w, h)
+    const bakeRingTex = bakeMesh(renderer, bakeRing, w, h)
     if (appSettings?.bakingPixelize) bakeRingTex.magFilter = THREE.NearestFilter
 
     bakeRing.material = new THREE.MeshStandardMaterial({
@@ -450,6 +457,7 @@ export async function exportPlanetToGLTF(
 
   // ---------------------------- Export meshes and clean up ---------------------------
   progressDialog.setProgress(7)
+  await sleep(50)
 
   bakePlanet.scale.setScalar(LG_PLANET_DATA.value.planetRadius)
   bakePlanet.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
@@ -464,14 +472,3 @@ export async function exportPlanetToGLTF(
   })
   progressDialog.setProgress(8)
 }
-
-/*
-  _planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
-  _planet.setRotationFromAxisAngle(_planet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
-  _clouds.setRotationFromAxisAngle(
-    _clouds.up,
-    degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation),
-  )
-  _ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
-  _ring.setRotationFromAxisAngle(_ring.up, degToRad(LG_PLANET_DATA.value.ringRotation))
-*/
