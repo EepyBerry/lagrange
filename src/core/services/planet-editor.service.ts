@@ -428,6 +428,7 @@ export async function exportPlanetToGLTF(
     })
     bakingTargets.push({ mesh: bakeClouds, textures: [bakeCloudsTex] })
     bakePlanet.add(bakeClouds)
+    bakeClouds.setRotationFromAxisAngle(bakeClouds.up, degToRad(LG_PLANET_DATA.value.cloudsRotation))
   }
 
   // --------------------------------- Bake ring system -------------------------------
@@ -444,10 +445,16 @@ export async function exportPlanetToGLTF(
     })
     bakingTargets.push({ mesh: bakeRing, textures: [bakeRingTex] })
     bakePlanet.add(bakeRing)
+    bakeRing.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
   }
 
   // ---------------------------- Export meshes and clean up ---------------------------
   progressDialog.setProgress(7)
+
+  bakePlanet.scale.setScalar(LG_PLANET_DATA.value.planetRadius)
+  bakePlanet.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+  bakePlanet.rotateOnAxis(bakePlanet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
+
   bakePlanet.name = LG_PLANET_DATA.value.planetName
   exportMeshesToGLTF([bakePlanet], LG_PLANET_DATA.value.planetName.replaceAll(' ', '_') + `_${w}`)
   bakingTargets.forEach((bt) => {
@@ -457,3 +464,14 @@ export async function exportPlanetToGLTF(
   })
   progressDialog.setProgress(8)
 }
+
+/*
+  _planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+  _planet.setRotationFromAxisAngle(_planet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
+  _clouds.setRotationFromAxisAngle(
+    _clouds.up,
+    degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation),
+  )
+  _ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
+  _ring.setRotationFromAxisAngle(_ring.up, degToRad(LG_PLANET_DATA.value.ringRotation))
+*/

@@ -125,6 +125,10 @@ dialog[open].lg {
 dialog[open].lg::backdrop {
   background: rgb(0 0 0 / 40%);
 }
+dialog.lg.warn {
+  background: var(--lg-warn-panel);
+  border: 1px solid var(--lg-warn);
+}
 
 @media screen and (max-width: 767px) {
   dialog[open].lg {

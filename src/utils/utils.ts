@@ -1,7 +1,7 @@
 import { TEXTURE_LOADER } from '@/core/three/external-data.loader'
 import type { RawRGBA } from '@/core/types'
 import { LOCALE_MAP, MUL_INT8_TO_UNIT } from '@core/globals'
-import type { Color, Texture } from 'three'
+import { CanvasTexture, type Color, type Texture } from 'three'
 import type { Composer } from 'vue-i18n'
 
 export function toRawRGBA(color: Color, a: number): RawRGBA {
@@ -54,7 +54,7 @@ export async function bufferToTexture(buf: Uint8Array, w: number, h: number): Pr
   ctx.putImageData(imgData, 0, 0)
   //saveAs(canvas.toDataURL(), 'normalmap.png')
 
-  const tex = await TEXTURE_LOADER.loadAsync(canvas.toDataURL())
+  const tex = new CanvasTexture(canvas)
   tex.flipY = false
   canvas.remove()
   return tex
