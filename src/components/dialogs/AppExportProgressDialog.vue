@@ -38,8 +38,12 @@ const _progressError: Ref<unknown> = ref(undefined)
 
 function open() {
   dialogRef.value?.open()
+  _progressError.value = undefined
+  setProgress(1)
 }
 function setProgress(value: number) {
+  if (_progressError.value) return
+  
   _progressStep.value = value
   if (value === bakingSteps) {
     setTimeout(dialogRef.value!.close, 1000)

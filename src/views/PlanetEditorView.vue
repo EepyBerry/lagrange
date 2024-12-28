@@ -640,7 +640,7 @@ function updatePlanet() {
 function exportPlanet() {
   exportProgressDialogRef.value!.open()
   exportProgressDialogRef.value!.setProgress(1)
-  setTimeout(() => exportPlanetToGLTF($se.renderer, exportProgressDialogRef.value!).catch(err => exportProgressDialogRef.value!.setError(err)), 0)
+  setTimeout(() => exportPlanetToGLTF($se.renderer, exportProgressDialogRef.value!), 0)
 }
 </script>
 

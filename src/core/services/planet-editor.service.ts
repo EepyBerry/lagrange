@@ -374,101 +374,107 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
 export async function exportPlanetToGLTF(
   renderer: THREE.WebGLRenderer,
-  progressDialog: { open: () => void; setProgress: (value: number) => void },
+  progressDialog: { open: () => void; setProgress: (value: number) => void, setError: (error: unknown) => void },
 ) {
   await sleep(50)
   progressDialog.setProgress(1)
   const bakingTargets: BakingTarget[] = []
-  const appSettings = await idb.settings.limit(1).first()
-  const w = appSettings?.bakingResolution ?? 2048,
-    h = appSettings?.bakingResolution ?? 2048
+  try {
+    const appSettings = await idb.settings.limit(1).first()
+    const w = appSettings?.bakingResolution ?? 2048,
+      h = appSettings?.bakingResolution ?? 2048
 
-  // ----------------------------------- Bake planet ----------------------------------
-  progressDialog.setProgress(2)
-  await sleep(50)
-  const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value as PlanetData)
-  const bakePlanetSurfaceTex = bakeMesh(renderer, bakePlanet, w, h)
-  if (appSettings?.bakingPixelize) bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
-
-  progressDialog.setProgress(3)
-  await sleep(50)
-  const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value as PlanetData)
-  const bakePlanetPBRTex = bakeMesh(renderer, bakePBR, w, h)
-  if (appSettings?.bakingPixelize) bakePlanetPBRTex.magFilter = THREE.NearestFilter
-
-  progressDialog.setProgress(4)
-  await sleep(50)
-  const bakeHeight = createBakingHeightMap(LG_PLANET_DATA.value as PlanetData)
-  const bakePlanetHeightTex = bakeMesh(renderer, bakeHeight, w, h)
-
-  const bakeNormal = createBakingNormalMap(bakePlanetHeightTex, w)
-  const bakePlanetNormalTex = bakeMesh(renderer, bakeNormal, w, h)
-  if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
-
-  bakePlanet.material = new THREE.MeshStandardMaterial({
-    map: bakePlanetSurfaceTex,
-    roughnessMap: bakePlanetPBRTex,
-    metalnessMap: bakePlanetPBRTex,
-    normalMap: bakePlanetNormalTex,
-    normalScale: new THREE.Vector2(
-      2.0 * LG_PLANET_DATA.value.planetSurfaceBumpStrength,
-      2.0 * LG_PLANET_DATA.value.planetSurfaceBumpStrength,
-    ),
-  })
-  bakingTargets.push({ mesh: bakePlanet, textures: [bakePlanetSurfaceTex, bakePlanetPBRTex, bakePlanetHeightTex] })
-
-  // ----------------------------------- Bake clouds ----------------------------------
-  if (LG_PLANET_DATA.value.cloudsEnabled) {
-    progressDialog.setProgress(5)
+    // ----------------------------------- Bake planet ----------------------------------
+    progressDialog.setProgress(2)
     await sleep(50)
-    const bakeClouds = createBakingClouds(LG_PLANET_DATA.value as PlanetData)
-    const bakeCloudsTex = bakeMesh(renderer, bakeClouds, w, h)
-    if (appSettings?.bakingPixelize) bakeCloudsTex.magFilter = THREE.NearestFilter
+    const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value as PlanetData)
+    const bakePlanetSurfaceTex = bakeMesh(renderer, bakePlanet, w, h)
+    if (appSettings?.bakingPixelize) bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
 
-    bakeClouds.material = new THREE.MeshStandardMaterial({
-      map: bakeCloudsTex,
-      opacity: 1.0,
-      metalness: 0.5,
-      roughness: 1.0,
-      transparent: true,
-    })
-    bakingTargets.push({ mesh: bakeClouds, textures: [bakeCloudsTex] })
-    bakePlanet.add(bakeClouds)
-    bakeClouds.setRotationFromAxisAngle(bakeClouds.up, degToRad(LG_PLANET_DATA.value.cloudsRotation))
-  }
-
-  // --------------------------------- Bake ring system -------------------------------
-  if (LG_PLANET_DATA.value.ringEnabled) {
-    progressDialog.setProgress(6)
+    progressDialog.setProgress(3)
     await sleep(50)
-    const bakeRing = createBakingRing(LG_PLANET_DATA.value as PlanetData)
-    const bakeRingTex = bakeMesh(renderer, bakeRing, w, h)
-    if (appSettings?.bakingPixelize) bakeRingTex.magFilter = THREE.NearestFilter
+    const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value as PlanetData)
+    const bakePlanetPBRTex = bakeMesh(renderer, bakePBR, w, h)
+    if (appSettings?.bakingPixelize) bakePlanetPBRTex.magFilter = THREE.NearestFilter
 
-    bakeRing.material = new THREE.MeshStandardMaterial({
-      map: bakeRingTex,
-      side: THREE.DoubleSide,
-      transparent: true,
+    progressDialog.setProgress(4)
+    await sleep(50)
+    const bakeHeight = createBakingHeightMap(LG_PLANET_DATA.value as PlanetData)
+    const bakePlanetHeightTex = bakeMesh(renderer, bakeHeight, w, h)
+
+    const bakeNormal = createBakingNormalMap(bakePlanetHeightTex, w)
+    const bakePlanetNormalTex = bakeMesh(renderer, bakeNormal, w, h)
+    if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
+
+    bakePlanet.material = new THREE.MeshStandardMaterial({
+      map: bakePlanetSurfaceTex,
+      roughnessMap: bakePlanetPBRTex,
+      metalnessMap: bakePlanetPBRTex,
+      normalMap: bakePlanetNormalTex,
+      normalScale: new THREE.Vector2(
+        2.0 * LG_PLANET_DATA.value.planetSurfaceBumpStrength,
+        2.0 * LG_PLANET_DATA.value.planetSurfaceBumpStrength,
+      ),
     })
-    bakingTargets.push({ mesh: bakeRing, textures: [bakeRingTex] })
-    bakePlanet.add(bakeRing)
-    bakeRing.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
+    bakingTargets.push({ mesh: bakePlanet, textures: [bakePlanetSurfaceTex, bakePlanetPBRTex, bakePlanetHeightTex] })
+
+    // ----------------------------------- Bake clouds ----------------------------------
+    if (LG_PLANET_DATA.value.cloudsEnabled) {
+      progressDialog.setProgress(5)
+      await sleep(50)
+      const bakeClouds = createBakingClouds(LG_PLANET_DATA.value as PlanetData)
+      const bakeCloudsTex = bakeMesh(renderer, bakeClouds, w, h)
+      if (appSettings?.bakingPixelize) bakeCloudsTex.magFilter = THREE.NearestFilter
+
+      bakeClouds.material = new THREE.MeshStandardMaterial({
+        map: bakeCloudsTex,
+        opacity: 1.0,
+        metalness: 0.5,
+        roughness: 1.0,
+        transparent: true,
+      })
+      bakingTargets.push({ mesh: bakeClouds, textures: [bakeCloudsTex] })
+      bakePlanet.add(bakeClouds)
+      bakeClouds.setRotationFromAxisAngle(bakeClouds.up, degToRad(LG_PLANET_DATA.value.cloudsRotation))
+    }
+
+    // --------------------------------- Bake ring system -------------------------------
+    if (LG_PLANET_DATA.value.ringEnabled) {
+      progressDialog.setProgress(6)
+      await sleep(50)
+      const bakeRing = createBakingRing(LG_PLANET_DATA.value as PlanetData)
+      const bakeRingTex = bakeMesh(renderer, bakeRing, w, h)
+      if (appSettings?.bakingPixelize) bakeRingTex.magFilter = THREE.NearestFilter
+
+      bakeRing.material = new THREE.MeshStandardMaterial({
+        map: bakeRingTex,
+        side: THREE.DoubleSide,
+        transparent: true,
+      })
+      bakingTargets.push({ mesh: bakeRing, textures: [bakeRingTex] })
+      bakePlanet.add(bakeRing)
+      bakeRing.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
+    }
+
+    // ---------------------------- Export meshes and clean up ---------------------------
+    progressDialog.setProgress(7)
+    await sleep(50)
+
+    bakePlanet.scale.setScalar(LG_PLANET_DATA.value.planetRadius)
+    bakePlanet.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+    bakePlanet.rotateOnAxis(bakePlanet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
+
+    bakePlanet.name = LG_PLANET_DATA.value.planetName
+    exportMeshesToGLTF([bakePlanet], LG_PLANET_DATA.value.planetName.replaceAll(' ', '_') + `_${w}`)
+  } catch (error) {
+    console.error(error)
+    progressDialog.setError(error)
+  } finally {
+    bakingTargets.forEach((bt) => {
+      bt.textures.forEach((tex) => tex.dispose());
+      (bt.mesh.material as THREE.MeshStandardMaterial)?.dispose();
+      bt.mesh.geometry?.dispose();
+    })
+    progressDialog.setProgress(8)
   }
-
-  // ---------------------------- Export meshes and clean up ---------------------------
-  progressDialog.setProgress(7)
-  await sleep(50)
-
-  bakePlanet.scale.setScalar(LG_PLANET_DATA.value.planetRadius)
-  bakePlanet.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
-  bakePlanet.rotateOnAxis(bakePlanet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
-
-  bakePlanet.name = LG_PLANET_DATA.value.planetName
-  exportMeshesToGLTF([bakePlanet], LG_PLANET_DATA.value.planetName.replaceAll(' ', '_') + `_${w}`)
-  bakingTargets.forEach((bt) => {
-    bt.textures.forEach((tex) => tex.dispose())
-    ;(bt.mesh.material as THREE.MeshStandardMaterial).dispose()
-    bt.mesh.geometry.dispose()
-  })
-  progressDialog.setProgress(8)
 }
