@@ -17,6 +17,7 @@ export async function addDefaultSettings(): Promise<void> {
     enableAnimations: !prefersReducedMotion(),
     // extras
     extrasHologramMode: false,
+    extrasShowSpecialDays: true,
   })
 }
 

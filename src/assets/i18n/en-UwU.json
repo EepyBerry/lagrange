@@ -75,7 +75,7 @@
       "$action_confirm": "Get s-stawted!"
     },
     "planetinfo": {
-      "$title": "Pwanyet information :3",
+      "$title": "Pwanyet infowmation :3",
       "name": "Name",
       "radius": "Wadius",
       "axialtilt": "Axiaw tiwt",
@@ -120,6 +120,7 @@
 
       "extras": "Extwas",
       "extras_hologram_mode": "Howogwam mode",
+      "extras_special_days": "Sh-show speciaw days",
 
       "advanced": "Advanced Settings",
       "advanced_persist": "Pewsist IndexedDB stowage",
@@ -457,5 +458,34 @@
     "action_sort_colorsteps": "Sort cowow steps",
     "action_close_dialog": "Cwose diawog",
     "action_close_toast": "Cwose message"
+  },
+  "extras": {
+    "day_newyear": "Happy New Yeaw!!! (≧∇≦)ﾉ",
+    "day_valentines": "Happy Vawentine's Day!!! ❤️",
+    "day_strawberry": "Happy Stwawbewwy Day!!! 🍓",
+    "day_pi": "Happy Pi(e) Day! 🥧",
+    "day_transvisibility": "Happy Twans Day of Visibiwity!!!",
+    "day_acevisibility": "Happy Asexual Visibiwity Day!!!",
+    "day_lesbianvisibility": "Happy Wesbian Visibiwity Day!!!",
+    "day_agenderawareness": "Happy Agendew Awawenyess Day!!!",
+    "day_panawareness": "Happy Pansexual/Panwomyantic Awawenyess Day!!!",
+    "day_arovisibility": "Happy Awomantic Visibiwity Day!!!",
+    "day_nonbinary": "Happy Non-Binawy Day!!!",
+    "day_firstrelease": "Happy Biwthday, Wagwange!!! UwU 🪐",
+    "day_biawareness": "Happy Bisexual+ Pwide Day!!!",
+    "day_lesbian": "Happy Wesbian Day!!!",
+    "day_comingout": "Happy Intewnyationyal Coming Out Day!!! (✿◡‿◡) ✨",
+    "day_intersexawareness": "Happy Intewsex Awawenyess Day!!!",
+    "day_halloween": "Happy Hawwoween!!! (☆▽☆) 🎃",
+    "day_intersexremembrance": "Wemembewing ouw fawwen intewsex sibwings this day...",
+    "day_transremembrance": "Wemembewing ouw fawwen twans+ sibwings this day...",
+    "day_polyamory": "Happy Powyamowy Day!",
+
+    "week_biawareness": "Happy Bisexual+ Awawenyess Week!!!",
+    "week_genderfluidvisibility": "Happy Gendewfwuid Visibiwity Week!!!",
+    "week_transawareness": "Happy Twans Awawenyess Week!",
+    "month_pride": "Happy Pwide Month!!! o(*￣▽￣*)o 🌈",
+
+    "overlay1": "i see you ༼ つ ◕_◕ ༽つ"
   }
 }

@@ -3,7 +3,7 @@
   <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
     <AppNavigation :compact-mode="showCompactNavigation" :block-navigation="false" />
     <div id="codex-header-controls">
-      <RouterLink class="lg dark create-planet" to="/planet-editor/new" :title="$t('codex.$action_add')">
+      <RouterLink class="lg dark create-planet" :to="uwuifyPath('/planet-editor/new')" :title="$t('codex.$action_add')">
         <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
         {{ $t('codex.$action_add') }}
       </RouterLink>
@@ -70,6 +70,7 @@ import JSZip from 'jszip'
 import NewCardElement from '@/components/elements/NewCardElement.vue'
 import { readFileData } from '@/core/helpers/import.helper'
 import { nanoid } from 'nanoid'
+import { uwuifyPath } from '@/core/extras'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
@@ -95,6 +96,7 @@ onMounted(async () => {
 onUnmounted(() => {
   EventBus.deregisterWindowEventListener('resize', onWindowResize)
 })
+
 watch(
   () => EventBus.clearEvent.value,
   async () => await loadPlanets(),

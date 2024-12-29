@@ -158,7 +158,8 @@
 import type { IDBPlanet } from '@/dexie.config'
 import DialogElement from '../elements/DialogElement.vue'
 import { ref, type Ref } from 'vue'
-import { A11Y_ANIMATE, EXTRAS_HOLOGRAM_MODE } from '@/core/globals'
+import { A11Y_ANIMATE } from '@/core/globals'
+import { EXTRAS_HOLOGRAM_MODE } from '@/core/extras'
 
 const planet: Ref<IDBPlanet | null> = ref(null)
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
