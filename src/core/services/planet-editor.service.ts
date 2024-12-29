@@ -376,8 +376,8 @@ export async function exportPlanetToGLTF(
   renderer: THREE.WebGLRenderer,
   progressDialog: { open: () => void; setProgress: (value: number) => void, setError: (error: unknown) => void },
 ) {
-  await sleep(50)
   progressDialog.setProgress(1)
+  await sleep(50)
   const bakingTargets: BakingTarget[] = []
   try {
     const appSettings = await idb.settings.limit(1).first()
