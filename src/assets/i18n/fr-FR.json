@@ -58,9 +58,11 @@
       "topbar": "Barre du haut - Nommage et données",
       "topbar_rename": "Renommer la planète",
       "topbar_reset": "Réinitialiser",
+      "topbar_save": "Enregistrer la planète",
       "topbar_import": "Importer une planète",
       "topbar_export": "Exporter une planète",
-      "topbar_export_all": "Export full codex",
+      "topbar_export_all": "Exporter le Codex",
+      "topbar_gltf": "Exporter au format glTF",
 
       "footer": "Footer - Divers",
       "footer_github": "Page GitHub",

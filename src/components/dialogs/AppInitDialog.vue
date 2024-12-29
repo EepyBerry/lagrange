@@ -87,6 +87,14 @@
                 {{ $t('dialog.init.topbar_reset') }}
               </li>
               <li class="lg">
+                <iconify-icon icon="mingcute:save-2-line" width="1.25rem" aria-hidden="true" />
+                {{ $t('dialog.init.topbar_save') }}
+              </li>
+              <li class="lg">
+                <iconify-icon icon="simple-icons:gltf" width="1.25rem" aria-hidden="true" />
+                {{ $t('dialog.init.topbar_gltf') }}
+              </li>
+              <li class="lg">
                 <iconify-icon icon="mingcute:upload-line" width="1.25rem" aria-hidden="true" />
                 {{ $t('dialog.init.topbar_import') }}
               </li>

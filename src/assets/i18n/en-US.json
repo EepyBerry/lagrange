@@ -58,9 +58,11 @@
       "topbar": "Top bar - Naming & data",
       "topbar_rename": "Rename planet",
       "topbar_reset": "Reset to defaults",
+      "topbar_save": "Save planet",
       "topbar_import": "Import planet",
       "topbar_export": "Export planet",
       "topbar_export_all": "Export full codex",
+      "topbar_gltf": "Export as glTF",
 
       "footer": "Footer - Miscellaneous",
       "footer_github": "GitHub page",
