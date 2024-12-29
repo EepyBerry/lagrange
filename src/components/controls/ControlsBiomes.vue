@@ -4,169 +4,169 @@
       {{ $t('editor.controls.biomes.biomes_show') }}
     </ParameterCheckbox>
     <template v-if="LG_PLANET_DATA.biomesEnabled">
-      <button class="lg debug" style="padding: 0 0.5rem" @click="DebugUtils.getRawBiomeData">
-        <iconify-icon icon="material-symbols:code-rounded" aria-hidden="true" />
-        get tex
-      </button>
-
-      <ParameterCategory>{{ $t('editor.controls.biomes.temperature') }}</ParameterCategory>
-      <ParameterRadio>
-        <template #title> {{ $t('editor.controls.biomes.gradient_mode') }}: </template>
-        <template #options>
-          <ParameterRadioOption
-            :id="'0'"
-            v-model="LG_PLANET_DATA.biomesTemperatureMode"
-            icon="mingcute:photo-album-line"
-            name="temp-mode"
-            :value="GradientMode.REALISTIC"
-            :button-aria-label="$t('editor.controls.biomes.gradient_mode_realistic')"
-            :title="$t('tooltip.gradient_mode_realistic')"
+      <ParameterGroup :toggleable="true">
+        <template #title>{{ $t('editor.controls.biomes.temperature') }}</template>
+        <template #content>
+          <ParameterRadio>
+            <template #title> {{ $t('editor.controls.biomes.gradient_mode') }}: </template>
+            <template #options>
+              <ParameterRadioOption
+                :id="'0'"
+                v-model="LG_PLANET_DATA.biomesTemperatureMode"
+                icon="mingcute:photo-album-line"
+                name="temp-mode"
+                :value="GradientMode.REALISTIC"
+                :button-aria-label="$t('editor.controls.biomes.gradient_mode_realistic')"
+                :title="$t('tooltip.gradient_mode_realistic')"
+              >
+                {{ $t('editor.controls.biomes.gradient_mode_realistic') }}
+              </ParameterRadioOption>
+              <ParameterRadioOption
+                :id="'1'"
+                v-model="LG_PLANET_DATA.biomesTemperatureMode"
+                icon="material-symbols:gradient-outline"
+                name="temp-mode"
+                :value="GradientMode.POLE_TO_POLE"
+                :button-aria-label="$t('editor.controls.biomes.gradient_mode_poletopole')"
+                :title="$t('tooltip.gradient_mode_poletopole')"
+              >
+                {{ $t('editor.controls.biomes.gradient_mode_poletopole') }}
+              </ParameterRadioOption>
+              <ParameterRadioOption
+                :id="'2'"
+                v-model="LG_PLANET_DATA.biomesTemperatureMode"
+                icon="tabler:ease-in-out-control-points"
+                name="temp-mode"
+                :value="GradientMode.FULLNOISE"
+                :button-aria-label="$t('editor.controls.biomes.gradient_mode_fullnoise')"
+                :title="$t('tooltip.gradient_mode_fullnoise')"
+              >
+                {{ $t('editor.controls.biomes.gradient_mode_fullnoise') }}
+              </ParameterRadioOption>
+            </template>
+          </ParameterRadio>
+          <ParameterSlider id="b-tfreq" v-model="LG_PLANET_DATA.biomesTemperatureNoise.frequency" :step="0.01" :max="5">
+            {{ $t('editor.general.noise_fbm_frequency') }}
+          </ParameterSlider>
+          <ParameterSlider
+            id="b-tamp"
+            v-model="LG_PLANET_DATA.biomesTemperatureNoise.amplitude"
+            :step="0.01"
+            :min="0"
+            :max="2"
           >
-            {{ $t('editor.controls.biomes.gradient_mode_realistic') }}
-          </ParameterRadioOption>
-          <ParameterRadioOption
-            :id="'1'"
-            v-model="LG_PLANET_DATA.biomesTemperatureMode"
-            icon="material-symbols:gradient-outline"
-            name="temp-mode"
-            :value="GradientMode.POLE_TO_POLE"
-            :button-aria-label="$t('editor.controls.biomes.gradient_mode_poletopole')"
-            :title="$t('tooltip.gradient_mode_poletopole')"
+            {{ $t('editor.general.noise_fbm_amplitude') }}
+          </ParameterSlider>
+          <ParameterSlider
+            id="b-tlac"
+            v-model="LG_PLANET_DATA.biomesTemperatureNoise.lacunarity"
+            :step="0.01"
+            :min="1"
+            :max="3"
           >
-            {{ $t('editor.controls.biomes.gradient_mode_poletopole') }}
-          </ParameterRadioOption>
-          <ParameterRadioOption
-            :id="'2'"
-            v-model="LG_PLANET_DATA.biomesTemperatureMode"
-            icon="tabler:ease-in-out-control-points"
-            name="temp-mode"
-            :value="GradientMode.FULLNOISE"
-            :button-aria-label="$t('editor.controls.biomes.gradient_mode_fullnoise')"
-            :title="$t('tooltip.gradient_mode_fullnoise')"
-          >
-            {{ $t('editor.controls.biomes.gradient_mode_fullnoise') }}
-          </ParameterRadioOption>
+            {{ $t('editor.general.noise_fbm_lacunarity') }}
+          </ParameterSlider>
+          <ParameterSlider id="b-toct" v-model="LG_PLANET_DATA.biomesTemperatureNoise.octaves" :step="1" :min="1" :max="8">
+            {{ $t('editor.general.noise_fbm_octaves') }}
+          </ParameterSlider>
         </template>
-      </ParameterRadio>
-      <ParameterSlider id="b-tfreq" v-model="LG_PLANET_DATA.biomesTemperatureNoise.frequency" :step="0.01" :max="5">
-        {{ $t('editor.general.noise_fbm_frequency') }}
-      </ParameterSlider>
-      <ParameterSlider
-        id="b-tamp"
-        v-model="LG_PLANET_DATA.biomesTemperatureNoise.amplitude"
-        :step="0.01"
-        :min="0"
-        :max="2"
-      >
-        {{ $t('editor.general.noise_fbm_amplitude') }}
-      </ParameterSlider>
-      <ParameterSlider
-        id="b-tlac"
-        v-model="LG_PLANET_DATA.biomesTemperatureNoise.lacunarity"
-        :step="0.01"
-        :min="1"
-        :max="3"
-      >
-        {{ $t('editor.general.noise_fbm_lacunarity') }}
-      </ParameterSlider>
-      <ParameterSlider id="b-toct" v-model="LG_PLANET_DATA.biomesTemperatureNoise.octaves" :step="1" :min="1" :max="8">
-        {{ $t('editor.general.noise_fbm_octaves') }}
-      </ParameterSlider>
-
-      <ParameterCategory>{{ $t('editor.controls.biomes.humidity') }}</ParameterCategory>
-      <ParameterRadio>
-        <template #title> {{ $t('editor.controls.biomes.gradient_mode') }}: </template>
-        <template #options>
-          <ParameterRadioOption
-            :id="'0'"
-            v-model="LG_PLANET_DATA.biomesHumidityMode"
-            icon="mingcute:photo-album-line"
-            name="temp-mode"
-            :value="GradientMode.REALISTIC"
-            :button-aria-label="$t('editor.controls.biomes.gradient_mode_realistic')"
-            :title="$t('tooltip.gradient_mode_realistic')"
+      </ParameterGroup>
+      <ParameterGroup :toggleable="true">
+        <template #title>{{ $t('editor.controls.biomes.humidity') }}</template>
+        <template #content>
+          <ParameterRadio>
+            <template #title> {{ $t('editor.controls.biomes.gradient_mode') }}: </template>
+            <template #options>
+              <ParameterRadioOption
+                :id="'0'"
+                v-model="LG_PLANET_DATA.biomesHumidityMode"
+                icon="mingcute:photo-album-line"
+                name="temp-mode"
+                :value="GradientMode.REALISTIC"
+                :button-aria-label="$t('editor.controls.biomes.gradient_mode_realistic')"
+                :title="$t('tooltip.gradient_mode_realistic')"
+              >
+                {{ $t('editor.controls.biomes.gradient_mode_realistic') }}
+              </ParameterRadioOption>
+              <ParameterRadioOption
+                :id="'1'"
+                v-model="LG_PLANET_DATA.biomesHumidityMode"
+                icon="material-symbols:gradient-outline"
+                name="temp-mode"
+                :value="GradientMode.POLE_TO_POLE"
+                :button-aria-label="$t('editor.controls.biomes.gradient_mode_poletopole')"
+                :title="$t('tooltip.gradient_mode_poletopole')"
+              >
+                {{ $t('editor.controls.biomes.gradient_mode_poletopole') }}
+              </ParameterRadioOption>
+              <ParameterRadioOption
+                :id="'2'"
+                v-model="LG_PLANET_DATA.biomesHumidityMode"
+                icon="tabler:ease-in-out-control-points"
+                name="temp-mode"
+                :value="GradientMode.FULLNOISE"
+                :button-aria-label="$t('editor.controls.biomes.gradient_mode_fullnoise')"
+                :title="$t('tooltip.gradient_mode_fullnoise')"
+              >
+                {{ $t('editor.controls.biomes.gradient_mode_fullnoise') }}
+              </ParameterRadioOption>
+            </template>
+          </ParameterRadio>
+          <ParameterSlider id="b-tfreq" v-model="LG_PLANET_DATA.biomesHumidityNoise.frequency" :step="0.01" :max="5">
+            {{ $t('editor.general.noise_fbm_frequency') }}
+          </ParameterSlider>
+          <ParameterSlider
+            id="b-tamp"
+            v-model="LG_PLANET_DATA.biomesHumidityNoise.amplitude"
+            :step="0.01"
+            :min="0"
+            :max="2"
           >
-            {{ $t('editor.controls.biomes.gradient_mode_realistic') }}
-          </ParameterRadioOption>
-          <ParameterRadioOption
-            :id="'1'"
-            v-model="LG_PLANET_DATA.biomesHumidityMode"
-            icon="material-symbols:gradient-outline"
-            name="temp-mode"
-            :value="GradientMode.POLE_TO_POLE"
-            :button-aria-label="$t('editor.controls.biomes.gradient_mode_poletopole')"
-            :title="$t('tooltip.gradient_mode_poletopole')"
+            {{ $t('editor.general.noise_fbm_amplitude') }}
+          </ParameterSlider>
+          <ParameterSlider
+            id="b-tlac"
+            v-model="LG_PLANET_DATA.biomesHumidityNoise.lacunarity"
+            :step="0.01"
+            :min="1"
+            :max="3"
           >
-            {{ $t('editor.controls.biomes.gradient_mode_poletopole') }}
-          </ParameterRadioOption>
-          <ParameterRadioOption
-            :id="'2'"
-            v-model="LG_PLANET_DATA.biomesHumidityMode"
-            icon="tabler:ease-in-out-control-points"
-            name="temp-mode"
-            :value="GradientMode.FULLNOISE"
-            :button-aria-label="$t('editor.controls.biomes.gradient_mode_fullnoise')"
-            :title="$t('tooltip.gradient_mode_fullnoise')"
-          >
-            {{ $t('editor.controls.biomes.gradient_mode_fullnoise') }}
-          </ParameterRadioOption>
+            {{ $t('editor.general.noise_fbm_lacunarity') }}
+          </ParameterSlider>
+          <ParameterSlider id="b-toct" v-model="LG_PLANET_DATA.biomesHumidityNoise.octaves" :step="1" :min="1" :max="8">
+            {{ $t('editor.general.noise_fbm_octaves') }}
+          </ParameterSlider>
         </template>
-      </ParameterRadio>
-      <ParameterSlider id="b-tfreq" v-model="LG_PLANET_DATA.biomesHumidityNoise.frequency" :step="0.01" :max="5">
-        {{ $t('editor.general.noise_fbm_frequency') }}
-      </ParameterSlider>
-      <ParameterSlider
-        id="b-tamp"
-        v-model="LG_PLANET_DATA.biomesHumidityNoise.amplitude"
-        :step="0.01"
-        :min="0"
-        :max="2"
-      >
-        {{ $t('editor.general.noise_fbm_amplitude') }}
-      </ParameterSlider>
-      <ParameterSlider
-        id="b-tlac"
-        v-model="LG_PLANET_DATA.biomesHumidityNoise.lacunarity"
-        :step="0.01"
-        :min="1"
-        :max="3"
-      >
-        {{ $t('editor.general.noise_fbm_lacunarity') }}
-      </ParameterSlider>
-      <ParameterSlider id="b-toct" v-model="LG_PLANET_DATA.biomesHumidityNoise.octaves" :step="1" :min="1" :max="8">
-        {{ $t('editor.general.noise_fbm_octaves') }}
-      </ParameterSlider>
-
-      <ParameterCategory>{{ $t('editor.controls.biomes.biome_list') }}</ParameterCategory>
-      <template v-for="(b, index) in LG_PLANET_DATA.biomesParams" :key="b.id">
-        <!-- prettier-ignore-attribute -->
-        <ParameterBiome
-          v-model="(LG_PLANET_DATA.biomesParams[index] as BiomeParameters)"
-          :index="index"
-          :max-index="LG_PLANET_DATA.biomesParams.length - 1"
-          @moveup="moveBiome(index, -1)"
-          @movedown="moveBiome(index, 1)"
-          @delete="deleteBiome"
-        />
-      </template>
-      <button class="lg action-add" @click="addBiome">
-        <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
-        {{ $t('editor.$action_add') }}
-      </button>
+      </ParameterGroup>
+      <ParameterGroup :toggleable="true">
+        <template #title>{{ $t('editor.controls.biomes.biome_list') }}</template>
+        <template #content>
+          <template v-for="(b, index) in LG_PLANET_DATA.biomesParams" :key="b.id">
+            <!-- prettier-ignore-attribute -->
+            <ParameterBiome
+              v-model="(LG_PLANET_DATA.biomesParams[index] as BiomeParameters)"
+              :index="index"
+              :max-index="LG_PLANET_DATA.biomesParams.length - 1"
+              @moveup="moveBiome(index, -1)"
+              @movedown="moveBiome(index, 1)"
+              @delete="deleteBiome"
+            />
+          </template>
+          <button class="lg action-add" @click="addBiome">
+            <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
+            {{ $t('editor.$action_add') }}
+          </button>
+        </template>
+      </ParameterGroup>
     </template>
   </ParameterGrid>
 </template>
 <script setup lang="ts">
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
-import ParameterGrid from '@components/parameters/ParameterGrid.vue'
-import ParameterCheckbox from '@components/parameters/ParameterCheckbox.vue'
 import ParameterBiome from '../parameters/ParameterBiome.vue'
-import ParameterSlider from '../parameters/ParameterSlider.vue'
-import ParameterCategory from '../parameters/ParameterCategory.vue'
 import { GradientMode } from '@/core/types'
 import { BiomeParameters } from '@/core/models/biome-parameters.model'
 import { Color } from 'three'
-import { DebugUtils } from '@/utils/debug-utils'
 
 function moveBiome(idx: number, diff: 1 | -1) {
   const element = LG_PLANET_DATA.value.biomesParams[idx]
