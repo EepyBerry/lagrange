@@ -173,7 +173,8 @@
       "step_5": "Baking clouds texture",
       "step_6": "Baking ring system texture",
       "step_7": "Finalizing",
-      "step_8": "Done!"
+      "step_8": "Done!",
+      "step_failed": "failed!"
     },
     "reset": {
       "$title": "Confirm reset",

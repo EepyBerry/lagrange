@@ -1,8 +1,11 @@
-import { TEXTURE_LOADER } from '@/core/three/external-data.loader'
 import type { RawRGBA } from '@/core/types'
 import { LOCALE_MAP, MUL_INT8_TO_UNIT } from '@core/globals'
-import type { Color, Texture } from 'three'
+import { CanvasTexture, type Color } from 'three'
 import type { Composer } from 'vue-i18n'
+
+export function sleep(delay: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, delay))
+}
 
 export function toRawRGBA(color: Color, a: number): RawRGBA {
   return { r: color.r, g: color.g, b: color.b, a }
@@ -45,7 +48,7 @@ export function getLinearUint8Luminance(r: number, g: number, b: number) {
 
 // ----------------------------------------------------------------------------
 
-export async function bufferToTexture(buf: Uint8Array, w: number, h: number): Promise<Texture> {
+export function bufferToTexture(buf: Uint8Array, w: number, h: number): CanvasTexture {
   const canvas = document.createElement('canvas')
   canvas.width = w
   canvas.height = h
@@ -54,7 +57,7 @@ export async function bufferToTexture(buf: Uint8Array, w: number, h: number): Pr
   ctx.putImageData(imgData, 0, 0)
   //saveAs(canvas.toDataURL(), 'normalmap.png')
 
-  const tex = await TEXTURE_LOADER.loadAsync(canvas.toDataURL())
+  const tex = new CanvasTexture(canvas)
   tex.flipY = false
   canvas.remove()
   return tex

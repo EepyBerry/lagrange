@@ -79,7 +79,7 @@ const head = useHead({
 const webglErrorDialogRef: Ref<{ openWithError: (error: HTMLElement) => void } | null> = ref(null)
 const planetErrorDialogRef: Ref<{ openWithError: (error: string, stack?: string) => void } | null> = ref(null)
 const warnSaveDialogRef: Ref<{ open: () => void } | null> = ref(null)
-const exportProgressDialogRef: Ref<{ open: () => void; setProgress: (value: number) => void } | null> = ref(null)
+const exportProgressDialogRef: Ref<{ open: () => void; setProgress: (value: number) => void; setError: (value: unknown) => void } | null> = ref(null)
 let loadedCorrectly = false
 
 // Data
@@ -595,7 +595,7 @@ async function savePlanet() {
   // -------- Generate planet preview -------- //
   enableEditorRendering = false
   _lensFlare.mesh.visible = false
-  const previewDataString = exportPlanetPreview($se, {
+  let previewDataString = exportPlanetPreview($se, {
     sun: _sunLight.clone(),
     ambientLight: _ambLight.clone(),
     planet: _planet.clone(),
@@ -619,6 +619,7 @@ async function savePlanet() {
 
   enableEditorRendering = true
   showSpinner.value = false
+  previewDataString = ''
   EventBus.sendToastEvent('success', 'toast.save_success', 3000)
 }
 
