@@ -19,7 +19,7 @@
             <ParameterGrid>
               <ParameterDivider />
               <!-- cat mode toggle -->
-              <ParameterSelect v-if="EXTRAS_CAT_MODE" v-model="catModeOverride" id="language-cat" disabled>
+              <ParameterSelect v-if="EXTRAS_CAT_MODE" id="language-cat" v-model="catModeOverride" disabled>
                 {{ $t('dialog.settings.general_language') }}
                 <template #options>
                   <option value="en-UwU" selected>Uwuish [en-UwU]</option>
