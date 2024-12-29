@@ -58,9 +58,11 @@
       "topbar": "Top baw - Nyaming & data",
       "topbar_rename": "Wenyame pwanyet",
       "topbar_reset": "Weset t-to defauwts",
+      "topbar_save": "Save pwanyet",
       "topbar_import": "Impowt pwanyet",
       "topbar_export": "Expowt pwanyet",
       "topbar_export_all": "Expowt fuww codex",
+      "topbar_gltf": "Expowt as glTF",
 
       "footer": "Footew - Miscewwanyeous",
       "footer_github": "GitHub p-p-page",

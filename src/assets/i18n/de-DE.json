@@ -58,9 +58,11 @@
       "topbar": "Obere Leiste - Benennung und Daten",
       "topbar_rename": "Planeten umbenennen",
       "topbar_reset": "Zurücksetzen",
+      "topbar_save": "Planeten speichern",
       "topbar_import": "Einen Planeten importieren",
       "topbar_export": "Einen Planeten exportieren",
       "topbar_export_all": "Vollen Kodex exportieren",
+      "topbar_gltf": "Einen Planeten als glTF exportieren",
 
       "footer": "Fußzeile - Verschiedenes",
       "footer_github": "GitHub Seite",
