@@ -166,14 +166,15 @@
     },
     "export_progress": {
       "$title": "Export en cours",
-      "step_1": "Préparation de l'export",
+      "step_1": "Préparation",
       "step_2": "Baking de la surface",
       "step_3": "Baking des données PBR",
       "step_4": "Baking des normales",
       "step_5": "Baking des nuages",
       "step_6": "Baking des anneaux",
-      "step_7": "Finalisation de l'export",
-      "step_8": "Terminé!"
+      "step_7": "Finalisation",
+      "step_8": "Terminé !",
+      "step_failed": "échec !"
     },
     "reset": {
       "$title": "Réinitialiser",

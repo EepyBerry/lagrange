@@ -1,6 +1,6 @@
 <template>
   <DialogElement
-    id="dialog-clear-data-confirm" 
+    id="dialog-clear-data-confirm"
     ref="dialogRef"
     :show-title="true"
     :show-actions="true"

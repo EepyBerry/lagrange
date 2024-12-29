@@ -4,7 +4,7 @@
       <iconify-icon icon="material-symbols:code-rounded" aria-hidden="true" />
       get tex
     </button>
-    
+
     <ParameterGroup v-model="LG_PLANET_DATA.planetSurfaceShowBumps" :toggleable="LG_PLANET_DATA.planetSurfaceShowBumps">
       <template #title>{{ $t('editor.controls.surface.bumpmap') }}</template>
       <template #content>
@@ -19,7 +19,10 @@
         </ParameterSlider>
       </template>
     </ParameterGroup>
-    <ParameterGroup v-model="LG_PLANET_DATA.planetSurfaceShowWarping" :toggleable="LG_PLANET_DATA.planetSurfaceShowWarping">
+    <ParameterGroup
+      v-model="LG_PLANET_DATA.planetSurfaceShowWarping"
+      :toggleable="LG_PLANET_DATA.planetSurfaceShowWarping"
+    >
       <template #title>{{ $t('editor.general.warping') }}</template>
       <template #content>
         <ParameterSlider id="s-xwarp" v-model="LG_PLANET_DATA.planetSurfaceNoise.xWarpFactor" :step="0.01" :max="8">
@@ -33,10 +36,18 @@
         </ParameterSlider>
       </template>
     </ParameterGroup>
-    <ParameterGroup v-model="LG_PLANET_DATA.planetSurfaceShowDisplacement" :toggleable="LG_PLANET_DATA.planetSurfaceShowDisplacement">
+    <ParameterGroup
+      v-model="LG_PLANET_DATA.planetSurfaceShowDisplacement"
+      :toggleable="LG_PLANET_DATA.planetSurfaceShowDisplacement"
+    >
       <template #title>{{ $t('editor.controls.surface.displacement') }}</template>
       <template #content>
-        <ParameterSlider id="s-dfac" v-model="LG_PLANET_DATA.planetSurfaceDisplacement.factor" :step="0.005" :max="0.25">
+        <ParameterSlider
+          id="s-dfac"
+          v-model="LG_PLANET_DATA.planetSurfaceDisplacement.factor"
+          :step="0.005"
+          :max="0.25"
+        >
           {{ $t('editor.general.displacement_factor') }}
         </ParameterSlider>
         <ParameterSlider
@@ -47,11 +58,21 @@
         >
           {{ $t('editor.general.displacement_epsilon') }}
         </ParameterSlider>
-        <ParameterSlider id="s-dmul" v-model="LG_PLANET_DATA.planetSurfaceDisplacement.multiplier" :step="0.01" :max="3">
+        <ParameterSlider
+          id="s-dmul"
+          v-model="LG_PLANET_DATA.planetSurfaceDisplacement.multiplier"
+          :step="0.01"
+          :max="3"
+        >
           {{ $t('editor.general.displacement_multiplier') }}
         </ParameterSlider>
         <ParameterDivider />
-        <ParameterSlider id="s-dfreq" v-model="LG_PLANET_DATA.planetSurfaceDisplacement.frequency" :step="0.01" :max="3">
+        <ParameterSlider
+          id="s-dfreq"
+          v-model="LG_PLANET_DATA.planetSurfaceDisplacement.frequency"
+          :step="0.01"
+          :max="3"
+        >
           {{ $t('editor.general.noise_fbm_frequency') }}
         </ParameterSlider>
         <ParameterSlider
@@ -95,7 +116,13 @@
         <ParameterSlider id="s-amp" v-model="LG_PLANET_DATA.planetSurfaceNoise.amplitude" :step="0.01" :max="1.25">
           {{ $t('editor.general.noise_fbm_amplitude') }}
         </ParameterSlider>
-        <ParameterSlider id="s-lac" v-model="LG_PLANET_DATA.planetSurfaceNoise.lacunarity" :step="0.01" :min="1" :max="3">
+        <ParameterSlider
+          id="s-lac"
+          v-model="LG_PLANET_DATA.planetSurfaceNoise.lacunarity"
+          :step="0.01"
+          :min="1"
+          :max="3"
+        >
           {{ $t('editor.general.noise_fbm_lacunarity') }}
         </ParameterSlider>
         <ParameterSlider id="s-oct" v-model="LG_PLANET_DATA.planetSurfaceNoise.octaves" :step="1" :min="1" :max="8">

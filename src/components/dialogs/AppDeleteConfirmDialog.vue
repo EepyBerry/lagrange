@@ -1,6 +1,6 @@
 <template>
   <DialogElement
-    id="dialog-delete-confirm" 
+    id="dialog-delete-confirm"
     ref="dialogRef"
     :show-title="true"
     :show-actions="true"

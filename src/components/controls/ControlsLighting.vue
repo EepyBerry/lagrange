@@ -13,7 +13,13 @@
           >
             {{ $t('editor.controls.lighting.lensflare_points_intensity') }}
           </ParameterSlider>
-          <ParameterSlider id="f-glareint" v-model="LG_PLANET_DATA.lensFlareGlareIntensity" :step="0.01" :min="0" :max="1">
+          <ParameterSlider
+            id="f-glareint"
+            v-model="LG_PLANET_DATA.lensFlareGlareIntensity"
+            :step="0.01"
+            :min="0"
+            :max="1"
+          >
             {{ $t('editor.controls.lighting.lensflare_glare_intensity') }}
           </ParameterSlider>
         </template>

@@ -10,7 +10,7 @@
     :iid="id"
     :min="min ?? 0"
     :max="max ?? 10"
-    :step="step ?? 1" 
+    :step="step ?? 1"
     :disabled="disabled"
   />
 </template>

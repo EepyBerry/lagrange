@@ -5,7 +5,7 @@
         v-if="editMode"
         ref="planetNameInput"
         v-model="LG_PLANET_DATA.planetName"
-        class="lg" 
+        class="lg"
         type="text"
         @keyup.enter="toggleEditMode"
       />

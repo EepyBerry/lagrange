@@ -12,7 +12,7 @@
     <button
       class="lg icon-button"
       :aria-label="$t('a11y.action_close_toast')"
-      :tabindex="visible ? 'auto' : '-1'" 
+      :tabindex="visible ? 'auto' : '-1'"
       @click="$emit('close')"
     >
       <iconify-icon icon="mingcute:close-line" width="1.5rem" aria-hidden="true" />

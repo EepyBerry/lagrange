@@ -1,5 +1,5 @@
 <template>
-  <p> 
+  <p>
     <slot>ParameterName</slot>
   </p>
   <div class="container">

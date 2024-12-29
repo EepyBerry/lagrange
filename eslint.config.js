@@ -5,7 +5,7 @@ import typescriptEslint from 'typescript-eslint'
 import globals from 'globals'
 
 export default typescriptEslint.config(
-  { 
+  {
     ignores: ['*.d.ts', 'coverage', 'dist', 'node_modules'],
   },
   {
@@ -29,14 +29,14 @@ export default typescriptEslint.config(
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
-          "args": "all",
-          "argsIgnorePattern": "^_",
-          "caughtErrors": "all",
-          "caughtErrorsIgnorePattern": "^_",
-          "destructuredArrayIgnorePattern": "^_",
-          "varsIgnorePattern": "^_",
-          "ignoreRestSiblings": true
-        }
+          args: 'all',
+          argsIgnorePattern: '^_',
+          caughtErrors: 'all',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
       ],
     },
   },

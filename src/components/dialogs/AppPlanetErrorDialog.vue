@@ -1,7 +1,7 @@
 <template>
   <DialogElement
     id="dialog-error"
-    ref="dialogRef" 
+    ref="dialogRef"
     :show-title="true"
     :closeable="true"
     :prevent-click-close="true"

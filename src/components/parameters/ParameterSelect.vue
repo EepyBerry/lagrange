@@ -1,4 +1,4 @@
-<template> 
+<template>
   <label :for="id">
     <slot>ParameterName</slot>
   </label>

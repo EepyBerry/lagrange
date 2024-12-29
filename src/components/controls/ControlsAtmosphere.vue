@@ -66,7 +66,14 @@
             </template>
           </ParameterRadio>
           <template v-if="[ColorMode.REALISTIC, ColorMode.MIXED].includes(LG_PLANET_DATA.atmosphereColorMode)">
-            <ParameterSlider id="a-hue" v-model="LG_PLANET_DATA.atmosphereHue" :step="0.01" :min="0" :max="2" extras="rgb">
+            <ParameterSlider
+              id="a-hue"
+              v-model="LG_PLANET_DATA.atmosphereHue"
+              :step="0.01"
+              :min="0"
+              :max="2"
+              extras="rgb"
+            >
               {{ $t('editor.controls.atmosphere.rgba_hue') }}
             </ParameterSlider>
           </template>

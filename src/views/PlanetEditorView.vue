@@ -79,7 +79,11 @@ const head = useHead({
 const webglErrorDialogRef: Ref<{ openWithError: (error: HTMLElement) => void } | null> = ref(null)
 const planetErrorDialogRef: Ref<{ openWithError: (error: string, stack?: string) => void } | null> = ref(null)
 const warnSaveDialogRef: Ref<{ open: () => void } | null> = ref(null)
-const exportProgressDialogRef: Ref<{ open: () => void; setProgress: (value: number) => void; setError: (value: unknown) => void } | null> = ref(null)
+const exportProgressDialogRef: Ref<{
+  open: () => void
+  setProgress: (value: number) => void
+  setError: (value: unknown) => void
+} | null> = ref(null)
 let loadedCorrectly = false
 
 // Data
@@ -96,7 +100,7 @@ const showCompactControls: Ref<boolean> = ref(false)
 const showCompactNavigation: Ref<boolean> = ref(false)
 
 // THREE canvas/scene root
-const sceneRoot: Ref<HTMLCanvasElement|null> = ref(null)
+const sceneRoot: Ref<HTMLCanvasElement | null> = ref(null)
 const showSpinner: Ref<boolean> = ref(true)
 const clock = new THREE.Clock()
 

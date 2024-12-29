@@ -240,7 +240,7 @@
         </CollapsibleSection>
 
         <CollapsibleSection icon="mingcute:alert-diamond-line" class="section-advanced">
-          <template #title> 
+          <template #title>
             {{ $t('dialog.settings.advanced') }}
           </template>
           <template #content>
@@ -300,8 +300,12 @@ import { EventBus } from '@/core/event-bus'
 const i18n = useI18n()
 
 const confirmDialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
-const dialogRef: Ref<{ open: () => void; close: () => void; ignoreNativeEvents: (v: boolean) => void; isOpen: boolean } | null> =
-  ref(null)
+const dialogRef: Ref<{
+  open: () => void
+  close: () => void
+  ignoreNativeEvents: (v: boolean) => void
+  isOpen: boolean
+} | null> = ref(null)
 const appSettings: Ref<IDBSettings> = ref({
   id: 0,
   locale: 'en-US',

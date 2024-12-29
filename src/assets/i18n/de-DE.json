@@ -174,8 +174,7 @@
       "step_6": "MISSING_TRANSLATION",
       "step_7": "MISSING_TRANSLATION",
       "step_8": "MISSING_TRANSLATION",
-      "step_9": "MISSING_TRANSLATION",
-      "step_10": "MISSING_TRANSLATION"
+      "step_failed": "MISSING_TRANSLATION"
     },
     "reset": {
       "$title": "Zurücksetzen",

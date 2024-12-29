@@ -1,13 +1,19 @@
 <template>
-  <section 
-    class="parameter-group"
-    :class="{ expanded: _expanded }"
-    role="group"
-    :aria-expanded="_expanded"
-  >
-    <button class="group-title" :class="{ locked: !toggleable }" @click="toggleExpand()" @keydown.enter="toggleExpand()">
+  <section class="parameter-group" :class="{ expanded: _expanded }" role="group" :aria-expanded="_expanded">
+    <button
+      class="group-title"
+      :class="{ locked: !toggleable }"
+      @click="toggleExpand()"
+      @keydown.enter="toggleExpand()"
+    >
       <span>
-        <input v-model="_toggleParam" type="checkbox" class="lg" :class="{ 'no-model': _toggleParam === undefined }" @click="handleCheckboxClick">
+        <input
+          v-model="_toggleParam"
+          type="checkbox"
+          class="lg"
+          :class="{ 'no-model': _toggleParam === undefined }"
+          @click="handleCheckboxClick"
+        />
         <h4><slot name="title">GROUP_TITLE</slot></h4>
       </span>
       <iconify-icon v-if="toggleable" class="indicator" icon="mingcute:right-fill" width="1rem" aria-hidden="true" />
@@ -23,14 +29,17 @@
 <script setup lang="ts">
 import { type Ref, onMounted, ref, watch } from 'vue'
 
-const _toggleParam = defineModel<boolean|undefined>({ default: undefined })
+const _toggleParam = defineModel<boolean | undefined>({ default: undefined })
 const _expanded: Ref<boolean> = ref(true)
 
-const _props = defineProps<{ expand?: boolean, toggleable?: boolean }>()
+const _props = defineProps<{ expand?: boolean; toggleable?: boolean }>()
 onMounted(() => (_expanded.value = _props.expand ?? true))
-watch(() => _toggleParam.value, v => {
-  if (!v) _expanded.value = false
-})
+watch(
+  () => _toggleParam.value,
+  (v) => {
+    if (!v) _expanded.value = false
+  },
+)
 
 function handleCheckboxClick(evt: Event) {
   evt.stopImmediatePropagation()
@@ -78,7 +87,7 @@ function toggleExpand() {
       display: flex;
       align-items: center;
       gap: 8px;
-      
+
       input[type='checkbox'].lg {
         pointer-events: all;
         cursor: pointer;
