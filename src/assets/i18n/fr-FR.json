@@ -457,5 +457,34 @@
     "action_sort_colorsteps": "Trier les points",
     "action_close_dialog": "Fermer la boîte de dialogue",
     "action_close_toast": "Fermer la notification"
+  },
+  "extras": {
+    "day_newyear": "Bonne année!",
+    "day_valentines": "Joyeuse Saint-Valentin! ❤️",
+    "day_strawberry": "C'est la Journée des Fraises! 🍓",
+    "day_pi": "Joyeux Jour de Pi! 🥧",
+    "day_transvisibility": "Joyeuse Journée de Visibilité Trans!",
+    "day_acevisibility": "Joyeuse Journée de Visibilité Asexuelle!",
+    "day_lesbianvisibility": "Joyeuse Journée de Visibilité Lesbienne!",
+    "day_agenderawareness": "Joyeuse Journée de Visibilité Agenre!",
+    "day_panawareness": "Joyeuse Journée de Visibilité Pansexuelle/Panromantique!",
+    "day_arovisibility": "Joyeuse Journée de Visibilité Aromantique!",
+    "day_nonbinary": "Joyeuse Journée de Fierté Non-Binaire!",
+    "day_firstrelease": "Joyeux anniversaire, Lagrange! 🪐",
+    "day_biawareness": "Joyeuse Journée de Fierté Bisexuelle+!",
+    "day_lesbian": "Joyeuse Journée de Fierté Lesbienne!",
+    "day_comingout": "Joyeuse Journée Internationale du Coming Out! ✨",
+    "day_intersexawareness": "Joyeuse Journée de Visibilté Intersexe!",
+    "day_halloween": "Joyeux Halloween! 🎃",
+    "day_intersexremembrance": "Souvenons-nous ce jour de nos adelphes intersexes perdu·es",
+    "day_transremembrance": "Souvenons-nous ce jour de nos adelphes trans+ perdu·es",
+    "day_polyamory": "Joyeuse Journée de Fierté Polyamoureuse!",
+
+    "week_biawareness": "Joyeuse Journée de Visibilité Bisexuelle!",
+    "week_genderfluidvisibility": "Joyeuse Journée de Visibilité Genderfluid!",
+    "week_transawareness": "Joyeuse Journée de Visibilité Trans!",
+    "month_pride": "Joyeux Mois de la Fierté! 🌈",
+
+    "overlay1": "je te vois"
   }
 }

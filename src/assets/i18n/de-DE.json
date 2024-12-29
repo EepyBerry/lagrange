@@ -457,5 +457,34 @@
     "action_sort_colorsteps": "Punkte sortieren",
     "action_close_dialog": "Dialog schließen",
     "action_close_toast": "Benachrichtigung schließen"
+  },
+  "extras": {
+    "day_newyear": "MISSING_TRANSLATION",
+    "day_valentines": "MISSING_TRANSLATION",
+    "day_strawberry": "MISSING_TRANSLATION",
+    "day_pi": "MISSING_TRANSLATION",
+    "day_transvisibility": "MISSING_TRANSLATION",
+    "day_acevisibility": "MISSING_TRANSLATION",
+    "day_lesbianvisibility": "MISSING_TRANSLATION",
+    "day_agenderawareness": "MISSING_TRANSLATION",
+    "day_panawareness": "MISSING_TRANSLATION",
+    "day_arovisibility": "MISSING_TRANSLATION",
+    "day_nonbinary": "MISSING_TRANSLATION",
+    "day_firstrelease": "MISSING_TRANSLATION",
+    "day_biawareness": "MISSING_TRANSLATION",
+    "day_lesbian": "MISSING_TRANSLATION",
+    "day_comingout": "MISSING_TRANSLATION",
+    "day_intersexawareness": "MISSING_TRANSLATION",
+    "day_halloween": "MISSING_TRANSLATION",
+    "day_intersexremembrance": "MISSING_TRANSLATION",
+    "day_transremembrance": "MISSING_TRANSLATION",
+    "day_polyamory": "MISSING_TRANSLATION",
+
+    "week_biawareness": "MISSING_TRANSLATION",
+    "week_genderfluidvisibility": "MISSING_TRANSLATION",
+    "week_transawareness": "MISSING_TRANSLATION",
+    "month_pride": "MISSING_TRANSLATION",
+
+    "overlay1": "ich sehe dich"
   }
 }
