@@ -240,6 +240,14 @@
                 >
                   {{ $t('dialog.settings.extras_hologram_mode') }}:
                 </ParameterCheckbox>
+                <ParameterCheckbox
+                  id="settings-special-days"
+                  v-model="appSettings.extrasShowSpecialDays"
+                  :true-value="true"
+                  :false-value="false"
+                >
+                  {{ $t('dialog.settings.extras_special_days') }}:
+                </ParameterCheckbox>
               </ParameterGrid>
             </div>
           </template>
@@ -296,13 +304,13 @@ import { useI18n } from 'vue-i18n'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
 import { mapLocale } from '@/utils/utils'
 import ParameterKeyBinding from '../parameters/ParameterKeyBinding.vue'
-import { A11Y_ANIMATE, EXTRAS_HOLOGRAM_MODE } from '@/core/globals'
+import { A11Y_ANIMATE } from '@/core/globals'
 import NotificationElement from '../elements/NotificationElement.vue'
 import ParameterCategory from '../parameters/ParameterCategory.vue'
 import AppClearDataConfirmDialog from './AppClearDataConfirmDialog.vue'
 import { clearData } from '@/utils/dexie-utils'
 import { EventBus } from '@/core/event-bus'
-import { EXTRAS_CAT_MODE } from '@/core/extras'
+import { EXTRAS_CAT_MODE, EXTRAS_HOLOGRAM_MODE, EXTRAS_SPECIAL_DAYS } from '@/core/extras'
 
 const i18n = useI18n()
 
@@ -321,6 +329,7 @@ const appSettings: Ref<IDBSettings> = ref({
   enableAnimations: true,
   enableEffects: true,
   extrasHologramMode: false,
+  extrasShowSpecialDays: true
 })
 const persistStorage: Ref<boolean> = ref(false)
 const selectedAction: Ref<string | null> = ref(null)
@@ -396,6 +405,7 @@ async function updateSettings() {
   document.documentElement.setAttribute('data-effects', appSettings.value!.enableEffects ? 'on' : 'off')
   A11Y_ANIMATE.value = appSettings.value!.enableAnimations!
   EXTRAS_HOLOGRAM_MODE.value = appSettings.value!.extrasHologramMode!
+  EXTRAS_SPECIAL_DAYS.value = appSettings.value!.extrasShowSpecialDays!
 
   await idb.settings.update(appSettings.value!.id, {
     locale: mapLocale(appSettings.value!.locale),
@@ -407,6 +417,7 @@ async function updateSettings() {
     enableEffects: appSettings.value!.enableEffects,
     enableAnimations: appSettings.value!.enableAnimations,
     extrasHologramMode: appSettings.value!.extrasHologramMode,
+    extrasShowSpecialDays: appSettings.value!.extrasShowSpecialDays
   })
 }
 

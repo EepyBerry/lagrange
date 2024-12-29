@@ -56,8 +56,8 @@
 </template>
 
 <script setup lang="ts">
-import { uwuifyPath } from '@/core/extras'
-import { A11Y_ANIMATE, EXTRAS_HOLOGRAM_MODE } from '@/core/globals'
+import { EXTRAS_HOLOGRAM_MODE, uwuifyPath } from '@/core/extras'
+import { A11Y_ANIMATE } from '@/core/globals'
 import { type IDBPlanet } from '@/dexie.config'
 import { onMounted, ref, type Ref } from 'vue'
 import { RouterLink } from 'vue-router'

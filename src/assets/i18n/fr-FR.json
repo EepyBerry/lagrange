@@ -120,6 +120,7 @@
 
       "extras": "Extras",
       "extras_hologram_mode": "Mode hologramme",
+      "extras_special_days": "Afficher les jours spéciaux",
 
       "advanced": "Paramètres avancés",
       "advanced_persist": "Persister le stockage IndexedDB",

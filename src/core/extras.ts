@@ -1,8 +1,11 @@
 import { DateTime } from 'luxon'
 import { ref, type Ref } from 'vue'
 
-export type SpecialDayInfo = { emoji: string[]; translationKey: string; overlayMode?: number }
+export const EXTRAS_HOLOGRAM_MODE = ref(true)
+export const EXTRAS_SPECIAL_DAYS = ref(true)
 export const EXTRAS_CAT_MODE: Ref<boolean> = ref(false)
+
+export type SpecialDayInfo = { emoji: string[]; translationKey: string; overlayMode?: number }
 
 export function uwuifyPath(path: string): string {
   if (!EXTRAS_CAT_MODE.value) return path
@@ -11,7 +14,7 @@ export function uwuifyPath(path: string): string {
 
 // prettier-ignore
 export function checkSpecialDay(): SpecialDayInfo | undefined {
-  const now = DateTime.now()
+  const now = DateTime.fromISO('2024-11-20')
   if (now.month === 1  && now.day === 1)                   return { emoji: ['noto:confetti-ball'],                          translationKey: 'extras.day_newyear' }
   if (now.month === 2  && now.day === 14)                  return { emoji: ['noto:heart-with-arrow'],                       translationKey: 'extras.day_valentines' }
   if (now.month === 2  && now.day === 27)                  return { emoji: ['noto:strawberry'],                             translationKey: 'extras.day_strawberry' }

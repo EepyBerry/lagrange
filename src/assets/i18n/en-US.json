@@ -120,6 +120,7 @@
 
       "extras": "Extras",
       "extras_hologram_mode": "Hologram mode",
+      "extras_special_days": "Show special days",
 
       "advanced": "Advanced Settings",
       "advanced_persist": "Persist IndexedDB storage",

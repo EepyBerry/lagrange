@@ -27,6 +27,7 @@ interface IDBSettings {
   enableEffects?: boolean
   enableAnimations?: boolean
   extrasHologramMode?: boolean
+  extrasShowSpecialDays?: boolean
 }
 
 interface IDBPlanet {

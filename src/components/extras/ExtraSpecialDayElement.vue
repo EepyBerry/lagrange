@@ -1,5 +1,5 @@
 <template>
-  <div v-if="specialDay" class="special-day-box" :title="$t(specialDay!.translationKey)">
+  <div v-if="specialDay && !!EXTRAS_SPECIAL_DAYS" class="special-day-box" :title="$t(specialDay!.translationKey)">
     <div class="special-day-emoji" :class="{ multi: specialDay!.emoji.length > 1, ...getSpecialOverlay(specialDay!.overlayMode) }">
       <iconify-icon v-for="emoji of specialDay?.emoji" :key="emoji" :icon="emoji" width="1.75rem" aria-hidden="true" />
     </div>
@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { checkSpecialDay, getSpecialOverlay, type SpecialDayInfo } from '@/core/extras';
+import { checkSpecialDay, EXTRAS_SPECIAL_DAYS, getSpecialOverlay, type SpecialDayInfo } from '@/core/extras';
 import { ref, type Ref } from 'vue';
 
 const specialDay: Ref<SpecialDayInfo|undefined> = ref(checkSpecialDay())
