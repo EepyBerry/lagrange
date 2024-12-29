@@ -55,7 +55,7 @@ import {
   LG_PLANET_DATA,
 } from '@/core/services/planet-editor.service'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
-import { getPlanetMetaTitle } from '@/utils/utils'
+import { getPlanetMetaTitle, sleep } from '@/utils/utils'
 import { saveAs } from 'file-saver'
 import { nanoid } from 'nanoid'
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
@@ -120,6 +120,7 @@ let _biomeDataTex: THREE.DataTexture
 let _ringDataTex: THREE.DataTexture
 
 onMounted(async () => {
+  await sleep(50)
   await bootstrapEditor()
 })
 onUnmounted(() => {

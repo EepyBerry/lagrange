@@ -3,7 +3,7 @@
     <div class="biome-header">
       <div class="biome-info">
         <button class="lg icon-button" @click="toggleExpand()" @keydown.enter="toggleExpand()">
-          <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.5rem" aria-hidden="true" />
+          <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.25rem" aria-hidden="true" />
         </button>
         <span class="current-color" :style="{ backgroundColor: `#${lgParam?.color?.getHexString()}` }"></span>
         <span class="biome-index">{{ getPartialId() }}</span>
@@ -130,7 +130,7 @@ function getPartialId() {
 
   display: flex;
   flex-direction: column;
-  padding: 0.75rem;
+  padding: 0.5rem;
 
   &.expanded > .biome-header .indicator {
     transform: rotateZ(90deg);

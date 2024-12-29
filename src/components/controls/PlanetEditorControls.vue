@@ -21,6 +21,7 @@ defineProps<{ compactMode: boolean }>()
   z-index: 10;
   position: absolute;
   inset: 0 auto 0;
+  margin-top: 3.875rem;
 
   display: flex;
   flex-direction: column;
@@ -31,7 +32,6 @@ defineProps<{ compactMode: boolean }>()
     width: 100%;
     padding: 1rem;
     padding-right: 1.5rem;
-    margin-top: 3.875rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -62,8 +62,7 @@ defineProps<{ compactMode: boolean }>()
 @media screen and (max-width: 1199px) {
   #controls:not(.compact) {
     .sidebar {
-      padding: 0.5rem;
-      margin-top: 3.375rem;
+      padding: 0 1.5rem 0 0.5rem;
 
       & > section {
         min-width: 0;

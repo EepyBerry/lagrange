@@ -73,11 +73,8 @@ function toggleExpand() {
     padding: 0 0.75rem 0.75rem;
     overflow-x: auto;
   }
-  .section-content:has(.default) {
-    text-align: center;
-    .default {
-      font-size: 0.75rem;
-    }
+  .section-content .default {
+    font-size: 0.75rem;
   }
 }
 .collapsible-section.warn {
