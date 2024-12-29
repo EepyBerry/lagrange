@@ -374,7 +374,7 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
 export async function exportPlanetToGLTF(
   renderer: THREE.WebGLRenderer,
-  progressDialog: { open: () => void; setProgress: (value: number) => void, setError: (error: unknown) => void },
+  progressDialog: { open: () => void; setProgress: (value: number) => void; setError: (error: unknown) => void },
 ) {
   progressDialog.setProgress(1)
   await sleep(50)
@@ -471,9 +471,9 @@ export async function exportPlanetToGLTF(
     progressDialog.setError(error)
   } finally {
     bakingTargets.forEach((bt) => {
-      bt.textures.forEach((tex) => tex.dispose());
-      (bt.mesh.material as THREE.MeshStandardMaterial)?.dispose();
-      bt.mesh.geometry?.dispose();
+      bt.textures.forEach((tex) => tex.dispose())
+      ;(bt.mesh.material as THREE.MeshStandardMaterial)?.dispose()
+      bt.mesh.geometry?.dispose()
     })
     progressDialog.setProgress(8)
   }

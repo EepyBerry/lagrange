@@ -25,7 +25,14 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue'
 
-defineProps<{ name: string; id: string; value: string|number|boolean|object; icon?: string; buttonAriaLabel: string; title?: string }>()
+defineProps<{
+  name: string
+  id: string
+  value: string | number | boolean | object
+  icon?: string
+  buttonAriaLabel: string
+  title?: string
+}>()
 const lgParam = defineModel<string | number | boolean>()
 const htmlRadio: Ref<HTMLInputElement | null> = ref(null)
 

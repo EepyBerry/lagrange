@@ -1,5 +1,5 @@
 <template>
-  <section 
+  <section
     class="collapsible-section"
     :class="{ expanded: _expanded, compact: compactMode, 'allow-icon-mode': allowIconMode }"
     role="group"

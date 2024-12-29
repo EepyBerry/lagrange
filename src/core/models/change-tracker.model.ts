@@ -22,7 +22,7 @@ export abstract class ChangeTracker {
 
 export type ChangedPropPair = {
   key: string
-  value: string|number|boolean|object
+  value: string | number | boolean | object
 }
 export type ChangedProp = {
   prop: string

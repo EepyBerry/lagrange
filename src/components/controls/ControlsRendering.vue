@@ -3,7 +3,7 @@
     <ParameterGroup :toggleable="true">
       <template #title>{{ $t('editor.controls.planet_rendering.transform') }}</template>
       <template #content>
-        <ParameterSlider id="p-tilt"  v-model="LG_PLANET_DATA.planetRadius" :step="0.01" :min="0.5" :max="1">
+        <ParameterSlider id="p-tilt" v-model="LG_PLANET_DATA.planetRadius" :step="0.01" :min="0.5" :max="1">
           {{ $t('editor.controls.planet_rendering.transform_radius') }}
         </ParameterSlider>
         <ParameterSlider id="p-tilt" v-model="LG_PLANET_DATA.planetAxialTilt" :step="1" :min="-180" :max="180">

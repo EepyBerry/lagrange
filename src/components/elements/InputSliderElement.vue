@@ -3,7 +3,7 @@
     <div class="lg-input-wrapper-slider">
       <input
         :id="iid ?? undefined"
-        class="lg" 
+        class="lg"
         type="range"
         :min="min ?? 0"
         :max="max ?? 100"

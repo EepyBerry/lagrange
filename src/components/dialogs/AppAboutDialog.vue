@@ -6,7 +6,7 @@
     :closeable="true"
     :aria-label="$t('a11y.dialog_about')"
   >
-    <template #content >
+    <template #content>
       <div class="about-grid">
         <div class="about-logo">
           <AppLogo />

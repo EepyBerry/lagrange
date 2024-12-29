@@ -66,7 +66,13 @@
           >
             {{ $t('editor.general.noise_fbm_lacunarity') }}
           </ParameterSlider>
-          <ParameterSlider id="b-toct" v-model="LG_PLANET_DATA.biomesTemperatureNoise.octaves" :step="1" :min="1" :max="8">
+          <ParameterSlider
+            id="b-toct"
+            v-model="LG_PLANET_DATA.biomesTemperatureNoise.octaves"
+            :step="1"
+            :min="1"
+            :max="8"
+          >
             {{ $t('editor.general.noise_fbm_octaves') }}
           </ParameterSlider>
         </template>

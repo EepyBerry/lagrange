@@ -6,7 +6,7 @@ export async function addDefaultSettings(): Promise<void> {
   idb.settings.put({
     // general
     theme: 'default',
-    locale: (navigator.language in I18N_SUPPORTED_LANGS) ? navigator.language : 'en-US',
+    locale: navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US',
     font: 'default',
     showInitDialog: true,
     // baking
@@ -35,7 +35,7 @@ export async function clearData(): Promise<void> {
   await idb.settings.update(settings[0].id, {
     // general
     theme: 'default',
-    locale: (navigator.language in I18N_SUPPORTED_LANGS) ? navigator.language : 'en-US',
+    locale: navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US',
     font: 'default',
     showInitDialog: true,
     // baking

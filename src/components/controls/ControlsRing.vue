@@ -20,7 +20,7 @@
         <template #content>
           <ParameterColorRamp
             :key="LG_PLANET_DATA.planetName"
-            v-model="(LG_PLANET_DATA.ringColorRamp as ColorRamp)"
+            v-model="LG_PLANET_DATA.ringColorRamp as ColorRamp"
             mode="rgba"
           >
             {{ $t('editor.general.noise_rgbaramp') }}

@@ -1,6 +1,6 @@
 <template>
   <DialogElement
-    id="dialog-exportprogress" 
+    id="dialog-exportprogress"
     ref="dialogRef"
     :show-title="true"
     :closeable="!!_progressError"
@@ -43,7 +43,7 @@ function open() {
 }
 function setProgress(value: number) {
   if (_progressError.value) return
-  
+
   _progressStep.value = value
   if (value === bakingSteps) {
     setTimeout(dialogRef.value!.close, 1000)
