@@ -1,8 +1,8 @@
-import { idb, KeyBindingAction } from '@/dexie.config'
+import { idb, KeyBindingAction, type IDBSettings } from '@/dexie.config'
 import { prefersReducedMotion } from './utils'
 import { I18N_SUPPORTED_LANGS } from '@/i18n.config'
 
-export async function addDefaultSettings(): Promise<void> {
+export async function initDefaultSettings(): Promise<void> {
   idb.settings.put({
     // general
     theme: 'default',
@@ -29,6 +29,25 @@ export async function addDefaultKeyBindings(): Promise<void> {
     { action: KeyBindingAction.ToggleAtmosphere, key: 'A' },
     { action: KeyBindingAction.TakeScreenshot, key: 'X' },
   ])
+}
+
+export async function injectMissingSettings(settings: IDBSettings): Promise<void> {
+  idb.settings.update(settings.id, {
+    // general
+    theme: settings.theme ?? 'default',
+    locale: settings.locale ?? (navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US'),
+    font: settings.font ?? 'default',
+    showInitDialog: settings.showInitDialog ?? true,
+    // baking
+    bakingResolution: settings.bakingResolution ?? 2048,
+    bakingPixelize: settings.bakingPixelize ?? false,
+    // accessibility
+    enableEffects: settings.enableEffects ?? !prefersReducedMotion(),
+    enableAnimations: settings.enableAnimations ?? !prefersReducedMotion(),
+    // extras
+    extrasHologramMode: settings.extrasHologramMode ?? false,
+    extrasShowSpecialDays: settings.extrasShowSpecialDays ?? true,
+  })
 }
 
 export async function clearData(): Promise<void> {

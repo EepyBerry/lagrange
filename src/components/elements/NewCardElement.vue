@@ -1,7 +1,7 @@
 <template>
   <RouterLink
     ref="cardRoot"
-    class="planet-card-link" 
+    class="planet-card-link"
     :to="uwuifyPath('/planet-editor/new')"
     :aria-label="$t('codex.$action_add')"
     :title="$t('codex.$action_add')"
@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { uwuifyPath } from '@/core/extras';
+import { uwuifyPath } from '@/core/extras'
 </script>
 
 <style scoped lang="scss">

@@ -69,18 +69,23 @@ onMounted(async () => {
 })
 
 async function initDexie() {
+  // Init standard settings
   let settings = await idb.settings.limit(1).first()
   if (!settings) {
     console.debug('No settings found in IndexedDB, adding defaults')
-    await DexieUtils.addDefaultSettings()
+    await DexieUtils.initDefaultSettings()
     settings = await idb.settings.limit(1).first()
   }
+  await DexieUtils.injectMissingSettings(settings!)
 
+  // Init keybinds
   const kb = await idb.keyBindings.limit(4).toArray()
   if (kb.length === 0) {
     console.debug('No keybinds found in IndexedDB, adding defaults')
     await DexieUtils.addDefaultKeyBindings()
   }
+
+  // Init HTML data (theme, font, effects)
   document.documentElement.setAttribute('data-theme', settings!.theme ?? 'default')
   document.documentElement.setAttribute('data-font', settings!.font ?? 'default')
   document.documentElement.setAttribute('data-effects', settings!.enableEffects ? 'on' : 'off')

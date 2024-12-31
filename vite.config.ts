@@ -25,11 +25,12 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
+    chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
         manualChunks: {
           vue: ['vue', 'vue-router', 'vue-accessible-color-picker', '@unhead/vue', 'vue-i18n'],
-          three: ['three'],
+          three: ['three', 'three-custom-shader-material'],
           export: ['pako', 'jszip', 'file-saver'],
         },
       },

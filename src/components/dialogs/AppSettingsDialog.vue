@@ -315,8 +315,12 @@ import { EXTRAS_CAT_MODE, EXTRAS_HOLOGRAM_MODE, EXTRAS_SPECIAL_DAYS } from '@/co
 const i18n = useI18n()
 
 const confirmDialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
-const dialogRef: Ref<{ open: () => void; close: () => void; ignoreNativeEvents: (v: boolean) => void; isOpen: boolean } | null> =
-  ref(null)
+const dialogRef: Ref<{
+  open: () => void
+  close: () => void
+  ignoreNativeEvents: (v: boolean) => void
+  isOpen: boolean
+} | null> = ref(null)
 const catModeOverride = ref('en-UwU')
 const appSettings: Ref<IDBSettings> = ref({
   id: 0,
@@ -329,7 +333,7 @@ const appSettings: Ref<IDBSettings> = ref({
   enableAnimations: true,
   enableEffects: true,
   extrasHologramMode: false,
-  extrasShowSpecialDays: true
+  extrasShowSpecialDays: true,
 })
 const persistStorage: Ref<boolean> = ref(false)
 const selectedAction: Ref<string | null> = ref(null)
@@ -417,7 +421,7 @@ async function updateSettings() {
     enableEffects: appSettings.value!.enableEffects,
     enableAnimations: appSettings.value!.enableAnimations,
     extrasHologramMode: appSettings.value!.extrasHologramMode,
-    extrasShowSpecialDays: appSettings.value!.extrasShowSpecialDays
+    extrasShowSpecialDays: appSettings.value!.extrasShowSpecialDays,
   })
 }
 
