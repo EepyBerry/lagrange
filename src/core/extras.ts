@@ -43,10 +43,11 @@ export function checkSpecialDay(): SpecialDayInfo | undefined {
   return undefined
 }
 
-export function getSpecialOverlay(mode?: number): { [key: string]: boolean }|undefined {
+export function getSpecialOverlay(mode?: number): { [key: string]: boolean } | undefined {
   if (!mode) return
   switch (mode) {
-    case 1: return { 'overlay-1': true }
+    case 1:
+      return { 'overlay-1': true }
   }
   return undefined
 }
