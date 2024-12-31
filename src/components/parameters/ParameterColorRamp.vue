@@ -35,8 +35,8 @@
             v-if="!lgColorRamp?.isBoundStep(step.id) && mode !== 'opacity'"
             class="lg warn"
             :aria-label="$t('a11y.action_open_colorpanel')"
-            @click="removeStep(step.id)"
             :disabled="pickerIdOpen === step.id"
+            @click="removeStep(step.id)"
           >
             <iconify-icon class="icon" icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
           </button>
@@ -47,14 +47,14 @@
             <span v-if="lgColorRamp?.isBoundStep(step.id)">{{ step.factor }}</span>
             <InputSliderElement
               v-else
-              ref="htmlFactorInputs"
-              class="lg wrapper-input"
               :id="step.id"
+              ref="htmlFactorInputs"
+              v-model="step.factor"
+              class="lg wrapper-input"
               :min="0.001"
               :max="0.999"
               :step="0.001"
               :aria-label="$t('a11y.editor_generic_input')"
-              v-model="step.factor"
               @input="updateStepFactor(step.id, $event)"
             />
           </div>
@@ -108,12 +108,12 @@
     <tr v-if="['rgb', 'rgba'].includes(mode ?? 'rgb') || !mode">
       <td colspan="4">
         <div class="add-step">
-          <button class="lg" @click="addStep()" :aria-label="$t('a11y.action_add_colorstep')">
+          <button class="lg" :aria-label="$t('a11y.action_add_colorstep')" @click="addStep()">
             <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
             {{ $t('editor.$action_add') }}
           </button>
           <iconify-icon class="icon" icon="ph:dot-outline-fill" width="1.25rem" aria-hidden="true" />
-          <button class="lg" @click="sortSteps()" :aria-label="$t('a11y.action_sort_colorsteps')">
+          <button class="lg" :aria-label="$t('a11y.action_sort_colorsteps')" @click="sortSteps()">
             <iconify-icon
               class="icon"
               icon="mingcute:numbers-09-sort-ascending-line"

@@ -4,6 +4,7 @@
   </label>
   <!-- prettier-ignore-attribute -->
   <InputSliderElement
+    v-model="(lgParam as number)"
     class="lg"
     :class="extras"
     :iid="id"
@@ -11,7 +12,6 @@
     :max="max ?? 10"
     :step="step ?? 1"
     :disabled="disabled"
-    v-model="(lgParam as number)"
   />
 </template>
 

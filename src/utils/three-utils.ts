@@ -21,13 +21,13 @@ export function patchMeshUniform(mesh: MeshOrLensFlare, uname: string, uvalue: o
   mat.needsUpdate = true
 }
 
-export function setMeshUniform(mesh: MeshOrLensFlare, uname: string, uvalue: any): void {
+export function setMeshUniform(mesh: MeshOrLensFlare, uname: string, uvalue: unknown): void {
   const mat = mesh.material as MeshMaterial
   mat.uniforms[uname] = { value: uvalue }
   mat.needsUpdate = true
 }
 
-export function setMeshUniforms(mesh: MeshOrLensFlare, unames: string[], uvalues: any[]): void {
+export function setMeshUniforms(mesh: MeshOrLensFlare, unames: string[], uvalues: unknown[]): void {
   const mat = mesh.material as MeshMaterial
   for (let i = 0; i < unames.length; i++) {
     mat.uniforms[unames[i]] = { value: uvalues[i] }

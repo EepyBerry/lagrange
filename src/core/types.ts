@@ -1,14 +1,18 @@
-import type { DataTexture } from 'three'
+import type { DataTexture, Mesh, Texture } from 'three'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
+// ---------------------------------- Shader loader ---------------------------------
+export enum ShaderFileType {
+  CORE,
+  BAKING,
+  FUNCTION,
+}
+
+// ----------------------------------- Editor types ---------------------------------
 export enum PlanetType {
   TELLURIC,
   GASEOUS,
-}
-export enum GeometryType {
-  SPHERE,
-  RING,
 }
 export enum ColorMode {
   REALISTIC,
@@ -29,10 +33,6 @@ export type Rect = {
   r?: number
   b?: number
 }
-export type Coordinates2D = {
-  x: number
-  y: number
-}
 export type RawRGBA = {
   r: number
   g: number
@@ -43,4 +43,10 @@ export type RawRGBA = {
 export type DataTextureWrapper = {
   texture: DataTexture
   data: Uint8Array
+}
+
+// ----------------------------------- Baking types ---------------------------------
+export type BakingTarget = {
+  mesh: Mesh
+  textures: Texture[]
 }

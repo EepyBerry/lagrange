@@ -1,5 +1,5 @@
 <template>
-  <div class="planet-card" ref="cardRoot">
+  <div ref="cardRoot" class="planet-card">
     <span class="deco-polygon">
       <span class="hole"></span>
     </span>
@@ -27,7 +27,7 @@
       </button>
       <hr />
       <RouterLink
-        :to="'/planet-editor/' + planet.id"
+        :to="uwuifyPath('/planet-editor/' + planet.id)"
         class="lg link-button"
         :aria-label="$t('codex.$action_edit', { planet: planet.data.planetName })"
         :title="$t('codex.$action_edit', { planet: planet.data.planetName })"
@@ -56,7 +56,8 @@
 </template>
 
 <script setup lang="ts">
-import { A11Y_ANIMATE, EXTRAS_HOLOGRAM_MODE } from '@/core/globals'
+import { EXTRAS_HOLOGRAM_MODE, uwuifyPath } from '@/core/extras'
+import { A11Y_ANIMATE } from '@/core/globals'
 import { type IDBPlanet } from '@/dexie.config'
 import { onMounted, ref, type Ref } from 'vue'
 import { RouterLink } from 'vue-router'

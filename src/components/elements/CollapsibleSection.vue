@@ -12,7 +12,7 @@
       </h3>
       <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.25rem" aria-hidden="true" />
     </button>
-    <div class="section-content" v-show="_expanded">
+    <div v-show="_expanded" class="section-content">
       <slot name="content">
         <span class="default">Nothing here yet, sorry :c</span>
       </slot>
@@ -73,11 +73,8 @@ function toggleExpand() {
     padding: 0 0.75rem 0.75rem;
     overflow-x: auto;
   }
-  .section-content:has(.default) {
-    text-align: center;
-    .default {
-      font-size: 0.75rem;
-    }
+  .section-content .default {
+    font-size: 0.75rem;
   }
 }
 .collapsible-section.warn {

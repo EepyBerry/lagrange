@@ -11,6 +11,7 @@
   --lg-input: #0f191f;
   --lg-input-focus: #15242c;
   --lg-overlay: #2f373e44;
+  --lg-border-disabled: #242424;
 
   --lg-contrast-light: #0b201f;
   --lg-contrast-medium: #143f3b;
@@ -138,6 +139,16 @@
     font-family:
       Jetbrains Mono,
       monospace;
+  }
+}
+:root[data-font='lowvision'] {
+  body * {
+    font-family: Atkinson Hyperlegible;
+  }
+}
+:root[data-font='dyslexia'] {
+  body * {
+    font-family: 'Open-Dyslexic';
   }
 }
 

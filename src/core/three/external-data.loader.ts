@@ -1,9 +1,7 @@
 import * as THREE from 'three'
-import { TGALoader } from 'three/addons/loaders/TGALoader.js'
 
-const CUBE_TEXTURE_LOADER = new THREE.CubeTextureLoader()
-const TEXTURE_LOADER = new THREE.TextureLoader()
-const TGA_LOADER = new TGALoader()
+export const TEXTURE_LOADER = new THREE.TextureLoader()
+export const CUBE_TEXTURE_LOADER = new THREE.CubeTextureLoader()
 
 /**
  *
@@ -24,13 +22,7 @@ export function loadCubeTexture(path: string, faces: string[], filter?: THREE.Mi
  * @param data the image URL
  */
 export function loadTextureFromUrl(url: string, colorSpace: THREE.ColorSpace) {
-  let texture
-  if (url.endsWith('.tga')) {
-    texture = TGA_LOADER.load(url)
-    texture.colorSpace = colorSpace
-  } else {
-    texture = TEXTURE_LOADER.load(url, undefined, undefined, (err) => console.error(err))
-    texture.colorSpace = colorSpace
-  }
+  const texture = TEXTURE_LOADER.load(url, undefined, undefined, (err) => console.error(err))
+  texture.colorSpace = colorSpace
   return texture
 }

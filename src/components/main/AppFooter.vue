@@ -1,5 +1,5 @@
 <template>
-  <footer :class="{ transparent: $route.name !== 'codex' }" v-show="$route.name !== 'page-not-found'">
+  <footer v-show="$route.name !== 'page-not-found'" :class="{ transparent: $route.name !== 'codex' }">
     <div id="footer-nav">
       <button
         class="lg dark"
@@ -30,6 +30,7 @@
         <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" />
         <iconify-icon class="link-icon" icon="mingcute:right-small-fill" width="2rem" aria-hidden="true" />
       </a>
+      <ExtraSpecialDayElement />
     </div>
   </footer>
   <AppAboutDialog ref="infoDialog" />
@@ -40,8 +41,9 @@
 import { ref, type Ref } from 'vue'
 import AppAboutDialog from '@components/dialogs/AppAboutDialog.vue'
 import AppSettingsDialog from '@components/dialogs/AppSettingsDialog.vue'
-const infoDialog: Ref<{ open: Function; close: Function } | null> = ref(null)
-const settingsDialog: Ref<{ open: Function; close: Function } | null> = ref(null)
+import ExtraSpecialDayElement from '../extras/ExtraSpecialDayElement.vue'
+const infoDialog: Ref<{ open: () => void; close: () => void } | null> = ref(null)
+const settingsDialog: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 </script>
 
 <style lang="scss">

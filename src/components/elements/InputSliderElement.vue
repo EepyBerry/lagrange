@@ -2,9 +2,9 @@
   <div class="lg-input-wrapper">
     <div class="lg-input-wrapper-slider">
       <input
+        :id="iid ?? undefined"
         class="lg"
         type="range"
-        :id="iid ?? undefined"
         :min="min ?? 0"
         :max="max ?? 100"
         :step="step ?? 1"
@@ -15,13 +15,13 @@
     </div>
 
     <input
+      v-model="vModel"
       :aria-labelledby="iid"
       class="lg"
       type="number"
       :min="min ?? 0"
       :max="max ?? 100"
       :step="step ?? 1"
-      v-model="vModel"
     />
   </div>
 </template>

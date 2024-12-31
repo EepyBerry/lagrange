@@ -1,10 +1,10 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
-import type { Rect, DataTextureWrapper, Coordinates2D, RawRGBA } from '@/core/types'
+import type { Rect, DataTextureWrapper, RawRGBA } from '@/core/types'
 import { alphaBlendColors, avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
-import { Color, DataTexture } from 'three'
+import { Color, DataTexture, Vector2 } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
-import { INT8_TO_UNIT_MUL } from '../globals'
+import { MUL_INT8_TO_UNIT } from '../globals'
 import { toRawRGBA } from '@/utils/utils'
 
 export function createRampTexture(buffer: Uint8Array, w: number, steps: ColorRampStep[]): DataTextureWrapper {
@@ -88,7 +88,7 @@ function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
     lineStride = biomeRect.y * w * 4
 
     // Prepare coords and pixel/biome colors
-    const pixelCoords: Coordinates2D = { x: biomeRect.x, y: biomeRect.y }
+    const pixelCoords: Vector2 = new Vector2(biomeRect.x, biomeRect.y)
     const pixelRGBA = { r: 0, g: 0, b: 0, a: 0 }
     const biomeRGBA = { r: biome.color.r, g: biome.color.g, b: biome.color.b, a: 1 }
 
@@ -96,7 +96,7 @@ function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
     let rectDistance: number, bufferIdx: number, blendedColor: RawRGBA
     for (let biomePx = 0; biomePx < totalPixels; biomePx++) {
       bufferIdx = lineStride + cellStride
-      _writeToRawRGBA(pixelRGBA, buffer, bufferIdx, INT8_TO_UNIT_MUL)
+      _writeToRawRGBA(pixelRGBA, buffer, bufferIdx, MUL_INT8_TO_UNIT)
 
       rectDistance = findMinDistanceToRect(biomeRect, pixelCoords.x, pixelCoords.y, biomeOverlaps)
       biomeRGBA.a = truncateTo(clamp(rectDistance / biomeAvgSmoothness, 0, 1), 1e4)

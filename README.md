@@ -102,6 +102,7 @@ This project is heavily inspired by the awesome projects below:
 **Special thanks** to the awesome people below, without whom this project would likely not exist:
 
 <ul>
+  <li>Three.js extensions: <a href=\"https://github.com/FarazzShaikh\" target=\"\"><b>Faraz Shaikh</b></a> (CustomShaderMaterial)</li>
   <li>Main GLSL code snippets: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)</li>
   <li>Miscellaneous GLSL code: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)</li>
 </ul>
@@ -113,7 +114,7 @@ The "Lagrange" logo, including _every_ update variant, is licensed under the Cre
 Original assets and source code from this project are provided under the "I'm So Tired" Software License 1.0 - No-Resale version.<br>
 Please consult the [license file](LICENSE) for full information.
 
-Content from other parties is provided under their respective license, and attribution is given at the top of the aforementioned content.
+Content from other parties is provided under their respective license, and attribution is given either at the top of the aforementioned content, or in a separate license file.
 
 ## 🤝 Contributing
 

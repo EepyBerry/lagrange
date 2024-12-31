@@ -1,18 +1,18 @@
 <template>
-  <div class="biome-grid" :id="lgParam!.id" :class="{ expanded: _expanded }">
+  <div :id="lgParam!.id" class="biome-grid" :class="{ expanded: _expanded }">
     <div class="biome-header">
       <div class="biome-info">
         <button class="lg icon-button" @click="toggleExpand()" @keydown.enter="toggleExpand()">
-          <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.5rem" aria-hidden="true" />
+          <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.25rem" aria-hidden="true" />
         </button>
         <span class="current-color" :style="{ backgroundColor: `#${lgParam?.color?.getHexString()}` }"></span>
         <span class="biome-index">{{ getPartialId() }}</span>
       </div>
       <span class="biome-actions">
-        <button class="lg" @click="$emit('moveup', lgParam!.id)" :disabled="index === 0">
+        <button class="lg" :disabled="index === 0" @click="$emit('moveup', lgParam!.id)">
           <iconify-icon icon="mingcute:up-fill" width="1.25rem" aria-hidden="true" />
         </button>
-        <button class="lg" @click="$emit('movedown', lgParam!.id)" :disabled="index === maxIndex">
+        <button class="lg" :disabled="index === maxIndex" @click="$emit('movedown', lgParam!.id)">
           <iconify-icon icon="mingcute:down-fill" width="1.25rem" aria-hidden="true" />
         </button>
         <hr class="action-divider" />
@@ -21,7 +21,7 @@
         </button>
       </span>
     </div>
-    <div class="biome-content" v-show="_expanded">
+    <div v-show="_expanded" class="biome-content">
       <hr class="info-divider" />
       <div class="biome-type">
         <strong>{{ $t('editor.controls.biomes.biome_type') }}:</strong>
@@ -35,21 +35,21 @@
         </div>
       </div>
       <ParameterDivider />
-      <ParameterSlider v-model="lgParam!.tempMin" :id="lgParam!.id + '-b-tmin'" :step="0.005" :min="0" :max="1">
+      <ParameterSlider :id="lgParam!.id + '-b-tmin'" v-model="lgParam!.tempMin" :step="0.005" :min="0" :max="1">
         {{ $t('editor.controls.biomes.temperature_min') }}
       </ParameterSlider>
-      <ParameterSlider v-model="lgParam!.tempMax" :id="lgParam!.id + '-b-tmax'" :step="0.005" :min="0" :max="1">
+      <ParameterSlider :id="lgParam!.id + '-b-tmax'" v-model="lgParam!.tempMax" :step="0.005" :min="0" :max="1">
         {{ $t('editor.controls.biomes.temperature_max') }}
       </ParameterSlider>
       <ParameterDivider />
-      <ParameterSlider v-model="lgParam!.humiMin" :id="lgParam!.id + '-b-hmin'" :step="0.005" :min="0" :max="1">
+      <ParameterSlider :id="lgParam!.id + '-b-hmin'" v-model="lgParam!.humiMin" :step="0.005" :min="0" :max="1">
         {{ $t('editor.controls.biomes.humidity_min') }}
       </ParameterSlider>
-      <ParameterSlider v-model="lgParam!.humiMax" :id="lgParam!.id + '-b-hmax'" :step="0.005" :min="0" :max="1">
+      <ParameterSlider :id="lgParam!.id + '-b-hmax'" v-model="lgParam!.humiMax" :step="0.005" :min="0" :max="1">
         {{ $t('editor.controls.biomes.humidity_max') }}
       </ParameterSlider>
       <ParameterDivider />
-      <ParameterSlider v-model="lgParam!.smoothness" :id="lgParam!.id + '-b-smoo'" :step="0.005" :min="0" :max="0.5">
+      <ParameterSlider :id="lgParam!.id + '-b-smoo'" v-model="lgParam!.smoothness" :step="0.005" :min="0" :max="0.5">
         {{ $t('editor.controls.biomes.smoothness') }}
       </ParameterSlider>
       <ParameterColor v-model="lgParam!.color">
@@ -96,8 +96,8 @@ function toggleExpand() {
 }
 
 function getBiomeTemperatureType(): string {
-  let minTypeIdx = temperatureTypeTable?.findLastIndex((b) => b.min <= lgParam.value!.tempMin)
-  let maxTypeIdx = temperatureTypeTable?.findIndex((b) => b.max >= lgParam.value!.tempMax)
+  const minTypeIdx = temperatureTypeTable?.findLastIndex((b) => b.min <= lgParam.value!.tempMin)
+  const maxTypeIdx = temperatureTypeTable?.findIndex((b) => b.max >= lgParam.value!.tempMax)
   if (minTypeIdx >= 0 && minTypeIdx === maxTypeIdx) {
     return temperatureTypeTable[minTypeIdx].label
   } else {
@@ -106,8 +106,8 @@ function getBiomeTemperatureType(): string {
 }
 
 function getBiomeHumidityType(): string {
-  let minTypeIdx = humidityTypeTable.findLastIndex((b) => b.min <= lgParam.value!.humiMin)
-  let maxTypeIdx = humidityTypeTable.findIndex((b) => b.max >= lgParam.value!.humiMax)
+  const minTypeIdx = humidityTypeTable.findLastIndex((b) => b.min <= lgParam.value!.humiMin)
+  const maxTypeIdx = humidityTypeTable.findIndex((b) => b.max >= lgParam.value!.humiMax)
   if (minTypeIdx === maxTypeIdx) {
     return humidityTypeTable[minTypeIdx].label
   } else {
@@ -130,7 +130,7 @@ function getPartialId() {
 
   display: flex;
   flex-direction: column;
-  padding: 0.75rem;
+  padding: 0.5rem;
 
   &.expanded > .biome-header .indicator {
     transform: rotateZ(90deg);

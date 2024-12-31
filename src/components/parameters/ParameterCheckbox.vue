@@ -3,13 +3,13 @@
     <slot>ParameterName</slot>
   </label>
   <input
+    :id="id"
+    v-model="lgParam"
     type="checkbox"
     class="lg"
-    :id="id"
     :true-value="trueValue"
     :false-value="falseValue"
     :disabled="disabled"
-    v-model="lgParam"
   />
 </template>
 

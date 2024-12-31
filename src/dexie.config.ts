@@ -22,13 +22,17 @@ interface IDBSettings {
   theme: string
   font: string
   showInitDialog?: boolean
+  bakingResolution?: number
+  bakingPixelize?: boolean
   enableEffects?: boolean
   enableAnimations?: boolean
   extrasHologramMode?: boolean
+  extrasShowSpecialDays?: boolean
 }
 
 interface IDBPlanet {
   id: string
+  timestamp?: number
   version?: string
   preview?: string
   data: PlanetData

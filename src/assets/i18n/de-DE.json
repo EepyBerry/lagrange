@@ -1,0 +1,491 @@
+{
+  "main": {
+    "$title": "Lagrange",
+    "locale": "de-DE",
+    "language": "Deutsch",
+    "more_coming_soon": "Mehr Sprachen kommen !",
+    "test_message": "Pfannkuchen hehe :3 🇩🇪",
+    "unit": "Einheit",
+    "units": "Einheiten",
+    "unknown_value": "[UNBEKANNT]",
+
+    "nav": {
+      "codex": "Kodex",
+      "editor": "Editor"
+    },
+
+    "planet_data": {
+      "biome": "Biom",
+      "biome_type_arctic": "Arktik",
+      "biome_type_tundra": "Tundra",
+      "biome_type_temperate": "Mild",
+      "biome_type_subtropical": "Subtropisch",
+      "biome_type_tropical": "Tropisch",
+      "biome_type_volcanic": "Volkanisch",
+      "biome_type_various": "Divers",
+
+      "biome_type_arid": "Aride",
+      "biome_type_dry": "Trocken",
+      "biome_type_semihumid": "Halb-feucht",
+      "biome_type_humid": "Feucht"
+    }
+  },
+  "dialog": {
+    "webglerror": {
+      "$title": "Editor kann nicht gestartet werden!",
+      "brief": "Der WebGL-Kontext konnte nicht initialisiert werden. Siehe den unten angezeigten Fehler."
+    },
+    "planeterror": {
+      "$title": "Editor kann nicht gestartet werden!",
+      "brief": "Der Planet konnte nicht geladen werden. Siehe den unten angezeigten Fehler.",
+      "reporting": "Wenn möglich, überprüfen Sie die Browserkonsole und öffnen Sie ein Issue auf GitHub!"
+    },
+    "init": {
+      "$title": "Willkommen in @:main.$title",
+      "introduction": "Lagrange ist ein vollständig prozedurales Tool zur Planetenerstellung, perfekt für Ihre Erzählbedürfnisse rund um Planeten, Sonnensysteme oder sogar ganze Galaxien!",
+      "update_title": "Update 0.4 - Jovian Expansion !",
+      "update_brief": "Fügt zusätzliche Einstellungen hinzu, um Ihre Welten zu diversifizieren, wie XYZ-Verformung, Oberflächenstörungen und Ringe! Sie können jetzt Gasriesen nach Ihren Wünschen (neu) erschaffen!",
+      "$tmp_wip": "In Entwicklung. Neue Funktionen in zukünftigen Versionen!",
+
+      "shortcuts": "Tastaturkürzel",
+      "shortcuts_note": "Tastaturkürzel können in den Einstellungen geändert werden!",
+      "shortcuts_lensflare": "Blendenfleck ein-/ausblenden",
+      "shortcuts_biomes": "Biome ein-/ausblenden",
+      "shortcuts_clouds": "Wolken ein-/ausblenden",
+      "shortcuts_atmosphere": "Atmosphäre ein-/ausblenden",
+      "shortcuts_screenshot": "Screenshot",
+
+      "topbar": "Obere Leiste - Benennung und Daten",
+      "topbar_rename": "Planeten umbenennen",
+      "topbar_reset": "Zurücksetzen",
+      "topbar_save": "Planeten speichern",
+      "topbar_import": "Einen Planeten importieren",
+      "topbar_export": "Einen Planeten exportieren",
+      "topbar_export_all": "Vollen Kodex exportieren",
+      "topbar_gltf": "Einen Planeten als glTF exportieren",
+
+      "footer": "Fußzeile - Verschiedenes",
+      "footer_github": "GitHub Seite",
+      "footer_settings": "Einstellungen",
+      "footer_about": "Über @:main.$title",
+
+      "show_next_time": "Dieses Intro beim nächsten Start anzeigen?",
+      "enable_persistence": "Datenpersistenz für diese Anwendung aktivieren?",
+
+      "$action_confirm": "Auf geht's!"
+    },
+    "planetinfo": {
+      "$title": "Planeteninformationen",
+      "name": "Name",
+      "radius": "Radius",
+      "axialtilt": "Neigung",
+      "clouded": "Präsenz von Wolken",
+      "atmospheric": "Präsenz von Atmosphäre",
+      "ringed": "Präsenz von Ringen",
+
+      "biomes": "Zusammensetzung von Biomen",
+      "biomes_temp": "Temperatur",
+      "biomes_humi": "Luftfeuchtigkeit",
+      "biomes_mode": "Modus",
+      "biomes_none": "Dieser Planet hat kein definiertes Biom"
+    },
+    "settings": {
+      "$title": "Einstellungen",
+
+      "general": "Allgemein",
+      "general_language": "Sprache",
+      "general_theme": "Thema Auswahl",
+      "general_theme_default": "Komet",
+      "general_theme_supernova": "Supernova",
+      "general_theme_voyager": "Voyager",
+      "general_font": "Schriftart auswählen",
+      "general_font_default": "Standard - Poppins",
+      "general_font_monospace": "Fester Breite - JetBrains Mono",
+      "general_font_lowvision": "Sehschwäche - Atkinson Hyperlegible",
+      "general_font_dyslexia": "Legasthenie - OpenDyslexic",
+      "general_init_dialog": "Ladeeinführung anzeigen",
+
+      "editor": "Editor",
+      "editor_lensflare": "@:dialog.init.shortcuts_lensflare",
+      "editor_biomes": "@:dialog.init.shortcuts_biomes",
+      "editor_clouds": "@:dialog.init.shortcuts_clouds",
+      "editor_atmosphere": "@:dialog.init.shortcuts_atmosphere",
+      "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
+      "editor_baking_resolution": "Auflösung der Texturen beim Baking (Zweierpotenzen)",
+      "editor_baking_pixelize": "Texturen beim Baking verpixeln",
+
+      "a11y": "Zugänglichkeit",
+      "a11y_effects": "Visuelle Effekte aktivieren",
+      "a11y_animations": "Animationen aktivieren",
+
+      "extras": "Extras",
+      "extras_hologram_mode": "Hologram Modus",
+      "extras_special_days": "Spezielle Tage anzeigen",
+
+      "advanced": "Erweiterte Einstellungen",
+      "advanced_persist": "IndexedDB-Speicher beihalten",
+      "advanced_persist_prompt": "Aktivieren",
+      "advanced_persist_success": "Persistiert!",
+      "advanced_persist_failure": "Persistenz unmöglich!",
+      "advanced_persist_info": "Die Datenpersistenz hängt von den Browserregeln ab. Diese könnten gelöscht werden, wenn sie deaktiviert sind (z. B. bei wenig Speicherplatz)",
+      "advanced_danger_zone": "Rote Zone!",
+      "advanced_clear_data": "Daten löschen",
+
+      "shortcuts": "@:dialog.init.shortcuts"
+    },
+    "about": {
+      "description": "Eine prozedurale App zur Planetenerstellung.",
+      "motivation": "Projekt mit dem Ziel, mein Wunder über den Weltraum und die Planeten zu verwirklichen!",
+
+      "tech": "Die wichtigsten Tools und Bibliotheken hinter diesem Projekt",
+      "prefix_framework": "Framework: ",
+      "prefix_engine": "3D-Engine: ",
+
+      "changelogs": {
+        "$title": "Änderungsprotokoll",
+        "02_title": "Update 0.2 - Weltsammler",
+        "02_codex": "Fügt den Kodex hinzu: Listen, importieren und exportieren Sie Ihre Planeten über Ihren Browser!",
+        "02_ui": "Fügt Dialogfelder, Benachrichtigungen, ein Einstellungsmenü sowie neue Variablen im Editor hinzu (Radius, Atmosphäre).",
+        "02_a11y": "Zugänglichkeits- und Leistungsverbesserungen",
+        "03_title": "Update 0.3 - Ökosysteme",
+        "03_biomes": "Fügt ein komplettes Biomsystem hinzu, das über Temperatur und Luftfeuchtigkeit einstellbar ist!",
+        "03_linux": "Oberflächenrauschen wird bei Browsern mit Linux korrigiert!",
+        "03_fixes": "Einige kleinere Korrekturen sowie eine Reduzierung der Anzahl der Variationen im GLSL-Code!",
+        "04_title": "Update 0.4 - Jovian-Erweiterung",
+        "04_params": "Fügt neue Einstellungen für Ihre Welten hinzu: XYZ-Verformung, Oberflächenstörungen und Ringe!",
+        "04_ui": "Neues Dialogfeld für den Fall, dass der Editor ohne Speichern geschlossen wird, sowie verschiedene Anpassungen und Verbesserungen",
+        "04_misc": "Fügt die fr-FR-Übersetzung hinzu und ändert die Projektlizenz zu ISTSL-NR 1.0"
+      },
+      "credits": {
+        "$title": "Erwähnungen und Dank",
+        "libs": "Hauptabhängigkeiten:<a href=\"https://www.farazzshaikh.com/\" target=\"_blank\"><b>Faraz Shaikh</b></a> (THREE-CustomShaderMaterial)",
+        "glsl_main": "Haupt-GLSL-Code: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
+        "glsl_misc": "Verschiedener GLSL-Code: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
+        "contributors": "<b>Ein großes Dankeschön an alle Mitwirkenden an diesem Projekt ❤️</b>"
+      },
+
+      "built_with_love": "Erstellt mit 🏳️‍🌈 & ❤️",
+      "license": "Lizenz ISTSL-NR 1.0"
+    },
+    "export_progress": {
+      "$title": "Export im Gange",
+      "step_1": "Vorbereitung",
+      "step_2": "Oberfläche Baking",
+      "step_3": "PBR Daten Baking",
+      "step_4": "Normale Baking",
+      "step_5": "Wolken Baking",
+      "step_6": "Ringe Baking",
+      "step_7": "Finalisierung",
+      "step_8": "Fertig !",
+      "step_failed": "Fehler"
+    },
+    "reset": {
+      "$title": "Zurücksetzen",
+      "message": "Planeten im Gange zurücksetzen?",
+      "warning": "Alle nicht gespeicherten Änderungen gehen verloren!",
+      "$action_cancel": "Abbrechen",
+      "$action_confirm": "Bestätigen"
+    },
+    "delete": {
+      "$title": "[{planet}] löschen",
+      "message": "Bestätigen Sie die Löschung dieses Planeten?",
+      "warning": "Diese Aktion kann nicht rückgängig gemacht werden!",
+      "$action_cancel": "Abbrechen",
+      "$action_confirm": "Bestätigen"
+    },
+    "warnsave": {
+      "$title": "Warnung: nicht gespeicherter Planet",
+      "message": "Dieser Planet wurde noch nicht gespeichert. Den Editor trotzdem verlassen?",
+      "warning": "Alle nicht gespeicherten Änderungen gehen verloren!",
+      "$action_cancel": "Abbrechen",
+      "$action_saveconfirm": "Speichern und Bestätigen",
+      "$action_confirm": "Bestätigen"
+    },
+    "clear_data": {
+      "$title": "Lagrange Daten löschen",
+      "message": "Löschung aller Daten bestätigen?",
+      "warning": "Diese Aktion kann nicht rückgängig gemacht werden!",
+      "$action_cancel": "Abbrechen",
+      "$action_confirm": "Bestätigen"
+    }
+  },
+  "codex": {
+    "$title": "Planetarischer Kodex",
+    "$action_add": "Neuer Planet",
+    "$action_edit": "{planet} ändern",
+    "$action_info": "{planet} Infos",
+    "$action_export": "{planet} exportieren",
+    "$action_delete": "{planet} löschen",
+
+    "no_planets": "Keine Planeten gefunden. Über den Button oben können Sie einen erstellen!",
+
+    "topbar_import": "Importieren Sie einen Planeten aus einer Datei",
+    "topbar_export": "Alle Planeten exportieren"
+  },
+  "editor": {
+    "$title": "Planeten-Editor",
+    "default_planet_name": "Neuer Planet",
+    "$action_sort": "Sortieren",
+    "$action_add": "Hinzufügen",
+
+    "general": {
+      "displacement_factor": "Faktor",
+      "displacement_epsilon": "Epsilon",
+      "displacement_multiplier": "Multiplikator",
+
+      "warping": "Verformung",
+      "warping_show": "Verformung anzeigen",
+      "warping_x": "X Verformung",
+      "warping_y": "Y Verformung",
+      "warping_z": "Z Verformung",
+
+      "noise_layers": "Anzahl der Schichten",
+      "noise_fbm_frequency": "Frequenz",
+      "noise_fbm_amplitude": "Amplitude",
+      "noise_fbm_lacunarity": "Lückenhaftigkeit",
+      "noise_fbm_octaves": "Oktaven",
+
+      "noise_color": "Farbe",
+      "noise_rgbramp": "Farbverlauf",
+      "noise_rgbaramp": "Farbverlauf (RGBA)"
+    },
+    "controls": {
+      "lighting": {
+        "$title": "Helligkeit",
+
+        "lensflare": "Blendenfleck",
+        "lensflare_show": "Blendenfleck anzeigen",
+        "lensflare_points_intensity": "Punktintensität",
+        "lensflare_glare_intensity": "Blendintensität",
+
+        "sunlight": "Sternenlicht",
+        "sunlight_angle": "Winkel",
+        "sunlight_intensity": "Intensität",
+        "sunlight_color": "Farbe",
+
+        "amblight": "Umgebungslicht",
+        "amblight_intensity": "Intensität",
+        "amblight_color": "Farbe"
+      },
+      "planet_rendering": {
+        "$title": "Planet & Rendering",
+
+        "transform": "Verformung",
+        "transform_radius": "Radius",
+        "transform_axialtilt": "Axiale Neigung",
+        "transform_rotation": "Drehung",
+
+        "pbr": "PBR Parameter",
+        "pbr_waterlevel": "Meeresspiegel",
+        "pbr_waterroughness": "Rauheit  der Flüssigkeit",
+        "pbr_watermetalness": "Metallizität der Flüssigkeit",
+        "pbr_groundroughness": "Bodenrauheit",
+        "pbr_groundmetalness": "Bodenmetallizität"
+      },
+      "surface": {
+        "$title": "Oberfläche",
+
+        "bumpmap": "Bump mapping",
+        "bumpmap_show": "Beulen anzeigen",
+        "bumpmap_strength": "Intensität der Beulen",
+
+        "displacement": "Oberflächenstörung",
+        "displacement_show": "Störung anzeigen",
+        "noise": "Rauscheinstellungen"
+      },
+      "biomes": {
+        "$title": "Biomen",
+        "biomes_show": "Biomen anzeigen",
+
+        "texture_resolution": "Auflösung",
+        "temperature": "Temperaturgradient",
+        "humidity": "Feuchtigkeitsgradient",
+
+        "gradient_mode": "Verlaufsmodus",
+        "gradient_mode_realistic": "Realistisch",
+        "gradient_mode_poletopole": "Von Pol zu Pol",
+        "gradient_mode_fullnoise": "Rausch",
+
+        "biome_list": "Biome",
+        "biome_type": "Typ",
+
+        "height_min": "Min. Höhe",
+        "height_max": "Max. Höhe",
+        "temperature_min": "Min. Temperatur",
+        "temperature_max": "Max. Temperatur",
+        "humidity_min": "Min. Feuchtigkeit",
+        "humidity_max": "Max. Feuchtigkeit",
+        "smoothness": "Glättungsfaktor"
+      },
+      "clouds": {
+        "$title": "Wolken",
+        "clouds_show": "Wolken anzeigen",
+
+        "transform": "Transform",
+        "transform_rotation": "Drehung",
+
+        "noise": "Rausch Parameter",
+        "noise_fbm_frequency": "Frequenz",
+        "noise_fbm_amplitude": "Amplitude",
+        "noise_fbm_lacunarity": "Lückenhaftigkeit",
+
+        "rgba": "Farbe & Transparenz",
+        "rgba_opacityramp": "Transparenzrampe"
+      },
+      "atmosphere": {
+        "$title": "Atmosphäre",
+        "atmosphere_show": "Atmosphäre anzeigen",
+
+        "transform": "Verformung",
+        "transform_height": "Höhe",
+        "transform_density": "Dichte",
+
+        "rgba": "Farbe & Intensität",
+        "rgba_intensity": "Intensität",
+        "rgba_mode": "Farbmodus",
+        "rgba_mode_realistic": "Realistisch",
+        "rgba_mode_direct": "Direkt",
+        "rgba_mode_mixed": "Mischen",
+        "rgba_hue": "Farbton",
+        "rgba_tint": "Farbe"
+      },
+      "ring": {
+        "$title": "Ring",
+        "ring_show": "Ring anzeigen",
+
+        "transform": "Verformung",
+        "transform_radius_inner": "Interner Radius",
+        "transform_radius_outer": "Externer Radius",
+
+        "rgba": "Farbe & Transparenz",
+        "rgba_opacity": "Transparenz",
+        "rgba_colorramp": "Farbverlauf (RGBA)"
+      }
+    }
+  },
+  "404": {
+    "$title": "Seite nicht gefunden",
+    "text_01": "Hier ist nichts, sorry!",
+    "text_02": "\"Dieser Sektor ist völlig leer, Kapitän Blaubär!\"",
+    "text_03": "Oh. Du musst irgendwo eine Abzweigung verpasst haben ...",
+    "text_04": "SEITE\u00A0=\u00A0FEHLT. STATUS\u00A0=\u00A0404. SPACE\u00A0=\u00A0LEER.",
+    "subtext": "Die angeforderte Seite konnte nicht gefunden werden.",
+    "link": "Zurück zum Kodex"
+  },
+  "toast": {
+    "storage_success": "Persistenter Speicher aktiviert!",
+    "storage_failure_none": "Datenpersistenz wird in diesem Browser nicht unterstützt!",
+    "storage_failure_rules": "Datenpersistenz durch Browserregeln blockiert!",
+    "delete_success": "Planet gelöscht !",
+    "delete_failure": "Der Planet konnte nicht gelöscht werden",
+    "import_success": "Planeten Importiert!",
+    "import_partial": "Achtung: Einige Planeten konnten nicht importiert werden",
+    "import_failure": "Planeten können nicht importiert werden. Stellen Sie sicher, dass die richtigen Dateien ausgewählt wurden, und versuchen Sie es dann erneut",
+    "save_success": "Planet gespeichert !"
+  },
+  "tooltip": {
+    "topbar_rename": "Planeten umbenennen",
+    "topbar_rename_confirm": "Den Namen bestätigen",
+    "topbar_reset": "Zurücksetzen",
+    "topbar_save": "Speichern",
+    "topbar_gltf": "Export als glTF",
+    "topbar_import": "Eine Planetendatei importieren",
+    "topbar_export": "Eine Planetendatei exportieren",
+    "topbar_export_all": "Exportieren Sie alle Planeten im .zip Format",
+
+    "gradient_mode_realistic": "Niedrige Werte an den Polen, hohe am Äquator",
+    "gradient_mode_poletopole": "Niedrige Werte am Nordpol, hohe am Südpol",
+    "gradient_mode_fullnoise": "Werte, die vollständig durch Lärm gesteuert werden, ähnlich wie an der Oberfläche",
+
+    "rgba_mode_realistic": "Rohe Berechnungen der atmosphärischen Diffusion von Raleigh & Mie mit Tönung",
+    "rgba_mode_direct": "Tragt direkt nach der Berechnung eine einzelne Farbe auf",
+    "rgba_mode_mixed": "Tragt eine einzelne Farbe auf den ausgewählten Farbton auf",
+
+    "footer_github": "GitHub-Repository (im neuen Tab)",
+    "footer_settings": "Einstellungen",
+    "footer_about": "Über @:main.$title"
+  },
+  "a11y": {
+    "logo": "Lagrange Logo",
+    "logo_alt": "Geheimes Lagrange Logo !",
+    "logo_update_codex": "Aktualisierungs Logo",
+
+    "dialog_webgl_error": "WebGL-Fehler modal",
+    "dialog_planet_error": "Planetenfehlermodal",
+    "dialog_init": "Einführungsmodal",
+    "dialog_planetinfo": "Informationenmodal über den Planeten",
+    "dialog_settings": "Parametermodal",
+    "dialog_about": "Informationenmodal zu @:main.$title",
+    "dialog_export_progress": "Planetenexportmodal",
+    "dialog_reset": "Zurücksetzungbestätigungsmodal",
+    "dialog_delete": "Löschungbestätigungsmodal",
+    "dialog_warn_save": "Warnmodal für nicht gespeicherte Daten",
+    "dialog_clear_data": "Datendump-Bestätigungsmodal",
+
+    "topbar_rename": "@:tooltip.topbar_rename",
+    "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
+    "topbar_reset": "@:tooltip.topbar_reset",
+    "topbar_save": "@:tooltip.topbar_save",
+    "topbar_gltf": "@:tooltip.topbar_gltf",
+    "topbar_import": "@:tooltip.topbar_import",
+    "topbar_export": "@:tooltip.topbar_export",
+    "topbar_export_all": "@:tooltip.topbar_export_all",
+
+    "footer_github": "@:tooltip.footer_github",
+    "footer_settings": "@:tooltip.footer_settings",
+    "footer_about": "@:tooltip.footer_about",
+
+    "general_theme_default": "Das Thema Komet (blau) anwenden",
+    "general_theme_supernova": "Das Thema Supernova (lila) anwenden",
+    "general_theme_voyager": "Das Thema Voyager (orange) anwenden",
+    "editor_baking_resolution_256": "256 x 256 Pixel",
+    "editor_baking_resolution_512": "512 x 512 Pixel",
+    "editor_baking_resolution_1k": "1024 x 1024 Pixel",
+    "editor_baking_resolution_2k": "2048 x 2048 Pixel",
+    "editor_baking_resolution_4k": "4096 x 4096 Pixel",
+    "editor_baking_pixelize": "Ausgabetexturen pixelieren",
+
+    "editor_generic_input": "Parameterwert",
+
+    "action_nav_toggle": "Navigationsmenü ein-/ausblenden",
+    "action_nav_codex": "Link zum Kodex",
+    "action_nav_editor": "Link zum Editor",
+
+    "action_edit_keybind": "Taste ändern",
+    "action_edit_ramp": "Rampe ändern",
+    "action_open_colorpanel": "Das Farbfeld löschen",
+    "action_add_colorstep": "Einen Punkt hinzu fügen",
+    "action_sort_colorsteps": "Punkte sortieren",
+    "action_close_dialog": "Dialog schließen",
+    "action_close_toast": "Benachrichtigung schließen"
+  },
+  "extras": {
+    "day_newyear": "Gutes Jahr!",
+    "day_valentines": "Alles Gute zum Valentinstag! ❤️",
+    "day_strawberry": "Es ist Erdbeertag! 🍓",
+    "day_pi": "Es ist Pitag! 🥧",
+    "day_transvisibility": "Alles Gute zum Tag der Trans Sichtbarkeit!",
+    "day_acevisibility": "Alles Gute zum Tag der Asexuellen Sichtbarkeit!",
+    "day_lesbianvisibility": "Schönen Tag der Lesben Sichtbarkeit!",
+    "day_agenderawareness": "Alles Gute zum Tag der Agender Sichtbarkeit!",
+    "day_panawareness": "Alles Gute zum Tag der Pansexuellen/Panromantischen Sichtbarkeit!",
+    "day_arovisibility": "Alles Gute zum Tag der Aromantic Sichtbarkeit!",
+    "day_nonbinary": "Alles Gute zum Non-Binary Stolz Tag!",
+    "day_firstrelease": "Alles Gute zum Geburtstag, Lagrange! 🪐",
+    "day_biawareness": "Alles Gute zum Bisexuellen+ Stolz Tag!",
+    "day_lesbian": "Alles Gute zum Lesbian Stolz Tag!",
+    "day_comingout": "Alles Gute zum Internationalen Coming-Out-Tag! ✨",
+    "day_intersexawareness": "Alles Gute zum Tag der Intersex-Sichtbarkeit!",
+    "day_halloween": "Fröhliches Halloween! 🎃",
+    "day_intersexremembrance": "Erinnern wir uns an diesem Tag an unsere verlorenen intersexuellen Geschwistern",
+    "day_transremembrance": "Erinnern wir uns an diesen Tag an unsere verlorenen trans+ Geschwistern",
+    "day_polyamory": "Alles Gute zum Tag des polyamorösen Stolzes!",
+
+    "week_biawareness": "Alles Gute zum Tag der Sichtbarkeit von Bisexuellen!",
+    "week_genderfluidvisibility": "Alles Gute zum Tag der Genderfluid Sichtbarkeit!",
+    "week_transawareness": "Alles Gute zum Tag der Trans-Sichtbarkeit!",
+    "month_pride": "Schönen Pride-Monat! 🌈",
+
+    "overlay1": "ich sehe dich"
+  }
+}

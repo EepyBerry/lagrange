@@ -5,7 +5,12 @@
         <h2 v-if="showTitle" class="dialog-title">
           <slot name="title"></slot>
         </h2>
-        <button @click="close" class="lg icon-button dialog-close" :aria-label="$t('a11y.action_close_dialog')">
+        <button
+          v-if="closeable"
+          class="lg icon-button dialog-close"
+          :aria-label="$t('a11y.action_close_dialog')"
+          @click="close"
+        >
           <iconify-icon icon="mingcute:close-line" width="1.5rem" aria-hidden="true" />
         </button>
       </header>
@@ -38,7 +43,12 @@ const handleClick = (evt: Event) => {
   }
 }
 
-const $props = defineProps<{ showTitle?: boolean; showActions?: boolean; preventClickClose?: boolean }>()
+const $props = defineProps<{
+  showTitle?: boolean
+  showActions?: boolean
+  closeable?: boolean
+  preventClickClose?: boolean
+}>()
 onMounted(() => {
   dialog.value?.addEventListener('click', handleClick)
   dialog.value?.addEventListener('cancel', handleCancel)
@@ -114,6 +124,10 @@ dialog[open].lg {
 }
 dialog[open].lg::backdrop {
   background: rgb(0 0 0 / 40%);
+}
+dialog.lg.warn {
+  background: var(--lg-warn-panel);
+  border: 1px solid var(--lg-warn);
 }
 
 @media screen and (max-width: 767px) {

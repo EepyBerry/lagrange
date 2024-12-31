@@ -58,9 +58,11 @@
       "topbar": "Top bar - Naming & data",
       "topbar_rename": "Rename planet",
       "topbar_reset": "Reset to defaults",
+      "topbar_save": "Save planet",
       "topbar_import": "Import planet",
       "topbar_export": "Export planet",
       "topbar_export_all": "Export full codex",
+      "topbar_gltf": "Export as glTF",
 
       "footer": "Footer - Miscellaneous",
       "footer_github": "GitHub page",
@@ -96,7 +98,11 @@
       "general_theme_default": "Comet",
       "general_theme_supernova": "Supernova",
       "general_theme_voyager": "Voyager",
-      "general_monospace": "Enable monospace font",
+      "general_font": "Choose font to use",
+      "general_font_default": "Default - Poppins",
+      "general_font_monospace": "Monospace - JetBrains Mono",
+      "general_font_lowvision": "Low-vision - Atkinson Hyperlegible",
+      "general_font_dyslexia": "Dyslexia - OpenDyslexic",
       "general_init_dialog": "Show init dialog on load",
 
       "editor": "Editor",
@@ -105,6 +111,8 @@
       "editor_clouds": "@:dialog.init.shortcuts_clouds",
       "editor_atmosphere": "@:dialog.init.shortcuts_atmosphere",
       "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
+      "editor_baking_resolution": "Baking texture resolution (powers of two)",
+      "editor_baking_pixelize": "Pixelize baking output",
 
       "a11y": "Accessibility",
       "a11y_effects": "Enable visual effects",
@@ -112,6 +120,7 @@
 
       "extras": "Extras",
       "extras_hologram_mode": "Hologram mode",
+      "extras_special_days": "Show special days",
 
       "advanced": "Advanced Settings",
       "advanced_persist": "Persist IndexedDB storage",
@@ -149,13 +158,26 @@
       },
       "credits": {
         "$title": "Credits & attribution",
-        "glsl_terrestrial": "Terrestrial-type GLSL code: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
-        "glsl_misc": "Miscellaneous GLSL code: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
+        "libs": "Main libraries: <a href=\"https://www.farazzshaikh.com/\" target=\"_blank\"><b>Faraz Shaikh</b></a> (THREE-CustomShaderMaterial)",
+        "glsl_main": "Main GLSL snippets: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
+        "glsl_misc": "Miscellaneous GLSL snippets: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
         "contributors": "<b>Special thanks to all contributors of this project ❤️</b>"
       },
 
       "built_with_love": "Built with 🏳️‍🌈 & ❤️",
       "license": "ISTSL-NR 1.0 License"
+    },
+    "export_progress": {
+      "$title": "Exporting planet",
+      "step_1": "Preparing",
+      "step_2": "Baking surface texture",
+      "step_3": "Baking surface PBR",
+      "step_4": "Baking surface normals",
+      "step_5": "Baking clouds texture",
+      "step_6": "Baking ring system texture",
+      "step_7": "Finalizing",
+      "step_8": "Done!",
+      "step_failed": "failed!"
     },
     "reset": {
       "$title": "Confirm reset",
@@ -366,6 +388,7 @@
     "topbar_rename_confirm": "Confirm planet name",
     "topbar_reset": "Reset to defaults",
     "topbar_save": "Save planet",
+    "topbar_gltf": "Export as glTF",
     "topbar_import": "Import planet file",
     "topbar_export": "Export planet file",
     "topbar_export_all": "Export all planets as .zip",
@@ -393,6 +416,7 @@
     "dialog_planetinfo": "Planet info dialog",
     "dialog_settings": "Settings dialog",
     "dialog_about": "About @:main.$title dialog",
+    "dialog_export_progress": "Planet export dialog",
     "dialog_reset": "Confirm reset dialog",
     "dialog_delete": "Confirm delete dialog",
     "dialog_warn_save": "Unsaved data warning dialog",
@@ -402,6 +426,7 @@
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
     "topbar_reset": "@:tooltip.topbar_reset",
     "topbar_save": "@:tooltip.topbar_save",
+    "topbar_gltf": "@:tooltip.topbar_gltf",
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
     "topbar_export_all": "@:tooltip.topbar_export_all",
@@ -413,6 +438,12 @@
     "general_theme_default": "Set Comet theme (blue)",
     "general_theme_supernova": "Set Supernova theme (purple)",
     "general_theme_voyager": "Set Voyager theme (orange)",
+    "editor_baking_resolution_256": "256 by 256 pixels",
+    "editor_baking_resolution_512": "512 by 512 pixels",
+    "editor_baking_resolution_1k": "1024 by 1024 pixels",
+    "editor_baking_resolution_2k": "2048 by 2048 pixels",
+    "editor_baking_resolution_4k": "4096 by 4096 pixels",
+    "editor_baking_pixelize": "Pixelize baking output textures",
 
     "editor_generic_input": "Parameter value",
 
@@ -427,5 +458,34 @@
     "action_sort_colorsteps": "Sort color steps",
     "action_close_dialog": "Close dialog",
     "action_close_toast": "Close message"
+  },
+  "extras": {
+    "day_newyear": "Happy New Year!",
+    "day_valentines": "Happy Valentine's Day! ❤️",
+    "day_strawberry": "Happy Strawberry Day! 🍓",
+    "day_pi": "Happy Pi(e) Day! 🥧",
+    "day_transvisibility": "Happy Trans Day of Visibility!",
+    "day_acevisibility": "Happy Asexual Visibility Day!",
+    "day_lesbianvisibility": "Happy Lesbian Visibility Day!",
+    "day_agenderawareness": "Happy Agender Awareness Day!",
+    "day_panawareness": "Happy Pansexual/Panromantic Awareness Day!",
+    "day_arovisibility": "Happy Aromantic Visibility Day!",
+    "day_nonbinary": "Happy Non-Binary Day!",
+    "day_firstrelease": "Happy Birthday, Lagrange! 🪐",
+    "day_biawareness": "Happy Bisexual+ Pride Day!",
+    "day_lesbian": "Happy Lesbian Day!",
+    "day_comingout": "Happy International Coming Out Day! ✨",
+    "day_intersexawareness": "Happy Intersex Awareness Day!",
+    "day_halloween": "Happy Halloween! 🎃",
+    "day_intersexremembrance": "Remembering our fallen intersex siblings this day",
+    "day_transremembrance": "Remembering our fallen trans+ siblings this day",
+    "day_polyamory": "Happy Polyamory Day!",
+
+    "week_biawareness": "Happy Bisexual+ Awareness Week!",
+    "week_genderfluidvisibility": "Happy Genderfluid Visibility Week!",
+    "week_transawareness": "Happy Trans Awareness Week!",
+    "month_pride": "Happy Pride Month! 🌈",
+
+    "overlay1": "i see you"
   }
 }
