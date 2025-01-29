@@ -1,4 +1,4 @@
-import { float, floor, Fn, int, Loop, sub, vec3 } from "three/tsl"
+import { float, floor, Fn, fract, int, Loop, sub, vec3 } from "three/tsl"
 
 const mod289 = /*@__PURE__*/ Fn(([x]) => {
   return sub(x, floor(x.mul(float(1.0).mul(1.0/289.0)).mul(289.0)))
