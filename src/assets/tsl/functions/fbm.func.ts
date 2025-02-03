@@ -1,13 +1,21 @@
-import { float, floor, Fn, fract, int, Loop, sub, vec3 } from "three/tsl"
+import type { FnParams } from "@/core/helpers/tsl.helper"
+import { float, floor, Fn, fract, int, Loop, sub, vec2, vec3, vec4, mul } from "three/tsl"
 
-const mod289 = /*@__PURE__*/ Fn(([x]) => {
+// Sourced and converted from Yi-wen LIN, using code from Iñigo Quilez:
+// https://github.com/yiwenl/glsl-fbm/blob/master
+// https://iquilezles.org/articles/fbm/
+// ------------------------------------------------------------------------------------------------
+
+// 3D version
+
+const mod289 = /*@__PURE__*/ Fn<FnParams>(([x]) => {
   return sub(x, floor(x.mul(float(1.0).mul(1.0/289.0)).mul(289.0)))
 })
-const perm = /*@__PURE__*/  Fn(([x]) => {
+const perm = /*@__PURE__*/  Fn<FnParams>(([x]) => {
   return mod289(x.mul(x.mul(34.0).add(1.0)))
 })
 
-const noise3 = /*@__PURE__*/ Fn(([i_pos]) => {
+const noise3 = /*@__PURE__*/ Fn<FnParams>(([i_pos]) => {
   const p = vec3( i_pos ).toVar()
 	const a = vec3( floor( p ) ).toVar()
 	const d = vec3( p.sub( a ) ).toVar()
@@ -26,7 +34,7 @@ const noise3 = /*@__PURE__*/ Fn(([i_pos]) => {
 	return o4.y.mul( d.y ).add( o4.x.mul( sub( 1.0, d.y ) ) );
 })
 
-export const fbm3 = /*@__PURE__*/ Fn(([i_pos, i_freq, i_amp, i_lac, i_octaves]) => {
+export const fbm3 = /*@__PURE__*/ Fn<FnParams>(([i_pos, i_freq, i_amp, i_lac, i_octaves]) => {
   const pos = vec3(i_pos).toVar()
   const freq = float(i_freq).toVar()
   const amp = float(i_amp).toVar()
@@ -35,7 +43,7 @@ export const fbm3 = /*@__PURE__*/ Fn(([i_pos, i_freq, i_amp, i_lac, i_octaves]) 
 
   const val = float(0.0)
   Loop({ start: int(0), end: octaves, condition: '' }, () => {
-    val.addAssign(amp.mul(noise3(x.mul(freq))))
+    val.addAssign(amp.mul(noise3(pos.mul(freq))))
     freq.mulAssign(lac)
     amp.mulAssign(0.5)
   })

@@ -23,3 +23,4 @@ const uBumpStrength = uniform(LG_PLANET_DATA.value.planetSurfaceBumpStrength)
 const uBumpOffset = uniform(0.005)
 
 // Biome uniforms
+const uBiomes = uniform(LG_PLANET_DATA.value.biomesEnabled)
