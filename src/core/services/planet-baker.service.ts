@@ -14,7 +14,7 @@ import {
   LG_PLANET_DATA,
 } from './planet-editor.service'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
-import { bufferToTexture } from '@/utils/utils'
+import { bufferToTexture } from '@/utils/three-utils'
 
 const BAKE_PATCH_RGX = /gl_Position ?=.*;/gm
 const BAKE_CAMERA = ComponentBuilder.createOrthgraphicCameraComponent(1, 1, 0, 1)
