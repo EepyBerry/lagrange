@@ -27,7 +27,7 @@ import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue'
 import * as THREE from 'three'
 import * as Globals from '@core/globals'
 import { degToRad } from 'three/src/math/MathUtils.js'
-import { createControlsComponent, createRingGeometryComponent } from '@core/three/component.builder'
+import { createAtmosphere, createClouds, createControlsComponent, createLensFlare, createPlanet, createRing, createRingGeometryComponent, createScene, createSun } from '@core/three/component.builder'
 import { useHead } from '@unhead/vue'
 import type { SceneElements } from '@core/models/scene-elements.model'
 import type { LensFlareEffect } from '@core/three/lens-flare.effect'
@@ -39,13 +39,6 @@ import { patchMeshUniform, setMeshUniform, setMeshUniforms } from '@/utils/three
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import PlanetData from '@/core/models/planet-data.model'
 import {
-  createAtmosphere,
-  createClouds,
-  createLensFlare,
-  createPlanet,
-  createRing,
-  createScene,
-  createSun,
   exportPlanetPreview,
   exportPlanetToGLTF,
   LG_BUFFER_BIOME,
