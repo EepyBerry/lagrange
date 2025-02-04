@@ -1,4 +1,4 @@
-import type { DataTexture, Mesh, Texture } from 'three'
+import type { AmbientLight, DataTexture, DirectionalLight, Mesh, Texture } from 'three'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
@@ -43,6 +43,15 @@ export type RawRGBA = {
 export type DataTextureWrapper = {
   texture: DataTexture
   data: Uint8Array
+}
+
+export type PlanetPreviewData = {
+  sun: DirectionalLight
+  ambientLight: AmbientLight
+  planet: Mesh
+  clouds: Mesh
+  atmosphere: Mesh
+  ring: Mesh
 }
 
 // ----------------------------------- Baking types ---------------------------------

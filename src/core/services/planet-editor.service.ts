@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import * as Globals from '@core/globals'
 import * as ComponentBuilder from '@core/three/component.builder'
-import { type BakingTarget } from '@core/types'
+import { type BakingTarget, type PlanetPreviewData } from '@core/types'
 import { SceneElements } from '@core/models/scene-elements.model'
 import PlanetData from '@core/models/planet-data.model'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
@@ -20,6 +20,7 @@ import { exportMeshesToGLTF } from '../helpers/export.helper'
 import { idb } from '@/dexie.config'
 import { sleep } from '@/utils/utils'
 
+// Types
 // Editor constants
 export const LG_PLANET_DATA = ref(new PlanetData())
 
@@ -29,19 +30,7 @@ export const LG_BUFFER_BIOME = new Uint8Array(Globals.TEXTURE_SIZES.BIOME * Glob
 export const LG_BUFFER_CLOUDS = new Uint8Array(Globals.TEXTURE_SIZES.CLOUDS * Globals.TEXTURE_SIZES.CLOUDS * 4)
 export const LG_BUFFER_RING = new Uint8Array(Globals.TEXTURE_SIZES.RING * Globals.TEXTURE_SIZES.RING * 4)
 
-export type PlanetPreviewData = {
-  sun: THREE.DirectionalLight
-  ambientLight: THREE.AmbientLight
-  planet: THREE.Mesh
-  clouds: THREE.Mesh
-  atmosphere: THREE.Mesh
-  ring: THREE.Mesh
-}
-export type PlanetGltfData = {
-  planet: THREE.Mesh
-  clouds: THREE.Mesh
-  ring: THREE.Mesh
-}
+
 
 export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData): string {
   const initialSize = new THREE.Vector2()

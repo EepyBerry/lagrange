@@ -26,8 +26,8 @@ import PlanetInfoControls from '@components/controls/PlanetInfoControls.vue'
 import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue'
 import * as THREE from 'three'
 import * as Globals from '@core/globals'
+import * as ComponentBuilder from '@core/three/component.builder'
 import { degToRad } from 'three/src/math/MathUtils.js'
-import { createAtmosphere, createClouds, createControlsComponent, createLensFlare, createPlanet, createRing, createRingGeometryComponent, createScene, createSun } from '@core/three/component.builder'
 import { useHead } from '@unhead/vue'
 import type { SceneElements } from '@core/models/scene-elements.model'
 import type { LensFlareEffect } from '@core/three/lens-flare.effect'
@@ -212,11 +212,11 @@ async function initCanvas() {
   }
 
   // Init scene & objects
-  $se = createScene(LG_PLANET_DATA.value as PlanetData, effectiveWidth, effectiveHeight, pixelRatio)
+  $se = ComponentBuilder.createScene(LG_PLANET_DATA.value as PlanetData, effectiveWidth, effectiveHeight, pixelRatio)
   initLighting()
   initPlanet()
   initRendering(effectiveWidth, effectiveHeight)
-  createControlsComponent($se.camera, $se.renderer.domElement)
+  ComponentBuilder.createControlsComponent($se.camera, $se.renderer.domElement)
 
   // Register data updates
   registerLightingDataUpdates()
@@ -236,8 +236,8 @@ async function initCanvas() {
 // ------------------------------------------------------------------------------------------------
 
 function initLighting(): void {
-  const sun = createSun(LG_PLANET_DATA.value as PlanetData)
-  const lensFlare = createLensFlare(LG_PLANET_DATA.value as PlanetData, sun.position, sun.color)
+  const sun = ComponentBuilder.createSun(LG_PLANET_DATA.value as PlanetData)
+  const lensFlare = ComponentBuilder.createLensFlare(LG_PLANET_DATA.value as PlanetData, sun.position, sun.color)
   sun.add(lensFlare.mesh)
   $se.scene.add(sun)
   _sunLight = sun
@@ -252,10 +252,10 @@ function initLighting(): void {
 }
 
 function initPlanet(): void {
-  const planet = createPlanet(LG_PLANET_DATA.value as PlanetData)
-  const clouds = createClouds(LG_PLANET_DATA.value as PlanetData)
-  const atmosphere = createAtmosphere(LG_PLANET_DATA.value as PlanetData, _sunLight.position)
-  const ring = createRing(LG_PLANET_DATA.value as PlanetData)
+  const planet = ComponentBuilder.createPlanet(LG_PLANET_DATA.value as PlanetData)
+  const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value as PlanetData)
+  const atmosphere = ComponentBuilder.createAtmosphere(LG_PLANET_DATA.value as PlanetData, _sunLight.position)
+  const ring = ComponentBuilder.createRing(LG_PLANET_DATA.value as PlanetData)
   const planetGroup = new THREE.Group()
   planetGroup.add(planet.mesh)
   planetGroup.add(clouds.mesh)
@@ -490,7 +490,7 @@ function registerRingDataUpdates(): void {
   $dataUpdateMap.set('_ringEnabled', () => _ring.visible = LG_PLANET_DATA.value.ringEnabled)
   $dataUpdateMap.set('_ringInnerRadius', () => {
     _ring.geometry.dispose()
-    _ring.geometry = createRingGeometryComponent(LG_PLANET_DATA.value.ringInnerRadius, LG_PLANET_DATA.value.ringOuterRadius)
+    _ring.geometry = ComponentBuilder.createRingGeometryComponent(LG_PLANET_DATA.value.ringInnerRadius, LG_PLANET_DATA.value.ringOuterRadius)
     setMeshUniform(_ring, 'u_inner_radius', LG_PLANET_DATA.value.ringInnerRadius)
   })
   
