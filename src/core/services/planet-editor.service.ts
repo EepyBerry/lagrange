@@ -214,8 +214,6 @@ export function exportPlanetScreenshot() {
 }
 
 export function exportPlanetPreview(): string {
-  LG_SCENE_DATA.lensFlare!.mesh.visible = false
-
   const initialSize = new THREE.Vector2()
   LG_SCENE_DATA.renderer!.getSize(initialSize)
 
@@ -242,17 +240,17 @@ export function exportPlanetPreview(): string {
 
   // ---------------------- Add cloned objects to preview scene -----------------------
   const planetGroup = new THREE.Group()
-  planetGroup.add(LG_SCENE_DATA.planet!)
-  planetGroup.add(LG_SCENE_DATA.clouds!)
-  planetGroup.add(LG_SCENE_DATA.atmosphere!)
+  planetGroup.add(LG_SCENE_DATA.planet!.clone())
+  planetGroup.add(LG_SCENE_DATA.clouds!.clone())
+  planetGroup.add(LG_SCENE_DATA.atmosphere!.clone())
 
   const ringAnchor = new THREE.Group()
-  ringAnchor.add(LG_SCENE_DATA.ring!)
+  ringAnchor.add(LG_SCENE_DATA.ring!.clone())
   planetGroup.add(ringAnchor)
 
   previewScene.add(planetGroup)
-  previewScene.add(LG_SCENE_DATA.sunLight!)
-  previewScene.add(LG_SCENE_DATA.ambLight!)
+  previewScene.add(LG_SCENE_DATA.sunLight!.clone())
+  previewScene.add(LG_SCENE_DATA.ambLight!.clone())
 
   planetGroup.scale.setScalar(LG_PLANET_DATA.value.planetRadius)
   planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
@@ -305,7 +303,7 @@ export function exportPlanetPreview(): string {
   const dataURL = canvas.toDataURL('image/webp')
   canvas.remove()
 
-  LG_SCENE_DATA.lensFlare!.mesh.visible = true
+  //LG_SCENE_DATA.lensFlare!.mesh.visible = true
   return dataURL
 }
 

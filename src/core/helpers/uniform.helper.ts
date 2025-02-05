@@ -116,13 +116,13 @@ function registerBiomeDataUpdates(planet: Mesh, biomeDataTex: DataTexture): void
   UNIFORM_UPDATE_MAP.value.set('_biomesEnabled',                      () => setMeshUniform(planet, 'u_biomes', LG_PLANET_DATA.value.biomesEnabled))
   // Temperature
   UNIFORM_UPDATE_MAP.value.set('_biomesTemperatureMode',              () => patchMeshUniform(planet, 'u_temp_noise', { mode: LG_PLANET_DATA.value.biomesTemperatureMode }))
-  UNIFORM_UPDATE_MAP.value.set('_biomesTemperatureNoise._frequency',  () => patchMeshUniform(planet, 'u_temp_noise', { lac: LG_PLANET_DATA.value.biomesTemperatureNoise.frequency }))
+  UNIFORM_UPDATE_MAP.value.set('_biomesTemperatureNoise._frequency',  () => patchMeshUniform(planet, 'u_temp_noise', { freq: LG_PLANET_DATA.value.biomesTemperatureNoise.frequency }))
   UNIFORM_UPDATE_MAP.value.set('_biomesTemperatureNoise._amplitude',  () => patchMeshUniform(planet, 'u_temp_noise', { amp: LG_PLANET_DATA.value.biomesTemperatureNoise.amplitude }))
   UNIFORM_UPDATE_MAP.value.set('_biomesTemperatureNoise._lacunarity', () => patchMeshUniform(planet, 'u_temp_noise', { lac: LG_PLANET_DATA.value.biomesTemperatureNoise.lacunarity }))
   UNIFORM_UPDATE_MAP.value.set('_biomesTemperatureNoise._octaves',    () => patchMeshUniform(planet, 'u_temp_noise', { oct: LG_PLANET_DATA.value.biomesTemperatureNoise.octaves }))
   // Humidity
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityMode',                 () => patchMeshUniform(planet, 'u_humi_noise', { mode: LG_PLANET_DATA.value.biomesHumidityMode }))
-  UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._frequency',     () => patchMeshUniform(planet, 'u_humi_noise', { lac: LG_PLANET_DATA.value.biomesHumidityNoise.frequency }))
+  UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._frequency',     () => patchMeshUniform(planet, 'u_humi_noise', { freq: LG_PLANET_DATA.value.biomesHumidityNoise.frequency }))
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._amplitude',     () => patchMeshUniform(planet, 'u_humi_noise', { amp: LG_PLANET_DATA.value.biomesHumidityNoise.amplitude }))
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._lacunarity',    () => patchMeshUniform(planet, 'u_humi_noise', { lac: LG_PLANET_DATA.value.biomesHumidityNoise.lacunarity }))
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._octaves',       () => patchMeshUniform(planet, 'u_humi_noise', { oct: LG_PLANET_DATA.value.biomesHumidityNoise.octaves }))
