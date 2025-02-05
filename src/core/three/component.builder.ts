@@ -15,7 +15,7 @@ import * as ShaderLoader from '../three/shader.loader'
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
 
-export function createScene(data: PlanetData, width: number, height: number, pixelRatio: number): SceneElements {
+export function createScene(width: number, height: number, pixelRatio: number): SceneElements {
   // setup cubemap
   const scene = new THREE.Scene()
   scene.background = loadCubeTexture('/skybox/', [
@@ -34,9 +34,9 @@ export function createScene(data: PlanetData, width: number, height: number, pix
     width / height,
     0.1,
     1e6,
-    new THREE.Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle)),
+    new THREE.Spherical(LG_PLANET_DATA.value.initCamDistance, Math.PI / 2.0, degToRad(LG_PLANET_DATA.value.initCamAngle)),
   )
-  const ambientLight = createAmbientLightComponent(data.ambLightColor, data.ambLightIntensity)
+  const ambientLight = createAmbientLightComponent(LG_PLANET_DATA.value.ambLightColor, LG_PLANET_DATA.value.ambLightIntensity)
   ambientLight.name = Globals.LG_NAME_AMBLIGHT
   scene.add(ambientLight)
 

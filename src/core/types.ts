@@ -1,4 +1,6 @@
-import type { AmbientLight, DataTexture, DirectionalLight, Mesh, Texture } from 'three'
+import type { AmbientLight, Clock, DataTexture, DirectionalLight, Group, Mesh, PerspectiveCamera, Scene, Texture, WebGLRenderer } from 'three'
+import type { SceneElements } from './models/scene-elements.model'
+import type { LensFlareEffect } from './three/lens-flare.effect'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
@@ -52,6 +54,34 @@ export type PlanetPreviewData = {
   clouds: Mesh
   atmosphere: Mesh
   ring: Mesh
+}
+export type PlanetSceneData = {
+  // Scene, renderer, camera
+  scene?: Scene
+  renderer?: WebGLRenderer
+  camera?: PerspectiveCamera
+
+  // Groups
+  planetGroup?: Group
+  ringAnchor?: Group
+
+  // Main objects
+  planet?: Mesh
+  clouds?: Mesh
+  atmosphere?: Mesh
+  ring?: Mesh
+  sunLight?: DirectionalLight
+  ambLight?: AmbientLight
+  lensFlare?: LensFlareEffect
+
+  // DataTextures
+  surfaceDataTex?: DataTexture
+  cloudsDataTex?: DataTexture
+  biomeDataTex?: DataTexture
+  ringDataTex?: DataTexture
+
+  // Misc
+  clock?: Clock
 }
 
 // ----------------------------------- Baking types ---------------------------------

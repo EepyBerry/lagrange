@@ -1,10 +1,9 @@
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import * as THREE from 'three'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import * as Globals from '@core/globals'
 import * as ComponentBuilder from '@core/three/component.builder'
-import { type BakingTarget, type PlanetPreviewData } from '@core/types'
-import { SceneElements } from '@core/models/scene-elements.model'
+import { type BakingTarget, type PlanetSceneData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
 import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
 import {
@@ -19,9 +18,12 @@ import {
 import { exportMeshesToGLTF } from '../helpers/export.helper'
 import { idb } from '@/dexie.config'
 import { sleep } from '@/utils/utils'
+import saveAs from 'file-saver'
+import { clearUniformUpdateMap, execUniformUpdate, initUniformUpdateMap } from '../helpers/uniform.helper'
+import Stats from 'three/examples/jsm/libs/stats.module.js'
 
-// Types
 // Editor constants
+const LG_SCENE_DATA: PlanetSceneData = {}
 export const LG_PLANET_DATA = ref(new PlanetData())
 
 // Buffers
@@ -30,11 +32,191 @@ export const LG_BUFFER_BIOME = new Uint8Array(Globals.TEXTURE_SIZES.BIOME * Glob
 export const LG_BUFFER_CLOUDS = new Uint8Array(Globals.TEXTURE_SIZES.CLOUDS * Globals.TEXTURE_SIZES.CLOUDS * 4)
 export const LG_BUFFER_RING = new Uint8Array(Globals.TEXTURE_SIZES.RING * Globals.TEXTURE_SIZES.RING * 4)
 
+const hasPlanetBeenEdited: Ref<boolean> = ref(false)
+let enableEditorRendering = true
+let watchForPlanetUpdates = false
 
+// ------------------------------------------------------------------------------------------------ //
+//                                           BOOTSTRAPPING                                          //
+// ------------------------------------------------------------------------------------------------ //
 
-export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData): string {
+export function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
+  enableEditorRendering = true
+  const sceneElems = ComponentBuilder.createScene(w, h, pixelRatio)
+  LG_SCENE_DATA.scene = sceneElems.scene
+  LG_SCENE_DATA.renderer = sceneElems.renderer
+  LG_SCENE_DATA.camera = sceneElems.camera
+  LG_SCENE_DATA.clock = new THREE.Clock()
+  initLighting()
+  initPlanet()
+  initRendering(canvas, w, h)
+  initUniformUpdateMap(LG_SCENE_DATA)
+  ComponentBuilder.createControlsComponent(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
+}
+
+function initLighting(): void {
+  const sun = ComponentBuilder.createSun(LG_PLANET_DATA.value as PlanetData)
+  const lensFlare = ComponentBuilder.createLensFlare(LG_PLANET_DATA.value as PlanetData, sun.position, sun.color)
+  sun.add(lensFlare.mesh)
+  LG_SCENE_DATA.scene!.add(sun)
+  LG_SCENE_DATA.sunLight = sun
+  LG_SCENE_DATA.ambLight = LG_SCENE_DATA.scene!.getObjectByName(Globals.LG_NAME_AMBLIGHT) as THREE.AmbientLight
+  LG_SCENE_DATA.lensFlare = lensFlare
+
+  // Set initial rotations
+  const pos = Globals.SUN_INIT_POS.clone()
+  pos.applyAxisAngle(Globals.AXIS_X, degToRad(-15))
+  LG_SCENE_DATA.sunLight.position.set(pos.x, pos.y, pos.z)
+  LG_SCENE_DATA.lensFlare.updatePosition(LG_SCENE_DATA.sunLight.position)
+}
+
+function initPlanet(): void {
+  const planet = ComponentBuilder.createPlanet(LG_PLANET_DATA.value as PlanetData)
+  const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value as PlanetData)
+  const atmosphere = ComponentBuilder.createAtmosphere(LG_PLANET_DATA.value as PlanetData, LG_SCENE_DATA.sunLight!.position)
+  const ring = ComponentBuilder.createRing(LG_PLANET_DATA.value as PlanetData)
+  const planetGroup = new THREE.Group()
+  planetGroup.add(planet.mesh)
+  planetGroup.add(clouds.mesh)
+  planetGroup.add(atmosphere)
+
+  const ringAnchor = new THREE.Group()
+  ringAnchor.add(ring.mesh)
+  planetGroup.add(ringAnchor)
+
+  LG_SCENE_DATA.scene!.add(planetGroup)
+  LG_SCENE_DATA.planet = planet.mesh
+  LG_SCENE_DATA.clouds = clouds.mesh
+  LG_SCENE_DATA.atmosphere = atmosphere
+  LG_SCENE_DATA.ring = ring.mesh
+  LG_SCENE_DATA.planetGroup = planetGroup
+  LG_SCENE_DATA.ringAnchor = ringAnchor
+
+  // Set datatextures + data
+  LG_SCENE_DATA.surfaceDataTex = planet.texs[0].texture
+  LG_SCENE_DATA.biomeDataTex = planet.texs[1].texture
+  LG_SCENE_DATA.cloudsDataTex = clouds.texs[0].texture
+  LG_SCENE_DATA.ringDataTex = ring.texs[0].texture
+
+  // Set initial rotations
+  LG_SCENE_DATA.planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+  LG_SCENE_DATA.planet.setRotationFromAxisAngle(LG_SCENE_DATA.planet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
+  LG_SCENE_DATA.clouds.setRotationFromAxisAngle(
+    LG_SCENE_DATA.clouds.up,
+    degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation),
+  )
+  LG_SCENE_DATA.ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
+  LG_SCENE_DATA.ring.setRotationFromAxisAngle(LG_SCENE_DATA.ring.up, degToRad(LG_PLANET_DATA.value.ringRotation))
+
+  // Set lighting target
+  LG_SCENE_DATA.sunLight!.target = LG_SCENE_DATA.planetGroup
+}
+
+function initRendering(sceneRoot: HTMLCanvasElement, width: number, height: number) {
+  const stats = new Stats()
+  stats.dom.style.right = '0'
+  stats.dom.style.left = 'auto'
+  stats.dom.ariaHidden = 'true'
+  // document.body.appendChild(stats.dom)
+
+  LG_SCENE_DATA.renderer!.setSize(width, height)
+  LG_SCENE_DATA.renderer!.setAnimationLoop(() => renderFrame(stats))
+  LG_SCENE_DATA.renderer!.domElement.ariaLabel = '3D planet viewer'
+  sceneRoot.appendChild(LG_SCENE_DATA.renderer!.domElement)
+}
+
+// ------------------------------------------------------------------------------------------------ //
+//                                         SCENE MANAGEMENT                                         //
+// ------------------------------------------------------------------------------------------------ //
+
+function renderFrame(stats: Stats) {
+  if (!enableEditorRendering) {
+    return
+  }
+  stats.update()
+  updateScene()
+  watchForPlanetUpdates = true
+  LG_SCENE_DATA.lensFlare!.update(LG_SCENE_DATA.renderer!, LG_SCENE_DATA.scene!, LG_SCENE_DATA.camera!, LG_SCENE_DATA.clock!)
+  LG_SCENE_DATA.renderer!.render(LG_SCENE_DATA.scene!, LG_SCENE_DATA.camera!)
+}
+
+export function updateCameraRendering(w: number, h: number) {
+  LG_SCENE_DATA.camera!.aspect = w / h
+  LG_SCENE_DATA.camera!.updateProjectionMatrix()
+  LG_SCENE_DATA.renderer!.setSize(w, h)
+}
+
+function updateScene() {
+  if (watchForPlanetUpdates && LG_PLANET_DATA.value.changedProps.length > 0) {
+    console.debug('Planet has been edited, warning user in case of unsaved data')
+    hasPlanetBeenEdited.value = true
+  }
+  for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
+    let key = changedProp.prop
+    // Check for additional info, separated by |
+    key = changedProp.prop.split('|')[0]
+    execUniformUpdate(key)
+  }
+  LG_PLANET_DATA.value.clearChangedProps()
+}
+
+/**
+ * Removes every object from the scene, then removes the scene itself
+ */
+export function disposeScene() {
+  console.debug('[unmount] Clearing scene...')
+  LG_SCENE_DATA.sunLight!.dispose()
+  LG_SCENE_DATA.ambLight!.dispose()
+  LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.sunLight!)
+  LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.ambLight!)
+
+  LG_SCENE_DATA.lensFlare!.material.dispose()
+  LG_SCENE_DATA.lensFlare!.mesh.geometry.dispose()
+  ;(LG_SCENE_DATA.planet!.material as THREE.Material).dispose()
+  LG_SCENE_DATA.planet!.geometry.dispose()
+  ;(LG_SCENE_DATA.clouds!.material as THREE.Material).dispose()
+  LG_SCENE_DATA.clouds!.geometry.dispose()
+  ;(LG_SCENE_DATA.atmosphere!.material as THREE.Material).dispose()
+  LG_SCENE_DATA.atmosphere!.geometry.dispose()
+  ;(LG_SCENE_DATA.ring!.material as THREE.Material).dispose()
+  LG_SCENE_DATA.ring!.geometry.dispose()
+
+  LG_BUFFER_SURFACE.fill(0)
+  LG_BUFFER_BIOME.fill(0)
+  LG_BUFFER_CLOUDS.fill(0)
+  LG_BUFFER_RING.fill(0)
+  LG_SCENE_DATA.surfaceDataTex!.dispose()
+  LG_SCENE_DATA.biomeDataTex!.dispose()
+  LG_SCENE_DATA.cloudsDataTex!.dispose()
+  LG_SCENE_DATA.ringAnchor!.clear()
+  LG_SCENE_DATA.planetGroup!.clear()
+
+  LG_SCENE_DATA.scene!.children.forEach((c) => LG_SCENE_DATA.scene!.remove(c))
+  LG_SCENE_DATA.renderer!.dispose()
+  
+  clearUniformUpdateMap()
+  console.debug('[unmount] ...done!')
+}
+
+// ------------------------------------------------------------------------------------------------ //
+//                                          DATA FUNCTIONS                                          //
+// ------------------------------------------------------------------------------------------------ //
+
+export async function resetPlanet() {
+  LG_PLANET_DATA.value.reset()
+}
+
+export function exportPlanetScreenshot() {
+  LG_SCENE_DATA.renderer!.domElement.toBlob((blob) => {
+    saveAs(blob!, `${LG_PLANET_DATA.value.planetName.replaceAll(' ', '_')}-${new Date().toISOString()}.png`)
+  }, 'image/png')
+}
+
+export function exportPlanetPreview(): string {
+  LG_SCENE_DATA.lensFlare!.mesh.visible = false
+
   const initialSize = new THREE.Vector2()
-  $se.renderer.getSize(initialSize)
+  LG_SCENE_DATA.renderer!.getSize(initialSize)
 
   // ------------------------------- Setup render scene -------------------------------
   const w = 384,
@@ -59,33 +241,33 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
   // ---------------------- Add cloned objects to preview scene -----------------------
   const planetGroup = new THREE.Group()
-  planetGroup.add(data.planet)
-  planetGroup.add(data.clouds)
-  planetGroup.add(data.atmosphere)
+  planetGroup.add(LG_SCENE_DATA.planet!)
+  planetGroup.add(LG_SCENE_DATA.clouds!)
+  planetGroup.add(LG_SCENE_DATA.atmosphere!)
 
   const ringAnchor = new THREE.Group()
-  ringAnchor.add(data.ring)
+  ringAnchor.add(LG_SCENE_DATA.ring!)
   planetGroup.add(ringAnchor)
 
   previewScene.add(planetGroup)
-  previewScene.add(data.sun!)
-  previewScene.add(data.ambientLight!)
+  previewScene.add(LG_SCENE_DATA.sunLight!)
+  previewScene.add(LG_SCENE_DATA.ambLight!)
 
   planetGroup.scale.setScalar(LG_PLANET_DATA.value.planetRadius)
   planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
   ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
 
   // ---------------------------- Setup renderer & render -----------------------------
-  $se.renderer.clear()
-  $se.renderer.setSize(w, h)
-  $se.renderer.setRenderTarget(previewRenderTarget)
+  LG_SCENE_DATA.renderer!.clear()
+  LG_SCENE_DATA.renderer!.setSize(w, h)
+  LG_SCENE_DATA.renderer!.setRenderTarget(previewRenderTarget)
 
   const rawBuffer = new Uint8Array(w * h * 4)
-  $se.renderer.render(previewScene, previewCamera)
-  $se.renderer.readRenderTargetPixels(previewRenderTarget, 0, 0, w, h, rawBuffer)
+  LG_SCENE_DATA.renderer!.render(previewScene, previewCamera)
+  LG_SCENE_DATA.renderer!.readRenderTargetPixels(previewRenderTarget, 0, 0, w, h, rawBuffer)
 
-  $se.renderer.setSize(initialSize.x, initialSize.y)
-  $se.renderer.setRenderTarget(null)
+  LG_SCENE_DATA.renderer!.setSize(initialSize.x, initialSize.y)
+  LG_SCENE_DATA.renderer!.setRenderTarget(null)
 
   // ----------------- Create preview canvas & write data from buffer -----------------
   const canvas = document.createElement('canvas')
@@ -102,17 +284,17 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   // ------------------------------- Clean-up resources -------------------------------
   ringAnchor.clear()
   planetGroup.clear()
-  data.sun!.dispose()
-  data.ambientLight!.dispose()
-  ;(data.clouds.material as THREE.Material).dispose()
-  ;(data.atmosphere.material as THREE.Material).dispose()
-  ;(data.planet.material as THREE.Material).dispose()
-  ;(data.ring.material as THREE.Material).dispose()
+  LG_SCENE_DATA.sunLight!.dispose()
+  LG_SCENE_DATA.ambLight!.dispose()
+  ;(LG_SCENE_DATA.clouds!.material as THREE.Material).dispose()
+  ;(LG_SCENE_DATA.atmosphere!.material as THREE.Material).dispose()
+  ;(LG_SCENE_DATA.planet!.material as THREE.Material).dispose()
+  ;(LG_SCENE_DATA.ring!.material as THREE.Material).dispose()
 
-  data.clouds.geometry.dispose()
-  data.atmosphere.geometry.dispose()
-  data.planet.geometry.dispose()
-  data.ring.geometry.dispose()
+  LG_SCENE_DATA.clouds!.geometry.dispose()
+  LG_SCENE_DATA.atmosphere!.geometry.dispose()
+  LG_SCENE_DATA.planet!.geometry.dispose()
+  LG_SCENE_DATA.ring!.geometry.dispose()
 
   previewRenderTarget.dispose()
   previewScene.clear()
@@ -121,11 +303,12 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
 
   const dataURL = canvas.toDataURL('image/webp')
   canvas.remove()
+
+  LG_SCENE_DATA.lensFlare!.mesh.visible = true
   return dataURL
 }
 
 export async function exportPlanetToGLTF(
-  renderer: THREE.WebGLRenderer,
   progressDialog: { open: () => void; setProgress: (value: number) => void; setError: (error: unknown) => void },
 ) {
   progressDialog.setProgress(1)
@@ -140,22 +323,22 @@ export async function exportPlanetToGLTF(
     progressDialog.setProgress(2)
     await sleep(50)
     const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value as PlanetData)
-    const bakePlanetSurfaceTex = bakeMesh(renderer, bakePlanet, w, h)
+    const bakePlanetSurfaceTex = bakeMesh(LG_SCENE_DATA.renderer!, bakePlanet, w, h)
     if (appSettings?.bakingPixelize) bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
 
     progressDialog.setProgress(3)
     await sleep(50)
     const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value as PlanetData)
-    const bakePlanetPBRTex = bakeMesh(renderer, bakePBR, w, h)
+    const bakePlanetPBRTex = bakeMesh(LG_SCENE_DATA.renderer!, bakePBR, w, h)
     if (appSettings?.bakingPixelize) bakePlanetPBRTex.magFilter = THREE.NearestFilter
 
     progressDialog.setProgress(4)
     await sleep(50)
     const bakeHeight = createBakingHeightMap(LG_PLANET_DATA.value as PlanetData)
-    const bakePlanetHeightTex = bakeMesh(renderer, bakeHeight, w, h)
+    const bakePlanetHeightTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeHeight, w, h)
 
     const bakeNormal = createBakingNormalMap(bakePlanetHeightTex, w)
-    const bakePlanetNormalTex = bakeMesh(renderer, bakeNormal, w, h)
+    const bakePlanetNormalTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeNormal, w, h)
     if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
 
     bakePlanet.material = new THREE.MeshStandardMaterial({
@@ -175,7 +358,7 @@ export async function exportPlanetToGLTF(
       progressDialog.setProgress(5)
       await sleep(50)
       const bakeClouds = createBakingClouds(LG_PLANET_DATA.value as PlanetData)
-      const bakeCloudsTex = bakeMesh(renderer, bakeClouds, w, h)
+      const bakeCloudsTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeClouds, w, h)
       if (appSettings?.bakingPixelize) bakeCloudsTex.magFilter = THREE.NearestFilter
 
       bakeClouds.material = new THREE.MeshStandardMaterial({
@@ -195,7 +378,7 @@ export async function exportPlanetToGLTF(
       progressDialog.setProgress(6)
       await sleep(50)
       const bakeRing = createBakingRing(LG_PLANET_DATA.value as PlanetData)
-      const bakeRingTex = bakeMesh(renderer, bakeRing, w, h)
+      const bakeRingTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeRing, w, h)
       if (appSettings?.bakingPixelize) bakeRingTex.magFilter = THREE.NearestFilter
 
       bakeRing.material = new THREE.MeshStandardMaterial({
@@ -229,4 +412,18 @@ export async function exportPlanetToGLTF(
     })
     progressDialog.setProgress(8)
   }
+}
+
+// ------------------------------------------------------------------------------------------------ //
+//                                            ACCESSORS                                             //
+// ------------------------------------------------------------------------------------------------ //
+
+export function isPlanetEdited() {
+  return hasPlanetBeenEdited.value
+}
+export function setPlanetEditFlag(value: boolean) {
+  hasPlanetBeenEdited.value = value
+}
+export function setEditorRendering(value: boolean) {
+  enableEditorRendering = value
 }
