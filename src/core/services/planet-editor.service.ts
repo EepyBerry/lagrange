@@ -147,7 +147,7 @@ export function updateCameraRendering(w: number, h: number) {
 }
 
 function updateScene() {
-  if (watchForPlanetUpdates && LG_PLANET_DATA.value.changedProps.length > 0) {
+  if (watchForPlanetUpdates && LG_PLANET_DATA.value.changedProps.length > 0 && !hasPlanetBeenEdited.value) {
     console.debug('Planet has been edited, warning user in case of unsaved data')
     hasPlanetBeenEdited.value = true
   }
@@ -164,6 +164,7 @@ function updateScene() {
  * Removes every object from the scene, then removes the scene itself
  */
 export function disposeScene() {
+  watchForPlanetUpdates = false
   console.debug('[unmount] Clearing scene...')
   LG_SCENE_DATA.sunLight!.dispose()
   LG_SCENE_DATA.ambLight!.dispose()
