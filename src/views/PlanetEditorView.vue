@@ -252,10 +252,10 @@ function computeResponsiveness() {
 async function savePlanet() {
   showSpinner.value = true
   setPlanetEditFlag(false)
-  setEditorRendering(false)
+  //setEditorRendering(false)
 
   // -------- Generate planet preview -------- //
-  let previewDataString = exportPlanetPreview()
+  let previewDataString = await exportPlanetPreview()
 
   // ----------- Save planet data ------------ //
   console.debug(toRaw(LG_PLANET_DATA.value))
@@ -269,7 +269,7 @@ async function savePlanet() {
   await idb.planets.put(idbData, idbData.id)
   $planetEntityId.value = idbData.id
 
-  setEditorRendering(true)
+  //setEditorRendering(true)
   showSpinner.value = false
   previewDataString = ''
   EventBus.sendToastEvent('success', 'toast.save_success', 3000)

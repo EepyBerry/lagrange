@@ -213,22 +213,20 @@ export function exportPlanetScreenshot() {
   }, 'image/png')
 }
 
-export function exportPlanetPreview(): string {
-  const initialSize = new THREE.Vector2()
-  LG_SCENE_DATA.renderer!.getSize(initialSize)
+export async function exportPlanetPreview(): Promise<string> {
+  await sleep(50)
+  LG_SCENE_DATA.lensFlare!.mesh.visible = false
 
   // ------------------------------- Setup render scene -------------------------------
-  const w = 384,
-    h = 384
+  const w = 384, h = 384
   const previewRenderTarget = new THREE.WebGLRenderTarget(w, h, {
     colorSpace: THREE.SRGBColorSpace,
   })
-  const previewScene = new THREE.Scene()
   const previewCamera = ComponentBuilder.createPerspectiveCameraComponent(
     50,
     w / h,
     0.1,
-    1e4,
+    10,
     new THREE.Spherical(
       LG_PLANET_DATA.value.initCamDistance - (LG_PLANET_DATA.value.ringEnabled ? 0.75 : 1.5),
       Math.PI / 2.0,
@@ -238,35 +236,15 @@ export function exportPlanetPreview(): string {
   previewCamera.setRotationFromAxisAngle(Globals.AXIS_Y, degToRad(LG_PLANET_DATA.value.initCamAngle))
   previewCamera.updateProjectionMatrix()
 
-  // ---------------------- Add cloned objects to preview scene -----------------------
-  const planetGroup = new THREE.Group()
-  planetGroup.add(LG_SCENE_DATA.planet!.clone())
-  planetGroup.add(LG_SCENE_DATA.clouds!.clone())
-  planetGroup.add(LG_SCENE_DATA.atmosphere!.clone())
-
-  const ringAnchor = new THREE.Group()
-  ringAnchor.add(LG_SCENE_DATA.ring!.clone())
-  planetGroup.add(ringAnchor)
-
-  previewScene.add(planetGroup)
-  previewScene.add(LG_SCENE_DATA.sunLight!.clone())
-  previewScene.add(LG_SCENE_DATA.ambLight!.clone())
-
-  planetGroup.scale.setScalar(LG_PLANET_DATA.value.planetRadius)
-  planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
-  ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
+  const renderGroup = new THREE.Group()
+  renderGroup.add(LG_SCENE_DATA.planetGroup!, LG_SCENE_DATA.sunLight!)
 
   // ---------------------------- Setup renderer & render -----------------------------
-  LG_SCENE_DATA.renderer!.clear()
-  LG_SCENE_DATA.renderer!.setSize(w, h)
   LG_SCENE_DATA.renderer!.setRenderTarget(previewRenderTarget)
 
   const rawBuffer = new Uint8Array(w * h * 4)
-  LG_SCENE_DATA.renderer!.render(previewScene, previewCamera)
+  LG_SCENE_DATA.renderer!.render(renderGroup, previewCamera)
   LG_SCENE_DATA.renderer!.readRenderTargetPixels(previewRenderTarget, 0, 0, w, h, rawBuffer)
-
-  LG_SCENE_DATA.renderer!.setSize(initialSize.x, initialSize.y)
-  LG_SCENE_DATA.renderer!.setRenderTarget(null)
 
   // ----------------- Create preview canvas & write data from buffer -----------------
   const canvas = document.createElement('canvas')
@@ -281,29 +259,15 @@ export function exportPlanetPreview(): string {
   ctx.putImageData(imageData, 0, 0)
 
   // ------------------------------- Clean-up resources -------------------------------
-  ringAnchor.clear()
-  planetGroup.clear()
-  LG_SCENE_DATA.sunLight!.dispose()
-  LG_SCENE_DATA.ambLight!.dispose()
-  ;(LG_SCENE_DATA.clouds!.material as THREE.Material).dispose()
-  ;(LG_SCENE_DATA.atmosphere!.material as THREE.Material).dispose()
-  ;(LG_SCENE_DATA.planet!.material as THREE.Material).dispose()
-  ;(LG_SCENE_DATA.ring!.material as THREE.Material).dispose()
-
-  LG_SCENE_DATA.clouds!.geometry.dispose()
-  LG_SCENE_DATA.atmosphere!.geometry.dispose()
-  LG_SCENE_DATA.planet!.geometry.dispose()
-  LG_SCENE_DATA.ring!.geometry.dispose()
-
+  renderGroup.clear()
+  LG_SCENE_DATA.scene!.add(LG_SCENE_DATA.planetGroup!, LG_SCENE_DATA.sunLight!)
   previewRenderTarget.dispose()
-  previewScene.clear()
 
   // ----------------------------- Save and remove canvas -----------------------------
-
   const dataURL = canvas.toDataURL('image/webp')
   canvas.remove()
 
-  //LG_SCENE_DATA.lensFlare!.mesh.visible = true
+  LG_SCENE_DATA.lensFlare!.mesh.visible = true
   return dataURL
 }
 
