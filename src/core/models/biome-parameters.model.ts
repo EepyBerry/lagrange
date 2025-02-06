@@ -1,7 +1,7 @@
 import { Color } from 'three'
 import { ChangeTracker, type ChangedProp, type ChangedPropPair } from './change-tracker.model'
 import { nanoid } from 'nanoid'
-import { clamp } from 'three/src/math/MathUtils.js'
+import { clamp, MathUtils } from 'three/src/math/MathUtils.js'
 
 export class BiomeDimensions {
   temperatureMin: number = 0.0
@@ -117,5 +117,20 @@ export class BiomeParameters extends ChangeTracker {
     const newValue: ChangedPropPair = { key: 'smoothness', value: value.valueOf() }
     this._smoothness = clamp(value, 0.0, 1.0)
     this.markForChange(`${this._changePrefix}|${this._id}`, oldValue, newValue)
+  }
+
+  public static createRandom(changedProps: ChangedProp[]) {
+    return new BiomeParameters(
+      changedProps,
+      '_biomesParameters',
+      {
+        temperatureMin: MathUtils.randFloat(0, 1),
+        temperatureMax: MathUtils.randFloat(0, 1),
+        humidityMin: MathUtils.randFloat(0, 1),
+        humidityMax: MathUtils.randFloat(0, 1),
+      },
+      new Color(Math.random() * 0xffffff),
+      MathUtils.randFloat(0, 1),
+    )
   }
 }

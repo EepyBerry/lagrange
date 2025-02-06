@@ -54,6 +54,7 @@
           id="s-deps"
           v-model="LG_PLANET_DATA.planetSurfaceDisplacement.epsilon"
           :step="0.0005"
+          :min="0.0005"
           :max="0.25"
         >
           {{ $t('editor.general.displacement_epsilon') }}

@@ -168,16 +168,17 @@ export class ColorRamp extends ChangeTracker {
     this._steps.push(...data.map((s: any) => ColorRampStep.newWithAlpha(s._color, s._alpha, s._factor, s._isBound)))
   }
 
-  /**
-   * Gets a lookup table for luminance values
-   * @remarks only used for opacity-based ramps
-   * @param luminance
-   */
-  public getLuminanceLookup(): StepLuminance[] {
-    return this._steps.map((s) => ({ factor: s.factor, lumi: getColorLuminance(s.color) }))
-  }
-
-  public getRelativeLuminance(startStep: number, endStep: number, relativePct: number): number {
-    return getColorLuminance(this._steps[startStep].color.lerp(this._steps[endStep].color, relativePct))
+  public randomize() {
+    this._steps.splice(0)
+    const max = THREE.MathUtils.randInt(2, 10)
+    for (let i = 0; i < max; i++) {
+      this._steps.push(ColorRampStep.newWithAlpha(
+        Math.random() * 0xffffff,
+        THREE.MathUtils.randFloat(0, 1),
+        THREE.MathUtils.randFloat(0, 1),
+        i === 0 || i === max-1
+      ))
+    }
+    this.sortSteps()
   }
 }

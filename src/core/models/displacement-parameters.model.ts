@@ -1,4 +1,4 @@
-import { clamp } from 'three/src/math/MathUtils.js'
+import { clamp, MathUtils } from 'three/src/math/MathUtils.js'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 
 export class DisplacementParameters extends ChangeTracker {
@@ -103,5 +103,15 @@ export class DisplacementParameters extends ChangeTracker {
     this.epsilon = clamp(eps ?? 0.001, 0.0, 2.0)
     this.multiplier = clamp(mul ?? 2.0, 0.0, 5.0)
     this.factor = clamp(fac ?? 0.05, 0.0, 1.0)
+  }
+
+  public randomize() {
+    this.factor = MathUtils.randFloat(0, 0.25)
+    this.epsilon = MathUtils.randFloat(0.0005, 0.25)
+    this.multiplier = MathUtils.randFloat(0, 3)
+    this.frequency = MathUtils.randFloat(0, 3)
+    this.amplitude = MathUtils.randFloat(0, 1.25)
+    this.lacunarity = MathUtils.randFloat(0, 3)
+    this.octaves = MathUtils.randInt(0, 8)
   }
 }

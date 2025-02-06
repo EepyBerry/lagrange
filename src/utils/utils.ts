@@ -1,6 +1,6 @@
 import type { RawRGBA } from '@/core/types'
 import { LOCALE_MAP, MUL_INT8_TO_UNIT } from '@core/globals'
-import { type Color } from 'three'
+import { Color } from 'three'
 import type { Composer } from 'vue-i18n'
 
 export function sleep(delay: number): Promise<void> {

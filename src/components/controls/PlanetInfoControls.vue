@@ -43,6 +43,14 @@
     </button>
     <button
       class="lg dark"
+      :aria-label="$t('a11y.topbar_ranndom')"
+      :title="$t('tooltip.topbar_random')"
+      @click="$emit('random')"
+    >
+      <iconify-icon icon="mingcute:shuffle-2-fill" width="1.5rem" aria-hidden="true" />
+    </button>
+    <button
+      class="lg dark"
       :aria-label="$t('a11y.topbar_save')"
       :title="$t('tooltip.topbar_save')"
       @click="$emit('save')"
@@ -73,7 +81,7 @@ const planetNameInput: Ref<HTMLInputElement | null> = ref(null)
 const resetDialog: Ref<{ open: () => void } | null> = ref(null)
 
 defineProps<{ compactMode: boolean }>()
-const $emit = defineEmits(['rename', 'reset', 'save', 'gltf'])
+const $emit = defineEmits(['rename', 'reset', 'save', 'gltf', 'random'])
 
 function toggleEditMode() {
   editMode.value = !editMode.value

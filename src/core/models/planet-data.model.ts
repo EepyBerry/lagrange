@@ -5,7 +5,7 @@ import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeTracker } from './change-tracker.model'
 import { BiomeParameters } from './biome-parameters.model'
-import { clamp } from 'three/src/math/MathUtils.js'
+import { clamp, MathUtils } from 'three/src/math/MathUtils.js'
 import { DisplacementParameters } from './displacement-parameters.model'
 
 export default class PlanetData extends ChangeTracker {
@@ -767,6 +767,90 @@ export default class PlanetData extends ChangeTracker {
             new ColorRampStep(0xbf9a5e, 1.0, true),
           ],
     )
+  }
+
+  public randomize() {
+    this.planetName = 'Random'
+
+    // Lighting
+    this.lensFlareEnabled = Boolean(MathUtils.randInt(0, 1))
+    this.lensFlarePointsIntensity = MathUtils.randFloat(0, 1)
+    this.lensFlareGlareIntensity = MathUtils.randFloat(0, 1)
+    this.sunLightAngle = MathUtils.randFloat(-90, 90)
+    this.sunLightColor.set(Math.random() * 0xffffff)
+    this.sunLightIntensity = MathUtils.randFloat(0, 50)
+    this.ambLightColor.set(Math.random() * 0xffffff)
+    this.ambLightIntensity = MathUtils.randFloat(0, 1)
+
+    // Planet & Rendering
+    this.planetType = MathUtils.randInt(0, 1) as PlanetType
+    this.planetRadius = MathUtils.randFloat(0.5, 1)
+    this.planetAxialTilt = MathUtils.randFloat(-180, 180)
+    this.planetRotation = MathUtils.randFloat(0, 360)
+    this.planetWaterRoughness = MathUtils.randFloat(0, 1)
+    this.planetWaterMetalness = MathUtils.randFloat(0, 1)
+    this.planetGroundRoughness = MathUtils.randFloat(0, 1)
+    this.planetGroundMetalness = MathUtils.randFloat(0, 1)
+    this.planetWaterLevel = MathUtils.randFloat(0, 1)
+
+    // Surface
+    this.planetSurfaceShowBumps = Boolean(MathUtils.randInt(0, 1))
+    this.planetSurfaceBumpStrength =  MathUtils.randFloat(0, 0.2)
+    this.planetSurfaceShowWarping = Boolean(MathUtils.randInt(0, 1))
+    this.planetSurfaceShowDisplacement = Boolean(MathUtils.randInt(0, 1))
+    this.planetSurfaceDisplacement.randomize()
+    this.planetSurfaceNoise.randomize()
+    this.planetSurfaceColorRamp.randomize()
+
+    // Biomes
+    this.biomesEnabled = Boolean(MathUtils.randInt(0, 1))
+    this.biomesTemperatureMode = MathUtils.randInt(0, 2) as GradientMode
+    this.biomesTemperatureNoise.randomize()
+    this.biomesHumidityMode = MathUtils.randInt(0, 2) as GradientMode
+    this.biomesHumidityNoise.randomize()
+    this.biomesParams.splice(0)
+    for (let i = 0; i < MathUtils.randInt(0, 8); i++) {
+      this.biomesParams.push(BiomeParameters.createRandom(this.changedProps))
+    }
+    
+    // Clouds
+    this.cloudsEnabled = Boolean(MathUtils.randInt(0, 1))
+    this.cloudsRotation = MathUtils.randFloat(0, 360)
+    this.cloudsShowWarping = Boolean(MathUtils.randInt(0, 1))
+    this.cloudsNoise.randomize()
+    this.cloudsColor.set(Math.random() * 0xffffff)
+    this.cloudsColorRamp.loadFromSteps(
+      [
+        new ColorRampStep(0x000000, 0.0, true),
+        new ColorRampStep(Math.random() * 0xffffff, MathUtils.randFloat(0.0, 1.0)),
+        new ColorRampStep(0xbbbbbb, 1.0, true),
+      ],
+    )
+
+    // Atmosphere
+    this.atmosphereEnabled = Boolean(MathUtils.randInt(0, 1))
+    this.atmosphereHeight = MathUtils.randFloat(0.25, 8)
+    this.atmosphereDensityScale = MathUtils.randFloat(0.25, 10)
+    this.atmosphereIntensity = MathUtils.randFloat(0, 2)
+    this.atmosphereColorMode = MathUtils.randInt(0, 2) as ColorMode
+    this.atmosphereHue = MathUtils.randFloat(0, 2)
+    this.atmosphereTint.set(Math.random() * 0xffffff)
+
+    // Ring
+    /*this.ringEnabled = data._ringEnabled ?? false
+    this.ringAxialTilt = data._ringAxialTilt ?? 90.0
+    this.ringRotation = data._ringRotation ?? 0.0
+    this.ringInnerRadius = data._ringInnerRadius ?? 1.25
+    this.ringOuterRadius = data._ringOuterRadius ?? 1.5
+    this.ringColorRamp.loadFromSteps(
+      data._ringColorRamp
+        ? data._ringColorRamp._steps
+        : [
+            new ColorRampStep(0x856f4e, 0.0, true),
+            new ColorRampStep(0x000000, 0.5),
+            new ColorRampStep(0xbf9a5e, 1.0, true),
+          ],
+    ) */
   }
 
   public reset() {

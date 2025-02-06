@@ -7,6 +7,7 @@
       @save="savePlanet"
       @reset="resetPlanet"
       @gltf="exportPlanet"
+      @random="randomizePlanet"
     />
   </div>
   <PlanetEditorControls :compact-mode="showCompactControls" />
@@ -42,6 +43,7 @@ import {
   setPlanetEditFlag,
   updateCameraRendering,
   resetPlanet,
+  randomizePlanet,
 } from '@/core/services/planet-editor.service'
 import { getPlanetMetaTitle, sleep } from '@/utils/utils'
 import { nanoid } from 'nanoid'
@@ -110,7 +112,6 @@ async function initThree() {
       await initCanvas()
       loadedCorrectly = true
     } else {
-      showSpinner.value = false
       const error = WebGL.getWebGL2ErrorMessage()
       error.style.margin = ''
       error.style.background = ''
@@ -123,12 +124,13 @@ async function initThree() {
     }
   } catch (error: unknown) {
     console.error(error)
-    showSpinner.value = false
     if (error instanceof Error) {
       planetErrorDialogRef.value!.openWithError(error.message, error.stack)
     } else if (typeof error === 'string') {
       planetErrorDialogRef.value!.openWithError(error, undefined)
     }
+  } finally {
+    showSpinner.value = false
   }
 }
 
@@ -163,7 +165,6 @@ async function initData() {
 }
 
 async function initCanvas() {
-  // Determine UI modes on start
   computeResponsiveness()
 
   const width = window.innerWidth,
@@ -178,12 +179,11 @@ async function initCanvas() {
   }
 
   // Bootstrap editor service
-  bootstrapEditor(sceneRoot.value!, effectiveWidth, effectiveHeight, pixelRatio)
+  await bootstrapEditor(sceneRoot.value!, effectiveWidth, effectiveHeight, pixelRatio)
 
   // Register event listeners
   EventBus.registerWindowEventListener('resize', onWindowResize)
   EventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
-  showSpinner.value = false
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -40,7 +40,8 @@ let watchForPlanetUpdates = false
 //                                           BOOTSTRAPPING                                          //
 // ------------------------------------------------------------------------------------------------ //
 
-export function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
+export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
+  await sleep(50)
   enableEditorRendering = true
   const sceneElems = ComponentBuilder.createScene(w, h, pixelRatio)
   LG_SCENE_DATA.scene = sceneElems.scene
@@ -203,6 +204,10 @@ export function disposeScene() {
 //                                          DATA FUNCTIONS                                          //
 // ------------------------------------------------------------------------------------------------ //
 
+export async function randomizePlanet() {
+  LG_PLANET_DATA.value.randomize()
+}
+
 export async function resetPlanet() {
   LG_PLANET_DATA.value.reset()
 }
@@ -240,9 +245,8 @@ export async function exportPlanetPreview(): Promise<string> {
   renderGroup.add(LG_SCENE_DATA.planetGroup!, LG_SCENE_DATA.sunLight!)
 
   // ---------------------------- Setup renderer & render -----------------------------
-  LG_SCENE_DATA.renderer!.setRenderTarget(previewRenderTarget)
-
   const rawBuffer = new Uint8Array(w * h * 4)
+  LG_SCENE_DATA.renderer!.setRenderTarget(previewRenderTarget)
   LG_SCENE_DATA.renderer!.render(renderGroup, previewCamera)
   LG_SCENE_DATA.renderer!.readRenderTargetPixels(previewRenderTarget, 0, 0, w, h, rawBuffer)
   LG_SCENE_DATA.renderer!.setRenderTarget(null)
