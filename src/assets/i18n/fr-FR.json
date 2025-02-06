@@ -389,6 +389,7 @@
     "topbar_reset": "Réinitialiser",
     "topbar_save": "Enregistrer",
     "topbar_gltf": "Exporter au format glTF",
+    "topbar_random": "Planète aléatoire",
     "topbar_import": "Importer un fichier de planète",
     "topbar_export": "Exporter la planète en fichier",
     "topbar_export_all": "Exporter toutes les planètes au format .zip",
@@ -401,7 +402,7 @@
     "rgba_mode_direct": "Applique une couleur unique directe après les calculs",
     "rgba_mode_mixed": "Applique une couleur unique par-dessus la teinte sélectionnée",
 
-    "footer_github": "Dépôt GitHub repository (dans un nouvel onglet)",
+    "footer_github": "Dépôt GitHub (dans un nouvel onglet)",
     "footer_settings": "Paramètres",
     "footer_about": "À propos de @:main.$title"
   },
@@ -427,6 +428,7 @@
     "topbar_reset": "@:tooltip.topbar_reset",
     "topbar_save": "@:tooltip.topbar_save",
     "topbar_gltf": "@:tooltip.topbar_gltf",
+    "topbar_random": "@:tooltip.topbar_random",
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
     "topbar_export_all": "@:tooltip.topbar_export_all",

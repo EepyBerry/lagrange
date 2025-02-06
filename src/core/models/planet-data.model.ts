@@ -770,8 +770,6 @@ export default class PlanetData extends ChangeTracker {
   }
 
   public randomize() {
-    this.planetName = 'Random'
-
     // Lighting
     this.lensFlareEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
     this.lensFlarePointsIntensity = clampedPRNG(0, 1)
