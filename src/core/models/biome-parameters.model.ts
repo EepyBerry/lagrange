@@ -2,6 +2,7 @@ import { Color } from 'three'
 import { ChangeTracker, type ChangedProp, type ChangedPropPair } from './change-tracker.model'
 import { nanoid } from 'nanoid'
 import { clamp, MathUtils } from 'three/src/math/MathUtils.js'
+import { clampedPRNG } from '@/utils/math-utils'
 
 export class BiomeDimensions {
   temperatureMin: number = 0.0
@@ -124,13 +125,13 @@ export class BiomeParameters extends ChangeTracker {
       changedProps,
       '_biomesParameters',
       {
-        temperatureMin: MathUtils.randFloat(0, 1),
-        temperatureMax: MathUtils.randFloat(0, 1),
-        humidityMin: MathUtils.randFloat(0, 1),
-        humidityMax: MathUtils.randFloat(0, 1),
+        temperatureMin: clampedPRNG(0, 1),
+        temperatureMax: clampedPRNG(0, 1),
+        humidityMin: clampedPRNG(0, 1),
+        humidityMax: clampedPRNG(0, 1),
       },
-      new Color(Math.random() * 0xffffff),
-      MathUtils.randFloat(0, 1),
+      new Color(clampedPRNG(0, 1) * 0xffffff),
+      clampedPRNG(0, 1),
     )
   }
 }
