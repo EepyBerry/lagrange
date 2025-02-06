@@ -13,8 +13,8 @@ export enum ShaderFileType {
 
 // ----------------------------------- Editor types ---------------------------------
 export enum PlanetType {
-  TELLURIC,
-  GASEOUS,
+  PLANET,
+  STAR,
 }
 export enum ColorMode {
   REALISTIC,

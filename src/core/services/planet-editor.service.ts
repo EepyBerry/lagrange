@@ -245,6 +245,7 @@ export async function exportPlanetPreview(): Promise<string> {
   const rawBuffer = new Uint8Array(w * h * 4)
   LG_SCENE_DATA.renderer!.render(renderGroup, previewCamera)
   LG_SCENE_DATA.renderer!.readRenderTargetPixels(previewRenderTarget, 0, 0, w, h, rawBuffer)
+  LG_SCENE_DATA.renderer!.setRenderTarget(null)
 
   // ----------------- Create preview canvas & write data from buffer -----------------
   const canvas = document.createElement('canvas')
@@ -259,7 +260,6 @@ export async function exportPlanetPreview(): Promise<string> {
   ctx.putImageData(imageData, 0, 0)
 
   // ------------------------------- Clean-up resources -------------------------------
-  renderGroup.clear()
   LG_SCENE_DATA.scene!.add(LG_SCENE_DATA.planetGroup!, LG_SCENE_DATA.sunLight!)
   previewRenderTarget.dispose()
 

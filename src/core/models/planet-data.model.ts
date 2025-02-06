@@ -113,7 +113,7 @@ export default class PlanetData extends ChangeTracker {
   // |                Planet settings                 |
   // --------------------------------------------------
 
-  private _planetType: PlanetType = PlanetType.TELLURIC
+  private _planetType: PlanetType = PlanetType.PLANET
   private _planetMeshQuality: number
 
   private _planetRadius: number
@@ -547,7 +547,7 @@ export default class PlanetData extends ChangeTracker {
     this._ambLightIntensity = 0.02
 
     // Planet & Rendering
-    this._planetType = PlanetType.TELLURIC
+    this._planetType = PlanetType.PLANET
     this._planetMeshQuality = 64.0
     this._planetRadius = 1.0
     this._planetAxialTilt = 15.0
@@ -669,7 +669,7 @@ export default class PlanetData extends ChangeTracker {
     this.ambLightIntensity = data._ambLightIntensity ?? 0.02
 
     // Planet & Rendering
-    this.planetType = data._planetType ?? PlanetType.TELLURIC
+    this.planetType = data._planetType ?? PlanetType.PLANET
     this.planetRadius = data._planetRadius ?? 1.0
     this.planetAxialTilt = data._planetAxialTilt ?? 15.0
     this.planetRotation = data._planetRotation ?? 0.0

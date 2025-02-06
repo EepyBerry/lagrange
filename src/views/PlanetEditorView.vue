@@ -42,7 +42,6 @@ import {
   setPlanetEditFlag,
   updateCameraRendering,
   resetPlanet,
-  setEditorRendering
 } from '@/core/services/planet-editor.service'
 import { getPlanetMetaTitle, sleep } from '@/utils/utils'
 import { nanoid } from 'nanoid'
@@ -252,7 +251,6 @@ function computeResponsiveness() {
 async function savePlanet() {
   showSpinner.value = true
   setPlanetEditFlag(false)
-  //setEditorRendering(false)
 
   // -------- Generate planet preview -------- //
   let previewDataString = await exportPlanetPreview()
@@ -269,7 +267,6 @@ async function savePlanet() {
   await idb.planets.put(idbData, idbData.id)
   $planetEntityId.value = idbData.id
 
-  //setEditorRendering(true)
   showSpinner.value = false
   previewDataString = ''
   EventBus.sendToastEvent('success', 'toast.save_success', 3000)
