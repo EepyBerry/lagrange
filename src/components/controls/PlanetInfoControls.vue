@@ -43,7 +43,7 @@
     </button>
     <button
       class="lg dark"
-      :aria-label="$t('a11y.topbar_ranndom')"
+      :aria-label="$t('a11y.topbar_random')"
       :title="$t('tooltip.topbar_random')"
       @click="$emit('random')"
     >

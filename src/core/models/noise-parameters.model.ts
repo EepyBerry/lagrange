@@ -1,6 +1,7 @@
 import { clamp, MathUtils } from 'three/src/math/MathUtils.js'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import { Vector3 } from 'three'
+import { clampedPRNG } from '@/utils/math-utils'
 
 export class NoiseParameters extends ChangeTracker {
   private _frequency: number = 3
@@ -117,13 +118,13 @@ export class NoiseParameters extends ChangeTracker {
   }
 
   public randomize() {
-    this.layers = MathUtils.randInt(1, 3)
-    this.frequency = MathUtils.randFloat(0, 10)
-    this.amplitude = MathUtils.randFloat(0, 1.25)
-    this.lacunarity = MathUtils.randFloat(0, 3)
-    this.octaves = MathUtils.randInt(0, 8)
-    this.xWarpFactor = MathUtils.randFloat(0, 8)
-    this.yWarpFactor = MathUtils.randFloat(0, 8)
-    this.zWarpFactor = MathUtils.randFloat(0, 8)
+    this.layers = Math.round(clampedPRNG(1, 3))
+    this.frequency = clampedPRNG(0, 10)
+    this.amplitude = clampedPRNG(0, 1.25)
+    this.lacunarity = clampedPRNG(0, 3)
+    this.octaves = Math.round(clampedPRNG(1, 8))
+    this.xWarpFactor = clampedPRNG(0, 8)
+    this.yWarpFactor = clampedPRNG(0, 8)
+    this.zWarpFactor = clampedPRNG(0, 8)
   }
 }

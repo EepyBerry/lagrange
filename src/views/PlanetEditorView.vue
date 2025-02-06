@@ -7,7 +7,7 @@
       @save="savePlanet"
       @reset="resetPlanet"
       @gltf="exportPlanet"
-      @random="randomizePlanet"
+      @random="randPlanet"
     />
   </div>
   <PlanetEditorControls :compact-mode="showCompactControls" />
@@ -247,6 +247,12 @@ function computeResponsiveness() {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+async function randPlanet() {
+  showSpinner.value = true
+  await randomizePlanet()
+  showSpinner.value = false
+}
 
 async function savePlanet() {
   showSpinner.value = true

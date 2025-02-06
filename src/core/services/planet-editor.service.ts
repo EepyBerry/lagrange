@@ -5,7 +5,7 @@ import * as Globals from '@core/globals'
 import * as ComponentBuilder from '@core/three/component.builder'
 import { type BakingTarget, type PlanetSceneData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
-import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
+import { regeneratePRNG, normalizeUInt8ArrayPixels } from '@/utils/math-utils'
 import {
   bakeMesh,
   createBakingHeightMap,
@@ -205,6 +205,8 @@ export function disposeScene() {
 // ------------------------------------------------------------------------------------------------ //
 
 export async function randomizePlanet() {
+  await sleep(50)
+  regeneratePRNG()
   LG_PLANET_DATA.value.randomize()
 }
 

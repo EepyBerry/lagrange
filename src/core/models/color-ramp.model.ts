@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import { nanoid } from 'nanoid'
 import { getColorLuminance } from '@/utils/utils'
+import { clampedPRNG } from '@/utils/math-utils'
 
 export type StepLuminance = { factor: number; lumi: number }
 export class ColorRampStep {
@@ -168,14 +169,15 @@ export class ColorRamp extends ChangeTracker {
     this._steps.push(...data.map((s: any) => ColorRampStep.newWithAlpha(s._color, s._alpha, s._factor, s._isBound)))
   }
 
-  public randomize() {
+  public randomize(maxSteps: number = 10) {
     this._steps.splice(0)
-    const max = THREE.MathUtils.randInt(2, 10)
+    const max = Math.round(clampedPRNG(2, maxSteps))
     for (let i = 0; i < max; i++) {
+      const factor = i === 0 ? 0 : (i === max-1 ? 1 : clampedPRNG(0, 1))
       this._steps.push(ColorRampStep.newWithAlpha(
-        Math.random() * 0xffffff,
-        THREE.MathUtils.randFloat(0, 1),
-        THREE.MathUtils.randFloat(0, 1),
+        clampedPRNG(0, 1) * 0xffffff,
+        clampedPRNG(0, 1),
+        factor,
         i === 0 || i === max-1
       ))
     }
