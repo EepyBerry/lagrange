@@ -5,7 +5,7 @@ import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeTracker } from './change-tracker.model'
 import { BiomeParameters } from './biome-parameters.model'
-import { clamp, MathUtils } from 'three/src/math/MathUtils.js'
+import { clamp } from 'three/src/math/MathUtils.js'
 import { DisplacementParameters } from './displacement-parameters.model'
 
 export default class PlanetData extends ChangeTracker {

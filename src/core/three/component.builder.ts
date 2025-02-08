@@ -1,12 +1,10 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-shader-material/vanilla'
-import { LG_BUFFER_BIOME, LG_BUFFER_CLOUDS, LG_BUFFER_RING, LG_BUFFER_SURFACE, LG_PLANET_DATA } from '../services/planet-editor.service'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { createRampTexture, createBiomeTexture } from '../helpers/texture.helper'
 import type PlanetData from '../models/planet-data.model'
-import { SceneElements } from '../models/scene-elements.model'
-import { type DataTextureWrapper, ShaderFileType, ColorMode } from '../types'
+import { type DataTextureWrapper, ShaderFileType, ColorMode, type SceneRenderObjects } from '../types'
 import { loadCubeTexture } from './external-data.loader'
 import { LensFlareEffect } from './lens-flare.effect'
 import * as Globals from '@core/globals'
@@ -15,7 +13,7 @@ import * as ShaderLoader from '../three/shader.loader'
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
 
-export function createScene(width: number, height: number, pixelRatio: number): SceneElements {
+export function createScene(data: PlanetData, width: number, height: number, pixelRatio: number): SceneRenderObjects {
   // setup cubemap
   const scene = new THREE.Scene()
   scene.background = loadCubeTexture('/skybox/', [
@@ -34,13 +32,13 @@ export function createScene(width: number, height: number, pixelRatio: number): 
     width / height,
     0.1,
     1e6,
-    new THREE.Spherical(LG_PLANET_DATA.value.initCamDistance, Math.PI / 2.0, degToRad(LG_PLANET_DATA.value.initCamAngle)),
+    new THREE.Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle)),
   )
-  const ambientLight = createAmbientLightComponent(LG_PLANET_DATA.value.ambLightColor, LG_PLANET_DATA.value.ambLightIntensity)
+  const ambientLight = createAmbientLightComponent(data.ambLightColor, data.ambLightIntensity)
   ambientLight.name = Globals.LG_NAME_AMBLIGHT
   scene.add(ambientLight)
 
-  return new SceneElements(scene, renderer, camera)
+  return { scene, renderer, camera }
 }
 
 export function createSun(data: PlanetData) {
@@ -66,16 +64,16 @@ export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THR
   })
 }
 
-export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
-  const geometry = createSphereGeometryComponent()
+export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
+  const geometry = createSphereGeometryComponent(data.planetMeshQuality)
   geometry.computeTangents()
 
   const surfaceTex = createRampTexture(
-    LG_BUFFER_SURFACE,
+    surfaceTexBuf,
     Globals.TEXTURE_SIZES.SURFACE,
     data.planetSurfaceColorRamp.steps,
   )
-  const biomeTex = createBiomeTexture(LG_BUFFER_BIOME, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
+  const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
 
   const material = createCustomShaderMaterialComponent(
     ShaderLoader.fetch('planet.vert.glsl', ShaderFileType.CORE),
@@ -154,10 +152,10 @@ export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
   return { mesh, texs: [surfaceTex, biomeTex] }
 }
 
-export function createClouds(data: PlanetData): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
+export function createClouds(data: PlanetData, textureBuffer: Uint8Array): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
   const cloudHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
-  const geometry = createSphereGeometryComponent(cloudHeight)
-  const opacityTex = createRampTexture(LG_BUFFER_CLOUDS, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
+  const geometry = createSphereGeometryComponent(data.planetMeshQuality, cloudHeight)
+  const opacityTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
   const material = createCustomShaderMaterialComponent(
     ShaderLoader.fetch('clouds.vert.glsl', ShaderFileType.CORE),
@@ -193,7 +191,7 @@ export function createClouds(data: PlanetData): { mesh: THREE.Mesh; texs: DataTe
 export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE.Mesh {
   const atmosHeight = data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
   const atmosDensity = data.atmosphereDensityScale / Globals.ATMOSPHERE_HEIGHT_DIVIDER
-  const geometry = createSphereGeometryComponent(atmosHeight)
+  const geometry = createSphereGeometryComponent(data.planetMeshQuality, atmosHeight)
   const material = createShaderMaterialComponent(
     ShaderLoader.fetch('atmosphere.vert.glsl', ShaderFileType.CORE),
     ShaderLoader.fetch('atmosphere.frag.glsl', ShaderFileType.CORE),
@@ -219,15 +217,15 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
   return mesh
 }
 
-export function createRing(data: PlanetData): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
-  const rgbaTex = createRampTexture(LG_BUFFER_RING, Globals.TEXTURE_SIZES.RING, data.ringColorRamp.steps)
-  const geometry = createRingGeometryComponent(data.ringInnerRadius, data.ringOuterRadius)
+export function createRing(data: PlanetData, textureBuffer: Uint8Array): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
+  const rgbaTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, data.ringColorRamp.steps)
+  const geometry = createRingGeometryComponent(data.planetMeshQuality, data.ringInnerRadius, data.ringOuterRadius)
   const material = createCustomShaderMaterialComponent(
     ShaderLoader.fetch('ring.vert.glsl', ShaderFileType.CORE),
     ShaderLoader.fetch('ring.frag.glsl', ShaderFileType.CORE),
     {
-      u_inner_radius: { value: LG_PLANET_DATA.value.ringInnerRadius },
-      u_outer_radius: { value: LG_PLANET_DATA.value.ringOuterRadius },
+      u_inner_radius: { value: data.ringInnerRadius },
+      u_outer_radius: { value: data.ringOuterRadius },
       u_ring_tex: { value: rgbaTex.texture },
     },
     THREE.MeshStandardMaterial,
@@ -319,19 +317,20 @@ export function createAmbientLightComponent(color: THREE.ColorRepresentation, in
   return light
 }
 
-export function createSphereGeometryComponent(addtlRadius: number = 0): THREE.SphereGeometry {
+export function createSphereGeometryComponent(quality: number, addtlRadius: number = 0): THREE.SphereGeometry {
   return new THREE.SphereGeometry(
     1.0 + addtlRadius,
-    LG_PLANET_DATA.value.planetMeshQuality,
-    LG_PLANET_DATA.value.planetMeshQuality / 2.0,
+    quality,
+    quality / 2.0,
   )
 }
 
 export function createRingGeometryComponent(
+  quality: number,
   innerRadius: number = 1.25,
   outerRadius: number = 1.75,
 ): THREE.RingGeometry {
-  return new THREE.RingGeometry(innerRadius, outerRadius, LG_PLANET_DATA.value.planetMeshQuality)
+  return new THREE.RingGeometry(innerRadius, outerRadius, quality)
 }
 
 /**

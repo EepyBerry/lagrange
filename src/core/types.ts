@@ -1,5 +1,4 @@
 import type { AmbientLight, Clock, DataTexture, DirectionalLight, Group, Mesh, PerspectiveCamera, Scene, Texture, WebGLRenderer } from 'three'
-import type { SceneElements } from './models/scene-elements.model'
 import type { LensFlareEffect } from './three/lens-flare.effect'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
@@ -12,6 +11,12 @@ export enum ShaderFileType {
 }
 
 // ----------------------------------- Editor types ---------------------------------
+export type SceneRenderObjects = {
+  scene: Scene
+  renderer: WebGLRenderer
+  camera: PerspectiveCamera
+}
+
 export enum PlanetType {
   PLANET,
   STAR,

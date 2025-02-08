@@ -24,7 +24,7 @@ import Stats from 'three/examples/jsm/libs/stats.module.js'
 
 // Editor constants
 const LG_SCENE_DATA: PlanetSceneData = {}
-export const LG_PLANET_DATA = ref(new PlanetData())
+export const LG_PLANET_DATA: Ref<PlanetData> = ref(new PlanetData())
 
 // Buffers
 export const LG_BUFFER_SURFACE = new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4)
@@ -43,21 +43,21 @@ let watchForPlanetUpdates = false
 export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
   await sleep(50)
   enableEditorRendering = true
-  const sceneElems = ComponentBuilder.createScene(w, h, pixelRatio)
-  LG_SCENE_DATA.scene = sceneElems.scene
-  LG_SCENE_DATA.renderer = sceneElems.renderer
-  LG_SCENE_DATA.camera = sceneElems.camera
+  const sceneRenderObjs = ComponentBuilder.createScene(LG_PLANET_DATA.value, w, h, pixelRatio)
+  LG_SCENE_DATA.scene = sceneRenderObjs.scene
+  LG_SCENE_DATA.renderer = sceneRenderObjs.renderer
+  LG_SCENE_DATA.camera = sceneRenderObjs.camera
   LG_SCENE_DATA.clock = new THREE.Clock()
   initLighting()
   initPlanet()
   initRendering(canvas, w, h)
-  initUniformUpdateMap(LG_SCENE_DATA)
+  initUniformUpdateMap(LG_SCENE_DATA, LG_PLANET_DATA.value, [LG_BUFFER_SURFACE, LG_BUFFER_BIOME, LG_BUFFER_CLOUDS, LG_BUFFER_RING])
   ComponentBuilder.createControlsComponent(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
 }
 
 function initLighting(): void {
-  const sun = ComponentBuilder.createSun(LG_PLANET_DATA.value as PlanetData)
-  const lensFlare = ComponentBuilder.createLensFlare(LG_PLANET_DATA.value as PlanetData, sun.position, sun.color)
+  const sun = ComponentBuilder.createSun(LG_PLANET_DATA.value)
+  const lensFlare = ComponentBuilder.createLensFlare(LG_PLANET_DATA.value, sun.position, sun.color)
   sun.add(lensFlare.mesh)
   LG_SCENE_DATA.scene!.add(sun)
   LG_SCENE_DATA.sunLight = sun
@@ -72,10 +72,10 @@ function initLighting(): void {
 }
 
 function initPlanet(): void {
-  const planet = ComponentBuilder.createPlanet(LG_PLANET_DATA.value as PlanetData)
-  const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value as PlanetData)
-  const atmosphere = ComponentBuilder.createAtmosphere(LG_PLANET_DATA.value as PlanetData, LG_SCENE_DATA.sunLight!.position)
-  const ring = ComponentBuilder.createRing(LG_PLANET_DATA.value as PlanetData)
+  const planet = ComponentBuilder.createPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME)
+  const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
+  const atmosphere = ComponentBuilder.createAtmosphere(LG_PLANET_DATA.value , LG_SCENE_DATA.sunLight!.position)
+  const ring = ComponentBuilder.createRing(LG_PLANET_DATA.value, LG_BUFFER_RING)
   const planetGroup = new THREE.Group()
   planetGroup.add(planet.mesh)
   planetGroup.add(clouds.mesh)
@@ -291,22 +291,22 @@ export async function exportPlanetToGLTF(
     // ----------------------------------- Bake planet ----------------------------------
     progressDialog.setProgress(2)
     await sleep(50)
-    const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value as PlanetData)
+    const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME)
     const bakePlanetSurfaceTex = bakeMesh(LG_SCENE_DATA.renderer!, bakePlanet, w, h)
     if (appSettings?.bakingPixelize) bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
 
     progressDialog.setProgress(3)
     await sleep(50)
-    const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value as PlanetData)
+    const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value)
     const bakePlanetPBRTex = bakeMesh(LG_SCENE_DATA.renderer!, bakePBR, w, h)
     if (appSettings?.bakingPixelize) bakePlanetPBRTex.magFilter = THREE.NearestFilter
 
     progressDialog.setProgress(4)
     await sleep(50)
-    const bakeHeight = createBakingHeightMap(LG_PLANET_DATA.value as PlanetData)
+    const bakeHeight = createBakingHeightMap(LG_PLANET_DATA.value)
     const bakePlanetHeightTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeHeight, w, h)
 
-    const bakeNormal = createBakingNormalMap(bakePlanetHeightTex, w)
+    const bakeNormal = createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex, w)
     const bakePlanetNormalTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeNormal, w, h)
     if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
 
@@ -326,7 +326,7 @@ export async function exportPlanetToGLTF(
     if (LG_PLANET_DATA.value.cloudsEnabled) {
       progressDialog.setProgress(5)
       await sleep(50)
-      const bakeClouds = createBakingClouds(LG_PLANET_DATA.value as PlanetData)
+      const bakeClouds = createBakingClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
       const bakeCloudsTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeClouds, w, h)
       if (appSettings?.bakingPixelize) bakeCloudsTex.magFilter = THREE.NearestFilter
 
@@ -346,7 +346,7 @@ export async function exportPlanetToGLTF(
     if (LG_PLANET_DATA.value.ringEnabled) {
       progressDialog.setProgress(6)
       await sleep(50)
-      const bakeRing = createBakingRing(LG_PLANET_DATA.value as PlanetData)
+      const bakeRing = createBakingRing(LG_PLANET_DATA.value, LG_BUFFER_RING)
       const bakeRingTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeRing, w, h)
       if (appSettings?.bakingPixelize) bakeRingTex.magFilter = THREE.NearestFilter
 

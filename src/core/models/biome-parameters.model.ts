@@ -1,7 +1,7 @@
 import { Color } from 'three'
 import { ChangeTracker, type ChangedProp, type ChangedPropPair } from './change-tracker.model'
 import { nanoid } from 'nanoid'
-import { clamp, MathUtils } from 'three/src/math/MathUtils.js'
+import { clamp } from 'three/src/math/MathUtils.js'
 import { clampedPRNG } from '@/utils/math-utils'
 
 export class BiomeDimensions {

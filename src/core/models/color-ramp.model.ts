@@ -1,7 +1,6 @@
 import * as THREE from 'three'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import { nanoid } from 'nanoid'
-import { getColorLuminance } from '@/utils/utils'
 import { clampedPRNG } from '@/utils/math-utils'
 
 export type StepLuminance = { factor: number; lumi: number }

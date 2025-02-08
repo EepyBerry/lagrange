@@ -1,4 +1,4 @@
-import { clamp, MathUtils } from 'three/src/math/MathUtils.js'
+import { clamp } from 'three/src/math/MathUtils.js'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import { clampedPRNG } from '@/utils/math-utils'
 

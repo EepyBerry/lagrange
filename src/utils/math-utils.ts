@@ -4,12 +4,6 @@ import { ref } from 'vue'
 
 // @ts-expect-error Type definitions missing in 'seedrandom' package
 export const PRNG = ref(new seedrandom.alea(Math.random().toString().substring(2)))
-console.log(clampedPRNG(0, 5))
-console.log(clampedPRNG(0, 5))
-console.log(clampedPRNG(0, 5))
-console.log(clampedPRNG(0, 5))
-console.log(clampedPRNG(0, 5))
-console.log(clampedPRNG(0, 5))
 
 export function regeneratePRNG(seed?: string): string {
   const s: string = seed ?? Math.random().toString().substring(2)
