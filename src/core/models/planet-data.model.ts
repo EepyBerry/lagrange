@@ -799,7 +799,7 @@ export default class PlanetData extends ChangeTracker {
     this.planetSurfaceShowDisplacement = Boolean(Math.round(clampedPRNG(0, 1)))
     this.planetSurfaceDisplacement.randomize()
     this.planetSurfaceNoise.randomize()
-    this.planetSurfaceColorRamp.randomize()
+    this.planetSurfaceColorRamp.randomize(8)
 
     // Biomes
     this.biomesEnabled = Boolean(Math.round(clampedPRNG(0, 1)))

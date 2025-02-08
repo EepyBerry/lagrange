@@ -147,7 +147,7 @@ const pickerIdInitColor = ref('')
 
 const $props = defineProps<{ mode?: 'rgb' | 'rgba' | 'opacity' }>()
 watch(
-  () => lgColorRamp.value?.steps,
+  () => lgColorRamp.value?.hash,
   () => updateRamp(),
 )
 onMounted(() => updateRamp())

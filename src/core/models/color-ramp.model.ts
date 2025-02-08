@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import { nanoid } from 'nanoid'
 import { clampedPRNG } from '@/utils/math-utils'
+import { sha1 } from 'crypto-hash'
 
 export type StepLuminance = { factor: number; lumi: number }
 export class ColorRampStep {
@@ -67,6 +68,7 @@ export class ColorRampStep {
 export class ColorRamp extends ChangeTracker {
   static EMPTY = new ColorRamp([], '', [])
 
+  private _hash: string = '' // internal hash for tracking changes
   private _steps: ColorRampStep[] = []
   private _maxSize: number = 16
   private _lockedSize: boolean = true
@@ -91,6 +93,10 @@ export class ColorRamp extends ChangeTracker {
     return new ColorRamp([], this._changePrefix, clonedSteps, this._maxSize, this._lockedSize)
   }
 
+  public get hash(): string {
+    return this._hash
+  }
+
   public get steps(): ColorRampStep[] {
     return this._steps
   }
@@ -107,9 +113,14 @@ export class ColorRamp extends ChangeTracker {
 
   // Utility functions
 
+  private async generateHash() {
+    this._hash = await sha1(JSON.stringify(this))
+  }
+
   public sortSteps() {
     this._steps.sort((a, b) => a.factor - b.factor)
     this.markForChange(this._changePrefix)
+    this.generateHash()
   }
 
   public addStep() {
@@ -119,6 +130,7 @@ export class ColorRamp extends ChangeTracker {
     this._steps.push(new ColorRampStep('black', this._steps[this._steps.length - 2].factor))
     this.sortSteps()
     this.markForChange(this._changePrefix)
+    this.generateHash()
   }
 
   public getStep(stepId: string) {
@@ -139,6 +151,7 @@ export class ColorRamp extends ChangeTracker {
     this._steps[index].alpha = options.alpha ?? this._steps[index].alpha
     this._steps[index].factor = options.factor ?? this._steps[index].factor
     this.markForChange(this._changePrefix)
+    this.generateHash()
   }
 
   public removeStep(stepId: string) {
@@ -152,6 +165,7 @@ export class ColorRamp extends ChangeTracker {
     }
     this._steps.splice(index, 1)
     this.markForChange(this._changePrefix)
+    this.generateHash()
   }
 
   public isBoundStep(stepId: string) {
@@ -166,6 +180,7 @@ export class ColorRamp extends ChangeTracker {
     this._steps.splice(0)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this._steps.push(...data.map((s: any) => ColorRampStep.newWithAlpha(s._color, s._alpha, s._factor, s._isBound)))
+    this.generateHash()
   }
 
   public randomize(maxSteps: number = 10) {
@@ -181,5 +196,7 @@ export class ColorRamp extends ChangeTracker {
       ))
     }
     this.sortSteps()
+    this.markForChange(this._changePrefix)
+    this.generateHash()
   }
 }

@@ -10,9 +10,9 @@ export function regeneratePRNG(seed?: string): string {
   PRNG.value = seedrandom.alea(s)
   return s
 }
-export function clampedPRNG(min: number, max: number): number {
+export function clampedPRNG(min: number, max: number, precision: number = 3): number {
   const v = PRNG.value()
-  return (max - min) * v + min
+  return Number(((max - min) * v + min).toPrecision(precision))
 }
 
 /**
