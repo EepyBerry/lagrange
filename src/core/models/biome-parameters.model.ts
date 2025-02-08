@@ -121,14 +121,16 @@ export class BiomeParameters extends ChangeTracker {
   }
 
   public static createRandom(changedProps: ChangedProp[]) {
+    const minTemp = clampedPRNG(0, 1),
+      minHumi = clampedPRNG(0, 1)
     return new BiomeParameters(
       changedProps,
       '_biomesParameters',
       {
-        temperatureMin: clampedPRNG(0, 1),
-        temperatureMax: clampedPRNG(0, 1),
-        humidityMin: clampedPRNG(0, 1),
-        humidityMax: clampedPRNG(0, 1),
+        temperatureMin: minTemp,
+        temperatureMax: clampedPRNG(minTemp, 1),
+        humidityMin: minHumi,
+        humidityMax: clampedPRNG(minHumi, 1),
       },
       new Color(clampedPRNG(0, 1) * 0xffffff),
       clampedPRNG(0, 1),

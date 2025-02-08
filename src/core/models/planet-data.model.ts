@@ -769,15 +769,16 @@ export default class PlanetData extends ChangeTracker {
     )
   }
 
+  // Note: adjusted ranges to get more coherent data
   public randomize() {
     // Lighting
     this.lensFlareEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
     this.lensFlarePointsIntensity = clampedPRNG(0, 1)
     this.lensFlareGlareIntensity = clampedPRNG(0, 1)
     this.sunLightAngle = clampedPRNG(-90, 90)
-    this.sunLightColor.set(clampedPRNG(0, 1) * 0xffffff)
-    this.sunLightIntensity = clampedPRNG(0, 50)
-    this.ambLightColor.set(clampedPRNG(0, 1) * 0xffffff)
+    this.sunLightColor.set(clampedPRNG(0.5, 1) * 0xffffff)
+    this.sunLightIntensity = clampedPRNG(10, 35)
+    this.ambLightColor.set(clampedPRNG(0.5, 1) * 0xffffff)
     this.ambLightIntensity = clampedPRNG(0, 1)
 
     // Planet & Rendering
@@ -838,7 +839,7 @@ export default class PlanetData extends ChangeTracker {
     this.ringEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
     this.ringAxialTilt = 90.0
     this.ringRotation = 0.0
-    this.ringInnerRadius = clampedPRNG(1, 5)
+    this.ringInnerRadius = clampedPRNG(1.5, 5)
     this.ringOuterRadius = clampedPRNG(this.ringInnerRadius, 5)
     this.ringColorRamp.randomize(5)
   }
