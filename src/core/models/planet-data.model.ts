@@ -322,6 +322,8 @@ export default class PlanetData extends ChangeTracker {
   private _cloudsRotation: number
   private _cloudsHeight: number
   private _cloudsShowWarping: boolean
+  private _cloudsShowDisplacement: boolean
+  private _cloudsDisplacement: DisplacementParameters
   private _cloudsNoise: NoiseParameters
   private _cloudsColor: Color
   private _cloudsColorRamp: ColorRamp
@@ -358,6 +360,21 @@ export default class PlanetData extends ChangeTracker {
   public set cloudsShowWarping(value: boolean) {
     this._cloudsShowWarping = value
     this.markForChange('_cloudsShowWarping')
+  }
+
+  public get cloudsShowDisplacement(): boolean {
+    return this._cloudsShowDisplacement
+  }
+  public set cloudsShowDisplacement(value: boolean) {
+    this._cloudsShowDisplacement = value
+    this.markForChange('_cloudsShowDisplacement')
+  }
+  public get cloudsDisplacement(): DisplacementParameters {
+    return this._cloudsDisplacement
+  }
+  public set cloudsDisplacement(value: DisplacementParameters) {
+    this._cloudsDisplacement = value
+    this.markForChange('_cloudsDisplacement')
   }
 
   public get cloudsNoise(): NoiseParameters {
@@ -620,6 +637,15 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsRotation = 0.0
     this._cloudsHeight = 1.0
     this._cloudsShowWarping = false
+    this._cloudsShowDisplacement = false
+    this._cloudsDisplacement = new DisplacementParameters(
+      this._changedProps,
+      '_cloudsDisplacement',
+      2.0,
+      0.2,
+      2.0,
+      6,
+    )
     this._cloudsNoise = new NoiseParameters(this._changedProps, '_cloudsNoise', 4.0, 0.6, 1.75, 4)
     this._cloudsColor = new Color(0xffffff)
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
@@ -731,6 +757,8 @@ export default class PlanetData extends ChangeTracker {
     this.cloudsEnabled = data._cloudsEnabled ?? true
     this.cloudsRotation = data._cloudsRotation ?? 0.0
     this.cloudsShowWarping = data._cloudsShowWarping ?? false
+    this.cloudsShowDisplacement = data._cloudsShowDisplacement ?? false
+    this.cloudsDisplacement.loadData(data._cloudsDisplacement)
     this.cloudsNoise.loadData(data._cloudsNoise)
     this.cloudsColor.set(data._cloudsColor ?? 0xffffff)
     this.cloudsColorRamp.loadFromSteps(
@@ -816,6 +844,8 @@ export default class PlanetData extends ChangeTracker {
     this.cloudsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
     this.cloudsRotation = clampedPRNG(0, 360)
     this.cloudsShowWarping = Boolean(Math.round(clampedPRNG(0, 1)))
+    this.cloudsShowDisplacement = Boolean(Math.round(clampedPRNG(0, 1)))
+    this.cloudsDisplacement.randomize()
     this.cloudsNoise.randomize()
     this.cloudsColor.set(clampedPRNG(0, 1) * 0xffffff)
     this.cloudsColorRamp.loadFromSteps(
@@ -850,6 +880,7 @@ export default class PlanetData extends ChangeTracker {
     this._planetSurfaceNoise.reset(2.45, 0.53, 2.16, 6, 1, 1.0)
     this._biomesTemperatureNoise.reset(2.5, 1.25, 2.5, 4)
     this._biomesHumidityNoise.reset(2.25, 0.95, 2.25, 4)
+    this._cloudsDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05)
     this._cloudsNoise.reset(4.0, 0.6, 1.75, 4, 1, 1.0)
     this.markAllForChange()
   }

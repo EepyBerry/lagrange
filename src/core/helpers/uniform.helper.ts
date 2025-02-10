@@ -82,6 +82,13 @@ function registerPlanetRenderingDataUpdates(data: PlanetData, planetGroup: Group
 function registerSurfaceDataUpdates(data: PlanetData, planet: Mesh, surfaceDataTex: DataTexture, buffer: Uint8Array): void {
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowBumps',                () => setMeshUniform(planet,   'u_bump', data.planetSurfaceShowBumps))
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceBumpStrength',             () => setMeshUniform(planet,   'u_bump_strength', data.planetSurfaceBumpStrength))
+  // Warping
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowWarping',              () => setMeshUniform(planet,   'u_warp', data.planetSurfaceShowWarping))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._warpFactor',        () => patchMeshUniform(planet, 'u_surface_noise', {
+    xwarp: data.planetSurfaceNoise.xWarpFactor,
+    ywarp: data.planetSurfaceNoise.yWarpFactor,
+    zwarp: data.planetSurfaceNoise.zWarpFactor
+  }))
   // Displacement
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowDisplacement',         () => setMeshUniform(planet,   'u_displace', data.planetSurfaceShowDisplacement))
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._factor',     () => patchMeshUniform(planet, 'u_surface_displacement', { fac: data.planetSurfaceDisplacement.factor }))
@@ -97,13 +104,7 @@ function registerSurfaceDataUpdates(data: PlanetData, planet: Mesh, surfaceDataT
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._lacunarity',        () => patchMeshUniform(planet, 'u_surface_noise', { lac: data.planetSurfaceNoise.lacunarity }))
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._octaves',           () => patchMeshUniform(planet, 'u_surface_noise', { oct: data.planetSurfaceNoise.octaves }))
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._layers',            () => patchMeshUniform(planet, 'u_surface_noise', { layers: data.planetSurfaceNoise.layers }))
-  // Warping
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowWarping',              () => setMeshUniform(planet,   'u_warp', data.planetSurfaceShowWarping))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._warpFactor',        () => patchMeshUniform(planet, 'u_surface_noise', {
-    xwarp: data.planetSurfaceNoise.xWarpFactor,
-    ywarp: data.planetSurfaceNoise.yWarpFactor,
-    zwarp: data.planetSurfaceNoise.zWarpFactor
-  }))
+  // Color
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceColorRamp',         () => {
     const v = data.planetSurfaceColorRamp
     recalculateRampTexture(buffer, Globals.TEXTURE_SIZES.SURFACE, v.steps as ColorRampStep[])
@@ -140,16 +141,28 @@ function registerCloudDataUpdates(data: PlanetData, clouds: Mesh, cloudsDataTex:
     const v = degToRad(isNaN(data.cloudsRotation) ? 0 : data.cloudsRotation)
     clouds.setRotationFromAxisAngle(clouds.up, planetRotation + v)
   })
+  // Warping
   UNIFORM_UPDATE_MAP.value.set('_cloudsShowWarping',       () => setMeshUniform(clouds,   'u_warp', data.cloudsShowWarping))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._frequency',  () => patchMeshUniform(clouds, 'u_noise', { freq: data.cloudsNoise.frequency }))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._amplitude',  () => patchMeshUniform(clouds, 'u_noise', { amp: data.cloudsNoise.amplitude }))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._lacunarity', () => patchMeshUniform(clouds, 'u_noise', { lac: data.cloudsNoise.lacunarity }))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._octaves',    () => patchMeshUniform(clouds, 'u_noise', { oct: data.cloudsNoise.octaves }))
   UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._warpFactor', () => patchMeshUniform(clouds, 'u_noise', {
     xwarp: data.cloudsNoise.xWarpFactor,
     ywarp: data.cloudsNoise.yWarpFactor,
     zwarp: data.cloudsNoise.zWarpFactor,
   }))
+  // Displacement
+  UNIFORM_UPDATE_MAP.value.set('_cloudsShowDisplacement',         () => setMeshUniform(clouds,   'u_displace', data.cloudsShowDisplacement))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._factor',     () => patchMeshUniform(clouds, 'u_displacement', { fac: data.cloudsDisplacement.factor }))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._epsilon',    () => patchMeshUniform(clouds, 'u_displacement', { eps: data.cloudsDisplacement.epsilon }))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._multiplier', () => patchMeshUniform(clouds, 'u_displacement', { mul: data.cloudsDisplacement.multiplier }))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._frequency',  () => patchMeshUniform(clouds, 'u_displacement', { freq: data.cloudsDisplacement.frequency }))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._amplitude',  () => patchMeshUniform(clouds, 'u_displacement', { amp: data.cloudsDisplacement.amplitude }))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._lacunarity', () => patchMeshUniform(clouds, 'u_displacement', { lac: data.cloudsDisplacement.lacunarity }))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._octaves',    () => patchMeshUniform(clouds, 'u_displacement', { oct: data.cloudsDisplacement.octaves }))
+  // Noise
+  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._frequency',  () => patchMeshUniform(clouds, 'u_noise', { freq: data.cloudsNoise.frequency }))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._amplitude',  () => patchMeshUniform(clouds, 'u_noise', { amp: data.cloudsNoise.amplitude }))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._lacunarity', () => patchMeshUniform(clouds, 'u_noise', { lac: data.cloudsNoise.lacunarity }))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._octaves',    () => patchMeshUniform(clouds, 'u_noise', { oct: data.cloudsNoise.octaves }))
+  // Color
   UNIFORM_UPDATE_MAP.value.set('_cloudsColor',             () =>  setMeshUniform(clouds, 'u_color', data.cloudsColor))
   UNIFORM_UPDATE_MAP.value.set('_cloudsColorRamp',         () =>  {
     const v = data.cloudsColorRamp

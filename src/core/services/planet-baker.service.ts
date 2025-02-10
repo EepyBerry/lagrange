@@ -219,6 +219,18 @@ export function createBakingClouds(data: PlanetData, textureBuffer: Uint8Array):
     ShaderLoader.fetch('clouds.frag.glsl', ShaderFileType.BAKING),
     {
       u_warp: { value: data.cloudsShowWarping },
+      u_displace: { value: data.cloudsShowDisplacement },
+      u_displacement: {
+        value: {
+          freq: data.cloudsDisplacement.frequency,
+          amp: data.cloudsDisplacement.amplitude,
+          lac: data.cloudsDisplacement.lacunarity,
+          oct: data.cloudsDisplacement.octaves,
+          eps: data.cloudsDisplacement.epsilon,
+          mul: data.cloudsDisplacement.multiplier,
+          fac: data.cloudsDisplacement.factor,
+        },
+      },
       u_noise: {
         value: {
           freq: data.cloudsNoise.frequency,

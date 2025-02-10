@@ -229,6 +229,8 @@
     "$action_add": "Hinzufügen",
 
     "general": {
+      "displacement": "Oberflächenstörung",
+      "displacement_show": "Störung anzeigen",
       "displacement_factor": "Faktor",
       "displacement_epsilon": "Epsilon",
       "displacement_multiplier": "Multiplikator",
@@ -239,6 +241,7 @@
       "warping_y": "Y Verformung",
       "warping_z": "Z Verformung",
 
+      "noise": "Rausch Parameter",
       "noise_layers": "Anzahl der Schichten",
       "noise_fbm_frequency": "Frequenz",
       "noise_fbm_amplitude": "Amplitude",
@@ -287,11 +290,7 @@
 
         "bumpmap": "Bump mapping",
         "bumpmap_show": "Beulen anzeigen",
-        "bumpmap_strength": "Intensität der Beulen",
-
-        "displacement": "Oberflächenstörung",
-        "displacement_show": "Störung anzeigen",
-        "noise": "Rauscheinstellungen"
+        "bumpmap_strength": "Intensität der Beulen"
       },
       "biomes": {
         "$title": "Biomen",
@@ -323,11 +322,6 @@
 
         "transform": "Transform",
         "transform_rotation": "Drehung",
-
-        "noise": "Rausch Parameter",
-        "noise_fbm_frequency": "Frequenz",
-        "noise_fbm_amplitude": "Amplitude",
-        "noise_fbm_lacunarity": "Lückenhaftigkeit",
 
         "rgba": "Farbe & Transparenz",
         "rgba_opacityramp": "Transparenzrampe"

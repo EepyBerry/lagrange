@@ -40,7 +40,7 @@
       v-model="LG_PLANET_DATA.planetSurfaceShowDisplacement"
       :toggleable="LG_PLANET_DATA.planetSurfaceShowDisplacement"
     >
-      <template #title>{{ $t('editor.controls.surface.displacement') }}</template>
+      <template #title>{{ $t('editor.general.displacement') }}</template>
       <template #content>
         <ParameterSlider
           id="s-dfac"
@@ -105,7 +105,7 @@
       </template>
     </ParameterGroup>
     <ParameterGroup :toggleable="true">
-      <template #title>{{ $t('editor.controls.surface.noise') }}</template>
+      <template #title>{{ $t('editor.general.noise') }}</template>
       <template #content>
         <ParameterSlider id="s-layers" v-model="LG_PLANET_DATA.planetSurfaceNoise.layers" :step="1" :min="1" :max="3">
           {{ $t('editor.general.noise_layers') }}

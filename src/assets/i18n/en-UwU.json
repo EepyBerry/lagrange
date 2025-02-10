@@ -229,6 +229,8 @@
     "$action_add": "Add",
 
     "general": {
+      "displacement": "Dispwacement",
+      "displacement_show": "Show dispwacement :3",
       "displacement_factor": "Factow",
       "displacement_epsilon": "Epsiwon",
       "displacement_multiplier": "Muwtipliew",
@@ -239,6 +241,7 @@
       "warping_y": "Y wawping",
       "warping_z": "Z wawping",
 
+      "noise": "Nyoise p-pawametews",
       "noise_layers": "Wayews",
       "noise_fbm_frequency": "Fwequency",
       "noise_fbm_amplitude": "Ampwitude",
@@ -287,11 +290,7 @@
 
         "bumpmap": "Bump map",
         "bumpmap_show": "Show bumps :3",
-        "bumpmap_strength": "Bump stwength",
-
-        "displacement": "Dispwacement",
-        "displacement_show": "Show dispwacement :3",
-        "noise": "Nyoise p-pawametews"
+        "bumpmap_strength": "Bump stwength"
       },
       "biomes": {
         "$title": "Biomes",
@@ -323,11 +322,6 @@
 
         "transform": "Twansfowm",
         "transform_rotation": "Wotation",
-
-        "noise": "Nyoise p-pawametews",
-        "noise_fbm_frequency": "Fwequency",
-        "noise_fbm_amplitude": "Ampwitude",
-        "noise_fbm_lacunarity": "Wacunyawity",
 
         "rgba": "Cowow & opacity",
         "rgba_opacityramp": "Opacity wamp"

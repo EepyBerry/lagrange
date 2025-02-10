@@ -229,6 +229,8 @@
     "$action_add": "Ajouter",
 
     "general": {
+      "displacement": "Perturbation de surface",
+      "displacement_show": "Afficher perturbation",
       "displacement_factor": "Facteur",
       "displacement_epsilon": "Epsilon",
       "displacement_multiplier": "Multiplicateur",
@@ -239,6 +241,7 @@
       "warping_y": "Déformation Y",
       "warping_z": "Déformation Z",
 
+      "noise": "Paramètres de bruit",
       "noise_layers": "Nb. de couches",
       "noise_fbm_frequency": "Fréquence",
       "noise_fbm_amplitude": "Amplitude",
@@ -287,11 +290,7 @@
 
         "bumpmap": "Bump mapping",
         "bumpmap_show": "Afficher les bumps",
-        "bumpmap_strength": "Intensité des bumps",
-
-        "displacement": "Perturbation de surface",
-        "displacement_show": "Afficher perturbation",
-        "noise": "Paramètres de bruit"
+        "bumpmap_strength": "Intensité des bumps"
       },
       "biomes": {
         "$title": "Biomes",
@@ -323,11 +322,6 @@
 
         "transform": "Transform",
         "transform_rotation": "Rotation",
-
-        "noise": "Paramètres de bruit",
-        "noise_fbm_frequency": "Frequency",
-        "noise_fbm_amplitude": "Amplitude",
-        "noise_fbm_lacunarity": "Lacunarity",
 
         "rgba": "Couleur & transparence",
         "rgba_opacityramp": "Rampe de transparence"
