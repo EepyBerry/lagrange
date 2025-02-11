@@ -567,10 +567,10 @@ export default class PlanetData extends ChangeTracker {
     this._planetType = PlanetType.PLANET
     this._planetMeshQuality = 64.0
     this._planetRadius = 1.0
-    this._planetAxialTilt = 15.0
+    this._planetAxialTilt = -15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
-    this._planetWaterMetalness = 0.5
+    this._planetWaterMetalness = 0.1
     this._planetGroundRoughness = 0.8
     this._planetGroundMetalness = 0.1
     this._planetWaterLevel = 0.5
@@ -588,13 +588,13 @@ export default class PlanetData extends ChangeTracker {
       2.0,
       6,
     )
-    this._planetSurfaceNoise = new NoiseParameters(this._changedProps, '_planetSurfaceNoise', 2.45, 0.53, 2.16, 6)
+    this._planetSurfaceNoise = new NoiseParameters(this._changedProps, '_planetSurfaceNoise', 3.75, 0.48, 2.45, 6)
     this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
       new ColorRampStep(0x000000, 0, true),
       new ColorRampStep(0x0b1931, 0.4),
       new ColorRampStep(0x2d4265, 0.495),
-      new ColorRampStep(0x2f2e10, 0.5),
-      new ColorRampStep(0x446611, 0.525),
+      new ColorRampStep(0x766f17, 0.5),
+      new ColorRampStep(0x446611, 0.505),
       new ColorRampStep(0x223b05, 0.65),
       new ColorRampStep(0x223b05, 1, true),
     ])
@@ -602,17 +602,17 @@ export default class PlanetData extends ChangeTracker {
     // Biomes
     this._biomesEnabled = true
     this._biomesTemperatureMode = GradientMode.REALISTIC
-    this._biomesTemperatureNoise = new NoiseParameters(this._changedProps, '_biomesTemperatureNoise', 2.5, 1.25, 2.5, 4)
-    this._biomesHumidityMode = GradientMode.REALISTIC
-    this._biomesHumidityNoise = new NoiseParameters(this._changedProps, '_biomesHumidityNoise', 2.25, 0.95, 2.25, 4)
+    this._biomesTemperatureNoise = new NoiseParameters(this._changedProps, '_biomesTemperatureNoise', 2.5, 1.25, 2.4, 6)
+    this._biomesHumidityMode = GradientMode.FULLNOISE
+    this._biomesHumidityNoise = new NoiseParameters(this._changedProps, '_biomesHumidityNoise', 3.0, 0.63, 2.53, 6)
     this._biomesParams = [
       new BiomeParameters(
         this._changedProps,
         '_biomesParameters',
         {
           temperatureMin: 0.0,
-          temperatureMax: 0.08,
-          humidityMin: 0.7,
+          temperatureMax: 0.1,
+          humidityMin: 0.35,
           humidityMax: 1.0,
         },
         new Color(0xffffff),
@@ -622,12 +622,24 @@ export default class PlanetData extends ChangeTracker {
         this._changedProps,
         '_biomesParameters',
         {
-          temperatureMin: 0.6,
+          temperatureMin: 0.8,
           temperatureMax: 1.0,
           humidityMin: 0.0,
-          humidityMax: 0.25,
+          humidityMax: 1.0,
         },
         new Color(0xbaa345),
+        0.25,
+      ),
+      new BiomeParameters(
+        this._changedProps,
+        '_biomesParameters',
+        {
+          temperatureMin: 0.0,
+          temperatureMax: 1.0,
+          humidityMin: 0.0,
+          humidityMax: 0.685,
+        },
+        new Color(0x132e06),
         0.25,
       ),
     ]
@@ -877,9 +889,9 @@ export default class PlanetData extends ChangeTracker {
   public reset() {
     Object.assign(this, new PlanetData())
     this._planetSurfaceDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05)
-    this._planetSurfaceNoise.reset(2.45, 0.53, 2.16, 6, 1, 1.0)
-    this._biomesTemperatureNoise.reset(2.5, 1.25, 2.5, 4)
-    this._biomesHumidityNoise.reset(2.25, 0.95, 2.25, 4)
+    this._planetSurfaceNoise.reset(3.75, 0.48, 2.45, 6, 1, 1.0)
+    this._biomesTemperatureNoise.reset(2.5, 1.25, 2.4, 6)
+    this._biomesHumidityNoise.reset(35, 0.63, 2.53, 6)
     this._cloudsDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05)
     this._cloudsNoise.reset(4.0, 0.6, 1.75, 4, 1, 1.0)
     this.markAllForChange()
