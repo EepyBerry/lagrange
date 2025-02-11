@@ -37,13 +37,13 @@ uniform sampler2D u_opacity_tex;
 
 in vec3 vPos;
 
-// Constants
-const vec3 DVEC_A = vec3(0.1, 0.1, 0.0);
-const vec3 DVEC_B = vec3(0.2, 0.2, 0.0);
-
 @import functions/fbm;
 @import functions/lwd;
 @import functions/color_utils;
+
+// Constants
+const vec3 DVEC_A = vec3(0.1, 0.1, 0.0);
+const vec3 DVEC_B = vec3(0.2, 0.2, 0.0);
 
 void main() {
     vec3 warpVec = vec3(u_noise.xwarp, u_noise.ywarp, u_noise.zwarp);
@@ -59,9 +59,6 @@ void main() {
         fbm3(wPos + DVEC_A,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct),
         fbm3(wPos + DVEC_B,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct)
     );
-    if (wOpacity.x < 0.05) {
-        discard;
-    }
     opacity += fbm3(wPos + wOpacity, u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct);
     opacity = texture2D(u_opacity_tex, vec2(opacity.x, 0.5)).xyz;
 

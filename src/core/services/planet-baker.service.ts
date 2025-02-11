@@ -211,7 +211,7 @@ export function createBakingNormalMap(data: PlanetData, bumpTex: THREE.Texture, 
 
 export function createBakingClouds(data: PlanetData, textureBuffer: Uint8Array): THREE.Mesh {
   const cloudHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
-  const geometry = ComponentBuilder.createSphereGeometryComponent(cloudHeight)
+  const geometry = ComponentBuilder.createSphereGeometryComponent(data.planetMeshQuality, cloudHeight)
   const opacityTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
   const material = ComponentBuilder.createCustomShaderMaterialComponent(

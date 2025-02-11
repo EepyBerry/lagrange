@@ -2,6 +2,16 @@
 precision highp float;
 #endif
 
+struct DisplacementParameters {
+  float fac;
+  float eps;
+  float mul;
+
+  float freq;
+  float amp;
+  float lac;
+  int oct;
+};
 struct NoiseParameters {
     int type;
     float freq;
@@ -51,9 +61,6 @@ void main() {
         fbm3(wPos + DVEC_A,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct),
         fbm3(wPos + DVEC_B,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct)
     );
-    if (wOpacity.x < 0.05) {
-        discard;
-    }
     opacity += fbm3(vPos + wOpacity, u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct);
     opacity = texture2D(u_opacity_tex, vec2(opacity.x, 0.5)).xyz;
     csm_DiffuseColor = vec4(u_color, opacity.x);
