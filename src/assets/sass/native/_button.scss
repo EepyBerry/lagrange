@@ -76,10 +76,17 @@ a.lg.dark {
     right: -0.75rem;
     transform: rotate(-45deg);
   }
+  &.active {
+    background: var(--lg-contrast);
+    border-color: var(--lg-contrast);
+  }
 }
 button.lg.dark:hover,
 a.lg.dark:hover {
   background: var(--lg-button-active);
+  &.active {
+    background: var(--lg-contrast-focus);
+  }
 }
 
 // icon button

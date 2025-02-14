@@ -53,12 +53,12 @@
     <button
       ref="actionMenuTrigger"
       class="lg dark"
-      :class="{ 'success': actionMenu?.style.visibility === 'visible' }"
+      :class="{ 'active': isActionMenuOpen }"
       :aria-label="$t('a11y.topbar_gltf')"
       :title="$t('tooltip.topbar_gltf')"
       @click="toggleActionMenu()"
     >
-      <iconify-icon icon="mdi:content-save-cog-outline" width="1.5rem" aria-hidden="true" />
+      <iconify-icon :icon="isActionMenuOpen ? 'mdi:content-save-minus-outline' : 'mdi:content-save-plus-outline'" width="1.5rem" aria-hidden="true" />
     </button>
     <div ref="actionMenu" class="lg floating" :style="actionFloating.floatingStyles.value">
       <button
@@ -105,6 +105,7 @@ const planetNameInput: Ref<HTMLInputElement | null> = ref(null)
 const resetDialog: Ref<{ open: () => void } | null> = ref(null)
 
 // floating-ui start
+const isActionMenuOpen: Ref<boolean> = ref(false)
 const actionMenuTrigger: Ref<HTMLElement|null> = ref(null)
 const actionMenu: Ref<HTMLElement|null> = ref(null)
 const actionFloating = useFloating(actionMenuTrigger, actionMenu, {
@@ -141,8 +142,10 @@ function toggleEditMode() {
 function toggleActionMenu(override?: boolean) {
   if (override !== undefined) {
     actionMenu.value!.style.visibility = override ? 'visible' : 'hidden'
+    isActionMenuOpen.value = override
   } else {
     actionMenu.value!.style.visibility = (actionMenu.value!.style.visibility === 'visible' ? 'hidden' : 'visible')
+    isActionMenuOpen.value = actionMenu.value!.style.visibility === 'visible'
   }
 }
 </script>
