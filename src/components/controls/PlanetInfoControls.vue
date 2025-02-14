@@ -49,22 +49,45 @@
     >
       <iconify-icon icon="mingcute:shuffle-2-fill" width="1.5rem" aria-hidden="true" />
     </button>
+    <!-- begin floating menus -->
     <button
+      ref="actionMenuTrigger"
       class="lg dark"
-      :aria-label="$t('a11y.topbar_save')"
-      :title="$t('tooltip.topbar_save')"
-      @click="$emit('save')"
-    >
-      <iconify-icon icon="mingcute:save-2-line" width="1.5rem" aria-hidden="true" />
-    </button>
-    <button
-      class="lg dark"
+      :class="{ 'success': actionMenu?.style.visibility === 'visible' }"
       :aria-label="$t('a11y.topbar_gltf')"
       :title="$t('tooltip.topbar_gltf')"
-      @click="$emit('gltf')"
+      @click="toggleActionMenu()"
     >
-      <iconify-icon icon="simple-icons:gltf" width="1.5rem" aria-hidden="true" />
+      <iconify-icon icon="mdi:content-save-cog-outline" width="1.5rem" aria-hidden="true" />
     </button>
+    <div ref="actionMenu" class="lg floating" :style="actionFloating.floatingStyles.value">
+      <button
+        class="lg dark"
+        :aria-label="$t('a11y.topbar_save')"
+        @click="toggleActionMenu(false); $emit('save')"
+      >
+        <iconify-icon icon="mingcute:save-2-line" width="1.5rem" aria-hidden="true" />
+        <p>{{ $t('tooltip.topbar_save') }}</p>
+      </button>
+      <button
+        v-if="!$route.path.endsWith('/new')"
+        class="lg dark"
+        :aria-label="$t('a11y.topbar_copy')"
+        @click="toggleActionMenu(false); $emit('copy')"
+      >
+        <iconify-icon icon="mingcute:copy-2-line" width="1.5rem" aria-hidden="true" />
+        <p>{{ $t('tooltip.topbar_copy') }}</p>
+      </button>
+      <button
+        class="lg dark"
+        :aria-label="$t('a11y.topbar_gltf')"
+        @click="toggleActionMenu(false); $emit('gltf')"
+      >
+        <iconify-icon icon="simple-icons:gltf" width="1.5rem" aria-hidden="true" />
+        <p>{{ $t('tooltip.topbar_gltf') }}</p>
+      </button>
+    </div>
+    <!-- end floating menus -->
     <AppResetConfirmDialog ref="resetDialog" @confirm="$emit('reset')" />
   </div>
 </template>
@@ -72,16 +95,37 @@
 <script setup lang="ts">
 import AppResetConfirmDialog from '../dialogs/AppResetConfirmDialog.vue'
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
-import { ref, type Ref } from 'vue'
+import { ref, watch, type Ref } from 'vue'
 import { EventBus } from '@/core/event-bus'
+import { autoUpdate, offset, useFloating } from '@floating-ui/vue'
 
 const editMode: Ref<boolean> = ref(false)
 
 const planetNameInput: Ref<HTMLInputElement | null> = ref(null)
 const resetDialog: Ref<{ open: () => void } | null> = ref(null)
 
+// floating-ui start
+const actionMenuTrigger: Ref<HTMLElement|null> = ref(null)
+const actionMenu: Ref<HTMLElement|null> = ref(null)
+const actionFloating = useFloating(actionMenuTrigger, actionMenu, {
+  whileElementsMounted: autoUpdate,
+  placement: 'bottom-end',
+  middleware: [offset(8)],
+})
+//floating-ui end
+
+watch(() => EventBus.clickEvent.value, evt => onWindowClick(evt!))
+
 defineProps<{ compactMode: boolean }>()
-const $emit = defineEmits(['rename', 'reset', 'save', 'gltf', 'random'])
+const $emit = defineEmits(['rename', 'reset', 'save', 'copy', 'gltf', 'random'])
+
+function onWindowClick(evt: MouseEvent) {
+  if (evt.target === actionMenuTrigger.value) {
+    toggleActionMenu(true)
+  } else if (!actionMenu.value?.contains(evt.target as Node)) {
+    toggleActionMenu(false)
+  }
+}
 
 function toggleEditMode() {
   editMode.value = !editMode.value
@@ -91,6 +135,14 @@ function toggleEditMode() {
   } else {
     EventBus.enableWindowEventListener('keydown')
     $emit('rename')
+  }
+}
+
+function toggleActionMenu(override?: boolean) {
+  if (override !== undefined) {
+    actionMenu.value!.style.visibility = override ? 'visible' : 'hidden'
+  } else {
+    actionMenu.value!.style.visibility = (actionMenu.value!.style.visibility === 'visible' ? 'hidden' : 'visible')
   }
 }
 </script>

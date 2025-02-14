@@ -5,6 +5,7 @@
       :compact-mode="showCompactInfo"
       @rename="patchMetaHead"
       @save="savePlanet"
+      @copy="savePlanet(true)"
       @reset="resetPlanet"
       @gltf="exportPlanet"
       @random="randPlanet"
@@ -93,8 +94,9 @@ onUnmounted(() => {
   if (loadedCorrectly) {
     disposeScene()
   }
+  EventBus.deregisterWindowEventListener('click', onWindowClick)
   EventBus.deregisterWindowEventListener('resize', onWindowResize)
-  EventBus.deregisterWindowEventListener('keydown', handleKeyboardEvent)
+  EventBus.deregisterWindowEventListener('keydown', onWindowKeydown)
 })
 onBeforeRouteLeave((_to, _from, next) => {
   if (isPlanetEdited()) {
@@ -182,13 +184,18 @@ async function initCanvas() {
   await bootstrapEditor(sceneRoot.value!, effectiveWidth, effectiveHeight, pixelRatio)
 
   // Register event listeners
+  EventBus.registerWindowEventListener('click', onWindowClick)
   EventBus.registerWindowEventListener('resize', onWindowResize)
-  EventBus.registerWindowEventListener('keydown', handleKeyboardEvent)
+  EventBus.registerWindowEventListener('keydown', onWindowKeydown)
 }
 
 // ------------------------------------------------------------------------------------------------
 
-async function handleKeyboardEvent(event: KeyboardEvent) {
+async function onWindowClick(event: MouseEvent) {
+  EventBus.sendClickEvent(event)
+}
+
+async function onWindowKeydown(event: KeyboardEvent) {
   const keyBinds = await idb.keyBindings.toArray()
   const kb = keyBinds.find((k) => k.key === event.key.toUpperCase())
   if (!kb) return
@@ -254,7 +261,7 @@ async function randPlanet() {
   showSpinner.value = false
 }
 
-async function savePlanet() {
+async function savePlanet(asCopy: boolean = false) {
   showSpinner.value = true
   setPlanetEditFlag(false)
 
@@ -264,8 +271,11 @@ async function savePlanet() {
   // ----------- Save planet data ------------ //
   console.debug(toRaw(LG_PLANET_DATA.value))
   const localData = toRaw(JSON.stringify(LG_PLANET_DATA.value))
+  const planetId = asCopy
+    ? nanoid()
+    : $planetEntityId.value.length > 0 ? $planetEntityId.value : nanoid()
   const idbData: IDBPlanet = {
-    id: $planetEntityId.value.length > 0 ? $planetEntityId.value : nanoid(),
+    id: planetId,
     version: '2',
     data: JSON.parse(localData),
     preview: previewDataString,
@@ -275,6 +285,7 @@ async function savePlanet() {
 
   showSpinner.value = false
   previewDataString = ''
+  router.replace(`/planet-editor/${idbData.id}`)
   EventBus.sendToastEvent('success', 'toast.save_success', 3000)
 }
 

@@ -91,9 +91,11 @@ useHead({
 onMounted(async () => {
   computeResponsiveness()
   await loadPlanets()
+  EventBus.registerWindowEventListener('click', onWindowClick)
   EventBus.registerWindowEventListener('resize', onWindowResize)
 })
 onUnmounted(() => {
+  EventBus.deregisterWindowEventListener('click', onWindowClick)
   EventBus.deregisterWindowEventListener('resize', onWindowResize)
 })
 
@@ -109,6 +111,9 @@ async function loadPlanets() {
 
 // ------------------------------------------------------------------------------------------------
 
+async function onWindowClick(event: MouseEvent) {
+  EventBus.sendClickEvent(event)
+}
 function onWindowResize() {
   computeResponsiveness()
 }

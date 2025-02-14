@@ -1,0 +1,16 @@
+.lg.floating {
+  visibility: hidden; // will be overridden
+  background: var(--lg-panel);
+  border: 1px solid var(--lg-accent);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  button.lg.dark {
+    border: none;
+    border-radius: 0;
+    padding: 0 0.5rem;
+    justify-content: flex-start;
+  }
+}
