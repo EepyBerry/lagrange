@@ -53,6 +53,7 @@ import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
 import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
 import AppWarnSaveDialog from '@/components/dialogs/AppWarnSaveDialog.vue'
 import AppExportProgressDialog from '@/components/dialogs/AppExportProgressDialog.vue'
+import { regeneratePRNGIfNecessary } from '@/utils/math-utils'
 
 const route = useRoute()
 const router = useRouter()
@@ -163,6 +164,7 @@ async function initData() {
     console.warn('No planet ID found in the URL, assuming new planet')
     LG_PLANET_DATA.value.reset()
   }
+  regeneratePRNGIfNecessary(true)
   patchMetaHead()
 }
 

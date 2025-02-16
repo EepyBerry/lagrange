@@ -26,6 +26,7 @@ export default class PlanetData extends ChangeTracker {
   }
   public set planetName(value: string) {
     this._planetName = value
+    this.markForChange('_planetName')
   }
 
   public get initCamDistance() {

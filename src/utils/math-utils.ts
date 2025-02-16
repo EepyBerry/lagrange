@@ -11,8 +11,8 @@ export const PRNG_SEED: Ref<string> = ref(currentPRNGSeed)
 export function regenerateSeed() {
   PRNG_SEED.value = Math.random().toString().substring(2)
 }
-export function regeneratePRNGIfNecessary(): void {
-  if (PRNG_SEED.value === currentPRNGSeed) {
+export function regeneratePRNGIfNecessary(force?: boolean): void {
+  if (!force && PRNG_SEED.value === currentPRNGSeed) {
     return
   }
   const s: string = PRNG_SEED.value
