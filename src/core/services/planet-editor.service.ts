@@ -5,7 +5,7 @@ import * as Globals from '@core/globals'
 import * as ComponentBuilder from '@core/three/component.builder'
 import { type BakingTarget, type PlanetSceneData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
-import { regeneratePRNG, normalizeUInt8ArrayPixels } from '@/utils/math-utils'
+import { normalizeUInt8ArrayPixels, regeneratePRNGIfNecessary } from '@/utils/math-utils'
 import {
   bakeMesh,
   createBakingHeightMap,
@@ -51,7 +51,12 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   initLighting()
   initPlanet()
   initRendering(canvas, w, h)
-  initUniformUpdateMap(LG_SCENE_DATA, LG_PLANET_DATA.value, [LG_BUFFER_SURFACE, LG_BUFFER_BIOME, LG_BUFFER_CLOUDS, LG_BUFFER_RING])
+  initUniformUpdateMap(LG_SCENE_DATA, LG_PLANET_DATA.value, [
+    LG_BUFFER_SURFACE,
+    LG_BUFFER_BIOME,
+    LG_BUFFER_CLOUDS,
+    LG_BUFFER_RING,
+  ])
   ComponentBuilder.createControlsComponent(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
 }
 
@@ -74,7 +79,7 @@ function initLighting(): void {
 function initPlanet(): void {
   const planet = ComponentBuilder.createPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME)
   const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
-  const atmosphere = ComponentBuilder.createAtmosphere(LG_PLANET_DATA.value , LG_SCENE_DATA.sunLight!.position)
+  const atmosphere = ComponentBuilder.createAtmosphere(LG_PLANET_DATA.value, LG_SCENE_DATA.sunLight!.position)
   const ring = ComponentBuilder.createRing(LG_PLANET_DATA.value, LG_BUFFER_RING)
   const planetGroup = new THREE.Group()
   planetGroup.add(planet.mesh)
@@ -137,7 +142,12 @@ function renderFrame(stats: Stats) {
   stats.update()
   updateScene()
   watchForPlanetUpdates = true
-  LG_SCENE_DATA.lensFlare!.update(LG_SCENE_DATA.renderer!, LG_SCENE_DATA.scene!, LG_SCENE_DATA.camera!, LG_SCENE_DATA.clock!)
+  LG_SCENE_DATA.lensFlare!.update(
+    LG_SCENE_DATA.renderer!,
+    LG_SCENE_DATA.scene!,
+    LG_SCENE_DATA.camera!,
+    LG_SCENE_DATA.clock!,
+  )
   LG_SCENE_DATA.renderer!.render(LG_SCENE_DATA.scene!, LG_SCENE_DATA.camera!)
 }
 
@@ -195,7 +205,7 @@ export function disposeScene() {
 
   LG_SCENE_DATA.scene!.children.forEach((c) => LG_SCENE_DATA.scene!.remove(c))
   LG_SCENE_DATA.renderer!.dispose()
-  
+
   clearUniformUpdateMap()
   console.debug('[unmount] ...done!')
 }
@@ -206,7 +216,7 @@ export function disposeScene() {
 
 export async function randomizePlanet() {
   await sleep(50)
-  regeneratePRNG()
+  regeneratePRNGIfNecessary()
   LG_PLANET_DATA.value.randomize()
 }
 
