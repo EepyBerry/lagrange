@@ -243,6 +243,7 @@ export function createRing(data: PlanetData, textureBuffer: Uint8Array): { mesh:
     THREE.MeshStandardMaterial,
   )
   material.side = THREE.DoubleSide
+  material.transparent = true
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.name = Globals.LG_NAME_RING
