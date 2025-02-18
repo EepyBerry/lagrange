@@ -219,8 +219,6 @@
     "$action_info": "{planet} Infos",
     "$action_export": "{planet} exportieren",
     "$action_delete": "{planet} löschen",
-    "$action_reseed": "Seed erstellen",
-    "$action_random": "Randomizieren",
 
     "no_planets": "Keine Planeten gefunden. Über den Button oben können Sie einen erstellen!",
 
@@ -232,6 +230,8 @@
     "default_planet_name": "Neuer Planet",
     "$action_sort": "Sortieren",
     "$action_add": "Hinzufügen",
+    "$action_reseed": "Seed erstellen",
+    "$action_random": "Randomizieren",
 
     "general": {
       "displacement": "Oberflächenstörung",

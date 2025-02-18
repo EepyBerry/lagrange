@@ -146,7 +146,7 @@ export class LensFlareEffect {
     }
 
     this._raycaster.setFromCamera(new THREE.Vector2(projectedPosition.x, projectedPosition.y), camera)
-    
+
     const planet = scene.getObjectByName(LG_NAME_PLANET)
     const ring = scene.getObjectByName(LG_NAME_RING)
     if (planet && ring) {

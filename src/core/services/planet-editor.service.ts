@@ -235,7 +235,8 @@ export async function exportPlanetPreview(): Promise<string> {
   LG_SCENE_DATA.lensFlare!.mesh.visible = false
 
   // ------------------------------- Setup render scene -------------------------------
-  const w = 384, h = 384
+  const w = 384,
+    h = 384
   const previewRenderTarget = new THREE.WebGLRenderTarget(w, h, {
     colorSpace: THREE.SRGBColorSpace,
   })
@@ -287,9 +288,11 @@ export async function exportPlanetPreview(): Promise<string> {
   return dataURL
 }
 
-export async function exportPlanetToGLTF(
-  progressDialog: { open: () => void; setProgress: (value: number) => void; setError: (error: unknown) => void },
-) {
+export async function exportPlanetToGLTF(progressDialog: {
+  open: () => void
+  setProgress: (value: number) => void
+  setError: (error: unknown) => void
+}) {
   progressDialog.setProgress(1)
   await sleep(50)
   const bakingTargets: BakingTarget[] = []
@@ -390,6 +393,7 @@ export async function exportPlanetToGLTF(
       bt.mesh.geometry?.dispose()
     })
     progressDialog.setProgress(8)
+    await sleep(50)
   }
 }
 

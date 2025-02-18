@@ -1,5 +1,3 @@
 {
-  "reject": [
-    "three-custom-shader-material"
-  ]
+  "reject": ["three-custom-shader-material"]
 }

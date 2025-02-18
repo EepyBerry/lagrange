@@ -273,9 +273,7 @@ async function savePlanet(asCopy: boolean = false) {
   // ----------- Save planet data ------------ //
   console.debug(toRaw(LG_PLANET_DATA.value))
   const localData = toRaw(JSON.stringify(LG_PLANET_DATA.value))
-  const planetId = asCopy
-    ? nanoid()
-    : $planetEntityId.value.length > 0 ? $planetEntityId.value : nanoid()
+  const planetId = asCopy ? nanoid() : $planetEntityId.value.length > 0 ? $planetEntityId.value : nanoid()
   const idbData: IDBPlanet = {
     id: planetId,
     version: '2',

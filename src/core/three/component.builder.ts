@@ -64,15 +64,15 @@ export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THR
   })
 }
 
-export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
+export function createPlanet(
+  data: PlanetData,
+  surfaceTexBuf: Uint8Array,
+  biomeTexBuf: Uint8Array,
+): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
   const geometry = createSphereGeometryComponent(data.planetMeshQuality)
   geometry.computeTangents()
 
-  const surfaceTex = createRampTexture(
-    surfaceTexBuf,
-    Globals.TEXTURE_SIZES.SURFACE,
-    data.planetSurfaceColorRamp.steps,
-  )
+  const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
   const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
 
   const material = createCustomShaderMaterialComponent(
@@ -152,7 +152,10 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
   return { mesh, texs: [surfaceTex, biomeTex] }
 }
 
-export function createClouds(data: PlanetData, textureBuffer: Uint8Array): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
+export function createClouds(
+  data: PlanetData,
+  textureBuffer: Uint8Array,
+): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
   const cloudHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
   const geometry = createSphereGeometryComponent(data.planetMeshQuality, cloudHeight)
   const opacityTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
@@ -229,7 +232,10 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
   return mesh
 }
 
-export function createRing(data: PlanetData, textureBuffer: Uint8Array): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
+export function createRing(
+  data: PlanetData,
+  textureBuffer: Uint8Array,
+): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
   const rgbaTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, data.ringColorRamp.steps)
   const geometry = createRingGeometryComponent(data.planetMeshQuality, data.ringInnerRadius, data.ringOuterRadius)
   const material = createCustomShaderMaterialComponent(
@@ -331,11 +337,7 @@ export function createAmbientLightComponent(color: THREE.ColorRepresentation, in
 }
 
 export function createSphereGeometryComponent(quality: number, addtlRadius: number = 0): THREE.SphereGeometry {
-  return new THREE.SphereGeometry(
-    1.0 + addtlRadius,
-    quality,
-    quality / 2.0,
-  )
+  return new THREE.SphereGeometry(1.0 + addtlRadius, quality, quality / 2.0)
 }
 
 export function createRingGeometryComponent(

@@ -651,14 +651,7 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsHeight = 1.0
     this._cloudsShowWarping = false
     this._cloudsShowDisplacement = false
-    this._cloudsDisplacement = new DisplacementParameters(
-      this._changedProps,
-      '_cloudsDisplacement',
-      2.0,
-      0.2,
-      2.0,
-      6,
-    )
+    this._cloudsDisplacement = new DisplacementParameters(this._changedProps, '_cloudsDisplacement', 2.0, 0.2, 2.0, 6)
     this._cloudsNoise = new NoiseParameters(this._changedProps, '_cloudsNoise', 4.0, 0.6, 1.75, 4)
     this._cloudsColor = new Color(0xffffff)
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
@@ -835,7 +828,7 @@ export default class PlanetData extends ChangeTracker {
 
     // Surface
     this.planetSurfaceShowBumps = Boolean(Math.round(clampedPRNG(0, 1)))
-    this.planetSurfaceBumpStrength =  clampedPRNG(0, 0.2)
+    this.planetSurfaceBumpStrength = clampedPRNG(0, 0.2)
     this.planetSurfaceShowWarping = Boolean(Math.round(clampedPRNG(0, 1)))
     this.planetSurfaceShowDisplacement = Boolean(Math.round(clampedPRNG(0, 1)))
     this.planetSurfaceDisplacement.randomize()
@@ -852,7 +845,7 @@ export default class PlanetData extends ChangeTracker {
     for (let i = 0; i < Math.round(clampedPRNG(0, 8)); i++) {
       this.biomesParams.push(BiomeParameters.createRandom(this.changedProps))
     }
-    
+
     // Clouds
     this.cloudsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
     this.cloudsRotation = clampedPRNG(0, 360)
@@ -861,13 +854,11 @@ export default class PlanetData extends ChangeTracker {
     this.cloudsDisplacement.randomize()
     this.cloudsNoise.randomize()
     this.cloudsColor.set(clampedPRNG(0, 1) * 0xffffff)
-    this.cloudsColorRamp.loadFromSteps(
-      [
-        new ColorRampStep(0x000000, 0.0, true),
-        new ColorRampStep(clampedPRNG(0, 1) * 0xffffff, clampedPRNG(0, 1)),
-        new ColorRampStep(clampedPRNG(0, 1) * 0xffffff, 1.0, true),
-      ],
-    )
+    this.cloudsColorRamp.loadFromSteps([
+      new ColorRampStep(0x000000, 0.0, true),
+      new ColorRampStep(clampedPRNG(0, 1) * 0xffffff, clampedPRNG(0, 1)),
+      new ColorRampStep(clampedPRNG(0, 1) * 0xffffff, 1.0, true),
+    ])
 
     // Atmosphere
     this.atmosphereEnabled = Boolean(Math.round(clampedPRNG(0, 1)))

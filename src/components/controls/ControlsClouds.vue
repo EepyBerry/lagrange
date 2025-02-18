@@ -32,12 +32,7 @@
       >
         <template #title>{{ $t('editor.general.displacement') }}</template>
         <template #content>
-          <ParameterSlider
-            id="s-dfac"
-            v-model="LG_PLANET_DATA.cloudsDisplacement.factor"
-            :step="0.005"
-            :max="0.25"
-          >
+          <ParameterSlider id="s-dfac" v-model="LG_PLANET_DATA.cloudsDisplacement.factor" :step="0.005" :max="0.25">
             {{ $t('editor.general.displacement_factor') }}
           </ParameterSlider>
           <ParameterSlider
@@ -49,29 +44,14 @@
           >
             {{ $t('editor.general.displacement_epsilon') }}
           </ParameterSlider>
-          <ParameterSlider
-            id="s-dmul"
-            v-model="LG_PLANET_DATA.cloudsDisplacement.multiplier"
-            :step="0.01"
-            :max="3"
-          >
+          <ParameterSlider id="s-dmul" v-model="LG_PLANET_DATA.cloudsDisplacement.multiplier" :step="0.01" :max="3">
             {{ $t('editor.general.displacement_multiplier') }}
           </ParameterSlider>
           <ParameterDivider />
-          <ParameterSlider
-            id="s-dfreq"
-            v-model="LG_PLANET_DATA.cloudsDisplacement.frequency"
-            :step="0.01"
-            :max="3"
-          >
+          <ParameterSlider id="s-dfreq" v-model="LG_PLANET_DATA.cloudsDisplacement.frequency" :step="0.01" :max="3">
             {{ $t('editor.general.noise_fbm_frequency') }}
           </ParameterSlider>
-          <ParameterSlider
-            id="s-damp"
-            v-model="LG_PLANET_DATA.cloudsDisplacement.amplitude"
-            :step="0.01"
-            :max="1.25"
-          >
+          <ParameterSlider id="s-damp" v-model="LG_PLANET_DATA.cloudsDisplacement.amplitude" :step="0.01" :max="1.25">
             {{ $t('editor.general.noise_fbm_amplitude') }}
           </ParameterSlider>
           <ParameterSlider
@@ -83,13 +63,7 @@
           >
             {{ $t('editor.general.noise_fbm_lacunarity') }}
           </ParameterSlider>
-          <ParameterSlider
-            id="s-doct"
-            v-model="LG_PLANET_DATA.cloudsDisplacement.octaves"
-            :step="1"
-            :min="1"
-            :max="8"
-          >
+          <ParameterSlider id="s-doct" v-model="LG_PLANET_DATA.cloudsDisplacement.octaves" :step="1" :min="1" :max="8">
             {{ $t('editor.general.noise_fbm_octaves') }}
           </ParameterSlider>
         </template>

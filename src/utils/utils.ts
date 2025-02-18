@@ -37,4 +37,3 @@ export function getLinearRGBLuminance(r: number, g: number, b: number) {
 export function getLinearUint8Luminance(r: number, g: number, b: number) {
   return 0.2126 * (r * MUL_INT8_TO_UNIT) + 0.7152 * (g * MUL_INT8_TO_UNIT) + 0.0722 * (b * MUL_INT8_TO_UNIT)
 }
-

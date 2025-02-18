@@ -49,7 +49,7 @@
     <button
       ref="randomMenuTrigger"
       class="lg dark"
-      :class="{ 'active': isRandomMenuOpen }"
+      :class="{ active: isRandomMenuOpen }"
       :aria-label="$t('a11y.topbar_menu_random')"
       :title="$t('tooltip.topbar_menu_random')"
     >
@@ -58,22 +58,16 @@
     <div id="random-menu" ref="randomMenu" class="lg floating" :style="randomFloating.floatingStyles.value">
       <div class="floating-content">
         <label for="random-seed">Seed</label>
-        <input id="random-seed" v-model="PRNG_SEED" class="lg" type="text">
+        <input id="random-seed" v-model="PRNG_SEED" class="lg" type="text" />
       </div>
       <div class="floating-actions">
-        <button
-          class="lg"
-          @click="generateSeed"
-        >
+        <button class="lg" @click="generateSeed">
           <iconify-icon icon="tabler:seeding" width="1.5rem" aria-hidden="true" />
-          {{  $t('editor.$action_reseed') }}
+          {{ $t('editor.$action_reseed') }}
         </button>
-        <button
-          class="lg success"
-          @click="$emit('random')"
-        >
+        <button class="lg success" @click="$emit('random')">
           <iconify-icon icon="mingcute:shuffle-2-fill" width="1.5rem" aria-hidden="true" />
-          {{  $t('editor.$action_random') }}
+          {{ $t('editor.$action_random') }}
         </button>
       </div>
     </div>
@@ -82,18 +76,18 @@
     <button
       ref="saveMenuTrigger"
       class="lg dark"
-      :class="{ 'active': isSaveMenuOpen }"
+      :class="{ active: isSaveMenuOpen }"
       :aria-label="$t('a11y.topbar_menu_save')"
       :title="$t('tooltip.topbar_menu_save')"
     >
-      <iconify-icon :icon="isSaveMenuOpen ? 'mdi:content-save-minus-outline' : 'mdi:content-save-plus-outline'" width="1.5rem" aria-hidden="true" />
+      <iconify-icon
+        :icon="isSaveMenuOpen ? 'mdi:content-save-minus-outline' : 'mdi:content-save-plus-outline'"
+        width="1.5rem"
+        aria-hidden="true"
+      />
     </button>
     <div ref="saveMenu" class="lg floating" :style="saveFloating.floatingStyles.value">
-      <button
-        class="lg dark"
-        :aria-label="$t('a11y.topbar_save')"
-        @click="toggleSaveMenu(false); $emit('save')"
-      >
+      <button class="lg dark" :aria-label="$t('a11y.topbar_save')" @click="closeSaveMenuAndEmit('save')">
         <iconify-icon icon="mingcute:save-2-line" width="1.5rem" aria-hidden="true" />
         <p>{{ $t('tooltip.topbar_save') }}</p>
       </button>
@@ -101,16 +95,12 @@
         v-if="!$route.path.endsWith('/new')"
         class="lg dark"
         :aria-label="$t('a11y.topbar_copy')"
-        @click="toggleSaveMenu(false); $emit('copy')"
+        @click="closeSaveMenuAndEmit('copy')"
       >
         <iconify-icon icon="mingcute:copy-2-line" width="1.5rem" aria-hidden="true" />
         <p>{{ $t('tooltip.topbar_copy') }}</p>
       </button>
-      <button
-        class="lg dark"
-        :aria-label="$t('a11y.topbar_gltf')"
-        @click="toggleSaveMenu(false); $emit('gltf')"
-      >
+      <button class="lg dark" :aria-label="$t('a11y.topbar_gltf')" @click="closeSaveMenuAndEmit('gltf')">
         <iconify-icon icon="simple-icons:gltf" width="1.5rem" aria-hidden="true" />
         <p>{{ $t('tooltip.topbar_gltf') }}</p>
       </button>
@@ -136,8 +126,8 @@ const resetDialog: Ref<{ open: () => void } | null> = ref(null)
 
 // floating-ui start
 const isRandomMenuOpen: Ref<boolean> = ref(false)
-const randomMenuTrigger: Ref<HTMLElement|null> = ref(null)
-const randomMenu: Ref<HTMLElement|null> = ref(null)
+const randomMenuTrigger: Ref<HTMLElement | null> = ref(null)
+const randomMenu: Ref<HTMLElement | null> = ref(null)
 const randomFloating = useFloating(randomMenuTrigger, randomMenu, {
   whileElementsMounted: autoUpdate,
   placement: 'bottom-end',
@@ -145,8 +135,8 @@ const randomFloating = useFloating(randomMenuTrigger, randomMenu, {
 })
 
 const isSaveMenuOpen: Ref<boolean> = ref(false)
-const saveMenuTrigger: Ref<HTMLElement|null> = ref(null)
-const saveMenu: Ref<HTMLElement|null> = ref(null)
+const saveMenuTrigger: Ref<HTMLElement | null> = ref(null)
+const saveMenu: Ref<HTMLElement | null> = ref(null)
 const saveFloating = useFloating(saveMenuTrigger, saveMenu, {
   whileElementsMounted: autoUpdate,
   placement: 'bottom-end',
@@ -154,14 +144,13 @@ const saveFloating = useFloating(saveMenuTrigger, saveMenu, {
 })
 // floating-ui end
 
-watch(() => EventBus.clickEvent.value, evt => onWindowClick(evt!))
+watch(
+  () => EventBus.clickEvent.value,
+  (evt) => onWindowClick(evt!),
+)
 
 defineProps<{ compactMode: boolean }>()
 const $emit = defineEmits(['rename', 'reset', 'save', 'copy', 'gltf', 'random'])
-
-function generateSeed() {
-  regenerateSeed()
-}
 
 function onWindowClick(evt: MouseEvent) {
   if (evt.target === randomMenuTrigger.value) {
@@ -175,6 +164,15 @@ function onWindowClick(evt: MouseEvent) {
   } else if (!saveMenu.value?.contains(evt.target as Node)) {
     toggleSaveMenu(false)
   }
+}
+
+function closeSaveMenuAndEmit(evt: 'rename' | 'reset' | 'save' | 'copy' | 'gltf' | 'random') {
+  toggleSaveMenu(false)
+  $emit(evt)
+}
+
+function generateSeed() {
+  regenerateSeed()
 }
 
 function toggleEditMode() {
@@ -193,7 +191,7 @@ function toggleRandomMenu(override?: boolean) {
     randomMenu.value!.style.visibility = override ? 'visible' : 'hidden'
     isRandomMenuOpen.value = override
   } else {
-    randomMenu.value!.style.visibility = (randomMenu.value!.style.visibility === 'visible' ? 'hidden' : 'visible')
+    randomMenu.value!.style.visibility = randomMenu.value!.style.visibility === 'visible' ? 'hidden' : 'visible'
     isRandomMenuOpen.value = randomMenu.value!.style.visibility === 'visible'
   }
 }
@@ -203,7 +201,7 @@ function toggleSaveMenu(override?: boolean) {
     saveMenu.value!.style.visibility = override ? 'visible' : 'hidden'
     isSaveMenuOpen.value = override
   } else {
-    saveMenu.value!.style.visibility = (saveMenu.value!.style.visibility === 'visible' ? 'hidden' : 'visible')
+    saveMenu.value!.style.visibility = saveMenu.value!.style.visibility === 'visible' ? 'hidden' : 'visible'
     isSaveMenuOpen.value = saveMenu.value!.style.visibility === 'visible'
   }
 }

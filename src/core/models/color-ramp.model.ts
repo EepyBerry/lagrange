@@ -187,13 +187,10 @@ export class ColorRamp extends ChangeTracker {
     this._steps.splice(0)
     const max = Math.round(clampedPRNG(2, maxSteps))
     for (let i = 0; i < max; i++) {
-      const factor = i === 0 ? 0 : (i === max-1 ? 1 : clampedPRNG(0, 1))
-      this._steps.push(ColorRampStep.newWithAlpha(
-        clampedPRNG(0, 1) * 0xffffff,
-        clampedPRNG(0, 1),
-        factor,
-        i === 0 || i === max-1
-      ))
+      const factor = i === 0 ? 0 : i === max - 1 ? 1 : clampedPRNG(0, 1)
+      this._steps.push(
+        ColorRampStep.newWithAlpha(clampedPRNG(0, 1) * 0xffffff, clampedPRNG(0, 1), factor, i === 0 || i === max - 1),
+      )
     }
     this.sortSteps()
     this.markForChange(this._changePrefix)
