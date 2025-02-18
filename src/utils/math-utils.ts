@@ -1,4 +1,29 @@
 import type { RawRGBA, Rect } from '@/core/types'
+import seedrandom from 'seedrandom'
+import { ref, type Ref } from 'vue'
+
+let currentPRNGSeed = Math.random().toString().substring(2)
+
+// @ts-expect-error Type definitions missing in 'seedrandom' package
+export const PRNG: Ref<seedrandom.PRNG> = ref(new seedrandom.alea(currentPRNGSeed))
+export const PRNG_SEED: Ref<string> = ref(currentPRNGSeed)
+
+export function regenerateSeed() {
+  PRNG_SEED.value = Math.random().toString().substring(2)
+}
+export function regeneratePRNGIfNecessary(force?: boolean): void {
+  if (!force && PRNG_SEED.value === currentPRNGSeed) {
+    return
+  }
+  const s: string = PRNG_SEED.value
+  PRNG.value = seedrandom.alea(s)
+  PRNG_SEED.value = s
+  currentPRNGSeed = s
+}
+export function clampedPRNG(min: number, max: number, precision: number = 3): number {
+  const v = PRNG.value()
+  return Number(((max - min) * v + min).toPrecision(precision))
+}
 
 /**
  * Simple numeric checking function.

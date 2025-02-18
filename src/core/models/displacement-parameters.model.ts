@@ -1,5 +1,6 @@
 import { clamp } from 'three/src/math/MathUtils.js'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
+import { clampedPRNG } from '@/utils/math-utils'
 
 export class DisplacementParameters extends ChangeTracker {
   private _epsilon: number = 0.001
@@ -103,5 +104,16 @@ export class DisplacementParameters extends ChangeTracker {
     this.epsilon = clamp(eps ?? 0.001, 0.0, 2.0)
     this.multiplier = clamp(mul ?? 2.0, 0.0, 5.0)
     this.factor = clamp(fac ?? 0.05, 0.0, 1.0)
+  }
+
+  // Note: adjusted ranges to get more coherent data
+  public randomize() {
+    this.factor = clampedPRNG(0, 0.25)
+    this.epsilon = clampedPRNG(0.0005, 0.25)
+    this.multiplier = clampedPRNG(0, 3)
+    this.frequency = clampedPRNG(0.25, 3)
+    this.amplitude = clampedPRNG(0.25, 1.25)
+    this.lacunarity = clampedPRNG(1.5, 3)
+    this.octaves = Math.round(clampedPRNG(2, 8))
   }
 }

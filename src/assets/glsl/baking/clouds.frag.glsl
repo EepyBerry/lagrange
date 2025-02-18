@@ -2,6 +2,16 @@
 precision highp float;
 #endif
 
+struct DisplacementParameters {
+  float fac;
+  float eps;
+  float mul;
+
+  float freq;
+  float amp;
+  float lac;
+  int oct;
+};
 struct NoiseParameters {
     int type;
     float freq;
@@ -9,6 +19,7 @@ struct NoiseParameters {
     float lac;
     int oct;
 
+    int layers;
     float xwarp;
     float ywarp;
     float zwarp;
@@ -17,6 +28,10 @@ struct NoiseParameters {
 // Main uniforms
 uniform bool u_warp;
 uniform NoiseParameters u_noise;
+
+uniform bool u_displace;
+uniform DisplacementParameters u_displacement;
+
 uniform vec3 u_color;
 uniform sampler2D u_opacity_tex;
 
@@ -24,6 +39,7 @@ uniform sampler2D u_opacity_tex;
 in mat4 vTransform;
 
 @import functions/fbm;
+@import functions/lwd;
 @import functions/color_utils;
 
 // Constants
@@ -32,12 +48,11 @@ const vec3 DVEC_B = vec3(0.2, 0.2, 0.0);
 
 void main() {
     vec3 vPos = vTransform[1].xyz;
-    // Warping
-    vec3 wPos = vec3(
-        vPos.x * mix(1.0, u_noise.xwarp, float(u_warp)),
-        vPos.y * mix(1.0, u_noise.ywarp, float(u_warp)),
-        vPos.z * mix(1.0, u_noise.zwarp, float(u_warp))
-    );
+    vec3 warpVec = vec3(u_noise.xwarp, u_noise.ywarp, u_noise.zwarp);
+
+    // XYZ Warping + Displacement
+    vec3 wPos = compute_warping(vPos, warpVec, u_warp);
+    wPos = compute_displacement(wPos, u_displacement, u_displace);
 
     // Clouds
     vec3 opacity = vec3(0.0);
@@ -46,10 +61,7 @@ void main() {
         fbm3(wPos + DVEC_A,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct),
         fbm3(wPos + DVEC_B,      u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct)
     );
-    if (wOpacity.x < 0.05) {
-        discard;
-    }
-    opacity += fbm3(wPos + wOpacity, u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct);
+    opacity += fbm3(vPos + wOpacity, u_noise.freq, u_noise.amp, u_noise.lac, u_noise.oct);
     opacity = texture2D(u_opacity_tex, vec2(opacity.x, 0.5)).xyz;
     csm_DiffuseColor = vec4(u_color, opacity.x);
 }

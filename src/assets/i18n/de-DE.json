@@ -58,7 +58,10 @@
       "topbar": "Obere Leiste - Benennung und Daten",
       "topbar_rename": "Planeten umbenennen",
       "topbar_reset": "Zurücksetzen",
+      "topbar_reseed": "Seed erstellen",
+      "topbar_random": "Planeten randomisieren",
       "topbar_save": "Planeten speichern",
+      "topbar_copy": "Planeten als Kopie speichern",
       "topbar_import": "Einen Planeten importieren",
       "topbar_export": "Einen Planeten exportieren",
       "topbar_export_all": "Vollen Kodex exportieren",
@@ -216,6 +219,8 @@
     "$action_info": "{planet} Infos",
     "$action_export": "{planet} exportieren",
     "$action_delete": "{planet} löschen",
+    "$action_reseed": "Seed erstellen",
+    "$action_random": "Randomizieren",
 
     "no_planets": "Keine Planeten gefunden. Über den Button oben können Sie einen erstellen!",
 
@@ -229,6 +234,8 @@
     "$action_add": "Hinzufügen",
 
     "general": {
+      "displacement": "Oberflächenstörung",
+      "displacement_show": "Störung anzeigen",
       "displacement_factor": "Faktor",
       "displacement_epsilon": "Epsilon",
       "displacement_multiplier": "Multiplikator",
@@ -239,6 +246,7 @@
       "warping_y": "Y Verformung",
       "warping_z": "Z Verformung",
 
+      "noise": "Rausch Parameter",
       "noise_layers": "Anzahl der Schichten",
       "noise_fbm_frequency": "Frequenz",
       "noise_fbm_amplitude": "Amplitude",
@@ -287,11 +295,7 @@
 
         "bumpmap": "Bump mapping",
         "bumpmap_show": "Beulen anzeigen",
-        "bumpmap_strength": "Intensität der Beulen",
-
-        "displacement": "Oberflächenstörung",
-        "displacement_show": "Störung anzeigen",
-        "noise": "Rauscheinstellungen"
+        "bumpmap_strength": "Intensität der Beulen"
       },
       "biomes": {
         "$title": "Biomen",
@@ -323,11 +327,6 @@
 
         "transform": "Transform",
         "transform_rotation": "Drehung",
-
-        "noise": "Rausch Parameter",
-        "noise_fbm_frequency": "Frequenz",
-        "noise_fbm_amplitude": "Amplitude",
-        "noise_fbm_lacunarity": "Lückenhaftigkeit",
 
         "rgba": "Farbe & Transparenz",
         "rgba_opacityramp": "Transparenzrampe"
@@ -387,8 +386,12 @@
     "topbar_rename": "Planeten umbenennen",
     "topbar_rename_confirm": "Den Namen bestätigen",
     "topbar_reset": "Zurücksetzen",
+    "topbar_menu_random": "Randomisierungsoptionen",
+    "topbar_menu_save": "Speicheroptionen",
     "topbar_save": "Speichern",
+    "topbar_copy": "Als Kopie speichern",
     "topbar_gltf": "Export als glTF",
+    "topbar_random": "Randomisieren",
     "topbar_import": "Eine Planetendatei importieren",
     "topbar_export": "Eine Planetendatei exportieren",
     "topbar_export_all": "Exportieren Sie alle Planeten im .zip Format",
@@ -425,8 +428,12 @@
     "topbar_rename": "@:tooltip.topbar_rename",
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
     "topbar_reset": "@:tooltip.topbar_reset",
+    "topbar_menu_random": "@:tooltip.topbar_menu_random",
+    "topbar_menu_save": "@:tooltip.topbar_menu_save",
     "topbar_save": "@:tooltip.topbar_save",
+    "topbar_copy": "@:tooltip.topbar_copy",
     "topbar_gltf": "@:tooltip.topbar_gltf",
+    "topbar_random": "@:tooltip.topbar_random",
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
     "topbar_export_all": "@:tooltip.topbar_export_all",

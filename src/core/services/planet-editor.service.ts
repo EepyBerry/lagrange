@@ -1,16 +1,11 @@
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import * as THREE from 'three'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import * as Globals from '@core/globals'
-import * as ShaderLoader from '../three/shader.loader'
 import * as ComponentBuilder from '@core/three/component.builder'
-import { ColorMode, ShaderFileType, type BakingTarget, type DataTextureWrapper } from '@core/types'
-import { loadCubeTexture } from '@core/three/external-data.loader'
-import { SceneElements } from '@core/models/scene-elements.model'
-import { LensFlareEffect } from '@core/three/lens-flare.effect'
+import { type BakingTarget, type PlanetSceneData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
-import { normalizeUInt8ArrayPixels } from '@/utils/math-utils'
-import { createBiomeTexture, createRampTexture } from '../helpers/texture.helper'
+import { normalizeUInt8ArrayPixels, regeneratePRNGIfNecessary } from '@/utils/math-utils'
 import {
   bakeMesh,
   createBakingHeightMap,
@@ -23,9 +18,13 @@ import {
 import { exportMeshesToGLTF } from '../helpers/export.helper'
 import { idb } from '@/dexie.config'
 import { sleep } from '@/utils/utils'
+import saveAs from 'file-saver'
+import { clearUniformUpdateMap, execUniformUpdate, initUniformUpdateMap } from '../helpers/uniform.helper'
+import Stats from 'three/examples/jsm/libs/stats.module.js'
 
 // Editor constants
-export const LG_PLANET_DATA = ref(new PlanetData())
+const LG_SCENE_DATA: PlanetSceneData = {}
+export const LG_PLANET_DATA: Ref<PlanetData> = ref(new PlanetData())
 
 // Buffers
 export const LG_BUFFER_SURFACE = new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4)
@@ -33,269 +32,218 @@ export const LG_BUFFER_BIOME = new Uint8Array(Globals.TEXTURE_SIZES.BIOME * Glob
 export const LG_BUFFER_CLOUDS = new Uint8Array(Globals.TEXTURE_SIZES.CLOUDS * Globals.TEXTURE_SIZES.CLOUDS * 4)
 export const LG_BUFFER_RING = new Uint8Array(Globals.TEXTURE_SIZES.RING * Globals.TEXTURE_SIZES.RING * 4)
 
-// ----------------------------------------------------------------------------------------------------------------------
-// SCENE FUNCTIONS
+const hasPlanetBeenEdited: Ref<boolean> = ref(false)
+let enableEditorRendering = true
+let watchForPlanetUpdates = false
 
-export function createScene(data: PlanetData, width: number, height: number, pixelRatio: number): SceneElements {
-  // setup cubemap
-  const scene = new THREE.Scene()
-  scene.background = loadCubeTexture('/skybox/', [
-    'space_ft.png',
-    'space_bk.png',
-    'space_up.png',
-    'space_dn.png',
-    'space_rt.png',
-    'space_lf.png',
-  ])
+// ------------------------------------------------------------------------------------------------ //
+//                                           BOOTSTRAPPING                                          //
+// ------------------------------------------------------------------------------------------------ //
 
-  // setup scene (renderer, cam, lighting)
-  const renderer = ComponentBuilder.createRendererComponent(width, height, pixelRatio)
-  const camera = ComponentBuilder.createPerspectiveCameraComponent(
-    50,
-    width / height,
-    0.1,
-    1e6,
-    new THREE.Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle)),
-  )
-  const ambientLight = ComponentBuilder.createAmbientightComponent(data.ambLightColor, data.ambLightIntensity)
-  ambientLight.name = Globals.LG_NAME_AMBLIGHT
-  scene.add(ambientLight)
-
-  return new SceneElements(scene, renderer, camera)
-}
-
-export function createSun(data: PlanetData) {
-  const sun = new THREE.DirectionalLight(data.sunLightColor, data.sunLightIntensity)
-  sun.frustumCulled = false
-  sun.userData.lens = 'no-occlusion'
-  sun.name = Globals.LG_NAME_SUN
-  sun.castShadow = true
-  sun.shadow.camera.far = 1e4
-  sun.shadow.mapSize.width = 4096
-  sun.shadow.mapSize.height = 4096
-  sun.shadow.bias = -0.00003
-  return sun
-}
-
-export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THREE.Color) {
-  return new LensFlareEffect({
-    opacity: 1,
-    lensPosition: pos,
-    colorGain: color,
-    starPointsIntensity: data.lensFlarePointsIntensity,
-    glareIntensity: data.lensFlareGlareIntensity,
-  })
-}
-
-export function createPlanet(data: PlanetData): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
-  const geometry = ComponentBuilder.createSphereGeometryComponent()
-  geometry.computeTangents()
-
-  const surfaceTex = createRampTexture(
+export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
+  await sleep(50)
+  enableEditorRendering = true
+  const sceneRenderObjs = ComponentBuilder.createScene(LG_PLANET_DATA.value, w, h, pixelRatio)
+  LG_SCENE_DATA.scene = sceneRenderObjs.scene
+  LG_SCENE_DATA.renderer = sceneRenderObjs.renderer
+  LG_SCENE_DATA.camera = sceneRenderObjs.camera
+  LG_SCENE_DATA.clock = new THREE.Clock()
+  initLighting()
+  initPlanet()
+  initRendering(canvas, w, h)
+  initUniformUpdateMap(LG_SCENE_DATA, LG_PLANET_DATA.value, [
     LG_BUFFER_SURFACE,
-    Globals.TEXTURE_SIZES.SURFACE,
-    data.planetSurfaceColorRamp.steps,
+    LG_BUFFER_BIOME,
+    LG_BUFFER_CLOUDS,
+    LG_BUFFER_RING,
+  ])
+  ComponentBuilder.createControlsComponent(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
+}
+
+function initLighting(): void {
+  const sun = ComponentBuilder.createSun(LG_PLANET_DATA.value)
+  const lensFlare = ComponentBuilder.createLensFlare(LG_PLANET_DATA.value, sun.position, sun.color)
+  sun.add(lensFlare.mesh)
+  LG_SCENE_DATA.scene!.add(sun)
+  LG_SCENE_DATA.sunLight = sun
+  LG_SCENE_DATA.ambLight = LG_SCENE_DATA.scene!.getObjectByName(Globals.LG_NAME_AMBLIGHT) as THREE.AmbientLight
+  LG_SCENE_DATA.lensFlare = lensFlare
+
+  // Set initial rotations
+  const pos = Globals.SUN_INIT_POS.clone()
+  pos.applyAxisAngle(Globals.AXIS_X, degToRad(-15))
+  LG_SCENE_DATA.sunLight.position.set(pos.x, pos.y, pos.z)
+  LG_SCENE_DATA.lensFlare.updatePosition(LG_SCENE_DATA.sunLight.position)
+}
+
+function initPlanet(): void {
+  const planet = ComponentBuilder.createPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME)
+  const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
+  const atmosphere = ComponentBuilder.createAtmosphere(LG_PLANET_DATA.value, LG_SCENE_DATA.sunLight!.position)
+  const ring = ComponentBuilder.createRing(LG_PLANET_DATA.value, LG_BUFFER_RING)
+  const planetGroup = new THREE.Group()
+  planetGroup.add(planet.mesh)
+  planetGroup.add(clouds.mesh)
+  planetGroup.add(atmosphere)
+
+  const ringAnchor = new THREE.Group()
+  ringAnchor.add(ring.mesh)
+  planetGroup.add(ringAnchor)
+
+  LG_SCENE_DATA.scene!.add(planetGroup)
+  LG_SCENE_DATA.planet = planet.mesh
+  LG_SCENE_DATA.clouds = clouds.mesh
+  LG_SCENE_DATA.atmosphere = atmosphere
+  LG_SCENE_DATA.ring = ring.mesh
+  LG_SCENE_DATA.planetGroup = planetGroup
+  LG_SCENE_DATA.ringAnchor = ringAnchor
+
+  // Set datatextures + data
+  LG_SCENE_DATA.surfaceDataTex = planet.texs[0].texture
+  LG_SCENE_DATA.biomeDataTex = planet.texs[1].texture
+  LG_SCENE_DATA.cloudsDataTex = clouds.texs[0].texture
+  LG_SCENE_DATA.ringDataTex = ring.texs[0].texture
+
+  // Set initial rotations
+  LG_SCENE_DATA.planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
+  LG_SCENE_DATA.planet.setRotationFromAxisAngle(LG_SCENE_DATA.planet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
+  LG_SCENE_DATA.clouds.setRotationFromAxisAngle(
+    LG_SCENE_DATA.clouds.up,
+    degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation),
   )
-  const biomeTex = createBiomeTexture(LG_BUFFER_BIOME, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
+  LG_SCENE_DATA.ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
+  LG_SCENE_DATA.ring.setRotationFromAxisAngle(LG_SCENE_DATA.ring.up, degToRad(LG_PLANET_DATA.value.ringRotation))
 
-  const material = ComponentBuilder.createCustomShaderMaterialComponent(
-    ShaderLoader.fetch('planet.vert.glsl', ShaderFileType.CORE),
-    ShaderLoader.fetch('planet.frag.glsl', ShaderFileType.CORE),
-    {
-      // Planet & Rendering
-      u_radius: { value: 1.0 },
-      u_pbr_params: {
-        value: {
-          wlevel: data.planetWaterLevel,
-          wrough: data.planetWaterRoughness,
-          wmetal: data.planetWaterMetalness,
-          grough: data.planetGroundRoughness,
-          gmetal: data.planetGroundMetalness,
-        },
-      },
-      // Surface
-      u_bump: { value: data.planetSurfaceShowBumps },
-      u_bump_strength: { value: data.planetSurfaceBumpStrength },
-      u_bump_offset: { value: 0.005 },
-      u_warp: { value: data.planetSurfaceShowWarping },
-      u_displace: { value: data.planetSurfaceShowDisplacement },
-      u_surface_displacement: {
-        value: {
-          freq: data.planetSurfaceDisplacement.frequency,
-          amp: data.planetSurfaceDisplacement.amplitude,
-          lac: data.planetSurfaceDisplacement.lacunarity,
-          oct: data.planetSurfaceDisplacement.octaves,
-          eps: data.planetSurfaceDisplacement.epsilon,
-          mul: data.planetSurfaceDisplacement.multiplier,
-          fac: data.planetSurfaceDisplacement.factor,
-        },
-      },
-      u_surface_noise: {
-        value: {
-          freq: data.planetSurfaceNoise.frequency,
-          amp: data.planetSurfaceNoise.amplitude,
-          lac: data.planetSurfaceNoise.lacunarity,
-          oct: data.planetSurfaceNoise.octaves,
-          layers: data.planetSurfaceNoise.layers,
-          xwarp: data.planetSurfaceNoise.xWarpFactor,
-          ywarp: data.planetSurfaceNoise.yWarpFactor,
-          zwarp: data.planetSurfaceNoise.zWarpFactor,
-        },
-      },
-      u_surface_tex: { value: surfaceTex.texture },
-      // Biomes
-      u_biomes: { value: data.biomesEnabled },
-      u_biomes_tex: { value: biomeTex.texture },
-      u_temp_noise: {
-        value: {
-          mode: data.biomesTemperatureMode,
-          freq: data.biomesTemperatureNoise.frequency,
-          amp: data.biomesTemperatureNoise.amplitude,
-          lac: data.biomesTemperatureNoise.lacunarity,
-          oct: data.biomesTemperatureNoise.octaves,
-        },
-      },
-      u_humi_noise: {
-        value: {
-          mode: data.biomesHumidityMode,
-          freq: data.biomesHumidityNoise.frequency,
-          amp: data.biomesHumidityNoise.amplitude,
-          lac: data.biomesHumidityNoise.lacunarity,
-          oct: data.biomesHumidityNoise.octaves,
-        },
-      },
-    },
-    THREE.MeshStandardMaterial,
+  // Set lighting target
+  LG_SCENE_DATA.sunLight!.target = LG_SCENE_DATA.planetGroup
+}
+
+function initRendering(sceneRoot: HTMLCanvasElement, width: number, height: number) {
+  const stats = new Stats()
+  stats.dom.style.right = '0'
+  stats.dom.style.left = 'auto'
+  stats.dom.ariaHidden = 'true'
+  // document.body.appendChild(stats.dom)
+
+  LG_SCENE_DATA.renderer!.setSize(width, height)
+  LG_SCENE_DATA.renderer!.setAnimationLoop(() => renderFrame(stats))
+  LG_SCENE_DATA.renderer!.domElement.ariaLabel = '3D planet viewer'
+  sceneRoot.appendChild(LG_SCENE_DATA.renderer!.domElement)
+}
+
+// ------------------------------------------------------------------------------------------------ //
+//                                         SCENE MANAGEMENT                                         //
+// ------------------------------------------------------------------------------------------------ //
+
+function renderFrame(stats: Stats) {
+  if (!enableEditorRendering) {
+    return
+  }
+  stats.update()
+  updateScene()
+  watchForPlanetUpdates = true
+  LG_SCENE_DATA.lensFlare!.update(
+    LG_SCENE_DATA.renderer!,
+    LG_SCENE_DATA.scene!,
+    LG_SCENE_DATA.camera!,
+    LG_SCENE_DATA.clock!,
   )
-
-  const mesh = new THREE.Mesh(geometry, material)
-  mesh.castShadow = true
-  mesh.receiveShadow = true
-  mesh.name = Globals.LG_NAME_PLANET
-  return { mesh, texs: [surfaceTex, biomeTex] }
+  LG_SCENE_DATA.renderer!.render(LG_SCENE_DATA.scene!, LG_SCENE_DATA.camera!)
 }
 
-export function createClouds(data: PlanetData): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
-  const cloudHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
-  const geometry = ComponentBuilder.createSphereGeometryComponent(cloudHeight)
-  const opacityTex = createRampTexture(LG_BUFFER_CLOUDS, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
-
-  const material = ComponentBuilder.createCustomShaderMaterialComponent(
-    ShaderLoader.fetch('clouds.vert.glsl', ShaderFileType.CORE),
-    ShaderLoader.fetch('clouds.frag.glsl', ShaderFileType.CORE),
-    {
-      u_warp: { value: data.cloudsShowWarping },
-      u_noise: {
-        value: {
-          freq: data.cloudsNoise.frequency,
-          amp: data.cloudsNoise.amplitude,
-          lac: data.cloudsNoise.lacunarity,
-          oct: data.cloudsNoise.octaves,
-          layers: data.cloudsNoise.layers,
-          xwarp: data.cloudsNoise.xWarpFactor,
-          ywarp: data.cloudsNoise.yWarpFactor,
-          zwarp: data.cloudsNoise.zWarpFactor,
-        },
-      },
-      u_color: { value: data.cloudsColor },
-      u_opacity_tex: { value: opacityTex.texture },
-    },
-    THREE.MeshStandardMaterial,
-  )
-  material.transparent = true
-
-  const mesh = new THREE.Mesh(geometry, material)
-  mesh.name = Globals.LG_NAME_CLOUDS
-  mesh.receiveShadow = true
-  mesh.castShadow = true
-  return { mesh, texs: [opacityTex] }
+export function updateCameraRendering(w: number, h: number) {
+  LG_SCENE_DATA.camera!.aspect = w / h
+  LG_SCENE_DATA.camera!.updateProjectionMatrix()
+  LG_SCENE_DATA.renderer!.setSize(w, h)
 }
 
-export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE.Mesh {
-  const atmosHeight = data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
-  const atmosDensity = data.atmosphereDensityScale / Globals.ATMOSPHERE_HEIGHT_DIVIDER
-  const geometry = ComponentBuilder.createSphereGeometryComponent(atmosHeight)
-  const material = ComponentBuilder.createShaderMaterialComponent(
-    ShaderLoader.fetch('atmosphere.vert.glsl', ShaderFileType.CORE),
-    ShaderLoader.fetch('atmosphere.frag.glsl', ShaderFileType.CORE),
-    {
-      u_light_position: { value: sunPos },
-      u_light_intensity: { value: data.sunLightIntensity },
-      u_surface_radius: { value: 1.0 },
-      u_radius: { value: 1.0 + atmosHeight },
-      u_density: { value: atmosDensity },
-      u_intensity: { value: data.atmosphereIntensity },
-      u_color_mode: { value: ColorMode.REALISTIC },
-      u_hue: { value: data.atmosphereHue },
-      u_tint: { value: data.atmosphereTint },
-    },
-  )
-  material.transparent = true
-  material.depthWrite = false
-
-  const mesh = new THREE.Mesh(geometry, material)
-  mesh.userData.lens = 'no-occlusion'
-  mesh.name = Globals.LG_NAME_ATMOSPHERE
-  mesh.castShadow = true
-  return mesh
+function updateScene() {
+  if (watchForPlanetUpdates && LG_PLANET_DATA.value.changedProps.length > 0 && !hasPlanetBeenEdited.value) {
+    console.debug('Planet has been edited, warning user in case of unsaved data')
+    hasPlanetBeenEdited.value = true
+  }
+  for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
+    let key = changedProp.prop
+    // Check for additional info, separated by |
+    key = changedProp.prop.split('|')[0]
+    execUniformUpdate(key)
+  }
+  LG_PLANET_DATA.value.clearChangedProps()
 }
 
-export function createRing(data: PlanetData): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
-  const rgbaTex = createRampTexture(LG_BUFFER_RING, Globals.TEXTURE_SIZES.RING, data.ringColorRamp.steps)
-  const geometry = ComponentBuilder.createRingGeometryComponent(data.ringInnerRadius, data.ringOuterRadius)
-  const material = ComponentBuilder.createCustomShaderMaterialComponent(
-    ShaderLoader.fetch('ring.vert.glsl', ShaderFileType.CORE),
-    ShaderLoader.fetch('ring.frag.glsl', ShaderFileType.CORE),
-    {
-      u_inner_radius: { value: LG_PLANET_DATA.value.ringInnerRadius },
-      u_outer_radius: { value: LG_PLANET_DATA.value.ringOuterRadius },
-      u_ring_tex: { value: rgbaTex.texture },
-    },
-    THREE.MeshStandardMaterial,
-  )
-  material.side = THREE.DoubleSide
-  material.transparent = true
+/**
+ * Removes every object from the scene, then removes the scene itself
+ */
+export function disposeScene() {
+  watchForPlanetUpdates = false
+  console.debug('[unmount] Clearing scene...')
+  LG_SCENE_DATA.sunLight!.dispose()
+  LG_SCENE_DATA.ambLight!.dispose()
+  LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.sunLight!)
+  LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.ambLight!)
 
-  const mesh = new THREE.Mesh(geometry, material)
-  mesh.name = Globals.LG_NAME_RING
-  mesh.receiveShadow = true
-  mesh.castShadow = true
-  return { mesh, texs: [rgbaTex] }
+  LG_SCENE_DATA.lensFlare!.material.dispose()
+  LG_SCENE_DATA.lensFlare!.mesh.geometry.dispose()
+  ;(LG_SCENE_DATA.planet!.material as THREE.Material).dispose()
+  LG_SCENE_DATA.planet!.geometry.dispose()
+  ;(LG_SCENE_DATA.clouds!.material as THREE.Material).dispose()
+  LG_SCENE_DATA.clouds!.geometry.dispose()
+  ;(LG_SCENE_DATA.atmosphere!.material as THREE.Material).dispose()
+  LG_SCENE_DATA.atmosphere!.geometry.dispose()
+  ;(LG_SCENE_DATA.ring!.material as THREE.Material).dispose()
+  LG_SCENE_DATA.ring!.geometry.dispose()
+
+  LG_BUFFER_SURFACE.fill(0)
+  LG_BUFFER_BIOME.fill(0)
+  LG_BUFFER_CLOUDS.fill(0)
+  LG_BUFFER_RING.fill(0)
+  LG_SCENE_DATA.surfaceDataTex!.dispose()
+  LG_SCENE_DATA.biomeDataTex!.dispose()
+  LG_SCENE_DATA.cloudsDataTex!.dispose()
+  LG_SCENE_DATA.ringAnchor!.clear()
+  LG_SCENE_DATA.planetGroup!.clear()
+
+  LG_SCENE_DATA.scene!.children.forEach((c) => LG_SCENE_DATA.scene!.remove(c))
+  LG_SCENE_DATA.renderer!.dispose()
+
+  clearUniformUpdateMap()
+  console.debug('[unmount] ...done!')
 }
 
-// ----------------------------------------------------------------------------------------------------------------------
-// DATA FUNCTIONS
+// ------------------------------------------------------------------------------------------------ //
+//                                          DATA FUNCTIONS                                          //
+// ------------------------------------------------------------------------------------------------ //
 
-export type PlanetPreviewData = {
-  sun: THREE.DirectionalLight
-  ambientLight: THREE.AmbientLight
-  planet: THREE.Mesh
-  clouds: THREE.Mesh
-  atmosphere: THREE.Mesh
-  ring: THREE.Mesh
-}
-export type PlanetGltfData = {
-  planet: THREE.Mesh
-  clouds: THREE.Mesh
-  ring: THREE.Mesh
+export async function randomizePlanet() {
+  await sleep(50)
+  regeneratePRNGIfNecessary()
+  LG_PLANET_DATA.value.randomize()
 }
 
-export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData): string {
-  const initialSize = new THREE.Vector2()
-  $se.renderer.getSize(initialSize)
+export async function resetPlanet() {
+  LG_PLANET_DATA.value.reset()
+}
+
+export function exportPlanetScreenshot() {
+  LG_SCENE_DATA.renderer!.domElement.toBlob((blob) => {
+    saveAs(blob!, `${LG_PLANET_DATA.value.planetName.replaceAll(' ', '_')}-${new Date().toISOString()}.png`)
+  }, 'image/png')
+}
+
+export async function exportPlanetPreview(): Promise<string> {
+  await sleep(50)
+  LG_SCENE_DATA.lensFlare!.mesh.visible = false
 
   // ------------------------------- Setup render scene -------------------------------
-  const w = 384,
-    h = 384
+  const w = 384, h = 384
   const previewRenderTarget = new THREE.WebGLRenderTarget(w, h, {
     colorSpace: THREE.SRGBColorSpace,
   })
-  const previewScene = new THREE.Scene()
   const previewCamera = ComponentBuilder.createPerspectiveCameraComponent(
     50,
     w / h,
     0.1,
-    1e4,
+    10,
     new THREE.Spherical(
       LG_PLANET_DATA.value.initCamDistance - (LG_PLANET_DATA.value.ringEnabled ? 0.75 : 1.5),
       Math.PI / 2.0,
@@ -305,35 +253,15 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   previewCamera.setRotationFromAxisAngle(Globals.AXIS_Y, degToRad(LG_PLANET_DATA.value.initCamAngle))
   previewCamera.updateProjectionMatrix()
 
-  // ---------------------- Add cloned objects to preview scene -----------------------
-  const planetGroup = new THREE.Group()
-  planetGroup.add(data.planet)
-  planetGroup.add(data.clouds)
-  planetGroup.add(data.atmosphere)
-
-  const ringAnchor = new THREE.Group()
-  ringAnchor.add(data.ring)
-  planetGroup.add(ringAnchor)
-
-  previewScene.add(planetGroup)
-  previewScene.add(data.sun!)
-  previewScene.add(data.ambientLight!)
-
-  planetGroup.scale.setScalar(LG_PLANET_DATA.value.planetRadius)
-  planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
-  ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
+  const renderGroup = new THREE.Group()
+  renderGroup.add(LG_SCENE_DATA.planetGroup!, LG_SCENE_DATA.sunLight!)
 
   // ---------------------------- Setup renderer & render -----------------------------
-  $se.renderer.clear()
-  $se.renderer.setSize(w, h)
-  $se.renderer.setRenderTarget(previewRenderTarget)
-
   const rawBuffer = new Uint8Array(w * h * 4)
-  $se.renderer.render(previewScene, previewCamera)
-  $se.renderer.readRenderTargetPixels(previewRenderTarget, 0, 0, w, h, rawBuffer)
-
-  $se.renderer.setSize(initialSize.x, initialSize.y)
-  $se.renderer.setRenderTarget(null)
+  LG_SCENE_DATA.renderer!.setRenderTarget(previewRenderTarget)
+  LG_SCENE_DATA.renderer!.render(renderGroup, previewCamera)
+  LG_SCENE_DATA.renderer!.readRenderTargetPixels(previewRenderTarget, 0, 0, w, h, rawBuffer)
+  LG_SCENE_DATA.renderer!.setRenderTarget(null)
 
   // ----------------- Create preview canvas & write data from buffer -----------------
   const canvas = document.createElement('canvas')
@@ -348,32 +276,18 @@ export function exportPlanetPreview($se: SceneElements, data: PlanetPreviewData)
   ctx.putImageData(imageData, 0, 0)
 
   // ------------------------------- Clean-up resources -------------------------------
-  ringAnchor.clear()
-  planetGroup.clear()
-  data.sun!.dispose()
-  data.ambientLight!.dispose()
-  ;(data.clouds.material as THREE.Material).dispose()
-  ;(data.atmosphere.material as THREE.Material).dispose()
-  ;(data.planet.material as THREE.Material).dispose()
-  ;(data.ring.material as THREE.Material).dispose()
-
-  data.clouds.geometry.dispose()
-  data.atmosphere.geometry.dispose()
-  data.planet.geometry.dispose()
-  data.ring.geometry.dispose()
-
+  LG_SCENE_DATA.scene!.add(LG_SCENE_DATA.planetGroup!, LG_SCENE_DATA.sunLight!)
   previewRenderTarget.dispose()
-  previewScene.clear()
 
   // ----------------------------- Save and remove canvas -----------------------------
-
   const dataURL = canvas.toDataURL('image/webp')
   canvas.remove()
+
+  LG_SCENE_DATA.lensFlare!.mesh.visible = true
   return dataURL
 }
 
 export async function exportPlanetToGLTF(
-  renderer: THREE.WebGLRenderer,
   progressDialog: { open: () => void; setProgress: (value: number) => void; setError: (error: unknown) => void },
 ) {
   progressDialog.setProgress(1)
@@ -387,23 +301,23 @@ export async function exportPlanetToGLTF(
     // ----------------------------------- Bake planet ----------------------------------
     progressDialog.setProgress(2)
     await sleep(50)
-    const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value as PlanetData)
-    const bakePlanetSurfaceTex = bakeMesh(renderer, bakePlanet, w, h)
+    const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME)
+    const bakePlanetSurfaceTex = bakeMesh(LG_SCENE_DATA.renderer!, bakePlanet, w, h)
     if (appSettings?.bakingPixelize) bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
 
     progressDialog.setProgress(3)
     await sleep(50)
-    const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value as PlanetData)
-    const bakePlanetPBRTex = bakeMesh(renderer, bakePBR, w, h)
+    const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value)
+    const bakePlanetPBRTex = bakeMesh(LG_SCENE_DATA.renderer!, bakePBR, w, h)
     if (appSettings?.bakingPixelize) bakePlanetPBRTex.magFilter = THREE.NearestFilter
 
     progressDialog.setProgress(4)
     await sleep(50)
-    const bakeHeight = createBakingHeightMap(LG_PLANET_DATA.value as PlanetData)
-    const bakePlanetHeightTex = bakeMesh(renderer, bakeHeight, w, h)
+    const bakeHeight = createBakingHeightMap(LG_PLANET_DATA.value)
+    const bakePlanetHeightTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeHeight, w, h)
 
-    const bakeNormal = createBakingNormalMap(bakePlanetHeightTex, w)
-    const bakePlanetNormalTex = bakeMesh(renderer, bakeNormal, w, h)
+    const bakeNormal = createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex, w)
+    const bakePlanetNormalTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeNormal, w, h)
     if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
 
     bakePlanet.material = new THREE.MeshStandardMaterial({
@@ -422,8 +336,8 @@ export async function exportPlanetToGLTF(
     if (LG_PLANET_DATA.value.cloudsEnabled) {
       progressDialog.setProgress(5)
       await sleep(50)
-      const bakeClouds = createBakingClouds(LG_PLANET_DATA.value as PlanetData)
-      const bakeCloudsTex = bakeMesh(renderer, bakeClouds, w, h)
+      const bakeClouds = createBakingClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
+      const bakeCloudsTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeClouds, w, h)
       if (appSettings?.bakingPixelize) bakeCloudsTex.magFilter = THREE.NearestFilter
 
       bakeClouds.material = new THREE.MeshStandardMaterial({
@@ -442,8 +356,8 @@ export async function exportPlanetToGLTF(
     if (LG_PLANET_DATA.value.ringEnabled) {
       progressDialog.setProgress(6)
       await sleep(50)
-      const bakeRing = createBakingRing(LG_PLANET_DATA.value as PlanetData)
-      const bakeRingTex = bakeMesh(renderer, bakeRing, w, h)
+      const bakeRing = createBakingRing(LG_PLANET_DATA.value, LG_BUFFER_RING)
+      const bakeRingTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeRing, w, h)
       if (appSettings?.bakingPixelize) bakeRingTex.magFilter = THREE.NearestFilter
 
       bakeRing.material = new THREE.MeshStandardMaterial({
@@ -477,4 +391,18 @@ export async function exportPlanetToGLTF(
     })
     progressDialog.setProgress(8)
   }
+}
+
+// ------------------------------------------------------------------------------------------------ //
+//                                            ACCESSORS                                             //
+// ------------------------------------------------------------------------------------------------ //
+
+export function isPlanetEdited() {
+  return hasPlanetBeenEdited.value
+}
+export function setPlanetEditFlag(value: boolean) {
+  hasPlanetBeenEdited.value = value
+}
+export function setEditorRendering(value: boolean) {
+  enableEditorRendering = value
 }

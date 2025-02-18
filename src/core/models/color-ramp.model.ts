@@ -1,7 +1,8 @@
 import * as THREE from 'three'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import { nanoid } from 'nanoid'
-import { getColorLuminance } from '@/utils/utils'
+import { clampedPRNG } from '@/utils/math-utils'
+import { sha1 } from 'crypto-hash'
 
 export type StepLuminance = { factor: number; lumi: number }
 export class ColorRampStep {
@@ -67,6 +68,7 @@ export class ColorRampStep {
 export class ColorRamp extends ChangeTracker {
   static EMPTY = new ColorRamp([], '', [])
 
+  private _hash: string = '' // internal hash for tracking changes
   private _steps: ColorRampStep[] = []
   private _maxSize: number = 16
   private _lockedSize: boolean = true
@@ -91,6 +93,10 @@ export class ColorRamp extends ChangeTracker {
     return new ColorRamp([], this._changePrefix, clonedSteps, this._maxSize, this._lockedSize)
   }
 
+  public get hash(): string {
+    return this._hash
+  }
+
   public get steps(): ColorRampStep[] {
     return this._steps
   }
@@ -107,9 +113,14 @@ export class ColorRamp extends ChangeTracker {
 
   // Utility functions
 
+  private async generateHash() {
+    this._hash = await sha1(JSON.stringify(this))
+  }
+
   public sortSteps() {
     this._steps.sort((a, b) => a.factor - b.factor)
     this.markForChange(this._changePrefix)
+    this.generateHash()
   }
 
   public addStep() {
@@ -119,6 +130,7 @@ export class ColorRamp extends ChangeTracker {
     this._steps.push(new ColorRampStep('black', this._steps[this._steps.length - 2].factor))
     this.sortSteps()
     this.markForChange(this._changePrefix)
+    this.generateHash()
   }
 
   public getStep(stepId: string) {
@@ -139,6 +151,7 @@ export class ColorRamp extends ChangeTracker {
     this._steps[index].alpha = options.alpha ?? this._steps[index].alpha
     this._steps[index].factor = options.factor ?? this._steps[index].factor
     this.markForChange(this._changePrefix)
+    this.generateHash()
   }
 
   public removeStep(stepId: string) {
@@ -152,6 +165,7 @@ export class ColorRamp extends ChangeTracker {
     }
     this._steps.splice(index, 1)
     this.markForChange(this._changePrefix)
+    this.generateHash()
   }
 
   public isBoundStep(stepId: string) {
@@ -166,18 +180,23 @@ export class ColorRamp extends ChangeTracker {
     this._steps.splice(0)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this._steps.push(...data.map((s: any) => ColorRampStep.newWithAlpha(s._color, s._alpha, s._factor, s._isBound)))
+    this.generateHash()
   }
 
-  /**
-   * Gets a lookup table for luminance values
-   * @remarks only used for opacity-based ramps
-   * @param luminance
-   */
-  public getLuminanceLookup(): StepLuminance[] {
-    return this._steps.map((s) => ({ factor: s.factor, lumi: getColorLuminance(s.color) }))
-  }
-
-  public getRelativeLuminance(startStep: number, endStep: number, relativePct: number): number {
-    return getColorLuminance(this._steps[startStep].color.lerp(this._steps[endStep].color, relativePct))
+  public randomize(maxSteps: number = 10) {
+    this._steps.splice(0)
+    const max = Math.round(clampedPRNG(2, maxSteps))
+    for (let i = 0; i < max; i++) {
+      const factor = i === 0 ? 0 : (i === max-1 ? 1 : clampedPRNG(0, 1))
+      this._steps.push(ColorRampStep.newWithAlpha(
+        clampedPRNG(0, 1) * 0xffffff,
+        clampedPRNG(0, 1),
+        factor,
+        i === 0 || i === max-1
+      ))
+    }
+    this.sortSteps()
+    this.markForChange(this._changePrefix)
+    this.generateHash()
   }
 }

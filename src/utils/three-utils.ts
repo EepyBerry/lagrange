@@ -1,5 +1,5 @@
 import type { LensFlareEffect } from '@/core/three/lens-flare.effect'
-import { Mesh, type ShaderMaterial } from 'three'
+import { CanvasTexture, Mesh, type ShaderMaterial } from 'three'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 
 type MeshOrLensFlare = Mesh | LensFlareEffect
@@ -33,4 +33,21 @@ export function setMeshUniforms(mesh: MeshOrLensFlare, unames: string[], uvalues
     mat.uniforms[unames[i]] = { value: uvalues[i] }
   }
   mat.needsUpdate = true
+}
+
+// ------------------------------------------------------------------------------------------------
+
+export function bufferToTexture(buf: Uint8Array, w: number, h: number): CanvasTexture {
+  const canvas = document.createElement('canvas')
+  canvas.width = w
+  canvas.height = h
+  const ctx = canvas.getContext('2d')!
+  const imgData = new ImageData(new Uint8ClampedArray(buf), w, h)
+  ctx.putImageData(imgData, 0, 0)
+  //saveAs(canvas.toDataURL(), 'normalmap.png')
+
+  const tex = new CanvasTexture(canvas)
+  tex.flipY = false
+  canvas.remove()
+  return tex
 }

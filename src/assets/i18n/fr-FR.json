@@ -58,7 +58,10 @@
       "topbar": "Barre du haut - Nommage et données",
       "topbar_rename": "Renommer la planète",
       "topbar_reset": "Réinitialiser",
-      "topbar_save": "Enregistrer la planète",
+      "topbar_reseed": "Générer une graine",
+      "topbar_random": "Randomiser la planète",
+      "topbar_save": "Enregistrer",
+      "topbar_copy": "Enregistrer comme copie",
       "topbar_import": "Importer une planète",
       "topbar_export": "Exporter une planète",
       "topbar_export_all": "Exporter le Codex",
@@ -227,8 +230,12 @@
     "default_planet_name": "Nouvelle planète",
     "$action_sort": "Trier",
     "$action_add": "Ajouter",
+    "$action_reseed": "Générer graine",
+    "$action_random": "Randomiser",
 
     "general": {
+      "displacement": "Perturbation de surface",
+      "displacement_show": "Afficher perturbation",
       "displacement_factor": "Facteur",
       "displacement_epsilon": "Epsilon",
       "displacement_multiplier": "Multiplicateur",
@@ -239,6 +246,7 @@
       "warping_y": "Déformation Y",
       "warping_z": "Déformation Z",
 
+      "noise": "Paramètres de bruit",
       "noise_layers": "Nb. de couches",
       "noise_fbm_frequency": "Fréquence",
       "noise_fbm_amplitude": "Amplitude",
@@ -287,11 +295,7 @@
 
         "bumpmap": "Bump mapping",
         "bumpmap_show": "Afficher les bumps",
-        "bumpmap_strength": "Intensité des bumps",
-
-        "displacement": "Perturbation de surface",
-        "displacement_show": "Afficher perturbation",
-        "noise": "Paramètres de bruit"
+        "bumpmap_strength": "Intensité des bumps"
       },
       "biomes": {
         "$title": "Biomes",
@@ -323,11 +327,6 @@
 
         "transform": "Transform",
         "transform_rotation": "Rotation",
-
-        "noise": "Paramètres de bruit",
-        "noise_fbm_frequency": "Frequency",
-        "noise_fbm_amplitude": "Amplitude",
-        "noise_fbm_lacunarity": "Lacunarity",
 
         "rgba": "Couleur & transparence",
         "rgba_opacityramp": "Rampe de transparence"
@@ -387,8 +386,12 @@
     "topbar_rename": "Renommer la planète",
     "topbar_rename_confirm": "Confirmer le nom",
     "topbar_reset": "Réinitialiser",
+    "topbar_menu_random": "Options de randomisation",
+    "topbar_menu_save": "Options d'enregistrement",
     "topbar_save": "Enregistrer",
+    "topbar_copy": "Enregistrer comme copie",
     "topbar_gltf": "Exporter au format glTF",
+    "topbar_random": "Planète aléatoire",
     "topbar_import": "Importer un fichier de planète",
     "topbar_export": "Exporter la planète en fichier",
     "topbar_export_all": "Exporter toutes les planètes au format .zip",
@@ -401,7 +404,7 @@
     "rgba_mode_direct": "Applique une couleur unique directe après les calculs",
     "rgba_mode_mixed": "Applique une couleur unique par-dessus la teinte sélectionnée",
 
-    "footer_github": "Dépôt GitHub repository (dans un nouvel onglet)",
+    "footer_github": "Dépôt GitHub (dans un nouvel onglet)",
     "footer_settings": "Paramètres",
     "footer_about": "À propos de @:main.$title"
   },
@@ -425,8 +428,12 @@
     "topbar_rename": "@:tooltip.topbar_rename",
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
     "topbar_reset": "@:tooltip.topbar_reset",
+    "topbar_menu_random": "@:tooltip.topbar_menu_random",
+    "topbar_menu_save": "@:tooltip.topbar_menu_save",
     "topbar_save": "@:tooltip.topbar_save",
+    "topbar_copy": "@:tooltip.topbar_copy",
     "topbar_gltf": "@:tooltip.topbar_gltf",
+    "topbar_random": "@:tooltip.topbar_random",
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
     "topbar_export_all": "@:tooltip.topbar_export_all",
