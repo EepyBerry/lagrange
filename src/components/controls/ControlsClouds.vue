@@ -26,8 +26,50 @@
           </ParameterSlider>
         </template>
       </ParameterGroup>
+      <ParameterGroup
+        v-model="LG_PLANET_DATA.cloudsShowDisplacement"
+        :toggleable="LG_PLANET_DATA.cloudsShowDisplacement"
+      >
+        <template #title>{{ $t('editor.general.displacement') }}</template>
+        <template #content>
+          <ParameterSlider id="s-dfac" v-model="LG_PLANET_DATA.cloudsDisplacement.factor" :step="0.005" :max="0.25">
+            {{ $t('editor.general.displacement_factor') }}
+          </ParameterSlider>
+          <ParameterSlider
+            id="s-deps"
+            v-model="LG_PLANET_DATA.cloudsDisplacement.epsilon"
+            :step="0.0005"
+            :min="0.0005"
+            :max="0.25"
+          >
+            {{ $t('editor.general.displacement_epsilon') }}
+          </ParameterSlider>
+          <ParameterSlider id="s-dmul" v-model="LG_PLANET_DATA.cloudsDisplacement.multiplier" :step="0.01" :max="3">
+            {{ $t('editor.general.displacement_multiplier') }}
+          </ParameterSlider>
+          <ParameterDivider />
+          <ParameterSlider id="s-dfreq" v-model="LG_PLANET_DATA.cloudsDisplacement.frequency" :step="0.01" :max="3">
+            {{ $t('editor.general.noise_fbm_frequency') }}
+          </ParameterSlider>
+          <ParameterSlider id="s-damp" v-model="LG_PLANET_DATA.cloudsDisplacement.amplitude" :step="0.01" :max="1.25">
+            {{ $t('editor.general.noise_fbm_amplitude') }}
+          </ParameterSlider>
+          <ParameterSlider
+            id="s-dlac"
+            v-model="LG_PLANET_DATA.cloudsDisplacement.lacunarity"
+            :step="0.01"
+            :min="1"
+            :max="3"
+          >
+            {{ $t('editor.general.noise_fbm_lacunarity') }}
+          </ParameterSlider>
+          <ParameterSlider id="s-doct" v-model="LG_PLANET_DATA.cloudsDisplacement.octaves" :step="1" :min="1" :max="8">
+            {{ $t('editor.general.noise_fbm_octaves') }}
+          </ParameterSlider>
+        </template>
+      </ParameterGroup>
       <ParameterGroup :toggleable="true">
-        <template #title>{{ $t('editor.controls.clouds.noise') }}</template>
+        <template #title>{{ $t('editor.general.noise') }}</template>
         <template #content>
           <ParameterSlider id="c-freq" v-model="LG_PLANET_DATA.cloudsNoise.frequency" :step="0.01" :max="5">
             {{ $t('editor.general.noise_fbm_frequency') }}

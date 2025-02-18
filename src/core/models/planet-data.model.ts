@@ -1,6 +1,6 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
 import { ColorMode, GradientMode, PlanetType } from '@core/types'
-import { isNumeric } from '@/utils/math-utils'
+import { clampedPRNG, isNumeric } from '@/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeTracker } from './change-tracker.model'
@@ -26,6 +26,7 @@ export default class PlanetData extends ChangeTracker {
   }
   public set planetName(value: string) {
     this._planetName = value
+    this.markForChange('_planetName')
   }
 
   public get initCamDistance() {
@@ -113,7 +114,7 @@ export default class PlanetData extends ChangeTracker {
   // |                Planet settings                 |
   // --------------------------------------------------
 
-  private _planetType: PlanetType = PlanetType.TELLURIC
+  private _planetType: PlanetType = PlanetType.PLANET
   private _planetMeshQuality: number
 
   private _planetRadius: number
@@ -322,6 +323,8 @@ export default class PlanetData extends ChangeTracker {
   private _cloudsRotation: number
   private _cloudsHeight: number
   private _cloudsShowWarping: boolean
+  private _cloudsShowDisplacement: boolean
+  private _cloudsDisplacement: DisplacementParameters
   private _cloudsNoise: NoiseParameters
   private _cloudsColor: Color
   private _cloudsColorRamp: ColorRamp
@@ -358,6 +361,21 @@ export default class PlanetData extends ChangeTracker {
   public set cloudsShowWarping(value: boolean) {
     this._cloudsShowWarping = value
     this.markForChange('_cloudsShowWarping')
+  }
+
+  public get cloudsShowDisplacement(): boolean {
+    return this._cloudsShowDisplacement
+  }
+  public set cloudsShowDisplacement(value: boolean) {
+    this._cloudsShowDisplacement = value
+    this.markForChange('_cloudsShowDisplacement')
+  }
+  public get cloudsDisplacement(): DisplacementParameters {
+    return this._cloudsDisplacement
+  }
+  public set cloudsDisplacement(value: DisplacementParameters) {
+    this._cloudsDisplacement = value
+    this.markForChange('_cloudsDisplacement')
   }
 
   public get cloudsNoise(): NoiseParameters {
@@ -547,13 +565,13 @@ export default class PlanetData extends ChangeTracker {
     this._ambLightIntensity = 0.02
 
     // Planet & Rendering
-    this._planetType = PlanetType.TELLURIC
+    this._planetType = PlanetType.PLANET
     this._planetMeshQuality = 64.0
     this._planetRadius = 1.0
-    this._planetAxialTilt = 15.0
+    this._planetAxialTilt = -15.0
     this._planetRotation = 0.0
     this._planetWaterRoughness = 0.55
-    this._planetWaterMetalness = 0.5
+    this._planetWaterMetalness = 0.1
     this._planetGroundRoughness = 0.8
     this._planetGroundMetalness = 0.1
     this._planetWaterLevel = 0.5
@@ -571,13 +589,13 @@ export default class PlanetData extends ChangeTracker {
       2.0,
       6,
     )
-    this._planetSurfaceNoise = new NoiseParameters(this._changedProps, '_planetSurfaceNoise', 2.45, 0.53, 2.16, 6)
+    this._planetSurfaceNoise = new NoiseParameters(this._changedProps, '_planetSurfaceNoise', 3.75, 0.48, 2.45, 6)
     this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
       new ColorRampStep(0x000000, 0, true),
       new ColorRampStep(0x0b1931, 0.4),
       new ColorRampStep(0x2d4265, 0.495),
-      new ColorRampStep(0x2f2e10, 0.5),
-      new ColorRampStep(0x446611, 0.525),
+      new ColorRampStep(0x766f17, 0.5),
+      new ColorRampStep(0x446611, 0.505),
       new ColorRampStep(0x223b05, 0.65),
       new ColorRampStep(0x223b05, 1, true),
     ])
@@ -585,17 +603,17 @@ export default class PlanetData extends ChangeTracker {
     // Biomes
     this._biomesEnabled = true
     this._biomesTemperatureMode = GradientMode.REALISTIC
-    this._biomesTemperatureNoise = new NoiseParameters(this._changedProps, '_biomesTemperatureNoise', 2.5, 1.25, 2.5, 4)
-    this._biomesHumidityMode = GradientMode.REALISTIC
-    this._biomesHumidityNoise = new NoiseParameters(this._changedProps, '_biomesHumidityNoise', 2.25, 0.95, 2.25, 4)
+    this._biomesTemperatureNoise = new NoiseParameters(this._changedProps, '_biomesTemperatureNoise', 2.5, 1.25, 2.4, 6)
+    this._biomesHumidityMode = GradientMode.FULLNOISE
+    this._biomesHumidityNoise = new NoiseParameters(this._changedProps, '_biomesHumidityNoise', 3.0, 0.63, 2.53, 6)
     this._biomesParams = [
       new BiomeParameters(
         this._changedProps,
         '_biomesParameters',
         {
           temperatureMin: 0.0,
-          temperatureMax: 0.08,
-          humidityMin: 0.7,
+          temperatureMax: 0.1,
+          humidityMin: 0.35,
           humidityMax: 1.0,
         },
         new Color(0xffffff),
@@ -605,12 +623,24 @@ export default class PlanetData extends ChangeTracker {
         this._changedProps,
         '_biomesParameters',
         {
-          temperatureMin: 0.6,
+          temperatureMin: 0.8,
           temperatureMax: 1.0,
           humidityMin: 0.0,
-          humidityMax: 0.25,
+          humidityMax: 1.0,
         },
         new Color(0xbaa345),
+        0.25,
+      ),
+      new BiomeParameters(
+        this._changedProps,
+        '_biomesParameters',
+        {
+          temperatureMin: 0.0,
+          temperatureMax: 1.0,
+          humidityMin: 0.0,
+          humidityMax: 0.685,
+        },
+        new Color(0x132e06),
         0.25,
       ),
     ]
@@ -620,6 +650,8 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsRotation = 0.0
     this._cloudsHeight = 1.0
     this._cloudsShowWarping = false
+    this._cloudsShowDisplacement = false
+    this._cloudsDisplacement = new DisplacementParameters(this._changedProps, '_cloudsDisplacement', 2.0, 0.2, 2.0, 6)
     this._cloudsNoise = new NoiseParameters(this._changedProps, '_cloudsNoise', 4.0, 0.6, 1.75, 4)
     this._cloudsColor = new Color(0xffffff)
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
@@ -669,7 +701,7 @@ export default class PlanetData extends ChangeTracker {
     this.ambLightIntensity = data._ambLightIntensity ?? 0.02
 
     // Planet & Rendering
-    this.planetType = data._planetType ?? PlanetType.TELLURIC
+    this.planetType = data._planetType ?? PlanetType.PLANET
     this.planetRadius = data._planetRadius ?? 1.0
     this.planetAxialTilt = data._planetAxialTilt ?? 15.0
     this.planetRotation = data._planetRotation ?? 0.0
@@ -731,6 +763,8 @@ export default class PlanetData extends ChangeTracker {
     this.cloudsEnabled = data._cloudsEnabled ?? true
     this.cloudsRotation = data._cloudsRotation ?? 0.0
     this.cloudsShowWarping = data._cloudsShowWarping ?? false
+    this.cloudsShowDisplacement = data._cloudsShowDisplacement ?? false
+    this.cloudsDisplacement.loadData(data._cloudsDisplacement)
     this.cloudsNoise.loadData(data._cloudsNoise)
     this.cloudsColor.set(data._cloudsColor ?? 0xffffff)
     this.cloudsColorRamp.loadFromSteps(
@@ -769,12 +803,88 @@ export default class PlanetData extends ChangeTracker {
     )
   }
 
+  // Note: adjusted ranges to get more coherent data
+  public randomize() {
+    // Lighting
+    this.lensFlareEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
+    this.lensFlarePointsIntensity = clampedPRNG(0, 1)
+    this.lensFlareGlareIntensity = clampedPRNG(0, 1)
+    this.sunLightAngle = clampedPRNG(-90, 90)
+    this.sunLightColor.set(clampedPRNG(0.5, 1) * 0xffffff)
+    this.sunLightIntensity = clampedPRNG(10, 35)
+    this.ambLightColor.set(clampedPRNG(0.5, 1) * 0xffffff)
+    this.ambLightIntensity = clampedPRNG(0, 1)
+
+    // Planet & Rendering
+    this.planetType = Math.round(clampedPRNG(0, 1)) as PlanetType
+    this.planetRadius = clampedPRNG(0.5, 1)
+    this.planetAxialTilt = clampedPRNG(-180, 180)
+    this.planetRotation = clampedPRNG(0, 360)
+    this.planetWaterRoughness = clampedPRNG(0, 1)
+    this.planetWaterMetalness = clampedPRNG(0, 1)
+    this.planetGroundRoughness = clampedPRNG(0, 1)
+    this.planetGroundMetalness = clampedPRNG(0, 1)
+    this.planetWaterLevel = clampedPRNG(0, 1)
+
+    // Surface
+    this.planetSurfaceShowBumps = Boolean(Math.round(clampedPRNG(0, 1)))
+    this.planetSurfaceBumpStrength = clampedPRNG(0, 0.2)
+    this.planetSurfaceShowWarping = Boolean(Math.round(clampedPRNG(0, 1)))
+    this.planetSurfaceShowDisplacement = Boolean(Math.round(clampedPRNG(0, 1)))
+    this.planetSurfaceDisplacement.randomize()
+    this.planetSurfaceNoise.randomize()
+    this.planetSurfaceColorRamp.randomize(8)
+
+    // Biomes
+    this.biomesEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
+    this.biomesTemperatureMode = Math.round(clampedPRNG(0, 2)) as GradientMode
+    this.biomesTemperatureNoise.randomize()
+    this.biomesHumidityMode = Math.round(clampedPRNG(0, 2)) as GradientMode
+    this.biomesHumidityNoise.randomize()
+    this.biomesParams.splice(0)
+    for (let i = 0; i < Math.round(clampedPRNG(0, 8)); i++) {
+      this.biomesParams.push(BiomeParameters.createRandom(this.changedProps))
+    }
+
+    // Clouds
+    this.cloudsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
+    this.cloudsRotation = clampedPRNG(0, 360)
+    this.cloudsShowWarping = Boolean(Math.round(clampedPRNG(0, 1)))
+    this.cloudsShowDisplacement = Boolean(Math.round(clampedPRNG(0, 1)))
+    this.cloudsDisplacement.randomize()
+    this.cloudsNoise.randomize()
+    this.cloudsColor.set(clampedPRNG(0, 1) * 0xffffff)
+    this.cloudsColorRamp.loadFromSteps([
+      new ColorRampStep(0x000000, 0.0, true),
+      new ColorRampStep(clampedPRNG(0, 1) * 0xffffff, clampedPRNG(0, 1)),
+      new ColorRampStep(clampedPRNG(0, 1) * 0xffffff, 1.0, true),
+    ])
+
+    // Atmosphere
+    this.atmosphereEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
+    this.atmosphereHeight = clampedPRNG(0.25, 8)
+    this.atmosphereDensityScale = clampedPRNG(0.25, 10)
+    this.atmosphereIntensity = clampedPRNG(0, 2)
+    this.atmosphereColorMode = Math.round(clampedPRNG(0, 2)) as ColorMode
+    this.atmosphereHue = clampedPRNG(0, 2)
+    this.atmosphereTint.set(clampedPRNG(0, 1) * 0xffffff)
+
+    // Ring
+    this.ringEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
+    this.ringAxialTilt = 90.0
+    this.ringRotation = 0.0
+    this.ringInnerRadius = clampedPRNG(1.5, 5)
+    this.ringOuterRadius = clampedPRNG(this.ringInnerRadius, 5)
+    this.ringColorRamp.randomize(5)
+  }
+
   public reset() {
     Object.assign(this, new PlanetData())
     this._planetSurfaceDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05)
-    this._planetSurfaceNoise.reset(2.45, 0.53, 2.16, 6, 1, 1.0)
-    this._biomesTemperatureNoise.reset(2.5, 1.25, 2.5, 4)
-    this._biomesHumidityNoise.reset(2.25, 0.95, 2.25, 4)
+    this._planetSurfaceNoise.reset(3.75, 0.48, 2.45, 6, 1, 1.0)
+    this._biomesTemperatureNoise.reset(2.5, 1.25, 2.4, 6)
+    this._biomesHumidityNoise.reset(35, 0.63, 2.53, 6)
+    this._cloudsDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05)
     this._cloudsNoise.reset(4.0, 0.6, 1.75, 4, 1, 1.0)
     this.markAllForChange()
   }

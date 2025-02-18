@@ -58,7 +58,10 @@
       "topbar": "Top bar - Naming & data",
       "topbar_rename": "Rename planet",
       "topbar_reset": "Reset to defaults",
+      "topbar_reseed": "Generate seed",
+      "topbar_random": "Randomize planet",
       "topbar_save": "Save planet",
+      "topbar_copy": "Save planet as copy",
       "topbar_import": "Import planet",
       "topbar_export": "Export planet",
       "topbar_export_all": "Export full codex",
@@ -227,8 +230,12 @@
     "default_planet_name": "New planet",
     "$action_sort": "Sort",
     "$action_add": "Add",
+    "$action_reseed": "Generate seed",
+    "$action_random": "Randomize",
 
     "general": {
+      "displacement": "Displacement",
+      "displacement_show": "Show displacement",
       "displacement_factor": "Factor",
       "displacement_epsilon": "Epsilon",
       "displacement_multiplier": "Multiplier",
@@ -239,6 +246,7 @@
       "warping_y": "Y warping",
       "warping_z": "Z warping",
 
+      "noise": "Noise parameters",
       "noise_layers": "Layers",
       "noise_fbm_frequency": "Frequency",
       "noise_fbm_amplitude": "Amplitude",
@@ -287,11 +295,7 @@
 
         "bumpmap": "Bump map",
         "bumpmap_show": "Show bumps",
-        "bumpmap_strength": "Bump strength",
-
-        "displacement": "Displacement",
-        "displacement_show": "Show displacement",
-        "noise": "Noise parameters"
+        "bumpmap_strength": "Bump strength"
       },
       "biomes": {
         "$title": "Biomes",
@@ -323,11 +327,6 @@
 
         "transform": "Transform",
         "transform_rotation": "Rotation",
-
-        "noise": "Noise parameters",
-        "noise_fbm_frequency": "Frequency",
-        "noise_fbm_amplitude": "Amplitude",
-        "noise_fbm_lacunarity": "Lacunarity",
 
         "rgba": "Color & opacity",
         "rgba_opacityramp": "Opacity ramp"
@@ -387,7 +386,10 @@
     "topbar_rename": "Rename planet",
     "topbar_rename_confirm": "Confirm planet name",
     "topbar_reset": "Reset to defaults",
-    "topbar_save": "Save planet",
+    "topbar_menu_random": "Randomization options",
+    "topbar_menu_save": "Save options",
+    "topbar_save": "Save",
+    "topbar_copy": "Save as copy",
     "topbar_gltf": "Export as glTF",
     "topbar_import": "Import planet file",
     "topbar_export": "Export planet file",
@@ -425,8 +427,12 @@
     "topbar_rename": "@:tooltip.topbar_rename",
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
     "topbar_reset": "@:tooltip.topbar_reset",
+    "topbar_menu_random": "@:tooltip.topbar_menu_random",
+    "topbar_menu_save": "@:tooltip.topbar_menu_save",
     "topbar_save": "@:tooltip.topbar_save",
+    "topbar_copy": "@:tooltip.topbar_copy",
     "topbar_gltf": "@:tooltip.topbar_gltf",
+    "topbar_random": "@:tooltip.topbar_random",
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
     "topbar_export_all": "@:tooltip.topbar_export_all",

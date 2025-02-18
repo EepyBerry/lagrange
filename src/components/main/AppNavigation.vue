@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import { EventBus } from '@/core/event-bus'
 import { uwuifyPath } from '@/core/extras'
-import { onMounted, onUnmounted, ref, type Ref } from 'vue'
+import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -63,13 +63,15 @@ const isOpen: Ref<boolean> = ref(false)
 
 defineProps<{ compactMode: boolean }>()
 onMounted(async () => {
-  EventBus.registerWindowEventListener('click', handleClick)
   EventBus.registerWindowEventListener('keydown', handleKey)
 })
 onUnmounted(() => {
-  EventBus.deregisterWindowEventListener('click', handleClick)
   EventBus.deregisterWindowEventListener('keydown', handleKey)
 })
+watch(
+  () => EventBus.clickEvent.value,
+  async (evt) => await handleClick(evt!),
+)
 
 function handleClick(evt: MouseEvent) {
   if (evt.target === buttonOpen.value) {

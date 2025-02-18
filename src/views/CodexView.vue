@@ -1,7 +1,7 @@
 <template>
   <span id="codex-background"></span>
   <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
-    <AppNavigation :compact-mode="showCompactNavigation" :block-navigation="false" />
+    <AppNavigation :compact-mode="showCompactNavigation" />
     <div id="codex-header-controls">
       <RouterLink class="lg dark create-planet" :to="uwuifyPath('/planet-editor/new')" :title="$t('codex.$action_add')">
         <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
@@ -91,9 +91,11 @@ useHead({
 onMounted(async () => {
   computeResponsiveness()
   await loadPlanets()
+  EventBus.registerWindowEventListener('click', onWindowClick)
   EventBus.registerWindowEventListener('resize', onWindowResize)
 })
 onUnmounted(() => {
+  EventBus.deregisterWindowEventListener('click', onWindowClick)
   EventBus.deregisterWindowEventListener('resize', onWindowResize)
 })
 
@@ -109,6 +111,9 @@ async function loadPlanets() {
 
 // ------------------------------------------------------------------------------------------------
 
+async function onWindowClick(event: MouseEvent) {
+  EventBus.sendClickEvent(event)
+}
 function onWindowResize() {
   computeResponsiveness()
 }

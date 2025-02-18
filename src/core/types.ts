@@ -1,4 +1,16 @@
-import type { DataTexture, Mesh, Texture } from 'three'
+import type {
+  AmbientLight,
+  Clock,
+  DataTexture,
+  DirectionalLight,
+  Group,
+  Mesh,
+  PerspectiveCamera,
+  Scene,
+  Texture,
+  WebGLRenderer,
+} from 'three'
+import type { LensFlareEffect } from './three/lens-flare.effect'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
@@ -10,9 +22,15 @@ export enum ShaderFileType {
 }
 
 // ----------------------------------- Editor types ---------------------------------
+export type SceneRenderObjects = {
+  scene: Scene
+  renderer: WebGLRenderer
+  camera: PerspectiveCamera
+}
+
 export enum PlanetType {
-  TELLURIC,
-  GASEOUS,
+  PLANET,
+  STAR,
 }
 export enum ColorMode {
   REALISTIC,
@@ -43,6 +61,43 @@ export type RawRGBA = {
 export type DataTextureWrapper = {
   texture: DataTexture
   data: Uint8Array
+}
+
+export type PlanetPreviewData = {
+  sun: DirectionalLight
+  ambientLight: AmbientLight
+  planet: Mesh
+  clouds: Mesh
+  atmosphere: Mesh
+  ring: Mesh
+}
+export type PlanetSceneData = {
+  // Scene, renderer, camera
+  scene?: Scene
+  renderer?: WebGLRenderer
+  camera?: PerspectiveCamera
+
+  // Groups
+  planetGroup?: Group
+  ringAnchor?: Group
+
+  // Main objects
+  planet?: Mesh
+  clouds?: Mesh
+  atmosphere?: Mesh
+  ring?: Mesh
+  sunLight?: DirectionalLight
+  ambLight?: AmbientLight
+  lensFlare?: LensFlareEffect
+
+  // DataTextures
+  surfaceDataTex?: DataTexture
+  cloudsDataTex?: DataTexture
+  biomeDataTex?: DataTexture
+  ringDataTex?: DataTexture
+
+  // Misc
+  clock?: Clock
 }
 
 // ----------------------------------- Baking types ---------------------------------

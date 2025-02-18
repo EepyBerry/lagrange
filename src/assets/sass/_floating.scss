@@ -1,0 +1,67 @@
+.lg.floating {
+  visibility: hidden; // will be overridden
+  background: var(--lg-panel);
+  border: 1px solid var(--lg-accent);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .floating-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    label {
+      font-size: 0.875rem;
+      font-weight: 300;
+    }
+    input {
+      flex-grow: 1;
+    }
+  }
+
+  .floating-actions {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+
+    & > button {
+      flex: 1 1 auto;
+      text-align: center;
+    }
+  }
+
+  button.lg {
+    border: none;
+    padding: 0 0.5rem;
+  }
+  button.lg.dark {
+    border: none;
+    border-radius: 0;
+    padding: 0 0.5rem;
+    justify-content: flex-start;
+  }
+}
+
+@media screen and (max-width: 1023px) {
+  .lg.floating {
+    font-size: 0.875rem;
+
+    .floating-content {
+      input.lg {
+        height: 2rem;
+        font-size: 1rem;
+      }
+    }
+
+    button.lg {
+      font-size: 0.875rem;
+      height: 2.5rem;
+    }
+    button.lg.dark {
+      font-size: 1rem;
+      height: 2.5rem;
+    }
+  }
+}

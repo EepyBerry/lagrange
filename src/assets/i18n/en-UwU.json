@@ -58,7 +58,10 @@
       "topbar": "Top baw - Nyaming & data",
       "topbar_rename": "Wenyame pwanyet",
       "topbar_reset": "Weset t-to defauwts",
+      "topbar_reseed": "Genyewate s-seed",
+      "topbar_random": "Wandomize pwanyet",
       "topbar_save": "Save pwanyet",
+      "topbar_copy": "Save pwanyet a-as copy",
       "topbar_import": "Impowt pwanyet",
       "topbar_export": "Expowt pwanyet",
       "topbar_export_all": "Expowt fuww codex",
@@ -227,8 +230,12 @@
     "default_planet_name": "New pwanyet ÒwÓ",
     "$action_sort": "Sowt",
     "$action_add": "Add",
+    "$action_reseed": "Genyewate seed",
+    "$action_random": "Wandomize!!!",
 
     "general": {
+      "displacement": "Dispwacement",
+      "displacement_show": "Show dispwacement :3",
       "displacement_factor": "Factow",
       "displacement_epsilon": "Epsiwon",
       "displacement_multiplier": "Muwtipliew",
@@ -239,6 +246,7 @@
       "warping_y": "Y wawping",
       "warping_z": "Z wawping",
 
+      "noise": "Nyoise p-pawametews",
       "noise_layers": "Wayews",
       "noise_fbm_frequency": "Fwequency",
       "noise_fbm_amplitude": "Ampwitude",
@@ -287,11 +295,7 @@
 
         "bumpmap": "Bump map",
         "bumpmap_show": "Show bumps :3",
-        "bumpmap_strength": "Bump stwength",
-
-        "displacement": "Dispwacement",
-        "displacement_show": "Show dispwacement :3",
-        "noise": "Nyoise p-pawametews"
+        "bumpmap_strength": "Bump stwength"
       },
       "biomes": {
         "$title": "Biomes",
@@ -323,11 +327,6 @@
 
         "transform": "Twansfowm",
         "transform_rotation": "Wotation",
-
-        "noise": "Nyoise p-pawametews",
-        "noise_fbm_frequency": "Fwequency",
-        "noise_fbm_amplitude": "Ampwitude",
-        "noise_fbm_lacunarity": "Wacunyawity",
 
         "rgba": "Cowow & opacity",
         "rgba_opacityramp": "Opacity wamp"
@@ -387,7 +386,10 @@
     "topbar_rename": "Wenyame pwanyet",
     "topbar_rename_confirm": "Confiwm pwanyet nyame",
     "topbar_reset": "Weset t-to defauwts",
-    "topbar_save": "S-save pwanyet",
+    "topbar_menu_random": "Wandomization o-options",
+    "topbar_menu_save": "S-save options",
+    "topbar_save": "S-save",
+    "topbar_copy": "S-save as copy",
     "topbar_gltf": "Expowt as glTF",
     "topbar_import": "Impowt pwanyet fiwe",
     "topbar_export": "Expowt pwanyet fiwe",
@@ -425,8 +427,12 @@
     "topbar_rename": "@:tooltip.topbar_rename",
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
     "topbar_reset": "@:tooltip.topbar_reset",
+    "topbar_menu_random": "@:tooltip.topbar_menu_random",
+    "topbar_menu_save": "@:tooltip.topbar_menu_save",
     "topbar_save": "@:tooltip.topbar_save",
+    "topbar_copy": "@:tooltip.topbar_copy",
     "topbar_gltf": "@:tooltip.topbar_gltf",
+    "topbar_random": "@:tooltip.topbar_random",
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
     "topbar_export_all": "@:tooltip.topbar_export_all",

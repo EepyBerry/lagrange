@@ -11,6 +11,7 @@ type ToastMessageEvent = { type: InfoLevel; translationKey: string; millis: numb
 export class EventBus {
   public static clearEvent: Ref<string> = ref('')
   public static toastEvent: Ref<ToastMessageEvent | null> = ref(null)
+  public static clickEvent: Ref<MouseEvent | null> = ref(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private static windowEventRegistry: Map<keyof WindowEventMap, any> = new Map<keyof WindowEventMap, any>()
 
@@ -20,6 +21,10 @@ export class EventBus {
 
   public static sendToastEvent(type: InfoLevel, translationKey: string, millis: number) {
     EventBus.toastEvent.value = { type, translationKey, millis }
+  }
+
+  public static sendClickEvent(evt: MouseEvent) {
+    EventBus.clickEvent.value = evt
   }
 
   // ----------------------------------------------------------------------------------------------

@@ -145,12 +145,14 @@ export class LensFlareEffect {
       this._material.uniforms.lensPosition.value.set(this._flarePosition.x, this._flarePosition.y)
     }
 
-    const planet = scene.getObjectByName(LG_NAME_PLANET)!
-    const ring = scene.getObjectByName(LG_NAME_RING)!
     this._raycaster.setFromCamera(new THREE.Vector2(projectedPosition.x, projectedPosition.y), camera)
-    const intersects = this._raycaster.intersectObjects([planet, ring], false)
-    this.checkTransparency(intersects)
 
+    const planet = scene.getObjectByName(LG_NAME_PLANET)
+    const ring = scene.getObjectByName(LG_NAME_RING)
+    if (planet && ring) {
+      const intersects = this._raycaster.intersectObjects([planet, ring], false)
+      this.checkTransparency(intersects)
+    }
     this._material.uniforms.iTime.value += dt
     this._material.uniforms.opacity.value = damp(this._material.uniforms.opacity.value, this._internalOpacity, 10, dt)
   }
