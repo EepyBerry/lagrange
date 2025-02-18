@@ -1,6 +1,6 @@
 {
   "name": "lagrange",
-  "version": "0.4.2-SNAPSHOT",
+  "version": "0.4.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,6 +8,7 @@
     "dev-host": "vite --host",
     "build": "run-p type-check prettify \"build-only {@}\" --",
     "preview": "vite preview",
+    "preview-host": "vite preview --host",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "prettify": "prettier . --write",

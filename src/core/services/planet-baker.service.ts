@@ -17,11 +17,7 @@ export function createBakingPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, 
   const geometry = ComponentBuilder.createSphereGeometryComponent(data.planetMeshQuality)
   geometry.computeTangents()
 
-  const surfaceTex = createRampTexture(
-    surfaceTexBuf,
-    Globals.TEXTURE_SIZES.SURFACE,
-    data.planetSurfaceColorRamp.steps,
-  )
+  const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
   const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
 
   const material = ComponentBuilder.createCustomShaderMaterialComponent(
@@ -259,7 +255,11 @@ export function createBakingClouds(data: PlanetData, textureBuffer: Uint8Array):
 
 export function createBakingRing(data: PlanetData, textureBuffer: Uint8Array): THREE.Mesh {
   const rgbaTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, data.ringColorRamp.steps)
-  const geometry = ComponentBuilder.createRingGeometryComponent(data.planetMeshQuality, data.ringInnerRadius, data.ringOuterRadius)
+  const geometry = ComponentBuilder.createRingGeometryComponent(
+    data.planetMeshQuality,
+    data.ringInnerRadius,
+    data.ringOuterRadius,
+  )
   const material = ComponentBuilder.createCustomShaderMaterialComponent(
     ShaderLoader.fetch('ring.vert.glsl', ShaderFileType.CORE),
     ShaderLoader.fetch('ring.frag.glsl', ShaderFileType.CORE),

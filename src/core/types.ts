@@ -1,4 +1,15 @@
-import type { AmbientLight, Clock, DataTexture, DirectionalLight, Group, Mesh, PerspectiveCamera, Scene, Texture, WebGLRenderer } from 'three'
+import type {
+  AmbientLight,
+  Clock,
+  DataTexture,
+  DirectionalLight,
+  Group,
+  Mesh,
+  PerspectiveCamera,
+  Scene,
+  Texture,
+  WebGLRenderer,
+} from 'three'
 import type { LensFlareEffect } from './three/lens-flare.effect'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
