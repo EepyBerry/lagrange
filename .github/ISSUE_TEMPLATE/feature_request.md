@@ -1,19 +1,28 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
+title: '[unspecified] Feature Request'
+labels: 'enhancement'
+assignees: 'EepyBerry'
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## **Feature description**
+```
+Put information about your proposed feature/enhancement here.
+Please be as detailed as possible in your description!
+```
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
+## **Reasoning behind proposed enhancement(s)**
+- [ ] Does it solve a previously unknown/unnoticed issue?
+- [ ] Is it about a completely new parameter/property/element/...?
+- [ ] Is it an improvement over an existing feature?
+- [ ] Something else (please specify below)
+```
+Please add details here. Incomplete information might be rejected/ignored!
+```
+## **Additional context (screenshots, etc)**
+```
+If you'd like to add more context, feel free to do so here.
+Any kind of supporting content is welcome: screenshots, drawings, anything that helps!
+```
