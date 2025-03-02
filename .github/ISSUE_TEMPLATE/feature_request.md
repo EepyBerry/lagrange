@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: '[unspecified] Feature Request'
+title: '[X.Y.Z] Feature Request'
 labels: 'enhancement'
 assignees: 'EepyBerry'
 ---
@@ -10,6 +10,10 @@ assignees: 'EepyBerry'
 ```
 Put information about your proposed feature/enhancement here.
 Please be as detailed as possible in your description!
+
+**NOTE:** targeted version should be added to the ticket between brackets if known!
+Unversioned tickets will be rejected if not comprehensive enough.
+Example:    "[0.4.2] Thing that doesn't work"
 ```
 
 
