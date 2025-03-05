@@ -17,7 +17,7 @@ Lagrange is a browser application to help you create your own planets, using pro
 
 _(**note:** this is something I am working on during my free time, which means that update frequency will vary!)_
 
-## 🚀 Latest version: "Jovian Expansion"!
+## 🚀 Latest major version: "Jovian Expansion"!
 
 <ul>
   <li>⭐ Adds <strong>new parameters</strong> for your worlds: XYZ warping, displacement and ring systems!</li>
