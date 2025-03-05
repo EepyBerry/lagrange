@@ -111,8 +111,7 @@ function initPlanet(): void {
     LG_SCENE_DATA.clouds.up,
     degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation),
   )
-  LG_SCENE_DATA.ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
-  LG_SCENE_DATA.ring.setRotationFromAxisAngle(LG_SCENE_DATA.ring.up, degToRad(LG_PLANET_DATA.value.ringRotation))
+  LG_SCENE_DATA.ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90))
 
   // Set lighting target
   LG_SCENE_DATA.sunLight!.target = LG_SCENE_DATA.planetGroup
@@ -246,7 +245,7 @@ export async function exportPlanetPreview(): Promise<string> {
     0.1,
     10,
     new THREE.Spherical(
-      LG_PLANET_DATA.value.initCamDistance - (LG_PLANET_DATA.value.ringEnabled ? 0.75 : 1.5),
+      LG_PLANET_DATA.value.initCamDistance - (LG_PLANET_DATA.value.ringsEnabled ? 0.75 : 1.5),
       Math.PI / 2.0,
       degToRad(LG_PLANET_DATA.value.initCamAngle),
     ),
@@ -356,7 +355,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     }
 
     // --------------------------------- Bake ring system -------------------------------
-    if (LG_PLANET_DATA.value.ringEnabled) {
+    if (LG_PLANET_DATA.value.ringsEnabled) {
       progressDialog.setProgress(6)
       await sleep(50)
       const bakeRing = createBakingRing(LG_PLANET_DATA.value, LG_BUFFER_RING)
@@ -370,7 +369,7 @@ export async function exportPlanetToGLTF(progressDialog: {
       })
       bakingTargets.push({ mesh: bakeRing, textures: [bakeRingTex] })
       bakePlanet.add(bakeRing)
-      bakeRing.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.ringAxialTilt))
+      bakeRing.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90))
     }
 
     // ---------------------------- Export meshes and clean up ---------------------------

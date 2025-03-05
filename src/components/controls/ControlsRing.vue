@@ -1,9 +1,9 @@
 <template>
   <ParameterGrid>
-    <ParameterCheckbox id="r-show" v-model="LG_PLANET_DATA.ringEnabled" :true-value="true" :false-value="false">
+    <ParameterCheckbox id="r-show" v-model="LG_PLANET_DATA.ringsEnabled" :true-value="true" :false-value="false">
       {{ $t('editor.controls.ring.ring_show') }}
     </ParameterCheckbox>
-    <template v-if="LG_PLANET_DATA.ringEnabled">
+    <template v-if="LG_PLANET_DATA.ringsEnabled">
       <ParameterGroup :toggleable="true">
         <template #title>{{ $t('editor.controls.ring.transform') }}</template>
         <template #content>

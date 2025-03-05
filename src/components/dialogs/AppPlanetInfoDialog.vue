@@ -75,7 +75,7 @@
                 <td name>{{ $t('dialog.planetinfo.ringed') }}:</td>
                 <td value>
                   <iconify-icon
-                    v-if="planet?.data.ringEnabled"
+                    v-if="planet?.data.ringsEnabled"
                     inline
                     icon="mingcute:check-circle-fill"
                     width="1.5rem"

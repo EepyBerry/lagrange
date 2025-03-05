@@ -235,6 +235,7 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE
 export function createRing(
   data: PlanetData,
   textureBuffer: Uint8Array,
+  bufferY: number = 0
 ): { mesh: THREE.Mesh; texs: DataTextureWrapper[] } {
   const rgbaTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, data.ringColorRamp.steps)
   const geometry = createRingGeometryComponent(data.planetMeshQuality, data.ringInnerRadius, data.ringOuterRadius)
@@ -242,6 +243,7 @@ export function createRing(
     ShaderLoader.fetch('ring.vert.glsl', ShaderFileType.CORE),
     ShaderLoader.fetch('ring.frag.glsl', ShaderFileType.CORE),
     {
+      u_ring_tex_y: { value: bufferY + 0.5 },
       u_inner_radius: { value: data.ringInnerRadius },
       u_outer_radius: { value: data.ringOuterRadius },
       u_ring_tex: { value: rgbaTex.texture },

@@ -187,7 +187,7 @@ function registerAtmosphereDataUpdates(data: PlanetData, atmosphere: Mesh): void
 
 // prettier-ignore
 function registerRingDataUpdates(data: PlanetData, ring: Mesh, ringDataTex: DataTexture, buffer: Uint8Array): void {
-  UNIFORM_UPDATE_MAP.value.set('_ringEnabled', () => ring.visible = data.ringEnabled)
+  UNIFORM_UPDATE_MAP.value.set('_ringsEnabled', () => ring.visible = data.ringsEnabled)
   UNIFORM_UPDATE_MAP.value.set('_ringInnerRadius', () => {
     ring.geometry.dispose()
     ring.geometry = ComponentBuilder.createRingGeometryComponent(data.planetMeshQuality, data.ringInnerRadius, data.ringOuterRadius)
