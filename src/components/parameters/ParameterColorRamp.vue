@@ -133,6 +133,7 @@ import { onMounted, ref, watch, type Ref } from 'vue'
 import { ColorPicker } from 'vue-accessible-color-picker'
 import InputSliderElement from '../elements/InputSliderElement.vue'
 import { ColorRamp, type ColorRampStep } from '@/core/models/color-ramp.model'
+import { colorRampToStyle, alphaToGrayscale } from '@/utils/utils'
 
 const lgColorRamp = defineModel<ColorRamp>()
 
@@ -156,17 +157,9 @@ function updateRamp() {
   if (!lgColorRamp.value) {
     return
   }
-  const gradient: string[] = []
-  const alphaGradient: string[] = []
-  for (let i = 0; i < lgColorRamp.value!.steps.length; i++) {
-    const step = lgColorRamp.value!.steps[i]
-    const rgb = step.color.getHexString()
-    const a = Math.ceil(step.alpha * 255).toString(16)
-    gradient.push(`#${rgb} ${step.factor * 100.0}%`)
-    alphaGradient.push(`#${a + a + a} ${step.factor * 100.0}%`)
-  }
-  htmlColorRamp.value!.style.background = `linear-gradient(90deg, ${gradient.join(', ')})`
-  htmlAlphaRamp.value!.style.background = `linear-gradient(90deg, ${alphaGradient.join(', ')})`
+  const rampStyle = colorRampToStyle(lgColorRamp.value!)
+  htmlColorRamp.value!.style.background = rampStyle.color
+  htmlAlphaRamp.value!.style.background = rampStyle.alpha
 }
 
 function togglePanel(): void {
@@ -222,15 +215,6 @@ function removeStep(id: string) {
   pickerIdOpen.value = null
   lgColorRamp.value?.removeStep(id)
   updateRamp()
-}
-
-// Misc functions
-
-function alphaToGrayscale(alpha: number, full = false): string {
-  const hex = Math.ceil(alpha * 255)
-    .toString(16)
-    .padStart(2, '0')
-  return full ? `#${hex + hex + hex}` : hex
 }
 </script>
 
