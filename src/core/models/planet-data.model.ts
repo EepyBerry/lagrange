@@ -666,9 +666,7 @@ export default class PlanetData extends ChangeTracker {
       new ColorRampStep(0x000000, 0.5),
       new ColorRampStep(0xbf9a5e, 1.0, true),
     ])
-    this._ringsParams = [
-      new RingParameters(this._changedProps, '_rings', 1.25, 1.5)
-    ]
+    this._ringsParams = []
   }
 
   // --------------------------------------------------
@@ -776,7 +774,7 @@ export default class PlanetData extends ChangeTracker {
     this.atmosphereTint.set(data._atmosphereTint ?? 0xffffff)
 
     // Ring
-    this.ringsEnabled = data._ringEnabled ?? false
+    this.ringsEnabled = data._ringsEnabled ?? false
     this.ringInnerRadius = data._ringInnerRadius ?? 1.25
     this.ringOuterRadius = data._ringOuterRadius ?? 1.5
     this.ringColorRamp.loadFromSteps(
@@ -797,6 +795,7 @@ export default class PlanetData extends ChangeTracker {
           '_rings',
           params._innerRadius ?? 1.25,
           params._outerRadius ?? 1.5,
+          params._colorRamp?._steps,
         )
         newParams.id = params._id ? params._id : newParams.id
         return newParams

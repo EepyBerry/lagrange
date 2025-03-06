@@ -12,7 +12,8 @@ export class RingParameters extends ChangeTracker {
     changedPropsRef: ChangedProp[],
     changePrefix: string,
     innerRadius: number,
-    outerRadius: number
+    outerRadius: number,
+    colorRampSteps?: ColorRampStep[]
   ) {
     super(changedPropsRef, changePrefix)
     this._id = nanoid()
@@ -23,6 +24,9 @@ export class RingParameters extends ChangeTracker {
       new ColorRampStep(0x000000, 0.5),
       new ColorRampStep(0xbf9a5e, 1.0, true),
     ])
+    if (colorRampSteps) {
+      this._colorRamp.loadFromSteps(colorRampSteps)
+    }
   }
 
   public get id(): string {

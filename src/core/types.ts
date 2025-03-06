@@ -85,7 +85,7 @@ export type PlanetSceneData = {
   planet?: Mesh
   clouds?: Mesh
   atmosphere?: Mesh
-  ring?: Mesh
+  rings?: Mesh[]
   sunLight?: DirectionalLight
   ambLight?: AmbientLight
   lensFlare?: LensFlareEffect
@@ -95,6 +95,7 @@ export type PlanetSceneData = {
   cloudsDataTex?: DataTexture
   biomeDataTex?: DataTexture
   ringDataTex?: DataTexture
+  ringDataTexs?: DataTexture[]
 
   // Misc
   clock?: Clock

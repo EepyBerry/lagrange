@@ -27,10 +27,11 @@ const LG_SCENE_DATA: PlanetSceneData = {}
 export const LG_PLANET_DATA: Ref<PlanetData> = ref(new PlanetData())
 
 // Buffers
-export const LG_BUFFER_SURFACE = new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4)
-export const LG_BUFFER_BIOME = new Uint8Array(Globals.TEXTURE_SIZES.BIOME * Globals.TEXTURE_SIZES.BIOME * 4)
-export const LG_BUFFER_CLOUDS = new Uint8Array(Globals.TEXTURE_SIZES.CLOUDS * Globals.TEXTURE_SIZES.CLOUDS * 4)
-export const LG_BUFFER_RING = new Uint8Array(Globals.TEXTURE_SIZES.RING * Globals.TEXTURE_SIZES.RING * 4)
+export const LG_BUFFER_SURFACE: Uint8Array  = new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4)
+export const LG_BUFFER_BIOME: Uint8Array    = new Uint8Array(Globals.TEXTURE_SIZES.BIOME * Globals.TEXTURE_SIZES.BIOME * 4)
+export const LG_BUFFER_CLOUDS: Uint8Array   = new Uint8Array(Globals.TEXTURE_SIZES.CLOUDS * Globals.TEXTURE_SIZES.CLOUDS * 4)
+export const LG_BUFFER_RING: Uint8Array     = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
+export const LG_BUFFERLIST_RINGS: Uint8Array[] = []
 
 const hasPlanetBeenEdited: Ref<boolean> = ref(false)
 let enableEditorRendering = true
@@ -55,7 +56,7 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
     LG_BUFFER_SURFACE,
     LG_BUFFER_BIOME,
     LG_BUFFER_CLOUDS,
-    LG_BUFFER_RING,
+    ...LG_BUFFERLIST_RINGS
   ])
   ComponentBuilder.createControlsComponent(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
 }
@@ -80,21 +81,24 @@ function initPlanet(): void {
   const planet = ComponentBuilder.createPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME)
   const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
   const atmosphere = ComponentBuilder.createAtmosphere(LG_PLANET_DATA.value, LG_SCENE_DATA.sunLight!.position)
-  const ring = ComponentBuilder.createRing(LG_PLANET_DATA.value, LG_BUFFER_RING)
+  const rings = LG_PLANET_DATA.value.ringsParams.map((_, idx) => {
+    LG_BUFFERLIST_RINGS.push(new Uint8Array(Globals.TEXTURE_SIZES.RING * 4))
+    return ComponentBuilder.createRing(LG_PLANET_DATA.value, LG_BUFFERLIST_RINGS[idx], idx)
+  })
   const planetGroup = new THREE.Group()
   planetGroup.add(planet.mesh)
   planetGroup.add(clouds.mesh)
   planetGroup.add(atmosphere)
 
   const ringAnchor = new THREE.Group()
-  ringAnchor.add(ring.mesh)
+  rings.forEach(r => ringAnchor.add(r.mesh))
   planetGroup.add(ringAnchor)
 
   LG_SCENE_DATA.scene!.add(planetGroup)
   LG_SCENE_DATA.planet = planet.mesh
   LG_SCENE_DATA.clouds = clouds.mesh
   LG_SCENE_DATA.atmosphere = atmosphere
-  LG_SCENE_DATA.ring = ring.mesh
+  LG_SCENE_DATA.rings = rings.map(r => r.mesh)
   LG_SCENE_DATA.planetGroup = planetGroup
   LG_SCENE_DATA.ringAnchor = ringAnchor
 
@@ -102,7 +106,7 @@ function initPlanet(): void {
   LG_SCENE_DATA.surfaceDataTex = planet.texs[0].texture
   LG_SCENE_DATA.biomeDataTex = planet.texs[1].texture
   LG_SCENE_DATA.cloudsDataTex = clouds.texs[0].texture
-  LG_SCENE_DATA.ringDataTex = ring.texs[0].texture
+  LG_SCENE_DATA.ringDataTexs = rings.map(r => r.texs[0].texture)
 
   // Set initial rotations
   LG_SCENE_DATA.planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
@@ -181,21 +185,23 @@ export function disposeScene() {
   LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.sunLight!)
   LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.ambLight!)
 
-  LG_SCENE_DATA.lensFlare!.material.dispose()
-  LG_SCENE_DATA.lensFlare!.mesh.geometry.dispose()
-  ;(LG_SCENE_DATA.planet!.material as THREE.Material).dispose()
-  LG_SCENE_DATA.planet!.geometry.dispose()
-  ;(LG_SCENE_DATA.clouds!.material as THREE.Material).dispose()
-  LG_SCENE_DATA.clouds!.geometry.dispose()
-  ;(LG_SCENE_DATA.atmosphere!.material as THREE.Material).dispose()
-  LG_SCENE_DATA.atmosphere!.geometry.dispose()
-  ;(LG_SCENE_DATA.ring!.material as THREE.Material).dispose()
-  LG_SCENE_DATA.ring!.geometry.dispose()
+  LG_SCENE_DATA.lensFlare!.material.dispose();
+  LG_SCENE_DATA.lensFlare!.mesh.geometry.dispose();
+  (LG_SCENE_DATA.planet!.material as THREE.Material).dispose();
+  LG_SCENE_DATA.planet!.geometry.dispose();
+  (LG_SCENE_DATA.clouds!.material as THREE.Material).dispose();
+  LG_SCENE_DATA.clouds!.geometry.dispose();
+  (LG_SCENE_DATA.atmosphere!.material as THREE.Material).dispose();
+  LG_SCENE_DATA.atmosphere!.geometry.dispose();
+  LG_SCENE_DATA.rings!.forEach(r => {
+    (r.material as THREE.Material).dispose();
+    r.geometry.dispose()
+  })
 
   LG_BUFFER_SURFACE.fill(0)
   LG_BUFFER_BIOME.fill(0)
   LG_BUFFER_CLOUDS.fill(0)
-  LG_BUFFER_RING.fill(0)
+  LG_BUFFERLIST_RINGS.splice(0)
   LG_SCENE_DATA.surfaceDataTex!.dispose()
   LG_SCENE_DATA.biomeDataTex!.dispose()
   LG_SCENE_DATA.cloudsDataTex!.dispose()

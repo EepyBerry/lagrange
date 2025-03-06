@@ -20,7 +20,9 @@ export function initUniformUpdateMap(scd: PlanetSceneData, pld: PlanetData, texB
   registerBiomeDataUpdates(pld, scd.planet!, scd.biomeDataTex!, texBufs[1])
   registerCloudDataUpdates(pld, scd.clouds!, scd.cloudsDataTex!, texBufs[2])
   registerAtmosphereDataUpdates(pld, scd.atmosphere!)
-  registerRingDataUpdates(pld, scd.ring!, scd.ringDataTex!, texBufs[3])
+  pld.ringsParams.forEach((_, idx) => 
+    registerRingDataUpdates(pld, scd.rings![idx], scd.ringDataTexs![idx], texBufs[3+idx], idx)
+  )
 }
 
 export function clearUniformUpdateMap() {
@@ -186,17 +188,18 @@ function registerAtmosphereDataUpdates(data: PlanetData, atmosphere: Mesh): void
 }
 
 // prettier-ignore
-function registerRingDataUpdates(data: PlanetData, ring: Mesh, ringDataTex: DataTexture, buffer: Uint8Array): void {
+function registerRingDataUpdates(data: PlanetData, ring: Mesh, ringDataTex: DataTexture, buffer: Uint8Array, ringIndex: number): void {
+  const ringParams = data.ringsParams[ringIndex]
   UNIFORM_UPDATE_MAP.value.set('_ringsEnabled', () => ring.visible = data.ringsEnabled)
   UNIFORM_UPDATE_MAP.value.set('_ringInnerRadius', () => {
     ring.geometry.dispose()
-    ring.geometry = ComponentBuilder.createRingGeometryComponent(data.planetMeshQuality, data.ringInnerRadius, data.ringOuterRadius)
-    setMeshUniform(ring, 'u_inner_radius', data.ringInnerRadius)
+    ring.geometry = ComponentBuilder.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
+    setMeshUniform(ring, 'u_inner_radius', ringParams.innerRadius)
   })
   
-  UNIFORM_UPDATE_MAP.value.set('_ringOuterRadius', () => setMeshUniform(ring, 'u_outer_radius', data.ringOuterRadius))
+  UNIFORM_UPDATE_MAP.value.set('_ringOuterRadius', () => setMeshUniform(ring, 'u_outer_radius', ringParams.outerRadius))
   UNIFORM_UPDATE_MAP.value.set('_ringColorRamp', () => {
-    const v = data.ringColorRamp
+    const v = ringParams.colorRamp
     recalculateRampTexture(buffer, Globals.TEXTURE_SIZES.RING, v.steps as ColorRampStep[])
     ringDataTex.needsUpdate = true
   })
