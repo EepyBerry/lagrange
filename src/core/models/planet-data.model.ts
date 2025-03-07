@@ -473,9 +473,6 @@ export default class PlanetData extends ChangeTracker {
   // --------------------------------------------------
 
   private _ringsEnabled: boolean
-  private _ringInnerRadius: number
-  private _ringOuterRadius: number
-  private _ringColorRamp: ColorRamp
   private _ringsParams: RingParameters[]
 
   // --------------------------------------------------
@@ -486,33 +483,6 @@ export default class PlanetData extends ChangeTracker {
   public set ringsEnabled(value: boolean) {
     this._ringsEnabled = value
     this.markForChange('_ringsEnabled')
-  }
-
-  public get ringInnerRadius(): number {
-    return this._ringInnerRadius
-  }
-  public set ringInnerRadius(value: number) {
-    this._ringInnerRadius = clamp(value, 1.0, 5.0)
-    this._ringOuterRadius = clamp(this._ringOuterRadius, this._ringInnerRadius, 10)
-    this.markForChange('_ringInnerRadius')
-    this.markForChange('_ringOuterRadius')
-  }
-
-  public get ringOuterRadius(): number {
-    return this._ringOuterRadius
-  }
-  public set ringOuterRadius(value: number) {
-    this._ringOuterRadius = clamp(value, 1.0, 5.0)
-    this._ringInnerRadius = clamp(this._ringInnerRadius, 1.0, this._ringOuterRadius)
-    this.markForChange('_ringOuterRadius')
-    this.markForChange('_ringInnerRadius')
-  }
-
-  public get ringColorRamp(): ColorRamp {
-    return this._ringColorRamp
-  }
-  public get ringColorRampSize() {
-    return this._ringColorRamp.steps.length
   }
 
   public get ringsParams() {
@@ -659,13 +629,6 @@ export default class PlanetData extends ChangeTracker {
 
     // Ring
     this._ringsEnabled = false
-    this._ringInnerRadius = 1.25
-    this._ringOuterRadius = 1.5
-    this._ringColorRamp = new ColorRamp(this._changedProps, '_ringColorRamp', [
-      new ColorRampStep(0x856f4e, 0.0, true),
-      new ColorRampStep(0x000000, 0.5),
-      new ColorRampStep(0xbf9a5e, 1.0, true),
-    ])
     this._ringsParams = []
   }
 
@@ -775,17 +738,6 @@ export default class PlanetData extends ChangeTracker {
 
     // Ring
     this.ringsEnabled = data._ringsEnabled ?? false
-    this.ringInnerRadius = data._ringInnerRadius ?? 1.25
-    this.ringOuterRadius = data._ringOuterRadius ?? 1.5
-    this.ringColorRamp.loadFromSteps(
-      data._ringColorRamp
-        ? data._ringColorRamp._steps
-        : [
-            new ColorRampStep(0x856f4e, 0.0, true),
-            new ColorRampStep(0x000000, 0.5),
-            new ColorRampStep(0xbf9a5e, 1.0, true),
-          ],
-    )
     this.ringsParams.splice(0)
     this.ringsParams.push(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -843,7 +795,7 @@ export default class PlanetData extends ChangeTracker {
     this.biomesHumidityNoise.randomize()
     this.biomesParams.splice(0)
     for (let i = 0; i < Math.round(clampedPRNG(0, 8)); i++) {
-      this.biomesParams.push(BiomeParameters.createRandom(this.changedProps))
+      this.biomesParams.push(BiomeParameters.createRandom(this.changedProps, '_biomesParameters'))
     }
 
     // Clouds
@@ -871,11 +823,10 @@ export default class PlanetData extends ChangeTracker {
 
     // Ring
     this.ringsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
-    this.ringsParams.forEach(p => {
-        p.innerRadius = clampedPRNG(1.5, 5)
-        p.outerRadius = clampedPRNG(p.innerRadius, 5)
-        p.colorRamp.randomize(3)
-    })
+    this.ringsParams.splice(0)
+    for (let i = 0; i < Math.round(clampedPRNG(0, 4)); i++) {
+      this.ringsParams.push(RingParameters.createRandom(this._changedProps, '_ringsParameters'))
+    }
   }
 
   public reset() {

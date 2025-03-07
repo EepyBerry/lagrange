@@ -91,7 +91,7 @@
           <span class="deco-polygon">
             <span class="hole"></span>
           </span>
-          <template v-if="planet?.data.biomesParams.length && planet?.data.biomesParams.length > 0">
+          <template v-if="planet?.data.biomesEnabled && planet?.data.biomesParams.length && planet?.data.biomesParams.length > 0">
             <h3>{{ $t('dialog.planetinfo.biomes') }}</h3>
             <table class="compact-header">
               <tbody>

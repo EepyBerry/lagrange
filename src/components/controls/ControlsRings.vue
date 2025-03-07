@@ -5,29 +5,6 @@
     </ParameterCheckbox>
     <template v-if="LG_PLANET_DATA.ringsEnabled">
       <ParameterGroup :toggleable="true">
-        <template #title>{{ $t('editor.controls.ring.transform') }}</template>
-        <template #content>
-          <ParameterSlider id="s-freq" v-model="LG_PLANET_DATA.ringInnerRadius" :step="0.01" :min="1" :max="5">
-            {{ $t('editor.controls.ring.transform_radius_inner') }}
-          </ParameterSlider>
-          <ParameterSlider id="s-amp" v-model="LG_PLANET_DATA.ringOuterRadius" :step="0.01" :min="1" :max="5">
-            {{ $t('editor.controls.ring.transform_radius_outer') }}
-          </ParameterSlider>
-        </template>
-      </ParameterGroup>
-      <ParameterGroup :toggleable="true">
-        <template #title>{{ $t('editor.controls.ring.rgba') }}</template>
-        <template #content>
-          <ParameterColorRamp
-            :key="LG_PLANET_DATA.planetName"
-            v-model="LG_PLANET_DATA.ringColorRamp"
-            mode="rgba"
-          >
-            {{ $t('editor.general.noise_rgbaramp') }}
-          </ParameterColorRamp>
-        </template>
-      </ParameterGroup>
-      <ParameterGroup :toggleable="true">
         <template #title>{{ $t('editor.controls.ring.ring_list') }}</template>
         <template #content>
           <template v-for="(b, index) in LG_PLANET_DATA.ringsParams" :key="b.id">

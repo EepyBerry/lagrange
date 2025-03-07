@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid"
 import { ChangeTracker, type ChangedProp } from "./change-tracker.model"
 import { ColorRamp, ColorRampStep } from "./color-ramp.model"
+import { clampedPRNG } from "@/utils/math-utils"
 
 export class RingParameters extends ChangeTracker {
   private _id: string
@@ -58,5 +59,17 @@ export class RingParameters extends ChangeTracker {
 
   public loadColorRampSteps(steps: ColorRampStep[]) {
     this._colorRamp.loadFromSteps(steps)
+  }
+
+  public static createRandom(changedProps: ChangedProp[], changePrefix: string) {
+    const innerRadius = clampedPRNG(1.25, 4.75)
+    const params = new RingParameters(
+      changedProps,
+      changePrefix,
+      innerRadius,
+      clampedPRNG(innerRadius, 5)
+    )
+    params.colorRamp.randomize(3)
+    return params
   }
 }

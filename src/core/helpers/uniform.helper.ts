@@ -29,6 +29,7 @@ export function reloadRingDataUpdates(sceneData: PlanetSceneData, planetData: Pl
     UNIFORM_UPDATE_MAP.value.delete(k)
   });
   registerRingsDataUpdates(planetData, sceneData.rings!)
+  planetData.markForChange('_ringsParameters')
 }
 
 export function clearUniformUpdateMap() {

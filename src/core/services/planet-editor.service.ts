@@ -168,7 +168,6 @@ export function updateRingMeshes() {
   const ringsData = LG_SCENE_DATA.rings!
   const ringsParams = LG_PLANET_DATA.value.ringsParams
   let ringMesh: THREE.Mesh
-  console.log(ringsParams)
 
   // Remove mesh for deleted ring params
   for (let i = 0; i < ringsData.length; i++) {
@@ -177,6 +176,7 @@ export function updateRingMeshes() {
       (ringMesh.material as THREE.Material).dispose()
       ringMesh.geometry.dispose()
       LG_SCENE_DATA.ringAnchor!.remove(ringMesh)
+      // FIXME: properly remove ring data here
     }
   }
 
@@ -262,6 +262,9 @@ export async function randomizePlanet() {
   await sleep(50)
   regeneratePRNGIfNecessary()
   LG_PLANET_DATA.value.randomize()
+  updateRingMeshes()
+  reloadRingDataUpdates(LG_SCENE_DATA, LG_PLANET_DATA.value)
+  console.log(LG_SCENE_DATA.rings!)
 }
 
 export async function resetPlanet() {
