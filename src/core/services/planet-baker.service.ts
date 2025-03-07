@@ -57,10 +57,10 @@ export function createBakingPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, 
           zwarp: data.planetSurfaceNoise.zWarpFactor,
         },
       },
-      u_surface_tex: { value: surfaceTex.texture },
+      u_surface_tex: { value: surfaceTex },
       // Biomes
       u_biomes: { value: data.biomesEnabled },
-      u_biomes_tex: { value: biomeTex.texture },
+      u_biomes_tex: { value: biomeTex },
       u_temp_noise: {
         value: {
           mode: data.biomesTemperatureMode,
@@ -240,7 +240,7 @@ export function createBakingClouds(data: PlanetData, textureBuffer: Uint8Array):
         },
       },
       u_color: { value: data.cloudsColor },
-      u_opacity_tex: { value: opacityTex.texture },
+      u_opacity_tex: { value: opacityTex },
     },
     THREE.MeshBasicMaterial,
   )
@@ -266,7 +266,7 @@ export function createBakingRing(data: PlanetData, textureBuffer: Uint8Array): T
     {
       u_inner_radius: { value: data.ringInnerRadius },
       u_outer_radius: { value: data.ringOuterRadius },
-      u_ring_tex: { value: rgbaTex.texture },
+      u_ring_tex: { value: rgbaTex },
     },
     THREE.MeshBasicMaterial,
   )
@@ -274,7 +274,7 @@ export function createBakingRing(data: PlanetData, textureBuffer: Uint8Array): T
   material.transparent = true
 
   const mesh = new THREE.Mesh(geometry, material)
-  mesh.name = Globals.LG_NAME_RING
+  mesh.name = Globals.LG_NAME_RING_ANCHOR
   mesh.receiveShadow = true
   mesh.castShadow = true
   return mesh

@@ -80,9 +80,9 @@ function initPlanet(): void {
   const planet = ComponentBuilder.createPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME)
   const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
   const atmosphere = ComponentBuilder.createAtmosphere(LG_PLANET_DATA.value, LG_SCENE_DATA.sunLight!.position)
-  const rings: GenericMeshData[] = LG_PLANET_DATA.value.ringsParams.map(() => {
+  const rings: GenericMeshData[] = LG_PLANET_DATA.value.ringsParams.map((_, idx) => {
     const newRingBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
-    const newRing = ComponentBuilder.createRing(LG_PLANET_DATA.value, newRingBuffer, LG_PLANET_DATA.value.ringsParams.length-1)
+    const newRing = ComponentBuilder.createRing(LG_PLANET_DATA.value, newRingBuffer, idx)
     return {
       mesh: newRing.mesh,
       buffer: newRingBuffer,
@@ -95,6 +95,7 @@ function initPlanet(): void {
   planetGroup.add(atmosphere)
 
   const ringAnchor = new THREE.Group()
+  ringAnchor.name = Globals.LG_NAME_RING_ANCHOR
   rings.forEach(r => ringAnchor.add(r.mesh))
   planetGroup.add(ringAnchor)
 
