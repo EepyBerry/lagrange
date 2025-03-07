@@ -37,7 +37,7 @@ function addRing() {
     1.75
   )
   LG_PLANET_DATA.value.ringsParams.push(newRing)
-  LG_PLANET_DATA.value.markForChange(`_ringsParameters.${newRing.id}`)
+  LG_PLANET_DATA.value.markForChange('_ringsParameters')
 }
 
 function deleteRing(id: string) {
@@ -46,7 +46,7 @@ function deleteRing(id: string) {
     throw new Error('Cannot delete non-existent ring!')
   }
   LG_PLANET_DATA.value.ringsParams.splice(ringIdx, 1)
-  LG_PLANET_DATA.value.markForChange(`_ringsParameters.${id}`)
+  LG_PLANET_DATA.value.markForChange('_ringsParameters')
 }
 </script>
 <style scoped lang="scss">

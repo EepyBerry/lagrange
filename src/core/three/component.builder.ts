@@ -252,6 +252,7 @@ export function createRing(
   )
   material.side = THREE.DoubleSide
   material.transparent = true
+  material.opacity = 1
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.name = ringParams.id

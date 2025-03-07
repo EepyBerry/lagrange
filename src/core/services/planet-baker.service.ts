@@ -272,6 +272,7 @@ export function createBakingRing(data: PlanetData, textureBuffer: Uint8Array): T
   )
   material.side = THREE.DoubleSide
   material.transparent = true
+  material.opacity = 1
 
   const mesh = new THREE.Mesh(geometry, material)
   mesh.name = Globals.LG_NAME_RING_ANCHOR

@@ -103,7 +103,7 @@ export type PlanetMeshData = {
 export type GenericMeshData = {
   mesh: Mesh
   texture: DataTexture
-  buffer: Uint8Array
+  buffer: Uint8Array|null
 }
 
 // ----------------------------------- Baking types ---------------------------------

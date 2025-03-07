@@ -827,6 +827,8 @@ export default class PlanetData extends ChangeTracker {
     for (let i = 0; i < Math.round(clampedPRNG(0, 4)); i++) {
       this.ringsParams.push(RingParameters.createRandom(this._changedProps, '_ringsParameters'))
     }
+    this.markForChange('_ringsParameters')
+    this.markAllForChange()
   }
 
   public reset() {

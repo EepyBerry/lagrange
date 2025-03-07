@@ -29,7 +29,6 @@ export function reloadRingDataUpdates(sceneData: PlanetSceneData, planetData: Pl
     UNIFORM_UPDATE_MAP.value.delete(k)
   });
   registerRingsDataUpdates(planetData, sceneData.rings!)
-  planetData.markForChange('_ringsParameters')
 }
 
 export function clearUniformUpdateMap() {
@@ -215,7 +214,7 @@ function registerRingsDataUpdates(data: PlanetData, ringsData: GenericMeshData[]
     })
     UNIFORM_UPDATE_MAP.value.set(`_ringsParameters.${ringParams.id}._colorRamp`, () => {
       const v = ringParams.colorRamp
-      recalculateRampTexture(rd.buffer, Globals.TEXTURE_SIZES.RING, v.steps as ColorRampStep[])
+      recalculateRampTexture(rd.buffer!, Globals.TEXTURE_SIZES.RING, v.steps as ColorRampStep[])
       rd.texture.needsUpdate = true
     })
   })

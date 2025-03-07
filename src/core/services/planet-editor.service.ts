@@ -165,34 +165,30 @@ export function updateCameraRendering(w: number, h: number) {
 }
 
 export function updateRingMeshes() {
-  const ringsData = LG_SCENE_DATA.rings!
+  const ringsMeshData = LG_SCENE_DATA.rings!
   const ringsParams = LG_PLANET_DATA.value.ringsParams
-  let ringMesh: THREE.Mesh
 
-  // Remove mesh for deleted ring params
-  for (let i = 0; i < ringsData.length; i++) {
-    ringMesh = ringsData[i].mesh
-    if (!ringsParams.find(r => r.id === ringMesh.name)) {
-      (ringMesh.material as THREE.Material).dispose()
-      ringMesh.geometry.dispose()
-      LG_SCENE_DATA.ringAnchor!.remove(ringMesh)
-      // FIXME: properly remove ring data here
-    }
-  }
+  // Remove all current ring meshes
+  ringsMeshData.forEach(data => {
+    (data.mesh.material as THREE.Material).dispose();
+    data.mesh.geometry.dispose();
+    data.buffer = null;
+  })
+  ringsMeshData.splice(0)
+  LG_SCENE_DATA.ringAnchor!.clear()
 
-  // Create mesh for new ring params
-  for (const rp of ringsParams) {
-    if (!ringsData.find(r => r.mesh.name === rp.id)) {
-      const newRingBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
-      const newRing = ComponentBuilder.createRing(LG_PLANET_DATA.value, newRingBuffer, ringsParams.length-1)
-      ringsData.push({
-        mesh: newRing.mesh,
-        buffer: newRingBuffer,
-        texture: newRing.texs[0]
-      })
-      LG_SCENE_DATA.ringAnchor!.add(newRing.mesh)
-    }
-  }
+  // Recreate meshes for existing ring params
+  ringsParams.forEach((_,idx) => {
+    const newRingBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
+    const newRing = ComponentBuilder.createRing(LG_PLANET_DATA.value, newRingBuffer, idx)
+    ringsMeshData.push({
+      mesh: newRing.mesh,
+      buffer: newRingBuffer,
+      texture: newRing.texs[0]
+    })
+    LG_SCENE_DATA.ringAnchor!.add(newRing.mesh)
+  })
+  console.log(ringsMeshData)
 }
 
 function updateScene() {
@@ -205,7 +201,7 @@ function updateScene() {
     // Check for additional info, separated by |
     key = changedProp.prop.split('|')[0]
 
-    if (key.startsWith('_ringsParameters')) {
+    if (key === '_ringsParameters') {
       updateRingMeshes()
       reloadRingDataUpdates(LG_SCENE_DATA, LG_PLANET_DATA.value)
     }
@@ -264,7 +260,6 @@ export async function randomizePlanet() {
   LG_PLANET_DATA.value.randomize()
   updateRingMeshes()
   reloadRingDataUpdates(LG_SCENE_DATA, LG_PLANET_DATA.value)
-  console.log(LG_SCENE_DATA.rings!)
 }
 
 export async function resetPlanet() {
@@ -406,7 +401,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     if (LG_PLANET_DATA.value.ringsEnabled) {
       progressDialog.setProgress(6)
       await sleep(50)
-      const bakeRing = createBakingRing(LG_PLANET_DATA.value, LG_SCENE_DATA.rings![0].buffer)
+      const bakeRing = createBakingRing(LG_PLANET_DATA.value, LG_SCENE_DATA.rings![0].buffer!)
       const bakeRingTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeRing, w, h)
       if (appSettings?.bakingPixelize) bakeRingTex.magFilter = THREE.NearestFilter
 
