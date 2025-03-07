@@ -19,7 +19,7 @@ export class RingParameters extends ChangeTracker {
     this._id = nanoid()
     this._innerRadius = innerRadius
     this._outerRadius = outerRadius
-    this._colorRamp = new ColorRamp(this._changedProps, '_colorRamp', [
+    this._colorRamp = new ColorRamp(this._changedProps, `${this._changePrefix}.${this._id}._colorRamp`, [
       new ColorRampStep(0x856f4e, 0.0, true),
       new ColorRampStep(0x000000, 0.5),
       new ColorRampStep(0xbf9a5e, 1.0, true),
@@ -41,7 +41,7 @@ export class RingParameters extends ChangeTracker {
   }
   public set innerRadius(value: number) {
     this._innerRadius = value
-    this.markForChange(`${this._changePrefix}._innerRadius`)
+    this.markForChange(`${this._changePrefix}.${this._id}._innerRadius`)
   }
 
   public get outerRadius(): number {
@@ -49,7 +49,7 @@ export class RingParameters extends ChangeTracker {
   }
   public set outerRadius(value: number) {
     this._outerRadius = value
-    this.markForChange(`${this._changePrefix}._outerRadius`)
+    this.markForChange(`${this._changePrefix}.${this._id}._outerRadius`)
   }
 
   public get colorRamp(): ColorRamp {

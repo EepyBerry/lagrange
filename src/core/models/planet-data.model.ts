@@ -792,7 +792,7 @@ export default class PlanetData extends ChangeTracker {
       ...(data._ringsParams ?? []).map((params: any) => {
         const newParams = new RingParameters(
           this.changedProps,
-          '_rings',
+          '_ringsParameters',
           params._innerRadius ?? 1.25,
           params._outerRadius ?? 1.5,
           params._colorRamp?._steps,

@@ -179,8 +179,9 @@ function getPartialId() {
     }
   }
   hr.info-divider {
+    border-style: dotted;
     grid-column: span 2;
-    margin: 0.75rem 0;
+    margin: 0.5rem 0;
   }
   hr.action-divider {
     height: 1.25rem;
