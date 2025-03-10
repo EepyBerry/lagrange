@@ -8,6 +8,7 @@ import { BiomeParameters } from './biome-parameters.model'
 import { clamp } from 'three/src/math/MathUtils.js'
 import { DisplacementParameters } from './displacement-parameters.model'
 import { RingParameters } from './ring-parameters.model'
+import { convertLegacyRingStorage } from '../helpers/compatibility.helper'
 
 export default class PlanetData extends ChangeTracker {
   // --------------------------------------------------
@@ -753,6 +754,9 @@ export default class PlanetData extends ChangeTracker {
         return newParams
       })
     )
+
+    // Compatibility & conversion calls
+    convertLegacyRingStorage(this, data)
   }
 
   // Note: adjusted ranges to get more coherent data
