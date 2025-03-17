@@ -692,8 +692,8 @@ export default class PlanetData extends ChangeTracker {
     this.biomesParams.splice(0)
     this.biomesParams.push(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(data._biomesParams ?? []).map((params: any) => {
-        const newParams = new BiomeParameters(
+      ...(data._biomesParams ?? []).map((params: any) => 
+        new BiomeParameters(
           this.changedProps,
           '_biomesParameters',
           {
@@ -704,10 +704,9 @@ export default class PlanetData extends ChangeTracker {
           },
           new Color(params._color),
           params._smoothness ?? 0.25,
+          params._id
         )
-        newParams.id = params._id ? params._id : newParams.id
-        return newParams
-      }),
+      )
     )
 
     // Clouds
@@ -742,17 +741,16 @@ export default class PlanetData extends ChangeTracker {
     this.ringsParams.splice(0)
     this.ringsParams.push(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(data._ringsParams ?? []).map((params: any) => {
-        const newParams = new RingParameters(
+      ...(data._ringsParams ?? []).map((params: any) =>
+        new RingParameters(
           this.changedProps,
           '_ringsParameters',
           params._innerRadius ?? 1.25,
           params._outerRadius ?? 1.5,
           params._colorRamp?._steps,
+          params._id
         )
-        newParams.id = params._id ? params._id : newParams.id
-        return newParams
-      })
+      )
     )
 
     // Compatibility & conversion calls

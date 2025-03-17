@@ -25,9 +25,10 @@ export class BiomeParameters extends ChangeTracker {
     dims: BiomeDimensions,
     color: Color,
     smoothness: number,
+    oldId?: string
   ) {
     super(changedPropsRef, changePrefix)
-    this._id = nanoid()
+    this._id = oldId ?? nanoid()
     this._tempMin = dims.temperatureMin
     this._tempMax = dims.temperatureMax
     this._humiMin = dims.humidityMin
