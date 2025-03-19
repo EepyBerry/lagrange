@@ -351,6 +351,7 @@
       "ring": {
         "$title": "Ring System",
         "ring_show": "Show ring system",
+        "ring_list": "Rings",
 
         "transform": "Transform",
         "transform_radius_inner": "Inner radius",

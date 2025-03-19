@@ -177,7 +177,7 @@
       "step_3": "PBR Daten Baking",
       "step_4": "Normale Baking",
       "step_5": "Wolken Baking",
-      "step_6": "Ringen Baking",
+      "step_6": "Ringe Baking",
       "step_7": "Finalisierung",
       "step_8": "Fertig !",
       "step_failed": "Fehler"
@@ -349,8 +349,9 @@
         "rgba_tint": "Farbe"
       },
       "ring": {
-        "$title": "Ring",
-        "ring_show": "Ring anzeigen",
+        "$title": "Ringe",
+        "ring_show": "Ringe anzeigen",
+        "ring_list": "Ringe",
 
         "transform": "Verformung",
         "transform_radius_inner": "Interner Radius",

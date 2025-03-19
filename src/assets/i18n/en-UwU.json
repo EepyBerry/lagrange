@@ -351,6 +351,7 @@
       "ring": {
         "$title": "Wing Systyem",
         "ring_show": "Show wing systyem",
+        "ring_list": "Wings",
 
         "transform": "Twansfowm",
         "transform_radius_inner": "Innyew wadius",
