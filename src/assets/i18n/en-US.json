@@ -177,7 +177,7 @@
       "step_3": "Baking surface PBR",
       "step_4": "Baking surface normals",
       "step_5": "Baking clouds texture",
-      "step_6": "Baking ring system texture",
+      "step_6": "Baking ring system textures",
       "step_7": "Finalizing",
       "step_8": "Done!",
       "step_failed": "failed!"

@@ -253,19 +253,16 @@ export function createBakingClouds(data: PlanetData, textureBuffer: Uint8Array):
   return mesh
 }
 
-export function createBakingRing(data: PlanetData, textureBuffer: Uint8Array): THREE.Mesh {
-  const rgbaTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, data.ringColorRamp.steps)
-  const geometry = ComponentBuilder.createRingGeometryComponent(
-    data.planetMeshQuality,
-    data.ringInnerRadius,
-    data.ringOuterRadius,
-  )
+export function createBakingRing(data: PlanetData, textureBuffer: Uint8Array, paramsIndex: number): THREE.Mesh {
+  const ringParams = data.ringsParams[paramsIndex]
+  const rgbaTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
+  const geometry = ComponentBuilder.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
   const material = ComponentBuilder.createCustomShaderMaterialComponent(
     ShaderLoader.fetch('ring.vert.glsl', ShaderFileType.CORE),
     ShaderLoader.fetch('ring.frag.glsl', ShaderFileType.CORE),
     {
-      u_inner_radius: { value: data.ringInnerRadius },
-      u_outer_radius: { value: data.ringOuterRadius },
+      u_inner_radius: { value: ringParams.innerRadius },
+      u_outer_radius: { value: ringParams.outerRadius },
       u_ring_tex: { value: rgbaTex },
     },
     THREE.MeshBasicMaterial,
@@ -275,7 +272,7 @@ export function createBakingRing(data: PlanetData, textureBuffer: Uint8Array): T
   material.opacity = 1
 
   const mesh = new THREE.Mesh(geometry, material)
-  mesh.name = Globals.LG_NAME_RING_ANCHOR
+  mesh.name = ringParams.id
   mesh.receiveShadow = true
   mesh.castShadow = true
   return mesh

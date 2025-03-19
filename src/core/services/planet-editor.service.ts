@@ -405,18 +405,27 @@ export async function exportPlanetToGLTF(progressDialog: {
     if (LG_PLANET_DATA.value.ringsEnabled) {
       progressDialog.setProgress(6)
       await sleep(50)
-      const bakeRing = createBakingRing(LG_PLANET_DATA.value, LG_SCENE_DATA.rings![0].buffer!)
-      const bakeRingTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeRing, w, h)
-      if (appSettings?.bakingPixelize) bakeRingTex.magFilter = THREE.NearestFilter
+      const ringGroup = new THREE.Group()
+      ringGroup.name = Globals.LG_NAME_RING_ANCHOR
+      bakePlanet.add(ringGroup)
+      LG_PLANET_DATA.value.ringsParams.forEach((params, idx) => {
+        const ringMeshData = LG_SCENE_DATA.rings?.find(r => r.mesh.name === params.id)
+        if (!ringMeshData) return
 
-      bakeRing.material = new THREE.MeshStandardMaterial({
-        map: bakeRingTex,
-        side: THREE.DoubleSide,
-        transparent: true,
+        const bakeRing = createBakingRing(LG_PLANET_DATA.value, ringMeshData!.buffer!, idx)
+        const bakeRingTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeRing, w, h)
+        if (appSettings?.bakingPixelize) bakeRingTex.magFilter = THREE.NearestFilter
+
+        bakeRing.material = new THREE.MeshStandardMaterial({
+          map: bakeRingTex,
+          side: THREE.DoubleSide,
+          transparent: true,
+        })
+        bakingTargets.push({ mesh: bakeRing, textures: [bakeRingTex] })
+        ringGroup.add(bakeRing)
+        bakeRing.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90))
       })
-      bakingTargets.push({ mesh: bakeRing, textures: [bakeRingTex] })
-      bakePlanet.add(bakeRing)
-      bakeRing.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90))
+      bakePlanet.add(ringGroup)
     }
 
     // ---------------------------- Export meshes and clean up ---------------------------
