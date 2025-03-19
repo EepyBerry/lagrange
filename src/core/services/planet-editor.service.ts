@@ -168,8 +168,10 @@ export function updateRingMeshes() {
   const ringsMeshData = LG_SCENE_DATA.rings!
   const ringsParams = LG_PLANET_DATA.value.ringsParams
 
-  // Remove all current ring meshes
-  ringsMeshData.forEach(data => {
+  // Remove old ring meshes
+  ringsMeshData
+  .filter(meshData => !ringsParams.some(params => params.id === meshData.mesh.name))
+  .forEach(data => {
     (data.mesh.material as THREE.Material).dispose();
     data.mesh.geometry.dispose();
     data.buffer = null;
@@ -177,8 +179,10 @@ export function updateRingMeshes() {
   ringsMeshData.splice(0)
   LG_SCENE_DATA.ringAnchor!.clear()
 
-  // Recreate meshes for existing ring params
-  ringsParams.forEach((_,idx) => {
+  // Create new ring meshes
+  ringsParams
+  .filter(params => !ringsMeshData.some(p => p.mesh.name === params.id))
+  .forEach((_,idx) => {
     const newRingBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
     const newRing = ComponentBuilder.createRing(LG_PLANET_DATA.value, newRingBuffer, idx)
     ringsMeshData.push({
