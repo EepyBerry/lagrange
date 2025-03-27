@@ -75,7 +75,7 @@
                 <td name>{{ $t('dialog.planetinfo.ringed') }}:</td>
                 <td value>
                   <iconify-icon
-                    v-if="planet?.data.ringEnabled"
+                    v-if="planet?.data.ringsEnabled"
                     inline
                     icon="mingcute:check-circle-fill"
                     width="1.5rem"
@@ -91,7 +91,7 @@
           <span class="deco-polygon">
             <span class="hole"></span>
           </span>
-          <template v-if="planet?.data.biomesParams.length && planet?.data.biomesParams.length > 0">
+          <template v-if="planet?.data.biomesEnabled && planet?.data.biomesParams.length && planet?.data.biomesParams.length > 0">
             <h3>{{ $t('dialog.planetinfo.biomes') }}</h3>
             <table class="compact-header">
               <tbody>

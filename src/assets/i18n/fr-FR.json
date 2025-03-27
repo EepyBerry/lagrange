@@ -349,8 +349,9 @@
         "rgba_tint": "Couleur"
       },
       "ring": {
-        "$title": "Anneau",
-        "ring_show": "Afficher anneau",
+        "$title": "Anneaux",
+        "ring_show": "Afficher système",
+        "ring_list": "Anneaux",
 
         "transform": "Transform",
         "transform_radius_inner": "Rayon interne",

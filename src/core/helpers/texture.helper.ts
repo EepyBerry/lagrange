@@ -1,5 +1,5 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
-import type { Rect, DataTextureWrapper, RawRGBA } from '@/core/types'
+import type { Rect, RawRGBA } from '@/core/types'
 import { alphaBlendColors, avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
 import { Color, DataTexture, Vector2 } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
@@ -7,13 +7,13 @@ import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { MUL_INT8_TO_UNIT } from '../globals'
 import { toRawRGBA } from '@/utils/utils'
 
-export function createRampTexture(buffer: Uint8Array, w: number, steps: ColorRampStep[]): DataTextureWrapper {
+export function createRampTexture(buffer: Uint8Array, w: number, steps: ColorRampStep[]): DataTexture {
   if (steps.length > 0) {
     fillRamp(buffer, w, steps)
   }
   const dt = new DataTexture(buffer, w, 1)
   dt.needsUpdate = true
-  return { texture: dt, data: buffer }
+  return dt
 }
 
 export function recalculateRampTexture(buffer: Uint8Array, w: number, steps: ColorRampStep[]): void {
@@ -48,13 +48,13 @@ function fillRamp(buffer: Uint8Array, w: number, steps: ColorRampStep[]) {
 
 // ------------------------------------------------------------------------------------------------
 
-export function createBiomeTexture(buffer: Uint8Array, w: number, biomes: BiomeParameters[]): DataTextureWrapper {
+export function createBiomeTexture(buffer: Uint8Array, w: number, biomes: BiomeParameters[]): DataTexture {
   if (biomes.length > 0) {
     fillBiomes(buffer, w, biomes)
   }
   const dt = new DataTexture(buffer, w, w)
   dt.needsUpdate = true
-  return { texture: dt, data: buffer }
+  return dt
 }
 
 export function recalculateBiomeTexture(buffer: Uint8Array, w: number, biomes: BiomeParameters[]): void {

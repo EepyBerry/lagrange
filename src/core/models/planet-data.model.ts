@@ -7,6 +7,8 @@ import { ChangeTracker } from './change-tracker.model'
 import { BiomeParameters } from './biome-parameters.model'
 import { clamp } from 'three/src/math/MathUtils.js'
 import { DisplacementParameters } from './displacement-parameters.model'
+import { RingParameters } from './ring-parameters.model'
+import { convertLegacyRingStorage } from '../helpers/compatibility.helper'
 
 export default class PlanetData extends ChangeTracker {
   // --------------------------------------------------
@@ -471,64 +473,21 @@ export default class PlanetData extends ChangeTracker {
   // |                 Ring settings                  |
   // --------------------------------------------------
 
-  private _ringEnabled: boolean
-  private _ringAxialTilt: number
-  private _ringRotation: number
-  private _ringInnerRadius: number
-  private _ringOuterRadius: number
-  private _ringColorRamp: ColorRamp
+  private _ringsEnabled: boolean
+  private _ringsParams: RingParameters[]
 
   // --------------------------------------------------
 
-  public get ringEnabled(): boolean {
-    return this._ringEnabled
+  public get ringsEnabled(): boolean {
+    return this._ringsEnabled
   }
-  public set ringEnabled(value: boolean) {
-    this._ringEnabled = value
-    this.markForChange('_ringEnabled')
-  }
-
-  public get ringAxialTilt() {
-    return this._ringAxialTilt
-  }
-  public set ringAxialTilt(tilt: number) {
-    this._ringAxialTilt = isNumeric(tilt) ? clamp(tilt, -180, 180) : 0
-    this.markForChange('_ringAxialTilt')
+  public set ringsEnabled(value: boolean) {
+    this._ringsEnabled = value
+    this.markForChange('_ringsEnabled')
   }
 
-  public get ringRotation() {
-    return this._ringRotation
-  }
-  public set ringRotation(rot: number) {
-    this._ringRotation = isNumeric(rot) ? clamp(rot, 0, 360) : 0
-    this.markForChange('_ringRotation')
-  }
-
-  public get ringInnerRadius(): number {
-    return this._ringInnerRadius
-  }
-  public set ringInnerRadius(value: number) {
-    this._ringInnerRadius = clamp(value, 1.0, 5.0)
-    this._ringOuterRadius = clamp(this._ringOuterRadius, this._ringInnerRadius, 10)
-    this.markForChange('_ringInnerRadius')
-    this.markForChange('_ringOuterRadius')
-  }
-
-  public get ringOuterRadius(): number {
-    return this._ringOuterRadius
-  }
-  public set ringOuterRadius(value: number) {
-    this._ringOuterRadius = clamp(value, 1.0, 5.0)
-    this._ringInnerRadius = clamp(this._ringInnerRadius, 1.0, this._ringOuterRadius)
-    this.markForChange('_ringOuterRadius')
-    this.markForChange('_ringInnerRadius')
-  }
-
-  public get ringColorRamp(): ColorRamp {
-    return this._ringColorRamp
-  }
-  public get ringColorRampSize() {
-    return this._ringColorRamp.steps.length
+  public get ringsParams() {
+    return this._ringsParams
   }
 
   // --------------------------------------------------
@@ -670,16 +629,8 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereTint = new Color(0xffffff)
 
     // Ring
-    this._ringEnabled = false
-    this._ringAxialTilt = 90.0
-    this._ringRotation = 0.0
-    this._ringInnerRadius = 1.25
-    this._ringOuterRadius = 1.5
-    this._ringColorRamp = new ColorRamp(this._changedProps, '_ringColorRamp', [
-      new ColorRampStep(0x856f4e, 0.0, true),
-      new ColorRampStep(0x000000, 0.5),
-      new ColorRampStep(0xbf9a5e, 1.0, true),
-    ])
+    this._ringsEnabled = false
+    this._ringsParams = []
   }
 
   // --------------------------------------------------
@@ -741,22 +692,21 @@ export default class PlanetData extends ChangeTracker {
     this.biomesParams.splice(0)
     this.biomesParams.push(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(data._biomesParams ?? []).map((rbp: any) => {
-        const nbp = new BiomeParameters(
+      ...(data._biomesParams ?? []).map((params: any) => 
+        new BiomeParameters(
           this.changedProps,
           '_biomesParameters',
           {
-            temperatureMin: rbp._tempMin ?? 0.0,
-            temperatureMax: rbp._tempMax ?? 0.5,
-            humidityMin: rbp._humiMin ?? 0.0,
-            humidityMax: rbp._humiMax ?? 1.0,
+            temperatureMin: params._tempMin ?? 0.0,
+            temperatureMax: params._tempMax ?? 0.5,
+            humidityMin: params._humiMin ?? 0.0,
+            humidityMax: params._humiMax ?? 1.0,
           },
-          new Color(rbp._color),
-          rbp._smoothness ?? 0.25,
+          new Color(params._color),
+          params._smoothness ?? 0.25,
+          params._id
         )
-        nbp.id = rbp._id ? rbp._id : nbp.id
-        return nbp
-      }),
+      )
     )
 
     // Clouds
@@ -787,20 +737,24 @@ export default class PlanetData extends ChangeTracker {
     this.atmosphereTint.set(data._atmosphereTint ?? 0xffffff)
 
     // Ring
-    this.ringEnabled = data._ringEnabled ?? false
-    this.ringAxialTilt = data._ringAxialTilt ?? 90.0
-    this.ringRotation = data._ringRotation ?? 0.0
-    this.ringInnerRadius = data._ringInnerRadius ?? 1.25
-    this.ringOuterRadius = data._ringOuterRadius ?? 1.5
-    this.ringColorRamp.loadFromSteps(
-      data._ringColorRamp
-        ? data._ringColorRamp._steps
-        : [
-            new ColorRampStep(0x856f4e, 0.0, true),
-            new ColorRampStep(0x000000, 0.5),
-            new ColorRampStep(0xbf9a5e, 1.0, true),
-          ],
+    this.ringsEnabled = data._ringsEnabled ?? false
+    this.ringsParams.splice(0)
+    this.ringsParams.push(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...(data._ringsParams ?? []).map((params: any) =>
+        new RingParameters(
+          this.changedProps,
+          '_ringsParameters',
+          params._innerRadius ?? 1.25,
+          params._outerRadius ?? 1.5,
+          params._colorRamp?._steps,
+          params._id
+        )
+      )
     )
+
+    // Compatibility & conversion calls
+    convertLegacyRingStorage(this, data)
   }
 
   // Note: adjusted ranges to get more coherent data
@@ -843,7 +797,7 @@ export default class PlanetData extends ChangeTracker {
     this.biomesHumidityNoise.randomize()
     this.biomesParams.splice(0)
     for (let i = 0; i < Math.round(clampedPRNG(0, 8)); i++) {
-      this.biomesParams.push(BiomeParameters.createRandom(this.changedProps))
+      this.biomesParams.push(BiomeParameters.createRandom(this.changedProps, '_biomesParameters'))
     }
 
     // Clouds
@@ -870,12 +824,13 @@ export default class PlanetData extends ChangeTracker {
     this.atmosphereTint.set(clampedPRNG(0, 1) * 0xffffff)
 
     // Ring
-    this.ringEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
-    this.ringAxialTilt = 90.0
-    this.ringRotation = 0.0
-    this.ringInnerRadius = clampedPRNG(1.5, 5)
-    this.ringOuterRadius = clampedPRNG(this.ringInnerRadius, 5)
-    this.ringColorRamp.randomize(5)
+    this.ringsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
+    this.ringsParams.splice(0)
+    for (let i = 0; i < Math.round(clampedPRNG(0, 4)); i++) {
+      this.ringsParams.push(RingParameters.createRandom(this._changedProps, '_ringsParameters'))
+    }
+    this.markForChange('_ringsParameters')
+    this.markAllForChange()
   }
 
   public reset() {

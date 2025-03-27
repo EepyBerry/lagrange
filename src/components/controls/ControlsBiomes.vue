@@ -150,7 +150,7 @@
           <template v-for="(b, index) in LG_PLANET_DATA.biomesParams" :key="b.id">
             <!-- prettier-ignore-attribute -->
             <ParameterBiome
-              v-model="(LG_PLANET_DATA.biomesParams[index] as BiomeParameters)"
+              v-model="LG_PLANET_DATA.biomesParams[index]"
               :index="index"
               :max-index="LG_PLANET_DATA.biomesParams.length - 1"
               @moveup="moveBiome(index, -1)"

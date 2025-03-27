@@ -177,7 +177,7 @@
       "step_3": "Baking suwface PBR",
       "step_4": "Baking suwface n-nowmals",
       "step_5": "Baking cwouds textuwe",
-      "step_6": "Baking wing systyem textuwe",
+      "step_6": "Baking wing systyem textuwes",
       "step_7": "F-finawizing",
       "step_8": "Done!!! :3",
       "step_failed": "faiwed :c"
@@ -351,6 +351,7 @@
       "ring": {
         "$title": "Wing Systyem",
         "ring_show": "Show wing systyem",
+        "ring_list": "Wings",
 
         "transform": "Twansfowm",
         "transform_radius_inner": "Innyew wadius",

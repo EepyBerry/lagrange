@@ -25,9 +25,10 @@ export class BiomeParameters extends ChangeTracker {
     dims: BiomeDimensions,
     color: Color,
     smoothness: number,
+    oldId?: string
   ) {
     super(changedPropsRef, changePrefix)
-    this._id = nanoid()
+    this._id = oldId ?? nanoid()
     this._tempMin = dims.temperatureMin
     this._tempMax = dims.temperatureMax
     this._humiMin = dims.humidityMin
@@ -120,12 +121,12 @@ export class BiomeParameters extends ChangeTracker {
     this.markForChange(`${this._changePrefix}|${this._id}`, oldValue, newValue)
   }
 
-  public static createRandom(changedProps: ChangedProp[]) {
+  public static createRandom(changedProps: ChangedProp[], changePrefix: string) {
     const minTemp = clampedPRNG(0, 1),
       minHumi = clampedPRNG(0, 1)
     return new BiomeParameters(
       changedProps,
-      '_biomesParameters',
+      changePrefix,
       {
         temperatureMin: minTemp,
         temperatureMax: clampedPRNG(minTemp, 1),
