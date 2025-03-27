@@ -126,7 +126,10 @@
       "extras_special_days": "Show special days",
 
       "advanced": "Advanced Settings",
-      "advanced_persist": "Persist IndexedDB storage",
+      "advanced_io": "Backup/restore IndexedDB data",
+      "advanced_import": "Import file...",
+      "advanced_export": "Export",
+      "advanced_persist": "Persist IndexedDB data",
       "advanced_persist_prompt": "Enable",
       "advanced_persist_success": "Persisted!",
       "advanced_persist_failure": "Cannot persist!",

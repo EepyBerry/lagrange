@@ -261,6 +261,17 @@
             <div class="settings-advanced">
               <ParameterGrid>
                 <p>{{ $t('dialog.settings.advanced_persist') }}:</p>
+                <div id="actions-io">
+                  <button class="lg" @click="tryPersistStorage">
+                    <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
+                    {{ $t('dialog.settings.advanced_import') }}
+                  </button>
+                  <button class="lg" @click="exportData">
+                    <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
+                    {{ $t('dialog.settings.advanced_export') }}
+                  </button>
+                </div>
+                <p>{{ $t('dialog.settings.advanced_persist') }}:</p>
                 <button class="lg" :disabled="!!persistStorage || failedToPersist" @click="tryPersistStorage">
                   {{
                     $t(
@@ -311,6 +322,7 @@ import AppClearDataConfirmDialog from './AppClearDataConfirmDialog.vue'
 import { clearData } from '@/utils/dexie-utils'
 import { EventBus } from '@/core/event-bus'
 import { EXTRAS_CAT_MODE, EXTRAS_HOLOGRAM_MODE, EXTRAS_SPECIAL_DAYS } from '@/core/extras'
+import { saveAs } from 'file-saver'
 
 const i18n = useI18n()
 
@@ -382,6 +394,12 @@ async function loadData() {
   appSettings.value = settings!
   keyBinds.value.splice(0)
   keyBinds.value.push(...kb)
+}
+
+async function exportData() {
+  const settings = await idb.settings.limit(1).first()
+  const keybinds = await idb.keyBindings.toArray()
+  saveAs(new Blob([JSON.stringify({ settings, keybinds }, null, 2)]), 'lagrange_data.json')
 }
 
 async function clearAllData() {
@@ -477,6 +495,13 @@ function getKeyBind(action: string) {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.75rem;
+    }
+  }
+  .settings-advanced #actions-io {
+    display: flex;
+    gap: 0.5rem;
+    & > * {
+      flex: 1;
     }
   }
   .setting-persist button {
