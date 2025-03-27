@@ -192,7 +192,6 @@ export function updateRingMeshes() {
     })
     LG_SCENE_DATA.ringAnchor!.add(newRing.mesh)
   })
-  console.log(ringsMeshData)
 }
 
 function updateScene() {
