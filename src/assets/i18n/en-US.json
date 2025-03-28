@@ -384,7 +384,8 @@
     "import_success": "Imported planet(s) successfully!",
     "import_partial": "Warning: failed to import some planet(s)",
     "import_failure": "Could not import planets. Please check if the correct files are selected and try again",
-    "save_success": "Saved planet successfully!"
+    "save_success": "Saved planet successfully!",
+    "settings_import_success": "Imported settings successfully!"
   },
   "tooltip": {
     "topbar_rename": "Rename planet",
