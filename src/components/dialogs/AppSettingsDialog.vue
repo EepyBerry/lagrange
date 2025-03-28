@@ -261,6 +261,25 @@
             <div class="settings-advanced">
               <ParameterGrid>
                 <p>{{ $t('dialog.settings.advanced_persist') }}:</p>
+                <div id="actions-io">
+                  <button class="lg" @click="openImportDialog">
+                    <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
+                    {{ $t('dialog.settings.advanced_import') }}
+                  </button>
+                  <input
+                    ref="fileInput"
+                    type="file"
+                    accept=".json"
+                    hidden
+                    @cancel="(evt: Event) => evt.stopImmediatePropagation()"
+                    @change="importData"
+                  />
+                  <button class="lg" @click="exportData">
+                    <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
+                    {{ $t('dialog.settings.advanced_export') }}
+                  </button>
+                </div>
+                <p>{{ $t('dialog.settings.advanced_persist') }}:</p>
                 <button class="lg" :disabled="!!persistStorage || failedToPersist" @click="tryPersistStorage">
                   {{
                     $t(
@@ -311,8 +330,11 @@ import AppClearDataConfirmDialog from './AppClearDataConfirmDialog.vue'
 import { clearData } from '@/utils/dexie-utils'
 import { EventBus } from '@/core/event-bus'
 import { EXTRAS_CAT_MODE, EXTRAS_HOLOGRAM_MODE, EXTRAS_SPECIAL_DAYS } from '@/core/extras'
+import { saveAs } from 'file-saver'
+import { readFileSettings } from '@/core/helpers/import.helper'
 
 const i18n = useI18n()
+const fileInput: Ref<HTMLInputElement | null> = ref(null)
 
 const confirmDialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 const dialogRef: Ref<{
@@ -384,6 +406,29 @@ async function loadData() {
   keyBinds.value.push(...kb)
 }
 
+function openImportDialog() {
+  fileInput.value?.click()
+}
+async function importData(event: Event) {
+  const files = (event.target as HTMLInputElement).files
+  if (!files || files?.length === 0) {
+    console.warn('At least one file should be specified!')
+    return
+  }
+  const data = await readFileSettings(files[0])
+  appSettings.value = data.settings!
+  keyBinds.value.splice(0)
+  keyBinds.value.push(...data.keyBindings)
+  updateSettings()
+  EventBus.sendToastEvent('success', 'toast.settings_import_success', 5000)
+}
+
+async function exportData() {
+  const settings = await idb.settings.limit(1).first()
+  const keyBindings = await idb.keyBindings.toArray()
+  saveAs(new Blob([JSON.stringify({ settings, keyBindings }, null, 2)]), 'lagrange_data.json')
+}
+
 async function clearAllData() {
   await clearData()
   await loadData()
@@ -403,7 +448,9 @@ function toggleAction(action: string): void {
 }
 
 async function updateSettings() {
-  i18n.locale.value = appSettings.value!.locale
+  if (!EXTRAS_CAT_MODE.value) {
+    i18n.locale.value = appSettings.value!.locale
+  }
   document.documentElement.setAttribute('data-theme', appSettings.value!.theme)
   document.documentElement.setAttribute('data-font', appSettings.value!.font)
   document.documentElement.setAttribute('data-effects', appSettings.value!.enableEffects ? 'on' : 'off')
@@ -477,6 +524,13 @@ function getKeyBind(action: string) {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.75rem;
+    }
+  }
+  .settings-advanced #actions-io {
+    display: flex;
+    gap: 0.5rem;
+    & > * {
+      flex: 1;
     }
   }
   .setting-persist button {
