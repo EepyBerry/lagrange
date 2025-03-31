@@ -126,7 +126,10 @@
       "extras_special_days": "Show special days",
 
       "advanced": "Advanced Settings",
-      "advanced_persist": "Persist IndexedDB storage",
+      "advanced_io": "Backup/restore IndexedDB data",
+      "advanced_import": "Import file...",
+      "advanced_export": "Export",
+      "advanced_persist": "Persist IndexedDB data",
       "advanced_persist_prompt": "Enable",
       "advanced_persist_success": "Persisted!",
       "advanced_persist_failure": "Cannot persist!",
@@ -177,7 +180,7 @@
       "step_3": "Baking surface PBR",
       "step_4": "Baking surface normals",
       "step_5": "Baking clouds texture",
-      "step_6": "Baking ring system texture",
+      "step_6": "Baking ring system textures",
       "step_7": "Finalizing",
       "step_8": "Done!",
       "step_failed": "failed!"
@@ -351,6 +354,7 @@
       "ring": {
         "$title": "Ring System",
         "ring_show": "Show ring system",
+        "ring_list": "Rings",
 
         "transform": "Transform",
         "transform_radius_inner": "Inner radius",
@@ -380,7 +384,8 @@
     "import_success": "Imported planet(s) successfully!",
     "import_partial": "Warning: failed to import some planet(s)",
     "import_failure": "Could not import planets. Please check if the correct files are selected and try again",
-    "save_success": "Saved planet successfully!"
+    "save_success": "Saved planet successfully!",
+    "settings_import_success": "Imported settings successfully!"
   },
   "tooltip": {
     "topbar_rename": "Rename planet",

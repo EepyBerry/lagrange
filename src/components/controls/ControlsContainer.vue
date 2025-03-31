@@ -105,6 +105,6 @@ import ControlsSurface from './ControlsSurface.vue'
 import ControlsBiomes from './ControlsBiomes.vue'
 import ControlsClouds from './ControlsClouds.vue'
 import ControlsAtmosphere from './ControlsAtmosphere.vue'
-import ControlsRing from './ControlsRing.vue'
+import ControlsRing from './ControlsRings.vue'
 defineProps<{ compactMode: boolean }>()
 </script>

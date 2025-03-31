@@ -126,6 +126,9 @@
       "extras_special_days": "Spezielle Tage anzeigen",
 
       "advanced": "Erweiterte Einstellungen",
+      "advanced_io": "IndexedDB-Daten sichern/wiederherstellen",
+      "advanced_import": "Importieren...",
+      "advanced_export": "Exportieren",
       "advanced_persist": "IndexedDB-Speicher beihalten",
       "advanced_persist_prompt": "Aktivieren",
       "advanced_persist_success": "Persistiert!",
@@ -349,8 +352,9 @@
         "rgba_tint": "Farbe"
       },
       "ring": {
-        "$title": "Ring",
-        "ring_show": "Ring anzeigen",
+        "$title": "Ringe",
+        "ring_show": "Ringe anzeigen",
+        "ring_list": "Ringe",
 
         "transform": "Verformung",
         "transform_radius_inner": "Interner Radius",
@@ -380,7 +384,8 @@
     "import_success": "Planeten Importiert!",
     "import_partial": "Achtung: Einige Planeten konnten nicht importiert werden",
     "import_failure": "Planeten können nicht importiert werden. Stellen Sie sicher, dass die richtigen Dateien ausgewählt wurden, und versuchen Sie es dann erneut",
-    "save_success": "Planet gespeichert !"
+    "save_success": "Planet gespeichert !",
+    "settings_import_success": "Daten Importiert!"
   },
   "tooltip": {
     "topbar_rename": "Planeten umbenennen",

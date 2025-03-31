@@ -126,6 +126,9 @@
       "extras_special_days": "Afficher les jours spéciaux",
 
       "advanced": "Paramètres avancés",
+      "advanced_io": "Sauvegarde/import des paramètres",
+      "advanced_import": "Importer...",
+      "advanced_export": "Exporter",
       "advanced_persist": "Persister le stockage IndexedDB",
       "advanced_persist_prompt": "Activer",
       "advanced_persist_success": "Persisté !",
@@ -349,8 +352,9 @@
         "rgba_tint": "Couleur"
       },
       "ring": {
-        "$title": "Anneau",
-        "ring_show": "Afficher anneau",
+        "$title": "Anneaux",
+        "ring_show": "Afficher système",
+        "ring_list": "Anneaux",
 
         "transform": "Transform",
         "transform_radius_inner": "Rayon interne",
@@ -377,10 +381,11 @@
     "storage_failure_rules": "Persistance des données bloquée par les règles du navigateur !",
     "delete_success": "Planète supprimée !",
     "delete_failure": "Impossible de supprimer la planète",
-    "import_success": "Planète·s importé·es !",
+    "import_success": "Planète(s) importée(s) !",
     "import_partial": "Attention: certaines planètes n'ont pas pu être importées",
     "import_failure": "Impossible d'importer les planètes. Vérifiez que les bons fichiers ont été sélectionnés, puis essayez à nouveau",
-    "save_success": "Planète enregistrée !"
+    "save_success": "Planète enregistrée !",
+    "settings_import_success": "Paramètres chargés !"
   },
   "tooltip": {
     "topbar_rename": "Renommer la planète",

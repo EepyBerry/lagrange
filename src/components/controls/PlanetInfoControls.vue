@@ -106,7 +106,6 @@
       </button>
     </div>
     <!------ END floating menus ------>
-
     <AppResetConfirmDialog ref="resetDialog" @confirm="$emit('reset')" />
   </div>
 </template>

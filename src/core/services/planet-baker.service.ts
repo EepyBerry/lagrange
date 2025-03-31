@@ -57,10 +57,10 @@ export function createBakingPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, 
           zwarp: data.planetSurfaceNoise.zWarpFactor,
         },
       },
-      u_surface_tex: { value: surfaceTex.texture },
+      u_surface_tex: { value: surfaceTex },
       // Biomes
       u_biomes: { value: data.biomesEnabled },
-      u_biomes_tex: { value: biomeTex.texture },
+      u_biomes_tex: { value: biomeTex },
       u_temp_noise: {
         value: {
           mode: data.biomesTemperatureMode,
@@ -240,7 +240,7 @@ export function createBakingClouds(data: PlanetData, textureBuffer: Uint8Array):
         },
       },
       u_color: { value: data.cloudsColor },
-      u_opacity_tex: { value: opacityTex.texture },
+      u_opacity_tex: { value: opacityTex },
     },
     THREE.MeshBasicMaterial,
   )
@@ -253,28 +253,30 @@ export function createBakingClouds(data: PlanetData, textureBuffer: Uint8Array):
   return mesh
 }
 
-export function createBakingRing(data: PlanetData, textureBuffer: Uint8Array): THREE.Mesh {
-  const rgbaTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, data.ringColorRamp.steps)
+export function createBakingRing(data: PlanetData, textureBuffer: Uint8Array, paramsIndex: number): THREE.Mesh {
+  const ringParams = data.ringsParams[paramsIndex]
+  const rgbaTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
   const geometry = ComponentBuilder.createRingGeometryComponent(
     data.planetMeshQuality,
-    data.ringInnerRadius,
-    data.ringOuterRadius,
+    ringParams.innerRadius,
+    ringParams.outerRadius,
   )
   const material = ComponentBuilder.createCustomShaderMaterialComponent(
     ShaderLoader.fetch('ring.vert.glsl', ShaderFileType.CORE),
     ShaderLoader.fetch('ring.frag.glsl', ShaderFileType.CORE),
     {
-      u_inner_radius: { value: data.ringInnerRadius },
-      u_outer_radius: { value: data.ringOuterRadius },
-      u_ring_tex: { value: rgbaTex.texture },
+      u_inner_radius: { value: ringParams.innerRadius },
+      u_outer_radius: { value: ringParams.outerRadius },
+      u_ring_tex: { value: rgbaTex },
     },
     THREE.MeshBasicMaterial,
   )
   material.side = THREE.DoubleSide
   material.transparent = true
+  material.opacity = 1
 
   const mesh = new THREE.Mesh(geometry, material)
-  mesh.name = Globals.LG_NAME_RING
+  mesh.name = ringParams.id
   mesh.receiveShadow = true
   mesh.castShadow = true
   return mesh

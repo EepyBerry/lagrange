@@ -58,11 +58,6 @@ export type RawRGBA = {
   a: number
 }
 
-export type DataTextureWrapper = {
-  texture: DataTexture
-  data: Uint8Array
-}
-
 export type PlanetPreviewData = {
   sun: DirectionalLight
   ambientLight: AmbientLight
@@ -85,7 +80,7 @@ export type PlanetSceneData = {
   planet?: Mesh
   clouds?: Mesh
   atmosphere?: Mesh
-  ring?: Mesh
+  rings?: GenericMeshData[]
   sunLight?: DirectionalLight
   ambLight?: AmbientLight
   lensFlare?: LensFlareEffect
@@ -94,10 +89,21 @@ export type PlanetSceneData = {
   surfaceDataTex?: DataTexture
   cloudsDataTex?: DataTexture
   biomeDataTex?: DataTexture
-  ringDataTex?: DataTexture
 
   // Misc
   clock?: Clock
+}
+export type PlanetMeshData = {
+  mesh: Mesh
+  surfaceBuffer: Uint8Array
+  surfaceTexture: DataTexture
+  biomesBuffer: Uint8Array
+  biomesTexture: DataTexture
+}
+export type GenericMeshData = {
+  mesh: Mesh
+  texture: DataTexture
+  buffer: Uint8Array | null
 }
 
 // ----------------------------------- Baking types ---------------------------------

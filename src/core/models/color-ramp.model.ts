@@ -45,7 +45,7 @@ export class ColorRampStep {
     return this._color
   }
   public set color(color: THREE.Color) {
-    this._color = color
+    this._color.setRGB(color.r, color.g, color.b)
   }
 
   public get alpha(): number {
@@ -69,9 +69,9 @@ export class ColorRamp extends ChangeTracker {
   static EMPTY = new ColorRamp([], '', [])
 
   private _hash: string = '' // internal hash for tracking changes
-  private _steps: ColorRampStep[] = []
   private _maxSize: number = 16
   private _lockedSize: boolean = true
+  readonly _steps: ColorRampStep[] = []
 
   constructor(
     changedPropsRef: ChangedProp[],

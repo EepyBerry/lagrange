@@ -1,3 +1,4 @@
+import type { ColorRamp } from '@/core/models/color-ramp.model'
 import type { RawRGBA } from '@/core/types'
 import { LOCALE_MAP, MUL_INT8_TO_UNIT } from '@core/globals'
 import { Color } from 'three'
@@ -28,12 +29,25 @@ export function prefersReducedMotion() {
 
 // ----------------------------------------------------------------------------
 
-export function getColorLuminance(color: Color) {
-  return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b
+export type ColorRampStyle = { color: string; alpha: string }
+export function colorRampToStyle(ramp: ColorRamp): ColorRampStyle {
+  const gradient: string[] = []
+  const alphaGradient: string[] = []
+  for (let i = 0; i < ramp.steps.length; i++) {
+    const step = ramp.steps[i]
+    const rgb = step.color.getHexString()
+    const a = Math.ceil(step.alpha * 255).toString(16)
+    gradient.push(`#${rgb} ${step.factor * 100.0}%`)
+    alphaGradient.push(`#${a + a + a} ${step.factor * 100.0}%`)
+  }
+  return {
+    color: `linear-gradient(90deg, ${gradient.join(', ')})`,
+    alpha: `linear-gradient(90deg, ${alphaGradient.join(', ')})`,
+  }
 }
-export function getLinearRGBLuminance(r: number, g: number, b: number) {
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b
-}
-export function getLinearUint8Luminance(r: number, g: number, b: number) {
-  return 0.2126 * (r * MUL_INT8_TO_UNIT) + 0.7152 * (g * MUL_INT8_TO_UNIT) + 0.0722 * (b * MUL_INT8_TO_UNIT)
+export function alphaToGrayscale(alpha: number, full = false): string {
+  const hex = Math.ceil(alpha * 255)
+    .toString(16)
+    .padStart(2, '0')
+  return full ? `#${hex + hex + hex}` : hex
 }
