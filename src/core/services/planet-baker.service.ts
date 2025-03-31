@@ -256,7 +256,11 @@ export function createBakingClouds(data: PlanetData, textureBuffer: Uint8Array):
 export function createBakingRing(data: PlanetData, textureBuffer: Uint8Array, paramsIndex: number): THREE.Mesh {
   const ringParams = data.ringsParams[paramsIndex]
   const rgbaTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
-  const geometry = ComponentBuilder.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
+  const geometry = ComponentBuilder.createRingGeometryComponent(
+    data.planetMeshQuality,
+    ringParams.innerRadius,
+    ringParams.outerRadius,
+  )
   const material = ComponentBuilder.createCustomShaderMaterialComponent(
     ShaderLoader.fetch('ring.vert.glsl', ShaderFileType.CORE),
     ShaderLoader.fetch('ring.frag.glsl', ShaderFileType.CORE),

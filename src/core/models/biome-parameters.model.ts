@@ -25,7 +25,7 @@ export class BiomeParameters extends ChangeTracker {
     dims: BiomeDimensions,
     color: Color,
     smoothness: number,
-    oldId?: string
+    oldId?: string,
   ) {
     super(changedPropsRef, changePrefix)
     this._id = oldId ?? nanoid()

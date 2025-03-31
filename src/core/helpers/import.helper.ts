@@ -3,8 +3,8 @@ import PlanetData from '../models/planet-data.model'
 import pako from 'pako'
 import { nanoid } from 'nanoid'
 
-export async function readFileSettings(json: File): Promise<{ settings: IDBSettings, keyBindings: IDBKeyBinding[] }> {
-  return new Promise<{ settings: IDBSettings, keyBindings: IDBKeyBinding[] }>((resolve, reject) => {
+export async function readFileSettings(json: File): Promise<{ settings: IDBSettings; keyBindings: IDBKeyBinding[] }> {
+  return new Promise<{ settings: IDBSettings; keyBindings: IDBKeyBinding[] }>((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = (e) => {
       if (!e.target || !e.target?.result) {

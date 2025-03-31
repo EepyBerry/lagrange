@@ -29,7 +29,7 @@ export function prefersReducedMotion() {
 
 // ----------------------------------------------------------------------------
 
-export type ColorRampStyle = { color: string, alpha: string }
+export type ColorRampStyle = { color: string; alpha: string }
 export function colorRampToStyle(ramp: ColorRamp): ColorRampStyle {
   const gradient: string[] = []
   const alphaGradient: string[] = []
@@ -42,7 +42,7 @@ export function colorRampToStyle(ramp: ColorRamp): ColorRampStyle {
   }
   return {
     color: `linear-gradient(90deg, ${gradient.join(', ')})`,
-    alpha: `linear-gradient(90deg, ${alphaGradient.join(', ')})`
+    alpha: `linear-gradient(90deg, ${alphaGradient.join(', ')})`,
   }
 }
 export function alphaToGrayscale(alpha: number, full = false): string {

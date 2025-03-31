@@ -19,19 +19,26 @@ import { exportMeshesToGLTF } from '../helpers/export.helper'
 import { idb } from '@/dexie.config'
 import { sleep } from '@/utils/utils'
 import saveAs from 'file-saver'
-import { clearUniformUpdateMap, execUniformUpdate, initUniformUpdateMap, reloadRingDataUpdates } from '../helpers/uniform.helper'
+import {
+  clearUniformUpdateMap,
+  execUniformUpdate,
+  initUniformUpdateMap,
+  reloadRingDataUpdates,
+} from '../helpers/uniform.helper'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 
 // Editor constants
 const LG_SCENE_DATA: PlanetSceneData = {
-  rings: []
+  rings: [],
 }
 export const LG_PLANET_DATA: Ref<PlanetData> = ref(new PlanetData())
 
 // Buffers
-export const LG_BUFFER_SURFACE: Uint8Array  = new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4)
-export const LG_BUFFER_BIOME: Uint8Array    = new Uint8Array(Globals.TEXTURE_SIZES.BIOME * Globals.TEXTURE_SIZES.BIOME * 4)
-export const LG_BUFFER_CLOUDS: Uint8Array   = new Uint8Array(Globals.TEXTURE_SIZES.CLOUDS * Globals.TEXTURE_SIZES.CLOUDS * 4)
+export const LG_BUFFER_SURFACE: Uint8Array = new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4)
+export const LG_BUFFER_BIOME: Uint8Array = new Uint8Array(Globals.TEXTURE_SIZES.BIOME * Globals.TEXTURE_SIZES.BIOME * 4)
+export const LG_BUFFER_CLOUDS: Uint8Array = new Uint8Array(
+  Globals.TEXTURE_SIZES.CLOUDS * Globals.TEXTURE_SIZES.CLOUDS * 4,
+)
 
 const hasPlanetBeenEdited: Ref<boolean> = ref(false)
 let enableEditorRendering = true
@@ -52,11 +59,7 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   initLighting()
   initPlanet()
   initRendering(canvas, w, h)
-  initUniformUpdateMap(LG_SCENE_DATA, LG_PLANET_DATA.value, [
-    LG_BUFFER_SURFACE,
-    LG_BUFFER_BIOME,
-    LG_BUFFER_CLOUDS,
-  ])
+  initUniformUpdateMap(LG_SCENE_DATA, LG_PLANET_DATA.value, [LG_BUFFER_SURFACE, LG_BUFFER_BIOME, LG_BUFFER_CLOUDS])
   ComponentBuilder.createControlsComponent(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
 }
 
@@ -86,7 +89,7 @@ function initPlanet(): void {
     return {
       mesh: newRing.mesh,
       buffer: newRingBuffer,
-      texture: newRing.texs[0]
+      texture: newRing.texs[0],
     }
   })
   const planetGroup = new THREE.Group()
@@ -96,7 +99,7 @@ function initPlanet(): void {
 
   const ringAnchor = new THREE.Group()
   ringAnchor.name = Globals.LG_NAME_RING_ANCHOR
-  rings.forEach(r => ringAnchor.add(r.mesh))
+  rings.forEach((r) => ringAnchor.add(r.mesh))
   planetGroup.add(ringAnchor)
 
   LG_SCENE_DATA.scene!.add(planetGroup)
@@ -170,28 +173,28 @@ export function updateRingMeshes() {
 
   // Remove old ring meshes
   ringsMeshData
-  .filter(meshData => !ringsParams.some(params => params.id === meshData.mesh.name))
-  .forEach(data => {
-    (data.mesh.material as THREE.Material).dispose();
-    data.mesh.geometry.dispose();
-    data.buffer = null;
-  })
+    .filter((meshData) => !ringsParams.some((params) => params.id === meshData.mesh.name))
+    .forEach((data) => {
+      ;(data.mesh.material as THREE.Material).dispose()
+      data.mesh.geometry.dispose()
+      data.buffer = null
+    })
   ringsMeshData.splice(0)
   LG_SCENE_DATA.ringAnchor!.clear()
 
   // Create new ring meshes
   ringsParams
-  .filter(params => !ringsMeshData.some(p => p.mesh.name === params.id))
-  .forEach((_,idx) => {
-    const newRingBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
-    const newRing = ComponentBuilder.createRing(LG_PLANET_DATA.value, newRingBuffer, idx)
-    ringsMeshData.push({
-      mesh: newRing.mesh,
-      buffer: newRingBuffer,
-      texture: newRing.texs[0]
+    .filter((params) => !ringsMeshData.some((p) => p.mesh.name === params.id))
+    .forEach((_, idx) => {
+      const newRingBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
+      const newRing = ComponentBuilder.createRing(LG_PLANET_DATA.value, newRingBuffer, idx)
+      ringsMeshData.push({
+        mesh: newRing.mesh,
+        buffer: newRingBuffer,
+        texture: newRing.texs[0],
+      })
+      LG_SCENE_DATA.ringAnchor!.add(newRing.mesh)
     })
-    LG_SCENE_DATA.ringAnchor!.add(newRing.mesh)
-  })
 }
 
 function updateScene() {
@@ -224,17 +227,17 @@ export function disposeScene() {
   LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.sunLight!)
   LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.ambLight!)
 
-  LG_SCENE_DATA.lensFlare!.material.dispose();
-  LG_SCENE_DATA.lensFlare!.mesh.geometry.dispose();
-  (LG_SCENE_DATA.planet!.material as THREE.Material).dispose();
-  LG_SCENE_DATA.planet!.geometry.dispose();
-  (LG_SCENE_DATA.clouds!.material as THREE.Material).dispose();
-  LG_SCENE_DATA.clouds!.geometry.dispose();
-  (LG_SCENE_DATA.atmosphere!.material as THREE.Material).dispose();
-  LG_SCENE_DATA.atmosphere!.geometry.dispose();
-  LG_SCENE_DATA.rings!.forEach(r => {
-    (r.mesh.material as THREE.Material).dispose();
-    r.mesh.geometry.dispose();
+  LG_SCENE_DATA.lensFlare!.material.dispose()
+  LG_SCENE_DATA.lensFlare!.mesh.geometry.dispose()
+  ;(LG_SCENE_DATA.planet!.material as THREE.Material).dispose()
+  LG_SCENE_DATA.planet!.geometry.dispose()
+  ;(LG_SCENE_DATA.clouds!.material as THREE.Material).dispose()
+  LG_SCENE_DATA.clouds!.geometry.dispose()
+  ;(LG_SCENE_DATA.atmosphere!.material as THREE.Material).dispose()
+  LG_SCENE_DATA.atmosphere!.geometry.dispose()
+  LG_SCENE_DATA.rings!.forEach((r) => {
+    ;(r.mesh.material as THREE.Material).dispose()
+    r.mesh.geometry.dispose()
   })
 
   LG_BUFFER_SURFACE.fill(0)
@@ -408,7 +411,7 @@ export async function exportPlanetToGLTF(progressDialog: {
       ringGroup.name = Globals.LG_NAME_RING_ANCHOR
       bakePlanet.add(ringGroup)
       LG_PLANET_DATA.value.ringsParams.forEach((params, idx) => {
-        const ringMeshData = LG_SCENE_DATA.rings?.find(r => r.mesh.name === params.id)
+        const ringMeshData = LG_SCENE_DATA.rings?.find((r) => r.mesh.name === params.id)
         if (!ringMeshData) return
 
         const bakeRing = createBakingRing(LG_PLANET_DATA.value, ringMeshData!.buffer!, idx)

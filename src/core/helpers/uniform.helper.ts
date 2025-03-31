@@ -15,7 +15,13 @@ const UNIFORM_UPDATE_MAP: Ref<Map<string, () => void>> = ref(new Map<string, () 
 
 export function initUniformUpdateMap(sceneData: PlanetSceneData, planetData: PlanetData, texBufs: Uint8Array[]) {
   registerLightingDataUpdates(planetData, sceneData.sunLight!, sceneData.ambLight!, sceneData.lensFlare!)
-  registerPlanetRenderingDataUpdates(planetData, sceneData.planetGroup!, sceneData.planet!, sceneData.atmosphere!, sceneData.clouds!)
+  registerPlanetRenderingDataUpdates(
+    planetData,
+    sceneData.planetGroup!,
+    sceneData.planet!,
+    sceneData.atmosphere!,
+    sceneData.clouds!,
+  )
   registerSurfaceDataUpdates(planetData, sceneData.planet!, sceneData.surfaceDataTex!, texBufs[0])
   registerBiomeDataUpdates(planetData, sceneData.planet!, sceneData.biomeDataTex!, texBufs[1])
   registerCloudDataUpdates(planetData, sceneData.clouds!, sceneData.cloudsDataTex!, texBufs[2])
@@ -24,10 +30,10 @@ export function initUniformUpdateMap(sceneData: PlanetSceneData, planetData: Pla
 }
 
 export function reloadRingDataUpdates(sceneData: PlanetSceneData, planetData: PlanetData) {
-  const ringKeys = [...UNIFORM_UPDATE_MAP.value.keys()].filter(k => k.startsWith('_ringsParameters'))
-  ringKeys.forEach(k => {
+  const ringKeys = [...UNIFORM_UPDATE_MAP.value.keys()].filter((k) => k.startsWith('_ringsParameters'))
+  ringKeys.forEach((k) => {
     UNIFORM_UPDATE_MAP.value.delete(k)
-  });
+  })
   registerRingsDataUpdates(planetData, sceneData.rings!)
 }
 
