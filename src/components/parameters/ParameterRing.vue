@@ -5,14 +5,8 @@
         <button class="lg icon-button" @click="toggleExpand()" @keydown.enter="toggleExpand()">
           <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.25rem" aria-hidden="true" />
         </button>
-        <span
-          class="current-color"
-          :style="{ background: colorRampToStyle(lgParam!.colorRamp).color }"
-        >
-          <div
-            class="alpha-color"
-            :style="{ background: colorRampToStyle(lgParam!.colorRamp).alpha }"
-          ></div>
+        <span class="current-color" :style="{ background: colorRampToStyle(lgParam!.colorRamp).color }">
+          <div class="alpha-color" :style="{ background: colorRampToStyle(lgParam!.colorRamp).alpha }"></div>
         </span>
         <span class="ring-index">{{ getPartialId() }}</span>
       </div>
@@ -30,11 +24,7 @@
       <ParameterSlider :id="lgParam!.id + '-r-outer'" v-model="lgParam!.outerRadius" :step="0.01" :min="1.25" :max="5">
         {{ $t('editor.controls.ring.transform_radius_outer') }}
       </ParameterSlider>
-      <ParameterColorRamp
-        :key="lgParam!.id"
-        v-model="lgParam!.colorRamp"
-        mode="rgba"
-      >
+      <ParameterColorRamp :key="lgParam!.id" v-model="lgParam!.colorRamp" mode="rgba">
         {{ $t('editor.general.noise_rgbaramp') }}
       </ParameterColorRamp>
     </div>
@@ -42,9 +32,9 @@
 </template>
 
 <script setup lang="ts">
-import type { RingParameters } from '@/core/models/ring-parameters.model';
-import { colorRampToStyle } from '@/utils/utils';
-import { onMounted, ref, type Ref } from 'vue';
+import type { RingParameters } from '@/core/models/ring-parameters.model'
+import { colorRampToStyle } from '@/utils/utils'
+import { onMounted, ref, type Ref } from 'vue'
 
 const lgParam = defineModel<RingParameters>()
 
@@ -62,7 +52,6 @@ function getPartialId() {
   return lgParam.value?.id.substring(0, 6)
 }
 </script>
-
 
 <style scoped lang="scss">
 .ring-grid {

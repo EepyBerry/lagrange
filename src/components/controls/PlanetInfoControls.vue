@@ -143,7 +143,10 @@ const saveFloating = useFloating(saveMenuTrigger, saveMenu, {
 })
 // floating-ui end
 
-watch(() => EventBus.clickEvent.value, (evt) => onWindowClick(evt!))
+watch(
+  () => EventBus.clickEvent.value,
+  (evt) => onWindowClick(evt!),
+)
 
 defineProps<{ compactMode: boolean }>()
 const $emit = defineEmits(['rename', 'reset', 'save', 'copy', 'gltf', 'random'])
