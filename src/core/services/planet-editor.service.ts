@@ -203,15 +203,11 @@ function updateScene() {
     hasPlanetBeenEdited.value = true
   }
   for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
-    let key = changedProp.prop
-    // Check for additional info, separated by |
-    key = changedProp.prop.split('|')[0]
-
-    if (key === '_ringsParameters') {
+    if (changedProp.prop === '_ringsParameters') {
       updateRingMeshes()
       reloadRingDataUpdates(LG_SCENE_DATA, LG_PLANET_DATA.value)
     }
-    execUniformUpdate(key)
+    execUniformUpdate(changedProp.prop)
   }
   LG_PLANET_DATA.value.clearChangedProps()
 }
