@@ -4,6 +4,7 @@ import vertexShader from '@assets/glsl/core/lens_flare.vert.glsl?raw'
 import fragmentShader from '@assets/glsl/core/lens_flare.frag.glsl?raw'
 import { damp } from 'three/src/math/MathUtils.js'
 import { TEXTURE_LOADER } from './external-data.loader'
+import type { WebGPURenderer } from 'three/webgpu'
 
 export type LensFlareParams = {
   lensPosition: THREE.Vector3
@@ -130,10 +131,10 @@ export class LensFlareEffect {
     }
   }
 
-  public update(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, clock: THREE.Clock) {
+  public update(renderer: WebGPURenderer, scene: THREE.Scene, camera: THREE.Camera, clock: THREE.Clock) {
     const dt = clock.getDelta()
 
-    renderer.getCurrentViewport(this._viewport)
+    renderer.getViewport(this._viewport)
     this._mesh.lookAt(camera.position)
     this._material.uniforms.iResolution.value.set(this._viewport.z, this._viewport.w)
 

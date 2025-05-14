@@ -11,6 +11,7 @@ import type {
   WebGLRenderer,
 } from 'three'
 import type { LensFlareEffect } from './three/lens-flare.effect'
+import type { WebGPURenderer } from 'three/webgpu'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
@@ -24,7 +25,7 @@ export enum ShaderFileType {
 // ----------------------------------- Editor types ---------------------------------
 export type SceneRenderObjects = {
   scene: Scene
-  renderer: WebGLRenderer
+  renderer: WebGPURenderer
   camera: PerspectiveCamera
 }
 
@@ -69,7 +70,7 @@ export type PlanetPreviewData = {
 export type PlanetSceneData = {
   // Scene, renderer, camera
   scene?: Scene
-  renderer?: WebGLRenderer
+  renderer?: WebGPURenderer
   camera?: PerspectiveCamera
 
   // Groups

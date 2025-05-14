@@ -81,7 +81,7 @@ function initLighting(): void {
 
 function initPlanet(): void {
   const planet = ComponentBuilder.createPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME)
-  const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
+  /*const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
   const atmosphere = ComponentBuilder.createAtmosphere(LG_PLANET_DATA.value, LG_SCENE_DATA.sunLight!.position)
   const rings: GenericMeshData[] = LG_PLANET_DATA.value.ringsParams.map((_, idx) => {
     const newRingBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
@@ -91,38 +91,38 @@ function initPlanet(): void {
       buffer: newRingBuffer,
       texture: newRing.texs[0],
     }
-  })
+  })*/
   const planetGroup = new THREE.Group()
   planetGroup.add(planet.mesh)
-  planetGroup.add(clouds.mesh)
+  /*planetGroup.add(clouds.mesh)
   planetGroup.add(atmosphere)
 
   const ringAnchor = new THREE.Group()
   ringAnchor.name = Globals.LG_NAME_RING_ANCHOR
   rings.forEach((r) => ringAnchor.add(r.mesh))
-  planetGroup.add(ringAnchor)
+  planetGroup.add(ringAnchor)*/
 
   LG_SCENE_DATA.scene!.add(planetGroup)
   LG_SCENE_DATA.planet = planet.mesh
-  LG_SCENE_DATA.clouds = clouds.mesh
-  LG_SCENE_DATA.atmosphere = atmosphere
-  LG_SCENE_DATA.rings = rings
+  //LG_SCENE_DATA.clouds = clouds.mesh
+  //LG_SCENE_DATA.atmosphere = atmosphere
+  //LG_SCENE_DATA.rings = rings
   LG_SCENE_DATA.planetGroup = planetGroup
-  LG_SCENE_DATA.ringAnchor = ringAnchor
+  //LG_SCENE_DATA.ringAnchor = ringAnchor
 
   // Set datatextures + data
   LG_SCENE_DATA.surfaceDataTex = planet.texs[0]
   LG_SCENE_DATA.biomeDataTex = planet.texs[1]
-  LG_SCENE_DATA.cloudsDataTex = clouds.texs[0]
+  //LG_SCENE_DATA.cloudsDataTex = clouds.texs[0]
 
   // Set initial rotations
   LG_SCENE_DATA.planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
   LG_SCENE_DATA.planet.setRotationFromAxisAngle(LG_SCENE_DATA.planet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
-  LG_SCENE_DATA.clouds.setRotationFromAxisAngle(
+  /*LG_SCENE_DATA.clouds.setRotationFromAxisAngle(
     LG_SCENE_DATA.clouds.up,
     degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation),
   )
-  LG_SCENE_DATA.ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90))
+  LG_SCENE_DATA.ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90))*/
 
   // Set lighting target
   LG_SCENE_DATA.sunLight!.target = LG_SCENE_DATA.planetGroup
@@ -203,15 +203,11 @@ function updateScene() {
     hasPlanetBeenEdited.value = true
   }
   for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
-    let key = changedProp.prop
-    // Check for additional info, separated by |
-    key = changedProp.prop.split('|')[0]
-
-    if (key === '_ringsParameters') {
+    /*if (changedProp.prop === '_ringsParameters') {
       updateRingMeshes()
       reloadRingDataUpdates(LG_SCENE_DATA, LG_PLANET_DATA.value)
     }
-    execUniformUpdate(key)
+    execUniformUpdate(changedProp.prop)*/
   }
   LG_PLANET_DATA.value.clearChangedProps()
 }
@@ -227,26 +223,26 @@ export function disposeScene() {
   LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.sunLight!)
   LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.ambLight!)
 
-  LG_SCENE_DATA.lensFlare!.material.dispose()
-  LG_SCENE_DATA.lensFlare!.mesh.geometry.dispose()
+  /*LG_SCENE_DATA.lensFlare!.material.dispose()
+  LG_SCENE_DATA.lensFlare!.mesh.geometry.dispose()*/
   ;(LG_SCENE_DATA.planet!.material as THREE.Material).dispose()
   LG_SCENE_DATA.planet!.geometry.dispose()
-  ;(LG_SCENE_DATA.clouds!.material as THREE.Material).dispose()
+  /*;(LG_SCENE_DATA.clouds!.material as THREE.Material).dispose()
   LG_SCENE_DATA.clouds!.geometry.dispose()
   ;(LG_SCENE_DATA.atmosphere!.material as THREE.Material).dispose()
   LG_SCENE_DATA.atmosphere!.geometry.dispose()
   LG_SCENE_DATA.rings!.forEach((r) => {
     ;(r.mesh.material as THREE.Material).dispose()
     r.mesh.geometry.dispose()
-  })
+  })*/
 
   LG_BUFFER_SURFACE.fill(0)
-  LG_BUFFER_BIOME.fill(0)
-  LG_BUFFER_CLOUDS.fill(0)
+  /*LG_BUFFER_BIOME.fill(0)
+  LG_BUFFER_CLOUDS.fill(0)*/
   LG_SCENE_DATA.surfaceDataTex!.dispose()
-  LG_SCENE_DATA.biomeDataTex!.dispose()
+  /*LG_SCENE_DATA.biomeDataTex!.dispose()
   LG_SCENE_DATA.cloudsDataTex!.dispose()
-  LG_SCENE_DATA.ringAnchor!.clear()
+  LG_SCENE_DATA.ringAnchor!.clear()*/
   LG_SCENE_DATA.planetGroup!.clear()
 
   LG_SCENE_DATA.scene!.children.forEach((c) => LG_SCENE_DATA.scene!.remove(c))
@@ -302,14 +298,14 @@ export async function exportPlanetPreview(): Promise<string> {
   previewCamera.setRotationFromAxisAngle(Globals.AXIS_Y, degToRad(LG_PLANET_DATA.value.initCamAngle))
   previewCamera.updateProjectionMatrix()
 
-  const renderGroup = new THREE.Group()
-  renderGroup.add(LG_SCENE_DATA.planetGroup!, LG_SCENE_DATA.sunLight!)
+  const renderScene = new THREE.Scene()
+  renderScene.add(LG_SCENE_DATA.planetGroup!, LG_SCENE_DATA.sunLight!)
 
   // ---------------------------- Setup renderer & render -----------------------------
   const rawBuffer = new Uint8Array(w * h * 4)
   LG_SCENE_DATA.renderer!.setRenderTarget(previewRenderTarget)
-  LG_SCENE_DATA.renderer!.render(renderGroup, previewCamera)
-  LG_SCENE_DATA.renderer!.readRenderTargetPixels(previewRenderTarget, 0, 0, w, h, rawBuffer)
+  LG_SCENE_DATA.renderer!.render(renderScene, previewCamera)
+  rawBuffer.set(await LG_SCENE_DATA.renderer!.readRenderTargetPixelsAsync(previewRenderTarget, 0, 0, w,h))
   LG_SCENE_DATA.renderer!.setRenderTarget(null)
 
   // ----------------- Create preview canvas & write data from buffer -----------------
@@ -353,22 +349,22 @@ export async function exportPlanetToGLTF(progressDialog: {
     progressDialog.setProgress(2)
     await sleep(50)
     const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME)
-    const bakePlanetSurfaceTex = bakeMesh(LG_SCENE_DATA.renderer!, bakePlanet, w, h)
+    const bakePlanetSurfaceTex = await bakeMesh(LG_SCENE_DATA.renderer!, bakePlanet, w, h)
     if (appSettings?.bakingPixelize) bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
 
     progressDialog.setProgress(3)
     await sleep(50)
     const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value)
-    const bakePlanetPBRTex = bakeMesh(LG_SCENE_DATA.renderer!, bakePBR, w, h)
+    const bakePlanetPBRTex = await bakeMesh(LG_SCENE_DATA.renderer!, bakePBR, w, h)
     if (appSettings?.bakingPixelize) bakePlanetPBRTex.magFilter = THREE.NearestFilter
 
     progressDialog.setProgress(4)
     await sleep(50)
     const bakeHeight = createBakingHeightMap(LG_PLANET_DATA.value)
-    const bakePlanetHeightTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeHeight, w, h)
+    const bakePlanetHeightTex = await bakeMesh(LG_SCENE_DATA.renderer!, bakeHeight, w, h)
 
     const bakeNormal = createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex, w)
-    const bakePlanetNormalTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeNormal, w, h)
+    const bakePlanetNormalTex = await bakeMesh(LG_SCENE_DATA.renderer!, bakeNormal, w, h)
     if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
 
     bakePlanet.material = new THREE.MeshStandardMaterial({
@@ -388,7 +384,7 @@ export async function exportPlanetToGLTF(progressDialog: {
       progressDialog.setProgress(5)
       await sleep(50)
       const bakeClouds = createBakingClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
-      const bakeCloudsTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeClouds, w, h)
+      const bakeCloudsTex = await bakeMesh(LG_SCENE_DATA.renderer!, bakeClouds, w, h)
       if (appSettings?.bakingPixelize) bakeCloudsTex.magFilter = THREE.NearestFilter
 
       bakeClouds.material = new THREE.MeshStandardMaterial({
@@ -410,12 +406,12 @@ export async function exportPlanetToGLTF(progressDialog: {
       const ringGroup = new THREE.Group()
       ringGroup.name = Globals.LG_NAME_RING_ANCHOR
       bakePlanet.add(ringGroup)
-      LG_PLANET_DATA.value.ringsParams.forEach((params, idx) => {
+      LG_PLANET_DATA.value.ringsParams.forEach(async (params, idx) => {
         const ringMeshData = LG_SCENE_DATA.rings?.find((r) => r.mesh.name === params.id)
         if (!ringMeshData) return
 
         const bakeRing = createBakingRing(LG_PLANET_DATA.value, ringMeshData!.buffer!, idx)
-        const bakeRingTex = bakeMesh(LG_SCENE_DATA.renderer!, bakeRing, w, h)
+        const bakeRingTex = await bakeMesh(LG_SCENE_DATA.renderer!, bakeRing, w, h)
         if (appSettings?.bakingPixelize) bakeRingTex.magFilter = THREE.NearestFilter
 
         bakeRing.material = new THREE.MeshStandardMaterial({

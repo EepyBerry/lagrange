@@ -9,6 +9,8 @@ import { loadCubeTexture } from './external-data.loader'
 import { LensFlareEffect } from './lens-flare.effect'
 import * as Globals from '@core/globals'
 import * as ShaderLoader from '../three/shader.loader'
+import { WebGPURenderer } from 'three/webgpu'
+import { buildPlanetMaterial } from '@/tsl/materials/planet.material'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -75,7 +77,7 @@ export function createPlanet(
   const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
   const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
 
-  const material = createCustomShaderMaterialComponent(
+  /*const material = createCustomShaderMaterialComponent(
     ShaderLoader.fetch('planet.vert.glsl', ShaderFileType.CORE),
     ShaderLoader.fetch('planet.frag.glsl', ShaderFileType.CORE),
     {
@@ -143,9 +145,10 @@ export function createPlanet(
       },
     },
     THREE.MeshStandardMaterial,
-  )
+  )*/
+  const uniformNodeMat = buildPlanetMaterial()
 
-  const mesh = new THREE.Mesh(geometry, material)
+  const mesh = new THREE.Mesh(geometry, uniformNodeMat.material)
   mesh.castShadow = true
   mesh.receiveShadow = true
   mesh.name = Globals.LG_NAME_PLANET
@@ -271,15 +274,14 @@ export function createRing(
  * @returns the renderer
  */
 export function createRendererComponent(width: number, height: number, pixelRatio?: number) {
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true })
+  const renderer = new WebGPURenderer({ antialias: true, alpha: true })
   if (pixelRatio) {
     renderer.setPixelRatio(pixelRatio)
   }
   renderer.setSize(width, height)
   renderer.setClearColor(0x000000, 0)
-  renderer.setTransparentSort((a, b) => a.z - b.z) // Invert transparent sorting to have a "filter" effect for transparent objects (atmos/ring)
+  //renderer.setTransparentSort((a, b) => a.z - b.z) // Invert transparent sorting to have a "filter" effect for transparent objects (atmos/ring)
   renderer.shadowMap.enabled = true
-  renderer.shadowMap.autoUpdate = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
   renderer.outputColorSpace = THREE.SRGBColorSpace
   return renderer

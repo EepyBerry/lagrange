@@ -1,7 +1,7 @@
 import { float, floor, Fn, fract, int, Loop, mul, sub, vec2, vec3, vec4 } from 'three/tsl'
 
 // X mod 289 operation, float style
-export const mod289f = /*#__PURE__*/ Fn(([i_value]: unknown[]) => {
+export const mod289f = /*@__PURE__*/ Fn(([i_value]: unknown[]) => {
   const x = float(i_value).toVar()
   return x.sub(floor(x.mul(1.0 / 289.0)).mul(289.0))
 }).setLayout({
@@ -11,7 +11,7 @@ export const mod289f = /*#__PURE__*/ Fn(([i_value]: unknown[]) => {
 })
 
 // X mod 289 operation, vec4 style
-export const mod289v = /*#__PURE__*/ Fn(([i_vec]: unknown[]) => {
+export const mod289v = /*@__PURE__*/ Fn(([i_vec]: unknown[]) => {
   const x = vec4(i_vec).toVar()
   return x.sub(floor(x.mul(1.0 / 289.0)).mul(289.0))
 }).setLayout({
@@ -23,7 +23,7 @@ export const mod289v = /*#__PURE__*/ Fn(([i_vec]: unknown[]) => {
 //export const mod289 = overloadingFn([mod289f, mod289v]);
 
 // Permutation function
-export const perm = /*#__PURE__*/ Fn(([i_vec]: unknown[]) => {
+export const perm = /*@__PURE__*/ Fn(([i_vec]: unknown[]) => {
   const x = vec4(i_vec).toVar()
   return mod289v(x.mul(34.0).add(1.0).mul(x))
 }).setLayout({
@@ -33,7 +33,7 @@ export const perm = /*#__PURE__*/ Fn(([i_vec]: unknown[]) => {
 })
 
 // 3D fractal Brownian motion - noise function
-export const noise3 = /*#__PURE__*/ Fn(([i_point]: unknown[]) => {
+export const noise3 = /*@__PURE__*/ Fn(([i_point]: unknown[]) => {
   const p = vec3(i_point).toVar()
   const a = vec3(floor(p)).toVar()
   const d = vec3(p.sub(a)).toVar()
@@ -59,18 +59,19 @@ export const noise3 = /*#__PURE__*/ Fn(([i_point]: unknown[]) => {
   inputs: [{ name: 'p', type: 'vec3' }],
 })
 
-export const fbm3 = /*#__PURE__*/ Fn(
-  ([i_x, i_frequency, i_amplitude, i_lacunarity, i_octaves]: unknown[]) => {
-    const octaves = int(i_octaves).toVar()
-    const lac = float(i_lacunarity).toVar()
-    const amp = float(i_amplitude).toVar()
-    const freq = float(i_frequency).toVar()
-    const x = vec3(i_x).toVar()
-    const val = float(0.0).toVar()
-    Loop({ start: int(0), end: octaves, condition: '' }, () => {
-      val.addAssign(amp.mul(noise3(x.mul(freq))))
+export const fbm3 = /*@__PURE__*/ Fn(
+  ([i_point, i_frequency, i_amplitude, i_lacunarity, i_octaves]: unknown[]) => {
+    const octaves = float(i_octaves).toInt().toVar().label('octaves')
+    const lac = float(i_lacunarity).toVar().label('lac')
+    const amp = float(i_amplitude).toVar().label('amp')
+    const freq = float(i_frequency).toVar().label('freq')
+    const point = vec3(i_point).toVar().label('x')
+    const val = float(0.0).toVar().label('val')
+    Loop({ start: int(0), end: octaves, condition: '<' }, () => {
+      val.addAssign(amp.mul(noise3(point.mul(freq))))
       freq.mulAssign(lac)
       amp.mulAssign(0.5)
+      console.log('sdfskf')
     })
     return val
   },
@@ -78,10 +79,10 @@ export const fbm3 = /*#__PURE__*/ Fn(
   name: 'fbm3',
   type: 'float',
   inputs: [
-    { name: 'x', type: 'vec3' },
-    { name: 'freq', type: 'float' },
-    { name: 'amp', type: 'float' },
-    { name: 'lac', type: 'float' },
-    { name: 'octaves', type: 'int' },
+    { name: 'point', type: 'vec3' },
+    { name: 'frequency', type: 'float' },
+    { name: 'amplitude', type: 'float' },
+    { name: 'lacunarity', type: 'float' },
+    { name: 'octaves', type: 'float' },
   ],
 })

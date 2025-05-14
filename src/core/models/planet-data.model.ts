@@ -692,8 +692,7 @@ export default class PlanetData extends ChangeTracker {
     this.biomesParams.splice(0)
     this.biomesParams.push(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(data._biomesParams ?? []).map(
-        (params: any) =>
+      ...(data._biomesParams ?? []).map((params: any) =>
           new BiomeParameters(
             this.changedProps,
             '_biomesParameters',
@@ -742,8 +741,7 @@ export default class PlanetData extends ChangeTracker {
     this.ringsParams.splice(0)
     this.ringsParams.push(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(data._ringsParams ?? []).map(
-        (params: any) =>
+      ...(data._ringsParams ?? []).map((params: any) =>
           new RingParameters(
             this.changedProps,
             '_ringsParameters',

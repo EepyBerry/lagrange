@@ -8,6 +8,7 @@ import type PlanetData from '@core/models/planet-data.model'
 import { ShaderFileType } from '@core/types'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import { bufferToTexture } from '@/utils/three-utils'
+import type { WebGPURenderer } from 'three/webgpu'
 
 const BAKE_PATCH_RGX = /gl_Position ?=.*;/gm
 const BAKE_CAMERA = ComponentBuilder.createOrthgraphicCameraComponent(1, 1, 0, 1)
@@ -293,12 +294,14 @@ export function createBakingRing(data: PlanetData, textureBuffer: Uint8Array, pa
  * @param applyGaussDilation if true, uses a Gaussian blur pass to dilate the texture cleanly
  * @returns a promise containing the mesh's baked texture
  */
-export function bakeMesh(
-  renderer: THREE.WebGLRenderer,
+export async function bakeMesh(
+  renderer: WebGPURenderer,
   mesh: THREE.Mesh,
   width: number,
   height: number,
-): THREE.Texture {
+): Promise<THREE.Texture> {
+  const bakeScene = new THREE.Scene()
+  bakeScene.add(mesh)
   BAKE_RENDER_TARGET.setSize(width, height)
 
   BAKE_CAMERA.left = -width / 2
@@ -309,10 +312,9 @@ export function bakeMesh(
 
   patchMaterialForUnwrapping(mesh.material as CustomShaderMaterial)
   renderer.setRenderTarget(BAKE_RENDER_TARGET)
-  renderer.render(mesh, BAKE_CAMERA)
+  renderer.render(bakeScene, BAKE_CAMERA)
 
-  const renderBuffer = new Uint8Array(width * height * 4)
-  renderer.readRenderTargetPixels(BAKE_RENDER_TARGET, 0, 0, width, height, renderBuffer)
+  const renderBuffer = await renderer.readRenderTargetPixelsAsync(BAKE_RENDER_TARGET, 0, 0, width, height)
   renderer.setRenderTarget(null)
 
   return bufferToTexture(renderBuffer, width, height)
