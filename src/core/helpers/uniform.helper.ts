@@ -5,7 +5,7 @@ import { degToRad } from 'three/src/math/MathUtils.js'
 import { patchMeshUniform, setMeshUniform, setMeshUniforms } from '@/utils/three-utils'
 import { recalculateBiomeTexture, recalculateRampTexture } from './texture.helper'
 import type { ColorRampStep } from '../models/color-ramp.model'
-import type { GenericMeshData, PlanetSceneData } from '../types'
+import type { GenericMeshData, PlanetMeshData, PlanetSceneData, PlanetUniformData } from '../types'
 import type { AmbientLight, DataTexture, DirectionalLight, Group, Mesh } from 'three'
 import type { LensFlareEffect } from '../three/lens-flare.effect'
 import type { BiomeParameters } from '../models/biome-parameters.model'
@@ -13,20 +13,20 @@ import type PlanetData from '../models/planet-data.model'
 
 const UNIFORM_UPDATE_MAP: Ref<Map<string, () => void>> = ref(new Map<string, () => void>())
 
-export function initUniformUpdateMap(sceneData: PlanetSceneData, planetData: PlanetData, texBufs: Uint8Array[]) {
-  registerLightingDataUpdates(planetData, sceneData.sunLight!, sceneData.ambLight!, sceneData.lensFlare!)
+export function initUniformUpdateMap(sceneData: PlanetSceneData, planetData: PlanetData) {
+  /* registerLightingDataUpdates(planetData, sceneData.sunLight!, sceneData.ambLight!, sceneData.lensFlare!)
   registerPlanetRenderingDataUpdates(
     planetData,
     sceneData.planetGroup!,
     sceneData.planet!,
     sceneData.atmosphere!,
     sceneData.clouds!,
-  )
-  registerSurfaceDataUpdates(planetData, sceneData.planet!, sceneData.surfaceDataTex!, texBufs[0])
-  registerBiomeDataUpdates(planetData, sceneData.planet!, sceneData.biomeDataTex!, texBufs[1])
+  )*/
+  registerSurfaceDataUpdates(planetData, sceneData.planet!)
+  /* registerBiomeDataUpdates(planetData, sceneData.planet!, sceneData.biomeDataTex!, texBufs[1])
   registerCloudDataUpdates(planetData, sceneData.clouds!, sceneData.cloudsDataTex!, texBufs[2])
   registerAtmosphereDataUpdates(planetData, sceneData.atmosphere!)
-  registerRingsDataUpdates(planetData, sceneData.rings!)
+  registerRingsDataUpdates(planetData, sceneData.rings!) */
 }
 
 export function reloadRingDataUpdates(sceneData: PlanetSceneData, planetData: PlanetData) {
@@ -34,7 +34,7 @@ export function reloadRingDataUpdates(sceneData: PlanetSceneData, planetData: Pl
   ringKeys.forEach((k) => {
     UNIFORM_UPDATE_MAP.value.delete(k)
   })
-  registerRingsDataUpdates(planetData, sceneData.rings!)
+  //registerRingsDataUpdates(planetData, sceneData.rings!)
 }
 
 export function clearUniformUpdateMap() {
@@ -93,8 +93,8 @@ function registerPlanetRenderingDataUpdates(data: PlanetData, planetGroup: Group
 }
 
 // prettier-ignore
-function registerSurfaceDataUpdates(data: PlanetData, planet: Mesh, surfaceDataTex: DataTexture, buffer: Uint8Array): void {
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowBumps',                () => setMeshUniform(planet,   'u_bump', data.planetSurfaceShowBumps))
+function registerSurfaceDataUpdates(data: PlanetData, planet: PlanetMeshData): void {
+  /* UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowBumps',                () => setMeshUniform(planet,   'u_bump', data.planetSurfaceShowBumps))
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceBumpStrength',             () => setMeshUniform(planet,   'u_bump_strength', data.planetSurfaceBumpStrength))
   // Warping
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowWarping',              () => setMeshUniform(planet,   'u_warp', data.planetSurfaceShowWarping))
@@ -119,14 +119,30 @@ function registerSurfaceDataUpdates(data: PlanetData, planet: Mesh, surfaceDataT
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._octaves',           () => patchMeshUniform(planet, 'u_surface_noise', { oct: data.planetSurfaceNoise.octaves }))
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._layers',            () => patchMeshUniform(planet, 'u_surface_noise', { layers: data.planetSurfaceNoise.layers }))
   // Color
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceColorRamp',         () => {
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceColorRamp', () => {
     const v = data.planetSurfaceColorRamp
     recalculateRampTexture(buffer, Globals.TEXTURE_SIZES.SURFACE, v.steps as ColorRampStep[])
     surfaceDataTex.needsUpdate = true
-  })
+  }) */
+  UNIFORM_UPDATE_MAP.value.set(
+    '_planetSurfaceNoise._frequency',
+    () => (planet.uniforms.noise.array[0] = data.planetSurfaceNoise.frequency),
+  )
+  UNIFORM_UPDATE_MAP.value.set(
+    '_planetSurfaceNoise._amplitude',
+    () => (planet.uniforms.noise.array[1] = data.planetSurfaceNoise.amplitude),
+  )
+  UNIFORM_UPDATE_MAP.value.set(
+    '_planetSurfaceNoise._lacunarity',
+    () => (planet.uniforms.noise.array[2] = data.planetSurfaceNoise.lacunarity),
+  )
+  UNIFORM_UPDATE_MAP.value.set(
+    '_planetSurfaceNoise._octaves',
+    () => (planet.uniforms.noise.array[3] = data.planetSurfaceNoise.octaves),
+  )
 }
 
-// prettier-ignore
+/* // prettier-ignore
 function registerBiomeDataUpdates(data: PlanetData, planet: Mesh, biomeDataTex: DataTexture, buffer: Uint8Array): void {
   UNIFORM_UPDATE_MAP.value.set('_biomesEnabled',                      () => setMeshUniform(planet, 'u_biomes', data.biomesEnabled))
   // Temperature
@@ -224,4 +240,4 @@ function registerRingsDataUpdates(data: PlanetData, ringsData: GenericMeshData[]
       rd.texture.needsUpdate = true
     })
   })
-}
+} */

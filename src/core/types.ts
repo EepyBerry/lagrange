@@ -12,6 +12,7 @@ import type {
 } from 'three'
 import type { LensFlareEffect } from './three/lens-flare.effect'
 import type { WebGPURenderer } from 'three/webgpu'
+import type { PlanetUniforms } from '@/tsl/materials/planet.tslmat'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
@@ -59,14 +60,7 @@ export type RawRGBA = {
   a: number
 }
 
-export type PlanetPreviewData = {
-  sun: DirectionalLight
-  ambientLight: AmbientLight
-  planet: Mesh
-  clouds: Mesh
-  atmosphere: Mesh
-  ring: Mesh
-}
+// ------------------------------------ Main data -----------------------------------
 export type PlanetSceneData = {
   // Scene, renderer, camera
   scene?: Scene
@@ -78,7 +72,7 @@ export type PlanetSceneData = {
   ringAnchor?: Group
 
   // Main objects
-  planet?: Mesh
+  planet?: PlanetMeshData
   clouds?: Mesh
   atmosphere?: Mesh
   rings?: GenericMeshData[]
@@ -87,24 +81,40 @@ export type PlanetSceneData = {
   lensFlare?: LensFlareEffect
 
   // DataTextures
-  surfaceDataTex?: DataTexture
   cloudsDataTex?: DataTexture
-  biomeDataTex?: DataTexture
 
   // Misc
   clock?: Clock
 }
+export type PlanetUniformData = {
+  planet?: PlanetUniforms
+}
+
+// ------------------------------------ Mesh data -----------------------------------
 export type PlanetMeshData = {
   mesh: Mesh
-  surfaceBuffer: Uint8Array
+  uniforms: PlanetUniforms
+
+  surfaceBuffer: Uint8Array | null
   surfaceTexture: DataTexture
-  biomesBuffer: Uint8Array
+
+  biomesBuffer: Uint8Array | null
   biomesTexture: DataTexture
 }
 export type GenericMeshData = {
   mesh: Mesh
   texture: DataTexture
   buffer: Uint8Array | null
+}
+
+// ---------------------------------- Preview data ----------------------------------
+export type PlanetPreviewData = {
+  sun: DirectionalLight
+  ambientLight: AmbientLight
+  planet: Mesh
+  clouds: Mesh
+  atmosphere: Mesh
+  ring: Mesh
 }
 
 // ----------------------------------- Baking types ---------------------------------
