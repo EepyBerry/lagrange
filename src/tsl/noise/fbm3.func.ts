@@ -1,38 +1,27 @@
 import { float, floor, Fn, fract, int, Loop, mul, sub, vec2, vec3, vec4 } from 'three/tsl'
-import type { Node, UniformArrayNode, VaryingNode } from 'three/webgpu'
+import type { UniformNode, VaryingNode } from 'three/webgpu'
+import type { UniformVector3Node, UniformVector4Node } from '../types'
 
 // X mod 289 operation, float style
-export const mod289f = /*@__PURE__*/ Fn(([i_value]: [Node]) => {
+export const mod289f = /*@__PURE__*/ Fn(([i_value]: [UniformNode<number>]) => {
   const x = float(i_value).toVar()
   return x.sub(floor(x.mul(1.0 / 289.0)).mul(289.0))
-}).setLayout({
-  name: 'mod289f',
-  type: 'float',
-  inputs: [{ name: 'value', type: 'float' }],
 })
 
 // X mod 289 operation, vec4 style
-export const mod289v = /*@__PURE__*/ Fn(([i_vec]: [Node]) => {
+export const mod289v = /*@__PURE__*/ Fn(([i_vec]: [UniformVector3Node]) => {
   const x = vec4(i_vec).toVar()
   return x.sub(floor(x.mul(1.0 / 289.0)).mul(289.0))
-}).setLayout({
-  name: 'mod289v',
-  type: 'vec4',
-  inputs: [{ name: 'vec', type: 'vec4' }],
 })
 
 // Permutation function
-export const perm = /*@__PURE__*/ Fn(([i_vec]: [Node]) => {
+export const perm = /*@__PURE__*/ Fn(([i_vec]: [UniformVector3Node]) => {
   const x = vec4(i_vec).toVar()
   return mod289v(x.mul(34.0).add(1.0).mul(x))
-}).setLayout({
-  name: 'perm',
-  type: 'vec4',
-  inputs: [{ name: 'vec', type: 'vec4' }],
 })
 
 // 3D fractal Brownian motion - noise function
-export const noise3 = /*@__PURE__*/ Fn(([i_point]: [Node]) => {
+export const noise3 = /*@__PURE__*/ Fn(([i_point]: [UniformVector3Node]) => {
   const p = vec3(i_point).toVar()
   const a = vec3(floor(p)).toVar()
   const d = vec3(p.sub(a)).toVar()
@@ -52,17 +41,13 @@ export const noise3 = /*@__PURE__*/ Fn(([i_point]: [Node]) => {
   const o4 = vec2(o3.yw.mul(d.x).add(o3.xz.mul(sub(1.0, d.x)))).toVar()
 
   return o4.y.mul(d.y).add(o4.x.mul(sub(1.0, d.y)))
-}).setLayout({
-  name: 'noise3',
-  type: 'float',
-  inputs: [{ name: 'point', type: 'vec3' }],
 })
 
-export const fbm3 = /*@__PURE__*/ Fn(([i_point, i_noiseparams]: [VaryingNode, UniformArrayNode]) => {
-  const freq = float(i_noiseparams.element(0)).toVar().label('freq')
-  const amp = float(i_noiseparams.element(1)).toVar().label('amp')
-  const lac = float(i_noiseparams.element(2)).toVar().label('lac')
-  const octaves = float(i_noiseparams.element(3)).toInt().toVar().label('octaves')
+export const fbm3 = /*@__PURE__*/ Fn(([i_point, i_noise]: [VaryingNode, UniformVector4Node]) => {
+  const freq = float(i_noise.x).toVar().label('freq')
+  const amp = float(i_noise.y).toVar().label('amp')
+  const lac = float(i_noise.z).toVar().label('lac')
+  const octaves = float(i_noise.w).toInt().toVar().label('octaves')
   const point = vec3(i_point).toVar().label('x')
   const val = float(0.0).toVar().label('val')
   Loop({ start: int(0), end: octaves, condition: '<' }, () => {

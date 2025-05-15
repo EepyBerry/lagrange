@@ -61,7 +61,7 @@ export type RawRGBA = {
 }
 
 // ------------------------------------ Main data -----------------------------------
-export type PlanetSceneData = {
+export type EditorSceneData = {
   // Scene, renderer, camera
   scene?: Scene
   renderer?: WebGPURenderer
@@ -79,9 +79,6 @@ export type PlanetSceneData = {
   sunLight?: DirectionalLight
   ambLight?: AmbientLight
   lensFlare?: LensFlareEffect
-
-  // DataTextures
-  cloudsDataTex?: DataTexture
 
   // Misc
   clock?: Clock

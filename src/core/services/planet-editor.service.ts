@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import * as Globals from '@core/globals'
 import * as ComponentBuilder from '@core/three/component.builder'
-import { type BakingTarget, type PlanetSceneData, type PlanetUniformData } from '@core/types'
+import { type BakingTarget, type EditorSceneData, type PlanetUniformData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
 import { normalizeUInt8ArrayPixels, regeneratePRNGIfNecessary } from '@/utils/math-utils'
 import {
@@ -28,7 +28,7 @@ import {
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 
 // Editor constants
-const LG_SCENE_DATA: PlanetSceneData = {
+const LG_SCENE_DATA: EditorSceneData = {
   rings: [],
 }
 const LG_UNIFORM_DATA: PlanetUniformData = {}

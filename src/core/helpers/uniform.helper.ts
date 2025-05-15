@@ -1,27 +1,23 @@
 import { ref, type Ref } from 'vue'
 import * as Globals from '@core/globals'
-import * as ComponentBuilder from '@core/three/component.builder'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { patchMeshUniform, setMeshUniform, setMeshUniforms } from '@/utils/three-utils'
-import { recalculateBiomeTexture, recalculateRampTexture } from './texture.helper'
-import type { ColorRampStep } from '../models/color-ramp.model'
-import type { GenericMeshData, PlanetMeshData, PlanetSceneData, PlanetUniformData } from '../types'
-import type { AmbientLight, DataTexture, DirectionalLight, Group, Mesh } from 'three'
+import type { PlanetMeshData, EditorSceneData } from '../types'
+import type { AmbientLight, DirectionalLight, Group, Mesh } from 'three'
 import type { LensFlareEffect } from '../three/lens-flare.effect'
-import type { BiomeParameters } from '../models/biome-parameters.model'
 import type PlanetData from '../models/planet-data.model'
 
 const UNIFORM_UPDATE_MAP: Ref<Map<string, () => void>> = ref(new Map<string, () => void>())
 
-export function initUniformUpdateMap(sceneData: PlanetSceneData, planetData: PlanetData) {
-  /* registerLightingDataUpdates(planetData, sceneData.sunLight!, sceneData.ambLight!, sceneData.lensFlare!)
+export function initUniformUpdateMap(sceneData: EditorSceneData, planetData: PlanetData) {
+  // registerLightingDataUpdates(planetData, sceneData.sunLight!, sceneData.ambLight!, sceneData.lensFlare!)
   registerPlanetRenderingDataUpdates(
     planetData,
     sceneData.planetGroup!,
     sceneData.planet!,
     sceneData.atmosphere!,
     sceneData.clouds!,
-  )*/
+  )
   registerSurfaceDataUpdates(planetData, sceneData.planet!)
   /* registerBiomeDataUpdates(planetData, sceneData.planet!, sceneData.biomeDataTex!, texBufs[1])
   registerCloudDataUpdates(planetData, sceneData.clouds!, sceneData.cloudsDataTex!, texBufs[2])
@@ -29,7 +25,7 @@ export function initUniformUpdateMap(sceneData: PlanetSceneData, planetData: Pla
   registerRingsDataUpdates(planetData, sceneData.rings!) */
 }
 
-export function reloadRingDataUpdates(sceneData: PlanetSceneData, planetData: PlanetData) {
+export function reloadRingDataUpdates(sceneData: EditorSceneData, planetData: PlanetData) {
   const ringKeys = [...UNIFORM_UPDATE_MAP.value.keys()].filter((k) => k.startsWith('_ringsParameters'))
   ringKeys.forEach((k) => {
     UNIFORM_UPDATE_MAP.value.delete(k)
@@ -65,8 +61,14 @@ function registerLightingDataUpdates(data: PlanetData, sunLight: DirectionalLigh
 }
 
 // prettier-ignore
-function registerPlanetRenderingDataUpdates(data: PlanetData, planetGroup: Group, planet: Mesh, atmosphere: Mesh, clouds: Mesh): void {
-  UNIFORM_UPDATE_MAP.value.set('_planetRadius', () => {
+function registerPlanetRenderingDataUpdates(
+  data: PlanetData,
+  planetGroup: Group,
+  planet: PlanetMeshData,
+  atmosphere: Mesh,
+  clouds: Mesh,
+): void {
+  /* UNIFORM_UPDATE_MAP.value.set('_planetRadius', () => {
     const v = data.planetRadius
     const atmosHeight = data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
     planetGroup.scale.setScalar(v)
@@ -84,25 +86,30 @@ function registerPlanetRenderingDataUpdates(data: PlanetData, planetGroup: Group
     )
     planet.setRotationFromAxisAngle(planet.up, vRad)
     clouds.setRotationFromAxisAngle(clouds.up, vRad + cloudsRotationRad)
-  })
-  UNIFORM_UPDATE_MAP.value.set('_planetWaterRoughness',  () => patchMeshUniform(planet, 'u_pbr_params', { wrough: data.planetWaterRoughness }))
-  UNIFORM_UPDATE_MAP.value.set('_planetWaterMetalness',  () => patchMeshUniform(planet, 'u_pbr_params', { wmetal: data.planetWaterMetalness }))
-  UNIFORM_UPDATE_MAP.value.set('_planetGroundRoughness', () => patchMeshUniform(planet, 'u_pbr_params', { grough: data.planetGroundRoughness }))
-  UNIFORM_UPDATE_MAP.value.set('_planetGroundMetalness', () => patchMeshUniform(planet, 'u_pbr_params', { gmetal: data.planetGroundMetalness }))
-  UNIFORM_UPDATE_MAP.value.set('_planetWaterLevel',      () => patchMeshUniform(planet, 'u_pbr_params', { wlevel: data.planetWaterLevel }))
+  })*/
+  UNIFORM_UPDATE_MAP.value.set('_planetWaterLevel', () => (planet.uniforms.pbr.array[0] = data.planetWaterLevel))
+  UNIFORM_UPDATE_MAP.value.set(
+    '_planetWaterRoughness',
+    () => (planet.uniforms.pbr.array[1] = data.planetWaterRoughness),
+  )
+  UNIFORM_UPDATE_MAP.value.set(
+    '_planetWaterMetalness',
+    () => (planet.uniforms.pbr.array[2] = data.planetWaterMetalness),
+  )
+  UNIFORM_UPDATE_MAP.value.set(
+    '_planetGroundRoughness',
+    () => (planet.uniforms.pbr.array[3] = data.planetGroundRoughness),
+  )
+  UNIFORM_UPDATE_MAP.value.set(
+    '_planetGroundMetalness',
+    () => (planet.uniforms.pbr.array[4] = data.planetGroundMetalness),
+  )
 }
 
 // prettier-ignore
 function registerSurfaceDataUpdates(data: PlanetData, planet: PlanetMeshData): void {
   /* UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowBumps',                () => setMeshUniform(planet,   'u_bump', data.planetSurfaceShowBumps))
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceBumpStrength',             () => setMeshUniform(planet,   'u_bump_strength', data.planetSurfaceBumpStrength))
-  // Warping
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowWarping',              () => setMeshUniform(planet,   'u_warp', data.planetSurfaceShowWarping))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._warpFactor',        () => patchMeshUniform(planet, 'u_surface_noise', {
-    xwarp: data.planetSurfaceNoise.xWarpFactor,
-    ywarp: data.planetSurfaceNoise.yWarpFactor,
-    zwarp: data.planetSurfaceNoise.zWarpFactor
-  }))
   // Displacement
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowDisplacement',         () => setMeshUniform(planet,   'u_displace', data.planetSurfaceShowDisplacement))
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._factor',     () => patchMeshUniform(planet, 'u_surface_displacement', { fac: data.planetSurfaceDisplacement.factor }))
@@ -112,33 +119,40 @@ function registerSurfaceDataUpdates(data: PlanetData, planet: PlanetMeshData): v
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._amplitude',  () => patchMeshUniform(planet, 'u_surface_displacement', { amp: data.planetSurfaceDisplacement.amplitude }))
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._lacunarity', () => patchMeshUniform(planet, 'u_surface_displacement', { lac: data.planetSurfaceDisplacement.lacunarity }))
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._octaves',    () => patchMeshUniform(planet, 'u_surface_displacement', { oct: data.planetSurfaceDisplacement.octaves }))
-  // Noise
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._frequency',         () => patchMeshUniform(planet, 'u_surface_noise', { freq: data.planetSurfaceNoise.frequency }))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._amplitude',         () => patchMeshUniform(planet, 'u_surface_noise', { amp: data.planetSurfaceNoise.amplitude }))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._lacunarity',        () => patchMeshUniform(planet, 'u_surface_noise', { lac: data.planetSurfaceNoise.lacunarity }))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._octaves',           () => patchMeshUniform(planet, 'u_surface_noise', { oct: data.planetSurfaceNoise.octaves }))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._layers',            () => patchMeshUniform(planet, 'u_surface_noise', { layers: data.planetSurfaceNoise.layers }))
   // Color
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceColorRamp', () => {
     const v = data.planetSurfaceColorRamp
     recalculateRampTexture(buffer, Globals.TEXTURE_SIZES.SURFACE, v.steps as ColorRampStep[])
     surfaceDataTex.needsUpdate = true
   }) */
+
+  // Warping
+  UNIFORM_UPDATE_MAP.value.set(
+    '_planetSurfaceNoise._layers',
+    () => (planet.uniforms.warping.value.x = data.planetSurfaceNoise.layers),
+  )
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._warpFactor', () => {
+    planet.uniforms.warping.value.y = data.planetSurfaceNoise.xWarpFactor
+    planet.uniforms.warping.value.z = data.planetSurfaceNoise.yWarpFactor
+    planet.uniforms.warping.value.w = data.planetSurfaceNoise.zWarpFactor
+  })
+
+  // Noise
   UNIFORM_UPDATE_MAP.value.set(
     '_planetSurfaceNoise._frequency',
-    () => (planet.uniforms.noise.array[0] = data.planetSurfaceNoise.frequency),
+    () => (planet.uniforms.noise.value.x = data.planetSurfaceNoise.frequency),
   )
   UNIFORM_UPDATE_MAP.value.set(
     '_planetSurfaceNoise._amplitude',
-    () => (planet.uniforms.noise.array[1] = data.planetSurfaceNoise.amplitude),
+    () => (planet.uniforms.noise.value.y = data.planetSurfaceNoise.amplitude),
   )
   UNIFORM_UPDATE_MAP.value.set(
     '_planetSurfaceNoise._lacunarity',
-    () => (planet.uniforms.noise.array[2] = data.planetSurfaceNoise.lacunarity),
+    () => (planet.uniforms.noise.value.z = data.planetSurfaceNoise.lacunarity),
   )
   UNIFORM_UPDATE_MAP.value.set(
     '_planetSurfaceNoise._octaves',
-    () => (planet.uniforms.noise.array[3] = data.planetSurfaceNoise.octaves),
+    () => (planet.uniforms.noise.value.w = data.planetSurfaceNoise.octaves),
   )
 }
 
