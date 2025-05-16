@@ -88,37 +88,16 @@ function registerPlanetRenderingDataUpdates(
     clouds.setRotationFromAxisAngle(clouds.up, vRad + cloudsRotationRad)
   })*/
   UNIFORM_UPDATE_MAP.value.set('_planetWaterLevel', () => (planet.uniforms.pbr.array[0] = data.planetWaterLevel))
-  UNIFORM_UPDATE_MAP.value.set(
-    '_planetWaterRoughness',
-    () => (planet.uniforms.pbr.array[1] = data.planetWaterRoughness),
-  )
-  UNIFORM_UPDATE_MAP.value.set(
-    '_planetWaterMetalness',
-    () => (planet.uniforms.pbr.array[2] = data.planetWaterMetalness),
-  )
-  UNIFORM_UPDATE_MAP.value.set(
-    '_planetGroundRoughness',
-    () => (planet.uniforms.pbr.array[3] = data.planetGroundRoughness),
-  )
-  UNIFORM_UPDATE_MAP.value.set(
-    '_planetGroundMetalness',
-    () => (planet.uniforms.pbr.array[4] = data.planetGroundMetalness),
-  )
+  UNIFORM_UPDATE_MAP.value.set('_planetWaterRoughness', () => (planet.uniforms.pbr.array[1] = data.planetWaterRoughness))
+  UNIFORM_UPDATE_MAP.value.set('_planetWaterMetalness', () => (planet.uniforms.pbr.array[2] = data.planetWaterMetalness))
+  UNIFORM_UPDATE_MAP.value.set('_planetGroundRoughness', () => (planet.uniforms.pbr.array[3] = data.planetGroundRoughness))
+  UNIFORM_UPDATE_MAP.value.set('_planetGroundMetalness', () => (planet.uniforms.pbr.array[4] = data.planetGroundMetalness))
 }
 
 // prettier-ignore
 function registerSurfaceDataUpdates(data: PlanetData, planet: PlanetMeshData): void {
   /* UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowBumps',                () => setMeshUniform(planet,   'u_bump', data.planetSurfaceShowBumps))
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceBumpStrength',             () => setMeshUniform(planet,   'u_bump_strength', data.planetSurfaceBumpStrength))
-  // Displacement
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowDisplacement',         () => setMeshUniform(planet,   'u_displace', data.planetSurfaceShowDisplacement))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._factor',     () => patchMeshUniform(planet, 'u_surface_displacement', { fac: data.planetSurfaceDisplacement.factor }))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._epsilon',    () => patchMeshUniform(planet, 'u_surface_displacement', { eps: data.planetSurfaceDisplacement.epsilon }))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._multiplier', () => patchMeshUniform(planet, 'u_surface_displacement', { mul: data.planetSurfaceDisplacement.multiplier }))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._frequency',  () => patchMeshUniform(planet, 'u_surface_displacement', { freq: data.planetSurfaceDisplacement.frequency }))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._amplitude',  () => patchMeshUniform(planet, 'u_surface_displacement', { amp: data.planetSurfaceDisplacement.amplitude }))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._lacunarity', () => patchMeshUniform(planet, 'u_surface_displacement', { lac: data.planetSurfaceDisplacement.lacunarity }))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._octaves',    () => patchMeshUniform(planet, 'u_surface_displacement', { oct: data.planetSurfaceDisplacement.octaves }))
   // Color
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceColorRamp', () => {
     const v = data.planetSurfaceColorRamp
@@ -127,33 +106,29 @@ function registerSurfaceDataUpdates(data: PlanetData, planet: PlanetMeshData): v
   }) */
 
   // Warping
-  UNIFORM_UPDATE_MAP.value.set(
-    '_planetSurfaceNoise._layers',
-    () => (planet.uniforms.warping.value.x = data.planetSurfaceNoise.layers),
-  )
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowWarping', () => (planet.uniforms.flags.array[0] = +data.planetSurfaceShowWarping))
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._warpFactor', () => {
     planet.uniforms.warping.value.y = data.planetSurfaceNoise.xWarpFactor
     planet.uniforms.warping.value.z = data.planetSurfaceNoise.yWarpFactor
     planet.uniforms.warping.value.w = data.planetSurfaceNoise.zWarpFactor
   })
 
+  // Displacement
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowDisplacement',         () => (planet.uniforms.flags.array[1] = +data.planetSurfaceShowDisplacement))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._factor',     () => (planet.uniforms.displacement.params.value.x = data.planetSurfaceDisplacement.factor))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._epsilon',    () => (planet.uniforms.displacement.params.value.y = data.planetSurfaceDisplacement.epsilon))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._multiplier', () => (planet.uniforms.displacement.params.value.z = data.planetSurfaceDisplacement.multiplier))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._frequency',  () => (planet.uniforms.displacement.noise.value.x = data.planetSurfaceDisplacement.frequency))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._amplitude',  () => (planet.uniforms.displacement.noise.value.y = data.planetSurfaceDisplacement.amplitude))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._lacunarity', () => (planet.uniforms.displacement.noise.value.z = data.planetSurfaceDisplacement.lacunarity))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._octaves',    () => (planet.uniforms.displacement.noise.value.w = data.planetSurfaceDisplacement.octaves))
+
   // Noise
-  UNIFORM_UPDATE_MAP.value.set(
-    '_planetSurfaceNoise._frequency',
-    () => (planet.uniforms.noise.value.x = data.planetSurfaceNoise.frequency),
-  )
-  UNIFORM_UPDATE_MAP.value.set(
-    '_planetSurfaceNoise._amplitude',
-    () => (planet.uniforms.noise.value.y = data.planetSurfaceNoise.amplitude),
-  )
-  UNIFORM_UPDATE_MAP.value.set(
-    '_planetSurfaceNoise._lacunarity',
-    () => (planet.uniforms.noise.value.z = data.planetSurfaceNoise.lacunarity),
-  )
-  UNIFORM_UPDATE_MAP.value.set(
-    '_planetSurfaceNoise._octaves',
-    () => (planet.uniforms.noise.value.w = data.planetSurfaceNoise.octaves),
-  )
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._layers',     () => (planet.uniforms.warping.value.x = data.planetSurfaceNoise.layers))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._frequency',  () => (planet.uniforms.noise.value.x = data.planetSurfaceNoise.frequency),)
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._amplitude',  () => (planet.uniforms.noise.value.y = data.planetSurfaceNoise.amplitude))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._lacunarity', () => (planet.uniforms.noise.value.z = data.planetSurfaceNoise.lacunarity),)
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._octaves',    () => (planet.uniforms.noise.value.w = data.planetSurfaceNoise.octaves),)
 }
 
 /* // prettier-ignore

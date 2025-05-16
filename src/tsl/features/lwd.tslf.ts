@@ -1,10 +1,10 @@
-import { vec3, float, mix, Fn, clamp, bool } from 'three/tsl'
+import { vec3, float, mix, Fn, clamp, bool, int } from 'three/tsl'
 import { fbm3 } from '../noise/fbm3.func'
 import type { VaryingNode } from 'three/webgpu'
 import { fbm1 } from '../noise/fbm1.func'
 import type { UniformBooleanNode, UniformNumberNode, UniformVector3Node, UniformVector4Node } from '../types'
 
-export const displace = /*@__PURE__*/ Fn(([i_position, i_params, i_noise]: [VaryingNode, UniformVector3Node, UniformVector4Node]) => {
+const doDisplace = /*@__PURE__*/ Fn(([i_position, i_params, i_noise]: [VaryingNode, UniformVector3Node, UniformVector4Node]) => {
   const vPos = vec3(i_position).toVar()
   const eps = float(i_params.y).toVar()
   const mul = float(i_params.z).toVar()
@@ -26,7 +26,7 @@ export const displace = /*@__PURE__*/ Fn(([i_position, i_params, i_noise]: [Vary
 
 // ----------------------------------------------------------------------------
 
-export const warpLayer = /*@__PURE__*/ Fn(([i_position, i_noise, i_layers]:  [VaryingNode, UniformVector4Node, UniformNumberNode]) => {
+export const layer = /*@__PURE__*/ Fn(([i_position, i_noise, i_layers]:  [VaryingNode, UniformVector4Node, UniformNumberNode]) => {
   const vPos = vec3(i_position).toVar()
   const height = float(fbm3(vPos, i_noise)).toVar()
   height.assign(mix(height, fbm1(height, i_noise), clamp(float(i_layers).sub(1.0), 0.0, 1.0)))
@@ -34,26 +34,18 @@ export const warpLayer = /*@__PURE__*/ Fn(([i_position, i_noise, i_layers]:  [Va
   return height
 })
 
-export const warpXYZ = /*@__PURE__*/ Fn(([i_position, i_params, i_enable]: [VaryingNode, UniformVector4Node, UniformBooleanNode]) => {
+export const warp = /*@__PURE__*/ Fn(([i_position, i_params, i_enable]: [VaryingNode, UniformVector4Node, UniformBooleanNode]) => {
   const vPos = vec3(i_position).toVar()
-  const enable = bool(i_enable).toVar()
+  const enable = int(i_enable).toVar()
   vPos.x.mulAssign(mix(1.0, i_params.y, enable))
   vPos.y.mulAssign(mix(1.0, i_params.z, enable))
   vPos.z.mulAssign(mix(1.0, i_params.w, enable))
   return vPos
-}).setLayout({
-  name: 'warpXYZ',
-  type: 'vec3',
-  inputs: [
-    { name: 'i_position', type: 'vec3' },
-    { name: 'i_params', type: 'vec4' },
-    { name: 'i_enable', type: 'bool' },
-  ]
 })
 
-export const warpDisplace = /*@__PURE__*/ Fn(([i_position, i_params, i_noise, i_enable]: [VaryingNode, UniformVector3Node, UniformVector4Node, UniformBooleanNode]) => {
-    const vPos = vec3(i_position).toVar()
-    vPos.assign(mix(vPos, displace(i_position, i_params, i_noise), float(i_enable)))
-    return vPos
-  },
-)
+export const displace = /*@__PURE__*/ Fn(([i_position, i_params, i_noise, i_enable]: [VaryingNode, UniformVector3Node, UniformVector4Node, UniformBooleanNode]) => {
+  const vPos = vec3(i_position).toVar()
+  const enable = int(i_enable).toVar()
+  vPos.assign(mix(vPos, doDisplace(i_position, i_params, i_noise), enable))
+  return vPos
+})

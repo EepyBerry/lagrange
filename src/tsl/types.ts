@@ -1,5 +1,5 @@
 import type { ShaderNodeObject } from 'three/tsl'
-import type { NodeMaterial, UniformArrayNode, UniformNode, Vector2, Vector3, Vector4 } from 'three/webgpu'
+import type { NodeMaterial, UniformNode, Vector2, Vector3, Vector4 } from 'three/webgpu'
 
 export type UniformNodeMaterial<M extends NodeMaterial, U> = {
   material: M
