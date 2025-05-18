@@ -314,7 +314,7 @@ export default class PlanetData extends ChangeTracker {
   public set biomesParams(value: BiomeParameters[]) {
     this._biomesParams.splice(0)
     this._biomesParams.push(...value)
-    this.markForChange('_biomesParams')
+    this.markForChange('_biomesParameters')
   }
 
   // --------------------------------------------------

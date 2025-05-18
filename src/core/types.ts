@@ -72,7 +72,7 @@ export type EditorSceneData = {
   ringAnchor?: Group
 
   // Main objects
-  planet?: PlanetMeshData
+  planet: PlanetMeshData
   clouds?: Mesh
   atmosphere?: Mesh
   rings?: GenericMeshData[]
@@ -89,14 +89,14 @@ export type PlanetUniformData = {
 
 // ------------------------------------ Mesh data -----------------------------------
 export type PlanetMeshData = {
-  mesh: Mesh
-  uniforms: PlanetUniforms
+  mesh?: Mesh
+  uniforms?: PlanetUniforms
 
-  surfaceBuffer: Uint8Array | null
-  surfaceTexture: DataTexture
+  surfaceBuffer: Uint8Array
+  surfaceTexture?: DataTexture
 
-  biomesBuffer: Uint8Array | null
-  biomesTexture: DataTexture
+  biomesBuffer: Uint8Array
+  biomesTexture?: DataTexture
 }
 export type GenericMeshData = {
   mesh: Mesh

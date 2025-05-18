@@ -10,7 +10,7 @@ import { LensFlareEffect } from './lens-flare.effect'
 import * as Globals from '@core/globals'
 import * as ShaderLoader from '../three/shader.loader'
 import { WebGPURenderer } from 'three/webgpu'
-import { PlanetTSLMaterial, type PlanetUniforms } from '@/tsl/materials/planet.tslmat'
+import { PlanetTSLMaterial } from '@/tsl/materials/planet.tslmat'
 import { LG_PLANET_DATA } from '../services/planet-editor.service'
 
 // ----------------------------------------------------------------------------------------------------------------------
@@ -73,24 +73,22 @@ export function createPlanet(
   biomeTexBuf: Uint8Array,
 ): PlanetMeshData {
   const geometry = createSphereGeometryComponent(data.planetMeshQuality)
-  geometry.computeTangents()
-
   const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
   const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
 
   const tslMaterial = new PlanetTSLMaterial(LG_PLANET_DATA.value, [surfaceTex, biomeTex])
-  const mesh = new THREE.Mesh(geometry, tslMaterial.get())
+  const mesh = new THREE.Mesh(geometry, tslMaterial.build())
   mesh.castShadow = true
   mesh.receiveShadow = true
   mesh.name = Globals.LG_NAME_PLANET
 
   return {
-    mesh, 
+    mesh,
     uniforms: tslMaterial.uniforms,
     surfaceBuffer: surfaceTexBuf,
     surfaceTexture: surfaceTex,
     biomesBuffer: biomeTexBuf,
-    biomesTexture: biomeTex
+    biomesTexture: biomeTex,
   }
 }
 
