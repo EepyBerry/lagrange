@@ -12,11 +12,12 @@ import {
   float,
   min,
   mix,
-  normalView,
+  normalLocal,
   positionLocal,
   step,
   tangentLocal,
   texture,
+  transformNormalToView,
   uniform,
   uniformArray,
   vec2,
@@ -194,7 +195,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     // init material & set outputs
     const material = new MeshStandardNodeMaterial()
     material.colorNode = vec4(colour, 1.0)
-    material.normalNode = mix(normalView, bump, FLAG_LAND.mul(this.uniforms.flags.element(2)))
+    material.normalNode = transformNormalToView(mix(normalLocal, bump, FLAG_LAND.mul(this.uniforms.flags.element(2))))
     material.roughnessNode = mix(this.uniforms.pbr.element(1), this.uniforms.pbr.element(3), FLAG_LAND)
     material.metalnessNode = mix(this.uniforms.pbr.element(2), this.uniforms.pbr.element(4), FLAG_LAND)
     return material
