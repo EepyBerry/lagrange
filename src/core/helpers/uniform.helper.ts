@@ -1,7 +1,7 @@
 import { ref, type Ref } from 'vue'
 import * as Globals from '@core/globals'
 import { degToRad } from 'three/src/math/MathUtils.js'
-import type { PlanetMeshData, EditorSceneData } from '../types'
+import type { PlanetMeshData, EditorSceneData, AtmosphereMeshData } from '../types'
 import type { AmbientLight, DirectionalLight, Group, Mesh } from 'three'
 import type { LensFlareEffect } from '../three/lens-flare.effect'
 import type PlanetData from '../models/planet-data.model'
@@ -20,8 +20,8 @@ export function initUniformUpdateMap(sceneData: EditorSceneData, planetData: Pla
   )
   registerSurfaceDataUpdates(planetData, sceneData.planet!)
   registerBiomeDataUpdates(planetData, sceneData.planet!)
-  /* registerCloudDataUpdates(planetData, sceneData.clouds!, sceneData.cloudsDataTex!, texBufs[2])
   registerAtmosphereDataUpdates(planetData, sceneData.atmosphere!)
+  /* registerCloudDataUpdates(planetData, sceneData.clouds!, sceneData.cloudsDataTex!, texBufs[2])
   registerRingsDataUpdates(planetData, sceneData.rings!) */
 }
 
@@ -66,16 +66,16 @@ function registerPlanetRenderingDataUpdates(
   data: PlanetData,
   planetGroup: Group,
   planet: PlanetMeshData,
-  atmosphere: Mesh,
+  atmosphere: AtmosphereMeshData,
   clouds: Mesh,
 ): void {
-  /* UNIFORM_UPDATE_MAP.value.set('_planetRadius', () => {
+  UNIFORM_UPDATE_MAP.value.set('_planetRadius', () => {
     const v = data.planetRadius
-    const atmosHeight = data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
     planetGroup.scale.setScalar(v)
-    setMeshUniform(planet, 'u_radius', v)
-    setMeshUniforms(atmosphere, ['u_surface_radius', 'u_radius'], [v, v + atmosHeight])
-  })*/
+    planet.uniforms!.radius.value = v
+    atmosphere.uniforms!.transform.surfaceRadius.value = v
+    atmosphere.uniforms!.transform.radius.value = v + (data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER)
+  })
   UNIFORM_UPDATE_MAP.value.set('_planetAxialTilt', () => {
     const v = degToRad(isNaN(data.planetAxialTilt) ? 0 : data.planetAxialTilt)
     planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, v)
@@ -187,11 +187,12 @@ function registerCloudDataUpdates(data: PlanetData, clouds: Mesh, cloudsDataTex:
     recalculateRampTexture(buffer, Globals.TEXTURE_SIZES.CLOUDS, v.steps as ColorRampStep[])
     cloudsDataTex.needsUpdate = true
   })
-}
+} */
 
 // prettier-ignore
-function registerAtmosphereDataUpdates(data: PlanetData, atmosphere: Mesh): void {
-  UNIFORM_UPDATE_MAP.value.set('_atmosphereEnabled', () => atmosphere.visible = data.atmosphereEnabled)
+function registerAtmosphereDataUpdates(data: PlanetData, atmosphere: AtmosphereMeshData): void {
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereEnabled', () => atmosphere.mesh!.visible = data.atmosphereEnabled)
+  /*
   UNIFORM_UPDATE_MAP.value.set('_atmosphereHeight',  () => {
     const atmosHeight = data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
     setMeshUniform(atmosphere, 'u_radius', data.planetRadius + atmosHeight)
@@ -201,10 +202,11 @@ function registerAtmosphereDataUpdates(data: PlanetData, atmosphere: Mesh): void
   UNIFORM_UPDATE_MAP.value.set('_atmosphereColorMode',    () => setMeshUniform(atmosphere, 'u_color_mode', data.atmosphereColorMode))
   UNIFORM_UPDATE_MAP.value.set('_atmosphereHue',          () => setMeshUniform(atmosphere, 'u_hue', data.atmosphereHue))
   UNIFORM_UPDATE_MAP.value.set('_atmosphereTint',         () => setMeshUniform(atmosphere, 'u_tint', data.atmosphereTint))
+  */
 }
 
 // prettier-ignore
-function registerRingsDataUpdates(data: PlanetData, ringsData: GenericMeshData[]): void {
+/*function registerRingsDataUpdates(data: PlanetData, ringsData: GenericMeshData[]): void {
   UNIFORM_UPDATE_MAP.value.set('_ringsEnabled', () => ringsData.forEach(rd => rd.mesh.visible = data.ringsEnabled))
 
   const ringsParams = data.ringsParams

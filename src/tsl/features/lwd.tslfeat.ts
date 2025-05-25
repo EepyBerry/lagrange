@@ -1,7 +1,7 @@
 import { vec3, float, mix, Fn, clamp, bool, int } from 'three/tsl'
-import { fbm3 } from '../noise/fbm3.func'
+import { fbm3 } from '../noise/fbm3.tslnoise'
 import type { VaryingNode } from 'three/webgpu'
-import { fbm1 } from '../noise/fbm1.func'
+import { fbm1 } from '../noise/fbm1.tslnoise'
 import type { UniformBooleanNode, UniformNumberNode, UniformVector3Node, UniformVector4Node } from '../types'
 
 const doDisplace = /*@__PURE__*/ Fn(([i_position, i_params, i_noise]: [VaryingNode, UniformVector3Node, UniformVector4Node]) => {

@@ -26,10 +26,10 @@ import {
 } from 'three/tsl'
 import { type TSLMaterial } from './tsl-material'
 import type PlanetData from '@/core/models/planet-data.model'
-import { displace, layer, warp } from '../features/lwd.tslf'
+import { displace, layer, warp } from '../features/lwd.tslfeat'
 import type { UniformNumberNode, UniformVector3Node, UniformVector4Node } from '../types'
-import { applyBump } from '../features/bump.tslf'
-import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes.tslf'
+import { applyBump } from '../features/bump.tslfeat'
+import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes.tslfeat'
 
 export type PlanetUniforms = {
   radius: UniformNumberNode

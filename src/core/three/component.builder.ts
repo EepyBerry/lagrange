@@ -4,7 +4,7 @@ import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-sha
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { createRampTexture, createBiomeTexture } from '../helpers/texture.helper'
 import type PlanetData from '../models/planet-data.model'
-import { ShaderFileType, ColorMode, type SceneRenderObjects, type PlanetMeshData } from '../types'
+import { ShaderFileType, ColorMode, type SceneRenderObjects, type PlanetMeshData, type AtmosphereMeshData } from '../types'
 import { loadCubeTexture } from './external-data.loader'
 import { LensFlareEffect } from './lens-flare.effect'
 import * as Globals from '@core/globals'
@@ -12,6 +12,7 @@ import * as ShaderLoader from '../three/shader.loader'
 import { WebGPURenderer } from 'three/webgpu'
 import { PlanetTSLMaterial } from '@/tsl/materials/planet.tslmat'
 import { LG_PLANET_DATA } from '../services/planet-editor.service'
+import { AtmosphereTSLMaterial } from '@/tsl/materials/atmosphere.tslmat'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -37,10 +38,6 @@ export function createScene(data: PlanetData, width: number, height: number, pix
     1e6,
     new THREE.Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle)),
   )
-  const ambientLight = createAmbientLightComponent(data.ambLightColor, data.ambLightIntensity)
-  ambientLight.name = Globals.LG_NAME_AMBLIGHT
-  scene.add(ambientLight)
-
   return { scene, renderer, camera }
 }
 
@@ -143,33 +140,19 @@ export function createClouds(
   return { mesh, texs: [opacityTex] }
 }
 
-export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): THREE.Mesh {
+export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): AtmosphereMeshData {
   const atmosHeight = data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
-  const atmosDensity = data.atmosphereDensityScale / Globals.ATMOSPHERE_HEIGHT_DIVIDER
   const geometry = createSphereGeometryComponent(data.planetMeshQuality, atmosHeight)
-  const material = createShaderMaterialComponent(
-    ShaderLoader.fetch('atmosphere.vert.glsl', ShaderFileType.CORE),
-    ShaderLoader.fetch('atmosphere.frag.glsl', ShaderFileType.CORE),
-    {
-      u_light_position: { value: sunPos },
-      u_light_intensity: { value: data.sunLightIntensity },
-      u_surface_radius: { value: 1.0 },
-      u_radius: { value: 1.0 + atmosHeight },
-      u_density: { value: atmosDensity },
-      u_intensity: { value: data.atmosphereIntensity },
-      u_color_mode: { value: ColorMode.REALISTIC },
-      u_hue: { value: data.atmosphereHue },
-      u_tint: { value: data.atmosphereTint },
-    },
-  )
-  material.transparent = true
-  material.depthWrite = false
-
-  const mesh = new THREE.Mesh(geometry, material)
+  
+  const tslMaterial = new AtmosphereTSLMaterial(LG_PLANET_DATA.value, sunPos, Globals.ATMOSPHERE_HEIGHT_DIVIDER)
+  const mesh = new THREE.Mesh(geometry, tslMaterial.build())
   mesh.userData.lens = 'no-occlusion'
   mesh.name = Globals.LG_NAME_ATMOSPHERE
   mesh.castShadow = true
-  return mesh
+  return {
+    mesh,
+    uniforms: tslMaterial.uniforms,
+  }
 }
 
 export function createRing(
