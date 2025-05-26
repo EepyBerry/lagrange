@@ -63,9 +63,9 @@ export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<N
   const c = float(i_c).toVar('c')
   const cc = float(i_cc).toVar('cc')
 
-  const gg = float(g.mul(g)).toVar()
-  const a = float(sub(1.0, gg).mul(add(1.0, cc))).toVar()
-  const b = float(add(1.0, gg.sub(mul(2.0, g).mul(c)))).toVar()
+  const gg = float(g.mul(g)).toVar('gg')
+  const a = float(sub(1.0, gg).mul(add(1.0, cc))).toVar('a')
+  const b = float(add(1.0, gg.sub(mul(2.0, g).mul(c)))).toVar('b')
   b.mulAssign(sqrt(b))
   b.mulAssign(add(2.0, gg))
 
@@ -205,7 +205,7 @@ export const applyInScatter = /*@__PURE__*/ Fn(
       n_mie0.addAssign(d_mie)
 
       const f = vec2(rayVsSphere(v, i_lightDir, i_uniforms.x)).toVar('f')
-      const u = vec3(v.add(i_e.mul(f.y))).toVar()
+      const u = vec3(v.add(i_lightDir.mul(f.y))).toVar('u')
 
       const n_ray1 = float(optic(v, u, ph_ray, i_uniforms.y, i_uniforms.z)).toVar('n_ray1')
       const n_mie1 = float(optic(v, u, ph_mie, i_uniforms.y, i_uniforms.z)).toVar('n_mie1')
