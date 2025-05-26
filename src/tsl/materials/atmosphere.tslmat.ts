@@ -83,7 +83,7 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
       const e = vec2(rayVsSphere(eye, rayDir, this.uniforms.transform.radius)).toVar()
 
       // if e.X > e.Y, something went horribly wrong so exit early
-      //e.x.greaterThan(e.y).discard()
+      e.x.greaterThan(e.y).discard()
 
       // find if the pixel is part of the surface
       const f = vec2(rayVsSphere(eye, rayDir, this.uniforms.transform.surfaceRadius)).toVar('f')
@@ -104,15 +104,15 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
       const I_shifted = vec4(shiftHue(I_gamma.xyz, this.uniforms.render.hue.mul(PI)), I_gamma.a).toVar('I_shifted')
       const tint = vec4(this.uniforms.render.tint, 1.0).toVar('tint')
 
-      let colorNode = vec4(0.0)
+      const colorNode = vec4(0.0).toVar()
       If(this.uniforms.render.colorMode.equal(0), () => {
-        colorNode = I_shifted.mul(this.uniforms.render.intensity)
+        colorNode.assign(I_shifted.mul(this.uniforms.render.intensity))
       })
       .ElseIf(this.uniforms.render.colorMode.equal(1), () => {
-        colorNode = whitescale(I_gamma).mul(tintToMatrix(tint)).mul(this.uniforms.render.intensity)
+        colorNode.assign(whitescale(I_gamma).mul(tintToMatrix(tint)).mul(this.uniforms.render.intensity))
       })
       .Else(() => {
-        colorNode = I_shifted.mul(tint).mul(this.uniforms.render.intensity)
+        colorNode.assign(I_shifted.mul(tint).mul(this.uniforms.render.intensity))
       })
       return colorNode
     }).setLayout({
