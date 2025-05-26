@@ -212,6 +212,12 @@ function updateScene() {
   if (watchForPlanetUpdates && LG_PLANET_DATA.value.changedProps.length > 0 && !hasPlanetBeenEdited.value) {
     console.debug('Planet has been edited, warning user in case of unsaved data')
     hasPlanetBeenEdited.value = true
+    
+    // TODO: Remove debug printing when done
+    LG_SCENE_DATA.renderer!.debug.getShaderAsync(LG_SCENE_DATA.scene!, LG_SCENE_DATA.camera!, LG_SCENE_DATA.atmosphere!.mesh!).then((e) => {
+      console.log(e.vertexShader)
+      console.log(e.fragmentShader)
+    })
   }
   for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
     /*if (changedProp.prop === '_ringsParameters') {

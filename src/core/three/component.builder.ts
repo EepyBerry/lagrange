@@ -194,7 +194,7 @@ export function createRing(
  * @returns the renderer
  */
 export function createRendererComponent(width: number, height: number, pixelRatio?: number) {
-  const renderer = new WebGPURenderer({ antialias: true, alpha: true })
+  const renderer = new WebGPURenderer({ antialias: true, alpha: true, forceWebGL: false })
   if (pixelRatio) {
     renderer.setPixelRatio(pixelRatio)
   }

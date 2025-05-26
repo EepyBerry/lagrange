@@ -1,13 +1,11 @@
-import { MeshBasicNodeMaterial, MeshStandardNodeMaterial, Node, NodeMaterial, VaryingNode, type Vector3 } from 'three/webgpu'
+import { Node, NodeMaterial, type Vector3 } from 'three/webgpu'
 import type { TSLMaterial } from './tsl-material'
 import type { UniformColorNode, UniformNumberNode, UniformVector3Node } from '../types'
 import type PlanetData from '@/core/models/planet-data.model'
 import {
-  atan,
   cameraProjectionMatrix,
   cameraProjectionMatrixInverse,
   cameraViewMatrix,
-  Discard,
   div,
   Fn,
   If,
@@ -71,24 +69,24 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
   build(): NodeMaterial {
     const buildFragmentNode = Fn(([i_localpos, i_worldpos]: ShaderNodeObject<Node>[]) => {
       // ---------------- VERTEX STAGE ----------------
-      const clipSpacePos = cameraProjectionMatrix.mul(modelViewMatrix).mul(vec4(i_localpos, 1.0)).toVar()
-      const ndc = div(clipSpacePos.xyz, clipSpacePos.w).toVar()
-      const clipRay = vec4(ndc.x, ndc.y, -1.0, 1.0).toVar()
-      const inverseRay = cameraProjectionMatrixInverse.mul(clipRay).toVar()
-      const viewRay = vec3(inverseRay.x, inverseRay.y, -1.0).toVar()
+      const clipSpacePos = cameraProjectionMatrix.mul(modelViewMatrix).mul(vec4(i_localpos, 1.0)).toVar('clipSpacePos')
+      const ndc = div(clipSpacePos.xyz, clipSpacePos.w).toVar('ndc')
+      const clipRay = vec4(ndc.x, ndc.y, -1.0, 1.0).toVar('clipRay')
+      const inverseRay = cameraProjectionMatrixInverse.mul(clipRay).toVar('inverseRay')
+      const viewRay = vec3(inverseRay.x, inverseRay.y, -1.0).toVar('viewRay')
 
       // --------------- FRAGMENT STAGE ---------------
-      const worldRay = vec4(inverseMat4(cameraViewMatrix).mul(vec4(viewRay, 0.0))).toVar()
+      const worldRay = vec4(inverseMat4(cameraViewMatrix).mul(vec4(viewRay, 0.0))).toVar('worldRay')
       const rayDir = vec3(normalize(worldRay.xyz)).toVar()
       const eye = vec3(i_worldpos.xyz).toVar()
       const sunglightDir = vec3(normalize(this.uniforms.sunlight.position.sub(i_worldpos.xyz))).toVar()
       const e = vec2(rayVsSphere(eye, rayDir, this.uniforms.transform.radius)).toVar()
 
       // if e.X > e.Y, something went horribly wrong so exit early
-      e.x.greaterThan(e.y).discard()
+      //e.x.greaterThan(e.y).discard()
 
       // find if the pixel is part of the surface
-      const f = vec2(rayVsSphere(eye, rayDir, this.uniforms.transform.surfaceRadius)).toVar()
+      const f = vec2(rayVsSphere(eye, rayDir, this.uniforms.transform.surfaceRadius)).toVar('f')
       e.y = min(e.y, f.x)
 
       // compute output values
@@ -101,10 +99,10 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
           this.uniforms.sunlight.intensity,
           vec3(this.uniforms.transform.radius, this.uniforms.transform.surfaceRadius, this.uniforms.render.density),
         ),
-      ).toVar()
-      const I_gamma = vec4(pow(I, vec4(1.0 / 2.2))).toVar()
-      const I_shifted = vec4(shiftHue(I_gamma.xyz, this.uniforms.render.hue.mul(PI)), I_gamma.a).toVar()
-      const tint = vec4(this.uniforms.render.tint, 1.0).toVar()
+      ).toVar('I')
+      const I_gamma = vec4(pow(I, vec4(1.0 / 2.2))).toVar('I_gamma')
+      const I_shifted = vec4(shiftHue(I_gamma.xyz, this.uniforms.render.hue.mul(PI)), I_gamma.a).toVar('I_shifted')
+      const tint = vec4(this.uniforms.render.tint, 1.0).toVar('tint')
 
       let colorNode = vec4(0.0)
       If(this.uniforms.render.colorMode.equal(0), () => {
