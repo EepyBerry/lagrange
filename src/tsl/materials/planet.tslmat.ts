@@ -141,7 +141,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     }
   }
 
-  build(): MeshStandardNodeMaterial {
+  buildMaterial(): MeshStandardNodeMaterial {
     // XYZ Warping + displacement
     let vPos = positionLocal
     vPos = warp(vPos, this.uniforms.warping, this.uniforms.flags.element(0))

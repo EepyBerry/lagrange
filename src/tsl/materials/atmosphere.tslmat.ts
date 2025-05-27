@@ -1,4 +1,4 @@
-import { Node, NodeMaterial, type Vector3 } from 'three/webgpu'
+import { NodeMaterial, type Vector3 } from 'three/webgpu'
 import type { TSLMaterial } from './tsl-material'
 import type { UniformColorNode, UniformNumberNode, UniformVector3Node } from '../types'
 import type PlanetData from '@/core/models/planet-data.model'
@@ -9,11 +9,12 @@ import {
   div,
   Fn,
   If,
+  int,
   min,
   modelViewMatrix,
   normalize,
   PI,
-  positionLocal,
+  positionGeometry,
   positionWorld,
   pow,
   uniform,
@@ -21,10 +22,9 @@ import {
   vec3,
   vec4,
 } from 'three/tsl'
-import { type ShaderNodeObject } from 'three/src/nodes/TSL.js'
 import { applyInScatter, rayVsSphere } from '../utils/atmosphere.tslutil'
 import { inverseMat4 } from '../utils/math.tslutil'
-import { shiftHue, tintToMatrix, whitescale } from '../utils/color.tslutil'
+import { shiftHue, sRGBToLinear, tintToMatrix, whitescale } from '../utils/color.tslutil'
 
 export type AtmosphereUniforms = {
   sunlight: {
@@ -49,27 +49,30 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
   constructor(data: PlanetData, sunPosition: Vector3, heightDivider: number) {
     this.uniforms = {
       sunlight: {
-        position: uniform(sunPosition, 'vec3'),
-        intensity: uniform(data.sunLightIntensity, 'float'),
+        position: uniform(sunPosition, 'vec3').label('uLightPosition'),
+        intensity: uniform(data.sunLightIntensity, 'float').label('uLightIntensity'),
       },
       transform: {
-        radius: uniform(1.0 + data.atmosphereHeight / heightDivider),
-        surfaceRadius: uniform(data.planetRadius),
+        radius: uniform(1.0 + (data.atmosphereHeight / heightDivider)).label('uRadius'),
+        surfaceRadius: uniform(data.planetRadius).label('uSurfaceRadius'),
       },
       render: {
-        density: uniform(data.atmosphereDensityScale / heightDivider),
-        intensity: uniform(data.atmosphereIntensity),
-        colorMode: uniform(data.atmosphereColorMode, 'int'),
-        hue: uniform(data.atmosphereHue),
-        tint: uniform(data.atmosphereTint),
+        density: uniform(data.atmosphereDensityScale / heightDivider).label('uDensity'),
+        intensity: uniform(data.atmosphereIntensity).label('uIntensity'),
+        colorMode: uniform(data.atmosphereColorMode, 'int').label('uColorMode'),
+        hue: uniform(data.atmosphereHue).label('uHue'),
+        tint: uniform(data.atmosphereTint).label('uTint'),
       },
     }
   }
 
-  build(): NodeMaterial {
-    const buildFragmentNode = Fn(([i_localpos, i_worldpos]: ShaderNodeObject<Node>[]) => {
+  buildMaterial(): NodeMaterial {
+    const fragmentNode = Fn(() => {
       // ---------------- VERTEX STAGE ----------------
-      const clipSpacePos = cameraProjectionMatrix.mul(modelViewMatrix).mul(vec4(i_localpos, 1.0)).toVar('clipSpacePos')
+      const clipSpacePos = cameraProjectionMatrix
+        .mul(modelViewMatrix)
+        .mul(vec4(positionGeometry, 1.0))
+        .toVar('clipSpacePos')
       const ndc = div(clipSpacePos.xyz, clipSpacePos.w).toVar('ndc')
       const clipRay = vec4(ndc.x, ndc.y, -1.0, 1.0).toVar('clipRay')
       const inverseRay = cameraProjectionMatrixInverse.mul(clipRay).toVar('inverseRay')
@@ -77,13 +80,13 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
 
       // --------------- FRAGMENT STAGE ---------------
       const worldRay = vec4(inverseMat4(cameraViewMatrix).mul(vec4(viewRay, 0.0))).toVar('worldRay')
-      const rayDir = vec3(normalize(worldRay.xyz)).toVar()
-      const eye = vec3(i_worldpos.xyz).toVar()
-      const sunglightDir = vec3(normalize(this.uniforms.sunlight.position.sub(i_worldpos.xyz))).toVar()
-      const e = vec2(rayVsSphere(eye, rayDir, this.uniforms.transform.radius)).toVar()
+      const rayDir = vec3(normalize(worldRay.xyz)).toVar('rayDir')
+      const eye = vec3(positionWorld.xyz).toVar('eye')
+      const sunglightDir = vec3(normalize(this.uniforms.sunlight.position.sub(positionWorld.xyz))).toVar('sunlightDir')
+      const e = vec2(rayVsSphere(eye, rayDir, this.uniforms.transform.radius)).toVar('e')
 
       // if e.X > e.Y, something went horribly wrong so exit early
-      e.x.greaterThan(e.y).discard()
+      If(e.x.greaterThan(e.y), () => vec4(0.0))
 
       // find if the pixel is part of the surface
       const f = vec2(rayVsSphere(eye, rayDir, this.uniforms.transform.surfaceRadius)).toVar('f')
@@ -100,32 +103,33 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
           vec3(this.uniforms.transform.radius, this.uniforms.transform.surfaceRadius, this.uniforms.render.density),
         ),
       ).toVar('I')
-      const I_gamma = vec4(pow(I, vec4(1.0 / 2.2))).toVar('I_gamma')
-      const I_shifted = vec4(shiftHue(I_gamma.xyz, this.uniforms.render.hue.mul(PI)), I_gamma.a).toVar('I_shifted')
+      const IGamma = vec4(pow(I, vec4(1.0 / 2.2))).toVar('IGamma')
+      const IShifted = vec4(shiftHue(IGamma.xyz, this.uniforms.render.hue.mul(PI)), IGamma.a).toVar('IShifted')
       const tint = vec4(this.uniforms.render.tint, 1.0).toVar('tint')
 
-      const colorNode = vec4(0.0).toVar()
-      If(this.uniforms.render.colorMode.equal(0), () => {
-        colorNode.assign(I_shifted.mul(this.uniforms.render.intensity))
+      const colorNode = vec4(0.0).toVar('colorNode')
+      If(this.uniforms.render.colorMode.equal(int(0)), () => {
+        colorNode.assign(IShifted.mul(this.uniforms.render.intensity))
       })
-      .ElseIf(this.uniforms.render.colorMode.equal(1), () => {
-        colorNode.assign(whitescale(I_gamma).mul(tintToMatrix(tint)).mul(this.uniforms.render.intensity))
+      If(this.uniforms.render.colorMode.equal(int(1)), () => {
+        colorNode.assign(whitescale(IGamma).mul(tintToMatrix(tint)).mul(this.uniforms.render.intensity))
       })
-      .Else(() => {
-        colorNode.assign(I_shifted.mul(tint).mul(this.uniforms.render.intensity))
+      If(this.uniforms.render.colorMode.equal(int(2)), () => {
+        colorNode.assign(IShifted.mul(tint).mul(this.uniforms.render.intensity))
       })
-      return colorNode
+      // convert to correct color space (SRGB)
+      return vec4(sRGBToLinear(colorNode.rgb), colorNode.a)
     }).setLayout({
-      name: 'buildFragmentNode',
-      inputs: [{ type: 'vec3', name: 'i_localpos' }, { type: 'vec3', name: 'i_worldpos' }],
-      type: 'vec4'
+      name: 'fragmentNode',
+      inputs: [],
+      type: 'vec4',
     })
-    
+
     // set colorNode depending on current color mode (realistic/direct/mixed)
     const material = new NodeMaterial()
     material.transparent = true
     material.depthWrite = false
-    material.fragmentNode = buildFragmentNode(positionLocal, positionWorld)
+    material.fragmentNode = fragmentNode()
     return material
   }
 }

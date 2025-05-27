@@ -192,17 +192,15 @@ function registerCloudDataUpdates(data: PlanetData, clouds: Mesh, cloudsDataTex:
 // prettier-ignore
 function registerAtmosphereDataUpdates(data: PlanetData, atmosphere: AtmosphereMeshData): void {
   UNIFORM_UPDATE_MAP.value.set('_atmosphereEnabled', () => atmosphere.mesh!.visible = data.atmosphereEnabled)
-  /*
   UNIFORM_UPDATE_MAP.value.set('_atmosphereHeight',  () => {
     const atmosHeight = data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
-    setMeshUniform(atmosphere, 'u_radius', data.planetRadius + atmosHeight)
+    atmosphere.uniforms!.transform.radius.value = data.planetRadius + atmosHeight
   })
-  UNIFORM_UPDATE_MAP.value.set('_atmosphereDensityScale', () => setMeshUniform(atmosphere, 'u_density', data.atmosphereDensityScale / Globals.ATMOSPHERE_HEIGHT_DIVIDER))
-  UNIFORM_UPDATE_MAP.value.set('_atmosphereIntensity',    () => setMeshUniform(atmosphere, 'u_intensity', data.atmosphereIntensity))
-  UNIFORM_UPDATE_MAP.value.set('_atmosphereColorMode',    () => setMeshUniform(atmosphere, 'u_color_mode', data.atmosphereColorMode))
-  UNIFORM_UPDATE_MAP.value.set('_atmosphereHue',          () => setMeshUniform(atmosphere, 'u_hue', data.atmosphereHue))
-  UNIFORM_UPDATE_MAP.value.set('_atmosphereTint',         () => setMeshUniform(atmosphere, 'u_tint', data.atmosphereTint))
-  */
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereDensityScale', () =>  atmosphere.uniforms!.render.density.value = data.atmosphereDensityScale / Globals.ATMOSPHERE_HEIGHT_DIVIDER)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereIntensity',    () =>  atmosphere.uniforms!.render.intensity.value = data.atmosphereIntensity)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereColorMode',    () =>  atmosphere.uniforms!.render.colorMode.value = data.atmosphereColorMode)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereHue',          () =>  atmosphere.uniforms!.render.hue.value = data.atmosphereHue)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereTint',         () =>  atmosphere.uniforms!.render.tint.value = data.atmosphereTint)
 }
 
 // prettier-ignore

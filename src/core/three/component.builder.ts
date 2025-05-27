@@ -4,7 +4,7 @@ import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-sha
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { createRampTexture, createBiomeTexture } from '../helpers/texture.helper'
 import type PlanetData from '../models/planet-data.model'
-import { ShaderFileType, ColorMode, type SceneRenderObjects, type PlanetMeshData, type AtmosphereMeshData } from '../types'
+import { ShaderFileType, type SceneRenderObjects, type PlanetMeshData, type AtmosphereMeshData } from '../types'
 import { loadCubeTexture } from './external-data.loader'
 import { LensFlareEffect } from './lens-flare.effect'
 import * as Globals from '@core/globals'
@@ -64,17 +64,13 @@ export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THR
   })
 }
 
-export function createPlanet(
-  data: PlanetData,
-  surfaceTexBuf: Uint8Array,
-  biomeTexBuf: Uint8Array,
-): PlanetMeshData {
+export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): PlanetMeshData {
   const geometry = createSphereGeometryComponent(data.planetMeshQuality)
   const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
   const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
 
   const tslMaterial = new PlanetTSLMaterial(LG_PLANET_DATA.value, [surfaceTex, biomeTex])
-  const mesh = new THREE.Mesh(geometry, tslMaterial.build())
+  const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
   mesh.name = Globals.LG_NAME_PLANET
@@ -143,12 +139,13 @@ export function createClouds(
 export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): AtmosphereMeshData {
   const atmosHeight = data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
   const geometry = createSphereGeometryComponent(data.planetMeshQuality, atmosHeight)
-  
+
   const tslMaterial = new AtmosphereTSLMaterial(LG_PLANET_DATA.value, sunPos, Globals.ATMOSPHERE_HEIGHT_DIVIDER)
-  const mesh = new THREE.Mesh(geometry, tslMaterial.build())
+  const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.userData.lens = 'no-occlusion'
   mesh.name = Globals.LG_NAME_ATMOSPHERE
   mesh.castShadow = true
+
   return {
     mesh,
     uniforms: tslMaterial.uniforms,
@@ -194,13 +191,13 @@ export function createRing(
  * @returns the renderer
  */
 export function createRendererComponent(width: number, height: number, pixelRatio?: number) {
-  const renderer = new WebGPURenderer({ antialias: true, alpha: true, forceWebGL: false })
+  const renderer = new WebGPURenderer({ antialias: true, alpha: true, forceWebGL: true })
   if (pixelRatio) {
     renderer.setPixelRatio(pixelRatio)
   }
   renderer.setSize(width, height)
   renderer.setClearColor(0x000000, 0)
-  //renderer.setTransparentSort((a, b) => a.z - b.z) // Invert transparent sorting to have a "filter" effect for transparent objects (atmos/ring)
+  renderer.setTransparentSort((a, b) => a.z! - b.z!) // Invert transparent sorting to have a "filter" effect for transparent objects (atmos/ring)
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
   renderer.outputColorSpace = THREE.SRGBColorSpace
@@ -255,7 +252,7 @@ export function createOrthgraphicCameraComponent(
  * @param intensity light intensity
  * @returns the AmbientLight instance
  */
-export function createAmbientLightComponent(color: THREE.ColorRepresentation, intensity: number) {
+export function createAmbientLight(color: THREE.ColorRepresentation, intensity: number) {
   const light = new THREE.AmbientLight(color)
   light.intensity = intensity
   return light
@@ -299,26 +296,13 @@ export function createCustomShaderMaterialComponent<T extends MaterialConstructo
   return mat
 }
 
-export function createShaderMaterialComponent(
-  vertexShader: string,
-  fragmentShader?: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  uniforms?: { [uniform: string]: THREE.IUniform<any> },
-): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader: fragmentShader ? ShaderLoader.resolveImports(fragmentShader) : undefined,
-    uniforms,
-  })
-}
-
 /**
  * Creates standard OrbitControls
  * @param camera the camera to control
  * @param canvas the render canvas
  * @returns an instance of OrbitControls
  */
-export function createControlsComponent(camera: THREE.Camera, canvas: HTMLCanvasElement): OrbitControls {
+export function createOrbitControls(camera: THREE.Camera, canvas: HTMLCanvasElement): OrbitControls {
   const controls = new OrbitControls(camera, canvas)
   controls.enablePan = false
   controls.enableDamping = false

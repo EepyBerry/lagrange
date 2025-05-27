@@ -64,7 +64,7 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   initPlanet()
   initRendering(canvas, w, h)
   initUniformUpdateMap(LG_SCENE_DATA, LG_PLANET_DATA.value)
-  ComponentBuilder.createControlsComponent(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
+  ComponentBuilder.createOrbitControls(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
 }
 
 function initLighting(): void {
@@ -72,7 +72,10 @@ function initLighting(): void {
   LG_SCENE_DATA.scene!.add(sun)
   LG_SCENE_DATA.sunLight = sun
 
-  const ambientLight = ComponentBuilder.createAmbientLightComponent(LG_PLANET_DATA.value.ambLightColor, LG_PLANET_DATA.value.ambLightIntensity)
+  const ambientLight = ComponentBuilder.createAmbientLight(
+    LG_PLANET_DATA.value.ambLightColor,
+    LG_PLANET_DATA.value.ambLightIntensity,
+  )
   ambientLight.name = Globals.LG_NAME_AMBLIGHT
   LG_SCENE_DATA.scene!.add(ambientLight)
   LG_SCENE_DATA.ambLight = ambientLight

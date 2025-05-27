@@ -31,15 +31,12 @@ const NUM_IN_SCATTER = 10
  */
 // e = -b +/- sqrt( b^2 - c )
 export const rayVsSphere = /*@__PURE__*/ Fn(([i_position, i_direction, i_r]: ShaderNodeObject<Node>[]) => {
-  const r = float(i_r).toVar('r')
-
   const b = float(dot(i_position, i_direction)).toVar('b')
-  const c = float(dot(i_position, i_position).sub(r.mul(r))).toVar('c')
-  let d = float(b.mul(b).sub(c))
-
+  const c = float(dot(i_position, i_position).sub(i_r.mul(i_r))).toVar('c')
+  const d = float(b.mul(b).sub(c)).toVar('d')
   If(d.lessThan(0.0), () => vec2(MAX, float(MAX).negate()))
   
-  d = sqrt(d)
+  d.assign(sqrt(d))
   return vec2(b.negate().sub(d), b.negate().add(d))
 }).setLayout({
   name: 'rayVsSphere',
@@ -59,13 +56,9 @@ export const rayVsSphere = /*@__PURE__*/ Fn(([i_position, i_direction, i_r]: Sha
 // F = ----------------- * -------------------------------
 //      8pi * ( 2 + g^2 )     ( 1 + g^2 - 2 * g * c )^(3/2)
 export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<Node>[]) => {
-  const g = float(i_g).toVar('g')
-  const c = float(i_c).toVar('c')
-  const cc = float(i_cc).toVar('cc')
-
-  const gg = float(g.mul(g)).toVar('gg')
-  const a = float(sub(1.0, gg).mul(add(1.0, cc))).toVar('a')
-  const b = float(add(1.0, gg.sub(mul(2.0, g).mul(c)))).toVar('b')
+  const gg = float(i_g.mul(i_g)).toVar('gg')
+  const a = float(sub(1.0, gg).mul(add(1.0, i_cc))).toVar('a')
+  const b = float(add(1.0, gg.sub(mul(2.0, i_g).mul(i_c)))).toVar('b')
   b.mulAssign(sqrt(b))
   b.mulAssign(add(2.0, gg))
 
@@ -104,11 +97,9 @@ export const computeDensity = /*@__PURE__*/ Fn(
     UniformNumberNode,
     UniformNumberNode,
   ]) => {
-    const p = vec3(i_p).toVar('p')
-    const ph = float(i_ph).toVar('ph')
     const actualScaleHeight = float(8500.0).toVar('actualScaleHeight') // The scale height on Earth in meters
     const scale = float(i_density.div(actualScaleHeight)).toVar('scale') // Scaling factor based on the gap
-    const altitude = float(length(p).sub(i_surfaceRadius)).toVar('altitude')
+    const altitude = float(length(i_p).sub(i_surfaceRadius)).toVar('altitude')
 
     // Initial density at the surface (sea level). Set this to your desired value.
     // Earth's air density at sea level is approximately 1.225 kg/m^3
@@ -119,7 +110,7 @@ export const computeDensity = /*@__PURE__*/ Fn(
 
     // Use exponential decay formula to calculate density
     const rho = float(rho_0.mul(exp(max(altitude, 0.0).negate().div(actualScaleHeight.mul(scale))))).toVar('rho')
-    return rho.mul(ph)
+    return rho.mul(i_ph)
   },
 ).setLayout({
   name: 'computeDensity',
@@ -140,15 +131,12 @@ export const optic = /*@__PURE__*/ Fn(
     UniformNumberNode,
     UniformNumberNode,
   ]) => {
-    const p = vec3(i_p).toVar('p')
-    const q = vec3(i_q).toVar('q')
-    const ph = float(i_ph).toVar('ph')
-    const s = vec3(q.sub(p).div(float(NUM_OUT_SCATTER))).toVar('s')
-    const v = vec3(p.add(s.mul(0.5))).toVar('v')
+    const s = vec3(i_q.sub(i_p).div(float(NUM_OUT_SCATTER))).toVar('s')
+    const v = vec3(i_p.add(s.mul(0.5))).toVar('v')
     const sum = float(0.0).toVar('sum')
 
-    Loop({ start: int(0), end: NUM_OUT_SCATTER, condition: '<' }, ({ i }) => {
-      sum.addAssign(computeDensity(v, ph, i_surfaceRadius, i_density))
+    Loop({ start: int(0), end: NUM_OUT_SCATTER, condition: '<' }, () => {
+      sum.addAssign(computeDensity(v, i_ph, i_surfaceRadius, i_density))
       v.addAssign(s)
     })
 
