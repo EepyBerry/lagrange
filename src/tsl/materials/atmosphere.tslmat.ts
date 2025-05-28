@@ -103,8 +103,8 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
           vec3(this.uniforms.transform.radius, this.uniforms.transform.surfaceRadius, this.uniforms.render.density),
         ),
       ).toVar('I')
-      const IGamma = vec4(pow(I, vec4(1.0 / 2.2))).toVar('IGamma')
-      const IShifted = vec4(shiftHue(IGamma.xyz, this.uniforms.render.hue.mul(PI)), IGamma.a).toVar('IShifted')
+      //I.powAssign(vec4(1.0 / 2.2))
+      const IShifted = vec4(shiftHue(I.xyz, this.uniforms.render.hue.mul(PI)), I.a).toVar('IShifted')
       const tint = vec4(this.uniforms.render.tint, 1.0).toVar('tint')
 
       const colorNode = vec4(0.0).toVar('colorNode')
@@ -112,13 +112,13 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
         colorNode.assign(IShifted.mul(this.uniforms.render.intensity))
       })
       If(this.uniforms.render.colorMode.equal(int(1)), () => {
-        colorNode.assign(whitescale(IGamma).mul(tintToMatrix(tint)).mul(this.uniforms.render.intensity))
+        colorNode.assign(whitescale(I).mul(tintToMatrix(tint)).mul(this.uniforms.render.intensity))
       })
       If(this.uniforms.render.colorMode.equal(int(2)), () => {
         colorNode.assign(IShifted.mul(tint).mul(this.uniforms.render.intensity))
       })
-      // convert to correct color space (SRGB)
-      return vec4(sRGBToLinear(colorNode.rgb), colorNode.a)
+      //return vec4(sRGBToLinear(colorNode.rgb), colorNode.a)
+      return colorNode
     }).setLayout({
       name: 'fragmentNode',
       inputs: [],

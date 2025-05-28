@@ -24,7 +24,7 @@
       <ParameterGroup :toggleable="true">
         <template #title>{{ $t('editor.controls.atmosphere.rgba') }}</template>
         <template #content>
-          <ParameterSlider id="a-int" v-model="LG_PLANET_DATA.atmosphereIntensity" :step="0.01" :min="0" :max="2">
+          <ParameterSlider id="a-int" v-model="LG_PLANET_DATA.atmosphereIntensity" :step="0.01" :min="0" :max="5">
             {{ $t('editor.controls.atmosphere.rgba_intensity') }}
           </ParameterSlider>
           <ParameterRadio>

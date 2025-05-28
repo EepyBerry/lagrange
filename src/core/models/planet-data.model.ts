@@ -444,7 +444,7 @@ export default class PlanetData extends ChangeTracker {
     return this._atmosphereIntensity
   }
   public set atmosphereIntensity(value: number) {
-    this._atmosphereIntensity = value
+    this._atmosphereIntensity = clamp(value, 0, 5.0)
     this.markForChange('_atmosphereIntensity')
   }
   public get atmosphereColorMode(): number {
@@ -623,7 +623,7 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereEnabled = true
     this._atmosphereHeight = 8.0
     this._atmosphereDensityScale = 3.0
-    this._atmosphereIntensity = 1.35
+    this._atmosphereIntensity = 2.0
     this._atmosphereColorMode = ColorMode.REALISTIC
     this._atmosphereHue = 0.0
     this._atmosphereTint = new Color(0xffffff)
