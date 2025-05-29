@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import type { RingParameters } from '@/core/models/ring-parameters.model'
-import { colorRampToStyle } from '@/utils/utils'
+import { colorRampToStyle } from '@/utils/render-utils'
 import { onMounted, ref, type Ref } from 'vue'
 
 const lgParam = defineModel<RingParameters>()

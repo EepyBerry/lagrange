@@ -1,11 +1,11 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import type { Rect, RawRGBA } from '@/core/types'
-import { alphaBlendColors, avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
+import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
 import { Color, DataTexture, Vector2 } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { MUL_INT8_TO_UNIT } from '../globals'
-import { toRawRGBA } from '@/utils/utils'
+import { alphaBlendColors, toRawRGBA } from '@/utils/render-utils'
 
 export function createRampTexture(buffer: Uint8Array, w: number, steps: ColorRampStep[]): DataTexture {
   if (steps.length > 0) {

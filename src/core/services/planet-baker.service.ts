@@ -7,11 +7,11 @@ import { createRampTexture, createBiomeTexture } from '@core/helpers/texture.hel
 import type PlanetData from '@core/models/planet-data.model'
 import { ShaderFileType } from '@core/types'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
-import { bufferToTexture } from '@/utils/three-utils'
+import { bufferToTexture } from '@/utils/render-utils'
 import type { WebGPURenderer } from 'three/webgpu'
 
 const BAKE_PATCH_RGX = /gl_Position ?=.*;/gm
-const BAKE_CAMERA = ComponentBuilder.createOrthgraphicCameraComponent(1, 1, 0, 1)
+const BAKE_CAMERA = ComponentBuilder.createOrthographicCamera(1, 1, 0, 1)
 const BAKE_RENDER_TARGET = new THREE.WebGLRenderTarget(1, 1, { colorSpace: THREE.SRGBColorSpace })
 
 export function createBakingPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): THREE.Mesh {

@@ -158,7 +158,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const FLAG_BIOMES = FLAG_LAND.mul(float(this.uniforms.flags.element(3)))
 
     // render noise as color
-    const texCoord = vec2(float(min(height, heightLimit)), 0.5).toVar('texCoord')
+    const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord')
     let colour = vec3(this.uniforms.textures[0].sample(texCoord).xyz)
 
     // Render biomes

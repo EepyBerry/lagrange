@@ -94,7 +94,7 @@
           <!-- prettier-ignore-attribute -->
           <ParameterColorRamp
             :key="LG_PLANET_DATA.planetName"
-            v-model="(LG_PLANET_DATA.cloudsColorRamp as ColorRamp)"
+            v-model="LG_PLANET_DATA.cloudsColorRamp"
             mode="opacity"
           >
             {{ $t('editor.controls.clouds.rgba_opacityramp') }}

@@ -34,19 +34,21 @@ export const doDisplace = /*@__PURE__*/ Fn(([i_position, i_params, i_noise]: [Va
 
 // ----------------------------------------------------------------------------
 
-export const layer = /*@__PURE__*/ Fn(([i_position, i_noise, i_layers]:  [VaryingNode, UniformVector4Node, UniformNumberNode]) => {
-  const height = float(fbm3(i_position, i_noise)).toVar('height')
-  height.assign(mix(height, fbm1(height, i_noise), clamp(i_layers.sub(1.0), 0.0, 1.0)))
-  height.assign(mix(height, fbm1(height, i_noise), clamp(i_layers.sub(2.0), 0.0, 1.0)))
-  return height
-}).setLayout({
+export const layer = /*@__PURE__*/ Fn(
+  ([i_position, i_noise, i_layers]: [VaryingNode, UniformVector4Node, UniformNumberNode]) => {
+    const height = float(fbm3(i_position, i_noise)).toVar('height')
+    height.assign(mix(height, fbm1(height, i_noise), clamp(i_layers.sub(1.0), 0.0, 1.0)))
+    height.assign(mix(height, fbm1(height, i_noise), clamp(i_layers.sub(2.0), 0.0, 1.0)))
+    return height
+  },
+).setLayout({
   name: 'LG_LWD_layer',
-  type: 'vec3',
+  type: 'float',
   inputs: [
     { name: 'i_position', type: 'vec3' },
     { name: 'i_noise', type: 'vec4' },
     { name: 'i_layers', type: 'int' },
-  ]
+  ],
 })
 
 export const warp = /*@__PURE__*/ Fn(([i_position, i_params, i_enable]: [VaryingNode, UniformVector4Node, UniformNumberNode]) => {

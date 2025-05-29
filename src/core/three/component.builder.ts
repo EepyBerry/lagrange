@@ -31,8 +31,8 @@ export function createScene(data: PlanetData, width: number, height: number, pix
   ])
 
   // setup scene (renderer, cam, lighting)
-  const renderer = createRendererComponent(width, height, pixelRatio)
-  const camera = createPerspectiveCameraComponent(
+  const renderer = createRenderer(width, height, pixelRatio)
+  const camera = createPerspectiveCamera(
     50,
     width / height,
     0.1,
@@ -86,10 +86,7 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
   }
 }
 
-export function createClouds(
-  data: PlanetData,
-  textureBuffer: Uint8Array,
-): CloudsMeshData {
+export function createClouds(data: PlanetData, textureBuffer: Uint8Array): CloudsMeshData {
   const cloudsHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
   const geometry = createSphereGeometryComponent(data.planetMeshQuality, cloudsHeight)
   const opacityTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
@@ -162,7 +159,7 @@ export function createRing(
  * @param height canvas height
  * @returns the renderer
  */
-export function createRendererComponent(width: number, height: number, pixelRatio?: number) {
+export function createRenderer(width: number, height: number, pixelRatio?: number) {
   const renderer = new WebGPURenderer({ antialias: true, alpha: true, forceWebGL: true })
   if (pixelRatio) {
     renderer.setPixelRatio(pixelRatio)
@@ -185,7 +182,7 @@ export function createRendererComponent(width: number, height: number, pixelRati
  * @param initialOrbit (optional) orbit settings (angle, etc)
  * @returns the configured camera
  */
-export function createPerspectiveCameraComponent(
+export function createPerspectiveCamera(
   fov: number,
   ratio: number,
   near: number,
@@ -201,15 +198,14 @@ export function createPerspectiveCameraComponent(
 }
 
 /**
- * Creates a perspective camera with the given params and optional orbit settings
- * @param fov Field of View, in degrees
- * @param ratio aspect ratio, i.e. width/height
+ * Creates an orthographic camera with the given params and optional orbit settings
+ * @param width screen width
+ * @param height screen height
  * @param near closest rendering distance
  * @param far furthest rendering distance
- * @param initialOrbit (optional) orbit settings (angle, etc)
  * @returns the configured camera
  */
-export function createOrthgraphicCameraComponent(
+export function createOrthographicCamera(
   width: number,
   height: number,
   near: number,

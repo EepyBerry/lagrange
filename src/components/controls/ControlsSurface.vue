@@ -1,10 +1,5 @@
 <template>
   <ParameterGrid>
-    <button class="lg debug" style="padding: 0 0.5rem" @click="DebugUtils.getRawSurfaceData">
-      <iconify-icon icon="material-symbols:code-rounded" aria-hidden="true" />
-      get tex
-    </button>
-
     <ParameterGroup v-model="LG_PLANET_DATA.planetSurfaceShowBumps" :toggleable="LG_PLANET_DATA.planetSurfaceShowBumps">
       <template #title>{{ $t('editor.controls.surface.bumpmap') }}</template>
       <template #content>
@@ -133,7 +128,7 @@
         <!-- prettier-ignore-attribute -->
         <ParameterColorRamp
           :key="LG_PLANET_DATA.planetName"
-          v-model="(LG_PLANET_DATA.planetSurfaceColorRamp as ColorRamp)"
+          v-model="LG_PLANET_DATA.planetSurfaceColorRamp"
           mode="rgb"
         >
           {{ $t('editor.general.noise_rgbramp') }}
@@ -145,5 +140,4 @@
 <script setup lang="ts">
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
 import type { ColorRamp } from '@/core/models/color-ramp.model'
-import { DebugUtils } from '@/utils/debug-utils'
 </script>

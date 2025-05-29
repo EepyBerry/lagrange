@@ -537,7 +537,7 @@ export default class PlanetData extends ChangeTracker {
 
     // Surface
     this._planetSurfaceShowBumps = true
-    this._planetSurfaceBumpStrength = 0.12
+    this._planetSurfaceBumpStrength = 0.09
     this._planetSurfaceShowWarping = false
     this._planetSurfaceShowDisplacement = false
     this._planetSurfaceDisplacement = new DisplacementParameters(

@@ -5,7 +5,7 @@ import * as Globals from '@core/globals'
 import * as ComponentBuilder from '@core/three/component.builder'
 import { type BakingTarget, type EditorSceneData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
-import { normalizeUInt8ArrayPixels, regeneratePRNGIfNecessary } from '@/utils/math-utils'
+import { regeneratePRNGIfNecessary } from '@/utils/math-utils'
 import {
   bakeMesh,
   createBakingHeightMap,
@@ -26,6 +26,7 @@ import {
   reloadRingDataUpdates,
 } from '../helpers/uniform.helper'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
+import { normalizeUInt8ArrayPixels } from '@/utils/render-utils'
 
 // Editor constants
 const LG_SCENE_DATA: EditorSceneData = {
@@ -221,12 +222,12 @@ function updateScene() {
 
     // TODO: Remove debug printing when done
     LG_SCENE_DATA.renderer!.debug.getShaderAsync(
-     LG_SCENE_DATA.scene!,
-     LG_SCENE_DATA.camera!,
-     LG_SCENE_DATA.clouds!.mesh!,
-   ).then((e) => {
-     console.log(e.fragmentShader)
-   })
+      LG_SCENE_DATA.scene!,
+      LG_SCENE_DATA.camera!,
+      LG_SCENE_DATA.clouds!.mesh!,
+    ).then((e) => {
+      console.log(e.fragmentShader)
+    })
   }
   for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
     /*if (changedProp.prop === '_ringsParameters') {
@@ -312,7 +313,7 @@ export async function exportPlanetPreview(): Promise<string> {
   const previewRenderTarget = new THREE.WebGLRenderTarget(w, h, {
     colorSpace: THREE.SRGBColorSpace,
   })
-  const previewCamera = ComponentBuilder.createPerspectiveCameraComponent(
+  const previewCamera = ComponentBuilder.createPerspectiveCamera(
     50,
     w / h,
     0.1,
@@ -333,7 +334,7 @@ export async function exportPlanetPreview(): Promise<string> {
   const rawBuffer = new Uint8Array(w * h * 4)
   LG_SCENE_DATA.renderer!.setRenderTarget(previewRenderTarget)
   LG_SCENE_DATA.renderer!.render(renderScene, previewCamera)
-  rawBuffer.set(await LG_SCENE_DATA.renderer!.readRenderTargetPixelsAsync(previewRenderTarget, 0, 0, w,h))
+  rawBuffer.set(await LG_SCENE_DATA.renderer!.readRenderTargetPixelsAsync(previewRenderTarget, 0, 0, w, h))
   LG_SCENE_DATA.renderer!.setRenderTarget(null)
 
   // ----------------- Create preview canvas & write data from buffer -----------------

@@ -46,7 +46,7 @@ import {
   resetPlanet,
   randomizePlanet,
 } from '@/core/services/planet-editor.service'
-import { getPlanetMetaTitle, sleep } from '@/utils/utils'
+import { sleep } from '@/utils/utils'
 import { nanoid } from 'nanoid'
 import WebGL from 'three/addons/capabilities/WebGL.js'
 import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
@@ -232,7 +232,7 @@ async function onWindowKeydown(event: KeyboardEvent) {
 }
 
 function patchMetaHead() {
-  head!.patch({ title: getPlanetMetaTitle(LG_PLANET_DATA.value.planetName, i18n) })
+  head!.patch({ title: `[${LG_PLANET_DATA.value.planetName}]` + ' · ' + i18n.t('main.$title') })
 }
 
 // ------------------------------------------------------------------------------------------------
