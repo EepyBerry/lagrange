@@ -33,6 +33,9 @@ const LG_SCENE_DATA: EditorSceneData = {
     surfaceBuffer: new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4),
     biomesBuffer: new Uint8Array(Globals.TEXTURE_SIZES.BIOME * Globals.TEXTURE_SIZES.BIOME * 4),
   },
+  clouds: {
+    buffer: new Uint8Array(Globals.TEXTURE_SIZES.CLOUDS * 4),
+  },
   rings: [],
 }
 export const LG_PLANET_DATA: Ref<PlanetData> = ref(new PlanetData())
@@ -97,7 +100,7 @@ function initPlanet(): void {
     LG_SCENE_DATA.planet.surfaceBuffer,
     LG_SCENE_DATA.planet.biomesBuffer,
   )
-  //const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
+  const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
   const atmosphere = ComponentBuilder.createAtmosphere(LG_PLANET_DATA.value, LG_SCENE_DATA.sunLight!.position)
   /*const rings: GenericMeshData[] = LG_PLANET_DATA.value.ringsParams.map((_, idx) => {
     const newRingBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
@@ -110,7 +113,7 @@ function initPlanet(): void {
   })*/
   const planetGroup = new THREE.Group()
   planetGroup.add(planet.mesh!)
-  //planetGroup.add(clouds.mesh)
+  planetGroup.add(clouds.mesh!)
   planetGroup.add(atmosphere.mesh!)
 
   /*const ringAnchor = new THREE.Group()
@@ -120,7 +123,7 @@ function initPlanet(): void {
 
   LG_SCENE_DATA.scene!.add(planetGroup)
   LG_SCENE_DATA.planet = planet
-  //LG_SCENE_DATA.clouds = clouds.mesh
+  LG_SCENE_DATA.clouds = clouds
   LG_SCENE_DATA.atmosphere = atmosphere
   //LG_SCENE_DATA.rings = rings
   LG_SCENE_DATA.planetGroup = planetGroup
@@ -132,11 +135,11 @@ function initPlanet(): void {
     LG_SCENE_DATA.planet.mesh!.up,
     degToRad(LG_PLANET_DATA.value.planetRotation),
   )
-  /*LG_SCENE_DATA.clouds.setRotationFromAxisAngle(
-    LG_SCENE_DATA.clouds.up,
+  LG_SCENE_DATA.clouds.mesh!.setRotationFromAxisAngle(
+    LG_SCENE_DATA.clouds.mesh!.up,
     degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation),
   )
-  LG_SCENE_DATA.ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90))*/
+  //LG_SCENE_DATA.ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90))
 
   // Set lighting target
   LG_SCENE_DATA.sunLight!.target = LG_SCENE_DATA.planetGroup
@@ -215,12 +218,15 @@ function updateScene() {
   if (watchForPlanetUpdates && LG_PLANET_DATA.value.changedProps.length > 0 && !hasPlanetBeenEdited.value) {
     console.debug('Planet has been edited, warning user in case of unsaved data')
     hasPlanetBeenEdited.value = true
-    
+
     // TODO: Remove debug printing when done
-    LG_SCENE_DATA.renderer!.debug.getShaderAsync(LG_SCENE_DATA.scene!, LG_SCENE_DATA.camera!, LG_SCENE_DATA.atmosphere!.mesh!).then((e) => {
-      console.log(e.vertexShader)
-      console.log(e.fragmentShader)
-    })
+    LG_SCENE_DATA.renderer!.debug.getShaderAsync(
+     LG_SCENE_DATA.scene!,
+     LG_SCENE_DATA.camera!,
+     LG_SCENE_DATA.clouds!.mesh!,
+   ).then((e) => {
+     console.log(e.fragmentShader)
+   })
   }
   for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
     /*if (changedProp.prop === '_ringsParameters') {
@@ -247,25 +253,24 @@ export function disposeScene() {
   LG_SCENE_DATA.lensFlare!.mesh.geometry.dispose()*/
   ;(LG_SCENE_DATA.planet.mesh!.material as THREE.Material).dispose()
   LG_SCENE_DATA.planet.mesh!.geometry.dispose()
-
   ;(LG_SCENE_DATA.atmosphere!.mesh!.material as THREE.Material).dispose()
   LG_SCENE_DATA.atmosphere!.mesh!.geometry.dispose()
-  /*;(LG_SCENE_DATA.clouds!.material as THREE.Material).dispose()
-  LG_SCENE_DATA.clouds!.geometry.dispose()
+  ;(LG_SCENE_DATA.clouds!.mesh!.material as THREE.Material).dispose()
+  LG_SCENE_DATA.clouds!.mesh!.geometry.dispose()
+  /*
   LG_SCENE_DATA.rings!.forEach((r) => {
     ;(r.mesh.material as THREE.Material).dispose()
     r.mesh.geometry.dispose()
   })*/
 
-  /*LG_BUFFER_BIOME.fill(0)
-  LG_BUFFER_CLOUDS.fill(0)*/
+  LG_BUFFER_BIOME.fill(0)
+  LG_BUFFER_CLOUDS.fill(0)
   LG_SCENE_DATA.planet.surfaceBuffer?.fill(0)
   LG_SCENE_DATA.planet.surfaceTexture!.dispose()
   LG_SCENE_DATA.planet.biomesBuffer?.fill(0)
   LG_SCENE_DATA.planet.biomesTexture!.dispose()
-  /*LG_SCENE_DATA.biomeDataTex!.dispose()
-  LG_SCENE_DATA.cloudsDataTex!.dispose()
-  LG_SCENE_DATA.ringAnchor!.clear()*/
+  LG_SCENE_DATA.clouds.texture!.dispose()
+  //LG_SCENE_DATA.ringAnchor!.clear()
   LG_SCENE_DATA.planetGroup!.clear()
 
   LG_SCENE_DATA.scene!.children.forEach((c) => LG_SCENE_DATA.scene!.remove(c))

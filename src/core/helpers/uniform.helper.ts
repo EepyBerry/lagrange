@@ -1,7 +1,7 @@
 import { ref, type Ref } from 'vue'
 import * as Globals from '@core/globals'
 import { degToRad } from 'three/src/math/MathUtils.js'
-import type { PlanetMeshData, EditorSceneData, AtmosphereMeshData } from '../types'
+import type { PlanetMeshData, EditorSceneData, AtmosphereMeshData, CloudsMeshData } from '../types'
 import type { AmbientLight, DirectionalLight, Group, Mesh } from 'three'
 import type { LensFlareEffect } from '../three/lens-flare.effect'
 import type PlanetData from '../models/planet-data.model'
@@ -21,8 +21,8 @@ export function initUniformUpdateMap(sceneData: EditorSceneData, planetData: Pla
   registerSurfaceDataUpdates(planetData, sceneData.planet!)
   registerBiomeDataUpdates(planetData, sceneData.planet!)
   registerAtmosphereDataUpdates(planetData, sceneData.atmosphere!)
-  /* registerCloudDataUpdates(planetData, sceneData.clouds!, sceneData.cloudsDataTex!, texBufs[2])
-  registerRingsDataUpdates(planetData, sceneData.rings!) */
+  registerCloudDataUpdates(planetData, sceneData.clouds!)
+  //registerRingsDataUpdates(planetData, sceneData.rings!)
 }
 
 export function reloadRingDataUpdates(sceneData: EditorSceneData, planetData: PlanetData) {
@@ -67,7 +67,7 @@ function registerPlanetRenderingDataUpdates(
   planetGroup: Group,
   planet: PlanetMeshData,
   atmosphere: AtmosphereMeshData,
-  clouds: Mesh,
+  clouds: CloudsMeshData,
 ): void {
   UNIFORM_UPDATE_MAP.value.set('_planetRadius', () => {
     const v = data.planetRadius
@@ -84,7 +84,7 @@ function registerPlanetRenderingDataUpdates(
     const vRad = degToRad(isNaN(data.planetRotation) ? 0 : data.planetRotation)
     const cloudsRotationRad = degToRad(isNaN(data.cloudsRotation) ? 0 : data.cloudsRotation)
     planet.mesh!.setRotationFromAxisAngle(planet.mesh!.up, vRad)
-   // clouds.setRotationFromAxisAngle(clouds.up, vRad + cloudsRotationRad)
+    clouds.mesh!.setRotationFromAxisAngle(clouds.mesh!.up, vRad + cloudsRotationRad)
   })
   UNIFORM_UPDATE_MAP.value.set('_planetWaterLevel', () => (planet.uniforms!.pbr.array[0] = data.planetWaterLevel))
   UNIFORM_UPDATE_MAP.value.set('_planetWaterRoughness', () => (planet.uniforms!.pbr.array[1] = data.planetWaterRoughness))
@@ -150,44 +150,44 @@ function registerBiomeDataUpdates(data: PlanetData, planet: PlanetMeshData): voi
     planet.biomesTexture!.needsUpdate = true
   })
 }
-/*
+
 // prettier-ignore
-function registerCloudDataUpdates(data: PlanetData, clouds: Mesh, cloudsDataTex: DataTexture, buffer: Uint8Array): void {
-  UNIFORM_UPDATE_MAP.value.set('_cloudsEnabled',  () => clouds.visible = data.cloudsEnabled)
+function registerCloudDataUpdates(data: PlanetData, clouds: CloudsMeshData): void {
+  UNIFORM_UPDATE_MAP.value.set('_cloudsEnabled',  () => clouds.mesh!.visible = data.cloudsEnabled)
   UNIFORM_UPDATE_MAP.value.set('_cloudsRotation', () => {
     const planetRotation = degToRad(isNaN(data.planetRotation) ? 0 : data.planetRotation)
     const v = degToRad(isNaN(data.cloudsRotation) ? 0 : data.cloudsRotation)
-    clouds.setRotationFromAxisAngle(clouds.up, planetRotation + v)
+    clouds.mesh!.setRotationFromAxisAngle(clouds.mesh!.up, planetRotation + v)
   })
   // Warping
-  UNIFORM_UPDATE_MAP.value.set('_cloudsShowWarping',       () => setMeshUniform(clouds,   'u_warp', data.cloudsShowWarping))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._warpFactor', () => patchMeshUniform(clouds, 'u_noise', {
-    xwarp: data.cloudsNoise.xWarpFactor,
-    ywarp: data.cloudsNoise.yWarpFactor,
-    zwarp: data.cloudsNoise.zWarpFactor,
-  }))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsShowWarping',       () => clouds.uniforms!.flags.array[0] = +data.cloudsShowWarping)
+  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._warpFactor', () => {
+    clouds.uniforms!.warping.value.y = data.cloudsNoise.xWarpFactor
+    clouds.uniforms!.warping.value.z = data.cloudsNoise.yWarpFactor
+    clouds.uniforms!.warping.value.w = data.cloudsNoise.zWarpFactor
+  })
   // Displacement
-  UNIFORM_UPDATE_MAP.value.set('_cloudsShowDisplacement',         () => setMeshUniform(clouds,   'u_displace', data.cloudsShowDisplacement))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._factor',     () => patchMeshUniform(clouds, 'u_displacement', { fac: data.cloudsDisplacement.factor }))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._epsilon',    () => patchMeshUniform(clouds, 'u_displacement', { eps: data.cloudsDisplacement.epsilon }))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._multiplier', () => patchMeshUniform(clouds, 'u_displacement', { mul: data.cloudsDisplacement.multiplier }))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._frequency',  () => patchMeshUniform(clouds, 'u_displacement', { freq: data.cloudsDisplacement.frequency }))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._amplitude',  () => patchMeshUniform(clouds, 'u_displacement', { amp: data.cloudsDisplacement.amplitude }))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._lacunarity', () => patchMeshUniform(clouds, 'u_displacement', { lac: data.cloudsDisplacement.lacunarity }))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._octaves',    () => patchMeshUniform(clouds, 'u_displacement', { oct: data.cloudsDisplacement.octaves }))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsShowDisplacement',       () => (clouds.uniforms!.flags.array[1] = +data.cloudsShowDisplacement))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._factor',     () => (clouds.uniforms!.displacement.params.value.x = data.cloudsDisplacement.factor))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._epsilon',    () => (clouds.uniforms!.displacement.params.value.y = data.cloudsDisplacement.epsilon))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._multiplier', () => (clouds.uniforms!.displacement.params.value.z = data.cloudsDisplacement.multiplier))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._frequency',  () => (clouds.uniforms!.displacement.noise.value.x = data.cloudsDisplacement.frequency))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._amplitude',  () => (clouds.uniforms!.displacement.noise.value.y = data.cloudsDisplacement.amplitude))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._lacunarity', () => (clouds.uniforms!.displacement.noise.value.z = data.cloudsDisplacement.lacunarity))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsDisplacement._octaves',    () => (clouds.uniforms!.displacement.noise.value.w = data.cloudsDisplacement.octaves))
   // Noise
-  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._frequency',  () => patchMeshUniform(clouds, 'u_noise', { freq: data.cloudsNoise.frequency }))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._amplitude',  () => patchMeshUniform(clouds, 'u_noise', { amp: data.cloudsNoise.amplitude }))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._lacunarity', () => patchMeshUniform(clouds, 'u_noise', { lac: data.cloudsNoise.lacunarity }))
-  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._octaves',    () => patchMeshUniform(clouds, 'u_noise', { oct: data.cloudsNoise.octaves }))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._frequency',  () => (clouds.uniforms!.noise.value.x = data.cloudsNoise.frequency),)
+  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._amplitude',  () => (clouds.uniforms!.noise.value.y = data.cloudsNoise.amplitude))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._lacunarity', () => (clouds.uniforms!.noise.value.z = data.cloudsNoise.lacunarity),)
+  UNIFORM_UPDATE_MAP.value.set('_cloudsNoise._octaves',    () => (clouds.uniforms!.noise.value.w = data.cloudsNoise.octaves),)
   // Color
-  UNIFORM_UPDATE_MAP.value.set('_cloudsColor',             () =>  setMeshUniform(clouds, 'u_color', data.cloudsColor))
+  UNIFORM_UPDATE_MAP.value.set('_cloudsColor',             () =>  clouds.uniforms!.color.value = data.cloudsColor)
   UNIFORM_UPDATE_MAP.value.set('_cloudsColorRamp',         () =>  {
     const v = data.cloudsColorRamp
-    recalculateRampTexture(buffer, Globals.TEXTURE_SIZES.CLOUDS, v.steps as ColorRampStep[])
-    cloudsDataTex.needsUpdate = true
+    recalculateRampTexture(clouds.buffer!, Globals.TEXTURE_SIZES.CLOUDS, v.steps)
+    clouds.texture!.needsUpdate = true
   })
-} */
+}
 
 // prettier-ignore
 function registerAtmosphereDataUpdates(data: PlanetData, atmosphere: AtmosphereMeshData): void {

@@ -26,10 +26,10 @@ import {
 } from 'three/tsl'
 import { type TSLMaterial } from './tsl-material'
 import type PlanetData from '@/core/models/planet-data.model'
-import { displace, layer, warp } from '../features/lwd.tslfeat'
+import { displace, layer, warp } from '../features/lwd'
 import type { UniformNumberNode, UniformVector3Node, UniformVector4Node } from '../types'
-import { applyBump } from '../features/bump.tslfeat'
-import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes.tslfeat'
+import { applyBump } from '../features/bump'
+import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes'
 
 export type PlanetUniforms = {
   radius: UniformNumberNode
@@ -55,7 +55,6 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   public readonly uniforms: PlanetUniforms
 
   constructor(data: PlanetData, textures: DataTexture[]) {
-    // Register uniforms
     this.uniforms = {
       radius: uniform(data.planetRadius, 'float'),
       bumpStrength: uniform(data.planetSurfaceBumpStrength, 'float'),
@@ -159,7 +158,8 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const FLAG_BIOMES = FLAG_LAND.mul(float(this.uniforms.flags.element(3)))
 
     // render noise as color
-    let colour = vec3(this.uniforms.textures[0].sample(vec2(min(height, heightLimit), 0.5)).xyz)
+    const texCoord = vec2(float(min(height, heightLimit)), 0.5).toVar('texCoord')
+    let colour = vec3(this.uniforms.textures[0].sample(texCoord).xyz)
 
     // Render biomes
     const tHeight = float(

@@ -16,7 +16,6 @@ import {
   PI,
   positionGeometry,
   positionWorld,
-  pow,
   uniform,
   vec2,
   vec3,
@@ -24,7 +23,7 @@ import {
 } from 'three/tsl'
 import { applyInScatter, rayVsSphere } from '../utils/atmosphere.tslutil'
 import { inverseMat4 } from '../utils/math.tslutil'
-import { shiftHue, sRGBToLinear, tintToMatrix, whitescale } from '../utils/color.tslutil'
+import { shiftHue, tintToMatrix, whitescale } from '../utils/color.tslutil'
 
 export type AtmosphereUniforms = {
   sunlight: {
@@ -117,12 +116,12 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
       If(this.uniforms.render.colorMode.equal(int(2)), () => {
         colorNode.assign(IShifted.mul(tint).mul(this.uniforms.render.intensity))
       })
-      //return vec4(sRGBToLinear(colorNode.rgb), colorNode.a)
+      //return vec4(linearToSRGB(colorNode.rgb), colorNode.a)
       return colorNode
     }).setLayout({
       name: 'fragmentNode',
-      inputs: [],
       type: 'vec4',
+      inputs: [],
     })
 
     // set colorNode depending on current color mode (realistic/direct/mixed)

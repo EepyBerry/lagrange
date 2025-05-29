@@ -14,6 +14,7 @@ import type { LensFlareEffect } from './three/lens-flare.effect'
 import type { WebGPURenderer } from 'three/webgpu'
 import type { PlanetUniforms } from '@/tsl/materials/planet.tslmat'
 import type { AtmosphereUniforms } from '@/tsl/materials/atmosphere.tslmat'
+import type { CloudsUniforms } from '@/tsl/materials/clouds.tslmat'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
@@ -74,7 +75,7 @@ export type EditorSceneData = {
 
   // Main objects
   planet: PlanetMeshData
-  clouds?: Mesh
+  clouds: CloudsMeshData
   atmosphere?: AtmosphereMeshData
   rings?: GenericMeshData[]
   sunLight?: DirectionalLight
@@ -99,10 +100,18 @@ export type PlanetMeshData = {
   biomesBuffer: Uint8Array
   biomesTexture?: DataTexture
 }
+export type CloudsMeshData = {
+  mesh?: Mesh
+  uniforms?: CloudsUniforms
+
+  buffer: Uint8Array
+  texture?: DataTexture
+}
 export type AtmosphereMeshData = {
   mesh?: Mesh
   uniforms?: AtmosphereUniforms
 }
+
 export type GenericMeshData = {
   mesh: Mesh
   texture: DataTexture

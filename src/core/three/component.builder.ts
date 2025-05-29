@@ -4,7 +4,7 @@ import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-sha
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { createRampTexture, createBiomeTexture } from '../helpers/texture.helper'
 import type PlanetData from '../models/planet-data.model'
-import { ShaderFileType, type SceneRenderObjects, type PlanetMeshData, type AtmosphereMeshData } from '../types'
+import { ShaderFileType, type SceneRenderObjects, type PlanetMeshData, type AtmosphereMeshData, type GenericMeshData, type CloudsMeshData } from '../types'
 import { loadCubeTexture } from './external-data.loader'
 import { LensFlareEffect } from './lens-flare.effect'
 import * as Globals from '@core/globals'
@@ -13,6 +13,7 @@ import { WebGPURenderer } from 'three/webgpu'
 import { PlanetTSLMaterial } from '@/tsl/materials/planet.tslmat'
 import { LG_PLANET_DATA } from '../services/planet-editor.service'
 import { AtmosphereTSLMaterial } from '@/tsl/materials/atmosphere.tslmat'
+import { CloudsTSLMaterial } from '@/tsl/materials/clouds.tslmat'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -88,52 +89,23 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
 export function createClouds(
   data: PlanetData,
   textureBuffer: Uint8Array,
-): { mesh: THREE.Mesh; texs: THREE.DataTexture[] } {
-  const cloudHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
-  const geometry = createSphereGeometryComponent(data.planetMeshQuality, cloudHeight)
+): CloudsMeshData {
+  const cloudsHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
+  const geometry = createSphereGeometryComponent(data.planetMeshQuality, cloudsHeight)
   const opacityTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
-  const material = createCustomShaderMaterialComponent(
-    ShaderLoader.fetch('clouds.vert.glsl', ShaderFileType.CORE),
-    ShaderLoader.fetch('clouds.frag.glsl', ShaderFileType.CORE),
-    {
-      u_warp: { value: data.cloudsShowWarping },
-      u_displace: { value: data.cloudsShowDisplacement },
-      u_displacement: {
-        value: {
-          freq: data.cloudsDisplacement.frequency,
-          amp: data.cloudsDisplacement.amplitude,
-          lac: data.cloudsDisplacement.lacunarity,
-          oct: data.cloudsDisplacement.octaves,
-          eps: data.cloudsDisplacement.epsilon,
-          mul: data.cloudsDisplacement.multiplier,
-          fac: data.cloudsDisplacement.factor,
-        },
-      },
-      u_noise: {
-        value: {
-          freq: data.cloudsNoise.frequency,
-          amp: data.cloudsNoise.amplitude,
-          lac: data.cloudsNoise.lacunarity,
-          oct: data.cloudsNoise.octaves,
-          layers: data.cloudsNoise.layers,
-          xwarp: data.cloudsNoise.xWarpFactor,
-          ywarp: data.cloudsNoise.yWarpFactor,
-          zwarp: data.cloudsNoise.zWarpFactor,
-        },
-      },
-      u_color: { value: data.cloudsColor },
-      u_opacity_tex: { value: opacityTex },
-    },
-    THREE.MeshStandardMaterial,
-  )
-  material.transparent = true
-
-  const mesh = new THREE.Mesh(geometry, material)
-  mesh.name = Globals.LG_NAME_CLOUDS
-  mesh.receiveShadow = true
+  const tslMaterial = new CloudsTSLMaterial(data, [opacityTex])
+  const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.castShadow = true
-  return { mesh, texs: [opacityTex] }
+  mesh.receiveShadow = true
+  mesh.name = Globals.LG_NAME_CLOUDS
+
+  return {
+    mesh,
+    uniforms: tslMaterial.uniforms,
+    buffer: textureBuffer,
+    texture: opacityTex,
+  }
 }
 
 export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): AtmosphereMeshData {

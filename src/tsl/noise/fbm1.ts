@@ -2,17 +2,23 @@ import { float, sin, fract, Fn, floor, mix, int, Loop } from 'three/tsl'
 import type { UniformNumberNode, UniformVector3Node, UniformVector4Node } from '../types'
 import type { VaryingNode } from 'three/webgpu';
 
-export const rand = /*@__PURE__*/ Fn(([n_immutable]: [UniformNumberNode]) => {
-  const n = float(n_immutable).toVar()
-  return fract(sin(n).mul(43758.5453123))
-});
+export const rand = /*@__PURE__*/ Fn(([i_n]: [UniformNumberNode]) => {
+  return fract(sin(i_n).mul(43758.5453123))
+}).setLayout({
+  name: 'LG_NOISE_rand',
+  type: 'float',
+  inputs: [{ name: 'n', type: 'float' }]
+})
 
-export const noise1 = /*@__PURE__*/ Fn(([p_immutable]: [UniformVector3Node]) => {
-  const p = float(p_immutable).toVar()
-  const fl = float(floor(p)).toVar()
-  const fc = float(fract(p)).toVar()
+export const noise1 = /*@__PURE__*/ Fn(([i_p]: [UniformVector3Node]) => {
+  const fl = float(floor(i_p)).toVar()
+  const fc = float(fract(i_p)).toVar()
   return mix(rand(fl), rand(fl.add(1.0)), fc)
-});
+}).setLayout({
+  name: 'LG_NOISE_noise1',
+  type: 'float',
+  inputs: [{ name: 'p', type: 'float' }]
+})
 
 export const fbm1 = /*@__PURE__*/ Fn(([i_x, i_params]: [VaryingNode, UniformVector4Node]) => {
     const freq = float(i_params.x).toVar()
@@ -28,4 +34,12 @@ export const fbm1 = /*@__PURE__*/ Fn(([i_x, i_params]: [VaryingNode, UniformVect
       amp.mulAssign(0.5)
     })
     return val
-});
+}).setLayout({
+  name: 'LG_NOISE_fbm1',
+  type: 'float',
+  inputs: [
+    { name: 'i_x', type: 'float' },
+    { name: 'i_noise', type: 'vec4' }
+  ]
+})
+
