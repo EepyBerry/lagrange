@@ -15,6 +15,7 @@ import type { WebGPURenderer } from 'three/webgpu'
 import type { PlanetUniforms } from '@/tsl/materials/planet.tslmat'
 import type { AtmosphereUniforms } from '@/tsl/materials/atmosphere.tslmat'
 import type { CloudsUniforms } from '@/tsl/materials/clouds.tslmat'
+import type { RingUniforms } from '@/tsl/materials/ring.tslmat'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
@@ -77,7 +78,7 @@ export type EditorSceneData = {
   planet: PlanetMeshData
   clouds: CloudsMeshData
   atmosphere?: AtmosphereMeshData
-  rings?: GenericMeshData[]
+  rings?: RingMeshData[]
   sunLight?: DirectionalLight
   ambLight?: AmbientLight
   lensFlare?: LensFlareEffect
@@ -111,11 +112,12 @@ export type AtmosphereMeshData = {
   mesh?: Mesh
   uniforms?: AtmosphereUniforms
 }
+export type RingMeshData = {
+  mesh?: Mesh
+  uniforms?: RingUniforms
 
-export type GenericMeshData = {
-  mesh: Mesh
-  texture: DataTexture
   buffer: Uint8Array | null
+  texture?: DataTexture
 }
 
 // ---------------------------------- Preview data ----------------------------------

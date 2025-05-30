@@ -1,5 +1,6 @@
 import { Fn, mat4, float, type ShaderNodeObject } from 'three/tsl'
-import type { Node } from 'three/webgpu'
+import type { Node, VaryingNode } from 'three/webgpu'
+import type { UniformNumberNode } from '../types'
 
 export const inverseMat4 = /*@__PURE__*/ Fn(([i_matrix]: [ShaderNodeObject<Node>]) => {
   const m = mat4(i_matrix).toVar('m')
@@ -60,7 +61,21 @@ export const inverseMat4 = /*@__PURE__*/ Fn(([i_matrix]: [ShaderNodeObject<Node>
     a20.mul(b03).sub(a21.mul(b01)).add(a22.mul(b00)),
   ).mul(float(1).div(det))
 }).setLayout({
-  name: 'inverseMat4',
+  name: 'LG_MATH_inverseMat4',
   inputs: [{ name: 'i_matrix', type: 'mat4' }],
-  type: 'mat4'
+  type: 'mat4',
+})
+
+export const clampToRange = /*@__PURE__*/ Fn(
+  ([i_v, i_min, i_max]: [ShaderNodeObject<VaryingNode>, UniformNumberNode, UniformNumberNode]) => {
+    return i_v.sub(i_min).div(i_max.sub(i_min))
+  },
+).setLayout({
+  name: 'LG_MATH_clampToRange',
+  type: 'float',
+  inputs: [
+    { name: 'v', type: 'float' },
+    { name: 'min', type: 'float' },
+    { name: 'max', type: 'float' },
+  ],
 })

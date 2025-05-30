@@ -39,7 +39,7 @@ export const rayVsSphere = /*@__PURE__*/ Fn(([i_position, i_direction, i_r]: Sha
   d.assign(sqrt(d))
   return vec2(b.negate().sub(d), b.negate().add(d))
 }).setLayout({
-  name: 'rayVsSphere',
+  name: 'LG_ATMOS_rayVsSphere',
   type: 'vec2',
   inputs: [
     { name: 'i_position', type: 'vec3' },
@@ -66,7 +66,7 @@ export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<N
     .mul(a)
     .div(b)
 }).setLayout({
-  name: 'computeMie',
+  name: 'LG_ATMOS_computeMie',
   type: 'float',
   inputs: [
     { name: 'i_g', type: 'float' },
@@ -83,7 +83,7 @@ export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<N
 export const computeRayleigh = /*@__PURE__*/ Fn(([i_cc]: ShaderNodeObject<Node>[]) => {
   return div(3.0 / 16.0, PI).mul(add(1.0, i_cc))
 }).setLayout({
-  name: 'computeRayleigh',
+  name: 'LG_ATMOS_computeRayleigh',
   type: 'float',
   inputs: [
     { name: 'i_cc', type: 'float' }
@@ -113,7 +113,7 @@ export const computeDensity = /*@__PURE__*/ Fn(
     return rho.mul(i_ph)
   },
 ).setLayout({
-  name: 'computeDensity',
+  name: 'LG_ATMOS_computeDensity',
   type: 'float',
   inputs: [
     { name: 'i_p', type: 'vec3' },
@@ -144,7 +144,7 @@ export const optic = /*@__PURE__*/ Fn(
     return sum
   },
 ).setLayout({
-  name: 'optic',
+  name: 'LG_ATMOS_optic',
   type: 'float',
   inputs: [
     { name: 'i_p', type: 'vec3' },
@@ -223,7 +223,7 @@ export const applyInScatter = /*@__PURE__*/ Fn(
     return vec4(scatter.mul(i_lightIntensity), alpha)
   },
 ).setLayout({
-  name: 'applyInScatter',
+  name: 'LG_ATMOS_applyInScatter',
   type: 'vec4',
   inputs: [
     { name: 'i_o', type: 'vec3' },

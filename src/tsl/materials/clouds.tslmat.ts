@@ -1,11 +1,24 @@
-import { DataTexture, MeshStandardNodeMaterial, TextureNode, UniformArrayNode, Vector3, Vector4 } from 'three/webgpu'
+import { Color, DataTexture, MeshStandardNodeMaterial, TextureNode, UniformArrayNode, Vector3, Vector4 } from 'three/webgpu'
 import { Fn, positionLocal, texture, uniform, uniformArray, vec2, vec3, vec4 } from 'three/tsl'
 import { type TSLMaterial } from './tsl-material'
-import type PlanetData from '@/core/models/planet-data.model'
 import { displace, warp } from '../features/lwd'
 import { fbm3 } from '../noise/fbm3'
-import type { UniformColorNode, UniformVector3Node, UniformVector4Node } from '../types'
+import type { DisplacementData, NoiseData, UniformColorNode, UniformVector3Node, UniformVector4Node, WarpingData } from '../types'
 
+export type CloudsData = {
+  flags: {
+    showWarping: boolean
+    showDisplacement: boolean
+  }
+  color: Color
+  noise: NoiseData
+  warping: WarpingData
+  displacement: {
+    params: DisplacementData
+    noise: NoiseData
+  }
+  texture: DataTexture
+}
 export type CloudsUniforms = {
   flags: UniformArrayNode
   color: UniformColorNode
@@ -15,53 +28,53 @@ export type CloudsUniforms = {
     params: UniformVector3Node
     noise: UniformVector4Node
   }
-  textures: TextureNode[]
+  texture: TextureNode
 }
-export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, CloudsUniforms> {
+export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, CloudsData, CloudsUniforms> {
   public readonly uniforms: CloudsUniforms
 
-  constructor(data: PlanetData, textures: DataTexture[]) {
+  constructor(data: CloudsData) {
     this.uniforms = {
-      flags: uniformArray([+data.cloudsShowWarping, +data.cloudsShowDisplacement]),
-      color: uniform(data.cloudsColor),
+      flags: uniformArray([+data.flags.showWarping, +data.flags.showDisplacement], 'int'),
+      color: uniform(data.color),
       noise: uniform(
         new Vector4(
-          data.cloudsNoise.frequency,
-          data.cloudsNoise.amplitude,
-          data.cloudsNoise.lacunarity,
-          data.cloudsNoise.octaves,
+          data.noise.frequency,
+          data.noise.amplitude,
+          data.noise.lacunarity,
+          data.noise.octaves,
         ),
         'vec4',
       ),
       warping: uniform(
         new Vector4(
-          data.cloudsNoise.layers,
-          data.cloudsNoise.xWarpFactor,
-          data.cloudsNoise.yWarpFactor,
-          data.cloudsNoise.zWarpFactor,
+          data.warping.layers,
+          data.warping.warpFactor.x,
+          data.warping.warpFactor.y,
+          data.warping.warpFactor.z,
         ),
         'vec4',
       ),
       displacement: {
         params: uniform(
           new Vector3(
-            data.cloudsDisplacement.factor,
-            data.cloudsDisplacement.epsilon,
-            data.cloudsDisplacement.multiplier,
+            data.displacement.params.factor,
+            data.displacement.params.epsilon,
+            data.displacement.params.multiplier,
           ),
           'vec3',
         ),
         noise: uniform(
           new Vector4(
-            data.cloudsDisplacement.frequency,
-            data.cloudsDisplacement.amplitude,
-            data.cloudsDisplacement.lacunarity,
-            data.cloudsDisplacement.octaves,
+            data.displacement.noise.frequency,
+            data.displacement.noise.amplitude,
+            data.displacement.noise.lacunarity,
+            data.displacement.noise.octaves,
           ),
           'vec4',
         ),
       },
-      textures: [texture(textures[0])],
+      texture: texture(data.texture),
     }
   }
 
@@ -89,7 +102,7 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
         fbm3(vPos.add(DVEC_B), this.uniforms.noise),
       ).toVar('fOpacity')
       const opacity = vec3(fbm3(vPos.add(fOpacity), this.uniforms.noise)).toVar('opacity')
-      opacity.assign(this.uniforms.textures[0].sample(vec2(opacity.x, 0.5)).xyz)
+      opacity.assign(this.uniforms.texture.sample(vec2(opacity.x, 0.5)).xyz)
       return vec4(this.uniforms.color, opacity.x)
     }).setLayout({
       name: 'mainNode',

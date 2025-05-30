@@ -1,4 +1,6 @@
-export interface TSLMaterial<T, U extends object> {
-  readonly uniforms: U
-  buildMaterial(): T
+import type { NodeMaterial } from "three/webgpu"
+
+export interface TSLMaterial<MatType extends NodeMaterial, DataType extends object, UniformType extends object> {
+  uniforms: UniformType
+  buildMaterial(): MatType
 }

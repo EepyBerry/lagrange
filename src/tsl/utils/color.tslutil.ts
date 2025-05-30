@@ -102,7 +102,6 @@ export const shiftHue = /*@__PURE__*/ Fn(([i_color, i_hue]: ShaderNodeObject<Nod
 // ----------------------------------------------------------------------------
 // COLOR SPACE CONVERSIONS
 const SRGB_ALPHA = 0.055
-const SRGB_INVERSE_GAMMA = 2.2
 
 const chLinearToSRGB = /*@__PURE__*/ Fn(([i_channel]: [ShaderNodeObject<Node>]) => {
   const result = float(i_channel).toVar('result')
@@ -117,14 +116,14 @@ const chLinearToSRGB = /*@__PURE__*/ Fn(([i_channel]: [ShaderNodeObject<Node>]) 
   })
   return result
 }).setLayout({
-  name: 'chLinearToSRGB',
+  name: 'LG_COLOR_chLinearToSRGB',
   type: 'float',
   inputs: [{ name: 'channel', type: 'float' }],
 })
 export const linearToSRGB = /*#__PURE__*/ Fn(([i_rgb]: [ShaderNodeObject<Node>]) => {
   return vec3(chLinearToSRGB(i_rgb.r), chLinearToSRGB(i_rgb.g), chLinearToSRGB(i_rgb.b))
 }).setLayout({
-  name: 'rgb_to_srgb',
+  name: 'LG_COLOR_linearToSRGB',
   type: 'vec3',
   inputs: [{ name: 'rgb', type: 'vec3' }],
 })
@@ -138,14 +137,14 @@ const chSRGBToLinear = /*#__PURE__*/ Fn(([i_channel]: [ShaderNodeObject<Node>]) 
   })
   return channel
 }).setLayout({
-  name: 'chSRGBToLinear',
+  name: 'LG_COLOR_chSRGBToLinear',
   type: 'float',
   inputs: [{ name: 'channel', type: 'float' }],
 })
 export const sRGBToLinear = /*#__PURE__*/ Fn(([i_srgb]: [ShaderNodeObject<Node>]) => {
   return vec3(chSRGBToLinear(i_srgb.r), chSRGBToLinear(i_srgb.g), chSRGBToLinear(i_srgb.b))
 }).setLayout({
-  name: 'sRGBToLinear',
+  name: 'LG_COLOR_sRGBToLinear',
   type: 'vec3',
   inputs: [{ name: 'srgb', type: 'vec3' }],
 })

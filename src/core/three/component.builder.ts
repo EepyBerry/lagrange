@@ -4,16 +4,16 @@ import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-sha
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { createRampTexture, createBiomeTexture } from '../helpers/texture.helper'
 import type PlanetData from '../models/planet-data.model'
-import { ShaderFileType, type SceneRenderObjects, type PlanetMeshData, type AtmosphereMeshData, type GenericMeshData, type CloudsMeshData } from '../types'
+import { ShaderFileType, type SceneRenderObjects, type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type RingMeshData } from '../types'
 import { loadCubeTexture } from './external-data.loader'
 import { LensFlareEffect } from './lens-flare.effect'
 import * as Globals from '@core/globals'
 import * as ShaderLoader from '../three/shader.loader'
 import { WebGPURenderer } from 'three/webgpu'
 import { PlanetTSLMaterial } from '@/tsl/materials/planet.tslmat'
-import { LG_PLANET_DATA } from '../services/planet-editor.service'
 import { AtmosphereTSLMaterial } from '@/tsl/materials/atmosphere.tslmat'
 import { CloudsTSLMaterial } from '@/tsl/materials/clouds.tslmat'
+import { RingTSLMaterial } from '@/tsl/materials/ring.tslmat'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -70,7 +70,66 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
   const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
   const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
 
-  const tslMaterial = new PlanetTSLMaterial(LG_PLANET_DATA.value, [surfaceTex, biomeTex])
+  const tslMaterial = new PlanetTSLMaterial({
+    radius: data.planetRadius,
+    bumpStrength: data.planetSurfaceBumpStrength,
+    flags: {
+      showWarping: data.planetSurfaceShowWarping,
+      showDisplacement: data.planetSurfaceShowDisplacement,
+      showBumps: data.planetSurfaceShowBumps,
+      enableBiomes: data.biomesEnabled
+    },
+    pbr: {
+      waterLevel: data.planetWaterLevel,
+      waterRoughness: data.planetWaterRoughness,
+      waterMetalness: data.planetWaterMetalness,
+      groundRoughness: data.planetGroundRoughness,
+      groundMetalness: data.planetGroundMetalness
+    },
+    noise: {
+      frequency: data.planetSurfaceNoise.frequency,
+      amplitude: data.planetSurfaceNoise.amplitude,
+      lacunarity: data.planetSurfaceNoise.lacunarity,
+      octaves: data.planetSurfaceNoise.octaves,
+    },
+    warping: {
+      layers: data.planetSurfaceNoise.layers,
+      warpFactor: data.planetSurfaceNoise.warpFactor
+    },
+    displacement: {
+      params: {
+        factor: data.planetSurfaceDisplacement.factor,
+        epsilon: data.planetSurfaceDisplacement.epsilon,
+        multiplier: data.planetSurfaceDisplacement.multiplier
+      },
+      noise: {
+        frequency: data.planetSurfaceDisplacement.frequency,
+        amplitude: data.planetSurfaceDisplacement.amplitude,
+        lacunarity: data.planetSurfaceDisplacement.lacunarity,
+        octaves: data.planetSurfaceDisplacement.octaves,
+      }
+    },
+    biomes: {
+      temperatureMode: data.biomesTemperatureMode,
+      temperatureNoise: {
+        frequency: data.biomesTemperatureNoise.frequency,
+        amplitude: data.biomesTemperatureNoise.amplitude,
+        lacunarity: data.biomesTemperatureNoise.lacunarity,
+        octaves: data.biomesTemperatureNoise.octaves,
+      },
+      humidityMode: data.biomesHumidityMode,
+      humidityNoise: {
+        frequency: data.biomesHumidityNoise.frequency,
+        amplitude: data.biomesHumidityNoise.amplitude,
+        lacunarity: data.biomesHumidityNoise.lacunarity,
+        octaves: data.biomesHumidityNoise.octaves,
+      }
+    },
+    textures: {
+      surface: surfaceTex,
+      biomes: biomeTex
+    }
+  })
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
@@ -91,7 +150,32 @@ export function createClouds(data: PlanetData, textureBuffer: Uint8Array): Cloud
   const geometry = createSphereGeometryComponent(data.planetMeshQuality, cloudsHeight)
   const opacityTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
-  const tslMaterial = new CloudsTSLMaterial(data, [opacityTex])
+  const tslMaterial = new CloudsTSLMaterial({
+    flags: {
+      showWarping: data.cloudsShowWarping,
+      showDisplacement: data.cloudsShowDisplacement,
+    },
+    color: data.cloudsColor,
+    noise: data.cloudsNoise,
+    warping: {
+      layers: data.cloudsNoise.layers,
+      warpFactor: data.cloudsNoise.warpFactor,
+    },
+    displacement: {
+      params: {
+        factor: data.cloudsDisplacement.factor,
+        epsilon: data.cloudsDisplacement.epsilon,
+        multiplier: data.cloudsDisplacement.multiplier,
+      },
+      noise: {
+        frequency: data.cloudsDisplacement.frequency,
+        amplitude: data.cloudsDisplacement.amplitude,
+        lacunarity: data.cloudsDisplacement.lacunarity,
+        octaves: data.cloudsDisplacement.octaves,
+      }
+    },
+    texture: opacityTex,
+  })
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
@@ -106,10 +190,27 @@ export function createClouds(data: PlanetData, textureBuffer: Uint8Array): Cloud
 }
 
 export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): AtmosphereMeshData {
-  const atmosHeight = data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
-  const geometry = createSphereGeometryComponent(data.planetMeshQuality, atmosHeight)
-
-  const tslMaterial = new AtmosphereTSLMaterial(LG_PLANET_DATA.value, sunPos, Globals.ATMOSPHERE_HEIGHT_DIVIDER)
+  const geometry = createSphereGeometryComponent(
+    data.planetMeshQuality,
+    data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
+  )
+  const tslMaterial = new AtmosphereTSLMaterial({
+    sunlight: {
+      position: sunPos,
+      intensity: data.sunLightIntensity
+    },
+    transform: {
+      radius: data.planetRadius + (data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER),
+      surfaceRadius: data.planetRadius,
+    },
+    render: {
+      density: data.atmosphereDensityScale,
+      intensity: data.atmosphereIntensity,
+      colorMode: data.atmosphereColorMode,
+      hue: data.atmosphereHue,
+      tint: data.atmosphereTint,
+    }
+  })
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.userData.lens = 'no-occlusion'
   mesh.name = Globals.LG_NAME_ATMOSPHERE
@@ -125,29 +226,26 @@ export function createRing(
   data: PlanetData,
   textureBuffer: Uint8Array,
   paramsIndex: number,
-): { mesh: THREE.Mesh; texs: THREE.DataTexture[] } {
+): RingMeshData {
   const ringParams = data.ringsParams[paramsIndex]
-  const rgbaTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
+  const ringTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
   const geometry = createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
-  const material = createCustomShaderMaterialComponent(
-    ShaderLoader.fetch('ring.vert.glsl', ShaderFileType.CORE),
-    ShaderLoader.fetch('ring.frag.glsl', ShaderFileType.CORE),
-    {
-      u_inner_radius: { value: ringParams.innerRadius },
-      u_outer_radius: { value: ringParams.outerRadius },
-      u_ring_tex: { value: rgbaTex },
-    },
-    THREE.MeshStandardMaterial,
-  )
-  material.side = THREE.DoubleSide
-  material.transparent = true
-  material.opacity = 1
+  const tslMaterial = new RingTSLMaterial({
+    innerRadius: ringParams.innerRadius,
+    outerRadius: ringParams.outerRadius,
+    texture: ringTex
+  })
 
-  const mesh = new THREE.Mesh(geometry, material)
+  const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.name = ringParams.id
   mesh.receiveShadow = true
   mesh.castShadow = true
-  return { mesh, texs: [rgbaTex] }
+  return {
+    mesh, 
+    uniforms: tslMaterial.uniforms,
+    buffer: textureBuffer,
+    texture: ringTex,
+  }
 }
 
 // ----------------------------------------------------------------------------------------------------------------------

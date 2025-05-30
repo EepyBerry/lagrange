@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import * as Globals from '@core/globals'
 import * as ComponentBuilder from '@core/three/component.builder'
-import { type BakingTarget, type EditorSceneData } from '@core/types'
+import { type BakingTarget, type EditorSceneData, type RingMeshData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
 import { regeneratePRNGIfNecessary } from '@/utils/math-utils'
 import {
@@ -101,34 +101,37 @@ function initPlanet(): void {
     LG_SCENE_DATA.planet.surfaceBuffer,
     LG_SCENE_DATA.planet.biomesBuffer,
   )
-  const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
+  const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value, LG_SCENE_DATA.clouds.buffer)
   const atmosphere = ComponentBuilder.createAtmosphere(LG_PLANET_DATA.value, LG_SCENE_DATA.sunLight!.position)
-  /*const rings: GenericMeshData[] = LG_PLANET_DATA.value.ringsParams.map((_, idx) => {
-    const newRingBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
-    const newRing = ComponentBuilder.createRing(LG_PLANET_DATA.value, newRingBuffer, idx)
+  const rings: RingMeshData[] = LG_PLANET_DATA.value.ringsParams.map((_, idx) => {
+    const newRing = ComponentBuilder.createRing(
+      LG_PLANET_DATA.value,
+      new Uint8Array(Globals.TEXTURE_SIZES.RING * 4),
+      idx,
+    )
     return {
       mesh: newRing.mesh,
-      buffer: newRingBuffer,
-      texture: newRing.texs[0],
+      buffer: newRing.buffer,
+      texture: newRing.texture,
     }
-  })*/
+  })
   const planetGroup = new THREE.Group()
   planetGroup.add(planet.mesh!)
   planetGroup.add(clouds.mesh!)
   planetGroup.add(atmosphere.mesh!)
 
-  /*const ringAnchor = new THREE.Group()
+  const ringAnchor = new THREE.Group()
   ringAnchor.name = Globals.LG_NAME_RING_ANCHOR
-  rings.forEach((r) => ringAnchor.add(r.mesh))
-  planetGroup.add(ringAnchor)*/
+  rings.forEach((r) => ringAnchor.add(r.mesh!))
+  planetGroup.add(ringAnchor)
 
   LG_SCENE_DATA.scene!.add(planetGroup)
   LG_SCENE_DATA.planet = planet
   LG_SCENE_DATA.clouds = clouds
   LG_SCENE_DATA.atmosphere = atmosphere
-  //LG_SCENE_DATA.rings = rings
+  LG_SCENE_DATA.rings = rings
   LG_SCENE_DATA.planetGroup = planetGroup
-  //LG_SCENE_DATA.ringAnchor = ringAnchor
+  LG_SCENE_DATA.ringAnchor = ringAnchor
 
   // Set initial rotations
   LG_SCENE_DATA.planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
@@ -140,7 +143,7 @@ function initPlanet(): void {
     LG_SCENE_DATA.clouds.mesh!.up,
     degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation),
   )
-  //LG_SCENE_DATA.ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90))
+  LG_SCENE_DATA.ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90))
 
   // Set lighting target
   LG_SCENE_DATA.sunLight!.target = LG_SCENE_DATA.planetGroup
@@ -191,10 +194,10 @@ export function updateRingMeshes() {
 
   // Remove old ring meshes
   ringsMeshData
-    .filter((meshData) => !ringsParams.some((params) => params.id === meshData.mesh.name))
+    .filter((meshData) => !ringsParams.some((params) => params.id === meshData.mesh!.name))
     .forEach((data) => {
-      ;(data.mesh.material as THREE.Material).dispose()
-      data.mesh.geometry.dispose()
+      ;(data.mesh!.material as THREE.Material).dispose()
+      data.mesh!.geometry.dispose()
       data.buffer = null
     })
   ringsMeshData.splice(0)
@@ -202,38 +205,33 @@ export function updateRingMeshes() {
 
   // Create new ring meshes
   ringsParams
-    .filter((params) => !ringsMeshData.some((p) => p.mesh.name === params.id))
+    .filter((params) => !ringsMeshData.some((p) => p.mesh!.name === params.id))
     .forEach((_, idx) => {
-      const newRingBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
-      const newRing = ComponentBuilder.createRing(LG_PLANET_DATA.value, newRingBuffer, idx)
-      ringsMeshData.push({
-        mesh: newRing.mesh,
-        buffer: newRingBuffer,
-        texture: newRing.texs[0],
-      })
-      LG_SCENE_DATA.ringAnchor!.add(newRing.mesh)
+      const newRing = ComponentBuilder.createRing(LG_PLANET_DATA.value, new Uint8Array(Globals.TEXTURE_SIZES.RING * 4), idx)
+      ringsMeshData.push(newRing)
+      LG_SCENE_DATA.ringAnchor!.add(newRing.mesh!)
     })
+
+  // TODO: Remove debug printing when done
+  LG_SCENE_DATA.renderer!.debug.getShaderAsync(
+    LG_SCENE_DATA.scene!,
+    LG_SCENE_DATA.camera!,
+    LG_SCENE_DATA.rings![0].mesh!,
+  ).then((e) => {
+    console.log(e.fragmentShader)
+  })
 }
 
 function updateScene() {
   if (watchForPlanetUpdates && LG_PLANET_DATA.value.changedProps.length > 0 && !hasPlanetBeenEdited.value) {
     console.debug('Planet has been edited, warning user in case of unsaved data')
     hasPlanetBeenEdited.value = true
-
-    // TODO: Remove debug printing when done
-    LG_SCENE_DATA.renderer!.debug.getShaderAsync(
-      LG_SCENE_DATA.scene!,
-      LG_SCENE_DATA.camera!,
-      LG_SCENE_DATA.clouds!.mesh!,
-    ).then((e) => {
-      console.log(e.fragmentShader)
-    })
   }
   for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
-    /*if (changedProp.prop === '_ringsParameters') {
+    if (changedProp.prop === '_ringsParameters') {
       updateRingMeshes()
       reloadRingDataUpdates(LG_SCENE_DATA, LG_PLANET_DATA.value)
-    }*/
+    }
     execUniformUpdate(changedProp.prop.split('|')[0])
   }
   LG_PLANET_DATA.value.clearChangedProps()
@@ -258,11 +256,10 @@ export function disposeScene() {
   LG_SCENE_DATA.atmosphere!.mesh!.geometry.dispose()
   ;(LG_SCENE_DATA.clouds!.mesh!.material as THREE.Material).dispose()
   LG_SCENE_DATA.clouds!.mesh!.geometry.dispose()
-  /*
   LG_SCENE_DATA.rings!.forEach((r) => {
-    ;(r.mesh.material as THREE.Material).dispose()
-    r.mesh.geometry.dispose()
-  })*/
+    ;(r.mesh!.material as THREE.Material).dispose()
+    r.mesh!.geometry.dispose()
+  })
 
   LG_BUFFER_BIOME.fill(0)
   LG_BUFFER_CLOUDS.fill(0)
@@ -271,7 +268,7 @@ export function disposeScene() {
   LG_SCENE_DATA.planet.biomesBuffer?.fill(0)
   LG_SCENE_DATA.planet.biomesTexture!.dispose()
   LG_SCENE_DATA.clouds.texture!.dispose()
-  //LG_SCENE_DATA.ringAnchor!.clear()
+  LG_SCENE_DATA.ringAnchor!.clear()
   LG_SCENE_DATA.planetGroup!.clear()
 
   LG_SCENE_DATA.scene!.children.forEach((c) => LG_SCENE_DATA.scene!.remove(c))
@@ -436,7 +433,7 @@ export async function exportPlanetToGLTF(progressDialog: {
       ringGroup.name = Globals.LG_NAME_RING_ANCHOR
       bakePlanet.add(ringGroup)
       LG_PLANET_DATA.value.ringsParams.forEach(async (params, idx) => {
-        const ringMeshData = LG_SCENE_DATA.rings?.find((r) => r.mesh.name === params.id)
+        const ringMeshData = LG_SCENE_DATA.rings?.find((r) => r.mesh!.name === params.id)
         if (!ringMeshData) return
 
         const bakeRing = createBakingRing(LG_PLANET_DATA.value, ringMeshData!.buffer!, idx)

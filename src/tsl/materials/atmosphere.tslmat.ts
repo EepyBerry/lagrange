@@ -1,7 +1,6 @@
-import { NodeMaterial, type Vector3 } from 'three/webgpu'
+import { Color, NodeMaterial, type Vector3 } from 'three/webgpu'
 import type { TSLMaterial } from './tsl-material'
 import type { UniformColorNode, UniformNumberNode, UniformVector3Node } from '../types'
-import type PlanetData from '@/core/models/planet-data.model'
 import {
   cameraProjectionMatrix,
   cameraProjectionMatrixInverse,
@@ -25,6 +24,23 @@ import { applyInScatter, rayVsSphere } from '../utils/atmosphere.tslutil'
 import { inverseMat4 } from '../utils/math.tslutil'
 import { shiftHue, tintToMatrix, whitescale } from '../utils/color.tslutil'
 
+export type AtmosphereData = {
+  sunlight: {
+    position: Vector3
+    intensity: number
+  }
+  transform: {
+    radius: number
+    surfaceRadius: number
+  }
+  render: {
+    density: number
+    intensity: number
+    colorMode: number
+    hue: number
+    tint: Color
+  }
+}
 export type AtmosphereUniforms = {
   sunlight: {
     position: UniformVector3Node
@@ -42,25 +58,25 @@ export type AtmosphereUniforms = {
     tint: UniformColorNode
   }
 }
-export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, AtmosphereUniforms> {
+export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, AtmosphereData, AtmosphereUniforms> {
   public readonly uniforms: AtmosphereUniforms
 
-  constructor(data: PlanetData, sunPosition: Vector3, heightDivider: number) {
+  constructor(data: AtmosphereData) {
     this.uniforms = {
       sunlight: {
-        position: uniform(sunPosition, 'vec3').label('uLightPosition'),
-        intensity: uniform(data.sunLightIntensity, 'float').label('uLightIntensity'),
+        position: uniform(data.sunlight.position, 'vec3').label('uLightPosition'),
+        intensity: uniform(data.sunlight.intensity, 'float').label('uLightIntensity'),
       },
       transform: {
-        radius: uniform(1.0 + (data.atmosphereHeight / heightDivider)).label('uRadius'),
-        surfaceRadius: uniform(data.planetRadius).label('uSurfaceRadius'),
+        radius: uniform(data.transform.radius).label('uRadius'),
+        surfaceRadius: uniform(data.transform.surfaceRadius).label('uSurfaceRadius'),
       },
       render: {
-        density: uniform(data.atmosphereDensityScale / heightDivider).label('uDensity'),
-        intensity: uniform(data.atmosphereIntensity).label('uIntensity'),
-        colorMode: uniform(data.atmosphereColorMode, 'int').label('uColorMode'),
-        hue: uniform(data.atmosphereHue).label('uHue'),
-        tint: uniform(data.atmosphereTint).label('uTint'),
+        density: uniform(data.render.density).label('uDensity'),
+        intensity: uniform(data.render.intensity).label('uIntensity'),
+        colorMode: uniform(data.render.colorMode, 'int').label('uColorMode'),
+        hue: uniform(data.render.hue).label('uHue'),
+        tint: uniform(data.render.tint).label('uTint'),
       },
     }
   }

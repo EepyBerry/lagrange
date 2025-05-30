@@ -25,21 +25,35 @@ import type { UniformNumberNode, UniformVector3Node } from '../types'
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+// TODO: add setLayout when feature is stabilised in TSL
 export const applyBump = /*@__PURE__*/ Fn(
   ([i_position, i_dx, i_dy, i_height, i_dxHeight, i_dyHeight, i_radius, i_strength]: [
     UniformVector3Node,
     UniformVector3Node,
     UniformVector3Node,
     UniformNumberNode,
-    UniformVector3Node,
-    UniformVector3Node,
+    UniformNumberNode,
+    UniformNumberNode,
     UniformNumberNode,
     UniformNumberNode,
   ]) => {
-    const hPos = vec3(i_position.mul(i_radius.add(i_height))).toVar()
-    const dxPos = vec3(i_position.add(i_dx)).mul(i_radius.add(i_dxHeight)).toVar()
-    const dyPos = vec3(i_position.add(i_dy)).mul(i_radius.add(i_dyHeight)).toVar()
-    const bumpN = vec3(normalize(cross(dxPos.sub(hPos), dyPos.sub(hPos)))).toVar()
+    const hPos = vec3(i_position.mul(i_radius.add(i_height))).toVar('hPos')
+    const dxPos = vec3(i_position.add(i_dx)).mul(i_radius.add(i_dxHeight)).toVar('dxPos')
+    const dyPos = vec3(i_position.add(i_dy)).mul(i_radius.add(i_dyHeight)).toVar('dyPos')
+    const bumpN = vec3(normalize(cross(dxPos.sub(hPos), dyPos.sub(hPos)))).toVar('bumpN')
     return normalize(mix(normalLocal, bumpN, i_strength))
   },
-)
+)/* .setLayout({
+  name: 'LG_BUMP_applyBump',
+  type: 'vec3',
+  inputs: [
+    { name: 'pos', type: 'vec3' },
+    { name: 'dx', type: 'vec3' },
+    { name: 'dy', type: 'vec3' },
+    { name: 'height', type: 'float' },
+    { name: 'dxHeight', type: 'float' },
+    { name: 'dyHeight', type: 'float' },
+    { name: 'radius', type: 'float' },
+    { name: 'strength', type: 'float' },
+  ],
+}) */

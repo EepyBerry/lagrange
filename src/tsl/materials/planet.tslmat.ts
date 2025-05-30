@@ -25,12 +25,44 @@ import {
   vec4,
 } from 'three/tsl'
 import { type TSLMaterial } from './tsl-material'
-import type PlanetData from '@/core/models/planet-data.model'
 import { displace, layer, warp } from '../features/lwd'
-import type { UniformNumberNode, UniformVector3Node, UniformVector4Node } from '../types'
+import type { DisplacementData, NoiseData, UniformNumberNode, UniformVector3Node, UniformVector4Node, WarpingData } from '../types'
 import { applyBump } from '../features/bump'
 import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes'
 
+export type PlanetData = {
+  radius: number
+  bumpStrength: number
+  flags: {
+    showWarping: boolean
+    showDisplacement: boolean
+    showBumps: boolean
+    enableBiomes: boolean
+  }
+  pbr: {
+    waterLevel: number
+    waterRoughness: number
+    waterMetalness: number
+    groundRoughness: number
+    groundMetalness: number
+  }
+  noise: NoiseData
+  warping: WarpingData
+  displacement: {
+    params: DisplacementData
+    noise: NoiseData
+  }
+  biomes: {
+    temperatureMode: number
+    temperatureNoise: NoiseData
+    humidityMode: number
+    humidityNoise: NoiseData
+  }
+  textures: {
+    surface: DataTexture
+    biomes: DataTexture
+  }
+}
 export type PlanetUniforms = {
   radius: UniformNumberNode
   bumpStrength: UniformNumberNode
@@ -51,91 +83,91 @@ export type PlanetUniforms = {
   }
   textures: TextureNode[]
 }
-export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, PlanetUniforms> {
+export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, PlanetData, PlanetUniforms> {
   public readonly uniforms: PlanetUniforms
 
-  constructor(data: PlanetData, textures: DataTexture[]) {
+  constructor(data: PlanetData) {
     this.uniforms = {
-      radius: uniform(data.planetRadius, 'float'),
-      bumpStrength: uniform(data.planetSurfaceBumpStrength, 'float'),
+      radius: uniform(data.radius, 'float'),
+      bumpStrength: uniform(data.bumpStrength, 'float'),
       flags: uniformArray(
         [
-          +data.planetSurfaceShowWarping,
-          +data.planetSurfaceShowDisplacement,
-          +data.planetSurfaceShowBumps,
-          +data.biomesEnabled,
+          +data.flags.showWarping,
+          +data.flags.showDisplacement,
+          +data.flags.showBumps,
+          +data.flags.enableBiomes,
         ],
         'int',
       ),
       pbr: uniformArray([
-        data.planetWaterLevel,
-        data.planetWaterRoughness,
-        data.planetWaterMetalness,
-        data.planetGroundRoughness,
-        data.planetGroundMetalness,
+        data.pbr.waterLevel,
+        data.pbr.waterRoughness,
+        data.pbr.waterMetalness,
+        data.pbr.groundRoughness,
+        data.pbr.groundMetalness,
       ]),
       noise: uniform(
         new Vector4(
-          data.planetSurfaceNoise.frequency,
-          data.planetSurfaceNoise.amplitude,
-          data.planetSurfaceNoise.lacunarity,
-          data.planetSurfaceNoise.octaves,
+          data.noise.frequency,
+          data.noise.amplitude,
+          data.noise.lacunarity,
+          data.noise.octaves,
         ),
         'vec4',
       ),
       warping: uniform(
         new Vector4(
-          data.planetSurfaceNoise.layers,
-          data.planetSurfaceNoise.xWarpFactor,
-          data.planetSurfaceNoise.yWarpFactor,
-          data.planetSurfaceNoise.zWarpFactor,
+          data.warping.layers,
+          data.warping.warpFactor.x,
+          data.warping.warpFactor.y,
+          data.warping.warpFactor.z,
         ),
         'vec4',
       ),
       displacement: {
         params: uniform(
           new Vector3(
-            data.planetSurfaceDisplacement.factor,
-            data.planetSurfaceDisplacement.epsilon,
-            data.planetSurfaceDisplacement.multiplier,
+            data.displacement.params.factor,
+            data.displacement.params.epsilon,
+            data.displacement.params.multiplier,
           ),
           'vec3',
         ),
         noise: uniform(
           new Vector4(
-            data.planetSurfaceDisplacement.frequency,
-            data.planetSurfaceDisplacement.amplitude,
-            data.planetSurfaceDisplacement.lacunarity,
-            data.planetSurfaceDisplacement.octaves,
+            data.displacement.noise.frequency,
+            data.displacement.noise.amplitude,
+            data.displacement.noise.lacunarity,
+            data.displacement.noise.octaves,
           ),
           'vec4',
         ),
       },
       biomes: {
-        temperatureMode: uniform(data.biomesTemperatureMode),
+        temperatureMode: uniform(data.biomes.temperatureMode),
         temperatureNoise: uniform(
           new Vector4(
-            data.biomesTemperatureNoise.frequency,
-            data.biomesTemperatureNoise.amplitude,
-            data.biomesTemperatureNoise.lacunarity,
-            data.biomesTemperatureNoise.octaves,
+            data.biomes.temperatureNoise.frequency,
+            data.biomes.temperatureNoise.amplitude,
+            data.biomes.temperatureNoise.lacunarity,
+            data.biomes.temperatureNoise.octaves,
           ),
           'vec4',
         ),
-        humidityMode: uniform(data.biomesHumidityMode),
+        humidityMode: uniform(data.biomes.humidityMode),
         humidityNoise: uniform(
           new Vector4(
-            data.biomesHumidityNoise.frequency,
-            data.biomesHumidityNoise.amplitude,
-            data.biomesHumidityNoise.lacunarity,
-            data.biomesHumidityNoise.octaves,
+            data.biomes.humidityNoise.frequency,
+            data.biomes.humidityNoise.amplitude,
+            data.biomes.humidityNoise.lacunarity,
+            data.biomes.humidityNoise.octaves,
           ),
           'vec4',
         ),
       },
       textures: [
-        texture(textures[0]), // surface
-        texture(textures[1]), // biomes
+        texture(data.textures.surface),
+        texture(data.textures.biomes),
       ],
     }
   }
