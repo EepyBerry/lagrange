@@ -412,7 +412,7 @@ function openImportDialog() {
 async function importData(event: Event) {
   const files = (event.target as HTMLInputElement).files
   if (!files || files?.length === 0) {
-    console.warn('At least one file should be specified!')
+    console.warn('<Lagrange> At least one file should be specified!')
     return
   }
   const data = await readFileSettings(files[0])
@@ -498,7 +498,7 @@ async function setSelectedActionKey(event: KeyboardEvent) {
       ...alreadyAssignedActions.map((k) => ({ key: k.id, changes: { key: k.key } })),
     ])
     .then(() => (keyBinds.value[kbidx].key = event.key.toUpperCase()))
-    .catch((e) => console.error('(Dexie) Keybinds failed to update', e))
+    .catch((e) => console.error('<Lagrange> (Dexie) Keybinds failed to update', e))
   toggleAction(keyBinds.value[kbidx].action)
 }
 

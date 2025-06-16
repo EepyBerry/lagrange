@@ -54,6 +54,7 @@ import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
 import AppWarnSaveDialog from '@/components/dialogs/AppWarnSaveDialog.vue'
 import AppExportProgressDialog from '@/components/dialogs/AppExportProgressDialog.vue'
 import { regeneratePRNGIfNecessary } from '@/utils/math-utils'
+import WebGPU from 'three/addons/capabilities/WebGPU.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -110,7 +111,7 @@ onBeforeRouteLeave((_to, _from, next) => {
 
 async function initThree() {
   try {
-    if (WebGL.isWebGL2Available()) {
+    if (WebGL.isWebGL2Available() || WebGPU.isAvailable()) {
       await initData()
       await initCanvas()
       loadedCorrectly = true
@@ -152,13 +153,13 @@ async function initData() {
   if ((route.params.id as string).length > 3) {
     const idbPlanetData = await idb.planets.filter((p) => p.id === route.params.id).first()
     if (!idbPlanetData) {
-      console.warn(`Cannot find planet with ID: ${route.params.id}`)
+      console.warn(`<Lagrange> Cannot find planet with ID: ${route.params.id}`)
       LG_PLANET_DATA.value.reset()
       throw new Error(`Planet with ID [${route.params.id}] doesn't exist.`)
     }
     $planetEntityId.value = idbPlanetData.id
     LG_PLANET_DATA.value.loadData(idbPlanetData.data)
-    console.info(`Loaded planet [${LG_PLANET_DATA.value.planetName}] with ID: ${$planetEntityId.value}`)
+    console.info(`<Lagrange> Loaded planet [${LG_PLANET_DATA.value.planetName}] with ID: ${$planetEntityId.value}`)
     console.debug(toRaw(LG_PLANET_DATA.value))
   } else {
     console.warn('No planet ID found in the URL, assuming new planet')

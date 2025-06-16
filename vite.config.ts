@@ -23,19 +23,6 @@ export default defineConfig({
       },
     },
   },
-  build: {
-    sourcemap: true,
-    chunkSizeWarningLimit: 600,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vue: ['vue', 'vue-router', 'vue-accessible-color-picker', '@unhead/vue', 'vue-i18n'],
-          three: ['three', 'three-custom-shader-material'],
-          export: ['pako', 'jszip', 'file-saver'],
-        },
-      },
-    },
-  },
   define: {
     'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),
   },
@@ -45,6 +32,31 @@ export default defineConfig({
       '@core': fileURLToPath(new URL('./src/core', import.meta.url)),
       '@assets': fileURLToPath(new URL('./src/assets', import.meta.url)),
       '@components': fileURLToPath(new URL('./src/components', import.meta.url)),
+    },
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'es2022',
+    },
+  },
+  build: {
+    target: 'es2022',
+    sourcemap: true,
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vue: ['vue'],
+          vueplugins: ['vue-router', 'vue-accessible-color-picker', 'vue-i18n', '@unhead/vue'],
+          three: ['three', 'three-custom-shader-material'],
+          export: ['pako', 'jszip', 'file-saver'],
+        },
+      },
+    },
+  },
+  esbuild: {
+    supported: {
+      'top-level-await': true,
     },
   },
 })

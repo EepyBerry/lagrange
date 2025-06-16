@@ -224,7 +224,7 @@ export function updateRingMeshes() {
 
 function updateScene() {
   if (watchForPlanetUpdates && LG_PLANET_DATA.value.changedProps.length > 0 && !hasPlanetBeenEdited.value) {
-    console.debug('Planet has been edited, warning user in case of unsaved data')
+    console.debug('<Lagrange> Planet has been edited, warning user in case of unsaved data')
     hasPlanetBeenEdited.value = true
   }
   for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
@@ -242,7 +242,7 @@ function updateScene() {
  */
 export function disposeScene() {
   watchForPlanetUpdates = false
-  console.debug('[unmount] Clearing scene...')
+  console.debug('<Lagrange> Clearing scene... ')
   LG_SCENE_DATA.sunLight!.dispose()
   LG_SCENE_DATA.ambLight!.dispose()
   LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.sunLight!)
@@ -275,7 +275,7 @@ export function disposeScene() {
   LG_SCENE_DATA.renderer!.dispose()
 
   clearUniformUpdateMap()
-  console.debug('[unmount] ...done!')
+  console.debug('<Lagrange> ...done!')
 }
 
 // ------------------------------------------------------------------------------------------------ //

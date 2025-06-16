@@ -77,17 +77,17 @@ export async function initStoragePersistence() {
     const persist = await tryPersistWithoutPromptingUser()
     switch (persist) {
       case 'never':
-        console.warn('Cannot persist storage, continuing in best-effort mode.')
+        console.warn('<Lagrange> Cannot persist storage, continuing in best-effort mode.')
         break
       case 'persisted':
-        console.info('Successfully persisted storage silently!')
+        console.info('<Lagrange> Successfully persisted storage silently!')
         break
       case 'prompt':
-        console.warn('Storage not persisted, user should be prompted first')
+        console.warn('<Lagrange> Storage not persisted, user should be prompted first')
         break
     }
   } catch (_error) {
-    console.error('Failed to persist storage despite granted permission, continuing in best-effort mode.')
+    console.error('<Lagrange> Failed to persist storage despite granted permission, continuing in best-effort mode.')
   }
 }
 

@@ -40,7 +40,7 @@ export class RingTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, Ri
     // init material & set outputs
     const material = new MeshStandardNodeMaterial()
     material.colorNode = mainNode()
-    // FIXME: restore transparency when fixed in TSL
+    // TODO: restore transparency when fixed in TSL
     material.transparent = false
     material.side = DoubleSide
     return material

@@ -72,7 +72,7 @@ async function initDexie() {
   // Init standard settings
   let settings = await idb.settings.limit(1).first()
   if (!settings) {
-    console.debug('No settings found in IndexedDB, adding defaults')
+    console.debug('<Lagrange> No settings found in IndexedDB, adding defaults')
     await DexieUtils.initDefaultSettings()
     settings = await idb.settings.limit(1).first()
   }
@@ -81,7 +81,7 @@ async function initDexie() {
   // Init keybinds
   const kb = await idb.keyBindings.limit(4).toArray()
   if (kb.length === 0) {
-    console.debug('No keybinds found in IndexedDB, adding defaults')
+    console.debug('<Lagrange> No keybinds found in IndexedDB, adding defaults')
     await DexieUtils.addDefaultKeyBindings()
   }
 
