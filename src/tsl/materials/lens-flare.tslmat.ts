@@ -10,9 +10,8 @@ export type LensFlareData = {
   colorGain: Color
   starPointsIntensity: number
   glareIntensity: number
-  flareSize: number
-  flareSpeed: number
   flareShape: number
+  flareSize: number
   additionalStreaks: boolean
   streaksScale: number
 }
@@ -21,8 +20,8 @@ export type LensFlareUniforms = {
   colorGain: UniformColorNode
   starPointsIntensity: UniformNumberNode
   glareIntensity: UniformNumberNode
-  flareSize: UniformNumberNode
   flareShape: UniformNumberNode
+  flareSize: UniformNumberNode
   additionalStreaks: UniformNumberNode
   streaksScale: UniformNumberNode
 }
@@ -35,8 +34,8 @@ export class RingTSLMaterial implements TSLMaterial<NodeMaterial, LensFlareData,
       colorGain: uniform(data.colorGain, 'vec3').label('uColorGain'),
       starPointsIntensity: uniform(data.starPointsIntensity, 'float').label('uStarPointsIntensity'),
       glareIntensity: uniform(data.glareIntensity, 'float').label('uGlareIntensity'),
-      flareSize: uniform(data.flareSize, 'float').label('uFlareSize'),
       flareShape: uniform(data.flareShape, 'float').label('uFlareShape'),
+      flareSize: uniform(data.flareSize, 'float').label('uFlareSize'),
       additionalStreaks: uniform(+data.additionalStreaks, 'int').label('uAdditionalStreaks'),
       streaksScale: uniform(data.streaksScale, 'float').label('uStreakScale')
     }
@@ -44,11 +43,11 @@ export class RingTSLMaterial implements TSLMaterial<NodeMaterial, LensFlareData,
 
   buildMaterial(): NodeMaterial {
     const mainNode = Fn(() => {
-      const lfUV = vec2(uv().sub(0.5)).toVar('lfUV')
-      lfUV.y.mulAssign(iResolution.y.div(iResolution.x))
+      const localUv = vec2(uv().sub(0.5)).toVar('lfUV')
+      localUv.y.mulAssign(float(window.innerHeight).div(window.innerWidth))
       const mouse = vec2(this.uniforms.position.mul(0.5)).toVar()
-      mouse.y.mulAssign(iResolution.y.div(iResolution.x))
-      const finalColor = vec3(lensFlare(lfUV, mouse).mul(20.0).mul(this.uniforms.colorGain).div(2)).toVar()
+      mouse.y.mulAssign(float(window.innerHeight).div(window.innerWidth))
+      const finalColor = vec3(lensFlare(localUv, mouse).mul(20.0).mul(this.uniforms.colorGain).div(2)).toVar()
 
       If(this.uniforms.additionalStreaks.greaterThan(0), () => {
         const circColor = vec3(0.9, 0.2, 0.1).toVar()
@@ -57,7 +56,7 @@ export class RingTSLMaterial implements TSLMaterial<NodeMaterial, LensFlareData,
         Loop({ start: 0, end: 10, condition: '<' }, ({ i }) => {
           finalColor.addAssign(
             circle(
-              lfUV,
+              localUv,
               pow(rndf(float(i).mul(2000)).mul(2.8), 0.1).add(1.41),
               0.0,
               circColor.add(i),
@@ -66,6 +65,7 @@ export class RingTSLMaterial implements TSLMaterial<NodeMaterial, LensFlareData,
                 .mul(3)
                 .add(0.2 - 0.5),
               this.uniforms.position,
+              this.uniforms.colorGain
             ),
           )
         })

@@ -66,7 +66,7 @@ vec2 rotateUV(vec2 uv, float rotation)
 }
 
 // Based on https://www.shadertoy.com/view/XtKfRV
-vec3 drawflare(vec2 p, float intensity, float rnd, int id)
+vec3 drawflare(vec2 p, float intensity, float rnd)
 {
     float lingrad = distance(vec2(0.), p);
     float expgrad = 1. / exp(lingrad * (fract(rnd) * 0.66 + 0.33));
@@ -131,7 +131,7 @@ vec3 LensFlare(vec2 uv, vec2 pos)
     vec3 c = vec3(glare(uv,pos, glareSize));
     vec2 prot = uv - pos;
 
-    c += drawflare(prot, flareSize, 0.1, 1);
+    c += drawflare(prot, flareSize, 0.1);
     
     c.r+=(f1+f2+f4+f5+f6) * glareIntensity;
     c.g+=(f1+f22+f42+f52+f62) * glareIntensity;

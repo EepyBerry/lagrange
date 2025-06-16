@@ -25,6 +25,7 @@ import {
   smoothstep,
 } from 'three/tsl'
 import type { UniformNumberNode, UniformVector2Node, UniformVector3Node } from '../types'
+import type { VaryingNode } from 'three/webgpu'
 
 export const rand = /*@__PURE__*/ Fn(([i_n]: [UniformNumberNode]) => {
   return fract(sin(i_n).mul(43758.5453123))
@@ -35,8 +36,8 @@ export const rand = /*@__PURE__*/ Fn(([i_n]: [UniformNumberNode]) => {
 })
 
 export const noise = /*@__PURE__*/ Fn(([i_p]: [UniformNumberNode]) => {
-  const fl = float(floor(i_p)).toVar()
-  const fc = float(fract(i_p)).toVar()
+  const fl = float(floor(i_p)).toVar('fl')
+  const fc = float(fract(i_p)).toVar('fc')
   return mix(rand(fl), rand(fl.add(1.0)), fc)
 }).setLayout({
   name: 'noise',
@@ -45,8 +46,8 @@ export const noise = /*@__PURE__*/ Fn(([i_p]: [UniformNumberNode]) => {
 })
 
 export const hsv2rgb = /*@__PURE__*/ Fn(([i_c]: [UniformVector3Node]) => {
-  const k = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0).toVar()
-  const p = vec3(abs(fract(i_c.xxx.add(k.xyz)).mul(6.0).sub(k.www))).toVar()
+  const k = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0).toVar('k')
+  const p = vec3(abs(fract(i_c.xxx.add(k.xyz)).mul(6.0).sub(k.www))).toVar('p')
   return i_c.z.mul(mix(k.xxx, clamp(p.sub(k.xxx), 0.0, 1.0), i_c.y))
 }).setLayout({
   name: 'hsv2rgb',
@@ -77,14 +78,14 @@ export const rotateUV = /*@__PURE__*/ Fn(([i_uv, i_rotation]: [UniformVector2Nod
 })
 
 export const drawflare = /*@__PURE__*/ Fn(
-  ([i_p, i_intensity, i_rand]: [UniformVector3Node, UniformNumberNode, UniformNumberNode]) => {
-    const lingrad = float(distance(vec2(0), i_p)).toVar()
-    const expgrad = float(div(1, exp(lingrad.mul(fract(i_rand).mul(0.66).add(0.33))))).toVar()
-    const blades = float(length(i_p.mul(flareShape).mul(sin(starPoints.mul(atan(i_p.x, i_p.y)))))).toVar()
-    const comp = float(pow(sub(1, saturate2(blades)), 24)).toVar()
+  ([i_p, i_rand, i_flareShape, i_flareSize, i_starPoints]: [UniformVector3Node, UniformNumberNode, UniformNumberNode, UniformNumberNode, UniformNumberNode]) => {
+    const lingrad = float(distance(vec2(0), i_p)).toVar('lingrad')
+    const expgrad = float(div(1, exp(lingrad.mul(fract(i_rand).mul(0.66).add(0.33))))).toVar('expgrad')
+    const blades = float(length(i_p.mul(i_flareShape).mul(sin(i_starPoints.mul(atan(i_p.x, i_p.y)))))).toVar('blades')
+    const comp = float(pow(sub(1, saturate2(blades)), 24)).toVar('comp')
     comp.addAssign(saturate2(expgrad.sub(0.9)).mul(3))
-    comp.assign(pow(comp.mul(expgrad), add(8, sub(1, i_intensity).mul(5))))
-    return vec3(comp).mul(flareSize).mul(15)
+    comp.assign(pow(comp.mul(expgrad), add(8, sub(1, i_flareSize).mul(5))))
+    return vec3(comp).mul(i_flareSize).mul(15)
   },
 ).setLayout({
   name: 'drawflare',
@@ -93,6 +94,9 @@ export const drawflare = /*@__PURE__*/ Fn(
     { name: 'p', type: 'vec2' },
     { name: 'intensity', type: 'float' },
     { name: 'rand', type: 'float' },
+    { name: 'flareShape', type: 'float' },
+    { name: 'flareSize', type: 'float' },
+    { name: 'starPoints', type: 'float' },
   ],
 })
 
@@ -110,10 +114,10 @@ export const dist = /*@__PURE__*/ Fn(([i_a, i_b]: UniformVector3Node[]) => {
 })
 
 export const glare = /*@__PURE__*/ Fn(
-  ([i_uv, i_pos, i_size]: [UniformVector2Node, UniformVector2Node, UniformNumberNode]) => {
-    const main = vec2(i_uv.sub(i_pos)).toVar()
-    const ang = float(atan(main.y, main.x).mul(starPoints)).toVar()
-    const dist = float(length(main)).toVar()
+  ([i_uv, i_pos, i_size, i_starPoints]: [UniformVector2Node, UniformVector2Node, UniformNumberNode, UniformNumberNode]) => {
+    const main = vec2(i_uv.sub(i_pos)).toVar('main')
+    const ang = float(atan(main.y, main.x).mul(i_starPoints)).toVar('ang')
+    const dist = float(length(main)).toVar('dist')
     dist.assign(pow(dist, 0.9))
     const f0 = float(
       div(
@@ -122,7 +126,7 @@ export const glare = /*@__PURE__*/ Fn(
           .mul(div(1.0, i_size.mul(16.0)))
           .add(0.2),
       ),
-    ).toVar()
+    ).toVar('f0')
 
     return f0.add(f0.mul(sin(ang).mul(0.2).add(0.3)))
   },
@@ -133,48 +137,53 @@ export const glare = /*@__PURE__*/ Fn(
     { name: 'uv', type: 'vec2' },
     { name: 'pos', type: 'vec2' },
     { name: 'size', type: 'float' },
+    { name: 'starPoints', type: 'float' },
   ],
 })
 
-export const lensFlare = /*@__PURE__*/ Fn(([uv_immutable, pos_immutable]) => {
-  const pos = vec2(pos_immutable).toVar()
-  const uv = vec2(uv_immutable).toVar()
-  const main = vec2(uv.sub(pos)).toVar()
-  const uvd = vec2(uv.mul(length(uv))).toVar()
-  const ang = float(atan(main.x, main.y)).toVar()
-  const f0 = float(div(0.3, length(uv.sub(pos)).mul(16.0).add(1.0))).toVar()
-  f0.assign(f0.mul(sin(noise(sin(ang.mul(3.9).mul(0.3)).mul(starPoints))).mul(0.2)))
-  const f1 = float(max(sub(0.01, pow(length(uv.add(mul(1.2, pos))), 1.9)), 0.0).mul(7.0)).toVar()
-  const f2 = float(
-    max(div(0.9, add(10.0, mul(32.0, pow(length(uvd.add(mul(0.99, pos))), 2.0)))), 0.0).mul(0.35),
-  ).toVar()
-  const f22 = float(
-    max(div(0.9, add(11.0, mul(32.0, pow(length(uvd.add(mul(0.85, pos))), 2.0)))), 0.0).mul(0.23),
-  ).toVar()
-  const f23 = float(
-    max(div(0.9, add(12.0, mul(32.0, pow(length(uvd.add(mul(0.95, pos))), 2.0)))), 0.0).mul(0.6),
-  ).toVar()
-  const uvx = vec2(mix(uv, uvd, 0.1)).toVar()
-  const f4 = float(max(sub(0.01, pow(length(uvx.add(mul(0.4, pos))), 2.9)), 0.0).mul(4.02)).toVar()
-  const f42 = float(max(sub(0.0, pow(length(uvx.add(mul(0.45, pos))), 2.9)), 0.0).mul(4.1)).toVar()
-  const f43 = float(max(sub(0.01, pow(length(uvx.add(mul(0.5, pos))), 2.9)), 0.0).mul(4.6)).toVar()
-  uvx.assign(mix(uv, uvd, float(-0.4)))
-  const f5 = float(max(sub(0.01, pow(length(uvx.add(mul(0.1, pos))), 5.5)), 0.0).mul(2.0)).toVar()
-  const f52 = float(max(sub(0.01, pow(length(uvx.add(mul(0.2, pos))), 5.5)), 0.0).mul(2.0)).toVar()
-  const f53 = float(max(sub(0.01, pow(length(uvx.add(mul(0.1, pos))), 5.5)), 0.0).mul(2.0)).toVar()
-  uvx.assign(mix(uv, uvd, 2.1))
-  const f6 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.3, pos))), 1.61)), 0.0).mul(3.159)).toVar()
-  const f62 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.325, pos))), 1.614)), 0.0).mul(3.14)).toVar()
-  const f63 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.389, pos))), 1.623)), 0.0).mul(3.12)).toVar()
-  const c = vec3(glare(uv, pos, glareSize)).toVar()
-  const prot = vec2(uv.sub(pos)).toVar()
-  c.addAssign(drawflare(prot, flareSize, 0.1, int(1)))
-  c.r.addAssign(f1.add(f2).add(f4).add(f5).add(f6).mul(glareIntensity))
-  c.g.addAssign(f1.add(f22).add(f42).add(f52).add(f62).mul(glareIntensity))
-  c.b.addAssign(f1.add(f23).add(f43).add(f53).add(f63).mul(glareIntensity))
-  c.assign(c.mul(1.3).mul(vec3(length(uvd).add(0.09))))
-  c.addAssign(vec3(f0.mul(starPointsIntensity).div(4.0)))
+export const lensFlare = /*@__PURE__*/ Fn(([i_uv, i_pos, i_flare, i_glare, i_starPoints]: [UniformVector2Node, VaryingNode, UniformVector3Node, UniformVector2Node, UniformVector2Node]) => {
+  const main = vec2(i_uv.sub(i_pos)).toVar('main')
+  const uvd = vec2(i_uv.mul(length(i_uv))).toVar('uvd')
+  const ang = float(atan(main.x, main.y)).toVar('angle')
 
+  const f0 = float(div(0.3, length(i_uv.sub(i_pos)).mul(16.0).add(1.0))).toVar('f0')
+  f0.assign(f0.mul(sin(noise(sin(ang.mul(3.9).mul(0.3)).mul(i_flare.element(2)))).mul(0.2)))
+
+  const f1 = float(max(sub(0.01, pow(length(i_uv.add(mul(1.2, i_pos))), 1.9)), 0.0).mul(7.0)).toVar('f1')
+  const f2 = float(
+    max(div(0.9, add(10.0, mul(32.0, pow(length(uvd.add(mul(0.99, i_pos))), 2.0)))), 0.0).mul(0.35),
+  ).toVar('f2')
+  const f22 = float(
+    max(div(0.9, add(11.0, mul(32.0, pow(length(uvd.add(mul(0.85, i_pos))), 2.0)))), 0.0).mul(0.23),
+  ).toVar('f22')
+  const f23 = float(
+    max(div(0.9, add(12.0, mul(32.0, pow(length(uvd.add(mul(0.95, i_pos))), 2.0)))), 0.0).mul(0.6),
+  ).toVar('f23')
+
+  const uvx = vec2(mix(i_uv, uvd, 0.1)).toVar('uvx')
+
+  const f4 = float(max(sub(0.01, pow(length(uvx.add(mul(0.4, i_pos))), 2.9)), 0.0).mul(4.02)).toVar('f4')
+  const f42 = float(max(sub(0.0, pow(length(uvx.add(mul(0.45, i_pos))), 2.9)), 0.0).mul(4.1)).toVar('f42')
+  const f43 = float(max(sub(0.01, pow(length(uvx.add(mul(0.5, i_pos))), 2.9)), 0.0).mul(4.6)).toVar('f43')
+  uvx.assign(mix(i_uv, uvd, float(-0.4)))
+
+  const f5 = float(max(sub(0.01, pow(length(uvx.add(mul(0.1, i_pos))), 5.5)), 0.0).mul(2.0)).toVar('f5')
+  const f52 = float(max(sub(0.01, pow(length(uvx.add(mul(0.2, i_pos))), 5.5)), 0.0).mul(2.0)).toVar('f52')
+  const f53 = float(max(sub(0.01, pow(length(uvx.add(mul(0.1, i_pos))), 5.5)), 0.0).mul(2.0)).toVar('f53')
+  uvx.assign(mix(i_uv, uvd, 2.1))
+
+  const f6 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.3, i_pos))), 1.61)), 0.0).mul(3.159)).toVar('f6')
+  const f62 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.325, i_pos))), 1.614)), 0.0).mul(3.14)).toVar('f62')
+  const f63 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.389, i_pos))), 1.623)), 0.0).mul(3.12)).toVar('f63')
+  const c = vec3(glare(i_uv, i_pos, i_glare.element(0), i_starPoints)).toVar('c')
+
+  const prot = vec2(i_uv.sub(i_pos)).toVar()
+  c.addAssign(drawflare(prot, 0.1, i_flare.element(0), i_flare.element(1), i_starPoints.element(0)))
+  c.r.addAssign(f1.add(f2).add(f4).add(f5).add(f6).mul(i_glare.element(1)))
+  c.g.addAssign(f1.add(f22).add(f42).add(f52).add(f62).mul(i_glare.element(1)))
+  c.b.addAssign(f1.add(f23).add(f43).add(f53).add(f63).mul(i_glare.element(1)))
+  c.assign(c.mul(1.3).mul(vec3(length(uvd).add(0.09))))
+  c.addAssign(vec3(f0.mul(i_starPoints.element(1)).div(4.0)))
   return c
 }).setLayout({
   name: 'LensFlare',
@@ -182,6 +191,9 @@ export const lensFlare = /*@__PURE__*/ Fn(([uv_immutable, pos_immutable]) => {
   inputs: [
     { name: 'uv', type: 'vec2' },
     { name: 'pos', type: 'vec2' },
+    { name: 'flare', type: 'vec3' }, // size, shape, intensity
+    { name: 'glare', type: 'vec2' }, // size, intensity
+    { name: 'starPoints', type: 'vec2' }, // number, intensity
   ],
 })
 
@@ -193,58 +205,56 @@ export const rndf = /*@__PURE__*/ Fn(([i_w]: [UniformNumberNode]) => {
   inputs: [{ name: 'w', type: 'float' }],
 })
 
-export const regShape = /*#__PURE__*/ Fn(([p_immutable, N_immutable]) => {
-  const N = int(N_immutable).toVar()
-  const p = vec2(p_immutable).toVar()
-  const f = float().toVar()
-  const a = float(atan(p.x, p.y).add(0.2)).toVar()
-  const b = float(div(6.28319, float(N))).toVar()
-  f.assign(
-    smoothstep(
-      0.5,
-      0.51,
-      cos(
-        floor(add(0.5, a.div(b)))
-          .mul(b)
-          .sub(a),
+export const regShape = /*@__PURE__*/ Fn(([i_p, i_N, i_ghostScale]: [UniformVector2Node, UniformNumberNode, UniformNumberNode]) => {
+  const a = float(atan(i_p.x, i_p.y).add(0.2)).toVar()
+  const b = float(div(6.28319, float(i_N))).toVar()
+  return smoothstep(
+    0.5,
+    0.51,
+    cos(
+      floor(add(0.5, a.div(b)))
+        .mul(b)
+        .sub(a),
       )
-        .mul(length(p.xy))
-        .mul(2.0)
-        .sub(ghostScale),
-    ),
-  )
-
-  return f
+    .mul(length(i_p.xy))
+    .mul(2.0)
+    .sub(i_ghostScale),
+  );
 }).setLayout({
   name: 'regShape',
   type: 'float',
   inputs: [
     { name: 'p', type: 'vec2' },
     { name: 'N', type: 'int' },
+    { name: 'ghostScale', type: 'float' },
   ],
 })
 
-export const circle = /*#__PURE__*/ Fn(
-  ([p_immutable, size_immutable, decay_immutable, color_immutable, dist_immutable, mouse_immutable]) => {
-    const mouse = vec2(mouse_immutable).toVar()
-    const dist = float(dist_immutable).toVar()
-    const color = vec3(color_immutable).toVar()
-    const decay = float(decay_immutable).toVar()
-    const size = float(size_immutable).toVar()
-    const p = vec2(p_immutable).toVar()
-    const l = float(length(p.add(mouse.mul(dist.mul(2)))).add(size.div(2))).toVar()
-    const c = float(max(sub(0.04, pow(length(p.add(mouse.mul(dist))), size.mul(ghostScale))), 0.0).mul(10)).toVar()
-    const c1 = float(max(sub(0.001, pow(l.sub(0.3), 1 / 40)).add(sin(l.mul(20))), 0.0).mul(3)).toVar()
-    const c2 = float(max(div(0.09, pow(length(p.sub(mouse.mul(dist).div(0.5))).mul(1), 0.95)), 0.0).div(20)).toVar()
+export const circle = /*@__PURE__*/ Fn(
+  ([i_p, i_size, i_decay, i_color, i_dist, i_mouse, i_ghostScale, i_colorGain]: [
+    UniformVector2Node, UniformNumberNode, UniformNumberNode,
+    UniformVector3Node, UniformNumberNode, UniformVector2Node,
+    UniformNumberNode, UniformVector3Node
+  ]) => {
+    const color = vec3(i_color).toVar('color')
+
+    const l = float(length(i_p.add(i_mouse.mul(i_dist.mul(2)))).add(i_size.div(2))).toVar('l')
+    const c = float(max(sub(0.04, pow(length(i_p.add(i_mouse.mul(i_dist))), i_size.mul(i_ghostScale))), 0.0).mul(10)).toVar('c')
+    const c1 = float(max(sub(0.001, pow(l.sub(0.3), 1 / 40)).add(sin(l.mul(20))), 0.0).mul(3)).toVar('c1')
+    const c2 = float(max(div(0.09, pow(length(i_p.sub(i_mouse.mul(i_dist).div(0.5))).mul(1), 0.95)), 0.0).div(20)).toVar('c2')
     const s = float(
-      max(sub(0.02, pow(regShape(p.mul(5).add(mouse.mul(dist).mul(5)).add(decay), int(6)), 1)), 0.0).mul(1.5),
-    ).toVar()
-    color.assign(cos(vec3(colorGain)).mul(0.5).add(0.5))
+      max(sub(0.02, pow(
+        regShape(i_p.mul(5).add(i_mouse.mul(i_dist).mul(5)).add(i_decay),
+        int(6),
+        i_ghostScale
+      ), 1)), 0.0).mul(1.5),
+    ).toVar('s')
+
+    color.assign(cos(i_colorGain).mul(0.5).add(0.5))
     const f = vec3(c.mul(color)).toVar('f')
     f.addAssign(c1.mul(color))
     f.addAssign(c2.mul(color))
     f.addAssign(s.mul(color))
-
     return f
   },
 ).setLayout({
@@ -258,5 +268,7 @@ export const circle = /*#__PURE__*/ Fn(
     { name: 'color2', type: 'vec3' },
     { name: 'dist', type: 'float' },
     { name: 'mouse', type: 'vec2' },
+    { name: 'ghostScale', type: 'float' },
+    { name: 'colorGain', type: 'vec3' },
   ],
 })
