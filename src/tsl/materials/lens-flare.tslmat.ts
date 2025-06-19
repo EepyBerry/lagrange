@@ -8,7 +8,9 @@ import { lensFlare, circle, rndf } from '../features/lens-flare'
 export type LensFlareData = {
   position: Vector3
   colorGain: Color
+  starPoints: number
   starPointsIntensity: number
+  glareSize: number
   glareIntensity: number
   flareShape: number
   flareSize: number
@@ -18,7 +20,9 @@ export type LensFlareData = {
 export type LensFlareUniforms = {
   position: UniformVector3Node
   colorGain: UniformColorNode
+  starPoints: UniformNumberNode
   starPointsIntensity: UniformNumberNode
+  glareSize: UniformNumberNode
   glareIntensity: UniformNumberNode
   flareShape: UniformNumberNode
   flareSize: UniformNumberNode
@@ -32,7 +36,9 @@ export class RingTSLMaterial implements TSLMaterial<NodeMaterial, LensFlareData,
     this.uniforms = {
       position: uniform(data.position, 'vec3').label('uPosition'),
       colorGain: uniform(data.colorGain, 'vec3').label('uColorGain'),
+      starPoints: uniform(2, 'float').label('uStarPoints'),
       starPointsIntensity: uniform(data.starPointsIntensity, 'float').label('uStarPointsIntensity'),
+      glareSize: uniform(0.025, 'float').label('uGlareSize'),
       glareIntensity: uniform(data.glareIntensity, 'float').label('uGlareIntensity'),
       flareShape: uniform(data.flareShape, 'float').label('uFlareShape'),
       flareSize: uniform(data.flareSize, 'float').label('uFlareSize'),
@@ -47,7 +53,11 @@ export class RingTSLMaterial implements TSLMaterial<NodeMaterial, LensFlareData,
       localUv.y.mulAssign(float(window.innerHeight).div(window.innerWidth))
       const mouse = vec2(this.uniforms.position.mul(0.5)).toVar()
       mouse.y.mulAssign(float(window.innerHeight).div(window.innerWidth))
-      const finalColor = vec3(lensFlare(localUv, mouse).mul(20.0).mul(this.uniforms.colorGain).div(2)).toVar()
+
+      const flareParams = vec2(this.uniforms.flareSize, this.uniforms.flareShape).toVar('flareParams')
+      const glareParams = vec2(this.uniforms.glareSize, this.uniforms.glareIntensity).toVar('glareParams')
+      const starPointsparams = vec2(this.uniforms.starPoints, this.uniforms.starPointsIntensity).toVar('starPointsParams')
+      const finalColor = vec3(lensFlare(localUv, mouse, flareParams, glareParams, starPointsparams).mul(20.0).mul(this.uniforms.colorGain).div(2)).toVar()
 
       If(this.uniforms.additionalStreaks.greaterThan(0), () => {
         const circColor = vec3(0.9, 0.2, 0.1).toVar()
@@ -70,7 +80,6 @@ export class RingTSLMaterial implements TSLMaterial<NodeMaterial, LensFlareData,
           )
         })
       })
-
       return vec4(finalColor, 1.0)
     }).setLayout({
       name: 'mainNode',
