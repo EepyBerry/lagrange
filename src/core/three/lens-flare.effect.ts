@@ -8,23 +8,15 @@ import type { WebGPURenderer } from 'three/webgpu'
 
 export type LensFlareParams = {
   lensPosition: THREE.Vector3
-  opacity: number
   colorGain: THREE.Color
   starPoints: number
   starPointsIntensity: number
   glareSize: number
   glareIntensity: number
   flareSize: number
-  flareSpeed: number
   flareShape: number
-  haloScale: number
-  animated: boolean
-  anamorphic: boolean
-  secondaryGhosts: boolean
-  starBurst: boolean
   ghostScale: number
   additionalStreaks: boolean
-  lensDirtTexture: THREE.Texture
 }
 
 /**
@@ -45,25 +37,17 @@ export class LensFlareEffect {
   constructor(params: Partial<LensFlareParams>) {
     this._params = {
       lensPosition: params.lensPosition ?? new THREE.Vector3(0),
-      opacity: params.opacity ?? 1,
       colorGain: params.colorGain ?? new THREE.Color(95, 12, 10),
       starPointsIntensity: params.starPointsIntensity ?? 0.25,
       starPoints: params.starPoints ?? 2,
       glareSize: params.glareSize ?? 0.025,
       glareIntensity: params.glareIntensity ?? 0.5,
       flareSize: params.flareSize ?? 0.001,
-      flareSpeed: params.flareSpeed ?? 0,
       flareShape: params.flareShape ?? 0.375,
-      haloScale: params.haloScale ?? 0,
-      animated: params.animated ?? false,
-      anamorphic: params.anamorphic ?? false,
-      secondaryGhosts: params.secondaryGhosts ?? false,
-      starBurst: params.starBurst ?? false,
       ghostScale: params.ghostScale ?? 0.15,
       additionalStreaks: params.additionalStreaks ?? false,
-      lensDirtTexture: params.lensDirtTexture ?? TEXTURE_LOADER.load('/glsl/lens-Dirt-Texture.jpg'),
     }
-    this._internalOpacity = Number(this._params.opacity)
+    this._internalOpacity = 1
     this._viewport = new THREE.Vector4()
     this._flarePosition = new THREE.Vector3()
     this._raycaster = new THREE.Raycaster()
@@ -88,16 +72,9 @@ export class LensFlareEffect {
         glareSize: { value: this._params.glareSize },
         glareIntensity: { value: this._params.glareIntensity },
         flareSize: { value: this._params.flareSize },
-        flareSpeed: { value: this._params.flareSpeed },
         flareShape: { value: this._params.flareShape },
-        haloScale: { value: this._params.haloScale },
-        animated: { value: this._params.animated },
-        anamorphic: { value: this._params.anamorphic },
-        secondaryGhosts: { value: this._params.secondaryGhosts },
-        starBurst: { value: this._params.starBurst },
         ghostScale: { value: this._params.ghostScale },
         additionalStreaks: { value: this._params.additionalStreaks },
-        lensDirtTexture: { value: this._params.lensDirtTexture },
       },
       fragmentShader,
       vertexShader,
@@ -112,21 +89,21 @@ export class LensFlareEffect {
 
   private checkTransparency(intersects: THREE.Intersection[]) {
     if (intersects?.length === 0) {
-      this._internalOpacity = this._params.opacity
+      this._internalOpacity = 1
       return
     }
 
     const iObject = intersects[0].object as THREE.Mesh
     const iMaterial = iObject.material as THREE.Material
     if (!iObject.visible) {
-      this._internalOpacity = this._params.opacity
+      this._internalOpacity = 1
     } else if (iMaterial instanceof THREE.MeshPhysicalMaterial) {
-      this._internalOpacity = this._params.opacity * (iMaterial.transmission * 0.5)
+      this._internalOpacity = (iMaterial.transmission * 0.5)
     } else {
       if (iMaterial.transparent && iMaterial.opacity < 0.98) {
-        this._internalOpacity = this._params.opacity / (iMaterial.opacity * 10)
+        this._internalOpacity = 1 / (iMaterial.opacity * 10)
       } else {
-        this._internalOpacity = iObject.userData.lens === 'no-occlusion' ? this._params.opacity : 0
+        this._internalOpacity = iObject.userData.lens === 'no-occlusion' ? 1 : 0
       }
     }
   }

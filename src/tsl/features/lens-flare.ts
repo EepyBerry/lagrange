@@ -177,7 +177,7 @@ export const lensFlare = /*@__PURE__*/ Fn(([i_uv, i_pos, i_flare, i_glare, i_sta
   const f63 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.389, i_pos))), 1.623)), 0.0).mul(3.12)).toVar('f63')
   const c = vec3(glare(i_uv, i_pos, i_glare.element(0), i_starPoints.element(0))).toVar('c')
 
-  const prot = vec2(i_uv.sub(i_pos)).toVar()
+  const prot = vec2(i_uv.sub(i_pos)).toVar('prot')
   c.addAssign(drawflare(prot, 0.1, i_flare.element(0), i_flare.element(1), i_starPoints.element(0)))
   c.r.addAssign(f1.add(f2).add(f4).add(f5).add(f6).mul(i_glare.element(1)))
   c.g.addAssign(f1.add(f22).add(f42).add(f52).add(f62).mul(i_glare.element(1)))

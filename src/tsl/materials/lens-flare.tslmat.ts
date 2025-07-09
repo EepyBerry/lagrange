@@ -29,7 +29,7 @@ export type LensFlareUniforms = {
   additionalStreaks: UniformNumberNode
   streaksScale: UniformNumberNode
 }
-export class RingTSLMaterial implements TSLMaterial<NodeMaterial, LensFlareData, LensFlareUniforms> {
+export class LensFlareTSLMaterial implements TSLMaterial<NodeMaterial, LensFlareData, LensFlareUniforms> {
   public readonly uniforms: LensFlareUniforms
 
   constructor(data: LensFlareData) {
