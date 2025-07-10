@@ -1,7 +1,7 @@
 import type { Color, Vector3 } from 'three'
-import { NodeMaterial } from 'three/webgpu'
+import { AdditiveBlending, NodeMaterial, Vector2 } from 'three/webgpu'
 import type { TSLMaterial } from './tsl-material'
-import type { UniformColorNode, UniformNumberNode, UniformVector3Node } from '../types'
+import type { UniformColorNode, UniformNumberNode, UniformVector2Node, UniformVector3Node } from '../types'
 import { float, Fn, If, Loop, pow, uniform, uv, vec2, vec3, vec4 } from 'three/tsl'
 import { lensFlare, circle, rndf } from '../features/lens-flare'
 
@@ -18,6 +18,8 @@ export type LensFlareData = {
   streaksScale: number
 }
 export type LensFlareUniforms = {
+  resolution: UniformVector2Node
+  opacity: UniformNumberNode
   position: UniformVector3Node
   colorGain: UniformColorNode
   starPoints: UniformNumberNode
@@ -34,6 +36,8 @@ export class LensFlareTSLMaterial implements TSLMaterial<NodeMaterial, LensFlare
 
   constructor(data: LensFlareData) {
     this.uniforms = {
+      resolution: uniform(new Vector2(window.innerWidth, window.innerHeight), 'vec2').label('uResolution'),
+      opacity: uniform(1, 'float').label('uOpacity'),
       position: uniform(data.position, 'vec3').label('uPosition'),
       colorGain: uniform(data.colorGain, 'vec3').label('uColorGain'),
       starPoints: uniform(2, 'float').label('uStarPoints'),
@@ -50,9 +54,9 @@ export class LensFlareTSLMaterial implements TSLMaterial<NodeMaterial, LensFlare
   buildMaterial(): NodeMaterial {
     const mainNode = Fn(() => {
       const localUv = vec2(uv().sub(0.5)).toVar('lfUV')
-      localUv.y.mulAssign(float(window.innerHeight).div(window.innerWidth))
+      localUv.y.mulAssign(this.uniforms.resolution.y.div(this.uniforms.resolution.x))
       const mouse = vec2(this.uniforms.position.mul(0.5)).toVar()
-      mouse.y.mulAssign(float(window.innerHeight).div(window.innerWidth))
+      mouse.y.mulAssign(float(this.uniforms.resolution.y).div(this.uniforms.resolution.x))
 
       const flareParams = vec2(this.uniforms.flareSize, this.uniforms.flareShape).toVar('flareParams')
       const glareParams = vec2(this.uniforms.glareSize, this.uniforms.glareIntensity).toVar('glareParams')
@@ -74,13 +78,13 @@ export class LensFlareTSLMaterial implements TSLMaterial<NodeMaterial, LensFlare
               rndf(float(i).mul(20))
                 .mul(3)
                 .add(0.2 - 0.5),
-              this.uniforms.position,
+              this.uniforms.streaksScale,
               this.uniforms.colorGain
             ),
           )
         })
       })
-      return vec4(finalColor, 1.0)
+      return vec4(finalColor, this.uniforms.opacity)
     }).setLayout({
       name: 'mainNode',
       type: 'vec4',
@@ -90,6 +94,11 @@ export class LensFlareTSLMaterial implements TSLMaterial<NodeMaterial, LensFlare
     // init material & set outputs
     const material = new NodeMaterial()
     material.fragmentNode = mainNode()
+    material.transparent = true
+    material.depthTest = false
+    material.depthWrite = false
+    material.blending = AdditiveBlending
+    material.name = 'LensFlareShader'
     return material
   }
 }

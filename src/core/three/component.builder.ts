@@ -4,7 +4,7 @@ import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-sha
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { createRampTexture, createBiomeTexture } from '../helpers/texture.helper'
 import type PlanetData from '../models/planet-data.model'
-import { ShaderFileType, type SceneRenderObjects, type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type RingMeshData } from '../types'
+import { type SceneRenderObjects, type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type RingMeshData } from '../types'
 import { loadCubeTexture } from './external-data.loader'
 import { LensFlareEffect } from './lens-flare.effect'
 import * as Globals from '@core/globals'
@@ -57,11 +57,16 @@ export function createSun(data: PlanetData) {
 
 export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THREE.Color) {
   return new LensFlareEffect({
-    opacity: 1,
-    lensPosition: pos,
+    position: pos,
     colorGain: color,
+    starPoints: 2,
     starPointsIntensity: data.lensFlarePointsIntensity,
+    glareSize: 0.025,
     glareIntensity: data.lensFlareGlareIntensity,
+    flareSize: 0.001,
+    flareShape: 0.375,
+    additionalStreaks: false,
+    streaksScale: 0.15,
   })
 }
 

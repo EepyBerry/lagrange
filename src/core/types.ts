@@ -16,6 +16,7 @@ import type { PlanetUniforms } from '@/tsl/materials/planet.tslmat'
 import type { AtmosphereUniforms } from '@/tsl/materials/atmosphere.tslmat'
 import type { CloudsUniforms } from '@/tsl/materials/clouds.tslmat'
 import type { RingUniforms } from '@/tsl/materials/ring.tslmat'
+import type { LensFlareUniforms } from '@/tsl/materials/lens-flare.tslmat'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
@@ -118,6 +119,10 @@ export type RingMeshData = {
 
   buffer: Uint8Array | null
   texture?: DataTexture
+}
+export type LensFlareMeshdata = {
+  mesh?: Mesh
+  uniforms?: LensFlareUniforms
 }
 
 // ---------------------------------- Preview data ----------------------------------

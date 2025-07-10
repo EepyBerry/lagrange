@@ -206,8 +206,8 @@ export const rndf = /*@__PURE__*/ Fn(([i_w]: [UniformNumberNode]) => {
 })
 
 export const regShape = /*@__PURE__*/ Fn(([i_p, i_N, i_streakScale]: [UniformVector2Node, UniformNumberNode, UniformNumberNode]) => {
-  const a = float(atan(i_p.x, i_p.y).add(0.2)).toVar()
-  const b = float(div(6.28319, float(i_N))).toVar()
+  const a = float(atan(i_p.x, i_p.y).add(0.2)).toVar('a')
+  const b = float(div(6.28319, float(i_N))).toVar('b')
   return smoothstep(
     0.5,
     0.51,
@@ -268,7 +268,7 @@ export const circle = /*@__PURE__*/ Fn(
     { name: 'color2', type: 'vec3' },
     { name: 'dist', type: 'float' },
     { name: 'mouse', type: 'vec2' },
-    { name: 'ghostScale', type: 'float' },
+    { name: 'streakScale', type: 'float' },
     { name: 'colorGain', type: 'vec3' },
   ],
 })
