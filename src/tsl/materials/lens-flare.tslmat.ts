@@ -55,17 +55,24 @@ export class LensFlareTSLMaterial implements TSLMaterial<NodeMaterial, LensFlare
     const mainNode = Fn(() => {
       const localUv = vec2(uv().sub(0.5)).toVar('lfUV')
       localUv.y.mulAssign(this.uniforms.resolution.y.div(this.uniforms.resolution.x))
-      const mouse = vec2(this.uniforms.position.mul(0.5)).toVar()
+      const mouse = vec2(this.uniforms.position.mul(0.5)).toVar('mouse')
       mouse.y.mulAssign(float(this.uniforms.resolution.y).div(this.uniforms.resolution.x))
 
-      const flareParams = vec2(this.uniforms.flareSize, this.uniforms.flareShape).toVar('flareParams')
+      const flareParams = vec2(this.uniforms.flareShape, this.uniforms.flareSize).toVar('flareParams')
       const glareParams = vec2(this.uniforms.glareSize, this.uniforms.glareIntensity).toVar('glareParams')
-      const starPointsparams = vec2(this.uniforms.starPoints, this.uniforms.starPointsIntensity).toVar('starPointsParams')
-      const finalColor = vec3(lensFlare(localUv, mouse, flareParams, glareParams, starPointsparams).mul(20.0).mul(this.uniforms.colorGain).div(2)).toVar()
+      const starPointsparams = vec2(this.uniforms.starPoints, this.uniforms.starPointsIntensity).toVar(
+        'starPointsParams',
+      )
+      const finalColor = vec3(
+        lensFlare(localUv, mouse, flareParams, glareParams, starPointsparams)
+          .mul(20.0)
+          .mul(this.uniforms.colorGain)
+          .div(2),
+      ).toVar('finalColor')
 
       If(this.uniforms.additionalStreaks.greaterThan(0), () => {
-        const circColor = vec3(0.9, 0.2, 0.1).toVar()
-        const circColor2 = vec3(0.3, 0.1, 0.9).toVar()
+        const circColor = vec3(0.9, 0.2, 0.1).toVar('circColor')
+        const circColor2 = vec3(0.3, 0.1, 0.9).toVar('circColor2')
 
         Loop({ start: 0, end: 10, condition: '<' }, ({ i }) => {
           finalColor.addAssign(
@@ -79,7 +86,7 @@ export class LensFlareTSLMaterial implements TSLMaterial<NodeMaterial, LensFlare
                 .mul(3)
                 .add(0.2 - 0.5),
               this.uniforms.streaksScale,
-              this.uniforms.colorGain
+              this.uniforms.colorGain,
             ),
           )
         })

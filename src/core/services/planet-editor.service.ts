@@ -69,6 +69,16 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   initRendering(canvas, w, h)
   initUniformUpdateMap(LG_SCENE_DATA, LG_PLANET_DATA.value)
   ComponentBuilder.createOrbitControls(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
+  
+
+  // TODO: Remove debug printing when done
+  LG_SCENE_DATA.renderer!.debug.getShaderAsync(
+    LG_SCENE_DATA.scene!,
+    LG_SCENE_DATA.camera!,
+    LG_SCENE_DATA.lensFlare!.mesh!,
+  ).then((e) => {
+    console.log(e.fragmentShader)
+  })
 }
 
 function initLighting(): void {
@@ -211,15 +221,6 @@ export function updateRingMeshes() {
       ringsMeshData.push(newRing)
       LG_SCENE_DATA.ringAnchor!.add(newRing.mesh!)
     })
-
-  // TODO: Remove debug printing when done
-  LG_SCENE_DATA.renderer!.debug.getShaderAsync(
-    LG_SCENE_DATA.scene!,
-    LG_SCENE_DATA.camera!,
-    LG_SCENE_DATA.rings![0].mesh!,
-  ).then((e) => {
-    console.log(e.fragmentShader)
-  })
 }
 
 function updateScene() {
@@ -248,8 +249,8 @@ export function disposeScene() {
   LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.sunLight!)
   LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.ambLight!)
 
-  /*LG_SCENE_DATA.lensFlare!.material.dispose()
-  LG_SCENE_DATA.lensFlare!.mesh.geometry.dispose()*/
+  ;(LG_SCENE_DATA.lensFlare!.mesh!.material as THREE.Material).dispose()
+  LG_SCENE_DATA.lensFlare!.mesh!.geometry.dispose()
   ;(LG_SCENE_DATA.planet.mesh!.material as THREE.Material).dispose()
   LG_SCENE_DATA.planet.mesh!.geometry.dispose()
   ;(LG_SCENE_DATA.atmosphere!.mesh!.material as THREE.Material).dispose()
