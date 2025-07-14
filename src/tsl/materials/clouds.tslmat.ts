@@ -1,4 +1,4 @@
-import { Color, DataTexture, MeshStandardNodeMaterial, TextureNode, UniformArrayNode, Vector3, Vector4 } from 'three/webgpu'
+import { Color, DataTexture, MeshStandardNodeMaterial, TextureNode, UniformArrayNode, VaryingNode, Vector3, Vector4 } from 'three/webgpu'
 import { Fn, positionLocal, texture, uniform, uniformArray, vec2, vec3, vec4 } from 'three/tsl'
 import { type TSLMaterial } from './tsl-material'
 import { displace, warp } from '../features/lwd'
@@ -79,13 +79,13 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   }
 
   buildMaterial(): MeshStandardNodeMaterial {
-    const mainNode = Fn(() => {
+    const mainNode = Fn(([pos]: [VaryingNode]) => {
       // Constants
       const DVEC_A = vec3(0.1, 0.1, 0.0).toVar('DVEC_A')
       const DVEC_B = vec3(0.2, 0.2, 0.0).toVar('DVEC_B')
 
       // XYZ warping + displacement
-      const vPos = vec3(warp(positionLocal, this.uniforms.warping, this.uniforms.flags.element(0))).toVar('vPos')
+      const vPos = vec3(warp(pos, this.uniforms.warping, this.uniforms.flags.element(0))).toVar('vPos')
       vPos.assign(
         displace(
           vPos,
@@ -107,7 +107,7 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     }).setLayout({
       name: 'mainNode',
       type: 'vec4',
-      inputs: [],
+      inputs: [{ name: 'pos', type: 'vec3' }],
     })
 
     // init material & set outputs
@@ -115,7 +115,7 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     material.roughness = 1
     material.metalness = 0.5
     material.transparent = true
-    material.colorNode = mainNode()
+    material.colorNode = mainNode(positionLocal)
     return material
   }
 }

@@ -69,8 +69,8 @@ export const warp = /*@__PURE__*/ Fn(([i_position, i_params, i_enable]: [Varying
 
 export const displace = /*@__PURE__*/ Fn(([i_position, i_params, i_noise, i_enable]: [VaryingNode, UniformVector3Node, UniformVector4Node, UniformNumberNode]) => {
   const vPos = vec3(i_position).toVar('vPos')
-  const enable = int(i_enable).toVar('enable')
-  return mix(vPos, doDisplace(i_position, i_params, i_noise), enable)
+  const enabled = int(i_enable).toVar('enabled')
+  return mix(vPos, doDisplace(i_position, i_params, i_noise), enabled)
 }).setLayout({
   name: 'LG_LWD_displace',
   type: 'vec3',

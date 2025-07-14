@@ -1,4 +1,4 @@
-import { Color, NodeMaterial, type Vector3 } from 'three/webgpu'
+import { Color, NodeMaterial, VaryingNode, type Vector3 } from 'three/webgpu'
 import type { TSLMaterial } from './tsl-material'
 import type { UniformColorNode, UniformNumberNode, UniformVector3Node } from '../types'
 import {
@@ -82,12 +82,9 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
   }
 
   buildMaterial(): NodeMaterial {
-    const fragmentNode = Fn(() => {
+    const fragmentNode = Fn(([posGeo, posWorld]: [VaryingNode, VaryingNode]) => {
       // ---------------- VERTEX STAGE ----------------
-      const clipSpacePos = cameraProjectionMatrix
-        .mul(modelViewMatrix)
-        .mul(vec4(positionGeometry, 1.0))
-        .toVar('clipSpacePos')
+      const clipSpacePos = cameraProjectionMatrix.mul(modelViewMatrix).mul(vec4(posGeo, 1.0)).toVar('clipSpacePos')
       const ndc = div(clipSpacePos.xyz, clipSpacePos.w).toVar('ndc')
       const clipRay = vec4(ndc.x, ndc.y, -1.0, 1.0).toVar('clipRay')
       const inverseRay = cameraProjectionMatrixInverse.mul(clipRay).toVar('inverseRay')
@@ -96,8 +93,8 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
       // --------------- FRAGMENT STAGE ---------------
       const worldRay = vec4(inverseMat4(cameraViewMatrix).mul(vec4(viewRay, 0.0))).toVar('worldRay')
       const rayDir = vec3(normalize(worldRay.xyz)).toVar('rayDir')
-      const eye = vec3(positionWorld.xyz).toVar('eye')
-      const sunglightDir = vec3(normalize(this.uniforms.sunlight.position.sub(positionWorld.xyz))).toVar('sunlightDir')
+      const eye = vec3(posWorld.xyz).toVar('eye')
+      const sunglightDir = vec3(normalize(this.uniforms.sunlight.position.sub(posWorld.xyz))).toVar('sunlightDir')
       const e = vec2(rayVsSphere(eye, rayDir, this.uniforms.transform.radius)).toVar('e')
 
       // if e.X > e.Y, something went horribly wrong so exit early
@@ -137,14 +134,17 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
     }).setLayout({
       name: 'fragmentNode',
       type: 'vec4',
-      inputs: [],
+      inputs: [
+        { name: 'posGeo', type: 'vec3' },
+        { name: 'posWorld', type: 'vec3' },
+      ],
     })
 
     // set colorNode depending on current color mode (realistic/direct/mixed)
     const material = new NodeMaterial()
     material.transparent = true
     material.depthWrite = false
-    material.fragmentNode = fragmentNode()
+    material.fragmentNode = fragmentNode(positionGeometry, positionWorld)
     return material
   }
 }
