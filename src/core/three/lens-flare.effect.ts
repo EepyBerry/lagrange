@@ -58,12 +58,13 @@ export class LensFlareEffect {
     this._tslMaterial.uniforms.resolution.value.x = this._viewport.z
     this._tslMaterial.uniforms.resolution.value.y = this._viewport.w
 
-    const projectedPosition = this._tslMaterial.uniforms.position.value
+    const projectedPosition = this._tslMaterial.uniforms.lensPosition.value.clone()
     projectedPosition.project(camera)
 
     this._flarePosition.set(projectedPosition.x, projectedPosition.y, projectedPosition.z)
     if (this._flarePosition.z < 1) {
-      this._tslMaterial.uniforms.position.value.set(this._flarePosition.x, this._flarePosition.y, this._flarePosition.z)
+      this._tslMaterial.uniforms.lensPosition.value.x = this._flarePosition.x
+      this._tslMaterial.uniforms.lensPosition.value.y = this._flarePosition.y
     }
 
     this._raycaster.setFromCamera(new THREE.Vector2(projectedPosition.x, projectedPosition.y), camera)
@@ -78,7 +79,9 @@ export class LensFlareEffect {
   }
 
   public updatePosition(lensPosition: THREE.Vector3) {
-    this._tslMaterial.uniforms.position.value.set(lensPosition.x, lensPosition.y, lensPosition.z)
+    this._tslMaterial.uniforms.lensPosition.value.x = lensPosition.x
+    this._tslMaterial.uniforms.lensPosition.value.y = lensPosition.y
+    this._tslMaterial.uniforms.lensPosition.value.z = lensPosition.z
   }
 
   public get mesh(): THREE.Mesh {

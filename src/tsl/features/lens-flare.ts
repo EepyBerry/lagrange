@@ -152,49 +152,49 @@ export const glare = /*@__PURE__*/ Fn(
 })
 
 export const lensFlare = /*@__PURE__*/ Fn(
-  ([i_uv, i_mouse, i_flareParams, i_glareParams, i_starPoints]: [
+  ([i_uv, i_pos, i_flareParams, i_glareParams, i_starPoints]: [
     UniformVector2Node,
     VaryingNode,
     UniformVector2Node,
     UniformVector2Node,
     UniformVector2Node,
   ]) => {
-    const main = vec2(i_uv.sub(i_mouse)).toVar('main')
+    const main = vec2(i_uv.sub(i_pos)).toVar('main')
     const uvd = vec2(i_uv.mul(length(i_uv))).toVar('uvd')
     const ang = float(atan(main.x, main.y)).toVar('angle')
 
-    const f0 = float(div(0.3, length(i_uv.sub(i_mouse)).mul(16.0).add(1.0))).toVar('f0')
+    const f0 = float(div(0.3, length(i_uv.sub(i_pos)).mul(16.0).add(1.0))).toVar('f0')
     f0.assign(f0.mul(sin(noise(sin(ang.mul(3.9).mul(0.3)).mul(i_starPoints.x))).mul(0.2)))
 
-    const f1 = float(max(sub(0.01, pow(length(i_uv.add(mul(1.2, i_mouse))), 1.9)), 0.0).mul(7.0)).toVar('f1')
+    const f1 = float(max(sub(0.01, pow(length(i_uv.add(mul(1.2, i_pos))), 1.9)), 0.0).mul(7.0)).toVar('f1')
     const f2 = float(
-      max(div(0.9, add(10.0, mul(32.0, pow(length(uvd.add(mul(0.99, i_mouse))), 2.0)))), 0.0).mul(0.35),
+      max(div(0.9, add(10.0, mul(32.0, pow(length(uvd.add(mul(0.99, i_pos))), 2.0)))), 0.0).mul(0.35),
     ).toVar('f2')
     const f22 = float(
-      max(div(0.9, add(11.0, mul(32.0, pow(length(uvd.add(mul(0.85, i_mouse))), 2.0)))), 0.0).mul(0.23),
+      max(div(0.9, add(11.0, mul(32.0, pow(length(uvd.add(mul(0.85, i_pos))), 2.0)))), 0.0).mul(0.23),
     ).toVar('f22')
     const f23 = float(
-      max(div(0.9, add(12.0, mul(32.0, pow(length(uvd.add(mul(0.95, i_mouse))), 2.0)))), 0.0).mul(0.6),
+      max(div(0.9, add(12.0, mul(32.0, pow(length(uvd.add(mul(0.95, i_pos))), 2.0)))), 0.0).mul(0.6),
     ).toVar('f23')
 
     const uvx = vec2(mix(i_uv, uvd, 0.1)).toVar('uvx')
 
-    const f4 = float(max(sub(0.01, pow(length(uvx.add(mul(0.4, i_mouse))), 2.9)), 0.0).mul(4.02)).toVar('f4')
-    const f42 = float(max(sub(0.0, pow(length(uvx.add(mul(0.45, i_mouse))), 2.9)), 0.0).mul(4.1)).toVar('f42')
-    const f43 = float(max(sub(0.01, pow(length(uvx.add(mul(0.5, i_mouse))), 2.9)), 0.0).mul(4.6)).toVar('f43')
+    const f4 = float(max(sub(0.01, pow(length(uvx.add(mul(0.4, i_pos))), 2.9)), 0.0).mul(4.02)).toVar('f4')
+    const f42 = float(max(sub(0.0, pow(length(uvx.add(mul(0.45, i_pos))), 2.9)), 0.0).mul(4.1)).toVar('f42')
+    const f43 = float(max(sub(0.01, pow(length(uvx.add(mul(0.5, i_pos))), 2.9)), 0.0).mul(4.6)).toVar('f43')
     uvx.assign(mix(i_uv, uvd, float(-0.4)))
 
-    const f5 = float(max(sub(0.01, pow(length(uvx.add(mul(0.1, i_mouse))), 5.5)), 0.0).mul(2.0)).toVar('f5')
-    const f52 = float(max(sub(0.01, pow(length(uvx.add(mul(0.2, i_mouse))), 5.5)), 0.0).mul(2.0)).toVar('f52')
-    const f53 = float(max(sub(0.01, pow(length(uvx.add(mul(0.1, i_mouse))), 5.5)), 0.0).mul(2.0)).toVar('f53')
+    const f5 = float(max(sub(0.01, pow(length(uvx.add(mul(0.1, i_pos))), 5.5)), 0.0).mul(2.0)).toVar('f5')
+    const f52 = float(max(sub(0.01, pow(length(uvx.add(mul(0.2, i_pos))), 5.5)), 0.0).mul(2.0)).toVar('f52')
+    const f53 = float(max(sub(0.01, pow(length(uvx.add(mul(0.1, i_pos))), 5.5)), 0.0).mul(2.0)).toVar('f53')
     uvx.assign(mix(i_uv, uvd, 2.1))
 
-    const f6 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.3, i_mouse))), 1.61)), 0.0).mul(3.159)).toVar('f6')
-    const f62 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.325, i_mouse))), 1.614)), 0.0).mul(3.14)).toVar('f62')
-    const f63 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.389, i_mouse))), 1.623)), 0.0).mul(3.12)).toVar('f63')
-    const c = vec3(glare(i_uv, i_mouse, i_glareParams.x, i_starPoints.x)).toVar('c')
+    const f6 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.3, i_pos))), 1.61)), 0.0).mul(3.159)).toVar('f6')
+    const f62 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.325, i_pos))), 1.614)), 0.0).mul(3.14)).toVar('f62')
+    const f63 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.389, i_pos))), 1.623)), 0.0).mul(3.12)).toVar('f63')
+    const c = vec3(glare(i_uv, i_pos, i_glareParams.x, i_starPoints.x)).toVar('c')
 
-    const prot = vec2(i_uv.sub(i_mouse)).toVar('prot')
+    const prot = vec2(i_uv.sub(i_pos)).toVar('prot')
     c.addAssign(drawflare(prot, 0.1, i_flareParams.x, i_flareParams.y, i_starPoints.x))
     c.r.addAssign(f1.add(f2).add(f4).add(f5).add(f6).mul(i_glareParams.y))
     c.g.addAssign(f1.add(f22).add(f42).add(f52).add(f62).mul(i_glareParams.y))
@@ -252,7 +252,7 @@ export const regShape = /*@__PURE__*/ Fn(
 })
 
 export const circle = /*@__PURE__*/ Fn(
-  ([i_p, i_size, i_decay, i_color, i_dist, i_mouse, i_streakScale, i_colorGain]: [
+  ([i_p, i_size, i_decay, i_color, i_dist, i_pos, i_streakScale, i_colorGain]: [
     UniformVector2Node,
     UniformNumberNode,
     UniformNumberNode,
@@ -264,17 +264,17 @@ export const circle = /*@__PURE__*/ Fn(
   ]) => {
     const vColor = vec3(i_color).toVar('vColor')
 
-    const l = float(length(i_p.add(i_mouse.mul(i_dist.mul(2)))).add(i_size.div(2))).toVar('l')
+    const l = float(length(i_p.add(i_pos.mul(i_dist.mul(2)))).add(i_size.div(2))).toVar('l')
     const c = float(
-      max(sub(0.04, pow(length(i_p.add(i_mouse.mul(i_dist))), i_size.mul(i_streakScale))), 0.0).mul(10),
+      max(sub(0.04, pow(length(i_p.add(i_pos.mul(i_dist))), i_size.mul(i_streakScale))), 0.0).mul(10),
     ).toVar('c')
     const c1 = float(max(sub(0.001, pow(l.sub(0.3), 1 / 40)).add(sin(l.mul(20))), 0.0).mul(3)).toVar('c1')
     const c2 = float(
-      max(div(0.09, pow(length(i_p.sub(i_mouse.mul(i_dist).div(0.5))).mul(1), 0.95)), 0.0).div(20),
+      max(div(0.09, pow(length(i_p.sub(i_pos.mul(i_dist).div(0.5))).mul(1), 0.95)), 0.0).div(20),
     ).toVar('c2')
     const s = float(
       max(
-        sub(0.02, pow(regShape(i_p.mul(5).add(i_mouse.mul(i_dist).mul(5)).add(i_decay), int(6), i_streakScale), 1)),
+        sub(0.02, pow(regShape(i_p.mul(5).add(i_pos.mul(i_dist).mul(5)).add(i_decay), int(6), i_streakScale), 1)),
         0.0,
       ).mul(1.5),
     ).toVar('s')
@@ -295,7 +295,7 @@ export const circle = /*@__PURE__*/ Fn(
     { name: 'decay', type: 'float' },
     { name: 'color', type: 'vec3' },
     { name: 'dist', type: 'float' },
-    { name: 'mouse', type: 'vec2' },
+    { name: 'pos', type: 'vec2' },
     { name: 'streakScale', type: 'float' },
     { name: 'colorGain', type: 'vec3' },
   ],
