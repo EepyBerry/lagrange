@@ -1,10 +1,11 @@
 import saveAs from 'file-saver'
 import type { Mesh, Scene } from 'three'
 import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js'
+import type { WebGPURenderer } from 'three/webgpu'
 
 const GLTF_EXPORTER = new GLTFExporter()
 
-export function exportSceneToGLTF(scene: Scene, filename: string) {
+export function exportSceneToGLTF(scene: Scene, filename: string): void {
   GLTF_EXPORTER.parse(
     scene,
     (data) => {
@@ -15,7 +16,7 @@ export function exportSceneToGLTF(scene: Scene, filename: string) {
   )
 }
 
-export function exportMeshesToGLTF(meshes: Mesh[], filename: string) {
+export function exportMeshesToGLTF(meshes: Mesh[], filename: string): void {
   GLTF_EXPORTER.parse(
     meshes,
     (data) => {
@@ -24,4 +25,10 @@ export function exportMeshesToGLTF(meshes: Mesh[], filename: string) {
     },
     (err) => console.error(err),
   )
+}
+
+export function exportPlanetScreenshot(renderer: WebGPURenderer, planetName: string): void {
+  renderer.domElement.toBlob((blob) => {
+    saveAs(blob!, `${planetName.replaceAll(' ', '_')}-${new Date().toISOString()}.png`)
+  }, 'image/png')
 }

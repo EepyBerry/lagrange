@@ -8,15 +8,14 @@ import type {
   PerspectiveCamera,
   Scene,
   Texture,
-  WebGLRenderer,
 } from 'three'
 import type { LensFlareEffect } from './effects/lens-flare.effect'
 import type { WebGPURenderer } from 'three/webgpu'
-import type { PlanetUniforms } from '@/core/tsl/materials/planet.tslmat'
-import type { AtmosphereUniforms } from '@/core/tsl/materials/atmosphere.tslmat'
-import type { CloudsUniforms } from '@/core/tsl/materials/clouds.tslmat'
-import type { RingUniforms } from '@/core/tsl/materials/ring.tslmat'
-import type { LensFlareUniforms } from '@/core/tsl/materials/lens-flare.tslmat'
+import type { PlanetUniforms } from '@core/tsl/materials/planet.tslmat'
+import type { AtmosphereUniforms } from '@core/tsl/materials/atmosphere.tslmat'
+import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat'
+import type { RingUniforms } from '@core/tsl/materials/ring.tslmat'
+import type { LensFlareUniforms } from '@core/tsl/materials/lens-flare.tslmat'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 
@@ -67,21 +66,21 @@ export type RawRGBA = {
 // ------------------------------------ Main data -----------------------------------
 export type EditorSceneData = {
   // Scene, renderer, camera
-  scene?: Scene
-  renderer?: WebGPURenderer
-  camera?: PerspectiveCamera
+  scene: Scene
+  renderer: WebGPURenderer
+  camera: PerspectiveCamera
 
   // Groups
-  planetGroup?: Group
-  ringAnchor?: Group
+  planetGroup: Group
+  ringAnchor: Group
 
   // Main objects
   planet: PlanetMeshData
   clouds: CloudsMeshData
-  atmosphere?: AtmosphereMeshData
-  rings?: RingMeshData[]
-  sunLight?: DirectionalLight
-  ambLight?: AmbientLight
+  atmosphere: AtmosphereMeshData
+  rings: RingMeshData[]
+  sunLight: DirectionalLight
+  ambLight: AmbientLight
   lensFlare?: LensFlareEffect
 
   // Misc

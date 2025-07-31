@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import * as Globals from '@core/globals'
 import * as ComponentHelper from '@/core/helpers/component.helper'
-import { type BakingTarget, type EditorSceneData, type RingMeshData } from '@core/types'
+import { type BakingTarget, type EditorSceneData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
 import { regeneratePRNGIfNecessary } from '@/core/utils/math-utils'
 import {
@@ -15,30 +15,15 @@ import {
   createBakingPlanet,
   createBakingRing,
 } from '../helpers/baking.helper'
-import { exportMeshesToGLTF } from '../helpers/export.helper'
+import { exportMeshesToGLTF, exportPlanetScreenshot } from '../helpers/export.helper'
 import { idb } from '@/dexie.config'
 import { sleep } from '@/core/utils/utils'
-import saveAs from 'file-saver'
-import {
-  clearUniformUpdateMap,
-  execUniformUpdate,
-  initUniformUpdateMap,
-  reloadRingDataUpdates,
-} from '../helpers/uniform.helper'
-import Stats from 'three/examples/jsm/libs/stats.module.js'
-import { normalizeUInt8ArrayPixels } from '@/core/utils/render-utils'
+import * as UniformHelper from '../helpers/uniform.helper'
+import * as SceneHelper from '../helpers/scene.helper'
+import * as PreviewHelper from '../helpers/preview.helper'
 
 // Editor constants
-const LG_SCENE_DATA: EditorSceneData = {
-  planet: {
-    surfaceBuffer: new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4),
-    biomesBuffer: new Uint8Array(Globals.TEXTURE_SIZES.BIOME * Globals.TEXTURE_SIZES.BIOME * 4),
-  },
-  clouds: {
-    buffer: new Uint8Array(Globals.TEXTURE_SIZES.CLOUDS * 4),
-  },
-  rings: [],
-}
+let LG_SCENE_DATA!: EditorSceneData
 export const LG_PLANET_DATA: Ref<PlanetData> = ref(new PlanetData())
 
 // Buffers
@@ -59,17 +44,15 @@ let watchForPlanetUpdates = false
 export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
   await sleep(50)
   enableEditorRendering = true
-  const sceneRenderObjs = ComponentHelper.createScene(LG_PLANET_DATA.value, w, h, pixelRatio)
-  LG_SCENE_DATA.scene = sceneRenderObjs.scene
-  LG_SCENE_DATA.renderer = sceneRenderObjs.renderer
-  LG_SCENE_DATA.camera = sceneRenderObjs.camera
-  LG_SCENE_DATA.clock = new THREE.Clock()
-  initLighting()
-  initPlanet()
-  initRendering(canvas, w, h)
-  initUniformUpdateMap(LG_SCENE_DATA, LG_PLANET_DATA.value)
+  LG_SCENE_DATA = SceneHelper.buildEditorScene(LG_PLANET_DATA.value, w, h, pixelRatio)
+  UniformHelper.initUniformUpdateMap(LG_SCENE_DATA, LG_PLANET_DATA.value)
   ComponentHelper.createOrbitControls(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
-  
+
+  // Configure renderer
+  LG_SCENE_DATA.renderer!.setSize(w, h)
+  LG_SCENE_DATA.renderer!.setAnimationLoop(() => renderFrame())
+  LG_SCENE_DATA.renderer!.domElement.ariaLabel = '3D planet viewer'
+  canvas.appendChild(LG_SCENE_DATA.renderer!.domElement)
 
   // TODO: Remove debug printing when done
   LG_SCENE_DATA.renderer!.debug.getShaderAsync(
@@ -81,106 +64,14 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   })
 }
 
-function initLighting(): void {
-  const sun = ComponentHelper.createSun(LG_PLANET_DATA.value)
-  LG_SCENE_DATA.scene!.add(sun)
-  LG_SCENE_DATA.sunLight = sun
-
-  const ambientLight = ComponentHelper.createAmbientLight(
-    LG_PLANET_DATA.value.ambLightColor,
-    LG_PLANET_DATA.value.ambLightIntensity,
-  )
-  ambientLight.name = Globals.LG_NAME_AMBLIGHT
-  LG_SCENE_DATA.scene!.add(ambientLight)
-  LG_SCENE_DATA.ambLight = ambientLight
-
-  const lensFlare = ComponentHelper.createLensFlare(LG_PLANET_DATA.value, sun.position, sun.color)
-  sun.add(lensFlare.mesh)
-  LG_SCENE_DATA.lensFlare = lensFlare
-
-  // Set initial rotations
-  const pos = Globals.SUN_INIT_POS.clone()
-  pos.applyAxisAngle(Globals.AXIS_X, degToRad(-15))
-  LG_SCENE_DATA.sunLight.position.set(pos.x, pos.y, pos.z)
-  LG_SCENE_DATA.lensFlare.updatePosition(LG_SCENE_DATA.sunLight.position)
-}
-
-function initPlanet(): void {
-  const planet = ComponentHelper.createPlanet(
-    LG_PLANET_DATA.value,
-    LG_SCENE_DATA.planet.surfaceBuffer,
-    LG_SCENE_DATA.planet.biomesBuffer,
-  )
-  const clouds = ComponentHelper.createClouds(LG_PLANET_DATA.value, LG_SCENE_DATA.clouds.buffer)
-  const atmosphere = ComponentHelper.createAtmosphere(LG_PLANET_DATA.value, LG_SCENE_DATA.sunLight!.position)
-  const rings: RingMeshData[] = LG_PLANET_DATA.value.ringsParams.map((_, idx) => {
-    const newRing = ComponentHelper.createRing(
-      LG_PLANET_DATA.value,
-      new Uint8Array(Globals.TEXTURE_SIZES.RING * 4),
-      idx,
-    )
-    return {
-      mesh: newRing.mesh,
-      buffer: newRing.buffer,
-      texture: newRing.texture,
-    }
-  })
-  const planetGroup = new THREE.Group()
-  planetGroup.add(planet.mesh!)
-  planetGroup.add(clouds.mesh!)
-  planetGroup.add(atmosphere.mesh!)
-
-  const ringAnchor = new THREE.Group()
-  ringAnchor.name = Globals.LG_NAME_RING_ANCHOR
-  rings.forEach((r) => ringAnchor.add(r.mesh!))
-  planetGroup.add(ringAnchor)
-
-  LG_SCENE_DATA.scene!.add(planetGroup)
-  LG_SCENE_DATA.planet = planet
-  LG_SCENE_DATA.clouds = clouds
-  LG_SCENE_DATA.atmosphere = atmosphere
-  LG_SCENE_DATA.rings = rings
-  LG_SCENE_DATA.planetGroup = planetGroup
-  LG_SCENE_DATA.ringAnchor = ringAnchor
-
-  // Set initial rotations
-  LG_SCENE_DATA.planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
-  LG_SCENE_DATA.planet.mesh!.setRotationFromAxisAngle(
-    LG_SCENE_DATA.planet.mesh!.up,
-    degToRad(LG_PLANET_DATA.value.planetRotation),
-  )
-  LG_SCENE_DATA.clouds.mesh!.setRotationFromAxisAngle(
-    LG_SCENE_DATA.clouds.mesh!.up,
-    degToRad(LG_PLANET_DATA.value.planetRotation + LG_PLANET_DATA.value.cloudsRotation),
-  )
-  LG_SCENE_DATA.ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90))
-
-  // Set lighting target
-  LG_SCENE_DATA.sunLight!.target = LG_SCENE_DATA.planetGroup
-}
-
-function initRendering(sceneRoot: HTMLCanvasElement, width: number, height: number) {
-  const stats = new Stats()
-  stats.dom.style.right = '0'
-  stats.dom.style.left = 'auto'
-  stats.dom.ariaHidden = 'true'
-  // document.body.appendChild(stats.dom)
-
-  LG_SCENE_DATA.renderer!.setSize(width, height)
-  LG_SCENE_DATA.renderer!.setAnimationLoop(() => renderFrame(stats))
-  LG_SCENE_DATA.renderer!.domElement.ariaLabel = '3D planet viewer'
-  sceneRoot.appendChild(LG_SCENE_DATA.renderer!.domElement)
-}
-
 // ------------------------------------------------------------------------------------------------ //
-//                                         SCENE MANAGEMENT                                         //
+//                                          SCENE RENDERING                                         //
 // ------------------------------------------------------------------------------------------------ //
 
-function renderFrame(stats: Stats) {
+function renderFrame() {
   if (!enableEditorRendering) {
     return
   }
-  stats.update()
   updateScene()
   watchForPlanetUpdates = true
   LG_SCENE_DATA.lensFlare!.update(
@@ -197,6 +88,10 @@ export function updateCameraRendering(w: number, h: number) {
   LG_SCENE_DATA.camera!.updateProjectionMatrix()
   LG_SCENE_DATA.renderer!.setSize(w, h)
 }
+
+// ------------------------------------------------------------------------------------------------ //
+//                                         SCENE MANAGEMENT                                         //
+// ------------------------------------------------------------------------------------------------ //
 
 export function updateRingMeshes() {
   const ringsMeshData = LG_SCENE_DATA.rings!
@@ -231,9 +126,9 @@ function updateScene() {
   for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
     if (changedProp.prop === '_ringsParameters') {
       updateRingMeshes()
-      reloadRingDataUpdates(LG_SCENE_DATA, LG_PLANET_DATA.value)
+      UniformHelper.reloadRingDataUpdates(LG_SCENE_DATA, LG_PLANET_DATA.value)
     }
-    execUniformUpdate(changedProp.prop.split('|')[0])
+    UniformHelper.execUniformUpdate(changedProp.prop.split('|')[0])
   }
   LG_PLANET_DATA.value.clearChangedProps()
 }
@@ -244,38 +139,12 @@ function updateScene() {
 export function disposeScene() {
   watchForPlanetUpdates = false
   console.debug('<Lagrange> Clearing scene... ')
-  LG_SCENE_DATA.sunLight!.dispose()
-  LG_SCENE_DATA.ambLight!.dispose()
-  LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.sunLight!)
-  LG_SCENE_DATA.scene!.remove(LG_SCENE_DATA.ambLight!)
-
-  ;(LG_SCENE_DATA.lensFlare!.mesh!.material as THREE.Material).dispose()
-  LG_SCENE_DATA.lensFlare!.mesh!.geometry.dispose()
-  ;(LG_SCENE_DATA.planet.mesh!.material as THREE.Material).dispose()
-  LG_SCENE_DATA.planet.mesh!.geometry.dispose()
-  ;(LG_SCENE_DATA.atmosphere!.mesh!.material as THREE.Material).dispose()
-  LG_SCENE_DATA.atmosphere!.mesh!.geometry.dispose()
-  ;(LG_SCENE_DATA.clouds!.mesh!.material as THREE.Material).dispose()
-  LG_SCENE_DATA.clouds!.mesh!.geometry.dispose()
-  LG_SCENE_DATA.rings!.forEach((r) => {
-    ;(r.mesh!.material as THREE.Material).dispose()
-    r.mesh!.geometry.dispose()
-  })
-
+  
+  SceneHelper.disposeEditorScene(LG_SCENE_DATA)
   LG_BUFFER_BIOME.fill(0)
   LG_BUFFER_CLOUDS.fill(0)
-  LG_SCENE_DATA.planet.surfaceBuffer?.fill(0)
-  LG_SCENE_DATA.planet.surfaceTexture!.dispose()
-  LG_SCENE_DATA.planet.biomesBuffer?.fill(0)
-  LG_SCENE_DATA.planet.biomesTexture!.dispose()
-  LG_SCENE_DATA.clouds.texture!.dispose()
-  LG_SCENE_DATA.ringAnchor!.clear()
-  LG_SCENE_DATA.planetGroup!.clear()
 
-  LG_SCENE_DATA.scene!.children.forEach((c) => LG_SCENE_DATA.scene!.remove(c))
-  LG_SCENE_DATA.renderer!.dispose()
-
-  clearUniformUpdateMap()
+  UniformHelper.clearUniformUpdateMap()
   console.debug('<Lagrange> ...done!')
 }
 
@@ -288,78 +157,21 @@ export async function randomizePlanet() {
   regeneratePRNGIfNecessary()
   LG_PLANET_DATA.value.randomize()
   updateRingMeshes()
-  reloadRingDataUpdates(LG_SCENE_DATA, LG_PLANET_DATA.value)
+  UniformHelper.reloadRingDataUpdates(LG_SCENE_DATA, LG_PLANET_DATA.value)
 }
 
 export async function resetPlanet() {
   LG_PLANET_DATA.value.reset()
 }
 
-export function exportPlanetScreenshot() {
-  LG_SCENE_DATA.renderer!.domElement.toBlob((blob) => {
-    saveAs(blob!, `${LG_PLANET_DATA.value.planetName.replaceAll(' ', '_')}-${new Date().toISOString()}.png`)
-  }, 'image/png')
+export function takePlanetScreenshot() {
+  exportPlanetScreenshot(LG_SCENE_DATA.renderer!, LG_PLANET_DATA.value.planetName)
 }
 
 export async function exportPlanetPreview(): Promise<string> {
   await sleep(50)
   LG_SCENE_DATA.lensFlare!.mesh.visible = false
-
-  // ------------------------------- Setup render scene -------------------------------
-  const w = 384,
-    h = 384
-  const previewRenderTarget = new THREE.WebGLRenderTarget(w, h, {
-    colorSpace: THREE.SRGBColorSpace,
-  })
-  const previewCamera = ComponentHelper.createPerspectiveCamera(
-    50,
-    w / h,
-    0.1,
-    10,
-    new THREE.Spherical(
-      LG_PLANET_DATA.value.initCamDistance - (LG_PLANET_DATA.value.ringsEnabled ? 0.75 : 1.5),
-      Math.PI / 2.0,
-      degToRad(LG_PLANET_DATA.value.initCamAngle),
-    ),
-  )
-  previewCamera.setRotationFromAxisAngle(Globals.AXIS_Y, degToRad(LG_PLANET_DATA.value.initCamAngle))
-  previewCamera.updateProjectionMatrix()
-
-  const renderScene = new THREE.Scene()
-  renderScene.add(LG_SCENE_DATA.planetGroup!, LG_SCENE_DATA.sunLight!)
-
-  // TODO: Remove this once the Camera+RenderTarget system works again with TSL
-  // ---------------------- Recreate components (TSL workaround) ----------------------
-
-
-
-  // ---------------------------- Setup renderer & render -----------------------------
-  const rawBuffer = new Uint8Array(w * h * 4)
-  LG_SCENE_DATA.renderer!.setRenderTarget(previewRenderTarget)
-  LG_SCENE_DATA.renderer!.render(renderScene, previewCamera)
-  rawBuffer.set(await LG_SCENE_DATA.renderer!.readRenderTargetPixelsAsync(previewRenderTarget, 0, 0, w, h))
-  LG_SCENE_DATA.renderer!.setRenderTarget(null)
-
-  // ----------------- Create preview canvas & write data from buffer -----------------
-  const canvas = document.createElement('canvas')
-  canvas.width = w
-  canvas.height = h
-  const ctx = canvas.getContext('2d')!
-  const imageData = ctx.createImageData(w, h)
-  const previewBuffer = normalizeUInt8ArrayPixels(rawBuffer, w, h)
-  for (let i = 0; i < imageData.data.length; i++) {
-    imageData.data[i] = previewBuffer[i]
-  }
-  ctx.putImageData(imageData, 0, 0)
-
-  // ------------------------------- Clean-up resources -------------------------------
-  LG_SCENE_DATA.scene!.add(LG_SCENE_DATA.planetGroup!, LG_SCENE_DATA.sunLight!)
-  previewRenderTarget.dispose()
-
-  // ----------------------------- Save and remove canvas -----------------------------
-  const dataURL = canvas.toDataURL('image/webp')
-  canvas.remove()
-
+  const dataURL = PreviewHelper.generatePlanetPreview(LG_PLANET_DATA.value)
   LG_SCENE_DATA.lensFlare!.mesh.visible = true
   return dataURL
 }

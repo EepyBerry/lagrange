@@ -38,7 +38,7 @@ import {
   bootstrapEditor,
   disposeScene,
   exportPlanetPreview,
-  exportPlanetScreenshot,
+  takePlanetScreenshot,
   exportPlanetToGLTF,
   isPlanetEdited,
   setPlanetEditFlag,
@@ -226,7 +226,7 @@ async function onWindowKeydown(event: KeyboardEvent) {
       LG_PLANET_DATA.value.biomesEnabled = !LG_PLANET_DATA.value.biomesEnabled
       break
     case KeyBindingAction.TakeScreenshot: {
-      exportPlanetScreenshot()
+      takePlanetScreenshot()
       break
     }
   }
