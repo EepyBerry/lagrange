@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { LG_NAME_PLANET, LG_NAME_RING_ANCHOR } from '../globals'
 import { damp } from 'three/src/math/MathUtils.js'
 import type { WebGPURenderer } from 'three/webgpu'
-import { LensFlareTSLMaterial, type LensFlareData, type LensFlareUniforms } from '@/tsl/materials/lens-flare.tslmat'
+import { LensFlareTSLMaterial, type LensFlareData, type LensFlareUniforms } from '@/core/tsl/materials/lens-flare.tslmat'
 
 /**
  * Custom class that contains all the processing required to create lens flares.

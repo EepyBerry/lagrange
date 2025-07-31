@@ -10,13 +10,13 @@ import type {
   Texture,
   WebGLRenderer,
 } from 'three'
-import type { LensFlareEffect } from './three/lens-flare.effect'
+import type { LensFlareEffect } from './effects/lens-flare.effect'
 import type { WebGPURenderer } from 'three/webgpu'
-import type { PlanetUniforms } from '@/tsl/materials/planet.tslmat'
-import type { AtmosphereUniforms } from '@/tsl/materials/atmosphere.tslmat'
-import type { CloudsUniforms } from '@/tsl/materials/clouds.tslmat'
-import type { RingUniforms } from '@/tsl/materials/ring.tslmat'
-import type { LensFlareUniforms } from '@/tsl/materials/lens-flare.tslmat'
+import type { PlanetUniforms } from '@/core/tsl/materials/planet.tslmat'
+import type { AtmosphereUniforms } from '@/core/tsl/materials/atmosphere.tslmat'
+import type { CloudsUniforms } from '@/core/tsl/materials/clouds.tslmat'
+import type { RingUniforms } from '@/core/tsl/materials/ring.tslmat'
+import type { LensFlareUniforms } from '@/core/tsl/materials/lens-flare.tslmat'
 
 export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
 

@@ -14,12 +14,12 @@
 
 <script setup lang="ts">
 import AppFooter from '@components/main/AppFooter.vue'
-import * as DexieUtils from '@/utils/dexie-utils'
+import * as DexieUtils from '@/core/utils/dexie-utils'
 import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
 import { onMounted, ref, type Ref } from 'vue'
 import AppInitDialog from '@components/dialogs/AppInitDialog.vue'
 import { useI18n } from 'vue-i18n'
-import { mapLocale } from './utils/utils'
+import { mapLocale } from './core/utils/utils'
 import { useHead } from '@unhead/vue'
 import { A11Y_ANIMATE } from './core/globals'
 import AppToastBar from './components/main/AppToastBar.vue'

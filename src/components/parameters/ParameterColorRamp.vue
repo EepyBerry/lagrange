@@ -133,7 +133,7 @@ import { onMounted, ref, watch, type Ref } from 'vue'
 import { ColorPicker } from 'vue-accessible-color-picker'
 import InputSliderElement from '../elements/InputSliderElement.vue'
 import { ColorRamp, type ColorRampStep } from '@/core/models/color-ramp.model'
-import { alphaToGrayscale, colorRampToStyle } from '@/utils/render-utils'
+import { alphaToGrayscale, colorRampToStyle } from '@/core/utils/render-utils'
 
 const lgColorRamp = defineModel<ColorRamp>()
 

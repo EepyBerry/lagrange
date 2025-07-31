@@ -2,10 +2,10 @@ import { ref, type Ref } from 'vue'
 import * as THREE from 'three'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import * as Globals from '@core/globals'
-import * as ComponentBuilder from '@core/three/component.builder'
+import * as ComponentHelper from '@/core/helpers/component.helper'
 import { type BakingTarget, type EditorSceneData, type RingMeshData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
-import { regeneratePRNGIfNecessary } from '@/utils/math-utils'
+import { regeneratePRNGIfNecessary } from '@/core/utils/math-utils'
 import {
   bakeMesh,
   createBakingHeightMap,
@@ -14,10 +14,10 @@ import {
   createBakingPBRMap,
   createBakingPlanet,
   createBakingRing,
-} from './planet-baker.service'
+} from '../helpers/baking.helper'
 import { exportMeshesToGLTF } from '../helpers/export.helper'
 import { idb } from '@/dexie.config'
-import { sleep } from '@/utils/utils'
+import { sleep } from '@/core/utils/utils'
 import saveAs from 'file-saver'
 import {
   clearUniformUpdateMap,
@@ -26,7 +26,7 @@ import {
   reloadRingDataUpdates,
 } from '../helpers/uniform.helper'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
-import { normalizeUInt8ArrayPixels } from '@/utils/render-utils'
+import { normalizeUInt8ArrayPixels } from '@/core/utils/render-utils'
 
 // Editor constants
 const LG_SCENE_DATA: EditorSceneData = {
@@ -59,7 +59,7 @@ let watchForPlanetUpdates = false
 export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
   await sleep(50)
   enableEditorRendering = true
-  const sceneRenderObjs = ComponentBuilder.createScene(LG_PLANET_DATA.value, w, h, pixelRatio)
+  const sceneRenderObjs = ComponentHelper.createScene(LG_PLANET_DATA.value, w, h, pixelRatio)
   LG_SCENE_DATA.scene = sceneRenderObjs.scene
   LG_SCENE_DATA.renderer = sceneRenderObjs.renderer
   LG_SCENE_DATA.camera = sceneRenderObjs.camera
@@ -68,7 +68,7 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   initPlanet()
   initRendering(canvas, w, h)
   initUniformUpdateMap(LG_SCENE_DATA, LG_PLANET_DATA.value)
-  ComponentBuilder.createOrbitControls(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
+  ComponentHelper.createOrbitControls(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
   
 
   // TODO: Remove debug printing when done
@@ -82,11 +82,11 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
 }
 
 function initLighting(): void {
-  const sun = ComponentBuilder.createSun(LG_PLANET_DATA.value)
+  const sun = ComponentHelper.createSun(LG_PLANET_DATA.value)
   LG_SCENE_DATA.scene!.add(sun)
   LG_SCENE_DATA.sunLight = sun
 
-  const ambientLight = ComponentBuilder.createAmbientLight(
+  const ambientLight = ComponentHelper.createAmbientLight(
     LG_PLANET_DATA.value.ambLightColor,
     LG_PLANET_DATA.value.ambLightIntensity,
   )
@@ -94,7 +94,7 @@ function initLighting(): void {
   LG_SCENE_DATA.scene!.add(ambientLight)
   LG_SCENE_DATA.ambLight = ambientLight
 
-  const lensFlare = ComponentBuilder.createLensFlare(LG_PLANET_DATA.value, sun.position, sun.color)
+  const lensFlare = ComponentHelper.createLensFlare(LG_PLANET_DATA.value, sun.position, sun.color)
   sun.add(lensFlare.mesh)
   LG_SCENE_DATA.lensFlare = lensFlare
 
@@ -106,15 +106,15 @@ function initLighting(): void {
 }
 
 function initPlanet(): void {
-  const planet = ComponentBuilder.createPlanet(
+  const planet = ComponentHelper.createPlanet(
     LG_PLANET_DATA.value,
     LG_SCENE_DATA.planet.surfaceBuffer,
     LG_SCENE_DATA.planet.biomesBuffer,
   )
-  const clouds = ComponentBuilder.createClouds(LG_PLANET_DATA.value, LG_SCENE_DATA.clouds.buffer)
-  const atmosphere = ComponentBuilder.createAtmosphere(LG_PLANET_DATA.value, LG_SCENE_DATA.sunLight!.position)
+  const clouds = ComponentHelper.createClouds(LG_PLANET_DATA.value, LG_SCENE_DATA.clouds.buffer)
+  const atmosphere = ComponentHelper.createAtmosphere(LG_PLANET_DATA.value, LG_SCENE_DATA.sunLight!.position)
   const rings: RingMeshData[] = LG_PLANET_DATA.value.ringsParams.map((_, idx) => {
-    const newRing = ComponentBuilder.createRing(
+    const newRing = ComponentHelper.createRing(
       LG_PLANET_DATA.value,
       new Uint8Array(Globals.TEXTURE_SIZES.RING * 4),
       idx,
@@ -217,7 +217,7 @@ export function updateRingMeshes() {
   ringsParams
     .filter((params) => !ringsMeshData.some((p) => p.mesh!.name === params.id))
     .forEach((_, idx) => {
-      const newRing = ComponentBuilder.createRing(LG_PLANET_DATA.value, new Uint8Array(Globals.TEXTURE_SIZES.RING * 4), idx)
+      const newRing = ComponentHelper.createRing(LG_PLANET_DATA.value, new Uint8Array(Globals.TEXTURE_SIZES.RING * 4), idx)
       ringsMeshData.push(newRing)
       LG_SCENE_DATA.ringAnchor!.add(newRing.mesh!)
     })
@@ -311,7 +311,7 @@ export async function exportPlanetPreview(): Promise<string> {
   const previewRenderTarget = new THREE.WebGLRenderTarget(w, h, {
     colorSpace: THREE.SRGBColorSpace,
   })
-  const previewCamera = ComponentBuilder.createPerspectiveCamera(
+  const previewCamera = ComponentHelper.createPerspectiveCamera(
     50,
     w / h,
     0.1,
@@ -327,6 +327,11 @@ export async function exportPlanetPreview(): Promise<string> {
 
   const renderScene = new THREE.Scene()
   renderScene.add(LG_SCENE_DATA.planetGroup!, LG_SCENE_DATA.sunLight!)
+
+  // TODO: Remove this once the Camera+RenderTarget system works again with TSL
+  // ---------------------- Recreate components (TSL workaround) ----------------------
+
+
 
   // ---------------------------- Setup renderer & render -----------------------------
   const rawBuffer = new Uint8Array(w * h * 4)

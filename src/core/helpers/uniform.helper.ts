@@ -3,10 +3,10 @@ import * as Globals from '@core/globals'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import type { PlanetMeshData, EditorSceneData, AtmosphereMeshData, CloudsMeshData, RingMeshData } from '../types'
 import type { AmbientLight, DirectionalLight, Group } from 'three'
-import type { LensFlareEffect } from '../three/lens-flare.effect'
+import type { LensFlareEffect } from '../effects/lens-flare.effect'
 import type PlanetData from '../models/planet-data.model'
 import { recalculateBiomeTexture, recalculateRampTexture } from './texture.helper'
-import * as ComponentBuilder from '../three/component.builder'
+import * as ComponentHelper from './component.helper'
 
 const UNIFORM_UPDATE_MAP: Ref<Map<string, () => void>> = ref(new Map<string, () => void>())
 
@@ -214,12 +214,12 @@ function registerRingsDataUpdates(data: PlanetData, ringsData: RingMeshData[]): 
 
     UNIFORM_UPDATE_MAP.value.set(`_ringsParameters.${ringParams.id}._innerRadius`, () => {
       rd.mesh!.geometry.dispose()
-      rd.mesh!.geometry = ComponentBuilder.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
+      rd.mesh!.geometry = ComponentHelper.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
       rd.uniforms!.innerRadius.value = ringParams.innerRadius
     })
     UNIFORM_UPDATE_MAP.value.set(`_ringsParameters.${ringParams.id}._outerRadius`, () => {
       rd.mesh!.geometry.dispose()
-      rd.mesh!.geometry = ComponentBuilder.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
+      rd.mesh!.geometry = ComponentHelper.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
       rd.uniforms!.outerRadius.value = ringParams.outerRadius
     })
     UNIFORM_UPDATE_MAP.value.set(`_ringsParameters.${ringParams.id}._colorRamp`, () => {

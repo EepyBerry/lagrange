@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
-import { clampedPRNG } from '@/utils/math-utils'
+import { clampedPRNG } from '@/core/utils/math-utils'
 
 export class RingParameters extends ChangeTracker {
   private _id: string

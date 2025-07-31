@@ -1,4 +1,4 @@
-import type { RawRGBA, Rect } from '@/core/types'
+import type { Rect } from '@/core/types'
 import seedrandom from 'seedrandom'
 import { ref, type Ref } from 'vue'
 
@@ -58,17 +58,6 @@ export function avg(...values: number[]) {
  */
 export function truncateTo(a: number, multPrecision: number): number {
   return Math.trunc(a * multPrecision) / multPrecision
-}
-
-/**
- * Checks if a given point is withing a rect
- * @param rect the rect to check on
- * @param x point x
- * @param y point y
- * @returns true if the given point is within the rect, false otherwise
- */
-export function isWithinRect(rect: Rect, x: number, y: number): boolean {
-  return x >= rect.x && y >= rect.y && x < rect.x + rect.w && y < rect.y + rect.h
 }
 
 /**

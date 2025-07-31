@@ -1,27 +1,27 @@
 import * as THREE from 'three'
 import * as Globals from '@core/globals'
 import * as ShaderLoader from '@core/three/shader.loader'
-import * as ComponentBuilder from '@core/three/component.builder'
+import * as ComponentHelper from '@/core/helpers/component.helper'
 
 import { createRampTexture, createBiomeTexture } from '@core/helpers/texture.helper'
 import type PlanetData from '@core/models/planet-data.model'
 import { ShaderFileType } from '@core/types'
 import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
-import { bufferToTexture } from '@/utils/render-utils'
+import { bufferToTexture } from '@/core/utils/render-utils'
 import type { WebGPURenderer } from 'three/webgpu'
 
 const BAKE_PATCH_RGX = /gl_Position ?=.*;/gm
-const BAKE_CAMERA = ComponentBuilder.createOrthographicCamera(1, 1, 0, 1)
+const BAKE_CAMERA = ComponentHelper.createOrthographicCamera(1, 1, 0, 1)
 const BAKE_RENDER_TARGET = new THREE.WebGLRenderTarget(1, 1, { colorSpace: THREE.SRGBColorSpace })
 
 export function createBakingPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): THREE.Mesh {
-  const geometry = ComponentBuilder.createSphereGeometryComponent(data.planetMeshQuality)
+  const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
   geometry.computeTangents()
 
   const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
   const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
 
-  const material = ComponentBuilder.createCustomShaderMaterialComponent(
+  const material = ComponentHelper.createCustomShaderMaterialComponent(
     ShaderLoader.fetch('base.vert.glsl', ShaderFileType.BAKING),
     ShaderLoader.fetch('planet.frag.glsl', ShaderFileType.BAKING),
     {
@@ -90,10 +90,10 @@ export function createBakingPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, 
 }
 
 export function createBakingPBRMap(data: PlanetData): THREE.Mesh {
-  const geometry = ComponentBuilder.createSphereGeometryComponent(data.planetMeshQuality)
+  const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
   geometry.computeTangents()
 
-  const material = ComponentBuilder.createCustomShaderMaterialComponent(
+  const material = ComponentHelper.createCustomShaderMaterialComponent(
     ShaderLoader.fetch('base.vert.glsl', ShaderFileType.BAKING),
     ShaderLoader.fetch('pbr.frag.glsl', ShaderFileType.BAKING),
     {
@@ -143,10 +143,10 @@ export function createBakingPBRMap(data: PlanetData): THREE.Mesh {
 }
 
 export function createBakingHeightMap(data: PlanetData): THREE.Mesh {
-  const geometry = ComponentBuilder.createSphereGeometryComponent(data.planetMeshQuality)
+  const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
   geometry.computeTangents()
 
-  const material = ComponentBuilder.createCustomShaderMaterialComponent(
+  const material = ComponentHelper.createCustomShaderMaterialComponent(
     ShaderLoader.fetch('base.vert.glsl', ShaderFileType.BAKING),
     ShaderLoader.fetch('bump.frag.glsl', ShaderFileType.BAKING),
     {
@@ -208,10 +208,10 @@ export function createBakingNormalMap(data: PlanetData, bumpTex: THREE.Texture, 
 
 export function createBakingClouds(data: PlanetData, textureBuffer: Uint8Array): THREE.Mesh {
   const cloudHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
-  const geometry = ComponentBuilder.createSphereGeometryComponent(data.planetMeshQuality, cloudHeight)
+  const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality, cloudHeight)
   const opacityTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
-  const material = ComponentBuilder.createCustomShaderMaterialComponent(
+  const material = ComponentHelper.createCustomShaderMaterialComponent(
     ShaderLoader.fetch('base.vert.glsl', ShaderFileType.BAKING),
     ShaderLoader.fetch('clouds.frag.glsl', ShaderFileType.BAKING),
     {
@@ -257,12 +257,12 @@ export function createBakingClouds(data: PlanetData, textureBuffer: Uint8Array):
 export function createBakingRing(data: PlanetData, textureBuffer: Uint8Array, paramsIndex: number): THREE.Mesh {
   const ringParams = data.ringsParams[paramsIndex]
   const rgbaTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
-  const geometry = ComponentBuilder.createRingGeometryComponent(
+  const geometry = ComponentHelper.createRingGeometryComponent(
     data.planetMeshQuality,
     ringParams.innerRadius,
     ringParams.outerRadius,
   )
-  const material = ComponentBuilder.createCustomShaderMaterialComponent(
+  const material = ComponentHelper.createCustomShaderMaterialComponent(
     ShaderLoader.fetch('ring.vert.glsl', ShaderFileType.CORE),
     ShaderLoader.fetch('ring.frag.glsl', ShaderFileType.CORE),
     {

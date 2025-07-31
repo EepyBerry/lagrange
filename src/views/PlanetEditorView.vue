@@ -46,14 +46,14 @@ import {
   resetPlanet,
   randomizePlanet,
 } from '@/core/services/planet-editor.service'
-import { sleep } from '@/utils/utils'
+import { sleep } from '@/core/utils/utils'
 import { nanoid } from 'nanoid'
 import WebGL from 'three/addons/capabilities/WebGL.js'
 import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
 import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
 import AppWarnSaveDialog from '@/components/dialogs/AppWarnSaveDialog.vue'
 import AppExportProgressDialog from '@/components/dialogs/AppExportProgressDialog.vue'
-import { regeneratePRNGIfNecessary } from '@/utils/math-utils'
+import { regeneratePRNGIfNecessary } from '@/core/utils/math-utils'
 import WebGPU from 'three/addons/capabilities/WebGPU.js'
 
 const route = useRoute()
