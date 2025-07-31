@@ -44,19 +44,18 @@ export function execUniformUpdate(key: string) {
 
 // prettier-ignore
 function registerLightingDataUpdates(data: PlanetData, sunLight: DirectionalLight, ambLight: AmbientLight, lensFlare: LensFlareEffect): void {
-  /* UNIFORM_UPDATE_MAP.value.set('_lensFlareEnabled',         () => lensFlare.mesh.visible = data.lensFlareEnabled)
-  UNIFORM_UPDATE_MAP.value.set('_lensFlarePointsIntensity', () => setMeshUniform(lensFlare, 'starPointsIntensity', data.lensFlarePointsIntensity))
-  UNIFORM_UPDATE_MAP.value.set('_lensFlareGlareIntensity',  () => setMeshUniform(lensFlare, 'glareIntensity', data.lensFlareGlareIntensity))
-   */
+  UNIFORM_UPDATE_MAP.value.set('_lensFlareEnabled',         () => lensFlare.mesh.visible = data.lensFlareEnabled)
+  UNIFORM_UPDATE_MAP.value.set('_lensFlarePointsIntensity', () => lensFlare.uniforms.starPointsIntensity.value = data.lensFlarePointsIntensity)
+  UNIFORM_UPDATE_MAP.value.set('_lensFlareGlareIntensity',  () => lensFlare.uniforms.glareIntensity.value = data.lensFlareGlareIntensity)
   UNIFORM_UPDATE_MAP.value.set('_sunLightAngle', () => {
     const v = degToRad(isNaN(data.sunLightAngle) ? 0 : data.sunLightAngle)
     const newPos = Globals.SUN_INIT_POS.clone().applyAxisAngle(Globals.AXIS_X, v)
     sunLight.position.set(newPos.x, newPos.y, newPos.z)
   })
-  /* UNIFORM_UPDATE_MAP.value.set('_sunLightColor', () => {
+  UNIFORM_UPDATE_MAP.value.set('_sunLightColor', () => {
     sunLight.color.set(data.sunLightColor)
-    setMeshUniform(lensFlare, 'colorGain', data.sunLightColor)
-  }) */
+    lensFlare.uniforms.colorGain.value = data.sunLightColor
+  })
   UNIFORM_UPDATE_MAP.value.set('_sunLightIntensity', () => sunLight.intensity = data.sunLightIntensity)
   UNIFORM_UPDATE_MAP.value.set('_ambLightColor',     () => ambLight.color.set(data.ambLightColor))
   UNIFORM_UPDATE_MAP.value.set('_ambLightIntensity', () => ambLight.intensity = data.ambLightIntensity)
