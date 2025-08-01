@@ -171,7 +171,7 @@ export function takePlanetScreenshot() {
 export async function exportPlanetPreview(): Promise<string> {
   await sleep(50)
   LG_SCENE_DATA.lensFlare!.mesh.visible = false
-  const dataURL = PreviewHelper.generatePlanetPreview(LG_PLANET_DATA.value)
+  const dataURL = await PreviewHelper.generatePlanetPreview(LG_PLANET_DATA.value)
   LG_SCENE_DATA.lensFlare!.mesh.visible = true
   return dataURL
 }

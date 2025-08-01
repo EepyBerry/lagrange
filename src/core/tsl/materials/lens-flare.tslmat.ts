@@ -1,8 +1,8 @@
 import type { Color, Vector3 } from 'three'
-import { AdditiveBlending, NodeMaterial, Vector2 } from 'three/webgpu'
+import { AdditiveBlending, AttributeNode, NodeMaterial, Vector2 } from 'three/webgpu'
 import type { TSLMaterial } from './tsl-material'
 import type { UniformColorNode, UniformNumberNode, UniformVector2Node, UniformVector3Node } from '../types'
-import { float, Fn, If, Loop, pow, uniform, uv, vec2, vec3, vec4 } from 'three/tsl'
+import { float, Fn, If, Loop, pow, uniform, uv, vec2, vec3, vec4, type ShaderNodeObject } from 'three/tsl'
 import { lensFlare, circle, rndf } from '../features/lens-flare'
 
 export type LensFlareData = {
@@ -52,8 +52,8 @@ export class LensFlareTSLMaterial implements TSLMaterial<NodeMaterial, LensFlare
   }
 
   buildMaterial(): NodeMaterial {
-    const mainNode = Fn(() => {
-      const localUv = vec2(uv().sub(0.5)).toVar('lfUV')
+    const mainNode = Fn(([matUv]: [ShaderNodeObject<AttributeNode>]) => {
+      const localUv = vec2(matUv.sub(0.5)).toVar('lfUV')
       localUv.y.mulAssign(this.uniforms.resolution.y.div(this.uniforms.resolution.x))
       const mouse = vec2(this.uniforms.lensPosition.mul(0.5)).toVar('mouse')
       mouse.y.mulAssign(float(this.uniforms.resolution.y).div(this.uniforms.resolution.x))
@@ -94,12 +94,12 @@ export class LensFlareTSLMaterial implements TSLMaterial<NodeMaterial, LensFlare
     }).setLayout({
       name: 'mainNode',
       type: 'vec4',
-      inputs: [],
+      inputs: [{ name: 'matUv', type: 'vec2' }],
     })
 
     // init material & set outputs
     const material = new NodeMaterial()
-    material.fragmentNode = mainNode()
+    material.fragmentNode = mainNode(uv())
     material.transparent = true
     material.depthWrite = false
     material.depthTest = false

@@ -110,6 +110,13 @@ function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData): void {
       texture: newRing.texture,
     }
   })
+
+  // Toggle elements
+  clouds.mesh!.visible = data.cloudsEnabled
+  atmosphere.mesh!.visible = data.atmosphereEnabled
+  rings.forEach(r => r.mesh!.visible = data.ringsEnabled)
+
+  // Add to scene
   sceneData.planetGroup.add(planet.mesh!)
   sceneData.planetGroup.add(clouds.mesh!)
   sceneData.planetGroup.add(atmosphere.mesh!)
@@ -138,4 +145,5 @@ function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData): void {
 
   // Set lighting target
   sceneData.sunLight!.target = sceneData.planetGroup
+
 }
