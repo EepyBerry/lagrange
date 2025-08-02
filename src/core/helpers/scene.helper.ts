@@ -98,18 +98,11 @@ function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData): void {
   )
   const clouds = ComponentHelper.createClouds(data, sceneData.clouds.buffer)
   const atmosphere = ComponentHelper.createAtmosphere(data, sceneData.sunLight!.position)
-  const rings: RingMeshData[] = data.ringsParams.map((_, idx) => {
-    const newRing = ComponentHelper.createRing(
+  const rings: RingMeshData[] = data.ringsParams.map((_, idx) => ComponentHelper.createRing(
       data,
       new Uint8Array(Globals.TEXTURE_SIZES.RING * 4),
       idx,
-    )
-    return {
-      mesh: newRing.mesh,
-      buffer: newRing.buffer,
-      texture: newRing.texture,
-    }
-  })
+  ))
 
   // Toggle elements
   clouds.mesh!.visible = data.cloudsEnabled
@@ -129,7 +122,7 @@ function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData): void {
   sceneData.planet = planet
   sceneData.clouds = clouds
   sceneData.atmosphere = atmosphere
-  sceneData.rings = rings
+  sceneData.rings.push(...rings)
 
   // Set initial rotations
   sceneData.planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(data.planetAxialTilt))
