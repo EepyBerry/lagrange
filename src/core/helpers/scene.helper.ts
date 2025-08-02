@@ -85,7 +85,7 @@ function buildSceneLighting(sceneData: EditorSceneData, data: PlanetData): void 
 
   // Set initial rotations
   const dataSunlightAngle = degToRad(isNaN(data.sunLightAngle) ? -15 : data.sunLightAngle)
-  const pos = Globals.SUN_INIT_POS.clone().applyAxisAngle(Globals.AXIS_X, degToRad(dataSunlightAngle))
+  const pos = Globals.SUN_INIT_POS.clone().applyAxisAngle(Globals.AXIS_X, dataSunlightAngle)
   sceneData.sunLight.position.set(pos.x, pos.y, pos.z)
   sceneData.lensFlare.updatePosition(sceneData.sunLight.position)
 }
@@ -145,4 +145,7 @@ function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData): void {
 
   // Set lighting target
   sceneData.sunLight!.target = sceneData.planetGroup
+
+  // Set scale
+  sceneData.planetGroup.scale.setScalar(data.planetRadius)
 }
