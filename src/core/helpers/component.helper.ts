@@ -4,7 +4,7 @@ import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-sha
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { loadCubeTexture, createRampTexture, createBiomeTexture } from './texture.helper'
 import type PlanetData from '../models/planet-data.model'
-import { type SceneRenderObjects, type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type RingMeshData } from '../types'
+import { type SceneRenderObjects, type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type RingMeshData, SceneCreationMode } from '../types'
 import { LensFlareEffect } from '../effects/lens-flare.effect'
 import * as Globals from '@core/globals'
 import * as ShaderLoader from '../three/shader.loader'
@@ -17,27 +17,28 @@ import { RingTSLMaterial } from '@/core/tsl/materials/ring.tslmat'
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
 
-export function createScene(data: PlanetData, width: number, height: number, pixelRatio: number): SceneRenderObjects {
+export function createScene(data: PlanetData, width: number, height: number, pixelRatio: number, creationMode: SceneCreationMode): SceneRenderObjects {
   // setup cubemap
   const scene = new THREE.Scene()
-  scene.background = loadCubeTexture('/skybox/', [
-    'space_ft.png',
-    'space_bk.png',
-    'space_up.png',
-    'space_dn.png',
-    'space_rt.png',
-    'space_lf.png',
-  ])
+  if (!creationMode) {
+    scene.background = loadCubeTexture('/skybox/', [
+      'space_ft.png',
+      'space_bk.png',
+      'space_up.png',
+      'space_dn.png',
+      'space_rt.png',
+      'space_lf.png',
+    ])
+  }
+
+  // Make spherical before creating camera
+  const spherical = creationMode === SceneCreationMode.PREVIEW
+    ? new THREE.Spherical(data.initCamDistance - (data.ringsEnabled ? 0.75 : 1.5), Math.PI / 2.0, degToRad(data.initCamAngle))
+    : new THREE.Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle))
 
   // setup scene (renderer, cam, lighting)
   const renderer = createRenderer(width, height, pixelRatio)
-  const camera = createPerspectiveCamera(
-    50,
-    width / height,
-    0.1,
-    1e6,
-    new THREE.Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle)),
-  )
+  const camera = createPerspectiveCamera(50, width / height, 0.1, 1e6, spherical)
   return { scene, renderer, camera }
 }
 

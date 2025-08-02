@@ -10,9 +10,9 @@
 import { ref, watch, type Ref } from 'vue'
 import ToastElement from '../elements/ToastElement.vue'
 import { EventBus } from '@/core/event-bus'
-import type { InfoLevel } from '@/core/types'
+import type { EditorMessageLevel } from '@/core/types'
 
-const toastType: Ref<InfoLevel> = ref('info')
+const toastType: Ref<EditorMessageLevel> = ref('info')
 const toastMessageRaw: Ref<string> = ref('main.test_message')
 const isToastShown: Ref<boolean> = ref(false)
 
@@ -23,7 +23,7 @@ watch(EventBus.toastEvent, (evt) => {
   showToast(evt.type, evt.translationKey, evt.millis)
 })
 
-function showToast(type: InfoLevel, translationKey: string, millis: number) {
+function showToast(type: EditorMessageLevel, translationKey: string, millis: number) {
   if (timeoutId !== null) {
     // if a timeout is currently running, clear it
     clearTimeout(timeoutId)

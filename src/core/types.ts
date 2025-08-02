@@ -17,7 +17,8 @@ import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat'
 import type { RingUniforms } from '@core/tsl/materials/ring.tslmat'
 import type { LensFlareUniforms } from '@core/tsl/materials/lens-flare.tslmat'
 
-export type InfoLevel = 'success' | 'info' | 'warn' | 'wip'
+// ---------------------------------- Shader loader ---------------------------------
+export type EditorMessageLevel = 'success' | 'info' | 'warn' | 'wip'
 
 // ---------------------------------- Shader loader ---------------------------------
 export enum ShaderFileType {
@@ -37,11 +38,13 @@ export enum PlanetType {
   PLANET,
   STAR,
 }
+
 export enum ColorMode {
   REALISTIC,
   DIRECT,
   MIXED,
 }
+
 export enum GradientMode {
   REALISTIC = 0,
   POLE_TO_POLE = 1,
@@ -86,9 +89,6 @@ export type EditorSceneData = {
   // Misc
   clock?: Clock
 }
-export type PlanetUniformData = {
-  planet?: PlanetUniforms
-}
 
 // ------------------------------------ Mesh data -----------------------------------
 export type PlanetMeshData = {
@@ -124,18 +124,13 @@ export type LensFlareMeshdata = {
   uniforms?: LensFlareUniforms
 }
 
-// ---------------------------------- Preview data ----------------------------------
-export type PlanetPreviewData = {
-  sun: DirectionalLight
-  ambientLight: AmbientLight
-  planet: Mesh
-  clouds: Mesh
-  atmosphere: Mesh
-  ring: Mesh
-}
-
 // ----------------------------------- Baking types ---------------------------------
 export type BakingTarget = {
   mesh: Mesh
   textures: Texture[]
+}
+
+// --------------------------------- Technical types --------------------------------
+export enum SceneCreationMode {
+  EDITOR, PREVIEW
 }

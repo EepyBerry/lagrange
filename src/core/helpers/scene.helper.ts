@@ -1,12 +1,12 @@
 import type { NodeMaterial } from "three/webgpu";
 import type PlanetData from "../models/planet-data.model";
-import type { EditorSceneData, RingMeshData } from "../types";
+import { SceneCreationMode, type EditorSceneData, type RingMeshData } from "../types";
 import * as ComponentHelper from './component.helper';
 import * as Globals from '@/core/globals'
 import { Group, Clock } from 'three';
 import { degToRad } from "three/src/math/MathUtils.js";
 
-export function buildEditorScene(data: PlanetData, renderWidth: number, renderHeight: number, renderPixelRatio: number): EditorSceneData {
+export function buildEditorScene(data: PlanetData, renderWidth: number, renderHeight: number, renderPixelRatio: number, creationMode: SceneCreationMode = SceneCreationMode.EDITOR): EditorSceneData {
   const sceneData: Partial<EditorSceneData> = {
     planet: {
       surfaceBuffer: new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4),
@@ -19,7 +19,7 @@ export function buildEditorScene(data: PlanetData, renderWidth: number, renderHe
     planetGroup: new Group(),
     ringAnchor: new Group(),
   }
-  buildScene(sceneData as EditorSceneData, data, renderWidth, renderHeight, renderPixelRatio)
+  buildScene(sceneData as EditorSceneData, data, renderWidth, renderHeight, renderPixelRatio, creationMode)
   buildSceneLighting(sceneData as EditorSceneData, data)
   buildScenePlanet(sceneData as EditorSceneData, data)
   return sceneData as EditorSceneData
@@ -58,8 +58,8 @@ export function disposeEditorScene(sceneData: EditorSceneData) {
 
 // ------------------------------------------------------------------------------------------------
 
-function buildScene(sceneData: EditorSceneData, data: PlanetData, renderWidth: number, renderHeight: number, renderPixelRatio: number): void {
-  const { scene, renderer, camera } = ComponentHelper.createScene(data, renderWidth, renderHeight, renderPixelRatio)
+function buildScene(sceneData: EditorSceneData, data: PlanetData, renderWidth: number, renderHeight: number, renderPixelRatio: number, creationMode: SceneCreationMode): void {
+  const { scene, renderer, camera } = ComponentHelper.createScene(data, renderWidth, renderHeight, renderPixelRatio, creationMode)
   sceneData.scene = scene
   sceneData.renderer = renderer
   sceneData.camera = camera
@@ -84,8 +84,8 @@ function buildSceneLighting(sceneData: EditorSceneData, data: PlanetData): void 
   sceneData.lensFlare = lensFlare
 
   // Set initial rotations
-  const pos = Globals.SUN_INIT_POS.clone()
-  pos.applyAxisAngle(Globals.AXIS_X, degToRad(-15))
+  const dataSunlightAngle = degToRad(isNaN(data.sunLightAngle) ? -15 : data.sunLightAngle)
+  const pos = Globals.SUN_INIT_POS.clone().applyAxisAngle(Globals.AXIS_X, degToRad(dataSunlightAngle))
   sceneData.sunLight.position.set(pos.x, pos.y, pos.z)
   sceneData.lensFlare.updatePosition(sceneData.sunLight.position)
 }
@@ -145,5 +145,4 @@ function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData): void {
 
   // Set lighting target
   sceneData.sunLight!.target = sceneData.planetGroup
-
 }

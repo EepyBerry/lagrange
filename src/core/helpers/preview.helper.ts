@@ -4,22 +4,22 @@ import * as SceneHelper from './scene.helper'
 import type PlanetData from '../models/planet-data.model';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { normalizeUInt8ArrayPixels } from '../utils/render-utils';
-import type { EditorSceneData } from '../types';
+import { SceneCreationMode, type EditorSceneData } from '../types';
 
 export async function generatePlanetPreview(data: PlanetData): Promise<string> {
   const w = 384, h = 384
   const previewRenderTarget = new RenderTarget(w, h, {
-    count: 1,
     colorSpace: SRGBColorSpace,
   })
 
-  // TODO: Remove this once the Camera+RenderTarget system works again with TSL
+  // TODO: Remove this once the Camera+RenderTarget system works again with WebGPU/TSL
   // ------------------------- Initialize scene & components --------------------------
-
-  const sceneData: EditorSceneData = SceneHelper.buildEditorScene(data, w, h, w/h)
+  const sceneData: EditorSceneData = SceneHelper.buildEditorScene(data, w, h, w/h, SceneCreationMode.PREVIEW)
   sceneData.camera.setRotationFromAxisAngle(Globals.AXIS_Y, degToRad(data.initCamAngle))
   sceneData.camera.updateProjectionMatrix()
   sceneData.scene.background = null
+
+  sceneData.planetGroup.scale.setScalar(data.planetRadius)
 
   // ---------------------------- Setup renderer & render -----------------------------
   const rawBuffer = new Uint8Array(w * h * 4)
