@@ -98,11 +98,7 @@ function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData): void {
   )
   const clouds = ComponentHelper.createClouds(data, sceneData.clouds.buffer)
   const atmosphere = ComponentHelper.createAtmosphere(data, sceneData.sunLight!.position)
-  const rings: RingMeshData[] = data.ringsParams.map((_, idx) => ComponentHelper.createRing(
-      data,
-      new Uint8Array(Globals.TEXTURE_SIZES.RING * 4),
-      idx,
-  ))
+  const rings: RingMeshData[] = data.ringsParams.map((_, idx) => ComponentHelper.createRing(data, idx))
 
   // Toggle elements
   clouds.mesh!.visible = data.cloudsEnabled

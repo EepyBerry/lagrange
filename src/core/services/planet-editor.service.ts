@@ -112,7 +112,7 @@ export function updateRingMeshes() {
   ringsParams
     .filter((params) => !ringsMeshData.some((p) => p.mesh!.name === params.id))
     .forEach((_, idx) => {
-      const newRing = ComponentHelper.createRing(LG_PLANET_DATA.value, new Uint8Array(Globals.TEXTURE_SIZES.RING * 4), idx)
+      const newRing = ComponentHelper.createRing(LG_PLANET_DATA.value, idx)
       ringsMeshData.push(newRing)
       LG_SCENE_DATA.ringAnchor!.add(newRing.mesh!)
     })

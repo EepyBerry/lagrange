@@ -229,9 +229,9 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): Atmos
 
 export function createRing(
   data: PlanetData,
-  textureBuffer: Uint8Array,
   paramsIndex: number,
 ): RingMeshData {
+  const textureBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
   const ringParams = data.ringsParams[paramsIndex]
   const ringTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
   const geometry = createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
