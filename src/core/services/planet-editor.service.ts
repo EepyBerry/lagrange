@@ -58,7 +58,7 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   LG_SCENE_DATA.renderer!.debug.getShaderAsync(
     LG_SCENE_DATA.scene!,
     LG_SCENE_DATA.camera!,
-    LG_SCENE_DATA.lensFlare!.mesh!,
+    LG_SCENE_DATA.lensFlare!.mesh,
   ).then((e) => {
     console.log(e.fragmentShader)
   })

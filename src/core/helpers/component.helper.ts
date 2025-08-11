@@ -57,12 +57,12 @@ export function createSun(data: PlanetData) {
 
 export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THREE.Color) {
   return new LensFlareEffect({
-    lensPosition: pos,
-    colorGain: color,
+    lensPosition: pos ?? new THREE.Vector3(0.0),
+    colorGain: color ?? new THREE.Color(95, 12, 10),
     starPoints: 2,
-    starPointsIntensity: data.lensFlarePointsIntensity,
+    starPointsIntensity: data.lensFlarePointsIntensity ?? 0.25,
     glareSize: 0.025,
-    glareIntensity: data.lensFlareGlareIntensity,
+    glareIntensity: data.lensFlareGlareIntensity ?? 0.5,
     flareSize: 0.001,
     flareShape: 0.375,
     additionalStreaks: false,

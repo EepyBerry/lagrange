@@ -63,16 +63,16 @@ export const saturate2 = /*@__PURE__*/ Fn(([i_x]: [UniformNumberNode]) => {
   inputs: [{ name: 'x', type: 'float' }],
 })
 
-export const rotateUV = /*@__PURE__*/ Fn(([i_uv, i_rotation]: [UniformVector2Node, UniformVector3Node]) => {
+export const rotateUV = /*@__PURE__*/ Fn(([i_origUv, i_rotation]: [UniformVector2Node, UniformVector3Node]) => {
   return vec2(
-    cos(i_rotation).mul(i_uv.x).add(sin(i_rotation).mul(i_uv.y)),
-    cos(i_rotation).mul(i_uv.y).sub(sin(i_rotation).mul(i_uv.x)),
+    cos(i_rotation).mul(i_origUv.x).add(sin(i_rotation).mul(i_origUv.y)),
+    cos(i_rotation).mul(i_origUv.y).sub(sin(i_rotation).mul(i_origUv.x)),
   )
 }).setLayout({
   name: 'LF_rotateUV',
   type: 'vec2',
   inputs: [
-    { name: 'uv', type: 'vec2' },
+    { name: 'origUv', type: 'vec2' },
     { name: 'rotation', type: 'float' },
   ],
 })
@@ -119,20 +119,20 @@ export const dist = /*@__PURE__*/ Fn(([i_a, i_b]: UniformVector3Node[]) => {
 })
 
 export const glare = /*@__PURE__*/ Fn(
-  ([i_uv, i_mouse, i_size, i_starPoints]: [
+  ([i_origUv, i_mouse, i_size, i_starPoints]: [
     UniformVector2Node,
     UniformVector2Node,
     UniformNumberNode,
     UniformNumberNode,
   ]) => {
-    const main = vec2(i_uv.sub(i_mouse)).toVar('main')
+    const main = vec2(i_origUv.sub(i_mouse)).toVar('main')
     const ang = float(atan(main.y, main.x).mul(i_starPoints)).toVar('ang')
     const dist = float(length(main)).toVar('dist')
     dist.assign(pow(dist, 0.9))
     const f0 = float(
       div(
         1.0,
-        length(i_uv.sub(i_mouse))
+        length(i_origUv.sub(i_mouse))
           .mul(div(1.0, i_size.mul(16.0)))
           .add(0.2),
       ),
@@ -144,7 +144,7 @@ export const glare = /*@__PURE__*/ Fn(
   name: 'LF_glare',
   type: 'float',
   inputs: [
-    { name: 'uv', type: 'vec2' },
+    { name: 'origUv', type: 'vec2' },
     { name: 'mouse', type: 'vec2' },
     { name: 'size', type: 'float' },
     { name: 'starPoints', type: 'float' },
@@ -152,21 +152,21 @@ export const glare = /*@__PURE__*/ Fn(
 })
 
 export const lensFlare = /*@__PURE__*/ Fn(
-  ([i_uv, i_pos, i_flareParams, i_glareParams, i_starPoints]: [
+  ([i_origUv, i_pos, i_flareParams, i_glareParams, i_starPoints]: [
     UniformVector2Node,
     VaryingNode,
     UniformVector2Node,
     UniformVector2Node,
     UniformVector2Node,
   ]) => {
-    const main = vec2(i_uv.sub(i_pos)).toVar('main')
-    const uvd = vec2(i_uv.mul(length(i_uv))).toVar('uvd')
+    const main = vec2(i_origUv.sub(i_pos)).toVar('main')
+    const uvd = vec2(i_origUv.mul(length(i_origUv))).toVar('uvd')
     const ang = float(atan(main.x, main.y)).toVar('angle')
 
-    const f0 = float(div(0.3, length(i_uv.sub(i_pos)).mul(16.0).add(1.0))).toVar('f0')
+    const f0 = float(div(0.3, length(i_origUv.sub(i_pos)).mul(16.0).add(1.0))).toVar('f0')
     f0.assign(f0.mul(sin(noise(sin(ang.mul(3.9).mul(0.3)).mul(i_starPoints.x))).mul(0.2)))
 
-    const f1 = float(max(sub(0.01, pow(length(i_uv.add(mul(1.2, i_pos))), 1.9)), 0.0).mul(7.0)).toVar('f1')
+    const f1 = float(max(sub(0.01, pow(length(i_origUv.add(mul(1.2, i_pos))), 1.9)), 0.0).mul(7.0)).toVar('f1')
     const f2 = float(
       max(div(0.9, add(10.0, mul(32.0, pow(length(uvd.add(mul(0.99, i_pos))), 2.0)))), 0.0).mul(0.35),
     ).toVar('f2')
@@ -177,24 +177,24 @@ export const lensFlare = /*@__PURE__*/ Fn(
       max(div(0.9, add(12.0, mul(32.0, pow(length(uvd.add(mul(0.95, i_pos))), 2.0)))), 0.0).mul(0.6),
     ).toVar('f23')
 
-    const uvx = vec2(mix(i_uv, uvd, 0.1)).toVar('uvx')
+    const uvx = vec2(mix(i_origUv, uvd, 0.1)).toVar('uvx')
 
     const f4 = float(max(sub(0.01, pow(length(uvx.add(mul(0.4, i_pos))), 2.9)), 0.0).mul(4.02)).toVar('f4')
     const f42 = float(max(sub(0.0, pow(length(uvx.add(mul(0.45, i_pos))), 2.9)), 0.0).mul(4.1)).toVar('f42')
     const f43 = float(max(sub(0.01, pow(length(uvx.add(mul(0.5, i_pos))), 2.9)), 0.0).mul(4.6)).toVar('f43')
-    uvx.assign(mix(i_uv, uvd, float(-0.4)))
+    uvx.assign(mix(i_origUv, uvd, float(-0.4)))
 
     const f5 = float(max(sub(0.01, pow(length(uvx.add(mul(0.1, i_pos))), 5.5)), 0.0).mul(2.0)).toVar('f5')
     const f52 = float(max(sub(0.01, pow(length(uvx.add(mul(0.2, i_pos))), 5.5)), 0.0).mul(2.0)).toVar('f52')
     const f53 = float(max(sub(0.01, pow(length(uvx.add(mul(0.1, i_pos))), 5.5)), 0.0).mul(2.0)).toVar('f53')
-    uvx.assign(mix(i_uv, uvd, 2.1))
+    uvx.assign(mix(i_origUv, uvd, 2.1))
 
     const f6 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.3, i_pos))), 1.61)), 0.0).mul(3.159)).toVar('f6')
     const f62 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.325, i_pos))), 1.614)), 0.0).mul(3.14)).toVar('f62')
     const f63 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.389, i_pos))), 1.623)), 0.0).mul(3.12)).toVar('f63')
-    const c = vec3(glare(i_uv, i_pos, i_glareParams.x, i_starPoints.x)).toVar('c')
+    const c = vec3(glare(i_origUv, i_pos, i_glareParams.x, i_starPoints.x)).toVar('c')
 
-    const prot = vec2(i_uv.sub(i_pos)).toVar('prot')
+    const prot = vec2(i_origUv.sub(i_pos)).toVar('prot')
     c.addAssign(drawflare(prot, 0.1, i_flareParams.x, i_flareParams.y, i_starPoints.x))
     c.r.addAssign(f1.add(f2).add(f4).add(f5).add(f6).mul(i_glareParams.y))
     c.g.addAssign(f1.add(f22).add(f42).add(f52).add(f62).mul(i_glareParams.y))
@@ -207,7 +207,7 @@ export const lensFlare = /*@__PURE__*/ Fn(
   name: 'LF_lensFlare',
   type: 'vec3',
   inputs: [
-    { name: 'uv', type: 'vec2' },
+    { name: 'origUv', type: 'vec2' },
     { name: 'mouse', type: 'vec2' },
     { name: 'flareParams', type: 'vec2' }, // shape, size
     { name: 'glareParams', type: 'vec2' }, // size, intensity

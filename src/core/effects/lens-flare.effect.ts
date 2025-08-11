@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { LG_NAME_PLANET, LG_NAME_RING_ANCHOR } from '../globals'
 import { damp } from 'three/src/math/MathUtils.js'
-import type { WebGPURenderer } from 'three/webgpu'
+import { type NodeMaterial, type WebGPURenderer } from 'three/webgpu'
 import { LensFlareTSLMaterial, type LensFlareData, type LensFlareUniforms } from '@/core/tsl/materials/lens-flare.tslmat'
 
 /**
@@ -10,6 +10,7 @@ import { LensFlareTSLMaterial, type LensFlareData, type LensFlareUniforms } from
  * Based on Anderson Mancini's code: https://github.com/ektogamat/lensflare-threejs-vanilla
  */
 export class LensFlareEffect {
+  private _parameters: LensFlareData
   private _tslMaterial: LensFlareTSLMaterial
   private _mesh: THREE.Mesh
   private _uniforms: LensFlareUniforms
@@ -25,6 +26,7 @@ export class LensFlareEffect {
     this._flarePosition = new THREE.Vector3()
     this._raycaster = new THREE.Raycaster()
 
+    this._parameters = data
     this._tslMaterial = new LensFlareTSLMaterial(data)
     this._mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2, 1, 1), this._tslMaterial.buildMaterial())
     this._mesh.frustumCulled = false
@@ -38,11 +40,9 @@ export class LensFlareEffect {
     }
 
     const iObject = intersects[0].object as THREE.Mesh
-    const iMaterial = iObject.material as THREE.Material
+    const iMaterial = iObject.material as NodeMaterial
     if (!iObject.visible) {
       this._internalOpacity = 1
-    } else if (iMaterial instanceof THREE.MeshPhysicalMaterial) {
-      this._internalOpacity = (iMaterial.transmission * 0.5)
     } else {
       if (iMaterial.transparent && iMaterial.opacity < 0.98) {
         this._internalOpacity = 1 / (iMaterial.opacity * 10)
@@ -60,7 +60,7 @@ export class LensFlareEffect {
     this._tslMaterial.uniforms.resolution.value.x = this._viewport.z
     this._tslMaterial.uniforms.resolution.value.y = this._viewport.w
 
-    const projectedPosition = this._tslMaterial.uniforms.lensPosition.value.clone()
+    const projectedPosition = this._parameters.lensPosition.clone()
     projectedPosition.project(camera)
 
     this._flarePosition.set(projectedPosition.x, projectedPosition.y, projectedPosition.z)

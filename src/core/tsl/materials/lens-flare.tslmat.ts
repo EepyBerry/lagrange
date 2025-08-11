@@ -1,9 +1,18 @@
 import type { Color, Vector3 } from 'three'
-import { AdditiveBlending, AttributeNode, NodeMaterial, Vector2 } from 'three/webgpu'
+import { AdditiveBlending, NodeMaterial, Vector2 } from 'three/webgpu'
 import type { TSLMaterial } from './tsl-material'
 import type { UniformColorNode, UniformNumberNode, UniformVector2Node, UniformVector3Node } from '../types'
-import { float, Fn, If, Loop, pow, uniform, uv, vec2, vec3, vec4, type ShaderNodeObject } from 'three/tsl'
-import { lensFlare, circle, rndf } from '../features/lens-flare'
+import {
+  float,
+  Fn,
+  positionGeometry,
+  uniform,
+  uv,
+  vec2,
+  vec3,
+  vec4,
+} from 'three/tsl'
+import { lensFlare } from '../features/lens-flare'
 
 export type LensFlareData = {
   lensPosition: Vector3
@@ -52,54 +61,55 @@ export class LensFlareTSLMaterial implements TSLMaterial<NodeMaterial, LensFlare
   }
 
   buildMaterial(): NodeMaterial {
-    const mainNode = Fn(([matUv]: [ShaderNodeObject<AttributeNode>]) => {
-      const localUv = vec2(matUv.sub(0.5)).toVar('lfUV')
-      localUv.y.mulAssign(this.uniforms.resolution.y.div(this.uniforms.resolution.x))
-      const mouse = vec2(this.uniforms.lensPosition.mul(0.5)).toVar('mouse')
-      mouse.y.mulAssign(float(this.uniforms.resolution.y).div(this.uniforms.resolution.x))
+    // Precompute UV
+    const uvReduced = uv().sub(0.5).toVar('uvReduced')
+    const localUv = vec2(
+      uvReduced.x,
+      uvReduced.y.mul(this.uniforms.resolution.y.div(this.uniforms.resolution.x)),
+    ).toVar('lfUV')
 
-      const flareParams = vec2(this.uniforms.flareShape, this.uniforms.flareSize).toVar('flareParams')
-      const glareParams = vec2(this.uniforms.glareSize, this.uniforms.glareIntensity).toVar('glareParams')
-      const starPointsparams = vec2(this.uniforms.starPoints, this.uniforms.starPointsIntensity).toVar(
-        'starPointsParams',
-      )
-      const finalColor = vec3(
-        lensFlare(localUv, mouse, flareParams, glareParams, starPointsparams)
-          .mul(20.0)
-          .mul(this.uniforms.colorGain)
-          .div(2),
-      ).toVar('finalColor')
+    // Get mouse coords from lens position
+    const halfLensPos = this.uniforms.lensPosition.mul(0.5).toVar('halfLensPos')
+    const mouse = vec2(
+      halfLensPos.x,
+      halfLensPos.y.mul(float(this.uniforms.resolution.y).div(this.uniforms.resolution.x)),
+    ).toVar('mouse')
 
-      If(this.uniforms.additionalStreaks.greaterThan(0), () => {
-        const circColor = vec3(0.9, 0.2, 0.1).toVar('circColor')
+    const flareParams = vec2(this.uniforms.flareShape, this.uniforms.flareSize).toVar('flareParams')
+    const glareParams = vec2(this.uniforms.glareSize, this.uniforms.glareIntensity).toVar('glareParams')
+    const starPointsparams = vec2(this.uniforms.starPoints, this.uniforms.starPointsIntensity).toVar('starPointsParams')
+    const finalColor = vec3(
+      lensFlare(localUv, mouse, flareParams, glareParams, starPointsparams)
+        .mul(20.0)
+        .mul(this.uniforms.colorGain)
+        .div(2),
+    ).toVar('finalColor')
 
-        Loop({ start: 0, end: 10, condition: '<' }, ({ i }) => {
-          finalColor.addAssign(
-            circle(
-              localUv,
-              pow(rndf(float(i).mul(2000)).mul(2.8), 0.1).add(1.41),
-              0.0,
-              circColor.add(i),
-              rndf(float(i).mul(20))
-                .mul(3)
-                .add(0.2 - 0.5),
-              this.uniforms.lensPosition.xy,
-              this.uniforms.streaksScale,
-              this.uniforms.colorGain,
-            ),
-          )
-        })
+    /* if (this.uniforms.additionalStreaks.value > 0) {
+      const circColor = vec3(0.9, 0.2, 0.1).toVar('circColor')
+
+      Loop({ start: 0, end: 10, condition: '<' }, ({ i }) => {
+        finalColor.addAssign(
+          circle(
+            localUv,
+            pow(rndf(float(i).mul(2000)).mul(2.8), 0.1).add(1.41),
+            0.0,
+            circColor.add(i),
+            rndf(float(i).mul(20))
+              .mul(3)
+              .add(0.2 - 0.5),
+            this.uniforms.lensPosition.xy,
+            this.uniforms.streaksScale,
+            this.uniforms.colorGain,
+          ),
+        )
       })
-      return vec4(finalColor, this.uniforms.opacity)
-    }).setLayout({
-      name: 'mainNode',
-      type: 'vec4',
-      inputs: [{ name: 'matUv', type: 'vec2' }],
-    })
+    } */
 
     // init material & set outputs
     const material = new NodeMaterial()
-    material.fragmentNode = mainNode(uv())
+    material.vertexNode = Fn(() => vec4(positionGeometry, 1.0))()
+    material.colorNode = vec4(finalColor, this.uniforms.opacity)
     material.transparent = true
     material.depthWrite = false
     material.depthTest = false
