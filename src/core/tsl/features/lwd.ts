@@ -53,9 +53,9 @@ export const layer = /*@__PURE__*/ Fn(
 
 export const warp = /*@__PURE__*/ Fn(([i_position, i_params, i_enable]: [VaryingNode, UniformVector4Node, UniformNumberNode]) => {
   const vPos = vec3(i_position).toVar('vPos')
-  vPos.x.mulAssign(mix(1.0, i_params.y, i_enable.toInt()))
-  vPos.y.mulAssign(mix(1.0, i_params.z, i_enable.toInt()))
-  vPos.z.mulAssign(mix(1.0, i_params.w, i_enable.toInt()))
+  vPos.x.mulAssign(mix(1.0, i_params.y, i_enable))
+  vPos.y.mulAssign(mix(1.0, i_params.z, i_enable))
+  vPos.z.mulAssign(mix(1.0, i_params.w, i_enable))
   return vPos
 }).setLayout({
   name: 'LG_LWD_warp',
@@ -63,7 +63,7 @@ export const warp = /*@__PURE__*/ Fn(([i_position, i_params, i_enable]: [Varying
   inputs: [
     { name: 'i_position', type: 'vec3' },
     { name: 'i_params', type: 'vec4' },
-    { name: 'i_enable', type: 'int' },
+    { name: 'i_enable', type: 'float' },
   ]
 })
 

@@ -19,9 +19,9 @@ export class RingTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, Ri
 
   constructor(data: RingData) {
     this.uniforms = {
-      innerRadius: uniform(data.innerRadius, 'float').label('uInnerRadius'),
-      outerRadius: uniform(data.outerRadius, 'float').label('uOuterRadius'),
-      texture: texture(data.texture).label('uTexture'),
+      innerRadius: uniform(data.innerRadius, 'float').setName('uInnerRadius'),
+      outerRadius: uniform(data.outerRadius, 'float').setName('uOuterRadius'),
+      texture: texture(data.texture).setName('uTexture'),
     }
   }
 

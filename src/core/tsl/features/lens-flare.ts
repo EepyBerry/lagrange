@@ -207,8 +207,8 @@ export const lensFlare = /*@__PURE__*/ Fn(
   name: 'LF_lensFlare',
   type: 'vec3',
   inputs: [
-    { name: 'origUv', type: 'vec2' },
-    { name: 'mouse', type: 'vec2' },
+    { name: 'uv', type: 'vec2' },
+    { name: 'pos', type: 'vec2' },
     { name: 'flareParams', type: 'vec2' }, // shape, size
     { name: 'glareParams', type: 'vec2' }, // size, intensity
     { name: 'starPoints', type: 'vec2' }, // number, intensity

@@ -64,25 +64,25 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
   constructor(data: AtmosphereData) {
     this.uniforms = {
       sunlight: {
-        position: uniform(data.sunlight.position, 'vec3').label('uLightPosition'),
-        intensity: uniform(data.sunlight.intensity, 'float').label('uLightIntensity'),
+        position: uniform(data.sunlight.position, 'vec3').setName('uLightPosition'),
+        intensity: uniform(data.sunlight.intensity, 'float').setName('uLightIntensity'),
       },
       transform: {
-        radius: uniform(data.transform.radius).label('uRadius'),
-        surfaceRadius: uniform(data.transform.surfaceRadius).label('uSurfaceRadius'),
+        radius: uniform(data.transform.radius).setName('uRadius'),
+        surfaceRadius: uniform(data.transform.surfaceRadius).setName('uSurfaceRadius'),
       },
       render: {
-        density: uniform(data.render.density).label('uDensity'),
-        intensity: uniform(data.render.intensity).label('uIntensity'),
-        colorMode: uniform(data.render.colorMode, 'int').label('uColorMode'),
-        hue: uniform(data.render.hue).label('uHue'),
-        tint: uniform(data.render.tint).label('uTint'),
+        density: uniform(data.render.density).setName('uDensity'),
+        intensity: uniform(data.render.intensity).setName('uIntensity'),
+        colorMode: uniform(data.render.colorMode, 'int').setName('uColorMode'),
+        hue: uniform(data.render.hue).setName('uHue'),
+        tint: uniform(data.render.tint).setName('uTint'),
       },
     }
   }
 
   buildMaterial(): NodeMaterial {
-    const fragmentNode = Fn(([posGeo, posWorld]: [VaryingNode, VaryingNode]) => {
+    const fragmentNode = Fn(([posGeo, posWorld]: [UniformVector3Node, UniformVector3Node]) => {
       // ---------------- VERTEX STAGE ----------------
       const clipSpacePos = cameraProjectionMatrix.mul(modelViewMatrix).mul(vec4(posGeo, 1.0)).toVar('clipSpacePos')
       const ndc = div(clipSpacePos.xyz, clipSpacePos.w).toVar('ndc')

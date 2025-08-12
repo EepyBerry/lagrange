@@ -30,6 +30,7 @@ export function createScene(data: PlanetData, width: number, height: number, pix
       'space_lf.png',
     ])
   }
+  scene.userData.lens = 'no-occlusion'
 
   // Make spherical before creating camera
   const spherical = creationMode === SceneCreationMode.PREVIEW

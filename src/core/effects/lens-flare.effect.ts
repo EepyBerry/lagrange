@@ -28,9 +28,9 @@ export class LensFlareEffect {
 
     this._parameters = data
     this._tslMaterial = new LensFlareTSLMaterial(data)
+    this._uniforms = this._tslMaterial.uniforms
     this._mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2, 1, 1), this._tslMaterial.buildMaterial())
     this._mesh.frustumCulled = false
-    this._uniforms = this._tslMaterial.uniforms
   }
 
   private checkTransparency(intersects: THREE.Intersection[]) {
