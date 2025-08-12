@@ -133,7 +133,7 @@ export const glare = /*@__PURE__*/ Fn(
       div(
         1.0,
         length(i_origUv.sub(i_mouse))
-          .mul(div(1.0, i_size.mul(16.0)))
+          .mul(div(1.0, i_size).mul(16.0))
           .add(0.2),
       ),
     ).toVar('f0')
