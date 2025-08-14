@@ -20,7 +20,7 @@ import { RingTSLMaterial } from '@/core/tsl/materials/ring.tslmat'
 export function createScene(data: PlanetData, width: number, height: number, pixelRatio: number, creationMode: SceneCreationMode): SceneRenderObjects {
   // setup cubemap
   const scene = new THREE.Scene()
-  if (!creationMode) {
+  if (creationMode === SceneCreationMode.EDITOR) {
     scene.background = loadCubeTexture('/skybox/', [
       'space_ft.png',
       'space_bk.png',

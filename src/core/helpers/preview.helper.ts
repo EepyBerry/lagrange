@@ -17,6 +17,7 @@ export async function generatePlanetPreview(data: PlanetData): Promise<string> {
   const sceneData: EditorSceneData = SceneHelper.buildEditorScene(data, w, h, w/h, SceneCreationMode.PREVIEW)
   sceneData.camera.setRotationFromAxisAngle(Globals.AXIS_Y, degToRad(data.initCamAngle))
   sceneData.camera.updateProjectionMatrix()
+  sceneData.lensFlare!.mesh.visible = false
 
   // ---------------------------- Setup renderer & render -----------------------------
   const rawBuffer = new Uint8Array(w * h * 4)
