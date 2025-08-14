@@ -3,6 +3,24 @@ import type { RawRGBA } from '@/core/types'
 import { CanvasTexture, Color, type TypedArray } from 'three'
 
 /**
+ * Renders a buffer to a PNG dataURL
+ * @param buf the buffer, represented as a `Uint8Array`
+ * @param w width of the output (in pixels)
+ * @param h height of the output (in pixels)
+ * @returns a dataURL with the given pixel data
+ */
+export function bufferToDataURL(buf: Uint8Array, w: number, h: number): string {
+  const canvas = createCanvas(w, h)
+  const ctx = canvas.getContext('2d')!
+  const imageData = ctx.createImageData(w, h)
+  imageData.data.set(normalizeUInt8ArrayPixels(buf as Uint8Array, w, h))
+  ctx.putImageData(imageData, 0, 0)
+  const url = canvas.toDataURL()
+  canvas.remove()
+  return url
+}
+
+/**
  * Renders a buffer onto a CanvasTexture
  * @param buf the buffer, represented as a `TypedArray` (usually `UInt8Array`)
  * @param w width of the output (in pixels)
@@ -10,9 +28,7 @@ import { CanvasTexture, Color, type TypedArray } from 'three'
  * @returns a `CanvasTexture` instance containing data from the buffer
  */
 export function bufferToTexture(buf: TypedArray, w: number, h: number): CanvasTexture {
-  const canvas = document.createElement('canvas')
-  canvas.width = w
-  canvas.height = h
+  const canvas = createCanvas(w, h)
   const ctx = canvas.getContext('2d')!
   const imgData = new ImageData(new Uint8ClampedArray(buf), w, h)
   ctx.putImageData(imgData, 0, 0)
@@ -107,4 +123,13 @@ export function alphaToGrayscale(alpha: number, full = false): string {
  */
 export function toRawRGBA(color: Color, a: number): RawRGBA {
   return { r: color.r, g: color.g, b: color.b, a }
+}
+
+// ----------------------------------------------------------------------------
+
+function createCanvas(w: number, h: number): HTMLCanvasElement {
+  const canvas = document.createElement('canvas')
+  canvas.width = w
+  canvas.height = h
+  return canvas
 }

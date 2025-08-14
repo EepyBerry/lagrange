@@ -165,7 +165,7 @@ export async function resetPlanet() {
 }
 
 export function takePlanetScreenshot() {
-  exportPlanetScreenshot(LG_SCENE_DATA.renderer!, LG_PLANET_DATA.value.planetName)
+  exportPlanetScreenshot(LG_SCENE_DATA.renderer!, LG_SCENE_DATA.scene!, LG_SCENE_DATA.camera!, LG_PLANET_DATA.value.planetName)
 }
 
 export async function exportPlanetPreview(): Promise<string> {
