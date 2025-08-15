@@ -55,13 +55,13 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   canvas.appendChild(LG_SCENE_DATA.renderer!.domElement)
 
   // TODO: Remove debug printing when done
-  LG_SCENE_DATA.renderer!.debug.getShaderAsync(
+  /* LG_SCENE_DATA.renderer!.debug.getShaderAsync(
     LG_SCENE_DATA.scene!,
     LG_SCENE_DATA.camera!,
     LG_SCENE_DATA.lensFlare!.mesh,
   ).then((e) => {
     console.log(e.fragmentShader)
-  })
+  }) */
 }
 
 // ------------------------------------------------------------------------------------------------ //

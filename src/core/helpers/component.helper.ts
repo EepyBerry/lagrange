@@ -4,7 +4,7 @@ import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-sha
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { loadCubeTexture, createRampTexture, createBiomeTexture } from './texture.helper'
 import type PlanetData from '../models/planet-data.model'
-import { type SceneRenderObjects, type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type RingMeshData, SceneCreationMode } from '../types'
+import { type SceneRenderObjects, type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type RingMeshData, EditorSceneCreationMode } from '../types'
 import { LensFlareEffect } from '../effects/lens-flare.effect'
 import * as Globals from '@core/globals'
 import * as ShaderLoader from '../three/shader.loader'
@@ -17,10 +17,10 @@ import { RingTSLMaterial } from '@/core/tsl/materials/ring.tslmat'
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
 
-export function createScene(data: PlanetData, width: number, height: number, pixelRatio: number, creationMode: SceneCreationMode): SceneRenderObjects {
+export function createScene(data: PlanetData, width: number, height: number, pixelRatio: number, creationMode: EditorSceneCreationMode): SceneRenderObjects {
   // setup cubemap
   const scene = new THREE.Scene()
-  if (creationMode === SceneCreationMode.EDITOR) {
+  if (creationMode === EditorSceneCreationMode.EDITOR) {
     scene.background = loadCubeTexture('/skybox/', [
       'space_ft.png',
       'space_bk.png',
@@ -33,7 +33,7 @@ export function createScene(data: PlanetData, width: number, height: number, pix
   scene.userData.lens = 'no-occlusion'
 
   // Make spherical before creating camera
-  const spherical = creationMode === SceneCreationMode.PREVIEW
+  const spherical = creationMode === EditorSceneCreationMode.PREVIEW
     ? new THREE.Spherical(data.initCamDistance - (data.ringsEnabled ? 0.75 : 1.5), Math.PI / 2.0, degToRad(data.initCamAngle))
     : new THREE.Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle))
 

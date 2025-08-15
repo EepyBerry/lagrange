@@ -17,8 +17,14 @@ import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat'
 import type { RingUniforms } from '@core/tsl/materials/ring.tslmat'
 import type { LensFlareUniforms } from '@core/tsl/materials/lens-flare.tslmat'
 
-// ---------------------------------- Shader loader ---------------------------------
+// ---------------------------------- Editor types ----------------------------------
 export type EditorMessageLevel = 'success' | 'info' | 'warn' | 'wip'
+export enum EditorSceneCreationMode {
+  EDITOR, PREVIEW
+}
+export enum EditorBackendType {
+  WEBGL, WEBGPU
+}
 
 // ---------------------------------- Shader loader ---------------------------------
 export enum ShaderFileType {
@@ -128,9 +134,4 @@ export type LensFlareMeshdata = {
 export type BakingTarget = {
   mesh: Mesh
   textures: Texture[]
-}
-
-// --------------------------------- Technical types --------------------------------
-export enum SceneCreationMode {
-  EDITOR, PREVIEW
 }

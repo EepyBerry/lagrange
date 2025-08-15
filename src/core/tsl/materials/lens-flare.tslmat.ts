@@ -111,7 +111,6 @@ export class LensFlareTSLMaterial implements TSLMaterial<NodeMaterial, LensFlare
     })
 
     // init material & set outputs
-    console.log(toRaw(this.uniforms))
     const material = new NodeMaterial()
     material.vertexNode = Fn(() => vec4(positionGeometry, 1.0))()
     material.fragmentNode = mainNode(uv())

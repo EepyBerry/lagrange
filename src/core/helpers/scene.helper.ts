@@ -1,12 +1,12 @@
 import type { NodeMaterial } from "three/webgpu";
 import type PlanetData from "../models/planet-data.model";
-import { SceneCreationMode, type EditorSceneData, type RingMeshData } from "../types";
+import { EditorSceneCreationMode, type EditorSceneData, type RingMeshData } from "../types";
 import * as ComponentHelper from './component.helper';
 import * as Globals from '@/core/globals'
 import { Group, Clock } from 'three';
 import { degToRad } from "three/src/math/MathUtils.js";
 
-export function buildEditorScene(data: PlanetData, renderWidth: number, renderHeight: number, renderPixelRatio: number, creationMode: SceneCreationMode = SceneCreationMode.EDITOR): EditorSceneData {
+export function buildEditorScene(data: PlanetData, renderWidth: number, renderHeight: number, renderPixelRatio: number, creationMode: EditorSceneCreationMode = EditorSceneCreationMode.EDITOR): EditorSceneData {
   const sceneData: Partial<EditorSceneData> = {
     planet: {
       surfaceBuffer: new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4),
@@ -58,7 +58,7 @@ export function disposeEditorScene(sceneData: EditorSceneData) {
 
 // ------------------------------------------------------------------------------------------------
 
-function buildScene(sceneData: EditorSceneData, data: PlanetData, renderWidth: number, renderHeight: number, renderPixelRatio: number, creationMode: SceneCreationMode): void {
+function buildScene(sceneData: EditorSceneData, data: PlanetData, renderWidth: number, renderHeight: number, renderPixelRatio: number, creationMode: EditorSceneCreationMode): void {
   const { scene, renderer, camera } = ComponentHelper.createScene(data, renderWidth, renderHeight, renderPixelRatio, creationMode)
   sceneData.scene = scene
   sceneData.renderer = renderer

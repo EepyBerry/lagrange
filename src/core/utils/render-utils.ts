@@ -1,6 +1,7 @@
 import type { ColorRamp } from '@/core/models/color-ramp.model'
-import type { RawRGBA } from '@/core/types'
+import { EditorBackendType, type RawRGBA } from '@/core/types'
 import { CanvasTexture, Color, type TypedArray } from 'three'
+import type { WebGPURenderer } from 'three/webgpu'
 
 /**
  * Renders a buffer to a PNG dataURL
@@ -123,6 +124,15 @@ export function alphaToGrayscale(alpha: number, full = false): string {
  */
 export function toRawRGBA(color: Color, a: number): RawRGBA {
   return { r: color.r, g: color.g, b: color.b, a }
+}
+
+/**
+ * Get the backend type currently in use by the given renderer
+ * @param renderer the renderer
+ * @returns the backend type, either `EditorBackendType.WEBGL` or `EditorBackendType.WEBGPU`
+ */
+export function getBackendType(renderer: WebGPURenderer): EditorBackendType {
+  return Object.hasOwn(renderer.backend, 'gl') ? EditorBackendType.WEBGL : EditorBackendType.WEBGPU
 }
 
 // ----------------------------------------------------------------------------

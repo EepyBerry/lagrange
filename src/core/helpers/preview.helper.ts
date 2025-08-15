@@ -1,20 +1,18 @@
-import { RenderTarget, SRGBColorSpace } from 'three';
+import { RenderTarget } from 'three';
 import * as Globals from '@/core/globals'
 import * as SceneHelper from './scene.helper'
 import type PlanetData from '../models/planet-data.model';
 import { degToRad } from 'three/src/math/MathUtils.js';
-import { normalizeUInt8ArrayPixels } from '../utils/render-utils';
-import { SceneCreationMode, type EditorSceneData } from '../types';
+import { EditorBackendType, EditorSceneCreationMode, type EditorSceneData } from '../types';
+import { getBackendType, normalizeUInt8ArrayPixels } from '../utils/render-utils';
 
 export async function generatePlanetPreview(data: PlanetData): Promise<string> {
   const w = 384, h = 384
-  const previewRenderTarget = new RenderTarget(w, h, {
-    colorSpace: SRGBColorSpace,
-  })
+  const previewRenderTarget = new RenderTarget(w, h)
 
   // TODO: Remove this once the Camera+RenderTarget system works again with WebGPU/TSL
   // ------------------------- Initialize scene & components --------------------------
-  const sceneData: EditorSceneData = SceneHelper.buildEditorScene(data, w, h, w/h, SceneCreationMode.PREVIEW)
+  const sceneData: EditorSceneData = SceneHelper.buildEditorScene(data, w, h, w/h, EditorSceneCreationMode.PREVIEW)
   sceneData.camera.setRotationFromAxisAngle(Globals.AXIS_Y, degToRad(data.initCamAngle))
   sceneData.camera.updateProjectionMatrix()
   sceneData.lensFlare!.mesh.visible = false
@@ -32,10 +30,9 @@ export async function generatePlanetPreview(data: PlanetData): Promise<string> {
   canvas.height = h
   const ctx = canvas.getContext('2d')!
   const imageData = ctx.createImageData(w, h)
-  const previewBuffer = normalizeUInt8ArrayPixels(rawBuffer, w, h)
-  for (let i = 0; i < imageData.data.length; i++) {
-    imageData.data[i] = previewBuffer[i]
-  }
+  imageData.data.set(getBackendType(sceneData.renderer) === EditorBackendType.WEBGPU
+    ? rawBuffer
+    : normalizeUInt8ArrayPixels(rawBuffer, w, h))
   ctx.putImageData(imageData, 0, 0)
 
   // ------------------------------- Clean-up resources -------------------------------

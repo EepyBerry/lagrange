@@ -1,5 +1,5 @@
 import saveAs from 'file-saver'
-import { RenderTarget, SRGBColorSpace, type Mesh, type Scene } from 'three'
+import { RenderTarget, type Mesh, type Scene } from 'three'
 import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js'
 import type { PerspectiveCamera, WebGPURenderer } from 'three/webgpu'
 import { bufferToDataURL } from '../utils/render-utils'
@@ -30,7 +30,7 @@ export function exportMeshesToGLTF(meshes: Mesh[], filename: string): void {
 
 export function exportPlanetScreenshot(renderer: WebGPURenderer, scene: Scene, camera: PerspectiveCamera, planetName: string): void {
   const canvas = renderer.domElement
-  const screenshotRTT = new RenderTarget(canvas.width, canvas.height, { colorSpace: SRGBColorSpace })
+  const screenshotRTT = new RenderTarget(canvas.width, canvas.height)
   renderer.setRenderTarget(screenshotRTT)
   renderer.render(scene, camera)
   renderer.readRenderTargetPixelsAsync(screenshotRTT, 0, 0, canvas.width, canvas.height).then((v)=> {
