@@ -269,7 +269,7 @@ async function savePlanet(asCopy: boolean = false) {
   setPlanetEditFlag(false)
 
   // -------- Generate planet preview -------- //
-  let previewDataString = await exportPlanetPreview()
+  const previewDataString = await exportPlanetPreview()
 
   // ----------- Save planet data ------------ //
   console.debug(toRaw(LG_PLANET_DATA.value))
@@ -285,9 +285,12 @@ async function savePlanet(asCopy: boolean = false) {
   $planetEntityId.value = idbData.id
 
   showSpinner.value = false
-  previewDataString = ''
   router.replace(`/planet-editor/${idbData.id}`)
-  EventBus.sendToastEvent('success', 'toast.save_success', 3000)
+  if (previewDataString.length > 0) {
+    EventBus.sendToastEvent('success', 'toast.save_success', 3000)
+  } else {
+    EventBus.sendToastEvent('warn', 'toast.save_partial_no_preview', 3000)
+  }
 }
 
 function exportPlanet() {

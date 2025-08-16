@@ -6,7 +6,7 @@ import * as Globals from '@/core/globals'
 import { Group, Clock } from 'three';
 import { degToRad } from "three/src/math/MathUtils.js";
 
-export function buildEditorScene(data: PlanetData, renderWidth: number, renderHeight: number, renderPixelRatio: number, creationMode: EditorSceneCreationMode = EditorSceneCreationMode.EDITOR): EditorSceneData {
+export async function buildEditorScene(data: PlanetData, renderWidth: number, renderHeight: number, renderPixelRatio: number, creationMode: EditorSceneCreationMode): Promise<EditorSceneData> {
   const sceneData: Partial<EditorSceneData> = {
     planet: {
       surfaceBuffer: new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4),
@@ -19,7 +19,7 @@ export function buildEditorScene(data: PlanetData, renderWidth: number, renderHe
     planetGroup: new Group(),
     ringAnchor: new Group(),
   }
-  buildScene(sceneData as EditorSceneData, data, renderWidth, renderHeight, renderPixelRatio, creationMode)
+  await buildScene(sceneData as EditorSceneData, data, renderWidth, renderHeight, renderPixelRatio, creationMode)
   buildSceneLighting(sceneData as EditorSceneData, data)
   buildScenePlanet(sceneData as EditorSceneData, data)
   return sceneData as EditorSceneData
@@ -58,8 +58,8 @@ export function disposeEditorScene(sceneData: EditorSceneData) {
 
 // ------------------------------------------------------------------------------------------------
 
-function buildScene(sceneData: EditorSceneData, data: PlanetData, renderWidth: number, renderHeight: number, renderPixelRatio: number, creationMode: EditorSceneCreationMode): void {
-  const { scene, renderer, camera } = ComponentHelper.createScene(data, renderWidth, renderHeight, renderPixelRatio, creationMode)
+async function buildScene(sceneData: EditorSceneData, data: PlanetData, renderWidth: number, renderHeight: number, renderPixelRatio: number, creationMode: EditorSceneCreationMode): Promise<void> {
+  const { scene, renderer, camera } = await ComponentHelper.createScene(data, renderWidth, renderHeight, renderPixelRatio, creationMode)
   sceneData.scene = scene
   sceneData.renderer = renderer
   sceneData.camera = camera

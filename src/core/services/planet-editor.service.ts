@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import * as Globals from '@core/globals'
 import * as ComponentHelper from '@/core/helpers/component.helper'
-import { type BakingTarget, type EditorSceneData } from '@core/types'
+import { EditorSceneCreationMode, type BakingTarget, type EditorSceneData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
 import { regeneratePRNGIfNecessary } from '@/core/utils/math-utils'
 import {
@@ -44,7 +44,7 @@ let watchForPlanetUpdates = false
 export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
   await sleep(50)
   enableEditorRendering = true
-  LG_SCENE_DATA = SceneHelper.buildEditorScene(LG_PLANET_DATA.value, w, h, pixelRatio)
+  LG_SCENE_DATA = await SceneHelper.buildEditorScene(LG_PLANET_DATA.value, w, h, pixelRatio, EditorSceneCreationMode.EDITOR)
   UniformHelper.initUniformUpdateMap(LG_SCENE_DATA, LG_PLANET_DATA.value)
   ComponentHelper.createOrbitControls(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
 

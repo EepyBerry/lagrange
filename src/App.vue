@@ -25,6 +25,7 @@ import { A11Y_ANIMATE } from './core/globals'
 import AppToastBar from './components/main/AppToastBar.vue'
 import { EventBus } from './core/event-bus'
 import { EXTRAS_CAT_MODE, EXTRAS_HOLOGRAM_MODE, EXTRAS_SPECIAL_DAYS } from './core/extras'
+import WebGPU from 'three/examples/jsm/capabilities/WebGPU.js'
 
 const i18n = useI18n()
 useHead({
@@ -77,6 +78,12 @@ async function initDexie() {
     settings = await idb.settings.limit(1).first()
   }
   await DexieUtils.injectMissingSettings(settings!)
+
+  // Check WebGPU availability
+  if (!WebGPU.isAvailable()) {
+    settings = await idb.settings.limit(1).first()
+    await DexieUtils.setRenderingBackendFallback(settings!)
+  }
 
   // Init keybinds
   const kb = await idb.keyBindings.limit(4).toArray()

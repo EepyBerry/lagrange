@@ -116,6 +116,12 @@
       "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
       "editor_baking_resolution": "Baking texture resolution (powers of two)",
       "editor_baking_pixelize": "Pixelize baking output",
+      "editor_rendering_backend": "Select rendering backend <b>(needs app reload)</b>",
+      "editor_rendering_backend_webgl": "WebGL",
+      "editor_rendering_backend_webgpu": "WebGPU",
+      "editor_rendering_backend_webgl_notification": "Standard three.js WebGL backend; stable for most uses!",
+      "editor_rendering_backend_webgpu_notification": "The three.js WebGPU backend is currently under development. Bugs & errors are likely to occur!",
+      "editor_rendering_backend_webgpu_unavailable": "Your browser does not support WebGPU. WebGL will be the only backend available.",
 
       "a11y": "Accessibility",
       "a11y_effects": "Enable visual effects",
@@ -385,7 +391,9 @@
     "import_partial": "Warning: failed to import some planet(s)",
     "import_failure": "Could not import planets. Please check if the correct files are selected and try again",
     "save_success": "Saved planet successfully!",
-    "settings_import_success": "Imported settings successfully!"
+    "settings_import_success": "Imported settings successfully!",
+    "save_partial_no_preview": "Saved planet (could not generate planet preview!)",
+    "screenshot_failure": "Failed to export screenshot!"
   },
   "tooltip": {
     "topbar_rename": "Rename planet",
@@ -455,6 +463,8 @@
     "editor_baking_resolution_2k": "2048 by 2048 pixels",
     "editor_baking_resolution_4k": "4096 by 4096 pixels",
     "editor_baking_pixelize": "Pixelize baking output textures",
+    "editor_rendering_backend_webgl": "@:dialog.settings.editor_rendering_backend_webgl",
+    "editor_rendering_backend_webgpu": "@:dialog.settings.editor_rendering_backend_webgpu",
 
     "editor_generic_input": "Parameter value",
 

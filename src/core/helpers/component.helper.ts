@@ -13,11 +13,12 @@ import { PlanetTSLMaterial } from '@/core/tsl/materials/planet.tslmat'
 import { AtmosphereTSLMaterial } from '@/core/tsl/materials/atmosphere.tslmat'
 import { CloudsTSLMaterial } from '@/core/tsl/materials/clouds.tslmat'
 import { RingTSLMaterial } from '@/core/tsl/materials/ring.tslmat'
+import { idb } from '@/dexie.config'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
 
-export function createScene(data: PlanetData, width: number, height: number, pixelRatio: number, creationMode: EditorSceneCreationMode): SceneRenderObjects {
+export async function createScene(data: PlanetData, width: number, height: number, pixelRatio: number, creationMode: EditorSceneCreationMode): Promise<SceneRenderObjects> {
   // setup cubemap
   const scene = new THREE.Scene()
   if (creationMode === EditorSceneCreationMode.EDITOR) {
@@ -38,7 +39,7 @@ export function createScene(data: PlanetData, width: number, height: number, pix
     : new THREE.Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle))
 
   // setup scene (renderer, cam, lighting)
-  const renderer = createRenderer(width, height, pixelRatio)
+  const renderer = await createRenderer(width, height, pixelRatio)
   const camera = createPerspectiveCamera(50, width / height, 0.1, 1e6, spherical)
   return { scene, renderer, camera }
 }
@@ -263,8 +264,9 @@ export function createRing(
  * @param height canvas height
  * @returns the renderer
  */
-export function createRenderer(width: number, height: number, pixelRatio?: number) {
-  const renderer = new WebGPURenderer({ antialias: true, alpha: true, forceWebGL: true })
+export async function createRenderer(width: number, height: number, pixelRatio?: number) {
+  const idbSettings = await idb.settings.limit(1).first()
+  const renderer = new WebGPURenderer({ antialias: true, alpha: true, forceWebGL: idbSettings!.renderingBackend == 'webgl' })
   if (pixelRatio) {
     renderer.setPixelRatio(pixelRatio)
   }
@@ -274,6 +276,7 @@ export function createRenderer(width: number, height: number, pixelRatio?: numbe
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
   renderer.outputColorSpace = THREE.SRGBColorSpace
+  console.debug(`<Lagrange> Initialised renderer using ${idbSettings!.renderingBackend == 'webgl' ? 'WebGL' : 'WebGPU'} backend.`)
   return renderer
 }
 
