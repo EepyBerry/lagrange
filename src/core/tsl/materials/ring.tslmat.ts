@@ -45,4 +45,8 @@ export class RingTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, Ri
     material.side = DoubleSide
     return material
   }
+
+  buildBakeMaterial(): MeshStandardNodeMaterial {
+    return new MeshStandardNodeMaterial()
+  }
 }

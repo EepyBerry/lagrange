@@ -5,7 +5,6 @@ import type PlanetData from '../models/planet-data.model';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { EditorBackendType, EditorSceneCreationMode, type EditorSceneData } from '../types';
 import { getBackendType, normalizeUInt8ArrayPixels } from '../utils/render-utils';
-import { EventBus } from '../event-bus';
 
 export async function generatePlanetPreview(data: PlanetData): Promise<string> {
   try {

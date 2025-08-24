@@ -1,5 +1,5 @@
 import { Color, DataTexture, MeshStandardNodeMaterial, TextureNode, UniformArrayNode, VaryingNode, Vector3, Vector4 } from 'three/webgpu'
-import { Fn, positionLocal, texture, uniform, uniformArray, vec2, vec3, vec4 } from 'three/tsl'
+import { Fn, int, positionLocal, texture, uniform, uniformArray, vec2, vec3, vec4 } from 'three/tsl'
 import { type TSLMaterial } from './tsl-material'
 import { displace, warp } from '../features/lwd'
 import { fbm3 } from '../noise/fbm3'
@@ -85,13 +85,13 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       const DVEC_B = vec3(0.2, 0.2, 0.0).toVar('DVEC_B')
 
       // XYZ warping + displacement
-      const vPos = vec3(warp(pos, this.uniforms.warping, this.uniforms.flags.element(0))).toVar('vPos')
+      const vPos = vec3(warp(pos, this.uniforms.warping, this.uniforms.flags.element(int(0)))).toVar('vPos')
       vPos.assign(
         displace(
           vPos,
           this.uniforms.displacement.params,
           this.uniforms.displacement.noise,
-          this.uniforms.flags.element(1),
+          this.uniforms.flags.element(int(1)),
         ),
       )
 
@@ -117,5 +117,9 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     material.transparent = true
     material.colorNode = mainNode(positionLocal)
     return material
+  }
+
+  buildBakeMaterial(): MeshStandardNodeMaterial {
+    return new MeshStandardNodeMaterial()
   }
 }

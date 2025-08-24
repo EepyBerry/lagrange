@@ -4,7 +4,7 @@ import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-sha
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { loadCubeTexture, createRampTexture, createBiomeTexture } from './texture.helper'
 import type PlanetData from '../models/planet-data.model'
-import { type SceneRenderObjects, type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type RingMeshData, EditorSceneCreationMode } from '../types'
+import { type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type RingMeshData, EditorSceneCreationMode } from '../types'
 import { LensFlareEffect } from '../effects/lens-flare.effect'
 import * as Globals from '@core/globals'
 import * as ShaderLoader from '../three/shader.loader'
@@ -17,7 +17,11 @@ import { idb } from '@/dexie.config'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
-
+export type SceneRenderObjects = {
+  scene: THREE.Scene
+  renderer: WebGPURenderer
+  camera: THREE.PerspectiveCamera
+}
 export async function createScene(data: PlanetData, width: number, height: number, pixelRatio: number, creationMode: EditorSceneCreationMode): Promise<SceneRenderObjects> {
   // setup cubemap
   const scene = new THREE.Scene()

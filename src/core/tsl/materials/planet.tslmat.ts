@@ -1,5 +1,6 @@
 import {
   DataTexture,
+  MeshBasicNodeMaterial,
   MeshStandardNodeMaterial,
   TextureNode,
   UniformArrayNode,
@@ -10,6 +11,7 @@ import {
   bitangentLocal,
   EPSILON,
   float,
+  int,
   min,
   mix,
   normalLocal,
@@ -175,19 +177,19 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   buildMaterial(): MeshStandardNodeMaterial {
     // XYZ Warping + displacement
     let vPos = positionLocal
-    vPos = warp(vPos, this.uniforms.warping, this.uniforms.flags.element(0))
+    vPos = warp(vPos, this.uniforms.warping, this.uniforms.flags.element(int(0)))
     vPos = displace(
       vPos,
       this.uniforms.displacement.params,
       this.uniforms.displacement.noise,
-      this.uniforms.flags.element(1),
+      this.uniforms.flags.element(int(1)),
     )
 
     // Heightmap & global flags
     const heightLimit = float(1.0).sub(EPSILON)
     const height = layer(vPos, this.uniforms.noise, this.uniforms.warping.x).toVar()
-    const FLAG_LAND = step(this.uniforms.pbr.element(0), height).toVar()
-    const FLAG_BIOMES = FLAG_LAND.mul(float(this.uniforms.flags.element(3)))
+    const FLAG_LAND = step(this.uniforms.pbr.element(int(0)), height).toVar()
+    const FLAG_BIOMES = FLAG_LAND.mul(float(this.uniforms.flags.element(int(3))))
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord')
@@ -227,9 +229,29 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     // init material & set outputs
     const material = new MeshStandardNodeMaterial()
     material.colorNode = vec4(colour, 1.0)
-    material.normalNode = transformNormalToView(mix(normalLocal, bump, FLAG_LAND.mul(this.uniforms.flags.element(2))))
-    material.roughnessNode = mix(this.uniforms.pbr.element(1), this.uniforms.pbr.element(3), FLAG_LAND)
-    material.metalnessNode = mix(this.uniforms.pbr.element(2), this.uniforms.pbr.element(4), FLAG_LAND)
+    material.normalNode = transformNormalToView(mix(normalLocal, bump, FLAG_LAND.mul(this.uniforms.flags.element(int(2)))))
+    material.roughnessNode = mix(this.uniforms.pbr.element(int(1)), this.uniforms.pbr.element(int(3)), FLAG_LAND)
+    material.metalnessNode = mix(this.uniforms.pbr.element(int(2)), this.uniforms.pbr.element(int(4)), FLAG_LAND)
+    return material
+  }
+
+  buildSurfaceBakeMaterial(): MeshBasicNodeMaterial {
+    const material = new MeshBasicNodeMaterial()
+    return material
+  }
+
+  buildPBRBakeMaterial(): MeshBasicNodeMaterial {
+    const material = new MeshBasicNodeMaterial()
+    return material
+  }
+
+  buildHeightMapBakeMaterial(): MeshBasicNodeMaterial {
+    const material = new MeshBasicNodeMaterial()
+    return material
+  }
+
+  buildNormalMapBakeMaterial(): MeshBasicNodeMaterial {
+    const material = new MeshBasicNodeMaterial()
     return material
   }
 }

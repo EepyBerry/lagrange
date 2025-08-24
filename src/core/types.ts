@@ -22,6 +22,9 @@ export type EditorMessageLevel = 'success' | 'info' | 'warn' | 'wip'
 export enum EditorSceneCreationMode {
   EDITOR, PREVIEW
 }
+export enum EditorComponentCreationMode {
+  EDITOR, BAKING
+}
 export enum EditorBackendType {
   WEBGL, WEBGPU
 }
@@ -34,12 +37,6 @@ export enum ShaderFileType {
 }
 
 // ----------------------------------- Editor types ---------------------------------
-export type SceneRenderObjects = {
-  scene: Scene
-  renderer: WebGPURenderer
-  camera: PerspectiveCamera
-}
-
 export enum PlanetType {
   PLANET,
   STAR,

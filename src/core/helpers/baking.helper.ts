@@ -302,6 +302,7 @@ export async function bakeMesh(
 ): Promise<THREE.Texture> {
   const bakeScene = new THREE.Scene()
   bakeScene.add(mesh)
+  bakeScene.add(BAKE_CAMERA)
   BAKE_RENDER_TARGET.setSize(width, height)
 
   BAKE_CAMERA.left = -width / 2
@@ -310,7 +311,7 @@ export async function bakeMesh(
   BAKE_CAMERA.bottom = -height / 2
   BAKE_CAMERA.updateProjectionMatrix()
 
-  patchMaterialForUnwrapping(mesh.material as CustomShaderMaterial)
+  //patchMaterialForUnwrapping(mesh.material as CustomShaderMaterial)
   renderer.setRenderTarget(BAKE_RENDER_TARGET)
   renderer.render(bakeScene, BAKE_CAMERA)
 

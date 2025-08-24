@@ -7,17 +7,6 @@ import { EventBus } from '../event-bus'
 
 const GLTF_EXPORTER = new GLTFExporter()
 
-export function exportSceneToGLTF(scene: Scene, filename: string): void {
-  GLTF_EXPORTER.parse(
-    scene,
-    (data) => {
-      console.info('<Lagrange> Exported scene to GLTF successfully!')
-      saveAs(new Blob([JSON.stringify(data)]), `${filename}.gltf`)
-    },
-    (err) => console.error(err),
-  )
-}
-
 export function exportMeshesToGLTF(meshes: Mesh[], filename: string): void {
   GLTF_EXPORTER.parse(
     meshes,
