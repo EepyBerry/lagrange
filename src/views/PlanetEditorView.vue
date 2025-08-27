@@ -77,6 +77,7 @@ let loadedCorrectly = false
 
 // Data
 const $planetEntityId: Ref<string> = ref('')
+const $planetEntityPreviewDataURL: Ref<string | undefined> = ref('')
 
 // Responsiveness
 const centerInfoControls: Ref<boolean> = ref(true)
@@ -158,6 +159,7 @@ async function initData() {
       throw new Error(`Planet with ID [${route.params.id}] doesn't exist.`)
     }
     $planetEntityId.value = idbPlanetData.id
+    $planetEntityPreviewDataURL.value = idbPlanetData.preview
     LG_PLANET_DATA.value.loadData(idbPlanetData.data)
     console.info(`<Lagrange> Loaded planet [${LG_PLANET_DATA.value.planetName}] with ID: ${$planetEntityId.value}`)
     console.debug(toRaw(LG_PLANET_DATA.value))
@@ -279,7 +281,7 @@ async function savePlanet(asCopy: boolean = false) {
     id: planetId,
     version: '2',
     data: JSON.parse(localData),
-    preview: previewDataString,
+    preview: previewDataString.length > 0 ? previewDataString : $planetEntityPreviewDataURL.value,
   }
   await idb.planets.put(idbData, idbData.id)
   $planetEntityId.value = idbData.id

@@ -1,7 +1,10 @@
 import {
   DataTexture,
+  Matrix3,
   MeshBasicNodeMaterial,
   MeshStandardNodeMaterial,
+  Node,
+  Texture,
   TextureNode,
   UniformArrayNode,
   Vector3,
@@ -11,7 +14,9 @@ import {
   bitangentLocal,
   EPSILON,
   float,
+  Fn,
   int,
+  mat3,
   min,
   mix,
   normalLocal,
@@ -22,15 +27,18 @@ import {
   transformNormalToView,
   uniform,
   uniformArray,
+  uv,
   vec2,
   vec3,
   vec4,
+  type ShaderNodeObject,
 } from 'three/tsl'
 import { type TSLMaterial } from './tsl-material'
 import { displace, layer, warp } from '../features/lwd'
 import type { DisplacementData, NoiseData, UniformNumberNode, UniformVector3Node, UniformVector4Node, WarpingData } from '../types'
 import { applyBump } from '../features/bump'
 import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes'
+import { sobel } from '../utils/sobel.tlsutil'
 
 export type PlanetData = {
   radius: number
@@ -176,14 +184,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
   buildMaterial(): MeshStandardNodeMaterial {
     // XYZ Warping + displacement
-    let vPos = positionLocal
-    vPos = warp(vPos, this.uniforms.warping, this.uniforms.flags.element(int(0)))
-    vPos = displace(
-      vPos,
-      this.uniforms.displacement.params,
-      this.uniforms.displacement.noise,
-      this.uniforms.flags.element(int(1)),
-    )
+    const vPos = this.applyXYZTransformations(positionLocal)
 
     // Heightmap & global flags
     const heightLimit = float(1.0).sub(EPSILON)
@@ -196,6 +197,114 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     let colour = vec3(this.uniforms.textures[0].sample(texCoord).xyz)
 
     // Render biomes
+    colour = this.renderBiomes(colour, vPos, heightLimit, FLAG_BIOMES)
+
+    // Render bump-map (under MIT license)
+    const bump = this.applyBumpMap(vPos, height)
+
+    // Init material & set outputs
+    const material = new MeshStandardNodeMaterial()
+    material.colorNode = vec4(colour, 1.0)
+    material.normalNode = transformNormalToView(mix(normalLocal, bump, FLAG_LAND.mul(this.uniforms.flags.element(int(2)))))
+    material.roughnessNode = mix(this.uniforms.pbr.element(int(1)), this.uniforms.pbr.element(int(3)), FLAG_LAND)
+    material.metalnessNode = mix(this.uniforms.pbr.element(int(2)), this.uniforms.pbr.element(int(4)), FLAG_LAND)
+    return material
+  }
+
+  buildSurfaceBakeMaterial(): MeshBasicNodeMaterial {
+    // XYZ Warping + displacement
+    const vPos = this.applyXYZTransformations(positionLocal)
+
+    // Heightmap & global flags
+    const heightLimit = float(1.0).sub(EPSILON)
+    const height = layer(vPos, this.uniforms.noise, this.uniforms.warping.x).toVar()
+    const FLAG_LAND = step(this.uniforms.pbr.element(int(0)), height).toVar()
+    const FLAG_BIOMES = FLAG_LAND.mul(float(this.uniforms.flags.element(int(3))))
+
+    // render noise as color
+    const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord')
+    let colour = vec3(this.uniforms.textures[0].sample(texCoord).xyz)
+
+    // Render biomes
+    colour = this.renderBiomes(colour, vPos, heightLimit, FLAG_BIOMES)
+
+    // Init material & set outputs
+    const material = new MeshBasicNodeMaterial()
+    material.vertexNode = Fn(() => vec4(uv().x, uv().y, 0.0, 1.0).mul(2.0).sub(1.0))()
+    material.colorNode = vec4(colour, 1.0)
+    return material
+  }
+
+  buildPBRBakeMaterial(): MeshBasicNodeMaterial {
+    // XYZ Warping + displacement
+    const vPos = this.applyXYZTransformations(positionLocal)
+
+    // Heightmap & global flags
+    const height = layer(vPos, this.uniforms.noise, this.uniforms.warping.x).toVar()
+    const FLAG_LAND = step(this.uniforms.pbr.element(int(0)), height).toVar()
+
+    // render PBR as green/blue mask
+    const outRoughness = mix(this.uniforms.pbr.element(int(1)), this.uniforms.pbr.element(int(3)), FLAG_LAND)
+    const outMetalness = mix(this.uniforms.pbr.element(int(2)), this.uniforms.pbr.element(int(4)), FLAG_LAND)
+
+    // Init material & set outputs
+    const material = new MeshBasicNodeMaterial()
+    material.vertexNode = Fn(() => vec4(uv().x, uv().y, 0.0, 1.0).mul(2.0).sub(1.0))()
+    material.colorNode = vec4(0.0, outRoughness, outMetalness, 1.0)
+    return material
+  }
+
+  buildHeightMapBakeMaterial(): MeshBasicNodeMaterial {
+    // XYZ Warping + displacement
+    const vPos = this.applyXYZTransformations(positionLocal)
+
+    // Heightmap & global flags
+    const height = layer(vPos, this.uniforms.noise, this.uniforms.warping.x).toVar()
+    const FLAG_LAND = step(this.uniforms.pbr.element(int(0)), height).toVar()
+
+    // Init material & set outputs
+    const material = new MeshBasicNodeMaterial()
+    material.vertexNode = Fn(() => vec4(uv().x, uv().y, 0.0, 1.0).mul(2.0).sub(1.0))()
+    material.colorNode = vec4(mix(vec3(this.uniforms.pbr.element(int(0))), vec3(height), FLAG_LAND), 1.0)
+    return material
+  }
+
+  buildNormalMapBakeMaterial(heightMap: Texture): MeshBasicNodeMaterial {
+    const texNode = texture(heightMap)
+    const offset = vec3(-1.0/window.innerWidth, 0.0, 1.0/window.innerHeight);
+
+    // Sample height-map at 8 points around the current position
+    const s00 = texNode.sample(uv().add(offset.xx)).x;
+    const s10 = texNode.sample(uv().add(offset.yx)).x;
+    const s20 = texNode.sample(uv().add(offset.zx)).x;
+    const s01 = texNode.sample(uv().add(offset.xy)).x;
+    const s21 = texNode.sample(uv().add(offset.zy)).x;
+    const s02 = texNode.sample(uv().add(offset.xz)).x;
+    const s12 = texNode.sample(uv().add(offset.yz)).x;
+    const s22 = texNode.sample(uv().add(offset.zz)).x;
+    // @ts-expect-error: Invalid type definitions for mat3(...) using nodes
+    const normal = sobel(mat3(s00, s10, s20, s01, uv(), s21, s02, s12, s22), float(128.0).mul(this.uniforms.bumpStrength))
+
+    const material = new MeshBasicNodeMaterial()
+    material.vertexNode = Fn(() => vec4(uv().x, uv().y, 0.0, 1.0))()
+    material.colorNode = vec4(normal, 1.0)
+    return material
+  }
+
+  // --------------------------------------------------------------------------
+
+  private applyXYZTransformations(vPos: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
+    vPos = warp(vPos, this.uniforms.warping, this.uniforms.flags.element(int(0)))
+    vPos = displace(
+      vPos,
+      this.uniforms.displacement.params,
+      this.uniforms.displacement.noise,
+      this.uniforms.flags.element(int(1)),
+    )
+    return vPos
+  }
+
+  private renderBiomes(colour: ShaderNodeObject<Node>, vPos: ShaderNodeObject<Node>, heightLimit: ShaderNodeObject<Node>, FLAG_BIOMES: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
     const tHeight = float(
       mix(
         0.0,
@@ -214,44 +323,16 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     )
       .min(heightLimit)
       .toVar()
-    colour = mix(colour, sampleBiomeTexture(this.uniforms.textures[1], tHeight, hHeight, colour), FLAG_BIOMES)
+    return mix(colour, sampleBiomeTexture(this.uniforms.textures[1], tHeight, hHeight, colour), FLAG_BIOMES)
+  }
 
-    // Render bump-map (under MIT license)
-    // note: see license in bump.func.glsl
+  private applyBumpMap(vPos: ShaderNodeObject<Node>, height: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
     const dx = vec3(tangentLocal.mul(this.uniforms.warping.yzw).mul(0.005)).toVar()
     const dy = vec3(bitangentLocal.mul(this.uniforms.warping.yzw).mul(0.005)).toVar()
     const dxHeight = float(layer(vPos.add(dx), this.uniforms.noise, this.uniforms.warping.x)).toVar()
     const dyHeight = float(layer(vPos.add(dy), this.uniforms.noise, this.uniforms.warping.x)).toVar()
-    const bump = vec3(
+    return vec3(
       applyBump(vPos, dx, dy, height, dxHeight, dyHeight, this.uniforms.radius, this.uniforms.bumpStrength),
     ).toVar()
-
-    // init material & set outputs
-    const material = new MeshStandardNodeMaterial()
-    material.colorNode = vec4(colour, 1.0)
-    material.normalNode = transformNormalToView(mix(normalLocal, bump, FLAG_LAND.mul(this.uniforms.flags.element(int(2)))))
-    material.roughnessNode = mix(this.uniforms.pbr.element(int(1)), this.uniforms.pbr.element(int(3)), FLAG_LAND)
-    material.metalnessNode = mix(this.uniforms.pbr.element(int(2)), this.uniforms.pbr.element(int(4)), FLAG_LAND)
-    return material
-  }
-
-  buildSurfaceBakeMaterial(): MeshBasicNodeMaterial {
-    const material = new MeshBasicNodeMaterial()
-    return material
-  }
-
-  buildPBRBakeMaterial(): MeshBasicNodeMaterial {
-    const material = new MeshBasicNodeMaterial()
-    return material
-  }
-
-  buildHeightMapBakeMaterial(): MeshBasicNodeMaterial {
-    const material = new MeshBasicNodeMaterial()
-    return material
-  }
-
-  buildNormalMapBakeMaterial(): MeshBasicNodeMaterial {
-    const material = new MeshBasicNodeMaterial()
-    return material
   }
 }

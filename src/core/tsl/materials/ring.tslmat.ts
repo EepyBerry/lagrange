@@ -1,7 +1,7 @@
-import { DoubleSide, MeshStandardNodeMaterial, type DataTexture, type TextureNode } from 'three/webgpu'
+import { DoubleSide, MeshStandardNodeMaterial, Node, type DataTexture, type TextureNode } from 'three/webgpu'
 import type { UniformNumberNode } from '../types'
 import type { TSLMaterial } from './tsl-material'
-import { float, Fn, length, positionLocal, texture, uniform, vec2 } from 'three/tsl'
+import { float, Fn, length, positionLocal, texture, uniform, vec2, type ShaderNodeObject } from 'three/tsl'
 import { clampToRange } from '../utils/math.tslutil'
 
 export type RingData = {
@@ -26,20 +26,22 @@ export class RingTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, Ri
   }
 
   buildMaterial(): MeshStandardNodeMaterial {
-    const mainNode = Fn(() => {
-      const distanceToCenter = length(positionLocal.xy).toVar('distanceToCenter')
+    const mainNode = Fn(([pos]: [ShaderNodeObject<Node>]) => {
+      const distanceToCenter = length(pos.xy).toVar('distanceToCenter')
       const rampFactor = float(clampToRange(distanceToCenter, this.uniforms.innerRadius, this.uniforms.outerRadius)).toVar('rampFactor')
       const texCoord = vec2(rampFactor, 0.5).toVar('texCoord')
       return this.uniforms.texture.sample(texCoord);
     }).setLayout({
       name: 'mainNode',
       type: 'vec4',
-      inputs: [],
+      inputs: [
+        { name: 'pos', type: 'vec3' }
+      ],
     })
 
     // init material & set outputs
     const material = new MeshStandardNodeMaterial()
-    material.colorNode = mainNode()
+    material.colorNode = mainNode(positionLocal)
     // TODO: restore transparency when fixed in TSL
     material.transparent = false
     material.side = DoubleSide
