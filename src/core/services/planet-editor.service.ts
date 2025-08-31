@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import * as Globals from '@core/globals'
 import * as ComponentHelper from '@/core/helpers/component.helper'
+import * as BakingHelper from '@/core/helpers/baking.helper'
 import { EditorSceneCreationMode, type BakingTarget, type EditorSceneData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
 import { regeneratePRNGIfNecessary } from '@/core/utils/math-utils'
@@ -21,6 +22,7 @@ import { sleep } from '@/core/utils/utils'
 import * as UniformHelper from '../helpers/uniform.helper'
 import * as SceneHelper from '../helpers/scene.helper'
 import * as PreviewHelper from '../helpers/preview.helper'
+import type { NodeMaterial } from 'three/webgpu'
 
 // Editor constants
 let LG_SCENE_DATA!: EditorSceneData
@@ -189,26 +191,30 @@ export async function exportPlanetToGLTF(progressDialog: {
     const w = appSettings?.bakingResolution ?? 2048,
       h = appSettings?.bakingResolution ?? 2048
 
+    // ---------------------------------- Prepare scene ---------------------------------
+
+    const { scene, renderer, camera, renderTarget } = await BakingHelper.createBakingScene(w/h)
+
     // ----------------------------------- Bake planet ----------------------------------
     progressDialog.setProgress(2)
     await sleep(50)
-    const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME)
-    const bakePlanetSurfaceTex = await bakeMesh(LG_SCENE_DATA.renderer!, bakePlanet, w, h)
+    const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME).mesh!
+    const bakePlanetSurfaceTex = await bakeMesh(scene, renderer, camera, renderTarget, bakePlanet, w, h)
     if (appSettings?.bakingPixelize) bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
 
     progressDialog.setProgress(3)
     await sleep(50)
     const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value)
-    const bakePlanetPBRTex = await bakeMesh(LG_SCENE_DATA.renderer!, bakePBR, w, h)
+    const bakePlanetPBRTex = await bakeMesh(scene, renderer, camera, renderTarget, bakePBR, w, h)
     if (appSettings?.bakingPixelize) bakePlanetPBRTex.magFilter = THREE.NearestFilter
 
     progressDialog.setProgress(4)
     await sleep(50)
     const bakeHeight = createBakingHeightMap(LG_PLANET_DATA.value)
-    const bakePlanetHeightTex = await bakeMesh(LG_SCENE_DATA.renderer!, bakeHeight, w, h)
+    const bakePlanetHeightTex = await bakeMesh(scene, renderer, camera, renderTarget, bakeHeight, w, h)
 
     const bakeNormal = createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex, w)
-    const bakePlanetNormalTex = await bakeMesh(LG_SCENE_DATA.renderer!, bakeNormal, w, h)
+    const bakePlanetNormalTex = await bakeMesh(scene, renderer, camera, renderTarget, bakeNormal, w, h)
     if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
 
     bakePlanet.material = new THREE.MeshStandardMaterial({
@@ -228,7 +234,7 @@ export async function exportPlanetToGLTF(progressDialog: {
       progressDialog.setProgress(5)
       await sleep(50)
       const bakeClouds = createBakingClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
-      const bakeCloudsTex = await bakeMesh(LG_SCENE_DATA.renderer!, bakeClouds, w, h)
+      const bakeCloudsTex = await bakeMesh(scene, renderer, camera, renderTarget, bakeClouds, w, h)
       if (appSettings?.bakingPixelize) bakeCloudsTex.magFilter = THREE.NearestFilter
 
       bakeClouds.material = new THREE.MeshStandardMaterial({
@@ -255,7 +261,7 @@ export async function exportPlanetToGLTF(progressDialog: {
         if (!ringMeshData) return
 
         const bakeRing = createBakingRing(LG_PLANET_DATA.value, ringMeshData!.buffer!, idx)
-        const bakeRingTex = await bakeMesh(LG_SCENE_DATA.renderer!, bakeRing, w, h)
+        const bakeRingTex = await bakeMesh(scene, renderer, camera, renderTarget, bakeRing, w, h)
         if (appSettings?.bakingPixelize) bakeRingTex.magFilter = THREE.NearestFilter
 
         bakeRing.material = new THREE.MeshStandardMaterial({
@@ -286,7 +292,7 @@ export async function exportPlanetToGLTF(progressDialog: {
   } finally {
     bakingTargets.forEach((bt) => {
       bt.textures.forEach((tex) => tex.dispose())
-      ;(bt.mesh.material as THREE.MeshStandardMaterial)?.dispose()
+      ;(bt.mesh.material as NodeMaterial)?.dispose()
       bt.mesh.geometry?.dispose()
     })
     progressDialog.setProgress(8)

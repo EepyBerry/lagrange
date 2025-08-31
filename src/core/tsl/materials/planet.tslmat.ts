@@ -68,7 +68,7 @@ export type PlanetData = {
     humidityMode: number
     humidityNoise: NoiseData
   }
-  textures: {
+  textures?: {
     surface: DataTexture
     biomes: DataTexture
   }
@@ -91,7 +91,7 @@ export type PlanetUniforms = {
     humidityMode: UniformNumberNode
     humidityNoise: UniformVector4Node
   }
-  textures: TextureNode[]
+  textures?: TextureNode[]
 }
 export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, PlanetData, PlanetUniforms> {
   public readonly uniforms: PlanetUniforms
@@ -175,14 +175,17 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
           'vec4',
         ),
       },
-      textures: [
-        texture(data.textures.surface),
-        texture(data.textures.biomes),
-      ],
+      textures: data.textures
+        ? [texture(data.textures.surface), texture(data.textures.biomes)]
+        : undefined,
     }
   }
 
   buildMaterial(): MeshStandardNodeMaterial {
+    if (!this.uniforms.textures) {
+      throw new Error("Cannot build material with missing uniform: textures")
+    }
+    
     // XYZ Warping + displacement
     const vPos = this.applyXYZTransformations(positionLocal)
 
@@ -194,7 +197,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord')
-    let colour = vec3(this.uniforms.textures[0].sample(texCoord).xyz)
+    let colour = vec3(this.uniforms.textures![0].sample(texCoord).xyz)
 
     // Render biomes
     colour = this.renderBiomes(colour, vPos, heightLimit, FLAG_BIOMES)
@@ -212,6 +215,10 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   }
 
   buildSurfaceBakeMaterial(): MeshBasicNodeMaterial {
+    if (!this.uniforms.textures) {
+      throw new Error("Cannot build material with missing uniform: textures")
+    }
+
     // XYZ Warping + displacement
     const vPos = this.applyXYZTransformations(positionLocal)
 
@@ -223,7 +230,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord')
-    let colour = vec3(this.uniforms.textures[0].sample(texCoord).xyz)
+    let colour = vec3(this.uniforms.textures![0].sample(texCoord).xyz)
 
     // Render biomes
     colour = this.renderBiomes(colour, vPos, heightLimit, FLAG_BIOMES)
@@ -323,7 +330,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     )
       .min(heightLimit)
       .toVar()
-    return mix(colour, sampleBiomeTexture(this.uniforms.textures[1], tHeight, hHeight, colour), FLAG_BIOMES)
+    return mix(colour, sampleBiomeTexture(this.uniforms.textures![1], tHeight, hHeight, colour), FLAG_BIOMES)
   }
 
   private applyBumpMap(vPos: ShaderNodeObject<Node>, height: ShaderNodeObject<Node>): ShaderNodeObject<Node> {

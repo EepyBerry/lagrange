@@ -8,7 +8,7 @@ import { type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type
 import { LensFlareEffect } from '../effects/lens-flare.effect'
 import * as Globals from '@core/globals'
 import * as ShaderLoader from '../three/shader.loader'
-import { WebGPURenderer } from 'three/webgpu'
+import { NodeMaterial, WebGPURenderer } from 'three/webgpu'
 import { PlanetTSLMaterial } from '@/core/tsl/materials/planet.tslmat'
 import { AtmosphereTSLMaterial } from '@/core/tsl/materials/atmosphere.tslmat'
 import { CloudsTSLMaterial } from '@/core/tsl/materials/clouds.tslmat'
@@ -17,12 +17,12 @@ import { idb } from '@/dexie.config'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
-export type SceneRenderObjects = {
+type EditorSceneObjects = {
   scene: THREE.Scene
   renderer: WebGPURenderer
   camera: THREE.PerspectiveCamera
 }
-export async function createScene(data: PlanetData, width: number, height: number, pixelRatio: number, creationMode: EditorSceneCreationMode): Promise<SceneRenderObjects> {
+export async function createScene(data: PlanetData, width: number, height: number, pixelRatio: number, creationMode: EditorSceneCreationMode): Promise<EditorSceneObjects> {
   // setup cubemap
   const scene = new THREE.Scene()
   if (creationMode === EditorSceneCreationMode.EDITOR) {
@@ -76,6 +76,8 @@ export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THR
   })
 }
 
+export type CreatePlanetOptions = { mode: CreatePlanetMode, heightMapTex?: THREE.Texture }
+export enum CreatePlanetMode { EDITOR, BAKING_SURFACE, BAKING_PBR, BAKING_HEIGHTMAP, BAKING_NORMALMAP }
 export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): PlanetMeshData {
   const geometry = createSphereGeometryComponent(data.planetMeshQuality)
   const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
@@ -141,6 +143,7 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
       biomes: biomeTex
     }
   })
+
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true

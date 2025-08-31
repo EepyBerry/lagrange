@@ -22,9 +22,6 @@ export type EditorMessageLevel = 'success' | 'info' | 'warn' | 'wip'
 export enum EditorSceneCreationMode {
   EDITOR, PREVIEW
 }
-export enum EditorComponentCreationMode {
-  EDITOR, BAKING
-}
 export enum EditorBackendType {
   WEBGL, WEBGPU
 }

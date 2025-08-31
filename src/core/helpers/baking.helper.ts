@@ -3,90 +3,14 @@ import * as Globals from '@core/globals'
 import * as ShaderLoader from '@core/three/shader.loader'
 import * as ComponentHelper from '@/core/helpers/component.helper'
 
-import { createRampTexture, createBiomeTexture } from '@core/helpers/texture.helper'
+import { createRampTexture } from '@core/helpers/texture.helper'
 import type PlanetData from '@core/models/planet-data.model'
-import { ShaderFileType } from '@core/types'
-import type CustomShaderMaterial from 'three-custom-shader-material/vanilla'
+import { ShaderFileType, type PlanetMeshData } from '@core/types'
 import { bufferToTexture } from '@/core/utils/render-utils'
 import type { WebGPURenderer } from 'three/webgpu'
 
-const BAKE_PATCH_RGX = /gl_Position ?=.*;/gm
-const BAKE_CAMERA = ComponentHelper.createOrthographicCamera(1, 1, 0, 1)
-const BAKE_RENDER_TARGET = new THREE.WebGLRenderTarget(1, 1, { colorSpace: THREE.SRGBColorSpace })
-
-export function createBakingPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): THREE.Mesh {
-  const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
-  geometry.computeTangents()
-
-  const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
-  const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
-
-  const material = ComponentHelper.createCustomShaderMaterialComponent(
-    ShaderLoader.fetch('base.vert.glsl', ShaderFileType.BAKING),
-    ShaderLoader.fetch('planet.frag.glsl', ShaderFileType.BAKING),
-    {
-      // Planet & Rendering
-      u_radius: { value: 1.0 },
-      u_pbr_params: {
-        value: {
-          wlevel: data.planetWaterLevel,
-        },
-      },
-      // Surface
-      u_warp: { value: data.planetSurfaceShowWarping },
-      u_displace: { value: data.planetSurfaceShowDisplacement },
-      u_surface_displacement: {
-        value: {
-          freq: data.planetSurfaceDisplacement.frequency,
-          amp: data.planetSurfaceDisplacement.amplitude,
-          lac: data.planetSurfaceDisplacement.lacunarity,
-          oct: data.planetSurfaceDisplacement.octaves,
-          eps: data.planetSurfaceDisplacement.epsilon,
-          mul: data.planetSurfaceDisplacement.multiplier,
-          fac: data.planetSurfaceDisplacement.factor,
-        },
-      },
-      u_surface_noise: {
-        value: {
-          freq: data.planetSurfaceNoise.frequency,
-          amp: data.planetSurfaceNoise.amplitude,
-          lac: data.planetSurfaceNoise.lacunarity,
-          oct: data.planetSurfaceNoise.octaves,
-          layers: data.planetSurfaceNoise.layers,
-          xwarp: data.planetSurfaceNoise.xWarpFactor,
-          ywarp: data.planetSurfaceNoise.yWarpFactor,
-          zwarp: data.planetSurfaceNoise.zWarpFactor,
-        },
-      },
-      u_surface_tex: { value: surfaceTex },
-      // Biomes
-      u_biomes: { value: data.biomesEnabled },
-      u_biomes_tex: { value: biomeTex },
-      u_temp_noise: {
-        value: {
-          mode: data.biomesTemperatureMode,
-          freq: data.biomesTemperatureNoise.frequency,
-          amp: data.biomesTemperatureNoise.amplitude,
-          lac: data.biomesTemperatureNoise.lacunarity,
-          oct: data.biomesTemperatureNoise.octaves,
-        },
-      },
-      u_humi_noise: {
-        value: {
-          mode: data.biomesHumidityMode,
-          freq: data.biomesHumidityNoise.frequency,
-          amp: data.biomesHumidityNoise.amplitude,
-          lac: data.biomesHumidityNoise.lacunarity,
-          oct: data.biomesHumidityNoise.octaves,
-        },
-      },
-    },
-    THREE.MeshBasicMaterial,
-  )
-
-  const mesh = new THREE.Mesh(geometry, material)
-  mesh.name = Globals.LG_NAME_PLANET
-  return mesh
+export function createBakingPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): PlanetMeshData {
+  return ComponentHelper.createPlanet(data, surfaceTexBuf, biomeTexBuf)
 }
 
 export function createBakingPBRMap(data: PlanetData): THREE.Mesh {
@@ -284,51 +208,70 @@ export function createBakingRing(data: PlanetData, textureBuffer: Uint8Array, pa
 }
 
 // ------------------------------------------------------------------------------------------------
+type BakingSceneObjects = {
+  scene: THREE.Scene
+  renderer: WebGPURenderer
+  camera: THREE.OrthographicCamera
+  renderTarget: THREE.RenderTarget
+}
+/**
+ * Creates the main scene for baking purposes, as well as a base RenderTarget
+ * @param pixelRatio device pixel ratio
+ * @returns Scene, WebGPURenderer, OrthographicCamera and RenderTarget root objects
+ */
+export async function createBakingScene(pixelRatio: number): Promise<BakingSceneObjects> {
+  return {
+    scene: new THREE.Scene(),
+    renderer: await ComponentHelper.createRenderer(1, 1, pixelRatio),
+    camera: ComponentHelper.createOrthographicCamera(1, 1, 0, 1),
+    renderTarget: new THREE.WebGLRenderTarget(1, 1, { colorSpace: THREE.SRGBColorSpace })
+  }
+}
 
 /**
  * Asynchronously bakes a model's Material/CustomShaderMaterial into a texture
  * @remarks Uses TextureLoader
- * @param renderer renderer
+ * @param scene scene
+ * @param renderer WebGPURenderer
+ * @param camera orthographic camera
  * @param mesh mesh to bake
- * @param size texture size in pixels
- * @param applyGaussDilation if true, uses a Gaussian blur pass to dilate the texture cleanly
+ * @param width texture width in pixels
+ * @param height texture height in pixels
  * @returns a promise containing the mesh's baked texture
  */
 export async function bakeMesh(
+  scene: THREE.Scene,
   renderer: WebGPURenderer,
+  camera: THREE.OrthographicCamera,
+  renderTarget: THREE.RenderTarget,
   mesh: THREE.Mesh,
   width: number,
   height: number,
 ): Promise<THREE.Texture> {
-  const bakeScene = new THREE.Scene()
-  bakeScene.add(mesh)
-  bakeScene.add(BAKE_CAMERA)
-  BAKE_RENDER_TARGET.setSize(width, height)
+  scene.add(mesh)
+  renderTarget.setSize(width, height)
 
-  BAKE_CAMERA.left = -width / 2
-  BAKE_CAMERA.right = width / 2
-  BAKE_CAMERA.top = height / 2
-  BAKE_CAMERA.bottom = -height / 2
-  BAKE_CAMERA.updateProjectionMatrix()
+  camera.left = -width / 2
+  camera.right = width / 2
+  camera.top = height / 2
+  camera.bottom = -height / 2
+  camera.updateProjectionMatrix()
 
-  //patchMaterialForUnwrapping(mesh.material as CustomShaderMaterial)
-  renderer.setRenderTarget(BAKE_RENDER_TARGET)
-  renderer.render(bakeScene, BAKE_CAMERA)
+  renderer.setRenderTarget(renderTarget)
+  renderer.render(scene, camera)
+  renderer.setRenderTarget(null)
+  scene.remove(mesh)
 
-  const renderBuffer = await renderer.readRenderTargetPixelsAsync(BAKE_RENDER_TARGET, 0, 0, width, height)
+  const renderBuffer = await renderer.readRenderTargetPixelsAsync(renderTarget, 0, 0, width, height)
   renderer.setRenderTarget(null)
 
   return bufferToTexture(renderBuffer, width, height)
 }
 
-export function prepareMeshForExport(mesh: THREE.Mesh, material: THREE.Material) {
-  mesh.material = material
-}
-
 // NOTE: modified from three-shader-baker's code (see link)
 // https://github.com/FarazzShaikh/three-shader-baker/blob/main/package/src/index.ts
 // TODO: Not sure why material patching is necessary, need to investigate further (manual edits in GLSL code don't work)
-export function patchMaterialForUnwrapping(material: THREE.Material | CustomShaderMaterial) {
+/* export function patchMaterialForUnwrapping(material: THREE.Material | CustomShaderMaterial) {
   const origBeforeCompile = material.onBeforeCompile
   material.onBeforeCompile = (shader, renderer) => {
     origBeforeCompile(shader, renderer)
@@ -347,4 +290,4 @@ export function patchMaterialForUnwrapping(material: THREE.Material | CustomShad
       )
     }
   }
-}
+} */

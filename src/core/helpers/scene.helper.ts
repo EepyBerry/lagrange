@@ -91,11 +91,7 @@ function buildSceneLighting(sceneData: EditorSceneData, data: PlanetData): void 
 }
 
 function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData): void {
-  const planet = ComponentHelper.createPlanet(
-    data,
-    sceneData.planet.surfaceBuffer,
-    sceneData.planet.biomesBuffer,
-  )
+  const planet = ComponentHelper.createPlanet(data, sceneData.planet.surfaceBuffer, sceneData.planet.biomesBuffer)
   const clouds = ComponentHelper.createClouds(data, sceneData.clouds.buffer)
   const atmosphere = ComponentHelper.createAtmosphere(data, sceneData.sunLight!.position)
   const rings: RingMeshData[] = data.ringsParams.map((_, idx) => ComponentHelper.createRing(data, idx))
