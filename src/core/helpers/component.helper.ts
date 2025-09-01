@@ -8,12 +8,13 @@ import { type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type
 import { LensFlareEffect } from '../effects/lens-flare.effect'
 import * as Globals from '@core/globals'
 import * as ShaderLoader from '../three/shader.loader'
-import { NodeMaterial, WebGPURenderer } from 'three/webgpu'
+import { WebGPURenderer } from 'three/webgpu'
 import { PlanetTSLMaterial } from '@/core/tsl/materials/planet.tslmat'
 import { AtmosphereTSLMaterial } from '@/core/tsl/materials/atmosphere.tslmat'
 import { CloudsTSLMaterial } from '@/core/tsl/materials/clouds.tslmat'
 import { RingTSLMaterial } from '@/core/tsl/materials/ring.tslmat'
 import { idb } from '@/dexie.config'
+import { convertToPlanetUniformData } from '../models/converters/planet-data.converter'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -83,67 +84,7 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
   const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
   const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
 
-  const tslMaterial = new PlanetTSLMaterial({
-    radius: data.planetRadius,
-    bumpStrength: data.planetSurfaceBumpStrength,
-    flags: {
-      showWarping: data.planetSurfaceShowWarping,
-      showDisplacement: data.planetSurfaceShowDisplacement,
-      showBumps: data.planetSurfaceShowBumps,
-      enableBiomes: data.biomesEnabled
-    },
-    pbr: {
-      waterLevel: data.planetWaterLevel,
-      waterRoughness: data.planetWaterRoughness,
-      waterMetalness: data.planetWaterMetalness,
-      groundRoughness: data.planetGroundRoughness,
-      groundMetalness: data.planetGroundMetalness
-    },
-    noise: {
-      frequency: data.planetSurfaceNoise.frequency,
-      amplitude: data.planetSurfaceNoise.amplitude,
-      lacunarity: data.planetSurfaceNoise.lacunarity,
-      octaves: data.planetSurfaceNoise.octaves,
-    },
-    warping: {
-      layers: data.planetSurfaceNoise.layers,
-      warpFactor: data.planetSurfaceNoise.warpFactor
-    },
-    displacement: {
-      params: {
-        factor: data.planetSurfaceDisplacement.factor,
-        epsilon: data.planetSurfaceDisplacement.epsilon,
-        multiplier: data.planetSurfaceDisplacement.multiplier
-      },
-      noise: {
-        frequency: data.planetSurfaceDisplacement.frequency,
-        amplitude: data.planetSurfaceDisplacement.amplitude,
-        lacunarity: data.planetSurfaceDisplacement.lacunarity,
-        octaves: data.planetSurfaceDisplacement.octaves,
-      }
-    },
-    biomes: {
-      temperatureMode: data.biomesTemperatureMode,
-      temperatureNoise: {
-        frequency: data.biomesTemperatureNoise.frequency,
-        amplitude: data.biomesTemperatureNoise.amplitude,
-        lacunarity: data.biomesTemperatureNoise.lacunarity,
-        octaves: data.biomesTemperatureNoise.octaves,
-      },
-      humidityMode: data.biomesHumidityMode,
-      humidityNoise: {
-        frequency: data.biomesHumidityNoise.frequency,
-        amplitude: data.biomesHumidityNoise.amplitude,
-        lacunarity: data.biomesHumidityNoise.lacunarity,
-        octaves: data.biomesHumidityNoise.octaves,
-      }
-    },
-    textures: {
-      surface: surfaceTex,
-      biomes: biomeTex
-    }
-  })
-
+  const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data, surfaceTex, biomeTex))
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true

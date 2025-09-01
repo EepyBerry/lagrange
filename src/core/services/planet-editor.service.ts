@@ -22,7 +22,7 @@ import { sleep } from '@/core/utils/utils'
 import * as UniformHelper from '../helpers/uniform.helper'
 import * as SceneHelper from '../helpers/scene.helper'
 import * as PreviewHelper from '../helpers/preview.helper'
-import type { NodeMaterial } from 'three/webgpu'
+import { MeshStandardNodeMaterial, type NodeMaterial } from 'three/webgpu'
 
 // Editor constants
 let LG_SCENE_DATA!: EditorSceneData
@@ -186,19 +186,17 @@ export async function exportPlanetToGLTF(progressDialog: {
   progressDialog.setProgress(1)
   await sleep(50)
   const bakingTargets: BakingTarget[] = []
+
+  const appSettings = await idb.settings.limit(1).first()
+  const w = appSettings?.bakingResolution ?? 2048,
+    h = appSettings?.bakingResolution ?? 2048
+  const { scene, renderer, camera, renderTarget } = await BakingHelper.createBakingScene(w/h)
+
   try {
-    const appSettings = await idb.settings.limit(1).first()
-    const w = appSettings?.bakingResolution ?? 2048,
-      h = appSettings?.bakingResolution ?? 2048
-
-    // ---------------------------------- Prepare scene ---------------------------------
-
-    const { scene, renderer, camera, renderTarget } = await BakingHelper.createBakingScene(w/h)
-
     // ----------------------------------- Bake planet ----------------------------------
     progressDialog.setProgress(2)
     await sleep(50)
-    const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME).mesh!
+    const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME)
     const bakePlanetSurfaceTex = await bakeMesh(scene, renderer, camera, renderTarget, bakePlanet, w, h)
     if (appSettings?.bakingPixelize) bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
 
@@ -213,11 +211,11 @@ export async function exportPlanetToGLTF(progressDialog: {
     const bakeHeight = createBakingHeightMap(LG_PLANET_DATA.value)
     const bakePlanetHeightTex = await bakeMesh(scene, renderer, camera, renderTarget, bakeHeight, w, h)
 
-    const bakeNormal = createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex, w)
+    const bakeNormal = createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex, new THREE.Vector2(w,h))
     const bakePlanetNormalTex = await bakeMesh(scene, renderer, camera, renderTarget, bakeNormal, w, h)
     if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
 
-    bakePlanet.material = new THREE.MeshStandardMaterial({
+    bakePlanet.material = new MeshStandardNodeMaterial({
       map: bakePlanetSurfaceTex,
       roughnessMap: bakePlanetPBRTex,
       metalnessMap: bakePlanetPBRTex,
@@ -230,7 +228,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     bakingTargets.push({ mesh: bakePlanet, textures: [bakePlanetSurfaceTex, bakePlanetPBRTex, bakePlanetHeightTex] })
 
     // ----------------------------------- Bake clouds ----------------------------------
-    if (LG_PLANET_DATA.value.cloudsEnabled) {
+    /* if (LG_PLANET_DATA.value.cloudsEnabled) {
       progressDialog.setProgress(5)
       await sleep(50)
       const bakeClouds = createBakingClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
@@ -247,10 +245,10 @@ export async function exportPlanetToGLTF(progressDialog: {
       bakingTargets.push({ mesh: bakeClouds, textures: [bakeCloudsTex] })
       bakePlanet.add(bakeClouds)
       bakeClouds.setRotationFromAxisAngle(bakeClouds.up, degToRad(LG_PLANET_DATA.value.cloudsRotation))
-    }
+    } */
 
     // --------------------------------- Bake ring system -------------------------------
-    if (LG_PLANET_DATA.value.ringsEnabled) {
+    /* if (LG_PLANET_DATA.value.ringsEnabled) {
       progressDialog.setProgress(6)
       await sleep(50)
       const ringGroup = new THREE.Group()
@@ -274,12 +272,12 @@ export async function exportPlanetToGLTF(progressDialog: {
         bakeRing.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90))
       })
       bakePlanet.add(ringGroup)
-    }
+    } */
 
     // ---------------------------- Export meshes and clean up ---------------------------
     progressDialog.setProgress(7)
     await sleep(50)
-
+    
     bakePlanet.scale.setScalar(LG_PLANET_DATA.value.planetRadius)
     bakePlanet.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
     bakePlanet.rotateOnAxis(bakePlanet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
@@ -295,6 +293,8 @@ export async function exportPlanetToGLTF(progressDialog: {
       ;(bt.mesh.material as NodeMaterial)?.dispose()
       bt.mesh.geometry?.dispose()
     })
+    renderTarget.dispose()
+    renderer.dispose()
     progressDialog.setProgress(8)
     await sleep(50)
   }

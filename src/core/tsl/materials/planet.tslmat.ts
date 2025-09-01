@@ -1,12 +1,12 @@
 import {
   DataTexture,
-  Matrix3,
   MeshBasicNodeMaterial,
   MeshStandardNodeMaterial,
   Node,
   Texture,
   TextureNode,
   UniformArrayNode,
+  Vector2,
   Vector3,
   Vector4,
 } from 'three/webgpu'
@@ -40,7 +40,7 @@ import { applyBump } from '../features/bump'
 import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes'
 import { sobel } from '../utils/sobel.tlsutil'
 
-export type PlanetData = {
+export type PlanetUniformData = {
   radius: number
   bumpStrength: number
   flags: {
@@ -93,10 +93,10 @@ export type PlanetUniforms = {
   }
   textures?: TextureNode[]
 }
-export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, PlanetData, PlanetUniforms> {
+export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, PlanetUniformData, PlanetUniforms> {
   public readonly uniforms: PlanetUniforms
 
-  constructor(data: PlanetData) {
+  constructor(data: PlanetUniformData) {
     this.uniforms = {
       radius: uniform(data.radius, 'float'),
       bumpStrength: uniform(data.bumpStrength, 'float'),
@@ -182,7 +182,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   }
 
   buildMaterial(): MeshStandardNodeMaterial {
-    if (!this.uniforms.textures) {
+    if (this.uniforms.textures === undefined) {
       throw new Error("Cannot build material with missing uniform: textures")
     }
     
@@ -215,7 +215,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   }
 
   buildSurfaceBakeMaterial(): MeshBasicNodeMaterial {
-    if (!this.uniforms.textures) {
+    if (this.uniforms.textures === undefined) {
       throw new Error("Cannot build material with missing uniform: textures")
     }
 
@@ -276,9 +276,9 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     return material
   }
 
-  buildNormalMapBakeMaterial(heightMap: Texture): MeshBasicNodeMaterial {
+  buildNormalMapBakeMaterial(heightMap: Texture, resolution: Vector2): MeshBasicNodeMaterial {
     const texNode = texture(heightMap)
-    const offset = vec3(-1.0/window.innerWidth, 0.0, 1.0/window.innerHeight);
+    const offset = vec3(-1.0/resolution.x, 0.0, 1.0/resolution.y);
 
     // Sample height-map at 8 points around the current position
     const s00 = texNode.sample(uv().add(offset.xx)).x;

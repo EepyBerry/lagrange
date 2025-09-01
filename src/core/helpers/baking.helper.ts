@@ -3,65 +3,35 @@ import * as Globals from '@core/globals'
 import * as ShaderLoader from '@core/three/shader.loader'
 import * as ComponentHelper from '@/core/helpers/component.helper'
 
-import { createRampTexture } from '@core/helpers/texture.helper'
+import { createBiomeTexture, createRampTexture } from '@core/helpers/texture.helper'
 import type PlanetData from '@core/models/planet-data.model'
-import { ShaderFileType, type PlanetMeshData } from '@core/types'
+import { ShaderFileType } from '@core/types'
 import { bufferToTexture } from '@/core/utils/render-utils'
 import type { WebGPURenderer } from 'three/webgpu'
+import { PlanetTSLMaterial } from '../tsl/materials/planet.tslmat'
+import { convertToPlanetUniformData } from '../models/converters/planet-data.converter'
 
-export function createBakingPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): PlanetMeshData {
-  return ComponentHelper.createPlanet(data, surfaceTexBuf, biomeTexBuf)
+export function createBakingPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): THREE.Mesh {
+  const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
+  const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
+  const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
+
+  const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data, surfaceTex, biomeTex))
+  const mesh = new THREE.Mesh(geometry, tslMaterial.buildSurfaceBakeMaterial())
+  mesh.castShadow = true
+  mesh.receiveShadow = true
+  mesh.name = Globals.LG_NAME_PLANET
+  return mesh
 }
 
 export function createBakingPBRMap(data: PlanetData): THREE.Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
   geometry.computeTangents()
 
-  const material = ComponentHelper.createCustomShaderMaterialComponent(
-    ShaderLoader.fetch('base.vert.glsl', ShaderFileType.BAKING),
-    ShaderLoader.fetch('pbr.frag.glsl', ShaderFileType.BAKING),
-    {
-      // Planet & Rendering
-      u_pbr_params: {
-        value: {
-          wlevel: data.planetWaterLevel,
-          wrough: data.planetWaterRoughness,
-          wmetal: data.planetWaterMetalness,
-          grough: data.planetGroundRoughness,
-          gmetal: data.planetGroundMetalness,
-        },
-      },
-      // Surface
-      u_warp: { value: data.planetSurfaceShowWarping },
-      u_displace: { value: data.planetSurfaceShowDisplacement },
-      u_surface_displacement: {
-        value: {
-          freq: data.planetSurfaceDisplacement.frequency,
-          amp: data.planetSurfaceDisplacement.amplitude,
-          lac: data.planetSurfaceDisplacement.lacunarity,
-          oct: data.planetSurfaceDisplacement.octaves,
-          eps: data.planetSurfaceDisplacement.epsilon,
-          mul: data.planetSurfaceDisplacement.multiplier,
-          fac: data.planetSurfaceDisplacement.factor,
-        },
-      },
-      u_surface_noise: {
-        value: {
-          freq: data.planetSurfaceNoise.frequency,
-          amp: data.planetSurfaceNoise.amplitude,
-          lac: data.planetSurfaceNoise.lacunarity,
-          oct: data.planetSurfaceNoise.octaves,
-          layers: data.planetSurfaceNoise.layers,
-          xwarp: data.planetSurfaceNoise.xWarpFactor,
-          ywarp: data.planetSurfaceNoise.yWarpFactor,
-          zwarp: data.planetSurfaceNoise.zWarpFactor,
-        },
-      },
-    },
-    THREE.MeshBasicMaterial,
-  )
-
-  const mesh = new THREE.Mesh(geometry, material)
+  const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data))
+  const mesh = new THREE.Mesh(geometry, tslMaterial.buildPBRBakeMaterial())
+  mesh.castShadow = true
+  mesh.receiveShadow = true
   mesh.name = '_PBRMap'
   return mesh
 }
@@ -70,64 +40,24 @@ export function createBakingHeightMap(data: PlanetData): THREE.Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
   geometry.computeTangents()
 
-  const material = ComponentHelper.createCustomShaderMaterialComponent(
-    ShaderLoader.fetch('base.vert.glsl', ShaderFileType.BAKING),
-    ShaderLoader.fetch('bump.frag.glsl', ShaderFileType.BAKING),
-    {
-      // Planet & Rendering
-      u_radius: { value: 1.0 },
-      // Surface
-      u_bump: { value: data.planetSurfaceShowBumps },
-      u_bump_strength: { value: data.planetSurfaceBumpStrength },
-      u_bump_offset: { value: 0.005 },
-      u_warp: { value: data.planetSurfaceShowWarping },
-      u_displace: { value: data.planetSurfaceShowDisplacement },
-      u_water_level: { value: data.planetWaterLevel },
-      u_surface_displacement: {
-        value: {
-          freq: data.planetSurfaceDisplacement.frequency,
-          amp: data.planetSurfaceDisplacement.amplitude,
-          lac: data.planetSurfaceDisplacement.lacunarity,
-          oct: data.planetSurfaceDisplacement.octaves,
-          eps: data.planetSurfaceDisplacement.epsilon,
-          mul: data.planetSurfaceDisplacement.multiplier,
-          fac: data.planetSurfaceDisplacement.factor,
-        },
-      },
-      u_surface_noise: {
-        value: {
-          freq: data.planetSurfaceNoise.frequency,
-          amp: data.planetSurfaceNoise.amplitude,
-          lac: data.planetSurfaceNoise.lacunarity,
-          oct: data.planetSurfaceNoise.octaves,
-          layers: data.planetSurfaceNoise.layers,
-          xwarp: data.planetSurfaceNoise.xWarpFactor,
-          ywarp: data.planetSurfaceNoise.yWarpFactor,
-          zwarp: data.planetSurfaceNoise.zWarpFactor,
-        },
-      },
-    },
-    THREE.MeshBasicMaterial,
-  )
-
-  const mesh = new THREE.Mesh(geometry, material)
-  mesh.name = '_BumpMap'
+  const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data))
+  const mesh = new THREE.Mesh(geometry, tslMaterial.buildHeightMapBakeMaterial())
+  mesh.castShadow = true
+  mesh.receiveShadow = true
+  mesh.name = '_HeightMap'
   return mesh
 }
 
-export function createBakingNormalMap(data: PlanetData, bumpTex: THREE.Texture, resolution: number): THREE.Mesh {
-  return new THREE.Mesh(
+export function createBakingNormalMap(data: PlanetData, heightMapTex: THREE.Texture, resolution: THREE.Vector2): THREE.Mesh {
+  const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data))
+  const mesh = new THREE.Mesh(
     new THREE.PlaneGeometry(),
-    new THREE.ShaderMaterial({
-      vertexShader: ShaderLoader.fetch('normal.vert.glsl', ShaderFileType.BAKING),
-      fragmentShader: ShaderLoader.fetch('normal.frag.glsl', ShaderFileType.BAKING),
-      uniforms: {
-        u_scale: { value: 128 * data.planetSurfaceBumpStrength },
-        u_resolution: { value: resolution },
-        u_bump_tex: { value: bumpTex },
-      },
-    }),
+    tslMaterial.buildNormalMapBakeMaterial(heightMapTex, resolution)
   )
+  mesh.castShadow = true
+  mesh.receiveShadow = true
+  mesh.name = '_NormalMap'
+  return mesh
 }
 
 export function createBakingClouds(data: PlanetData, textureBuffer: Uint8Array): THREE.Mesh {
@@ -258,7 +188,7 @@ export async function bakeMesh(
   camera.updateProjectionMatrix()
 
   renderer.setRenderTarget(renderTarget)
-  renderer.render(scene, camera)
+  await renderer.renderAsync(scene, camera)
   renderer.setRenderTarget(null)
   scene.remove(mesh)
 
