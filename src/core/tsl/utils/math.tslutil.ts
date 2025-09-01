@@ -1,25 +1,25 @@
-import { Fn, mat4, float, type ShaderNodeObject } from 'three/tsl'
-import type { Node, VaryingNode } from 'three/webgpu'
+import { Fn, mat4, float, type ShaderNodeObject, int } from 'three/tsl'
+import type { Matrix3, Node, VaryingNode } from 'three/webgpu'
 import type { UniformNumberNode } from '../types'
 
 export const inverseMat4 = /*@__PURE__*/ Fn(([i_matrix]: [ShaderNodeObject<Node>]) => {
   const m = mat4(i_matrix).toVar('m')
-  const a00 = float(m.element(0).element(0)).toVar('a00')
-  const a01 = float(m.element(0).element(1)).toVar('a01')
-  const a02 = float(m.element(0).element(2)).toVar('a02')
-  const a03 = float(m.element(0).element(3)).toVar('a03')
-  const a10 = float(m.element(1).element(0)).toVar('a10')
-  const a11 = float(m.element(1).element(1)).toVar('a11')
-  const a12 = float(m.element(1).element(2)).toVar('a12')
-  const a13 = float(m.element(1).element(3)).toVar('a13')
-  const a20 = float(m.element(2).element(0)).toVar('a20')
-  const a21 = float(m.element(2).element(1)).toVar('a21')
-  const a22 = float(m.element(2).element(2)).toVar('a22')
-  const a23 = float(m.element(2).element(3)).toVar('a23')
-  const a30 = float(m.element(3).element(0)).toVar('a30')
-  const a31 = float(m.element(3).element(1)).toVar('a31')
-  const a32 = float(m.element(3).element(2)).toVar('a32')
-  const a33 = float(m.element(3).element(3)).toVar('a33')
+  const a00 = float(getMatrixElement(m,0,0)).toVar('a00')
+  const a01 = float(getMatrixElement(m,0,1)).toVar('a01')
+  const a02 = float(getMatrixElement(m,0,2)).toVar('a02')
+  const a03 = float(getMatrixElement(m,0,3)).toVar('a03')
+  const a10 = float(getMatrixElement(m,1,0)).toVar('a10')
+  const a11 = float(getMatrixElement(m,1,1)).toVar('a11')
+  const a12 = float(getMatrixElement(m,1,2)).toVar('a12')
+  const a13 = float(getMatrixElement(m,1,3)).toVar('a13')
+  const a20 = float(getMatrixElement(m,2,0)).toVar('a20')
+  const a21 = float(getMatrixElement(m,2,1)).toVar('a21')
+  const a22 = float(getMatrixElement(m,2,2)).toVar('a22')
+  const a23 = float(getMatrixElement(m,2,3)).toVar('a23')
+  const a30 = float(getMatrixElement(m,3,0)).toVar('a30')
+  const a31 = float(getMatrixElement(m,3,1)).toVar('a31')
+  const a32 = float(getMatrixElement(m,3,2)).toVar('a32')
+  const a33 = float(getMatrixElement(m,3,3)).toVar('a33')
 
   const b00 = float(a00.mul(a11).sub(a01.mul(a10))).toVar('b00')
   const b01 = float(a00.mul(a12).sub(a02.mul(a10))).toVar('b01')
@@ -43,6 +43,7 @@ export const inverseMat4 = /*@__PURE__*/ Fn(([i_matrix]: [ShaderNodeObject<Node>
   ).toVar('det')
 
   return mat4(
+    // @ts-expect-error: Invalid type definitions for mat4(...) using nodes
     a11.mul(b11).sub(a12.mul(b10)).add(a13.mul(b09)),
     a02.mul(b10).sub(a01.mul(b11)).sub(a03.mul(b09)),
     a31.mul(b05).sub(a32.mul(b04)).add(a33.mul(b03)),
@@ -79,3 +80,9 @@ export const clampToRange = /*@__PURE__*/ Fn(
     { name: 'max', type: 'float' },
   ],
 })
+
+// --------------------------- TypeScript functions ---------------------------
+
+export function getMatrixElement(matrix: ShaderNodeObject<Node>, y: number, x: number): ShaderNodeObject<Node> {
+  return matrix.element(int(y)).element(int(x))
+}

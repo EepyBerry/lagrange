@@ -1,32 +1,30 @@
-import { Fn, float, int, mat3, mul, normalize, vec3 } from 'three/tsl'
+import { Fn, float, mat3, mul, normalize, vec3 } from 'three/tsl'
 import type { UniformMatrix3Node, UniformNumberNode } from '../types'
+import { getMatrixElement } from './math.tslutil'
 
 export const sobel = Fn(([i_heights, i_strength]: [UniformMatrix3Node, UniformNumberNode]) => {
-  const scale = float(128).mul(i_strength).toVar()
-  const heights = mat3(i_heights).toVar()
+  const scale = float(128).mul(i_strength).toVar('scale')
+  const heights = mat3(i_heights).toVar('heights')
   const sobelX = float(
     scale.add(
-      heights
-        .element(int(0))
-        .sub(heights.element(int(2)))
-        .add(mul(2.0, heights.element(int(3))).sub(mul(2.0, heights.element(int(5)))))
-        .add(heights.element(int(6)).sub(heights.element(int(8)))),
+        getMatrixElement(heights,0,0)
+        .sub(getMatrixElement(heights,0,2))
+        .add(mul(2.0, getMatrixElement(heights,1,0)).sub(mul(2.0, getMatrixElement(heights,2,2))))
+        .add(getMatrixElement(heights,2,0)).sub(getMatrixElement(heights,2,2)),
     ),
-  ).toVar()
+  ).toVar('sobelX')
   const sobelY = float(
     scale.sub(
-      heights
-        .element(int(0))
-        .add(mul(2.0, heights.element(int(1))))
+        getMatrixElement(heights,0,0)
+        .add(mul(2.0, getMatrixElement(heights,0,1)))
         .add(
-          heights
-            .element(int(2))
-            .sub(heights.element(int(6)))
-            .sub(mul(2.0, heights.element(int(7))))
-            .sub(heights.element(int(8))),
+            getMatrixElement(heights,0,2)
+            .sub(getMatrixElement(heights,2,0))
+            .sub(mul(2.0, getMatrixElement(heights,2,1)))
+            .sub(getMatrixElement(heights,2,2)),
         ),
     ),
-  ).toVar()
+  ).toVar('sobelY')
   return vec3(
     normalize(vec3(sobelX, sobelY, 1.0))
       .mul(0.5)
