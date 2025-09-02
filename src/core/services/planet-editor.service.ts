@@ -23,6 +23,7 @@ import * as UniformHelper from '../helpers/uniform.helper'
 import * as SceneHelper from '../helpers/scene.helper'
 import * as PreviewHelper from '../helpers/preview.helper'
 import { MeshStandardNodeMaterial, type NodeMaterial } from 'three/webgpu'
+import { saveAs } from 'file-saver'
 
 // Editor constants
 let LG_SCENE_DATA!: EditorSceneData
@@ -214,6 +215,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     const bakeNormal = createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex, new THREE.Vector2(w,h))
     const bakePlanetNormalTex = await bakeMesh(scene, renderer, camera, renderTarget, bakeNormal, w, h)
     if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
+    saveAs(bakePlanetNormalTex.image.toDataURL(), 'test.png')
 
     bakePlanet.material = new MeshStandardNodeMaterial({
       map: bakePlanetSurfaceTex,

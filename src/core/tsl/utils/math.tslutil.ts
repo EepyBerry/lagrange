@@ -83,6 +83,6 @@ export const clampToRange = /*@__PURE__*/ Fn(
 
 // --------------------------- TypeScript functions ---------------------------
 
-export function getMatrixElement(matrix: ShaderNodeObject<Node>, y: number, x: number): ShaderNodeObject<Node> {
-  return matrix.element(int(y)).element(int(x))
+export function getMatrixElement(matrix: ShaderNodeObject<Node>, x: number, y: number): ShaderNodeObject<Node> {
+  return matrix.element(int(x)).element(int(y))
 }
