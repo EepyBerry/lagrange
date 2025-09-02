@@ -215,7 +215,6 @@ export async function exportPlanetToGLTF(progressDialog: {
     const bakeNormal = createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex, new THREE.Vector2(w,h))
     const bakePlanetNormalTex = await bakeMesh(scene, renderer, camera, renderTarget, bakeNormal, w, h)
     if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
-    saveAs(bakePlanetNormalTex.image.toDataURL(), 'test.png')
 
     bakePlanet.material = new MeshStandardNodeMaterial({
       map: bakePlanetSurfaceTex,

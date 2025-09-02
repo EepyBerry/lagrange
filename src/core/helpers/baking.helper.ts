@@ -193,8 +193,6 @@ export async function bakeMesh(
   scene.remove(mesh)
 
   const renderBuffer = await renderer.readRenderTargetPixelsAsync(renderTarget, 0, 0, width, height)
-  renderer.setRenderTarget(null)
-
   return bufferToTexture(renderBuffer, width, height)
 }
 
