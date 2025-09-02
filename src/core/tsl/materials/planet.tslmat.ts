@@ -293,7 +293,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const normal = sobel(mat3(s00, s10, s20, s01, uv().x, s21, s02, s12, s22), float(128.0).mul(this.uniforms.bumpStrength)).toVar('N')
 
     const material = new MeshBasicNodeMaterial()
-    material.vertexNode = Fn(() => vec4(uv().x, uv().y, 0.0, 1.0))()
+    material.vertexNode = Fn(() => vec4(uv().x, uv().y, 0.0, 1.0).mul(2.0).sub(1.0))()
     material.colorNode = vec4(normal, 1.0)
     return material
   }

@@ -222,10 +222,7 @@ export async function exportPlanetToGLTF(progressDialog: {
       roughnessMap: bakePlanetPBRTex,
       metalnessMap: bakePlanetPBRTex,
       normalMap: bakePlanetNormalTex,
-      normalScale: new THREE.Vector2(
-        2.0 * LG_PLANET_DATA.value.planetSurfaceBumpStrength,
-        2.0 * LG_PLANET_DATA.value.planetSurfaceBumpStrength,
-      ),
+      normalScale: new THREE.Vector2(LG_PLANET_DATA.value.planetSurfaceBumpStrength).multiplyScalar(2.0),
     })
     bakingTargets.push({ mesh: bakePlanet, textures: [bakePlanetSurfaceTex, bakePlanetPBRTex, bakePlanetHeightTex] })
 

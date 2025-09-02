@@ -16,8 +16,6 @@ export const LOCALE_MAP: { [k: string]: string } = {
 // Accessibility
 export const A11Y_ANIMATE = ref(true)
 
-// Extras
-
 // Scene object names
 export const LG_NAME_PLANET = 'Planet'
 export const LG_NAME_CLOUDS = 'Clouds'
