@@ -244,7 +244,6 @@ export async function exportPlanetToGLTF(progressDialog: {
         bakeCloudsTex.minFilter = THREE.NearestFilter
         bakeCloudsTex.magFilter = THREE.NearestFilter
       }
-      saveAs(bakeCloudsTex.image.toDataURL(), 'clouds.png')
 
       bakeClouds.material = new MeshStandardNodeMaterial({
         map: bakeCloudsTex,
