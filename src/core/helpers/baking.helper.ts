@@ -9,7 +9,8 @@ import { ShaderFileType } from '@core/types'
 import { bufferToTexture } from '@/core/utils/render-utils'
 import type { WebGPURenderer } from 'three/webgpu'
 import { PlanetTSLMaterial } from '../tsl/materials/planet.tslmat'
-import { convertToPlanetUniformData } from '../models/converters/planet-data.converter'
+import { convertToCloudsUniformData, convertToPlanetUniformData } from '../models/converters/planet-data.converter'
+import { CloudsTSLMaterial } from '../tsl/materials/clouds.tslmat'
 
 export function createBakingPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): THREE.Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
@@ -20,7 +21,7 @@ export function createBakingPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, 
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildSurfaceBakeMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
-  mesh.name = Globals.LG_NAME_PLANET
+  mesh.name = Globals.LG_MESH_NAME_PLANET
   return mesh
 }
 
@@ -32,7 +33,7 @@ export function createBakingPBRMap(data: PlanetData): THREE.Mesh {
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildPBRBakeMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
-  mesh.name = '_PBRMap'
+  mesh.name = Globals.LG_MESH_NAME_PBRMAP
   return mesh
 }
 
@@ -44,7 +45,7 @@ export function createBakingHeightMap(data: PlanetData): THREE.Mesh {
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildHeightMapBakeMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
-  mesh.name = '_HeightMap'
+  mesh.name = Globals.LG_MESH_NAME_HEIGHTMAP
   return mesh
 }
 
@@ -56,7 +57,7 @@ export function createBakingNormalMap(data: PlanetData, heightMapTex: THREE.Text
   )
   mesh.castShadow = true
   mesh.receiveShadow = true
-  mesh.name = '_NormalMap'
+  mesh.name = Globals.LG_MESH_NAME_NORMALMAP
   return mesh
 }
 
@@ -65,46 +66,11 @@ export function createBakingClouds(data: PlanetData, textureBuffer: Uint8Array):
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality, cloudHeight)
   const opacityTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
-  const material = ComponentHelper.createCustomShaderMaterialComponent(
-    ShaderLoader.fetch('base.vert.glsl', ShaderFileType.BAKING),
-    ShaderLoader.fetch('clouds.frag.glsl', ShaderFileType.BAKING),
-    {
-      u_warp: { value: data.cloudsShowWarping },
-      u_displace: { value: data.cloudsShowDisplacement },
-      u_displacement: {
-        value: {
-          freq: data.cloudsDisplacement.frequency,
-          amp: data.cloudsDisplacement.amplitude,
-          lac: data.cloudsDisplacement.lacunarity,
-          oct: data.cloudsDisplacement.octaves,
-          eps: data.cloudsDisplacement.epsilon,
-          mul: data.cloudsDisplacement.multiplier,
-          fac: data.cloudsDisplacement.factor,
-        },
-      },
-      u_noise: {
-        value: {
-          freq: data.cloudsNoise.frequency,
-          amp: data.cloudsNoise.amplitude,
-          lac: data.cloudsNoise.lacunarity,
-          oct: data.cloudsNoise.octaves,
-          layers: data.cloudsNoise.layers,
-          xwarp: data.cloudsNoise.xWarpFactor,
-          ywarp: data.cloudsNoise.yWarpFactor,
-          zwarp: data.cloudsNoise.zWarpFactor,
-        },
-      },
-      u_color: { value: data.cloudsColor },
-      u_opacity_tex: { value: opacityTex },
-    },
-    THREE.MeshBasicMaterial,
-  )
-  material.transparent = true
-
-  const mesh = new THREE.Mesh(geometry, material)
-  mesh.name = Globals.LG_NAME_CLOUDS
+  const tslMaterial = new CloudsTSLMaterial(convertToCloudsUniformData(data, opacityTex))
+  const mesh = new THREE.Mesh(geometry, tslMaterial.buildBakeMaterial())
   mesh.receiveShadow = true
   mesh.castShadow = true
+  mesh.name = Globals.LG_MESH_NAME_CLOUDS
   return mesh
 }
 

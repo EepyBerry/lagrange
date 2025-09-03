@@ -14,7 +14,7 @@ import { AtmosphereTSLMaterial } from '@/core/tsl/materials/atmosphere.tslmat'
 import { CloudsTSLMaterial } from '@/core/tsl/materials/clouds.tslmat'
 import { RingTSLMaterial } from '@/core/tsl/materials/ring.tslmat'
 import { idb } from '@/dexie.config'
-import { convertToPlanetUniformData } from '../models/converters/planet-data.converter'
+import { convertToCloudsUniformData, convertToPlanetUniformData } from '../models/converters/planet-data.converter'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -53,7 +53,7 @@ export function createSun(data: PlanetData) {
   const sun = new THREE.DirectionalLight(data.sunLightColor, data.sunLightIntensity)
   sun.frustumCulled = false
   sun.userData.lens = 'no-occlusion'
-  sun.name = Globals.LG_NAME_SUN
+  sun.name = Globals.LG_MESH_NAME_SUN
   sun.castShadow = true
   sun.shadow.camera.far = 1e4
   sun.shadow.mapSize.width = 4096
@@ -88,7 +88,7 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
-  mesh.name = Globals.LG_NAME_PLANET
+  mesh.name = Globals.LG_MESH_NAME_PLANET
 
   return {
     mesh,
@@ -105,36 +105,11 @@ export function createClouds(data: PlanetData, textureBuffer: Uint8Array): Cloud
   const geometry = createSphereGeometryComponent(data.planetMeshQuality, cloudsHeight)
   const opacityTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
-  const tslMaterial = new CloudsTSLMaterial({
-    flags: {
-      showWarping: data.cloudsShowWarping,
-      showDisplacement: data.cloudsShowDisplacement,
-    },
-    color: data.cloudsColor,
-    noise: data.cloudsNoise,
-    warping: {
-      layers: data.cloudsNoise.layers,
-      warpFactor: data.cloudsNoise.warpFactor,
-    },
-    displacement: {
-      params: {
-        factor: data.cloudsDisplacement.factor,
-        epsilon: data.cloudsDisplacement.epsilon,
-        multiplier: data.cloudsDisplacement.multiplier,
-      },
-      noise: {
-        frequency: data.cloudsDisplacement.frequency,
-        amplitude: data.cloudsDisplacement.amplitude,
-        lacunarity: data.cloudsDisplacement.lacunarity,
-        octaves: data.cloudsDisplacement.octaves,
-      }
-    },
-    texture: opacityTex,
-  })
+  const tslMaterial = new CloudsTSLMaterial(convertToCloudsUniformData(data, opacityTex))
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
-  mesh.name = Globals.LG_NAME_CLOUDS
+  mesh.name = Globals.LG_MESH_NAME_CLOUDS
 
   return {
     mesh,
@@ -168,7 +143,7 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): Atmos
   })
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.userData.lens = 'no-occlusion'
-  mesh.name = Globals.LG_NAME_ATMOSPHERE
+  mesh.name = Globals.LG_MESH_NAME_ATMOSPHERE
   mesh.castShadow = true
 
   return {

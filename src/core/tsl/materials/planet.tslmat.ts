@@ -282,15 +282,15 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
     // Sample height-map at 8 points around the current position
     const s00 = texNode.sample(uv().add(offset.xx)).x.toVar('s00');
-    const s10 = texNode.sample(uv().add(offset.yx)).x.toVar('s10');
-    const s20 = texNode.sample(uv().add(offset.zx)).x.toVar('s20');
-    const s01 = texNode.sample(uv().add(offset.xy)).x.toVar('s01');
-    const s21 = texNode.sample(uv().add(offset.zy)).x.toVar('s21');
-    const s02 = texNode.sample(uv().add(offset.xz)).x.toVar('s02');
-    const s12 = texNode.sample(uv().add(offset.yz)).x.toVar('s12');
+    const s01 = texNode.sample(uv().add(offset.yx)).x.toVar('s10');
+    const s02 = texNode.sample(uv().add(offset.zx)).x.toVar('s20');
+    const s10 = texNode.sample(uv().add(offset.xy)).x.toVar('s01');
+    const s12 = texNode.sample(uv().add(offset.zy)).x.toVar('s21');
+    const s20 = texNode.sample(uv().add(offset.xz)).x.toVar('s02');
+    const s21 = texNode.sample(uv().add(offset.yz)).x.toVar('s12');
     const s22 = texNode.sample(uv().add(offset.zz)).x.toVar('s22');
     // @ts-expect-error: Invalid type definitions for mat3(...) using nodes
-    const normal = sobel(mat3(s00, s10, s20, s01, uv().x, s21, s02, s12, s22), float(256.0).mul(this.uniforms.bumpStrength)).toVar('N')
+    const normal = sobel(mat3(s00, s01, s02, s10, uv().x, s12, s20, s21, s22), float(256.0).mul(this.uniforms.bumpStrength)).toVar('N')
 
     const material = new MeshBasicNodeMaterial()
     material.vertexNode = Fn(() => vec4(uv().x, uv().y, 0.0, 1.0).mul(2.0).sub(1.0))()

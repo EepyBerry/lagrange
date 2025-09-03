@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { LG_NAME_PLANET, LG_NAME_RING_ANCHOR } from '../globals'
+import { LG_MESH_NAME_PLANET, LG_MESH_NAME_RING_ANCHOR } from '../globals'
 import { damp } from 'three/src/math/MathUtils.js'
 import { type NodeMaterial, type WebGPURenderer } from 'three/webgpu'
 import { LensFlareTSLMaterial, type LensFlareData, type LensFlareUniforms } from '@/core/tsl/materials/lens-flare.tslmat'
@@ -71,8 +71,8 @@ export class LensFlareEffect {
 
     this._raycaster.setFromCamera(new THREE.Vector2(projectedPosition.x, projectedPosition.y), camera)
 
-    const planet = scene.getObjectByName(LG_NAME_PLANET)
-    const rings = scene.getObjectByName(LG_NAME_RING_ANCHOR)?.children
+    const planet = scene.getObjectByName(LG_MESH_NAME_PLANET)
+    const rings = scene.getObjectByName(LG_MESH_NAME_RING_ANCHOR)?.children
     if (planet && rings) {
       const intersects = this._raycaster.intersectObjects([planet, ...rings], false)
       this.checkTransparency(intersects)

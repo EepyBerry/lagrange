@@ -75,7 +75,7 @@ function buildSceneLighting(sceneData: EditorSceneData, data: PlanetData): void 
     data.ambLightColor,
     data.ambLightIntensity,
   )
-  ambientLight.name = Globals.LG_NAME_AMBLIGHT
+  ambientLight.name = Globals.LG_MESH_NAME_AMBLIGHT
   sceneData.scene!.add(ambientLight)
   sceneData.ambLight = ambientLight
 
@@ -106,7 +106,7 @@ function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData): void {
   sceneData.planetGroup.add(clouds.mesh!)
   sceneData.planetGroup.add(atmosphere.mesh!)
 
-  sceneData.ringAnchor.name = Globals.LG_NAME_RING_ANCHOR
+  sceneData.ringAnchor.name = Globals.LG_MESH_NAME_RING_ANCHOR
   rings.forEach((r) => sceneData.ringAnchor.add(r.mesh!))
   sceneData.planetGroup.add(sceneData.ringAnchor)
 

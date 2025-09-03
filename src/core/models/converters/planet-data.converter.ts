@@ -1,7 +1,15 @@
 import type { DataTexture } from "three";
 import type PlanetData from "../planet-data.model";
 import type { PlanetUniformData } from "@/core/tsl/materials/planet.tslmat";
+import type { CloudsUniformData } from "@/core/tsl/materials/clouds.tslmat";
 
+/**
+ * Converts editor planet data to uniform data used specifically for planet materials
+ * @param data editor planet data
+ * @param surfaceTex surface texture (optional, required only for certain materials)
+ * @param biomeTex biome texture (optional, required only for certain materials)
+ * @returns a PlanetUniformData object with the required data within
+ */
 export function convertToPlanetUniformData(data: PlanetData, surfaceTex?: DataTexture, biomeTex?: DataTexture): PlanetUniformData {
   return {
     radius: data.planetRadius,
@@ -61,5 +69,40 @@ export function convertToPlanetUniformData(data: PlanetData, surfaceTex?: DataTe
     textures: (surfaceTex && biomeTex)
       ? { surface: surfaceTex!, biomes: biomeTex! }
       : undefined
+  }
+}
+
+/**
+ * Converts editor planet data to uniform data used specifically for cloud materials
+ * @param data editor planet data
+ * @param opacityTex opacity texture
+ * @returns a CloudsUniformData object with the required data within
+ */
+export function convertToCloudsUniformData(data: PlanetData, opacityTex: DataTexture): CloudsUniformData {
+  return {
+    flags: {
+      showWarping: data.cloudsShowWarping,
+      showDisplacement: data.cloudsShowDisplacement,
+    },
+    color: data.cloudsColor,
+    noise: data.cloudsNoise,
+    warping: {
+      layers: data.cloudsNoise.layers,
+      warpFactor: data.cloudsNoise.warpFactor,
+    },
+    displacement: {
+      params: {
+        factor: data.cloudsDisplacement.factor,
+        epsilon: data.cloudsDisplacement.epsilon,
+        multiplier: data.cloudsDisplacement.multiplier,
+      },
+      noise: {
+        frequency: data.cloudsDisplacement.frequency,
+        amplitude: data.cloudsDisplacement.amplitude,
+        lacunarity: data.cloudsDisplacement.lacunarity,
+        octaves: data.cloudsDisplacement.octaves,
+      }
+    },
+    texture: opacityTex,
   }
 }

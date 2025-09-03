@@ -17,13 +17,17 @@ export const LOCALE_MAP: { [k: string]: string } = {
 export const A11Y_ANIMATE = ref(true)
 
 // Scene object names
-export const LG_NAME_PLANET = 'Planet'
-export const LG_NAME_CLOUDS = 'Clouds'
-export const LG_NAME_ATMOSPHERE = 'Atmosphere'
-export const LG_NAME_RING_ANCHOR = 'RingSystem'
-export const LG_NAME_SUN = 'Sun'
-export const LG_NAME_SUNLIGHT = 'SunLight'
-export const LG_NAME_AMBLIGHT = 'AmbientLight'
+export const LG_MESH_NAME_PLANET = 'Planet'
+export const LG_MESH_NAME_CLOUDS = 'Clouds'
+export const LG_MESH_NAME_ATMOSPHERE = 'Atmosphere'
+export const LG_MESH_NAME_RING_ANCHOR = 'RingSystem'
+export const LG_MESH_NAME_SUN = 'Sun'
+export const LG_MESH_NAME_SUNLIGHT = 'SunLight'
+export const LG_MESH_NAME_AMBLIGHT = 'AmbientLight'
+// Baking scene object names
+export const LG_MESH_NAME_PBRMAP = '_PBRMap'
+export const LG_MESH_NAME_HEIGHTMAP = '_HeightMap'
+export const LG_MESH_NAME_NORMALMAP = '_NormalMap'
 
 // Global threejs axes
 export const AXIS_X = new Vector3(1, 0, 0)

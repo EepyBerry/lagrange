@@ -199,13 +199,19 @@ export async function exportPlanetToGLTF(progressDialog: {
     await sleep(50)
     const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME)
     const bakePlanetSurfaceTex = await bakeMesh(scene, renderer, camera, renderTarget, bakePlanet, w, h)
-    if (appSettings?.bakingPixelize) bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
+    if (appSettings?.bakingPixelize) {
+       bakePlanetSurfaceTex.minFilter = THREE.NearestFilter
+       bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
+    }
 
     progressDialog.setProgress(3)
     await sleep(50)
     const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value)
     const bakePlanetPBRTex = await bakeMesh(scene, renderer, camera, renderTarget, bakePBR, w, h)
-    if (appSettings?.bakingPixelize) bakePlanetPBRTex.magFilter = THREE.NearestFilter
+    if (appSettings?.bakingPixelize) {
+      bakePlanetPBRTex.minFilter = THREE.NearestFilter
+      bakePlanetPBRTex.magFilter = THREE.NearestFilter
+    }
 
     progressDialog.setProgress(4)
     await sleep(50)
@@ -214,7 +220,10 @@ export async function exportPlanetToGLTF(progressDialog: {
 
     const bakeNormal = createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex, new THREE.Vector2(w,h))
     const bakePlanetNormalTex = await bakeMesh(scene, renderer, camera, renderTarget, bakeNormal, w, h)
-    if (appSettings?.bakingPixelize) bakePlanetNormalTex.magFilter = THREE.NearestFilter
+    if (appSettings?.bakingPixelize) {
+      bakePlanetNormalTex.minFilter = THREE.NearestFilter
+      bakePlanetNormalTex.magFilter = THREE.NearestFilter
+    }
 
     bakePlanet.material = new MeshStandardNodeMaterial({
       map: bakePlanetSurfaceTex,
@@ -226,24 +235,26 @@ export async function exportPlanetToGLTF(progressDialog: {
     bakingTargets.push({ mesh: bakePlanet, textures: [bakePlanetSurfaceTex, bakePlanetPBRTex, bakePlanetHeightTex] })
 
     // ----------------------------------- Bake clouds ----------------------------------
-    /* if (LG_PLANET_DATA.value.cloudsEnabled) {
+    if (LG_PLANET_DATA.value.cloudsEnabled) {
       progressDialog.setProgress(5)
       await sleep(50)
       const bakeClouds = createBakingClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
       const bakeCloudsTex = await bakeMesh(scene, renderer, camera, renderTarget, bakeClouds, w, h)
-      if (appSettings?.bakingPixelize) bakeCloudsTex.magFilter = THREE.NearestFilter
+      if (appSettings?.bakingPixelize) {
+        bakeCloudsTex.minFilter = THREE.NearestFilter
+        bakeCloudsTex.magFilter = THREE.NearestFilter
+      }
+      saveAs(bakeCloudsTex.image.toDataURL(), 'clouds.png')
 
-      bakeClouds.material = new THREE.MeshStandardMaterial({
+      bakeClouds.material = new MeshStandardNodeMaterial({
         map: bakeCloudsTex,
         opacity: 1.0,
-        metalness: 0.5,
-        roughness: 1.0,
         transparent: true,
       })
       bakingTargets.push({ mesh: bakeClouds, textures: [bakeCloudsTex] })
       bakePlanet.add(bakeClouds)
       bakeClouds.setRotationFromAxisAngle(bakeClouds.up, degToRad(LG_PLANET_DATA.value.cloudsRotation))
-    } */
+    }
 
     // --------------------------------- Bake ring system -------------------------------
     /* if (LG_PLANET_DATA.value.ringsEnabled) {
