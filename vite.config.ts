@@ -16,13 +16,6 @@ const vuePluginConfig: Options = {
 export default defineConfig({
   assetsInclude: ['**/*.glsl', '**/*.ico', '**/*.ttf'],
   plugins: [vue(vuePluginConfig), visualizer()],
-  css: {
-    preprocessorOptions: {
-      scss: {
-        api: 'modern-compiler',
-      },
-    },
-  },
   define: {
     'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),
   },

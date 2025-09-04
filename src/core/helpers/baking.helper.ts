@@ -2,7 +2,6 @@ import * as THREE from 'three'
 import * as Globals from '@core/globals'
 import * as ComponentHelper from '@/core/helpers/component.helper'
 
-import { createBiomeTexture, createRampTexture } from '@core/helpers/texture.helper'
 import type PlanetData from '@core/models/planet-data.model'
 import { bufferToTexture } from '@/core/utils/render-utils'
 import type { WebGPURenderer } from 'three/webgpu'

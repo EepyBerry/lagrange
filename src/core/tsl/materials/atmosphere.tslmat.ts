@@ -83,14 +83,14 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
 
   buildMaterial(): NodeMaterial {
     const fragmentNode = Fn(([posGeo, posWorld]: [UniformVector3Node, UniformVector3Node]) => {
-      // ---------------- VERTEX STAGE ----------------
+      // calculate rays
       const clipSpacePos = cameraProjectionMatrix.mul(modelViewMatrix).mul(vec4(posGeo, 1.0)).toVar('clipSpacePos')
       const ndc = div(clipSpacePos.xyz, clipSpacePos.w).toVar('ndc')
       const clipRay = vec4(ndc.x, ndc.y, -1.0, 1.0).toVar('clipRay')
       const inverseRay = cameraProjectionMatrixInverse.mul(clipRay).toVar('inverseRay')
       const viewRay = vec3(inverseRay.x, inverseRay.y, -1.0).toVar('viewRay')
 
-      // --------------- FRAGMENT STAGE ---------------
+      // calculate directions & e
       const worldRay = vec4(inverseMat4(cameraViewMatrix).mul(vec4(viewRay, 0.0))).toVar('worldRay')
       const rayDir = vec3(normalize(worldRay.xyz)).toVar('rayDir')
       const eye = vec3(posWorld.xyz).toVar('eye')

@@ -1,7 +1,7 @@
 import { DoubleSide, MeshBasicNodeMaterial, MeshStandardNodeMaterial, Node, VaryingNode, type DataTexture, type TextureNode } from 'three/webgpu'
 import type { UniformNumberNode } from '../types'
 import type { TSLMaterial } from './tsl-material'
-import { float, Fn, length, positionLocal, texture, uniform, vec2, type ShaderNodeObject } from 'three/tsl'
+import { float, Fn, length, positionLocal, texture, uniform, uv, vec2, vec4, type ShaderNodeObject } from 'three/tsl'
 
 export type RingUniformData = {
   innerRadius: number
@@ -62,6 +62,7 @@ export class RingTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, Ri
 
     // init material & set outputs
     const material = new MeshBasicNodeMaterial()
+    material.vertexNode = Fn(() => vec4(uv().x, uv().y, 0.0, 1.0).mul(2.0).sub(1.0))()
     material.fragmentNode = mainNode(positionLocal)
     material.transparent = false
     material.side = DoubleSide
