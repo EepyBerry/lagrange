@@ -126,11 +126,7 @@
         </ParameterSlider>
         <ParameterDivider />
         <!-- prettier-ignore-attribute -->
-        <ParameterColorRamp
-          :key="LG_PLANET_DATA.planetName"
-          v-model="LG_PLANET_DATA.planetSurfaceColorRamp"
-          mode="rgb"
-        >
+        <ParameterColorRamp :key="LG_PLANET_DATA.planetName" v-model="LG_PLANET_DATA.planetSurfaceColorRamp" mode="rgb">
           {{ $t('editor.general.noise_rgbramp') }}
         </ParameterColorRamp>
       </template>

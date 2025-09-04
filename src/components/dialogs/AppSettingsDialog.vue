@@ -99,7 +99,7 @@
             <div class="settings-editor">
               <ParameterGrid>
                 <ParameterRadio>
-                  <!-- eslint-disable-next-line vue/no-v-html --> 
+                  <!-- eslint-disable-next-line vue/no-v-html -->
                   <template #title><span v-html="$t('dialog.settings.editor_rendering_backend')"></span>:</template>
                   <template #options>
                     <ParameterRadioOption
@@ -108,7 +108,7 @@
                       name="rendering-backend-select"
                       :value="'webgl'"
                       :button-aria-label="$t('a11y.editor_rendering_backend_webgl')"
-                      >
+                    >
                       <iconify-icon class="icon" icon="simple-icons:webgl" width="2rem" aria-hidden="true" />
                       {{ $t('dialog.settings.editor_rendering_backend_webgl') }}
                     </ParameterRadioOption>
@@ -119,7 +119,7 @@
                       :value="'webgpu'"
                       :button-aria-label="$t('a11y.editor_rendering_backend_webgpu')"
                       :disabled="!WebGPU.isAvailable()"
-                      >
+                    >
                       <iconify-icon class="icon" icon="simple-icons:webgpu" width="1.5rem" aria-hidden="true" />
                       {{ $t('dialog.settings.editor_rendering_backend_webgpu') }}
                     </ParameterRadioOption>
@@ -127,7 +127,7 @@
                 </ParameterRadio>
                 <NotificationElement :type="appSettings.renderingBackend === 'webgl' ? 'info' : 'wip'">
                   {{
-                    appSettings.renderingBackend === 'webgl' 
+                    appSettings.renderingBackend === 'webgl'
                       ? $t('dialog.settings.editor_rendering_backend_webgl_notification')
                       : $t('dialog.settings.editor_rendering_backend_webgpu_notification')
                   }}

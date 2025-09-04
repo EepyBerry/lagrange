@@ -43,7 +43,7 @@ export const applyBump = /*@__PURE__*/ Fn(
     const bumpN = vec3(normalize(cross(dxPos.sub(hPos), dyPos.sub(hPos)))).toVar('bumpN')
     return normalize(mix(normalLocal, bumpN, i_strength))
   },
-)/* .setLayout({
+) /* .setLayout({
   name: 'LG_BUMP_applyBump',
   type: 'vec3',
   inputs: [

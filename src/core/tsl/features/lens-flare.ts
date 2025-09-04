@@ -129,14 +129,7 @@ export const glare = /*@__PURE__*/ Fn(
     const ang = float(atan(main.y, main.x).mul(i_starPoints)).toVar('ang')
     const dist = float(length(main)).toVar('dist')
     dist.assign(pow(dist, 0.9))
-    const f0 = float(
-      div(
-        1.0,
-        length(i_origUv.sub(i_mouse))
-          .mul(div(1.0, i_size).mul(16.0))
-          .add(0.2),
-      ),
-    ).toVar('f0')
+    const f0 = float(div(1.0, length(i_origUv.sub(i_mouse)).mul(div(1.0, i_size).mul(16.0)).add(0.2))).toVar('f0')
 
     return f0.add(f0.mul(sin(ang).mul(0.2).add(0.3)))
   },
@@ -269,9 +262,9 @@ export const circle = /*@__PURE__*/ Fn(
       max(sub(0.04, pow(length(i_p.add(i_pos.mul(i_dist))), i_size.mul(i_streakScale))), 0.0).mul(10),
     ).toVar('c')
     const c1 = float(max(sub(0.001, pow(l.sub(0.3), 1 / 40)).add(sin(l.mul(20))), 0.0).mul(3)).toVar('c1')
-    const c2 = float(
-      max(div(0.09, pow(length(i_p.sub(i_pos.mul(i_dist).div(0.5))).mul(1), 0.95)), 0.0).div(20),
-    ).toVar('c2')
+    const c2 = float(max(div(0.09, pow(length(i_p.sub(i_pos.mul(i_dist).div(0.5))).mul(1), 0.95)), 0.0).div(20)).toVar(
+      'c2',
+    )
     const s = float(
       max(
         sub(0.02, pow(regShape(i_p.mul(5).add(i_pos.mul(i_dist).mul(5)).add(i_decay), int(6), i_streakScale), 1)),

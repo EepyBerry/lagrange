@@ -1,9 +1,38 @@
-import { Color, DataTexture, MeshBasicNodeMaterial, MeshStandardNodeMaterial, Node, TextureNode, UniformArrayNode, Vector3, Vector4 } from 'three/webgpu'
-import { Fn, int, positionLocal, texture, uniform, uniformArray, uv, vec2, vec3, vec4, type ShaderNodeObject } from 'three/tsl'
+import {
+  Color,
+  DataTexture,
+  MeshBasicNodeMaterial,
+  MeshStandardNodeMaterial,
+  Node,
+  TextureNode,
+  UniformArrayNode,
+  Vector3,
+  Vector4,
+} from 'three/webgpu'
+import {
+  Fn,
+  int,
+  positionLocal,
+  texture,
+  uniform,
+  uniformArray,
+  uv,
+  vec2,
+  vec3,
+  vec4,
+  type ShaderNodeObject,
+} from 'three/tsl'
 import { type TSLMaterial } from './tsl-material'
 import { displace, warp } from '../features/lwd'
 import { fbm3 } from '../noise/fbm3'
-import type { DisplacementData, NoiseData, UniformColorNode, UniformVector3Node, UniformVector4Node, WarpingData } from '../types'
+import type {
+  DisplacementData,
+  NoiseData,
+  UniformColorNode,
+  UniformVector3Node,
+  UniformVector4Node,
+  WarpingData,
+} from '../types'
 
 export type CloudsUniformData = {
   flags: {
@@ -38,12 +67,7 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       flags: uniformArray([+data.flags.showWarping, +data.flags.showDisplacement], 'int'),
       color: uniform(data.color),
       noise: uniform(
-        new Vector4(
-          data.noise.frequency,
-          data.noise.amplitude,
-          data.noise.lacunarity,
-          data.noise.octaves,
-        ),
+        new Vector4(data.noise.frequency, data.noise.amplitude, data.noise.lacunarity, data.noise.octaves),
         'vec4',
       ),
       warping: uniform(
@@ -149,4 +173,4 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     opacity.assign(this.uniforms.texture.sample(vec2(opacity.x, 0.5)).xyz)
     return opacity
   }
-} 
+}

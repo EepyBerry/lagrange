@@ -41,7 +41,13 @@ let watchForPlanetUpdates = false
 export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
   await sleep(50)
   enableEditorRendering = true
-  LG_SCENE_DATA = await SceneHelper.buildEditorScene(LG_PLANET_DATA.value, w, h, pixelRatio, EditorSceneCreationMode.EDITOR)
+  LG_SCENE_DATA = await SceneHelper.buildEditorScene(
+    LG_PLANET_DATA.value,
+    w,
+    h,
+    pixelRatio,
+    EditorSceneCreationMode.EDITOR,
+  )
   UniformHelper.initUniformUpdateMap(LG_SCENE_DATA, LG_PLANET_DATA.value)
   ComponentHelper.createOrbitControls(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
 
@@ -151,7 +157,9 @@ export async function resetPlanet() {
 export async function takePlanetScreenshot() {
   try {
     await LG_SCENE_DATA.renderer.render(LG_SCENE_DATA.scene, LG_SCENE_DATA.camera)
-    LG_SCENE_DATA.renderer.domElement.toBlob(blob => saveAs(blob as Blob, `${LG_PLANET_DATA.value.planetName.replaceAll(' ', '_')}-${new Date().toISOString()}.png`))
+    LG_SCENE_DATA.renderer.domElement.toBlob((blob) =>
+      saveAs(blob as Blob, `${LG_PLANET_DATA.value.planetName.replaceAll(' ', '_')}-${new Date().toISOString()}.png`),
+    )
   } catch (err) {
     console.error('<Lagrange> Could not export screenshot!', err)
     EventBus.sendToastEvent('warn', 'toast.screenshot_failure', 3000)
@@ -178,17 +186,21 @@ export async function exportPlanetToGLTF(progressDialog: {
   const appSettings = await idb.settings.limit(1).first()
   const w = appSettings?.bakingResolution ?? 2048,
     h = appSettings?.bakingResolution ?? 2048
-  const { scene, renderer, camera, renderTarget } = await BakingHelper.createBakingScene(w/h)
+  const { scene, renderer, camera, renderTarget } = await BakingHelper.createBakingScene(w / h)
 
   try {
     // ----------------------------------- Bake planet ----------------------------------
     progressDialog.setProgress(2)
     await sleep(50)
-    const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value, LG_SCENE_DATA.planet.surfaceTexture!, LG_SCENE_DATA.planet.biomesTexture!)
+    const bakePlanet = createBakingPlanet(
+      LG_PLANET_DATA.value,
+      LG_SCENE_DATA.planet.surfaceTexture!,
+      LG_SCENE_DATA.planet.biomesTexture!,
+    )
     const bakePlanetSurfaceTex = await bakeMesh(scene, renderer, camera, renderTarget, bakePlanet, w, h)
     if (appSettings?.bakingPixelize) {
-       bakePlanetSurfaceTex.minFilter = THREE.NearestFilter
-       bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
+      bakePlanetSurfaceTex.minFilter = THREE.NearestFilter
+      bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
     }
 
     progressDialog.setProgress(3)
@@ -205,7 +217,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     const bakeHeight = createBakingHeightMap(LG_PLANET_DATA.value)
     const bakePlanetHeightTex = await bakeMesh(scene, renderer, camera, renderTarget, bakeHeight, w, h)
 
-    const bakeNormal = createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex, new THREE.Vector2(w,h))
+    const bakeNormal = createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex, new THREE.Vector2(w, h))
     const bakePlanetNormalTex = await bakeMesh(scene, renderer, camera, renderTarget, bakeNormal, w, h)
     if (appSettings?.bakingPixelize) {
       bakePlanetNormalTex.minFilter = THREE.NearestFilter
@@ -276,7 +288,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     // ---------------------------- Export meshes and clean up ---------------------------
     progressDialog.setProgress(7)
     await sleep(50)
-    
+
     bakePlanet.scale.setScalar(LG_PLANET_DATA.value.planetRadius)
     bakePlanet.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt))
     bakePlanet.rotateOnAxis(bakePlanet.up, degToRad(LG_PLANET_DATA.value.planetRotation))

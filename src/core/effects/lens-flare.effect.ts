@@ -2,7 +2,11 @@ import * as THREE from 'three'
 import { LG_MESH_NAME_PLANET, LG_MESH_NAME_RING_ANCHOR } from '../globals'
 import { damp } from 'three/src/math/MathUtils.js'
 import { type NodeMaterial, type WebGPURenderer } from 'three/webgpu'
-import { LensFlareTSLMaterial, type LensFlareData, type LensFlareUniforms } from '@/core/tsl/materials/lens-flare.tslmat'
+import {
+  LensFlareTSLMaterial,
+  type LensFlareData,
+  type LensFlareUniforms,
+} from '@/core/tsl/materials/lens-flare.tslmat'
 
 /**
  * Custom class that contains all the processing required to create lens flares.
@@ -77,7 +81,12 @@ export class LensFlareEffect {
       const intersects = this._raycaster.intersectObjects([planet, ...rings], false)
       this.checkTransparency(intersects)
     }
-    this._tslMaterial.uniforms.opacity.value = damp(this._tslMaterial.uniforms.opacity.value, this._internalOpacity, 10, dt)
+    this._tslMaterial.uniforms.opacity.value = damp(
+      this._tslMaterial.uniforms.opacity.value,
+      this._internalOpacity,
+      10,
+      dt,
+    )
   }
 
   public updatePosition(lensPosition: THREE.Vector3) {
@@ -89,7 +98,7 @@ export class LensFlareEffect {
   public get mesh(): THREE.Mesh {
     return this._mesh
   }
-  
+
   public get uniforms(): LensFlareUniforms {
     return this._uniforms
   }

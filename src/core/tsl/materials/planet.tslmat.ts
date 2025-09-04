@@ -35,7 +35,14 @@ import {
 } from 'three/tsl'
 import { type TSLMaterial } from './tsl-material'
 import { displace, layer, warp } from '../features/lwd'
-import type { DisplacementData, NoiseData, UniformNumberNode, UniformVector3Node, UniformVector4Node, WarpingData } from '../types'
+import type {
+  DisplacementData,
+  NoiseData,
+  UniformNumberNode,
+  UniformVector3Node,
+  UniformVector4Node,
+  WarpingData,
+} from '../types'
 import { applyBump } from '../features/bump'
 import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes'
 import { sobel } from '../utils/sobel.tlsutil'
@@ -101,12 +108,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       radius: uniform(data.radius, 'float'),
       bumpStrength: uniform(data.bumpStrength, 'float'),
       flags: uniformArray(
-        [
-          +data.flags.showWarping,
-          +data.flags.showDisplacement,
-          +data.flags.showBumps,
-          +data.flags.enableBiomes,
-        ],
+        [+data.flags.showWarping, +data.flags.showDisplacement, +data.flags.showBumps, +data.flags.enableBiomes],
         'int',
       ),
       pbr: uniformArray([
@@ -117,12 +119,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
         data.pbr.groundMetalness,
       ]),
       noise: uniform(
-        new Vector4(
-          data.noise.frequency,
-          data.noise.amplitude,
-          data.noise.lacunarity,
-          data.noise.octaves,
-        ),
+        new Vector4(data.noise.frequency, data.noise.amplitude, data.noise.lacunarity, data.noise.octaves),
         'vec4',
       ),
       warping: uniform(
@@ -175,17 +172,15 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
           'vec4',
         ),
       },
-      textures: data.textures
-        ? [texture(data.textures.surface), texture(data.textures.biomes)]
-        : undefined,
+      textures: data.textures ? [texture(data.textures.surface), texture(data.textures.biomes)] : undefined,
     }
   }
 
   buildMaterial(): MeshStandardNodeMaterial {
     if (this.uniforms.textures === undefined) {
-      throw new Error("Cannot build material with missing uniform: textures")
+      throw new Error('Cannot build material with missing uniform: textures')
     }
-    
+
     // XYZ Warping + displacement
     const vPos = this.applyXYZTransformations(positionLocal)
 
@@ -208,7 +203,9 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     // Init material & set outputs
     const material = new MeshStandardNodeMaterial()
     material.colorNode = vec4(colour, 1.0)
-    material.normalNode = transformNormalToView(mix(normalLocal, bump, FLAG_LAND.mul(this.uniforms.flags.element(int(2)))))
+    material.normalNode = transformNormalToView(
+      mix(normalLocal, bump, FLAG_LAND.mul(this.uniforms.flags.element(int(2)))),
+    )
     material.roughnessNode = mix(this.uniforms.pbr.element(int(1)), this.uniforms.pbr.element(int(3)), FLAG_LAND)
     material.metalnessNode = mix(this.uniforms.pbr.element(int(2)), this.uniforms.pbr.element(int(4)), FLAG_LAND)
     return material
@@ -216,7 +213,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
   buildSurfaceBakeMaterial(): MeshBasicNodeMaterial {
     if (this.uniforms.textures === undefined) {
-      throw new Error("Cannot build material with missing uniform: textures")
+      throw new Error('Cannot build material with missing uniform: textures')
     }
 
     // XYZ Warping + displacement
@@ -278,19 +275,20 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
   buildNormalMapBakeMaterial(heightMap: Texture, resolution: Vector2): MeshBasicNodeMaterial {
     const texNode = texture(heightMap)
-    const offset = vec3(-1.0/resolution.x, 0.0, 1.0/resolution.y).toVar('offset');
+    const offset = vec3(-1.0 / resolution.x, 0.0, 1.0 / resolution.y).toVar('offset')
 
     // Sample height-map at 8 points around the current position
-    const s00 = texNode.sample(uv().add(offset.xx)).x.toVar('s00');
-    const s01 = texNode.sample(uv().add(offset.yx)).x.toVar('s10');
-    const s02 = texNode.sample(uv().add(offset.zx)).x.toVar('s20');
-    const s10 = texNode.sample(uv().add(offset.xy)).x.toVar('s01');
-    const s12 = texNode.sample(uv().add(offset.zy)).x.toVar('s21');
-    const s20 = texNode.sample(uv().add(offset.xz)).x.toVar('s02');
-    const s21 = texNode.sample(uv().add(offset.yz)).x.toVar('s12');
-    const s22 = texNode.sample(uv().add(offset.zz)).x.toVar('s22');
+    const s00 = texNode.sample(uv().add(offset.xx)).x.toVar('s00')
+    const s01 = texNode.sample(uv().add(offset.yx)).x.toVar('s10')
+    const s02 = texNode.sample(uv().add(offset.zx)).x.toVar('s20')
+    const s10 = texNode.sample(uv().add(offset.xy)).x.toVar('s01')
+    const s12 = texNode.sample(uv().add(offset.zy)).x.toVar('s21')
+    const s20 = texNode.sample(uv().add(offset.xz)).x.toVar('s02')
+    const s21 = texNode.sample(uv().add(offset.yz)).x.toVar('s12')
+    const s22 = texNode.sample(uv().add(offset.zz)).x.toVar('s22')
     // @ts-expect-error: Invalid type definitions for mat3(...) using nodes
-    const normal = sobel(mat3(s00, s01, s02, s10, uv().x, s12, s20, s21, s22), float(256.0).mul(this.uniforms.bumpStrength)).toVar('N')
+    const sobelMat = mat3(s00, s01, s02, s10, uv().x, s12, s20, s21, s22).toVar('sobelMat')
+    const normal = sobel(sobelMat, float(256.0).mul(this.uniforms.bumpStrength)).toVar('N')
 
     const material = new MeshBasicNodeMaterial()
     material.vertexNode = Fn(() => vec4(uv().x, uv().y, 0.0, 1.0).mul(2.0).sub(1.0))()
@@ -311,7 +309,12 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     return vPos
   }
 
-  private renderBiomes(colour: ShaderNodeObject<Node>, vPos: ShaderNodeObject<Node>, heightLimit: ShaderNodeObject<Node>, FLAG_BIOMES: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
+  private renderBiomes(
+    colour: ShaderNodeObject<Node>,
+    vPos: ShaderNodeObject<Node>,
+    heightLimit: ShaderNodeObject<Node>,
+    FLAG_BIOMES: ShaderNodeObject<Node>,
+  ): ShaderNodeObject<Node> {
     const tHeight = float(
       mix(
         0.0,

@@ -1,25 +1,24 @@
 import { Fn, type ShaderNodeObject, float, int, mat4 } from 'three/tsl'
 import type { Node } from 'three/webgpu'
 
-
 export const inverseMat4 = /*@__PURE__*/ Fn(([i_matrix]: [ShaderNodeObject<Node>]) => {
   const m = mat4(i_matrix).toVar('m')
-  const a00 = float(getMatrixElement(m,0,0)).toVar('a00')
-  const a01 = float(getMatrixElement(m,0,1)).toVar('a01')
-  const a02 = float(getMatrixElement(m,0,2)).toVar('a02')
-  const a03 = float(getMatrixElement(m,0,3)).toVar('a03')
-  const a10 = float(getMatrixElement(m,1,0)).toVar('a10')
-  const a11 = float(getMatrixElement(m,1,1)).toVar('a11')
-  const a12 = float(getMatrixElement(m,1,2)).toVar('a12')
-  const a13 = float(getMatrixElement(m,1,3)).toVar('a13')
-  const a20 = float(getMatrixElement(m,2,0)).toVar('a20')
-  const a21 = float(getMatrixElement(m,2,1)).toVar('a21')
-  const a22 = float(getMatrixElement(m,2,2)).toVar('a22')
-  const a23 = float(getMatrixElement(m,2,3)).toVar('a23')
-  const a30 = float(getMatrixElement(m,3,0)).toVar('a30')
-  const a31 = float(getMatrixElement(m,3,1)).toVar('a31')
-  const a32 = float(getMatrixElement(m,3,2)).toVar('a32')
-  const a33 = float(getMatrixElement(m,3,3)).toVar('a33')
+  const a00 = float(getMatrixElement(m, 0, 0)).toVar('a00')
+  const a01 = float(getMatrixElement(m, 0, 1)).toVar('a01')
+  const a02 = float(getMatrixElement(m, 0, 2)).toVar('a02')
+  const a03 = float(getMatrixElement(m, 0, 3)).toVar('a03')
+  const a10 = float(getMatrixElement(m, 1, 0)).toVar('a10')
+  const a11 = float(getMatrixElement(m, 1, 1)).toVar('a11')
+  const a12 = float(getMatrixElement(m, 1, 2)).toVar('a12')
+  const a13 = float(getMatrixElement(m, 1, 3)).toVar('a13')
+  const a20 = float(getMatrixElement(m, 2, 0)).toVar('a20')
+  const a21 = float(getMatrixElement(m, 2, 1)).toVar('a21')
+  const a22 = float(getMatrixElement(m, 2, 2)).toVar('a22')
+  const a23 = float(getMatrixElement(m, 2, 3)).toVar('a23')
+  const a30 = float(getMatrixElement(m, 3, 0)).toVar('a30')
+  const a31 = float(getMatrixElement(m, 3, 1)).toVar('a31')
+  const a32 = float(getMatrixElement(m, 3, 2)).toVar('a32')
+  const a33 = float(getMatrixElement(m, 3, 3)).toVar('a33')
 
   const b00 = float(a00.mul(a11).sub(a01.mul(a10))).toVar('b00')
   const b01 = float(a00.mul(a12).sub(a02.mul(a10))).toVar('b01')
@@ -66,7 +65,6 @@ export const inverseMat4 = /*@__PURE__*/ Fn(([i_matrix]: [ShaderNodeObject<Node>
   inputs: [{ name: 'i_matrix', type: 'mat4' }],
   type: 'mat4',
 })
-
 
 export function getMatrixElement(matrix: ShaderNodeObject<Node>, x: number, y: number): ShaderNodeObject<Node> {
   return matrix.element(int(x)).element(int(y))

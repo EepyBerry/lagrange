@@ -1,21 +1,6 @@
 // Three.js Transpiler r176
 
-import {
-  float,
-  vec4,
-  sub,
-  mat4,
-  Fn,
-  vec3,
-  sin,
-  cos,
-  mat3,
-  dot,
-  type ShaderNodeObject,
-  If,
-  add,
-  pow,
-} from 'three/tsl'
+import { float, vec4, sub, mat4, Fn, vec3, sin, cos, mat3, dot, type ShaderNodeObject, If, add, pow } from 'three/tsl'
 import type { Node } from 'three/webgpu'
 
 export const darken = /*@__PURE__*/ Fn(([i_color, i_factor]: ShaderNodeObject<Node>[]) => {

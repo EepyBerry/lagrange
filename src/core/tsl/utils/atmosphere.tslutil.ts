@@ -35,7 +35,7 @@ export const rayVsSphere = /*@__PURE__*/ Fn(([i_position, i_direction, i_r]: Sha
   const c = float(dot(i_position, i_position).sub(i_r.mul(i_r))).toVar('c')
   const d = float(b.mul(b).sub(c)).toVar('d')
   If(d.lessThan(0.0), () => vec2(MAX, float(MAX).negate()))
-  
+
   d.assign(sqrt(d))
   return vec2(b.negate().sub(d), b.negate().add(d))
 }).setLayout({
@@ -44,8 +44,8 @@ export const rayVsSphere = /*@__PURE__*/ Fn(([i_position, i_direction, i_r]: Sha
   inputs: [
     { name: 'i_position', type: 'vec3' },
     { name: 'i_direction', type: 'vec3' },
-    { name: 'i_r', type: 'float' }
-  ]
+    { name: 'i_r', type: 'float' },
+  ],
 })
 
 /**
@@ -71,8 +71,8 @@ export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<N
   inputs: [
     { name: 'i_g', type: 'float' },
     { name: 'i_c', type: 'float' },
-    { name: 'i_cc', type: 'float' }
-  ]
+    { name: 'i_cc', type: 'float' },
+  ],
 })
 
 /**
@@ -85,9 +85,7 @@ export const computeRayleigh = /*@__PURE__*/ Fn(([i_cc]: ShaderNodeObject<Node>[
 }).setLayout({
   name: 'LG_ATMOS_computeRayleigh',
   type: 'float',
-  inputs: [
-    { name: 'i_cc', type: 'float' }
-  ]
+  inputs: [{ name: 'i_cc', type: 'float' }],
 })
 
 export const computeDensity = /*@__PURE__*/ Fn(
@@ -119,8 +117,8 @@ export const computeDensity = /*@__PURE__*/ Fn(
     { name: 'i_p', type: 'vec3' },
     { name: 'i_ph', type: 'float' },
     { name: 'i_surfaceRadius', type: 'float' },
-    { name: 'i_density', type: 'float' }
-  ]
+    { name: 'i_density', type: 'float' },
+  ],
 })
 
 export const optic = /*@__PURE__*/ Fn(
@@ -151,8 +149,8 @@ export const optic = /*@__PURE__*/ Fn(
     { name: 'i_q', type: 'vec3' },
     { name: 'i_ph', type: 'float' },
     { name: 'i_surfaceRadius', type: 'float' },
-    { name: 'i_density', type: 'float' }
-  ]
+    { name: 'i_density', type: 'float' },
+  ],
 })
 
 export const applyInScatter = /*@__PURE__*/ Fn(
@@ -231,6 +229,6 @@ export const applyInScatter = /*@__PURE__*/ Fn(
     { name: 'i_e', type: 'vec2' },
     { name: 'i_lightDir', type: 'vec3' },
     { name: 'i_lightIntensity', type: 'float' },
-    { name: 'i_uniforms', type: 'vec3' }
-  ]
+    { name: 'i_uniforms', type: 'vec3' },
+  ],
 })

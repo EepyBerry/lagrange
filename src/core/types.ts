@@ -20,10 +20,12 @@ import type { LensFlareUniforms } from '@core/tsl/materials/lens-flare.tslmat'
 // ---------------------------------- Editor types ----------------------------------
 export type EditorMessageLevel = 'success' | 'info' | 'warn' | 'wip'
 export enum EditorSceneCreationMode {
-  EDITOR, PREVIEW
+  EDITOR,
+  PREVIEW,
 }
 export enum EditorBackendType {
-  WEBGL, WEBGPU
+  WEBGL,
+  WEBGPU,
 }
 
 // ---------------------------------- Shader loader ---------------------------------

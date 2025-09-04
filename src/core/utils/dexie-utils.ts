@@ -39,7 +39,7 @@ export async function injectMissingSettings(settings: IDBSettings): Promise<void
     locale: settings.locale ?? (navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US'),
     font: settings.font ?? 'default',
     showInitDialog: settings.showInitDialog ?? true,
-    // rendering 
+    // rendering
     renderingBackend: settings.renderingBackend ?? 'webgl',
     bakingResolution: settings.bakingResolution ?? 2048,
     bakingPixelize: settings.bakingPixelize ?? false,
@@ -54,7 +54,7 @@ export async function injectMissingSettings(settings: IDBSettings): Promise<void
 
 export async function setRenderingBackendFallback(settings: IDBSettings) {
   idb.settings.update(settings.id, {
-    renderingBackend: 'webgl'
+    renderingBackend: 'webgl',
   })
 }
 

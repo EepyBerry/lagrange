@@ -12,14 +12,15 @@ export const computeTemperature = /*@__PURE__*/ Fn(
     const adjustedTy = float(smoothstep(1.0, FLAG_POLAR.negate(), ty)).toVar()
     const tHeight = float(mix(adjustedTy, 1.0, FLAG_NOISE)).toVar()
     return tHeight.mul(fbm3(i_position, i_noiseparams))
-}).setLayout({
+  },
+).setLayout({
   name: 'LG_BIOME_computeTemperature',
   type: 'float',
   inputs: [
     { name: 'position', type: 'vec3' },
     { name: 'noise', type: 'vec4' },
     { name: 'mode', type: 'float' },
-  ]
+  ],
 })
 
 export const computeHumidity = /*@__PURE__*/ Fn(
@@ -39,7 +40,7 @@ export const computeHumidity = /*@__PURE__*/ Fn(
     { name: 'position', type: 'vec3' },
     { name: 'noise', type: 'vec4' },
     { name: 'mode', type: 'float' },
-  ]
+  ],
 })
 
 // TODO: add setLayout when feature is ready in TSL
@@ -52,7 +53,8 @@ export const sampleBiomeTexture = /*@__PURE__*/ Fn(
   ]) => {
     const texel = vec4(i_tex.sample(vec2(i_humidity, i_temperature))).toVar('texel')
     return mix(i_color, texel.xyz, texel.w)
-})/*.setLayout({
+  },
+) /*.setLayout({
   name: 'LG_BIOME_sampleBiomeTexture',
   type: 'float',
   inputs: [

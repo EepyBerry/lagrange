@@ -119,7 +119,7 @@ export function alphaToGrayscale(alpha: number, full = false): string {
  * Converts a THREE.Color object to a RawRGBA object
  * @param color the color
  * @param a alpha value (0-1)
- * @returns 
+ * @returns
  */
 export function toRawRGBA(color: Color, a: number): RawRGBA {
   return { r: color.r, g: color.g, b: color.b, a }

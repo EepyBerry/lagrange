@@ -8,7 +8,7 @@ export const mod289f = /*@__PURE__*/ Fn(([i_value]: [UniformNumberNode]) => {
 }).setLayout({
   name: 'LG_NOISE_mod289f',
   type: 'float',
-  inputs: [{ name: 'i_value', type: 'float' }]
+  inputs: [{ name: 'i_value', type: 'float' }],
 })
 
 // X mod 289 operation, vec4 style
@@ -17,7 +17,7 @@ export const mod289v = /*@__PURE__*/ Fn(([i_vec]: [UniformVector3Node]) => {
 }).setLayout({
   name: 'LG_NOISE_mod289v',
   type: 'vec4',
-  inputs: [{ name: 'i_vec', type: 'vec4' }]
+  inputs: [{ name: 'i_vec', type: 'vec4' }],
 })
 
 // Permutation function
@@ -26,7 +26,7 @@ export const perm = /*@__PURE__*/ Fn(([i_vec]: [UniformVector3Node]) => {
 }).setLayout({
   name: 'LG_NOISE_perm',
   type: 'vec4',
-  inputs: [{ name: 'i_vec', type: 'vec4' }]
+  inputs: [{ name: 'i_vec', type: 'vec4' }],
 })
 
 // 3D fractal Brownian motion - noise function
@@ -53,7 +53,7 @@ export const noise3 = /*@__PURE__*/ Fn(([i_point]: [UniformVector3Node]) => {
 }).setLayout({
   name: 'LG_NOISE_noise3',
   type: 'float',
-  inputs: [{ name: 'i_point', type: 'vec3' }]
+  inputs: [{ name: 'i_point', type: 'vec3' }],
 })
 
 export const fbm3 = /*@__PURE__*/ Fn(([i_point, i_noise]: [VaryingNode, UniformVector4Node]) => {
@@ -74,6 +74,6 @@ export const fbm3 = /*@__PURE__*/ Fn(([i_point, i_noise]: [VaryingNode, UniformV
   type: 'float',
   inputs: [
     { name: 'i_point', type: 'vec3' },
-    { name: 'i_noise', type: 'vec4' }
-  ]
+    { name: 'i_noise', type: 'vec4' },
+  ],
 })

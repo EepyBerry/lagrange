@@ -22,7 +22,7 @@ interface IDBSettings {
   theme: string
   font: string
   showInitDialog?: boolean
-  renderingBackend: 'webgl'|'webgpu'
+  renderingBackend: 'webgl' | 'webgpu'
   bakingResolution?: number
   bakingPixelize?: boolean
   enableEffects?: boolean

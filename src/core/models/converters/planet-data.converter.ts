@@ -1,9 +1,9 @@
-import type { DataTexture } from "three";
-import type PlanetData from "../planet-data.model";
-import type { PlanetUniformData } from "@/core/tsl/materials/planet.tslmat";
-import type { CloudsUniformData } from "@/core/tsl/materials/clouds.tslmat";
-import type { RingUniformData } from "@/core/tsl/materials/ring.tslmat";
-import type { RingParameters } from "../ring-parameters.model";
+import type { DataTexture } from 'three'
+import type PlanetData from '../planet-data.model'
+import type { PlanetUniformData } from '@/core/tsl/materials/planet.tslmat'
+import type { CloudsUniformData } from '@/core/tsl/materials/clouds.tslmat'
+import type { RingUniformData } from '@/core/tsl/materials/ring.tslmat'
+import type { RingParameters } from '../ring-parameters.model'
 
 /**
  * Converts editor planet data to uniform data used specifically for planet materials
@@ -12,7 +12,11 @@ import type { RingParameters } from "../ring-parameters.model";
  * @param biomeTex biome texture (optional, required only for certain materials)
  * @returns a PlanetUniformData object with the required data within
  */
-export function convertToPlanetUniformData(data: PlanetData, surfaceTex?: DataTexture, biomeTex?: DataTexture): PlanetUniformData {
+export function convertToPlanetUniformData(
+  data: PlanetData,
+  surfaceTex?: DataTexture,
+  biomeTex?: DataTexture,
+): PlanetUniformData {
   return {
     radius: data.planetRadius,
     bumpStrength: data.planetSurfaceBumpStrength,
@@ -20,14 +24,14 @@ export function convertToPlanetUniformData(data: PlanetData, surfaceTex?: DataTe
       showWarping: data.planetSurfaceShowWarping,
       showDisplacement: data.planetSurfaceShowDisplacement,
       showBumps: data.planetSurfaceShowBumps,
-      enableBiomes: data.biomesEnabled
+      enableBiomes: data.biomesEnabled,
     },
     pbr: {
       waterLevel: data.planetWaterLevel,
       waterRoughness: data.planetWaterRoughness,
       waterMetalness: data.planetWaterMetalness,
       groundRoughness: data.planetGroundRoughness,
-      groundMetalness: data.planetGroundMetalness
+      groundMetalness: data.planetGroundMetalness,
     },
     noise: {
       frequency: data.planetSurfaceNoise.frequency,
@@ -37,20 +41,20 @@ export function convertToPlanetUniformData(data: PlanetData, surfaceTex?: DataTe
     },
     warping: {
       layers: data.planetSurfaceNoise.layers,
-      warpFactor: data.planetSurfaceNoise.warpFactor
+      warpFactor: data.planetSurfaceNoise.warpFactor,
     },
     displacement: {
       params: {
         factor: data.planetSurfaceDisplacement.factor,
         epsilon: data.planetSurfaceDisplacement.epsilon,
-        multiplier: data.planetSurfaceDisplacement.multiplier
+        multiplier: data.planetSurfaceDisplacement.multiplier,
       },
       noise: {
         frequency: data.planetSurfaceDisplacement.frequency,
         amplitude: data.planetSurfaceDisplacement.amplitude,
         lacunarity: data.planetSurfaceDisplacement.lacunarity,
         octaves: data.planetSurfaceDisplacement.octaves,
-      }
+      },
     },
     biomes: {
       temperatureMode: data.biomesTemperatureMode,
@@ -66,11 +70,9 @@ export function convertToPlanetUniformData(data: PlanetData, surfaceTex?: DataTe
         amplitude: data.biomesHumidityNoise.amplitude,
         lacunarity: data.biomesHumidityNoise.lacunarity,
         octaves: data.biomesHumidityNoise.octaves,
-      }
+      },
     },
-    textures: (surfaceTex && biomeTex)
-      ? { surface: surfaceTex!, biomes: biomeTex! }
-      : undefined
+    textures: surfaceTex && biomeTex ? { surface: surfaceTex!, biomes: biomeTex! } : undefined,
   }
 }
 
@@ -103,7 +105,7 @@ export function convertToCloudsUniformData(data: PlanetData, opacityTex: DataTex
         amplitude: data.cloudsDisplacement.amplitude,
         lacunarity: data.cloudsDisplacement.lacunarity,
         octaves: data.cloudsDisplacement.octaves,
-      }
+      },
     },
     texture: opacityTex,
   }
@@ -113,6 +115,6 @@ export function convertToRingUniformData(ringParams: RingParameters, ringTex: Da
   return {
     innerRadius: ringParams.innerRadius,
     outerRadius: ringParams.outerRadius,
-    texture: ringTex
+    texture: ringTex,
   }
 }
