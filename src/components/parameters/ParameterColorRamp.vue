@@ -96,7 +96,7 @@
             default-format="hex"
             :alpha-channel="mode === 'rgba' ? 'show' : 'hide'"
             :color="pickerIdInitColor"
-            @color-change="updateStepColor(step as ColorRampStep, $event.colors.hex)"
+            @color-change="updateStepColor(step, $event.colors.hex)"
           >
             <template #hue-range-input-label>
               <span class="visually-hidden">Hue</span>
@@ -133,7 +133,7 @@ import { onMounted, ref, watch, type Ref } from 'vue'
 import { ColorPicker } from 'vue-accessible-color-picker'
 import InputSliderElement from '../elements/InputSliderElement.vue'
 import { ColorRamp, type ColorRampStep } from '@/core/models/color-ramp.model'
-import { colorRampToStyle, alphaToGrayscale } from '@/utils/utils'
+import { alphaToGrayscale, colorRampToStyle } from '@/core/utils/render-utils'
 
 const lgColorRamp = defineModel<ColorRamp>()
 

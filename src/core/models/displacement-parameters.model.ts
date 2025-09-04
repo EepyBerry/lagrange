@@ -1,6 +1,6 @@
 import { clamp } from 'three/src/math/MathUtils.js'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
-import { clampedPRNG } from '@/utils/math-utils'
+import { clampedPRNG } from '@/core/utils/math-utils'
 
 export class DisplacementParameters extends ChangeTracker {
   private _epsilon: number = 0.001

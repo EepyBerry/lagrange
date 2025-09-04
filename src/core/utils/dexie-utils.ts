@@ -9,7 +9,8 @@ export async function initDefaultSettings(): Promise<void> {
     locale: navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US',
     font: 'default',
     showInitDialog: true,
-    // baking
+    // rendering
+    renderingBackend: 'webgl',
     bakingResolution: 2048,
     bakingPixelize: false,
     // accessibility
@@ -38,7 +39,8 @@ export async function injectMissingSettings(settings: IDBSettings): Promise<void
     locale: settings.locale ?? (navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US'),
     font: settings.font ?? 'default',
     showInitDialog: settings.showInitDialog ?? true,
-    // baking
+    // rendering
+    renderingBackend: settings.renderingBackend ?? 'webgl',
     bakingResolution: settings.bakingResolution ?? 2048,
     bakingPixelize: settings.bakingPixelize ?? false,
     // accessibility
@@ -47,6 +49,12 @@ export async function injectMissingSettings(settings: IDBSettings): Promise<void
     // extras
     extrasHologramMode: settings.extrasHologramMode ?? false,
     extrasShowSpecialDays: settings.extrasShowSpecialDays ?? true,
+  })
+}
+
+export async function setRenderingBackendFallback(settings: IDBSettings) {
+  idb.settings.update(settings.id, {
+    renderingBackend: 'webgl',
   })
 }
 
@@ -59,6 +67,7 @@ export async function clearData(): Promise<void> {
     font: 'default',
     showInitDialog: true,
     // baking
+    renderingBackend: 'webgl',
     bakingResolution: 2048,
     bakingPixelize: false,
     // accessibility
@@ -77,17 +86,17 @@ export async function initStoragePersistence() {
     const persist = await tryPersistWithoutPromptingUser()
     switch (persist) {
       case 'never':
-        console.warn('Cannot persist storage, continuing in best-effort mode.')
+        console.warn('<Lagrange> Cannot persist storage, continuing in best-effort mode.')
         break
       case 'persisted':
-        console.info('Successfully persisted storage silently!')
+        console.info('<Lagrange> Successfully persisted storage silently!')
         break
       case 'prompt':
-        console.warn('Storage not persisted, user should be prompted first')
+        console.warn('<Lagrange> Storage not persisted, user should be prompted first')
         break
     }
   } catch (_error) {
-    console.error('Failed to persist storage despite granted permission, continuing in best-effort mode.')
+    console.error('<Lagrange> Failed to persist storage despite granted permission, continuing in best-effort mode.')
   }
 }
 

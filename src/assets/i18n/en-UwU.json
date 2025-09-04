@@ -116,6 +116,12 @@
       "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
       "editor_baking_resolution": "Baking textuwe wesowution (powews of two)",
       "editor_baking_pixelize": "Pixewize baking output",
+      "editor_rendering_backend": "Sewect wendewing b-backend <b>(n-needs app wewoad!!!)</b>",
+      "editor_rendering_backend_webgl": "WebGL",
+      "editor_rendering_backend_webgpu": "WebGPU",
+      "editor_rendering_backend_webgl_notification": "Standawd three.js WebGL b-backend; stabwe fow most uses! :>",
+      "editor_rendering_backend_webgpu_notification": "The three.js WebGPU backend is c-cuwwentwy undew devewopment... B-buggies & ewwows are wikely to occuw!!! ;w;",
+      "editor_rendering_backend_webgpu_unavailable": "Ono :c, youw bwowsew does n-nyot suppowt WebGPU... WebGL wiww be the ONLY backend avaiwabwe (；′⌒`)",
 
       "a11y": "Accessibiwity !!!",
       "a11y_effects": "Enyabwe visuaw effects",
@@ -385,7 +391,9 @@
     "import_partial": "Wawning: faiwed to impowt some pwanyet(s)...",
     "import_failure": "Couwd nyot impowt pwanyets... :c Pp-wease check if the cowwect fiwes a-awe sewected and twy again!!!",
     "save_success": "Saved pwanyet successfuwwy!",
-    "settings_import_success": "Impowted settings s-successfuwwy!!!"
+    "settings_import_success": "Impowted settings s-successfuwwy!!!",
+    "save_partial_no_preview": "Saved pwanyet (c-couwd not genyewate pwanyet pweview ;w;)",
+    "screenshot_failure": "F-faiwed to expowt scweenshot!!! ＞﹏＜"
   },
   "tooltip": {
     "topbar_rename": "Wenyame pwanyet",
@@ -455,6 +463,8 @@
     "editor_baking_resolution_2k": "2048 by 2048 pixews",
     "editor_baking_resolution_4k": "4096 by 4096 pixews",
     "editor_baking_pixelize": "Pixewize baking output textuwes",
+    "editor_rendering_backend_webgl": "@:dialog.settings.editor_rendering_backend_webgl",
+    "editor_rendering_backend_webgpu": "@:dialog.settings.editor_rendering_backend_webgpu",
 
     "editor_generic_input": "Pawametew vawue",
 

@@ -132,7 +132,7 @@ function openFileDialog() {
 async function importPlanetFile(event: Event) {
   const files = (event.target as HTMLInputElement).files
   if (!files || files?.length === 0) {
-    console.warn('At least one file should be specified!')
+    console.warn('<Lagrange> At least one file should be specified!')
     return
   }
 

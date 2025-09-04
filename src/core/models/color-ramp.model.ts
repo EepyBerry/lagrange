@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import { nanoid } from 'nanoid'
-import { clampedPRNG } from '@/utils/math-utils'
+import { clampedPRNG } from '@/core/utils/math-utils'
 import { sha1 } from 'crypto-hash'
 
 export type StepLuminance = { factor: number; lumi: number }

@@ -38,7 +38,7 @@ import {
   bootstrapEditor,
   disposeScene,
   exportPlanetPreview,
-  exportPlanetScreenshot,
+  takePlanetScreenshot,
   exportPlanetToGLTF,
   isPlanetEdited,
   setPlanetEditFlag,
@@ -46,14 +46,15 @@ import {
   resetPlanet,
   randomizePlanet,
 } from '@/core/services/planet-editor.service'
-import { getPlanetMetaTitle, sleep } from '@/utils/utils'
+import { sleep } from '@/core/utils/utils'
 import { nanoid } from 'nanoid'
 import WebGL from 'three/addons/capabilities/WebGL.js'
 import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
 import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
 import AppWarnSaveDialog from '@/components/dialogs/AppWarnSaveDialog.vue'
 import AppExportProgressDialog from '@/components/dialogs/AppExportProgressDialog.vue'
-import { regeneratePRNGIfNecessary } from '@/utils/math-utils'
+import { regeneratePRNGIfNecessary } from '@/core/utils/math-utils'
+import WebGPU from 'three/addons/capabilities/WebGPU.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -76,6 +77,7 @@ let loadedCorrectly = false
 
 // Data
 const $planetEntityId: Ref<string> = ref('')
+const $planetEntityPreviewDataURL: Ref<string | undefined> = ref('')
 
 // Responsiveness
 const centerInfoControls: Ref<boolean> = ref(true)
@@ -110,7 +112,7 @@ onBeforeRouteLeave((_to, _from, next) => {
 
 async function initThree() {
   try {
-    if (WebGL.isWebGL2Available()) {
+    if (WebGL.isWebGL2Available() || WebGPU.isAvailable()) {
       await initData()
       await initCanvas()
       loadedCorrectly = true
@@ -152,13 +154,14 @@ async function initData() {
   if ((route.params.id as string).length > 3) {
     const idbPlanetData = await idb.planets.filter((p) => p.id === route.params.id).first()
     if (!idbPlanetData) {
-      console.warn(`Cannot find planet with ID: ${route.params.id}`)
+      console.warn(`<Lagrange> Cannot find planet with ID: ${route.params.id}`)
       LG_PLANET_DATA.value.reset()
       throw new Error(`Planet with ID [${route.params.id}] doesn't exist.`)
     }
     $planetEntityId.value = idbPlanetData.id
+    $planetEntityPreviewDataURL.value = idbPlanetData.preview
     LG_PLANET_DATA.value.loadData(idbPlanetData.data)
-    console.info(`Loaded planet [${LG_PLANET_DATA.value.planetName}] with ID: ${$planetEntityId.value}`)
+    console.info(`<Lagrange> Loaded planet [${LG_PLANET_DATA.value.planetName}] with ID: ${$planetEntityId.value}`)
     console.debug(toRaw(LG_PLANET_DATA.value))
   } else {
     console.warn('No planet ID found in the URL, assuming new planet')
@@ -225,14 +228,14 @@ async function onWindowKeydown(event: KeyboardEvent) {
       LG_PLANET_DATA.value.biomesEnabled = !LG_PLANET_DATA.value.biomesEnabled
       break
     case KeyBindingAction.TakeScreenshot: {
-      exportPlanetScreenshot()
+      takePlanetScreenshot()
       break
     }
   }
 }
 
 function patchMetaHead() {
-  head!.patch({ title: getPlanetMetaTitle(LG_PLANET_DATA.value.planetName, i18n) })
+  head!.patch({ title: `[${LG_PLANET_DATA.value.planetName}]` + ' · ' + i18n.t('main.$title') })
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -268,7 +271,7 @@ async function savePlanet(asCopy: boolean = false) {
   setPlanetEditFlag(false)
 
   // -------- Generate planet preview -------- //
-  let previewDataString = await exportPlanetPreview()
+  const previewDataString = await exportPlanetPreview()
 
   // ----------- Save planet data ------------ //
   console.debug(toRaw(LG_PLANET_DATA.value))
@@ -278,15 +281,18 @@ async function savePlanet(asCopy: boolean = false) {
     id: planetId,
     version: '2',
     data: JSON.parse(localData),
-    preview: previewDataString,
+    preview: previewDataString.length > 0 ? previewDataString : $planetEntityPreviewDataURL.value,
   }
   await idb.planets.put(idbData, idbData.id)
   $planetEntityId.value = idbData.id
 
   showSpinner.value = false
-  previewDataString = ''
   router.replace(`/planet-editor/${idbData.id}`)
-  EventBus.sendToastEvent('success', 'toast.save_success', 3000)
+  if (previewDataString.length > 0) {
+    EventBus.sendToastEvent('success', 'toast.save_success', 3000)
+  } else {
+    EventBus.sendToastEvent('warn', 'toast.save_partial_no_preview', 3000)
+  }
 }
 
 function exportPlanet() {

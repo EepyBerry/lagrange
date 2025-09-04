@@ -1,6 +1,6 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
 import { ColorMode, GradientMode, PlanetType } from '@core/types'
-import { clampedPRNG, isNumeric } from '@/utils/math-utils'
+import { clampedPRNG, isNumeric } from '@/core/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeTracker } from './change-tracker.model'
@@ -314,7 +314,7 @@ export default class PlanetData extends ChangeTracker {
   public set biomesParams(value: BiomeParameters[]) {
     this._biomesParams.splice(0)
     this._biomesParams.push(...value)
-    this.markForChange('_biomesParams')
+    this.markForChange('_biomesParameters')
   }
 
   // --------------------------------------------------
@@ -444,7 +444,7 @@ export default class PlanetData extends ChangeTracker {
     return this._atmosphereIntensity
   }
   public set atmosphereIntensity(value: number) {
-    this._atmosphereIntensity = value
+    this._atmosphereIntensity = clamp(value, 0, 5.0)
     this.markForChange('_atmosphereIntensity')
   }
   public get atmosphereColorMode(): number {
@@ -537,7 +537,7 @@ export default class PlanetData extends ChangeTracker {
 
     // Surface
     this._planetSurfaceShowBumps = true
-    this._planetSurfaceBumpStrength = 0.12
+    this._planetSurfaceBumpStrength = 0.09
     this._planetSurfaceShowWarping = false
     this._planetSurfaceShowDisplacement = false
     this._planetSurfaceDisplacement = new DisplacementParameters(
@@ -611,7 +611,7 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsShowWarping = false
     this._cloudsShowDisplacement = false
     this._cloudsDisplacement = new DisplacementParameters(this._changedProps, '_cloudsDisplacement', 2.0, 0.2, 2.0, 6)
-    this._cloudsNoise = new NoiseParameters(this._changedProps, '_cloudsNoise', 4.0, 0.6, 1.75, 4)
+    this._cloudsNoise = new NoiseParameters(this._changedProps, '_cloudsNoise', 4.0, 0.6, 1.75, 6)
     this._cloudsColor = new Color(0xffffff)
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
       new ColorRampStep(0x000000, 0.0, true),
@@ -623,7 +623,7 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereEnabled = true
     this._atmosphereHeight = 8.0
     this._atmosphereDensityScale = 3.0
-    this._atmosphereIntensity = 1.35
+    this._atmosphereIntensity = 2.0
     this._atmosphereColorMode = ColorMode.REALISTIC
     this._atmosphereHue = 0.0
     this._atmosphereTint = new Color(0xffffff)
@@ -692,8 +692,7 @@ export default class PlanetData extends ChangeTracker {
     this.biomesParams.splice(0)
     this.biomesParams.push(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(data._biomesParams ?? []).map(
-        (params: any) =>
+      ...(data._biomesParams ?? []).map((params: any) =>
           new BiomeParameters(
             this.changedProps,
             '_biomesParameters',
@@ -742,8 +741,7 @@ export default class PlanetData extends ChangeTracker {
     this.ringsParams.splice(0)
     this.ringsParams.push(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(data._ringsParams ?? []).map(
-        (params: any) =>
+      ...(data._ringsParams ?? []).map((params: any) =>
           new RingParameters(
             this.changedProps,
             '_ringsParameters',
@@ -842,7 +840,7 @@ export default class PlanetData extends ChangeTracker {
     this._biomesTemperatureNoise.reset(2.5, 1.25, 2.4, 6)
     this._biomesHumidityNoise.reset(35, 0.63, 2.53, 6)
     this._cloudsDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05)
-    this._cloudsNoise.reset(4.0, 0.6, 1.75, 4, 1, 1.0)
+    this._cloudsNoise.reset(4.0, 0.6, 1.75, 6, 1, 1.0)
     this.markAllForChange()
   }
 

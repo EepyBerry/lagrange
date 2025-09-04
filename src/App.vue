@@ -14,17 +14,18 @@
 
 <script setup lang="ts">
 import AppFooter from '@components/main/AppFooter.vue'
-import * as DexieUtils from '@/utils/dexie-utils'
+import * as DexieUtils from '@/core/utils/dexie-utils'
 import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
 import { onMounted, ref, type Ref } from 'vue'
 import AppInitDialog from '@components/dialogs/AppInitDialog.vue'
 import { useI18n } from 'vue-i18n'
-import { mapLocale } from './utils/utils'
+import { mapLocale } from './core/utils/utils'
 import { useHead } from '@unhead/vue'
 import { A11Y_ANIMATE } from './core/globals'
 import AppToastBar from './components/main/AppToastBar.vue'
 import { EventBus } from './core/event-bus'
 import { EXTRAS_CAT_MODE, EXTRAS_HOLOGRAM_MODE, EXTRAS_SPECIAL_DAYS } from './core/extras'
+import WebGPU from 'three/examples/jsm/capabilities/WebGPU.js'
 
 const i18n = useI18n()
 useHead({
@@ -72,16 +73,22 @@ async function initDexie() {
   // Init standard settings
   let settings = await idb.settings.limit(1).first()
   if (!settings) {
-    console.debug('No settings found in IndexedDB, adding defaults')
+    console.debug('<Lagrange> No settings found in IndexedDB, adding defaults')
     await DexieUtils.initDefaultSettings()
     settings = await idb.settings.limit(1).first()
   }
   await DexieUtils.injectMissingSettings(settings!)
 
+  // Check WebGPU availability
+  if (!WebGPU.isAvailable()) {
+    settings = await idb.settings.limit(1).first()
+    await DexieUtils.setRenderingBackendFallback(settings!)
+  }
+
   // Init keybinds
   const kb = await idb.keyBindings.limit(4).toArray()
   if (kb.length === 0) {
-    console.debug('No keybinds found in IndexedDB, adding defaults')
+    console.debug('<Lagrange> No keybinds found in IndexedDB, adding defaults')
     await DexieUtils.addDefaultKeyBindings()
   }
 

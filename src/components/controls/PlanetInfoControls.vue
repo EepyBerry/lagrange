@@ -116,7 +116,7 @@ import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
 import { ref, watch, type Ref } from 'vue'
 import { EventBus } from '@/core/event-bus'
 import { autoUpdate, offset, useFloating } from '@floating-ui/vue'
-import { PRNG_SEED, regenerateSeed } from '@/utils/math-utils'
+import { PRNG_SEED, regenerateSeed } from '@/core/utils/math-utils'
 
 const editMode: Ref<boolean> = ref(false)
 

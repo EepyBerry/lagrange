@@ -8,6 +8,7 @@
     :name="name"
     :value="value"
     :checked="value === lgParam"
+    :disabled="disabled"
   />
 
   <button
@@ -15,6 +16,7 @@
     :class="{ selected: value === lgParam }"
     :aria-label="buttonAriaLabel"
     :title="title"
+    :disabled="disabled"
     @click="select()"
   >
     <iconify-icon v-if="icon" :icon="icon" width="1.25rem" aria-hidden="true" />
@@ -32,6 +34,7 @@ defineProps<{
   icon?: string
   buttonAriaLabel: string
   title?: string
+  disabled?: boolean
 }>()
 const lgParam = defineModel<string | number | boolean>()
 const htmlRadio: Ref<HTMLInputElement | null> = ref(null)
@@ -65,7 +68,7 @@ function select() {
 .radio-button.selected {
   background: var(--lg-button-active);
 }
-.radio-button:hover {
+.radio-button:not(:disabled):hover {
   background: var(--lg-button-hover);
 }
 
