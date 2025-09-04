@@ -1,4 +1,4 @@
-import { Color, NodeMaterial, VaryingNode, type Vector3 } from 'three/webgpu'
+import { Color, NodeMaterial, type Vector3 } from 'three/webgpu'
 import type { TSLMaterial } from './tsl-material'
 import type { UniformColorNode, UniformNumberNode, UniformVector3Node } from '../types'
 import {

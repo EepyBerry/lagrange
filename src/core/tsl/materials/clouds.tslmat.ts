@@ -1,4 +1,4 @@
-import { Color, DataTexture, MeshBasicNodeMaterial, MeshStandardNodeMaterial, Node, TextureNode, UniformArrayNode, VaryingNode, Vector3, Vector4 } from 'three/webgpu'
+import { Color, DataTexture, MeshBasicNodeMaterial, MeshStandardNodeMaterial, Node, TextureNode, UniformArrayNode, Vector3, Vector4 } from 'three/webgpu'
 import { Fn, int, positionLocal, texture, uniform, uniformArray, uv, vec2, vec3, vec4, type ShaderNodeObject } from 'three/tsl'
 import { type TSLMaterial } from './tsl-material'
 import { displace, warp } from '../features/lwd'

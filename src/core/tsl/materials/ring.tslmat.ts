@@ -1,4 +1,4 @@
-import { DoubleSide, MeshBasicNodeMaterial, MeshStandardNodeMaterial, Node, VaryingNode, type DataTexture, type TextureNode } from 'three/webgpu'
+import { DoubleSide, MeshBasicNodeMaterial, MeshStandardNodeMaterial, Node, type DataTexture, type TextureNode } from 'three/webgpu'
 import type { UniformNumberNode } from '../types'
 import type { TSLMaterial } from './tsl-material'
 import { float, Fn, length, positionLocal, texture, uniform, uv, vec2, vec4, type ShaderNodeObject } from 'three/tsl'

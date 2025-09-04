@@ -16,7 +16,6 @@ import {
   vec4,
 } from 'three/tsl'
 import { circle, lensFlare, rndf } from '../features/lens-flare'
-import { toRaw } from 'vue'
 
 export type LensFlareData = {
   lensPosition: Vector3

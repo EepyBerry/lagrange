@@ -106,5 +106,4 @@
 </template>
 <script setup lang="ts">
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
-import type { ColorRamp } from '@/core/models/color-ramp.model'
 </script>
