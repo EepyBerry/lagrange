@@ -48,7 +48,7 @@ export default defineConfig({
         manualChunks: {
           vue: ['vue'],
           vueplugins: ['vue-router', 'vue-accessible-color-picker', 'vue-i18n', '@unhead/vue'],
-          three: ['three', 'three-custom-shader-material'],
+          three: ['three'],
           export: ['pako', 'jszip', 'file-saver'],
         },
       },

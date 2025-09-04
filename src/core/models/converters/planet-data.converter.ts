@@ -2,6 +2,8 @@ import type { DataTexture } from "three";
 import type PlanetData from "../planet-data.model";
 import type { PlanetUniformData } from "@/core/tsl/materials/planet.tslmat";
 import type { CloudsUniformData } from "@/core/tsl/materials/clouds.tslmat";
+import type { RingUniformData } from "@/core/tsl/materials/ring.tslmat";
+import type { RingParameters } from "../ring-parameters.model";
 
 /**
  * Converts editor planet data to uniform data used specifically for planet materials
@@ -104,5 +106,13 @@ export function convertToCloudsUniformData(data: PlanetData, opacityTex: DataTex
       }
     },
     texture: opacityTex,
+  }
+}
+
+export function convertToRingUniformData(ringParams: RingParameters, ringTex: DataTexture): RingUniformData {
+  return {
+    innerRadius: ringParams.innerRadius,
+    outerRadius: ringParams.outerRadius,
+    texture: ringTex
   }
 }

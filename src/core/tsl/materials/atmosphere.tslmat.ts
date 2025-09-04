@@ -21,7 +21,6 @@ import {
   vec4,
 } from 'three/tsl'
 import { applyInScatter, rayVsSphere } from '../utils/atmosphere.tslutil'
-import { inverseMat4 } from '../utils/math.tslutil'
 import { shiftHue, tintToMatrix, whitescale } from '../utils/color.tslutil'
 
 export type AtmosphereData = {
@@ -91,7 +90,7 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
       const viewRay = vec3(inverseRay.x, inverseRay.y, -1.0).toVar('viewRay')
 
       // --------------- FRAGMENT STAGE ---------------
-      const worldRay = vec4(inverseMat4(cameraViewMatrix).mul(vec4(viewRay, 0.0))).toVar('worldRay')
+      const worldRay = vec4(cameraViewMatrix.inverse().mul(vec4(viewRay, 0.0))).toVar('worldRay')
       const rayDir = vec3(normalize(worldRay.xyz)).toVar('rayDir')
       const eye = vec3(posWorld.xyz).toVar('eye')
       const sunglightDir = vec3(normalize(this.uniforms.sunlight.position.sub(posWorld.xyz))).toVar('sunlightDir')

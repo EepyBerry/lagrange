@@ -1,22 +1,18 @@
 import * as THREE from 'three'
 import * as Globals from '@core/globals'
-import * as ShaderLoader from '@core/three/shader.loader'
 import * as ComponentHelper from '@/core/helpers/component.helper'
 
 import { createBiomeTexture, createRampTexture } from '@core/helpers/texture.helper'
 import type PlanetData from '@core/models/planet-data.model'
-import { ShaderFileType } from '@core/types'
 import { bufferToTexture } from '@/core/utils/render-utils'
 import type { WebGPURenderer } from 'three/webgpu'
 import { PlanetTSLMaterial } from '../tsl/materials/planet.tslmat'
-import { convertToCloudsUniformData, convertToPlanetUniformData } from '../models/converters/planet-data.converter'
+import { convertToCloudsUniformData, convertToPlanetUniformData, convertToRingUniformData } from '../models/converters/planet-data.converter'
 import { CloudsTSLMaterial } from '../tsl/materials/clouds.tslmat'
+import { RingTSLMaterial } from '../tsl/materials/ring.tslmat'
 
-export function createBakingPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): THREE.Mesh {
+export function createBakingPlanet(data: PlanetData, surfaceTex: THREE.DataTexture, biomeTex: THREE.DataTexture): THREE.Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
-  const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
-  const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
-
   const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data, surfaceTex, biomeTex))
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildSurfaceBakeMaterial())
   mesh.castShadow = true
@@ -31,8 +27,6 @@ export function createBakingPBRMap(data: PlanetData): THREE.Mesh {
 
   const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data))
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildPBRBakeMaterial())
-  mesh.castShadow = true
-  mesh.receiveShadow = true
   mesh.name = Globals.LG_MESH_NAME_PBRMAP
   return mesh
 }
@@ -43,8 +37,6 @@ export function createBakingHeightMap(data: PlanetData): THREE.Mesh {
 
   const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data))
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildHeightMapBakeMaterial())
-  mesh.castShadow = true
-  mesh.receiveShadow = true
   mesh.name = Globals.LG_MESH_NAME_HEIGHTMAP
   return mesh
 }
@@ -55,51 +47,30 @@ export function createBakingNormalMap(data: PlanetData, heightMapTex: THREE.Text
     new THREE.PlaneGeometry(),
     tslMaterial.buildNormalMapBakeMaterial(heightMapTex, resolution)
   )
-  mesh.castShadow = true
-  mesh.receiveShadow = true
   mesh.name = Globals.LG_MESH_NAME_NORMALMAP
   return mesh
 }
 
-export function createBakingClouds(data: PlanetData, textureBuffer: Uint8Array): THREE.Mesh {
+export function createBakingClouds(data: PlanetData, texture: THREE.DataTexture): THREE.Mesh {
   const cloudHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality, cloudHeight)
-  const opacityTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
-  const tslMaterial = new CloudsTSLMaterial(convertToCloudsUniformData(data, opacityTex))
+  const tslMaterial = new CloudsTSLMaterial(convertToCloudsUniformData(data, texture))
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildBakeMaterial())
-  mesh.receiveShadow = true
-  mesh.castShadow = true
   mesh.name = Globals.LG_MESH_NAME_CLOUDS
   return mesh
 }
 
-export function createBakingRing(data: PlanetData, textureBuffer: Uint8Array, paramsIndex: number): THREE.Mesh {
+export function createBakingRing(data: PlanetData, texture: THREE.DataTexture, paramsIndex: number): THREE.Mesh {
   const ringParams = data.ringsParams[paramsIndex]
-  const rgbaTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
   const geometry = ComponentHelper.createRingGeometryComponent(
     data.planetMeshQuality,
     ringParams.innerRadius,
     ringParams.outerRadius,
   )
-  const material = ComponentHelper.createCustomShaderMaterialComponent(
-    ShaderLoader.fetch('ring.vert.glsl', ShaderFileType.CORE),
-    ShaderLoader.fetch('ring.frag.glsl', ShaderFileType.CORE),
-    {
-      u_inner_radius: { value: ringParams.innerRadius },
-      u_outer_radius: { value: ringParams.outerRadius },
-      u_ring_tex: { value: rgbaTex },
-    },
-    THREE.MeshBasicMaterial,
-  )
-  material.side = THREE.DoubleSide
-  material.transparent = true
-  material.opacity = 1
-
-  const mesh = new THREE.Mesh(geometry, material)
+  const material = new RingTSLMaterial(convertToRingUniformData(ringParams, texture))
+  const mesh = new THREE.Mesh(geometry, material.buildBakeMaterial())
   mesh.name = ringParams.id
-  mesh.receiveShadow = true
-  mesh.castShadow = true
   return mesh
 }
 
@@ -161,27 +132,3 @@ export async function bakeMesh(
   const renderBuffer = await renderer.readRenderTargetPixelsAsync(renderTarget, 0, 0, width, height)
   return bufferToTexture(renderBuffer, width, height)
 }
-
-// NOTE: modified from three-shader-baker's code (see link)
-// https://github.com/FarazzShaikh/three-shader-baker/blob/main/package/src/index.ts
-// TODO: Not sure why material patching is necessary, need to investigate further (manual edits in GLSL code don't work)
-/* export function patchMaterialForUnwrapping(material: THREE.Material | CustomShaderMaterial) {
-  const origBeforeCompile = material.onBeforeCompile
-  material.onBeforeCompile = (shader, renderer) => {
-    origBeforeCompile(shader, renderer)
-    if (shader.vertexShader.includes('#include <project_vertex>')) {
-      shader.vertexShader = shader.vertexShader.replace(
-        '#include <project_vertex>',
-        `
-          #include <project_vertex>
-          gl_Position = vec4(uv, 0.0, 1.0) * 2.0 - 1.0;
-        `,
-      )
-    } else {
-      shader.vertexShader = shader.vertexShader.replace(
-        shader.vertexShader.match(BAKE_PATCH_RGX)![0],
-        'gl_Position = vec4(uv, 0.0, 1.0) * 2.0 - 1.0;',
-      )
-    }
-  }
-} */

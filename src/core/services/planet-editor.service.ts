@@ -29,13 +29,6 @@ import { saveAs } from 'file-saver'
 let LG_SCENE_DATA!: EditorSceneData
 export const LG_PLANET_DATA: Ref<PlanetData> = ref(new PlanetData())
 
-// Buffers
-export const LG_BUFFER_SURFACE: Uint8Array = new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4)
-export const LG_BUFFER_BIOME: Uint8Array = new Uint8Array(Globals.TEXTURE_SIZES.BIOME * Globals.TEXTURE_SIZES.BIOME * 4)
-export const LG_BUFFER_CLOUDS: Uint8Array = new Uint8Array(
-  Globals.TEXTURE_SIZES.CLOUDS * Globals.TEXTURE_SIZES.CLOUDS * 4,
-)
-
 const hasPlanetBeenEdited: Ref<boolean> = ref(false)
 let enableEditorRendering = true
 let watchForPlanetUpdates = false
@@ -56,15 +49,6 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   LG_SCENE_DATA.renderer!.setAnimationLoop(() => renderFrame())
   LG_SCENE_DATA.renderer!.domElement.ariaLabel = '3D planet viewer'
   canvas.appendChild(LG_SCENE_DATA.renderer!.domElement)
-
-  // TODO: Remove debug printing when done
-  /* LG_SCENE_DATA.renderer!.debug.getShaderAsync(
-    LG_SCENE_DATA.scene!,
-    LG_SCENE_DATA.camera!,
-    LG_SCENE_DATA.lensFlare!.mesh,
-  ).then((e) => {
-    console.log(e.fragmentShader)
-  }) */
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -142,11 +126,7 @@ function updateScene() {
 export function disposeScene() {
   watchForPlanetUpdates = false
   console.debug('<Lagrange> Clearing scene... ')
-  
   SceneHelper.disposeEditorScene(LG_SCENE_DATA)
-  LG_BUFFER_BIOME.fill(0)
-  LG_BUFFER_CLOUDS.fill(0)
-
   UniformHelper.clearUniformUpdateMap()
   console.debug('<Lagrange> ...done!')
 }
@@ -197,7 +177,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     // ----------------------------------- Bake planet ----------------------------------
     progressDialog.setProgress(2)
     await sleep(50)
-    const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value, LG_BUFFER_SURFACE, LG_BUFFER_BIOME)
+    const bakePlanet = createBakingPlanet(LG_PLANET_DATA.value, LG_SCENE_DATA.planet.surfaceTexture!, LG_SCENE_DATA.planet.biomesTexture!)
     const bakePlanetSurfaceTex = await bakeMesh(scene, renderer, camera, renderTarget, bakePlanet, w, h)
     if (appSettings?.bakingPixelize) {
        bakePlanetSurfaceTex.minFilter = THREE.NearestFilter
@@ -238,7 +218,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     if (LG_PLANET_DATA.value.cloudsEnabled) {
       progressDialog.setProgress(5)
       await sleep(50)
-      const bakeClouds = createBakingClouds(LG_PLANET_DATA.value, LG_BUFFER_CLOUDS)
+      const bakeClouds = createBakingClouds(LG_PLANET_DATA.value, LG_SCENE_DATA.clouds.texture!)
       const bakeCloudsTex = await bakeMesh(scene, renderer, camera, renderTarget, bakeClouds, w, h)
       if (appSettings?.bakingPixelize) {
         bakeCloudsTex.minFilter = THREE.NearestFilter
@@ -256,31 +236,35 @@ export async function exportPlanetToGLTF(progressDialog: {
     }
 
     // --------------------------------- Bake ring system -------------------------------
-    /* if (LG_PLANET_DATA.value.ringsEnabled) {
+    if (LG_PLANET_DATA.value.ringsEnabled) {
       progressDialog.setProgress(6)
       await sleep(50)
       const ringGroup = new THREE.Group()
-      ringGroup.name = Globals.LG_NAME_RING_ANCHOR
+      ringGroup.name = Globals.LG_MESH_NAME_RING_ANCHOR
       bakePlanet.add(ringGroup)
       LG_PLANET_DATA.value.ringsParams.forEach(async (params, idx) => {
         const ringMeshData = LG_SCENE_DATA.rings?.find((r) => r.mesh!.name === params.id)
         if (!ringMeshData) return
 
-        const bakeRing = createBakingRing(LG_PLANET_DATA.value, ringMeshData!.buffer!, idx)
+        const bakeRing = createBakingRing(LG_PLANET_DATA.value, ringMeshData.texture!, idx)
         const bakeRingTex = await bakeMesh(scene, renderer, camera, renderTarget, bakeRing, w, h)
-        if (appSettings?.bakingPixelize) bakeRingTex.magFilter = THREE.NearestFilter
+        saveAs(bakeRingTex.image.toDataURL(), 'ring.png')
+        if (appSettings?.bakingPixelize) {
+          bakeRingTex.minFilter = THREE.NearestFilter
+          bakeRingTex.magFilter = THREE.NearestFilter
+        }
 
-        bakeRing.material = new THREE.MeshStandardMaterial({
+        bakeRing.material = new MeshStandardNodeMaterial({
           map: bakeRingTex,
           side: THREE.DoubleSide,
-          transparent: true,
+          transparent: false,
         })
         bakingTargets.push({ mesh: bakeRing, textures: [bakeRingTex] })
         ringGroup.add(bakeRing)
         bakeRing.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90))
       })
       bakePlanet.add(ringGroup)
-    } */
+    }
 
     // ---------------------------- Export meshes and clean up ---------------------------
     progressDialog.setProgress(7)

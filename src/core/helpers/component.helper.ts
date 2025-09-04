@@ -1,13 +1,11 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import CustomShaderMaterial, { type MaterialConstructor } from 'three-custom-shader-material/vanilla'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { loadCubeTexture, createRampTexture, createBiomeTexture } from './texture.helper'
 import type PlanetData from '../models/planet-data.model'
 import { type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type RingMeshData, EditorSceneCreationMode } from '../types'
 import { LensFlareEffect } from '../effects/lens-flare.effect'
 import * as Globals from '@core/globals'
-import * as ShaderLoader from '../three/shader.loader'
 import { WebGPURenderer } from 'three/webgpu'
 import { PlanetTSLMaterial } from '@/core/tsl/materials/planet.tslmat'
 import { AtmosphereTSLMaterial } from '@/core/tsl/materials/atmosphere.tslmat'
@@ -269,32 +267,6 @@ export function createRingGeometryComponent(
 }
 
 /**
- * Creates a CustomShaderMaterial instance from the given parameters
- * @param vertexShader GLSL vertex shader
- * @param fragmentShader GLSL fragment shader
- * @param shaderFunctions additional shader functions
- * @param uniforms shader uniforms
- * @param baseMaterial (optional) base material to use
- * @returns the RawShaderMaterial instance
- */
-export function createCustomShaderMaterialComponent<T extends MaterialConstructor>(
-  vertexShader: string,
-  fragmentShader?: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  uniforms?: { [uniform: string]: THREE.IUniform<any> },
-  baseMaterial?: T,
-): CustomShaderMaterial<T> {
-  const mat = new CustomShaderMaterial({
-    baseMaterial: baseMaterial ?? THREE.MeshStandardMaterial,
-    vertexShader,
-    fragmentShader: fragmentShader ? ShaderLoader.resolveImports(fragmentShader) : undefined,
-    uniforms,
-    silent: true,
-  })
-  return mat
-}
-
-/**
  * Creates standard OrbitControls
  * @param camera the camera to control
  * @param canvas the render canvas
@@ -310,7 +282,7 @@ export function createOrbitControls(camera: THREE.Camera, canvas: HTMLCanvasElem
   controls.maxDistance = 10
   controls.maxPolarAngle = Math.PI
   controls.rotateSpeed = 0.5
-  controls.zoomSpeed = 1.5
+  controls.zoomSpeed = 2
   controls.mouseButtons = {
     LEFT: THREE.MOUSE.ROTATE,
     MIDDLE: THREE.MOUSE.DOLLY,
