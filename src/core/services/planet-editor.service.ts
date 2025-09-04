@@ -16,7 +16,7 @@ import {
   createBakingPlanet,
   createBakingRing,
 } from '../helpers/baking.helper'
-import { exportMeshesToGLTF, exportPlanetScreenshot } from '../helpers/export.helper'
+import { exportMeshesToGLTF } from '../helpers/export.helper'
 import { idb } from '@/dexie.config'
 import { sleep } from '@/core/utils/utils'
 import * as UniformHelper from '../helpers/uniform.helper'
@@ -24,6 +24,7 @@ import * as SceneHelper from '../helpers/scene.helper'
 import * as PreviewHelper from '../helpers/preview.helper'
 import { MeshStandardNodeMaterial, type NodeMaterial } from 'three/webgpu'
 import { saveAs } from 'file-saver'
+import { EventBus } from '../event-bus'
 
 // Editor constants
 let LG_SCENE_DATA!: EditorSceneData
@@ -147,8 +148,14 @@ export async function resetPlanet() {
   LG_PLANET_DATA.value.reset()
 }
 
-export function takePlanetScreenshot() {
-  exportPlanetScreenshot(LG_SCENE_DATA.renderer!, LG_SCENE_DATA.scene!, LG_SCENE_DATA.camera!, LG_PLANET_DATA.value.planetName)
+export async function takePlanetScreenshot() {
+  try {
+    await LG_SCENE_DATA.renderer.render(LG_SCENE_DATA.scene, LG_SCENE_DATA.camera)
+    LG_SCENE_DATA.renderer.domElement.toBlob(blob => saveAs(blob as Blob, `${LG_PLANET_DATA.value.planetName.replaceAll(' ', '_')}-${new Date().toISOString()}.png`))
+  } catch (err) {
+    console.error('<Lagrange> Could not export screenshot!', err)
+    EventBus.sendToastEvent('warn', 'toast.screenshot_failure', 3000)
+  }
 }
 
 export async function exportPlanetPreview(): Promise<string> {
