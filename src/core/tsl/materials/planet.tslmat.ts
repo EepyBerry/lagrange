@@ -46,6 +46,7 @@ import type {
 import { applyBump } from '../features/bump'
 import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes'
 import { sobel } from '../utils/sobel.tlsutil'
+import { flattenUV } from '../utils/vertex.tlsutil'
 
 export type PlanetUniformData = {
   radius: number
@@ -234,7 +235,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial()
-    material.vertexNode = Fn(() => vec4(uv().x, uv().y, 0.0, 1.0).mul(2.0).sub(1.0))()
+    material.vertexNode = flattenUV(uv())
     material.colorNode = vec4(colour, 1.0)
     return material
   }
@@ -253,7 +254,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial()
-    material.vertexNode = Fn(() => vec4(uv().x, uv().y, 0.0, 1.0).mul(2.0).sub(1.0))()
+    material.vertexNode = flattenUV(uv())
     material.colorNode = vec4(0.0, outRoughness, outMetalness, 1.0)
     return material
   }
@@ -268,14 +269,14 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial()
-    material.vertexNode = Fn(() => vec4(uv().x, uv().y, 0.0, 1.0).mul(2.0).sub(1.0))()
+    material.vertexNode = flattenUV(uv())
     material.colorNode = vec4(mix(vec3(this.uniforms.pbr.element(int(0))), vec3(height), FLAG_LAND), 1.0)
     return material
   }
 
-  buildNormalMapBakeMaterial(heightMap: Texture, resolution: Vector2): MeshBasicNodeMaterial {
+  buildNormalMapBakeMaterial(heightMap: Texture): MeshBasicNodeMaterial {
     const texNode = texture(heightMap)
-    const offset = vec3(-1.0 / resolution.x, 0.0, 1.0 / resolution.y).toVar('offset')
+    const offset = vec3(-1.0 / heightMap.width, 0.0, 1.0 / heightMap.height).toVar('offset')
 
     // Sample height-map at 8 points around the current position
     const s00 = texNode.sample(uv().add(offset.xx)).x.toVar('s00')
@@ -291,7 +292,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const normal = sobel(sobelMat, float(256.0).mul(this.uniforms.bumpStrength)).toVar('N')
 
     const material = new MeshBasicNodeMaterial()
-    material.vertexNode = Fn(() => vec4(uv().x, uv().y, 0.0, 1.0).mul(2.0).sub(1.0))()
+    material.vertexNode = flattenUV(uv())
     material.colorNode = vec4(normal, 1.0)
     return material
   }

@@ -3,7 +3,7 @@ import * as Globals from '@core/globals'
 import * as ComponentHelper from '@/core/helpers/component.helper'
 
 import type PlanetData from '@core/models/planet-data.model'
-import { bufferToTexture } from '@/core/utils/render-utils'
+import { renderToCanvas } from '@/core/utils/render-utils'
 import type { WebGPURenderer } from 'three/webgpu'
 import { PlanetTSLMaterial } from '../tsl/materials/planet.tslmat'
 import { convertToCloudsUniformData, convertToPlanetUniformData, convertToRingUniformData } from '../models/converters/planet-data.converter'
@@ -40,11 +40,11 @@ export function createBakingHeightMap(data: PlanetData): THREE.Mesh {
   return mesh
 }
 
-export function createBakingNormalMap(data: PlanetData, heightMapTex: THREE.Texture, resolution: THREE.Vector2): THREE.Mesh {
+export function createBakingNormalMap(data: PlanetData, heightMapTex: THREE.Texture): THREE.Mesh {
   const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data))
   const mesh = new THREE.Mesh(
     new THREE.PlaneGeometry(),
-    tslMaterial.buildNormalMapBakeMaterial(heightMapTex, resolution)
+    tslMaterial.buildNormalMapBakeMaterial(heightMapTex)
   )
   mesh.name = Globals.LG_MESH_NAME_NORMALMAP
   return mesh
@@ -74,60 +74,47 @@ export function createBakingRing(data: PlanetData, texture: THREE.DataTexture, p
 }
 
 // ------------------------------------------------------------------------------------------------
-type BakingSceneObjects = {
-  scene: THREE.Scene
+type BakingObjects = {
   renderer: WebGPURenderer
   camera: THREE.OrthographicCamera
   renderTarget: THREE.RenderTarget
 }
 /**
- * Creates the main scene for baking purposes, as well as a base RenderTarget
+ * Creates the main baking objects, as well as a base RenderTarget
  * @param pixelRatio device pixel ratio
  * @returns Scene, WebGPURenderer, OrthographicCamera and RenderTarget root objects
  */
-export async function createBakingScene(pixelRatio: number): Promise<BakingSceneObjects> {
+export async function createBakingObjects(width: number, height: number, pixelRatio: number): Promise<BakingObjects> {
   return {
-    scene: new THREE.Scene(),
-    renderer: await ComponentHelper.createRenderer(1, 1, pixelRatio),
-    camera: ComponentHelper.createOrthographicCamera(1, 1, 0, 1),
-    renderTarget: new THREE.WebGLRenderTarget(1, 1, { colorSpace: THREE.SRGBColorSpace })
+    renderer: await ComponentHelper.createRenderer(width, height, pixelRatio),
+    camera: ComponentHelper.createOrthographicCamera(width, height, 0, 1),
+    renderTarget: new THREE.RenderTarget(width, height, { colorSpace: THREE.SRGBColorSpace })
   }
 }
 
 /**
  * Asynchronously bakes a model's Material/CustomShaderMaterial into a texture
  * @remarks Uses TextureLoader
- * @param scene scene
  * @param renderer WebGPURenderer
  * @param camera orthographic camera
+ * @param renderTarget common RenderTarget
  * @param mesh mesh to bake
- * @param width texture width in pixels
- * @param height texture height in pixels
  * @returns a promise containing the mesh's baked texture
  */
 export async function bakeMesh(
-  scene: THREE.Scene,
   renderer: WebGPURenderer,
   camera: THREE.OrthographicCamera,
   renderTarget: THREE.RenderTarget,
   mesh: THREE.Mesh,
-  width: number,
-  height: number,
 ): Promise<THREE.Texture> {
-  scene.add(mesh)
-  renderTarget.setSize(width, height)
+  const size = new THREE.Vector2()
+  renderer.getSize(size)
 
-  camera.left = -width / 2
-  camera.right = width / 2
-  camera.top = height / 2
-  camera.bottom = -height / 2
-  camera.updateProjectionMatrix()
-
+  const rawBuffer = new Uint8Array(size.x * size.y * 4)
   renderer.setRenderTarget(renderTarget)
-  await renderer.renderAsync(scene, camera)
+  await renderer.renderAsync(mesh, camera)
+  rawBuffer.set(await renderer.readRenderTargetPixelsAsync(renderTarget, 0, 0, size.x, size.y))
   renderer.setRenderTarget(null)
-  scene.remove(mesh)
 
-  const renderBuffer = await renderer.readRenderTargetPixelsAsync(renderTarget, 0, 0, width, height)
-  return bufferToTexture(renderBuffer, width, height)
+  return new THREE.CanvasTexture(renderToCanvas(renderer, rawBuffer, size.x, size.y))
 }

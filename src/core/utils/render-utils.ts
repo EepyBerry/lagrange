@@ -1,25 +1,7 @@
 import type { ColorRamp } from '@/core/models/color-ramp.model'
 import { EditorBackendType, type RawRGBA } from '@/core/types'
-import { CanvasTexture, Color, type TypedArray } from 'three'
+import { Color, type TypedArray } from 'three'
 import type { WebGPURenderer } from 'three/webgpu'
-
-/**
- * Renders a buffer to a PNG dataURL
- * @param buf the buffer, represented as a `Uint8Array`
- * @param w width of the output (in pixels)
- * @param h height of the output (in pixels)
- * @returns a dataURL with the given pixel data
- */
-export function bufferToDataURL(buf: Uint8Array, w: number, h: number): string {
-  const canvas = createCanvas(w, h)
-  const ctx = canvas.getContext('2d')!
-  const imageData = ctx.createImageData(w, h)
-  imageData.data.set(normalizeUInt8ArrayPixels(buf as Uint8Array, w, h))
-  ctx.putImageData(imageData, 0, 0)
-  const url = canvas.toDataURL()
-  canvas.remove()
-  return url
-}
 
 /**
  * Renders a buffer onto a CanvasTexture
@@ -28,26 +10,25 @@ export function bufferToDataURL(buf: Uint8Array, w: number, h: number): string {
  * @param h height of the output (in pixels)
  * @returns a `CanvasTexture` instance containing data from the buffer
  */
-export function bufferToTexture(buf: TypedArray, w: number, h: number): CanvasTexture {
-  const canvas = createCanvas(w, h)
+export function renderToCanvas(renderer: WebGPURenderer, buf: TypedArray, w: number, h: number): OffscreenCanvas {
+  const canvas = new OffscreenCanvas(w, h)
   const ctx = canvas.getContext('2d')!
-  const imgData = new ImageData(new Uint8ClampedArray(buf), w, h)
-  ctx.putImageData(imgData, 0, 0)
-
-  const tex = new CanvasTexture(canvas)
-  tex.flipY = false
-  canvas.remove()
-  return tex
+  const imageData = ctx.createImageData(w, h)
+    imageData.data.set(getBackendType(renderer) === EditorBackendType.WEBGL
+      ? flipBufferY(buf as Uint8Array, w, h)
+      : buf)
+  ctx.putImageData(imageData, 0, 0)
+  return canvas
 }
 
 /**
- * Flips a UInt8Array's pixels vertically to have a normalized +X/+Y image
+ * Flips an UInt8Array's data vertically to have a normalized +X/+Y image
  * @param buffer the data buffer
  * @param w width of the resulting image
  * @param h height of the resulting image
- * @returns
+ * @returns the flipped buffer
  */
-export function normalizeUInt8ArrayPixels(buffer: Uint8Array, w: number, h: number): Uint8Array {
+export function flipBufferY(buffer: Uint8Array, w: number, h: number): Uint8Array {
   const length = w * h * 4
   const row = w * 4
   const end = (h - 1) * row
@@ -132,13 +113,4 @@ export function toRawRGBA(color: Color, a: number): RawRGBA {
  */
 export function getBackendType(renderer: WebGPURenderer): EditorBackendType {
   return Object.hasOwn(renderer.backend, 'gl') ? EditorBackendType.WEBGL : EditorBackendType.WEBGPU
-}
-
-// ----------------------------------------------------------------------------
-
-function createCanvas(w: number, h: number): HTMLCanvasElement {
-  const canvas = document.createElement('canvas')
-  canvas.width = w
-  canvas.height = h
-  return canvas
 }

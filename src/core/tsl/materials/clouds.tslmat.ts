@@ -33,6 +33,7 @@ import type {
   UniformVector4Node,
   WarpingData,
 } from '../types'
+import { flattenUV } from '../utils/vertex.tlsutil'
 
 export type CloudsUniformData = {
   flags: {
@@ -140,7 +141,7 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     // init material & set outputs
     const material = new MeshBasicNodeMaterial()
     material.transparent = true
-    material.vertexNode = Fn(() => vec4(uv().x, uv().y, 0.0, 1.0).mul(2.0).sub(1.0))()
+    material.vertexNode = flattenUV(uv())
     material.colorNode = mainNode(positionLocal)
     return material
   }
