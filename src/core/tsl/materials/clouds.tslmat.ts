@@ -10,8 +10,11 @@ import {
   Vector4,
 } from 'three/webgpu'
 import {
+  EPSILON,
+  float,
   Fn,
   int,
+  min,
   positionLocal,
   texture,
   uniform,
@@ -171,7 +174,8 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       fbm3(vPos.add(DVEC_B), this.uniforms.noise),
     ).toVar('fOpacity')
     const opacity = vec3(fbm3(vPos.add(fOpacity), this.uniforms.noise)).toVar('opacity')
-    opacity.assign(this.uniforms.texture.sample(vec2(opacity.x, 0.5)).xyz)
+    const texCoords = vec2(min(float(1.0).sub(EPSILON), opacity.x)).toVar('texCoords')
+    opacity.assign(this.uniforms.texture.sample(texCoords).xyz)
     return opacity
   }
 }
