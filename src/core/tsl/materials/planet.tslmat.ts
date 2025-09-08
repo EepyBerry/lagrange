@@ -6,7 +6,6 @@ import {
   Texture,
   TextureNode,
   UniformArrayNode,
-  Vector2,
   Vector3,
   Vector4,
 } from 'three/webgpu'
@@ -289,7 +288,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const s22 = texNode.sample(uv().add(offset.zz)).x.toVar('s22')
     // @ts-expect-error: Invalid type definitions for mat3(...) using nodes
     const sobelMat = mat3(s00, s01, s02, s10, uv().x, s12, s20, s21, s22).toVar('sobelMat')
-    const normal = sobel(sobelMat, float(256.0).mul(this.uniforms.bumpStrength)).toVar('N')
+    const normal = sobel(sobelMat, float(heightMap.width).mul(this.uniforms.bumpStrength)).toVar('N')
 
     const material = new MeshBasicNodeMaterial()
     material.vertexNode = flattenUV(uv())
