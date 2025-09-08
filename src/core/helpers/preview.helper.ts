@@ -1,10 +1,10 @@
-import { RenderTarget, SRGBColorSpace } from 'three';
+import { CanvasTexture, RenderTarget, SRGBColorSpace } from 'three';
 import * as Globals from '@/core/globals'
 import * as SceneHelper from './scene.helper'
 import type PlanetData from '../models/planet-data.model';
 import { degToRad } from 'three/src/math/MathUtils.js';
-import { EditorBackendType, EditorSceneCreationMode, type EditorSceneData } from '../types';
-import { getBackendType, normalizeUInt8ArrayPixels } from '../utils/render-utils';
+import { EditorSceneCreationMode, type EditorSceneData } from '../types';
+import { renderToCanvas } from '../utils/render-utils';
 
 export async function generatePlanetPreview(data: PlanetData): Promise<string> {
   try {
@@ -26,23 +26,12 @@ export async function generatePlanetPreview(data: PlanetData): Promise<string> {
     sceneData.renderer.setRenderTarget(null)
 
     // ----------------- Create preview canvas & write data from buffer -----------------
-    const canvas = document.createElement('canvas')
-    canvas.width = w
-    canvas.height = h
-    const ctx = canvas.getContext('2d')!
-    const imageData = ctx.createImageData(w, h)
-    imageData.data.set(getBackendType(sceneData.renderer) === EditorBackendType.WEBGPU
-      ? rawBuffer
-      : normalizeUInt8ArrayPixels(rawBuffer, w, h))
-    ctx.putImageData(imageData, 0, 0)
+    const tex = new CanvasTexture(renderToCanvas(sceneData.renderer, rawBuffer, w, h))
+    const dataURL = URL.createObjectURL(await tex.image.convertToBlob())
 
     // ------------------------------- Clean-up resources -------------------------------
     previewRenderTarget.dispose()
     SceneHelper.disposeEditorScene(sceneData)
-
-    // ----------------------------- Save and remove canvas -----------------------------
-    const dataURL = canvas.toDataURL('image/webp')
-    canvas.remove()
     return dataURL
   } catch (err) {
     console.error('<Lagrange> Could not save planet preview!', err)
