@@ -14,9 +14,7 @@ export function renderToCanvas(renderer: WebGPURenderer, buf: TypedArray, w: num
   const canvas = new OffscreenCanvas(w, h)
   const ctx = canvas.getContext('2d')!
   const imageData = ctx.createImageData(w, h)
-    imageData.data.set(getBackendType(renderer) === EditorBackendType.WEBGL
-      ? flipBufferY(buf as Uint8Array, w, h)
-      : buf)
+  imageData.data.set(getBackendType(renderer) === EditorBackendType.WEBGL ? flipBufferY(buf as Uint8Array, w, h) : buf)
   ctx.putImageData(imageData, 0, 0)
   return canvas
 }

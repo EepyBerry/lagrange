@@ -116,6 +116,12 @@
       "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
       "editor_baking_resolution": "Résolution des textures lors du baking (puissances de deux)",
       "editor_baking_pixelize": "Pixéliser les textures lors du baking",
+      "editor_rendering_backend": "Sélectionner le moteur de rendu 3D <b>(rechargement nécessaire)</b>",
+      "editor_rendering_backend_webgl": "WebGL",
+      "editor_rendering_backend_webgpu": "WebGPU",
+      "editor_rendering_backend_webgl_notification": "Moteur WebGL standard; stable et couramment utilisé!",
+      "editor_rendering_backend_webgpu_notification": "Moteur WebGPU moderne; en cours de développement. Des bugs et/ou erreurs peuvent se produire!",
+      "editor_rendering_backend_webgpu_unavailable": "Votre navigateur ne prend pas en charge WebGPU. WebGL sera le seul moteur disponible.",
 
       "a11y": "Accessibilité",
       "a11y_effects": "Activer les effets visuels",
@@ -385,7 +391,9 @@
     "import_partial": "Attention: certaines planètes n'ont pas pu être importées",
     "import_failure": "Impossible d'importer les planètes. Vérifiez que les bons fichiers ont été sélectionnés, puis essayez à nouveau",
     "save_success": "Planète enregistrée !",
-    "settings_import_success": "Paramètres chargés !"
+    "settings_import_success": "Paramètres chargés !",
+    "save_partial_no_preview": "Planète enregistrée (l'aperçu n'a pas pu être généré !)",
+    "screenshot_failure": "Erreur lors de la capture d'écran !"
   },
   "tooltip": {
     "topbar_rename": "Renommer la planète",
@@ -456,6 +464,8 @@
     "editor_baking_resolution_2k": "2048 par 2048 pixels",
     "editor_baking_resolution_4k": "4096 par 4096 pixels",
     "editor_baking_pixelize": "Pixéliser les textures de sortie",
+    "editor_rendering_backend_webgl": "@:dialog.settings.editor_rendering_backend_webgl",
+    "editor_rendering_backend_webgpu": "@:dialog.settings.editor_rendering_backend_webgpu",
 
     "editor_generic_input": "Valeur du paramètre",
 

@@ -5,6 +5,7 @@ import type { Node } from 'three/webgpu'
 
 export const darken = /*@__PURE__*/ Fn(([i_color, i_factor]: ShaderNodeObject<Node>[]) => {
   return i_color.mul(
+    // @ts-expect-error: Missing overload definition in @types/three
     mat4(
       vec4(sub(1.0, i_factor), 0.0, 0.0, 0.0),
       vec4(0.0, sub(1.0, i_factor), 0.0, 0.0),
@@ -22,6 +23,7 @@ export const darken = /*@__PURE__*/ Fn(([i_color, i_factor]: ShaderNodeObject<No
 })
 
 export const tintToMatrix = /*@__PURE__*/ Fn(([i_tint]: [ShaderNodeObject<Node>]) => {
+  // @ts-expect-error: Missing overload definition in @types/three
   return mat4(
     vec4(i_tint.x, 0.0, 0.0, 0.0),
     vec4(0.0, i_tint.y, 0.0, 0.0),
@@ -36,6 +38,7 @@ export const tintToMatrix = /*@__PURE__*/ Fn(([i_tint]: [ShaderNodeObject<Node>]
 
 export const greyscale = /*@__PURE__*/ Fn(([i_color]: [ShaderNodeObject<Node>]) => {
   return i_color.mul(
+    // @ts-expect-error: Missing overload definition in @types/three
     mat4(
       vec4(0.2126, 0.7152, 0.0722, 0.0),
       vec4(0.2126, 0.7152, 0.0722, 0.0),
@@ -63,15 +66,14 @@ export const shiftHue = /*@__PURE__*/ Fn(([i_color, i_hue]: ShaderNodeObject<Nod
   return i_color
     .mul(c)
     .add(
-      i_color
-        .mul(s)
-        .mul(
-          mat3(
-            vec3(0.167444, 0.329213, float(-0.496657)),
-            vec3(float(-0.327948), 0.035669, 0.292279),
-            vec3(1.250268, float(-1.047561), float(-0.202707)),
-          ),
+      i_color.mul(s).mul(
+        // @ts-expect-error: Missing overload definition in @types/three
+        mat3(
+          vec3(0.167444, 0.329213, float(-0.496657)),
+          vec3(float(-0.327948), 0.035669, 0.292279),
+          vec3(1.250268, float(-1.047561), float(-0.202707)),
         ),
+      ),
     )
     .add(dot(vec3(0.299, 0.587, 0.114), i_color).mul(sub(1.0, c)))
 }).setLayout({
