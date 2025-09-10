@@ -27,15 +27,24 @@ export async function generatePlanetPreview(data: PlanetData): Promise<string> {
 
     // ----------------- Create preview canvas & write data from buffer -----------------
     const tex = new CanvasTexture(renderToCanvas(sceneData.renderer, rawBuffer, w, h))
-    const dataURL = URL.createObjectURL(await tex.image.convertToBlob())
+    const blob = await tex.image.convertToBlob()
 
     // ------------------------------- Clean-up resources -------------------------------
     previewRenderTarget.dispose()
     SceneHelper.disposeEditorScene(sceneData)
-    return dataURL
+    return await blobToDataURL(blob)
   } catch (err) {
     console.error('<Lagrange> Could not save planet preview!', err)
     return ''
   }
+}
+
+async function blobToDataURL(blob: Blob): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
 }
 

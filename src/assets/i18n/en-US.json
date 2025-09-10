@@ -43,8 +43,8 @@
     "init": {
       "$title": "Welcome to @:main.$title",
       "introduction": "Lagrange is a fully procedural planet builder, perfect for worldbuilding and tying your lore to a proper planet, solar system or even an entire galaxy!",
-      "update_title": "Update 0.4 - Jovian Expansion!",
-      "update_brief": "Adds more parameters to diversify your worlds, such as XYZ warping, displacement, and ring systems. Gas giants can now be (re)created at will!",
+      "update_title": "Update 0.5 - Core Overhaul!",
+      "update_brief": "Introduces WebGPU support; fully compatible with existing features! You can now select your preferred rendering engine in the app settings!",
       "$tmp_wip": "Currently work-in-progress. More features are planned for the next versions!",
 
       "shortcuts": "Shortcuts",
@@ -166,7 +166,13 @@
         "04_title": "Update 0.4 - Jovian Expansion",
         "04_params": "Adds new parameters for your worlds: XYZ warping, displacement and ring systems!",
         "04_ui": "New dialog box when trying to leave the Editor without saving first, along with many touch-ups & improvements",
-        "04_misc": "Adds fr-FR translation, and changes project license to ISTSL-NR 1.0"
+        "04_misc": "Adds fr-FR translation, and changes project license to ISTSL-NR 1.0",
+        "041_export": "(0.4.1) Planets can now be exported to glTF files! Does not include atmosphere for technical reasons",
+        "042_rnd": "(0.4.2) Introduces a seed-based randomization system. Seeds can be reused and shared at-will",
+        "043_settings": "(0.4.3) App settings can now be backed up and restored! Uses a JSON file to store settings data",
+        "05_title": "Update 0.5 - Core Overhaul",
+        "05_webgpu": "Introduces WebGPU support! Renderer selection is now available in the app settings",
+        "05_rewrite": "Full rewrite of the internal app structure, for better maintainability and feature development!"
       },
       "credits": {
         "$title": "Credits & attribution",

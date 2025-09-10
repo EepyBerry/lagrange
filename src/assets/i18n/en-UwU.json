@@ -43,8 +43,8 @@
     "init": {
       "$title": "Wewcome :3 t-to @:main.$title",
       "introduction": "Wagwange is a fuwwy pwoceduwaw pwanyet buiwdew, pewfect fow wowwdbuiwding and tying youw wowe t-to a pwopew pwanyet, sowaw system o-ow even an entiwe gawaxy! (・`ω´・)",
-      "update_title": "Update 0.4 - Jovian Expansion!",
-      "update_brief": "A-adds MOWE pawametews to divewsify youw wowwds, l-like XYZ wawping, dispwacemyent, a-and wing systems!!! Gas giants c-can now be (we)cweated at wiww!!! o(^▽^)o",
+      "update_title": "Update 0.5 - Cowe Ovewhauw!",
+      "update_brief": "Intwoduces WebGPU suppowt!!! F-FUWWY COMPATIBWE with existing features!!! You can n-now sewect your pwefewwed w-wendewing engine in the app settings!!! (✿ﾟ▽ﾟ)",
       "$tmp_wip": "Cuwwentwy wowk-in-pwogwess. M-Mowe featuwes awe pwanned fow the nyext vewsions! x3",
 
       "shortcuts": "Showtcuts",
@@ -166,7 +166,13 @@
         "04_title": "Update 0.4 - Jovian Expansion",
         "04_params": "Adds nyew p-pawametews fow youw wowwds: XYZ wawping, dispwacement a-and wing systems!!!",
         "04_ui": "New diawog box w-when twying to weave the Editow wi-without saving fiwst, awong with MANY touchie-upsies & impwovements!!!",
-        "04_misc": "Adds fr-FR twanswation, and changes pwoject wicense to ISTSL-NR 1.0!!!"
+        "04_misc": "Adds fr-FR twanswation, and changes pwoject wicense to ISTSL-NR 1.0!!!",
+        "041_export": "(0.4.1) P-pwanyets can nyow be expowted to glTF fiwes!!! B-but does nyot incwude atmosphewe f-for technicaw weasons...",
+        "042_rnd": "(0.4.2) Introduces a seed-based randomization system. Seeds can be reused and shared at-will",
+        "043_settings": "(0.4.3) App s-settings can nyow be backed up AND westowed!!! U-uses a JSON fiwe to stowe settings d-data",
+        "05_title": "Update 0.5 - Cowe Ovewhauw",
+        "05_webgpu": "I-intwoduces WebGPU suppowt!!! Wendewew sewection is now avaiwabwe in the app settings!!!",
+        "05_rewrite": "Fuww wewwite of the intewnyaw app s-stwuctuwe, for bettew maintainyabiwity and f-featuwe devewopment!!!"
       },
       "credits": {
         "$title": "Cwedits & attwibushon",
