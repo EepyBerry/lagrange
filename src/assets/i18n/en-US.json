@@ -172,7 +172,7 @@
         "043_settings": "(0.4.3) App settings can now be backed up and restored! Uses a JSON file to store settings data",
         "05_title": "Update 0.5 - Core Overhaul",
         "05_webgpu": "Introduces WebGPU support! Renderer selection is now available in the app settings",
-        "05_rewrite": "Full rewrite of the internal app structure, for better maintainability and feature development!"
+        "05_rewrite": "Full rewrite of the internal app structure to help future development efforts"
       },
       "credits": {
         "$title": "Credits & attribution",

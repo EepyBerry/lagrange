@@ -168,10 +168,10 @@
         "04_ui": "Nouvelle boite de dialogue dans le cas où l'éditeur va se fermer sans avoir sauvegardé, ainsi que divers ajustements et améliorations",
         "04_misc": "Ajoute la traduction fr-FR, et change la licence du projet vers la ISTSL-NR 1.0",
         "041_export": "(0.4.1) Les planètes sont maintenant exportables au format glTF ! L'atmosphère n'est pas incluse pour des raisons techniques",
-        "042_rnd": "(0.4.2) Ajoute un système de génération aléatoire. Les seeds (graines) peuvent être partagés entre différents appareils",
+        "042_rnd": "(0.4.2) Ajoute un système de génération aléatoire. Les graines (\"seeds\") peuvent être partagées à souhait !",
         "043_settings": "(0.4.3) Les paramètres de l'application sont maintenant exportables et importables ! Cette fonction utilise un fichier JSON pour le stockage",
         "05_title": "Mise à jour 0.5 - Core Overhaul",
-        "05_webgpu": "Ajoute la prise en charge de WebGPU ! La sélection du moteur de rendu 3D est disponible dans les paramètres de l'application",
+        "05_webgpu": "Ajoute la prise en charge de WebGPU ! Le moteur de rendu 3D peut être sélectionné dans les paramètres de l'application",
         "05_rewrite": "Refonte de la structure interne de l'application pour simplifier les futurs développements"
       },
       "credits": {
