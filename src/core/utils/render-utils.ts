@@ -4,11 +4,11 @@ import { Color, type TypedArray } from 'three'
 import type { WebGPURenderer } from 'three/webgpu'
 
 /**
- * Renders a buffer onto a CanvasTexture
+ * Renders a buffer onto an OffscreenCanvas
  * @param buf the buffer, represented as a `TypedArray` (usually `UInt8Array`)
  * @param w width of the output (in pixels)
  * @param h height of the output (in pixels)
- * @returns a `CanvasTexture` instance containing data from the buffer
+ * @returns an `OffscreenCanvas` instance containing data from the buffer
  */
 export function renderToCanvas(renderer: WebGPURenderer, buf: TypedArray, w: number, h: number): OffscreenCanvas {
   const canvas = new OffscreenCanvas(w, h)
@@ -111,4 +111,13 @@ export function toRawRGBA(color: Color, a: number): RawRGBA {
  */
 export function getBackendType(renderer: WebGPURenderer): EditorBackendType {
   return Object.hasOwn(renderer.backend, 'gl') ? EditorBackendType.WEBGL : EditorBackendType.WEBGPU
+}
+
+export async function blobToDataURL(blob: Blob): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
 }

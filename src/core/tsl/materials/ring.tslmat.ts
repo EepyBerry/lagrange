@@ -48,7 +48,7 @@ export class RingTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, Ri
 
     // init material & set outputs
     const material = new MeshStandardNodeMaterial()
-    material.fragmentNode = mainNode(positionLocal)
+    material.colorNode = mainNode(positionLocal)
     material.transparent = false
     material.side = DoubleSide
     return material
@@ -71,7 +71,7 @@ export class RingTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, Ri
     // init material & set outputs
     const material = new MeshBasicNodeMaterial()
     material.vertexNode = flattenUV(uv())
-    material.fragmentNode = mainNode(positionLocal)
+    material.colorNode = mainNode(positionLocal)
     material.transparent = false
     material.side = DoubleSide
     return material
