@@ -37,7 +37,7 @@ body:
 - type: markdown
   attributes:
     label: Environment & platform
-    description: Please add the requested information below
+    value: Please add the requested information below
 - type: dropdown
   id: device
   attributes:
