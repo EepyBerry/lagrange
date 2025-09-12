@@ -10,7 +10,7 @@ body:
     label: Pre-submit checks
     description: Please check the points below before submitting the issue.
     options:
-    - label: I have searched the existing issues
+    - label: I have searched the existing issues to avoid duplicates
       required: true
     - label: This problem affects the latest version
       required: false
