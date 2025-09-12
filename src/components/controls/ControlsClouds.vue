@@ -92,11 +92,7 @@
             {{ $t('editor.general.noise_color') }}
           </ParameterColor>
           <!-- prettier-ignore-attribute -->
-          <ParameterColorRamp
-            :key="LG_PLANET_DATA.planetName"
-            v-model="(LG_PLANET_DATA.cloudsColorRamp as ColorRamp)"
-            mode="opacity"
-          >
+          <ParameterColorRamp :key="LG_PLANET_DATA.planetName" v-model="LG_PLANET_DATA.cloudsColorRamp" mode="opacity">
             {{ $t('editor.controls.clouds.rgba_opacityramp') }}
           </ParameterColorRamp>
         </template>
@@ -106,5 +102,4 @@
 </template>
 <script setup lang="ts">
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
-import type { ColorRamp } from '@/core/models/color-ramp.model'
 </script>

@@ -37,7 +37,7 @@ function readFileV2(rawData: IDBPlanet): IDBPlanet | undefined {
       data: PlanetData.createFrom(rawData.data),
       preview: rawData.preview,
     }
-    console.debug('[import] Read file data as version 2')
+    console.debug('<Lagrange> Read file data as version 2')
     return newIdb
   } catch (err) {
     console.error(err)
@@ -51,7 +51,7 @@ function readFileV1(rawData: PlanetData): IDBPlanet | undefined {
       id: nanoid(),
       data: PlanetData.createFrom(rawData),
     }
-    console.debug('[import] Read file data as version 1')
+    console.debug('<Lagrange> Read file data as version 1')
     return newIdb
   } catch (err) {
     console.error(err)

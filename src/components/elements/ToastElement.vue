@@ -21,10 +21,10 @@
 </template>
 
 <script setup lang="ts">
-import type { InfoLevel } from '@/core/types'
+import type { EditorMessageLevel } from '@/core/types'
 import { computed, type ComputedRef } from 'vue'
 
-const $props = defineProps<{ type: InfoLevel; visible: boolean }>()
+const $props = defineProps<{ type: EditorMessageLevel; visible: boolean }>()
 defineEmits(['close'])
 
 const classObject: ComputedRef<string[]> = computed(() => [$props.visible ? 'visible' : '', $props.type])

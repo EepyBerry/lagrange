@@ -1,11 +1,30 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
 import type { Rect, RawRGBA } from '@/core/types'
-import { alphaBlendColors, avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/utils/math-utils'
-import { Color, DataTexture, Vector2 } from 'three'
+import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/core/utils/math-utils'
+import { Color, CubeTextureLoader, DataTexture, NearestFilter, Vector2, type MinificationTextureFilter } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { MUL_INT8_TO_UNIT } from '../globals'
-import { toRawRGBA } from '@/utils/utils'
+import { alphaBlendColors, toRawRGBA } from '@/core/utils/render-utils'
+
+const CUBE_TEXTURE_LOADER = new CubeTextureLoader()
+
+/**
+ *
+ * @param path Loads a THREE.CubeTexture from the given path and faces
+ * @param faces the faces of the cubemap
+ */
+export function loadCubeTexture(path: string, faces: string[], filter?: MinificationTextureFilter) {
+  if (faces.length !== 6) {
+    throw new Error('Exactly six faces are required for a CubeTexture !')
+  }
+  const cubemap = CUBE_TEXTURE_LOADER.setPath(path).load(faces)
+  cubemap.minFilter = filter ?? NearestFilter
+  return cubemap
+}
+
+
+// ------------------------------------------------------------------------------------------------
 
 export function createRampTexture(buffer: Uint8Array, w: number, steps: ColorRampStep[]): DataTexture {
   if (steps.length > 0) {

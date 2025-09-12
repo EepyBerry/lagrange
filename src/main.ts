@@ -15,8 +15,8 @@ import ParameterColorRamp from '@components/parameters/ParameterColorRamp.vue'
 import ParameterColor from '@components/parameters/ParameterColor.vue'
 import ParameterCheckbox from './components/parameters/ParameterCheckbox.vue'
 import ParameterDivider from '@components/parameters/ParameterDivider.vue'
-import { createHead } from '@unhead/vue'
 import * as i18nConfig from './i18n.config'
+import { createHead } from '@unhead/vue/client'
 
 createApp(App)
   .use(router)

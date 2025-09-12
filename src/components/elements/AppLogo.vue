@@ -1,7 +1,7 @@
 <template>
   <SVGAppLogoUwU v-if="$route.query.uwu !== undefined" :aria-label="$t('a11y.logo_alt')" />
   <template v-else>
-    <SVGAppLogo :aria-label="$t('a11y.logo')" />
+    <SVGAppLogo :aria-label="$t('a11y.logo')" :class="{ update: showUpdate }" />
     <SVGAppLogoUpdate v-if="showUpdate" />
   </template>
 </template>

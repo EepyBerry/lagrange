@@ -26,7 +26,7 @@
                 </template>
               </ParameterSelect>
               <ParameterSelect v-else id="language" v-model="appSettings.locale">
-                {{ $t('dialog.settings.general_language') }}
+                {{ $t('dialog.settings.general_language') }}:
                 <template #options>
                   <option value="en-US">English [en-US]</option>
                   <option value="fr-FR">Français [fr-FR]</option>
@@ -98,6 +98,98 @@
           <template #content>
             <div class="settings-editor">
               <ParameterGrid>
+                <ParameterRadio>
+                  <!-- eslint-disable-next-line vue/no-v-html -->
+                  <template #title><span v-html="$t('dialog.settings.editor_rendering_backend')"></span>:</template>
+                  <template #options>
+                    <ParameterRadioOption
+                      :id="'webgl'"
+                      v-model="appSettings.renderingBackend"
+                      name="rendering-backend-select"
+                      :value="'webgl'"
+                      :button-aria-label="$t('a11y.editor_rendering_backend_webgl')"
+                    >
+                      <iconify-icon class="icon" icon="simple-icons:webgl" width="2rem" aria-hidden="true" />
+                      {{ $t('dialog.settings.editor_rendering_backend_webgl') }}
+                    </ParameterRadioOption>
+                    <ParameterRadioOption
+                      :id="'webgpu'"
+                      v-model="appSettings.renderingBackend"
+                      name="rendering-backend-select"
+                      :value="'webgpu'"
+                      :button-aria-label="$t('a11y.editor_rendering_backend_webgpu')"
+                      :disabled="!WebGPU.isAvailable()"
+                    >
+                      <iconify-icon class="icon" icon="simple-icons:webgpu" width="1.5rem" aria-hidden="true" />
+                      {{ $t('dialog.settings.editor_rendering_backend_webgpu') }}
+                    </ParameterRadioOption>
+                  </template>
+                </ParameterRadio>
+                <NotificationElement :type="appSettings.renderingBackend === 'webgl' ? 'info' : 'wip'">
+                  {{
+                    appSettings.renderingBackend === 'webgl'
+                      ? $t('dialog.settings.editor_rendering_backend_webgl_notification')
+                      : $t('dialog.settings.editor_rendering_backend_webgpu_notification')
+                  }}
+                </NotificationElement>
+                <NotificationElement v-if="!WebGPU.isAvailable()" type="warn">
+                  {{ $t('dialog.settings.editor_rendering_backend_webgpu_unavailable') }}
+                </NotificationElement>
+                <ParameterDivider />
+                <ParameterRadio>
+                  <template #title> {{ $t('dialog.settings.editor_baking_resolution') }}: </template>
+                  <template #options>
+                    <ParameterRadioOption
+                      :id="'256'"
+                      v-model="appSettings.bakingResolution"
+                      name="baking-res-select"
+                      :value="256"
+                      :button-aria-label="$t('a11y.editor_baking_resolution_256')"
+                      >256</ParameterRadioOption
+                    >
+                    <ParameterRadioOption
+                      :id="'512'"
+                      v-model="appSettings.bakingResolution"
+                      name="baking-res-select"
+                      :value="512"
+                      :button-aria-label="$t('a11y.editor_baking_resolution_512')"
+                      >512</ParameterRadioOption
+                    >
+                    <ParameterRadioOption
+                      :id="'1024'"
+                      v-model="appSettings.bakingResolution"
+                      name="baking-res-select"
+                      :value="1024"
+                      :button-aria-label="$t('a11y.editor_baking_resolution_1k')"
+                      >1024</ParameterRadioOption
+                    >
+                    <ParameterRadioOption
+                      :id="'2048'"
+                      v-model="appSettings.bakingResolution"
+                      name="baking-res-select"
+                      :value="2048"
+                      :button-aria-label="$t('a11y.editor_baking_resolution_2k')"
+                      >2048</ParameterRadioOption
+                    >
+                    <ParameterRadioOption
+                      :id="'4096'"
+                      v-model="appSettings.bakingResolution"
+                      name="baking-res-select"
+                      :value="4096"
+                      :button-aria-label="$t('a11y.editor_baking_resolution_4k')"
+                      >4096</ParameterRadioOption
+                    >
+                  </template>
+                </ParameterRadio>
+                <ParameterCheckbox
+                  id="settings-baking-pixelize"
+                  v-model="appSettings.bakingPixelize"
+                  :true-value="true"
+                  :false-value="false"
+                >
+                  {{ $t('dialog.settings.editor_baking_pixelize') }}:
+                </ParameterCheckbox>
+                <ParameterDivider />
                 <ParameterKeyBinding
                   icon="mingcute:sun-line"
                   :key-bind="getKeyBind('toggle-lens-flare')"
@@ -138,60 +230,6 @@
                 >
                   {{ $t('dialog.settings.editor_screenshot') }}
                 </ParameterKeyBinding>
-                <ParameterDivider />
-                <ParameterRadio>
-                  <template #title> {{ $t('dialog.settings.editor_baking_resolution') }}: </template>
-                  <template #options>
-                    <ParameterRadioOption
-                      :id="'0'"
-                      v-model="appSettings.bakingResolution"
-                      name="baking-256"
-                      :value="256"
-                      :button-aria-label="$t('a11y.editor_baking_resolution_256')"
-                      >256</ParameterRadioOption
-                    >
-                    <ParameterRadioOption
-                      :id="'0'"
-                      v-model="appSettings.bakingResolution"
-                      name="baking-512"
-                      :value="512"
-                      :button-aria-label="$t('a11y.editor_baking_resolution_512')"
-                      >512</ParameterRadioOption
-                    >
-                    <ParameterRadioOption
-                      :id="'0'"
-                      v-model="appSettings.bakingResolution"
-                      name="baking-1k"
-                      :value="1024"
-                      :button-aria-label="$t('a11y.editor_baking_resolution_1k')"
-                      >1024</ParameterRadioOption
-                    >
-                    <ParameterRadioOption
-                      :id="'1'"
-                      v-model="appSettings.bakingResolution"
-                      name="baking-2k"
-                      :value="2048"
-                      :button-aria-label="$t('a11y.editor_baking_resolution_2k')"
-                      >2048</ParameterRadioOption
-                    >
-                    <ParameterRadioOption
-                      :id="'1'"
-                      v-model="appSettings.bakingResolution"
-                      name="baking-4k"
-                      :value="4096"
-                      :button-aria-label="$t('a11y.editor_baking_resolution_4k')"
-                      >4096</ParameterRadioOption
-                    >
-                  </template>
-                </ParameterRadio>
-                <ParameterCheckbox
-                  id="settings-baking-pixelize"
-                  v-model="appSettings.bakingPixelize"
-                  :true-value="true"
-                  :false-value="false"
-                >
-                  {{ $t('dialog.settings.editor_baking_pixelize') }}:
-                </ParameterCheckbox>
               </ParameterGrid>
             </div>
           </template>
@@ -260,7 +298,7 @@
           <template #content>
             <div class="settings-advanced">
               <ParameterGrid>
-                <p>{{ $t('dialog.settings.advanced_persist') }}:</p>
+                <p>{{ $t('dialog.settings.advanced_io') }}:</p>
                 <div id="actions-io">
                   <button class="lg" @click="openImportDialog">
                     <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
@@ -321,17 +359,18 @@ import ParameterRadioOption from '../parameters/ParameterRadioOption.vue'
 import ParameterSelect from '../parameters/ParameterSelect.vue'
 import { useI18n } from 'vue-i18n'
 import CollapsibleSection from '../elements/CollapsibleSection.vue'
-import { mapLocale } from '@/utils/utils'
+import { mapLocale } from '@/core/utils/utils'
 import ParameterKeyBinding from '../parameters/ParameterKeyBinding.vue'
 import { A11Y_ANIMATE } from '@/core/globals'
 import NotificationElement from '../elements/NotificationElement.vue'
 import ParameterCategory from '../parameters/ParameterCategory.vue'
 import AppClearDataConfirmDialog from './AppClearDataConfirmDialog.vue'
-import { clearData } from '@/utils/dexie-utils'
+import { clearData } from '@/core/utils/dexie-utils'
 import { EventBus } from '@/core/event-bus'
 import { EXTRAS_CAT_MODE, EXTRAS_HOLOGRAM_MODE, EXTRAS_SPECIAL_DAYS } from '@/core/extras'
 import { saveAs } from 'file-saver'
 import { readFileSettings } from '@/core/helpers/import.helper'
+import WebGPU from 'three/examples/jsm/capabilities/WebGPU.js'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
@@ -350,6 +389,7 @@ const appSettings: Ref<IDBSettings> = ref({
   theme: '',
   font: '',
   showInitDialog: true,
+  renderingBackend: 'webgl',
   bakingResolution: 2048,
   bakingPixelize: false,
   enableAnimations: true,
@@ -358,10 +398,9 @@ const appSettings: Ref<IDBSettings> = ref({
   extrasShowSpecialDays: true,
 })
 const persistStorage: Ref<boolean> = ref(false)
+const failedToPersist: Ref<boolean> = ref(false)
 const selectedAction: Ref<string | null> = ref(null)
 const keyBinds: Ref<IDBKeyBinding[]> = ref([])
-
-const failedToPersist: Ref<boolean> = ref(false)
 
 let dataLoaded = false
 
@@ -412,7 +451,7 @@ function openImportDialog() {
 async function importData(event: Event) {
   const files = (event.target as HTMLInputElement).files
   if (!files || files?.length === 0) {
-    console.warn('At least one file should be specified!')
+    console.warn('<Lagrange> At least one file should be specified!')
     return
   }
   const data = await readFileSettings(files[0])
@@ -463,6 +502,7 @@ async function updateSettings() {
     theme: appSettings.value!.theme,
     font: appSettings.value!.font,
     showInitDialog: appSettings.value!.showInitDialog,
+    renderingBackend: appSettings.value!.renderingBackend,
     bakingResolution: appSettings.value!.bakingResolution,
     bakingPixelize: appSettings.value!.bakingPixelize,
     enableEffects: appSettings.value!.enableEffects,
@@ -498,7 +538,7 @@ async function setSelectedActionKey(event: KeyboardEvent) {
       ...alreadyAssignedActions.map((k) => ({ key: k.id, changes: { key: k.key } })),
     ])
     .then(() => (keyBinds.value[kbidx].key = event.key.toUpperCase()))
-    .catch((e) => console.error('(Dexie) Keybinds failed to update', e))
+    .catch((e) => console.error('<Lagrange> (Dexie) Keybinds failed to update', e))
   toggleAction(keyBinds.value[kbidx].action)
 }
 
