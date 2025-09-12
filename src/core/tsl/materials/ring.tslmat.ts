@@ -51,7 +51,7 @@ export class RingTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, Ri
 
   // --------------------------------------------------------------------------
 
-  private sampleRampTexture(pos: ShaderNodeObject<Node>) {
+  private sampleRampTexture(pos: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
     const distanceToCenter = length(pos.xy).toVar('distanceToCenter')
     const rampFactor = float(
       this.clampToRange(distanceToCenter, this.uniforms.innerRadius, this.uniforms.outerRadius),
@@ -60,7 +60,7 @@ export class RingTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, Ri
     return this.uniforms.texture.sample(texCoord)
   }
 
-  private clampToRange(i_v: ShaderNodeObject<Node>, i_min: UniformNumberNode, i_max: UniformNumberNode) {
+  private clampToRange(i_v: ShaderNodeObject<Node>, i_min: UniformNumberNode, i_max: UniformNumberNode): ShaderNodeObject<Node> {
     return i_v.sub(i_min).div(i_max.sub(i_min))
   }
 }

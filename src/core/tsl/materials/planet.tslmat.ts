@@ -13,7 +13,6 @@ import {
   bitangentLocal,
   EPSILON,
   float,
-  Fn,
   int,
   mat3,
   min,
@@ -300,13 +299,12 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
   private applyXYZTransformations(vPos: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
     vPos = warp(vPos, this.uniforms.warping, this.uniforms.flags.element(int(0)))
-    vPos = displace(
+    return displace(
       vPos,
       this.uniforms.displacement.params,
       this.uniforms.displacement.noise,
       this.uniforms.flags.element(int(1)),
     )
-    return vPos
   }
 
   private renderBiomes(
