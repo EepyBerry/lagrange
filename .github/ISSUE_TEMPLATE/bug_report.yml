@@ -36,7 +36,6 @@ body:
     required: true
 - type: markdown
   attributes:
-    label: Environment & platform
     value: Please add the requested information below
 - type: dropdown
   id: device
