@@ -1,0 +1,68 @@
+name: Bug report
+description: File a bug/issue
+title: "🔴 [<version>] <title>"
+labels: ["bug", "triage"]
+assignees: ["EepyBerry"]
+body:
+- type: checkboxes
+  id: checks
+  attributes:
+    label: Pre-submit checks
+    description: Please check the points below before submitting the issue.
+    options:
+    - label: I have searched the existing issues
+      required: true
+    - label: This problem affects the latest version
+      required: false
+- type: textarea
+  id: desc
+  attributes:
+    label: Description
+    description: Put information about your problem/bug here. Please be as detailed as possible in your description to facilitate debugging.
+  validations:
+    required: true
+- type: textarea
+  id: repro
+  attributes:
+    label: Steps to reproduce
+    description: Add reproduction steps here: relevant planet data, editor settings, etc. You can attach a planet file if available!
+    value: |
+      1.
+      2.
+      3.
+    validations:
+      required: true
+- type: markdown
+  attributes:
+    label: Environment & platform
+    description: Please add the requested information below
+- type: dropdown
+  id: device
+  attributes:
+    label: Device
+    multiple: true
+    options:
+      - Desktop
+      - Mobile
+      - Headset
+- type: input
+  id: os
+  attributes:
+    label: Operating system
+    placeholder: ex. Windows 10 22H2
+  validations:
+    required: true
+- type: input
+  id: platform
+  attributes:
+    label: Browser
+    placeholder: Firefox
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Additional information
+    description: |
+      If you'd like to add more context, feel free to do so here. Any kind of supporting content is welcome: screenshots, drawings, anything that helps!
+  validations:
+    required: false
