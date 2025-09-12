@@ -23,7 +23,7 @@
             </p>
             <br />
 
-            <CollapsibleSection icon="mingcute:news-line">
+            <CollapsibleSection icon="mingcute:news-line" style="background: var(--lg-update-05-background)">
               <template #title>{{ $t('dialog.init.update_title') }}</template>
               <template #content>
                 {{ $t('dialog.init.update_brief') }}
@@ -77,36 +77,55 @@
         <CollapsibleSection icon="mingcute:settings-1-line">
           <template #title>{{ $t('dialog.init.topbar') }}</template>
           <template #content>
-            <ul class="controls">
-              <li class="lg">
-                <iconify-icon icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-                {{ $t('dialog.init.topbar_rename') }}
-              </li>
-              <li class="lg">
-                <iconify-icon icon="tabler:reload" width="1.25rem" aria-hidden="true" />
-                {{ $t('dialog.init.topbar_reset') }}
-              </li>
-              <li class="lg">
-                <iconify-icon icon="mingcute:save-2-line" width="1.25rem" aria-hidden="true" />
-                {{ $t('dialog.init.topbar_save') }}
-              </li>
-              <li class="lg">
-                <iconify-icon icon="mingcute:copy-2-line" width="1.25rem" aria-hidden="true" />
-                {{ $t('dialog.init.topbar_copy') }}
-              </li>
-              <li class="lg">
-                <iconify-icon icon="simple-icons:gltf" width="1.25rem" aria-hidden="true" />
-                {{ $t('dialog.init.topbar_gltf') }}
-              </li>
-              <li class="lg">
-                <iconify-icon icon="mingcute:upload-line" width="1.25rem" aria-hidden="true" />
-                {{ $t('dialog.init.topbar_import') }}
-              </li>
-              <li class="lg">
-                <iconify-icon icon="mingcute:folder-zip-line" width="1.25rem" aria-hidden="true" />
-                {{ $t('dialog.init.topbar_export_all') }}
-              </li>
-            </ul>
+            <div class="controls-container">
+              <p class="controls-group-name">
+                <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
+                {{ $t('main.nav.codex') }}
+              </p>
+              <ul class="controls">
+                <li class="lg">
+                  <iconify-icon icon="mingcute:upload-line" width="1.25rem" aria-hidden="true" />
+                  {{ $t('dialog.init.topbar_import') }}
+                </li>
+                <li class="lg">
+                  <iconify-icon icon="mingcute:folder-zip-line" width="1.25rem" aria-hidden="true" />
+                  {{ $t('dialog.init.topbar_export_all') }}
+                </li>
+              </ul>
+            </div>
+           
+            <div class="controls-container" style="margin-top: 0.25rem;">
+              <p class="controls-group-name">
+                <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
+                {{ $t('main.nav.editor') }}
+              </p>
+              <ul class="controls">
+                <li class="lg">
+                  <iconify-icon icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
+                  {{ $t('dialog.init.topbar_rename') }}
+                </li>
+                <li class="lg">
+                  <iconify-icon icon="tabler:reload" width="1.25rem" aria-hidden="true" />
+                  {{ $t('dialog.init.topbar_reset') }}
+                </li>
+                <li class="lg">
+                  <iconify-icon icon="mingcute:shuffle-2-fill" width="1.25rem" aria-hidden="true" />
+                  {{ $t('dialog.init.topbar_random') }}
+                </li>
+                <li class="lg">
+                  <iconify-icon icon="mingcute:save-2-line" width="1.25rem" aria-hidden="true" />
+                  {{ $t('dialog.init.topbar_save') }}
+                </li>
+                <li class="lg">
+                  <iconify-icon icon="mingcute:copy-2-line" width="1.25rem" aria-hidden="true" />
+                  {{ $t('dialog.init.topbar_copy') }}
+                </li>
+                <li class="lg">
+                  <iconify-icon icon="simple-icons:gltf" width="1.25rem" aria-hidden="true" />
+                  {{ $t('dialog.init.topbar_gltf') }}
+                </li>
+              </ul>
+            </div>
           </template>
         </CollapsibleSection>
 
@@ -239,12 +258,32 @@ function doClose() {
       margin-bottom: 0.75rem;
     }
   }
+  .controls-container {
+    border: 1px solid var(--lg-accent);
+    border-radius: 4px;
+    
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 10% 1fr;
+    align-items: center;
+    justify-content: flex-start;
+    .controls-group-name {
+      grid-column: 1;
+      height: 100%;
+      background-color: var(--lg-contrast-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+  }
   .controls {
+    padding: 0.5rem;
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
     justify-content: flex-start;
-    gap: 1rem;
-    margin-top: 0.5rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
 
     li {

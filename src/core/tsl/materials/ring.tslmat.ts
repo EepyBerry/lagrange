@@ -60,7 +60,11 @@ export class RingTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, Ri
     return this.uniforms.texture.sample(texCoord)
   }
 
-  private clampToRange(i_v: ShaderNodeObject<Node>, i_min: UniformNumberNode, i_max: UniformNumberNode): ShaderNodeObject<Node> {
+  private clampToRange(
+    i_v: ShaderNodeObject<Node>,
+    i_min: UniformNumberNode,
+    i_max: UniformNumberNode,
+  ): ShaderNodeObject<Node> {
     return i_v.sub(i_min).div(i_max.sub(i_min))
   }
 }
