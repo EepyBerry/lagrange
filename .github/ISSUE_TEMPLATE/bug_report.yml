@@ -34,9 +34,6 @@ body:
       3.
   validations:
     required: true
-- type: markdown
-  attributes:
-    value: Please add the requested information below
 - type: dropdown
   id: device
   attributes:
@@ -50,14 +47,14 @@ body:
   id: os
   attributes:
     label: Operating system
-    placeholder: ex. Windows 10 22H2
+    placeholder: ex. Windows 10
   validations:
     required: true
 - type: input
   id: platform
   attributes:
     label: Browser
-    placeholder: Firefox
+    placeholder: ex. Firefox
   validations:
     required: true
 - type: textarea
