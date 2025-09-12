@@ -69,7 +69,11 @@
                 </ul>
               </template>
             </CollapsibleSection>
-            <CollapsibleSection class="about-update-inner" icon="mingcute:lightning-line" style="background: var(--lg-update-05-background);">
+            <CollapsibleSection
+              class="about-update-inner"
+              icon="mingcute:lightning-line"
+              style="background: var(--lg-update-05-background)"
+            >
               <template #title>{{ $t('dialog.about.changelogs.05_title') }}</template>
               <template #content>
                 <ul style="list-style-type: disc; margin-left: 1rem">

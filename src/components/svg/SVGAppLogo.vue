@@ -138,8 +138,13 @@
   overflow: visible;
 }
 #app-logo.update {
-  .cls-1, .cls-3 { fill: var(--lg-logo-update); }
-  .cls-4 { stroke: var(--lg-logo-update); }
+  .cls-1,
+  .cls-3 {
+    fill: var(--lg-logo-update);
+  }
+  .cls-4 {
+    stroke: var(--lg-logo-update);
+  }
 }
 #subtitle > .cls-2 {
   stroke-width: 1px;

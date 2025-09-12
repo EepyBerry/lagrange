@@ -93,8 +93,8 @@
                 </li>
               </ul>
             </div>
-           
-            <div class="controls-container" style="margin-top: 0.25rem;">
+
+            <div class="controls-container" style="margin-top: 0.25rem">
               <p class="controls-group-name">
                 <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
                 {{ $t('main.nav.editor') }}
@@ -261,7 +261,7 @@ function doClose() {
   .controls-container {
     border: 1px solid var(--lg-accent);
     border-radius: 4px;
-    
+
     display: grid;
     grid-template-rows: 1fr;
     grid-template-columns: 10% 1fr;
