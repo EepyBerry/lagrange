@@ -18,14 +18,16 @@ body:
   id: desc
   attributes:
     label: Description
-    description: Put information about your problem/bug here. Please be as detailed as possible in your description to facilitate debugging.
+    description: |
+      Put information about your problem/bug here. Please be as detailed as possible in your description to facilitate debugging.
   validations:
     required: true
 - type: textarea
   id: repro
   attributes:
     label: Steps to reproduce
-    description: Add reproduction steps here: relevant planet data, editor settings, etc. You can attach a planet file if available!
+    description: |
+      Add reproduction steps here: relevant planet data, editor settings, etc. You can attach a planet file if available!
     value: |
       1.
       2.
