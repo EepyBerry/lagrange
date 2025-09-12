@@ -275,7 +275,7 @@ export async function exportPlanetToGLTF(progressDialog: {
         bakeRing.material = new MeshStandardNodeMaterial({
           map: bakeRingTex,
           side: THREE.DoubleSide,
-          transparent: false,
+          transparent: true,
         })
         bakingTargets.push({ mesh: bakeRing, textures: [bakeRingTex] })
         ringGroup.add(bakeRing)
