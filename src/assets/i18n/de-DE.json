@@ -116,6 +116,12 @@
       "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
       "editor_baking_resolution": "Auflösung der Texturen beim Baking (Zweierpotenzen)",
       "editor_baking_pixelize": "Texturen beim Baking verpixeln",
+      "editor_rendering_backend": "3D-Rendering-Engine auswählen <b>(benötigt App Neustart)</b>",
+      "editor_rendering_backend_webgl": "WebGL",
+      "editor_rendering_backend_webgpu": "WebGPU",
+      "editor_rendering_backend_webgl_notification": "Standard WebGL Engine; stabil und allgemein benutzt!",
+      "editor_rendering_backend_webgpu_notification": "Modernes WebGPU Engine; derzeit in Entwicklung. Bugs & Fehler sind zu erwarten!",
+      "editor_rendering_backend_webgpu_unavailable": "Ihr Browser unterstützt nicht WebGPU. WebGL ist das einzige verfügbare Backend.",
 
       "a11y": "Zugänglichkeit",
       "a11y_effects": "Visuelle Effekte aktivieren",
@@ -149,22 +155,28 @@
 
       "changelogs": {
         "$title": "Änderungsprotokoll",
-        "02_title": "Update 0.2 - Weltsammler",
+        "02_title": "Update 0.2 - World Collector",
         "02_codex": "Fügt den Kodex hinzu: Listen, importieren und exportieren Sie Ihre Planeten über Ihren Browser!",
         "02_ui": "Fügt Dialogfelder, Benachrichtigungen, ein Einstellungsmenü sowie neue Variablen im Editor hinzu (Radius, Atmosphäre).",
         "02_a11y": "Zugänglichkeits- und Leistungsverbesserungen",
-        "03_title": "Update 0.3 - Ökosysteme",
+        "03_title": "Update 0.3 - Ecosystems",
         "03_biomes": "Fügt ein komplettes Biomsystem hinzu, das über Temperatur und Luftfeuchtigkeit einstellbar ist!",
         "03_linux": "Oberflächenrauschen wird bei Browsern mit Linux korrigiert!",
         "03_fixes": "Einige kleinere Korrekturen sowie eine Reduzierung der Anzahl der Variationen im GLSL-Code!",
-        "04_title": "Update 0.4 - Jovian-Erweiterung",
+        "04_title": "Update 0.4 - Jovian Expansion",
         "04_params": "Fügt neue Einstellungen für Ihre Welten hinzu: XYZ-Verformung, Oberflächenstörungen und Ringe!",
         "04_ui": "Neues Dialogfeld für den Fall, dass der Editor ohne Speichern geschlossen wird, sowie verschiedene Anpassungen und Verbesserungen",
-        "04_misc": "Fügt die fr-FR-Übersetzung hinzu und ändert die Projektlizenz zu ISTSL-NR 1.0"
+        "04_misc": "Fügt die fr-FR-Übersetzung hinzu und ändert die Projektlizenz zu ISTSL-NR 1.0",
+        "041_export": "(0.4.1) Planeten können jetzt zu glTF Dateien exportiert werden! Wegen technischen Gründen wird die Atmosphäre ausgeschlossen",
+        "042_rnd": "(0.4.2) Führt ein a Seed basiertes Zufahl System ein. Seeds können wieder verwendet und geteilt werden",
+        "043_settings": "(0.4.3) App Einstellungen können jetzt gespeichert und geladen werden! Verwendet eine JSON Datei um die Einstellungen zu speichern ",
+        "05_title": "Update 0.5 - Core Overhaul",
+        "05_webgpu": "Führt WebGPU Support ein! Renderer Auswahl steht jetzt in den Einstellungen zur Verfügung ",
+        "05_rewrite": "Komplette Umschreibung der internen App Struktur um zukünftige Entwicklungen zu vereinfachen"
       },
       "credits": {
         "$title": "Erwähnungen und Dank",
-        "libs": "Hauptabhängigkeiten:<a href=\"https://www.farazzshaikh.com/\" target=\"_blank\"><b>Faraz Shaikh</b></a> (THREE-CustomShaderMaterial)",
+        "libs": "(vor-0.5) Hauptabhängigkeiten: <a href=\"https://www.farazzshaikh.com/\" target=\"_blank\"><b>Faraz Shaikh</b></a> (THREE-CustomShaderMaterial)",
         "glsl_main": "Haupt-GLSL-Code: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
         "glsl_misc": "Verschiedener GLSL-Code: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
         "contributors": "<b>Ein großes Dankeschön an alle Mitwirkenden an diesem Projekt ❤️</b>"
@@ -385,7 +397,9 @@
     "import_partial": "Achtung: Einige Planeten konnten nicht importiert werden",
     "import_failure": "Planeten können nicht importiert werden. Stellen Sie sicher, dass die richtigen Dateien ausgewählt wurden, und versuchen Sie es dann erneut",
     "save_success": "Planet gespeichert !",
-    "settings_import_success": "Daten Importiert!"
+    "settings_import_success": "Daten Importiert!",
+    "save_partial_no_preview": "Planet gespeichert (Planetvorschau konnte nicht generiert werden!)",
+    "screenshot_failure": "Fehler beim Screenshot!"
   },
   "tooltip": {
     "topbar_rename": "Planeten umbenennen",
@@ -456,6 +470,8 @@
     "editor_baking_resolution_2k": "2048 x 2048 Pixel",
     "editor_baking_resolution_4k": "4096 x 4096 Pixel",
     "editor_baking_pixelize": "Ausgabetexturen pixelieren",
+    "editor_rendering_backend_webgl": "@:dialog.settings.editor_rendering_backend_webgl",
+    "editor_rendering_backend_webgpu": "@:dialog.settings.editor_rendering_backend_webgpu",
 
     "editor_generic_input": "Parameterwert",
 

@@ -107,7 +107,10 @@ function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData): void {
   sceneData.planetGroup.add(atmosphere.mesh!)
 
   sceneData.ringAnchor.name = Globals.LG_MESH_NAME_RING_ANCHOR
-  rings.forEach((r) => sceneData.ringAnchor.add(r.mesh!))
+  rings.forEach((r) => {
+    sceneData.rings.push(r)
+    sceneData.ringAnchor.add(r.mesh!)
+  })
   sceneData.planetGroup.add(sceneData.ringAnchor)
 
   sceneData.scene!.add(sceneData.planetGroup)

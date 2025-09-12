@@ -260,10 +260,10 @@ export async function exportPlanetToGLTF(progressDialog: {
       await sleep(50)
       const ringGroup = new THREE.Group()
       ringGroup.name = Globals.LG_MESH_NAME_RING_ANCHOR
-      bakePlanet.add(ringGroup)
-      LG_PLANET_DATA.value.ringsParams.forEach(async (params, idx) => {
+      for (let idx = 0; idx < LG_PLANET_DATA.value.ringsParams.length; idx++) {
+        const params = LG_PLANET_DATA.value.ringsParams[idx]
         const ringMeshData = LG_SCENE_DATA.rings?.find((r) => r.mesh!.name === params.id)
-        if (!ringMeshData) return
+        if (!ringMeshData) continue
 
         const bakeRing = createBakingRing(LG_PLANET_DATA.value, ringMeshData.texture!, idx)
         const bakeRingTex = await bakeMesh(renderer, camera, renderTarget, bakeRing)
@@ -275,12 +275,12 @@ export async function exportPlanetToGLTF(progressDialog: {
         bakeRing.material = new MeshStandardNodeMaterial({
           map: bakeRingTex,
           side: THREE.DoubleSide,
-          transparent: false,
+          transparent: true,
         })
         bakingTargets.push({ mesh: bakeRing, textures: [bakeRingTex] })
         ringGroup.add(bakeRing)
         bakeRing.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90))
-      })
+      }
       bakePlanet.add(ringGroup)
     }
 

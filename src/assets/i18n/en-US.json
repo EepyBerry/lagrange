@@ -43,8 +43,8 @@
     "init": {
       "$title": "Welcome to @:main.$title",
       "introduction": "Lagrange is a fully procedural planet builder, perfect for worldbuilding and tying your lore to a proper planet, solar system or even an entire galaxy!",
-      "update_title": "Update 0.4 - Jovian Expansion!",
-      "update_brief": "Adds more parameters to diversify your worlds, such as XYZ warping, displacement, and ring systems. Gas giants can now be (re)created at will!",
+      "update_title": "Update 0.5 - Core Overhaul!",
+      "update_brief": "Introduces WebGPU support; fully compatible with existing features! You can now select your preferred rendering engine in the app settings!",
       "$tmp_wip": "Currently work-in-progress. More features are planned for the next versions!",
 
       "shortcuts": "Shortcuts",
@@ -116,12 +116,12 @@
       "editor_screenshot": "@:dialog.init.shortcuts_screenshot",
       "editor_baking_resolution": "Baking texture resolution (powers of two)",
       "editor_baking_pixelize": "Pixelize baking output",
-      "editor_rendering_backend": "Select rendering backend <b>(needs app reload)</b>",
+      "editor_rendering_backend": "Select 3D rendering engine <b>(needs app reload)</b>",
       "editor_rendering_backend_webgl": "WebGL",
       "editor_rendering_backend_webgpu": "WebGPU",
-      "editor_rendering_backend_webgl_notification": "Standard three.js WebGL backend; stable for most uses!",
-      "editor_rendering_backend_webgpu_notification": "The three.js WebGPU backend is currently under development. Bugs & errors are likely to occur!",
-      "editor_rendering_backend_webgpu_unavailable": "Your browser does not support WebGPU. WebGL will be the only backend available.",
+      "editor_rendering_backend_webgl_notification": "Standard WebGL engine; stable and widely used!",
+      "editor_rendering_backend_webgpu_notification": "Modern WebGPU engine; currently under development. Bugs & errors are likely to occur!",
+      "editor_rendering_backend_webgpu_unavailable": "Your browser does not support WebGPU. WebGL will be the only engine available.",
 
       "a11y": "Accessibility",
       "a11y_effects": "Enable visual effects",
@@ -166,11 +166,17 @@
         "04_title": "Update 0.4 - Jovian Expansion",
         "04_params": "Adds new parameters for your worlds: XYZ warping, displacement and ring systems!",
         "04_ui": "New dialog box when trying to leave the Editor without saving first, along with many touch-ups & improvements",
-        "04_misc": "Adds fr-FR translation, and changes project license to ISTSL-NR 1.0"
+        "04_misc": "Adds fr-FR translation, and changes project license to ISTSL-NR 1.0",
+        "041_export": "(0.4.1) Planets can now be exported to glTF files! Does not include atmosphere for technical reasons",
+        "042_rnd": "(0.4.2) Introduces a seed-based randomization system. Seeds can be reused and shared at-will",
+        "043_settings": "(0.4.3) App settings can now be backed up and restored! Uses a JSON file to store settings data",
+        "05_title": "Update 0.5 - Core Overhaul",
+        "05_webgpu": "Introduces WebGPU support! Renderer selection is now available in the app settings",
+        "05_rewrite": "Full rewrite of the internal app structure to help future development efforts"
       },
       "credits": {
         "$title": "Credits & attribution",
-        "libs": "Main libraries: <a href=\"https://www.farazzshaikh.com/\" target=\"_blank\"><b>Faraz Shaikh</b></a> (THREE-CustomShaderMaterial)",
+        "libs": "(pre-0.5) Main libraries: <a href=\"https://www.farazzshaikh.com/\" target=\"_blank\"><b>Faraz Shaikh</b></a> (THREE-CustomShaderMaterial)",
         "glsl_main": "Main GLSL snippets: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
         "glsl_misc": "Miscellaneous GLSL snippets: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
         "contributors": "<b>Special thanks to all contributors of this project ❤️</b>"

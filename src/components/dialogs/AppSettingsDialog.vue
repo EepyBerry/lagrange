@@ -298,7 +298,7 @@
           <template #content>
             <div class="settings-advanced">
               <ParameterGrid>
-                <p>{{ $t('dialog.settings.advanced_persist') }}:</p>
+                <p>{{ $t('dialog.settings.advanced_io') }}:</p>
                 <div id="actions-io">
                   <button class="lg" @click="openImportDialog">
                     <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />

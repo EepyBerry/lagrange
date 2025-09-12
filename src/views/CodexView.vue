@@ -195,7 +195,7 @@ function exportPlanet(planet: IDBPlanet) {
   const jsonParams = JSON.stringify(planet)
   const gzipParams = pako.deflate(jsonParams)
   const planetFilename = planet.data.planetName.replaceAll(' ', '_')
-  saveAs(new Blob([gzipParams]), `${planetFilename}.lagrange`)
+  saveAs(new Blob([gzipParams as BufferSource]), `${planetFilename}.lagrange`)
 }
 
 async function openPlanetInfoDialog(planet: IDBPlanet) {
@@ -269,7 +269,6 @@ async function deleteTargetedPlanet() {
   }
 }
 #codex-grid {
-  flex: 1;
   padding-bottom: 3.75rem;
   margin: 4.75rem 1rem 1rem;
   height: calc(100% - 4.75rem);

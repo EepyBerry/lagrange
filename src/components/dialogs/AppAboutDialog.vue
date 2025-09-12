@@ -33,15 +33,6 @@
             </div>
           </div>
         </div>
-        <div class="about-copyright">
-          <p>{{ $t('dialog.about.built_with_love') }}</p>
-          <p>
-            © {{ new Date().getFullYear() }} EepyBerry,
-            <a href="https://github.com/EepyBerry/lagrange/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
-              {{ $t('dialog.about.license') }}
-            </a>
-          </p>
-        </div>
         <CollapsibleSection class="about-updates" icon="mingcute:news-line">
           <template #title>{{ $t('dialog.about.changelogs.$title') }}</template>
           <template #content>
@@ -72,6 +63,22 @@
                   <li starred>{{ $t('dialog.about.changelogs.04_params') }}</li>
                   <li>{{ $t('dialog.about.changelogs.04_ui') }}</li>
                   <li>{{ $t('dialog.about.changelogs.04_misc') }}</li>
+                  <li style="margin-top: 0.5rem" starred>{{ $t('dialog.about.changelogs.041_export') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.042_rnd') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.043_settings') }}</li>
+                </ul>
+              </template>
+            </CollapsibleSection>
+            <CollapsibleSection
+              class="about-update-inner"
+              icon="mingcute:lightning-line"
+              style="background: var(--lg-update-05-background)"
+            >
+              <template #title>{{ $t('dialog.about.changelogs.05_title') }}</template>
+              <template #content>
+                <ul style="list-style-type: disc; margin-left: 1rem">
+                  <li starred>{{ $t('dialog.about.changelogs.05_webgpu') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.05_rewrite') }}</li>
                 </ul>
               </template>
             </CollapsibleSection>
@@ -92,6 +99,15 @@
             </ul>
           </template>
         </CollapsibleSection>
+        <div class="about-copyright">
+          <p>{{ $t('dialog.about.built_with_love') }}</p>
+          <p>
+            © 2024-{{ new Date().getFullYear() }} EepyBerry,
+            <a href="https://github.com/EepyBerry/lagrange/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
+              {{ $t('dialog.about.license') }}
+            </a>
+          </p>
+        </div>
       </div>
       <span id="app-version">{{ version }}</span>
     </template>

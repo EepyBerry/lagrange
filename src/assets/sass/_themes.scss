@@ -30,7 +30,7 @@
   --lg-link-visited: var(--lg-contrast-focus);
   --lg-link-error: #ffd7c4;
 
-  --lg-item-starred: #311d00;
+  --lg-text-starred: #ffbb00b4;
 
   --lg-success: #0b6449;
   --lg-success-hover: #06533c;
@@ -55,6 +55,8 @@
     #0000ff 83%,
     #00ffff 100%
   );
+  --lg-logo-update: #453264;
+  --lg-update-05-background: linear-gradient(90deg, #453264 0%, #251642 100%);
 }
 :root[data-theme='supernova'] {
   --lg-primary: linear-gradient(to bottom, #110a20 0%, #06030c 100%);

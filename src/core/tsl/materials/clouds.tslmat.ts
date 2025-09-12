@@ -12,10 +12,9 @@ import {
 import {
   EPSILON,
   float,
-  Fn,
   int,
   min,
-  positionLocal,
+  positionGeometry,
   texture,
   uniform,
   uniformArray,
@@ -107,61 +106,40 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   }
 
   buildMaterial(): MeshStandardNodeMaterial {
-    const mainNode = Fn(([pos]: [ShaderNodeObject<Node>]) => {
-      // XYZ warping + displacement
-      const vPos = this.applyXYZTransformations(pos)
-      // Clouds
-      const opacity = this.calculateOpacity(vPos)
-      return vec4(this.uniforms.color, opacity.x)
-    }).setLayout({
-      name: 'mainNode',
-      type: 'vec4',
-      inputs: [{ name: 'pos', type: 'vec3' }],
-    })
+    const vPos = this.applyXYZTransformations(positionGeometry)
+    const opacity = this.calculateOpacity(vPos)
 
     // init material & set outputs
     const material = new MeshStandardNodeMaterial()
     material.roughness = 1
     material.metalness = 0.5
     material.transparent = true
-    material.colorNode = mainNode(positionLocal)
+    material.colorNode = vec4(this.uniforms.color, opacity.x)
     return material
   }
 
   buildBakeMaterial(): MeshBasicNodeMaterial {
-    const mainNode = Fn(([pos]: [ShaderNodeObject<Node>]) => {
-      // XYZ warping + displacement
-      const vPos = this.applyXYZTransformations(pos)
-      // Clouds
-      const opacity = this.calculateOpacity(vPos)
-      return vec4(this.uniforms.color, opacity.x)
-    }).setLayout({
-      name: 'mainNode',
-      type: 'vec4',
-      inputs: [{ name: 'pos', type: 'vec3' }],
-    })
+    const vPos = this.applyXYZTransformations(positionGeometry)
+    const opacity = this.calculateOpacity(vPos)
 
     // init material & set outputs
     const material = new MeshBasicNodeMaterial()
     material.transparent = true
     material.vertexNode = flattenUV(uv())
-    material.colorNode = mainNode(positionLocal)
+    material.colorNode = vec4(this.uniforms.color, opacity.x)
     return material
   }
 
   // --------------------------------------------------------------------------
 
-  private applyXYZTransformations(pos: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
-    const vPos = vec3(warp(pos, this.uniforms.warping, this.uniforms.flags.element(int(0)))).toVar('vPos')
-    vPos.assign(
-      displace(
-        vPos,
-        this.uniforms.displacement.params,
-        this.uniforms.displacement.noise,
-        this.uniforms.flags.element(int(1)),
-      ),
+  private applyXYZTransformations(vPos: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
+    vPos = vec3(warp(vPos, this.uniforms.warping, this.uniforms.flags.element(int(0)))).toVar('vPos')
+    return displace(
+      vPos,
+      this.uniforms.displacement.params,
+      this.uniforms.displacement.noise,
+      this.uniforms.flags.element(int(1)),
     )
-    return vPos
   }
 
   private calculateOpacity(vPos: ShaderNodeObject<Node>) {
@@ -175,7 +153,6 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     ).toVar('fOpacity')
     const opacity = vec3(fbm3(vPos.add(fOpacity), this.uniforms.noise)).toVar('opacity')
     const texCoords = vec2(min(float(1.0).sub(EPSILON), opacity.x)).toVar('texCoords')
-    opacity.assign(this.uniforms.texture.sample(texCoords).xyz)
-    return opacity
+    return this.uniforms.texture.sample(texCoords).xyz
   }
 }

@@ -4,7 +4,7 @@ import * as SceneHelper from './scene.helper'
 import type PlanetData from '../models/planet-data.model';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { EditorSceneCreationMode, type EditorSceneData } from '../types';
-import { renderToCanvas } from '../utils/render-utils';
+import { blobToDataURL, renderToCanvas } from '../utils/render-utils';
 
 export async function generatePlanetPreview(data: PlanetData): Promise<string> {
   try {
@@ -27,12 +27,12 @@ export async function generatePlanetPreview(data: PlanetData): Promise<string> {
 
     // ----------------- Create preview canvas & write data from buffer -----------------
     const tex = new CanvasTexture(renderToCanvas(sceneData.renderer, rawBuffer, w, h))
-    const dataURL = URL.createObjectURL(await tex.image.convertToBlob())
+    const blob = await tex.image.convertToBlob()
 
     // ------------------------------- Clean-up resources -------------------------------
     previewRenderTarget.dispose()
     SceneHelper.disposeEditorScene(sceneData)
-    return dataURL
+    return await blobToDataURL(blob)
   } catch (err) {
     console.error('<Lagrange> Could not save planet preview!', err)
     return ''

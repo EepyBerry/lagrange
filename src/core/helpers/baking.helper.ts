@@ -106,7 +106,7 @@ export async function bakeMesh(
   camera: THREE.OrthographicCamera,
   renderTarget: THREE.RenderTarget,
   mesh: THREE.Mesh,
-): Promise<THREE.Texture> {
+): Promise<THREE.CanvasTexture> {
   const size = new THREE.Vector2()
   renderer.getSize(size)
 

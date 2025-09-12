@@ -8,7 +8,7 @@ import {
 } from 'three/webgpu'
 import type { UniformNumberNode } from '../types'
 import type { TSLMaterial } from './tsl-material'
-import { float, Fn, length, positionLocal, texture, uniform, uv, vec2, vec4, type ShaderNodeObject } from 'three/tsl'
+import { float, length, positionGeometry, texture, uniform, uv, vec2, type ShaderNodeObject } from 'three/tsl'
 import { flattenUV } from '../utils/vertex.tlsutil'
 
 export type RingUniformData = {
@@ -33,53 +33,38 @@ export class RingTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, Ri
   }
 
   buildMaterial(): MeshStandardNodeMaterial {
-    const mainNode = Fn(([pos]: [ShaderNodeObject<Node>]) => {
-      const distanceToCenter = length(pos.xy).toVar('distanceToCenter')
-      const rampFactor = float(
-        this.clampToRange(distanceToCenter, this.uniforms.innerRadius, this.uniforms.outerRadius),
-      ).toVar('rampFactor')
-      const texCoord = vec2(rampFactor, 0.5).toVar('texCoord')
-      return this.uniforms.texture.sample(texCoord)
-    }).setLayout({
-      name: 'mainNode',
-      type: 'vec4',
-      inputs: [{ name: 'pos', type: 'vec3' }],
-    })
-
-    // init material & set outputs
     const material = new MeshStandardNodeMaterial()
-    material.fragmentNode = mainNode(positionLocal)
-    material.transparent = false
+    material.colorNode = this.sampleRampTexture(positionGeometry)
+    material.transparent = true
     material.side = DoubleSide
     return material
   }
 
   buildBakeMaterial(): MeshBasicNodeMaterial {
-    const mainNode = Fn(([pos]: [ShaderNodeObject<Node>]) => {
-      const distanceToCenter = length(pos.xy).toVar('distanceToCenter')
-      const rampFactor = float(
-        this.clampToRange(distanceToCenter, this.uniforms.innerRadius, this.uniforms.outerRadius),
-      ).toVar('rampFactor')
-      const texCoord = vec2(rampFactor, 0.5).toVar('texCoord')
-      return this.uniforms.texture.sample(texCoord)
-    }).setLayout({
-      name: 'mainNode',
-      type: 'vec4',
-      inputs: [{ name: 'pos', type: 'vec3' }],
-    })
-
-    // init material & set outputs
     const material = new MeshBasicNodeMaterial()
     material.vertexNode = flattenUV(uv())
-    material.fragmentNode = mainNode(positionLocal)
-    material.transparent = false
+    material.colorNode = this.sampleRampTexture(positionGeometry)
+    material.transparent = true
     material.side = DoubleSide
     return material
   }
 
   // --------------------------------------------------------------------------
 
-  private clampToRange(i_v: ShaderNodeObject<Node>, i_min: UniformNumberNode, i_max: UniformNumberNode) {
+  private sampleRampTexture(pos: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
+    const distanceToCenter = length(pos.xy).toVar('distanceToCenter')
+    const rampFactor = float(
+      this.clampToRange(distanceToCenter, this.uniforms.innerRadius, this.uniforms.outerRadius),
+    ).toVar('rampFactor')
+    const texCoord = vec2(rampFactor, 0.5).toVar('texCoord')
+    return this.uniforms.texture.sample(texCoord)
+  }
+
+  private clampToRange(
+    i_v: ShaderNodeObject<Node>,
+    i_min: UniformNumberNode,
+    i_max: UniformNumberNode,
+  ): ShaderNodeObject<Node> {
     return i_v.sub(i_min).div(i_max.sub(i_min))
   }
 }

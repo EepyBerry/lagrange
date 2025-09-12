@@ -691,8 +691,9 @@ export default class PlanetData extends ChangeTracker {
     this.biomesHumidityNoise.loadData(data._biomesHumidityNoise)
     this.biomesParams.splice(0)
     this.biomesParams.push(
+      // prettier-ignore
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(data._biomesParams ?? []).map((params: any) =>
+      ...(data._biomesParams ?? []).map( (params: any) =>
           new BiomeParameters(
             this.changedProps,
             '_biomesParameters',
@@ -740,6 +741,7 @@ export default class PlanetData extends ChangeTracker {
     this.ringsEnabled = data._ringsEnabled ?? false
     this.ringsParams.splice(0)
     this.ringsParams.push(
+      // prettier-ignore
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...(data._ringsParams ?? []).map((params: any) =>
           new RingParameters(
