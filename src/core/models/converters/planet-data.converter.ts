@@ -24,14 +24,16 @@ export function convertToPlanetUniformData(
       showWarping: data.planetSurfaceShowWarping,
       showDisplacement: data.planetSurfaceShowDisplacement,
       showBumps: data.planetSurfaceShowBumps,
-      enableBiomes: data.biomesEnabled,
+      showBiomes: data.biomesEnabled,
     },
     pbr: {
       waterLevel: data.planetWaterLevel,
       waterRoughness: data.planetWaterRoughness,
       waterMetalness: data.planetWaterMetalness,
+      waterEmissiveIntensity: 1,
       groundRoughness: data.planetGroundRoughness,
       groundMetalness: data.planetGroundMetalness,
+      groundEmissiveIntensity: 1,
     },
     noise: {
       frequency: data.planetSurfaceNoise.frequency,

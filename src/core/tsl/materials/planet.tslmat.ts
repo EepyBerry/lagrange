@@ -1,4 +1,5 @@
 import {
+  Color,
   DataTexture,
   MeshBasicNodeMaterial,
   MeshStandardNodeMaterial,
@@ -45,6 +46,7 @@ import { applyBump } from '../features/bump'
 import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes'
 import { sobel } from '../utils/sobel.tlsutil'
 import { flattenUV } from '../utils/vertex.tlsutil'
+import { darken } from '../utils/color.tslutil'
 
 export type PlanetUniformData = {
   radius: number
@@ -53,14 +55,16 @@ export type PlanetUniformData = {
     showWarping: boolean
     showDisplacement: boolean
     showBumps: boolean
-    enableBiomes: boolean
+    showBiomes: boolean
   }
   pbr: {
     waterLevel: number
     waterRoughness: number
     waterMetalness: number
+    waterEmissiveIntensity: number
     groundRoughness: number
     groundMetalness: number
+    groundEmissiveIntensity: number
   }
   noise: NoiseData
   warping: WarpingData
@@ -107,15 +111,17 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       radius: uniform(data.radius, 'float'),
       bumpStrength: uniform(data.bumpStrength, 'float'),
       flags: uniformArray(
-        [+data.flags.showWarping, +data.flags.showDisplacement, +data.flags.showBumps, +data.flags.enableBiomes],
+        [+data.flags.showWarping, +data.flags.showDisplacement, +data.flags.showBumps, +data.flags.showBiomes],
         'int',
       ),
       pbr: uniformArray([
         data.pbr.waterLevel,
         data.pbr.waterRoughness,
         data.pbr.waterMetalness,
+        data.pbr.waterEmissiveIntensity,
         data.pbr.groundRoughness,
         data.pbr.groundMetalness,
+        data.pbr.groundEmissiveIntensity,
       ]),
       noise: uniform(
         new Vector4(data.noise.frequency, data.noise.amplitude, data.noise.lacunarity, data.noise.octaves),
@@ -205,8 +211,9 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     material.normalNode = transformNormalToView(
       mix(normalLocal, bump, FLAG_LAND.mul(this.uniforms.flags.element(int(2)))),
     )
-    material.roughnessNode = mix(this.uniforms.pbr.element(int(1)), this.uniforms.pbr.element(int(3)), FLAG_LAND)
-    material.metalnessNode = mix(this.uniforms.pbr.element(int(2)), this.uniforms.pbr.element(int(4)), FLAG_LAND)
+    material.roughnessNode = mix(this.uniforms.pbr.element(int(1)), this.uniforms.pbr.element(int(4)), FLAG_LAND)
+    material.metalnessNode = mix(this.uniforms.pbr.element(int(2)), this.uniforms.pbr.element(int(5)), FLAG_LAND)
+    //material.emissiveNode = this.applyEmissiveIntensity(colour, FLAG_LAND)
     return material
   }
 
@@ -247,8 +254,8 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const FLAG_LAND = step(this.uniforms.pbr.element(int(0)), height).toVar()
 
     // render PBR as green/blue mask
-    const outRoughness = mix(this.uniforms.pbr.element(int(1)), this.uniforms.pbr.element(int(3)), FLAG_LAND)
-    const outMetalness = mix(this.uniforms.pbr.element(int(2)), this.uniforms.pbr.element(int(4)), FLAG_LAND)
+    const outRoughness = mix(this.uniforms.pbr.element(int(1)), this.uniforms.pbr.element(int(4)), FLAG_LAND)
+    const outMetalness = mix(this.uniforms.pbr.element(int(2)), this.uniforms.pbr.element(int(5)), FLAG_LAND)
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial()
@@ -342,5 +349,10 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     return vec3(
       applyBump(vPos, dx, dy, height, dxHeight, dyHeight, this.uniforms.radius, this.uniforms.bumpStrength),
     ).toVar()
+  }
+
+  private applyEmissiveIntensity(colour: ShaderNodeObject<Node>, FLAG_LAND: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
+    const emissiveFactor = mix(this.uniforms.pbr.element(int(5)), this.uniforms.pbr.element(int(6)), FLAG_LAND).toVar('emissiveFactor')
+    return darken(colour, emissiveFactor)
   }
 }
