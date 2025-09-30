@@ -86,11 +86,11 @@ function registerPlanetRenderingDataUpdates(
     planet.mesh!.setRotationFromAxisAngle(planet.mesh!.up, vRad)
     clouds.mesh!.setRotationFromAxisAngle(clouds.mesh!.up, vRad + cloudsRotationRad)
   })
-  UNIFORM_UPDATE_MAP.value.set('_planetWaterLevel', () => (planet.uniforms!.pbr.array[0] = data.planetWaterLevel))
-  UNIFORM_UPDATE_MAP.value.set('_planetWaterRoughness', () => (planet.uniforms!.pbr.array[1] = data.planetWaterRoughness))
-  UNIFORM_UPDATE_MAP.value.set('_planetWaterMetalness', () => (planet.uniforms!.pbr.array[2] = data.planetWaterMetalness))
-  UNIFORM_UPDATE_MAP.value.set('_planetGroundRoughness', () => (planet.uniforms!.pbr.array[3] = data.planetGroundRoughness))
-  UNIFORM_UPDATE_MAP.value.set('_planetGroundMetalness', () => (planet.uniforms!.pbr.array[4] = data.planetGroundMetalness))
+  UNIFORM_UPDATE_MAP.value.set('_planetWaterLevel', () => (planet.uniforms!.pbr.waterLevel.value = data.planetWaterLevel))
+  UNIFORM_UPDATE_MAP.value.set('_planetWaterRoughness', () => (planet.uniforms!.pbr.metallicRoughness.value.w = data.planetWaterRoughness))
+  UNIFORM_UPDATE_MAP.value.set('_planetWaterMetalness', () => (planet.uniforms!.pbr.metallicRoughness.value.x = data.planetWaterMetalness))
+  UNIFORM_UPDATE_MAP.value.set('_planetGroundRoughness', () => (planet.uniforms!.pbr.metallicRoughness.value.y = data.planetGroundRoughness))
+  UNIFORM_UPDATE_MAP.value.set('_planetGroundMetalness', () => (planet.uniforms!.pbr.metallicRoughness.value.z = data.planetGroundMetalness))
 }
 
 // prettier-ignore

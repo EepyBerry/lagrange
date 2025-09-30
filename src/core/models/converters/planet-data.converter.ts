@@ -28,12 +28,16 @@ export function convertToPlanetUniformData(
     },
     pbr: {
       waterLevel: data.planetWaterLevel,
-      waterRoughness: data.planetWaterRoughness,
-      waterMetalness: data.planetWaterMetalness,
-      waterEmissiveIntensity: 1,
-      groundRoughness: data.planetGroundRoughness,
-      groundMetalness: data.planetGroundMetalness,
-      groundEmissiveIntensity: 1,
+      metallicRoughness: {
+        waterRoughness: data.planetWaterRoughness,
+        waterMetalness: data.planetWaterMetalness,
+        groundRoughness: data.planetGroundRoughness,
+        groundMetalness: data.planetGroundMetalness,
+      },
+      emissive: {
+        waterEmissiveIntensity: 0,
+        groundEmissiveIntensity: 0,
+      },
     },
     noise: {
       frequency: data.planetSurfaceNoise.frequency,
