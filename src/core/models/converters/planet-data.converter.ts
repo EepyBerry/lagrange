@@ -35,8 +35,8 @@ export function convertToPlanetUniformData(
         groundMetalness: data.planetGroundMetalness,
       },
       emissive: {
-        waterEmissiveIntensity: 0,
-        groundEmissiveIntensity: 0,
+        waterEmissiveIntensity: data.planetWaterEmissiveIntensity,
+        groundEmissiveIntensity: data.planetGroundEmissiveIntensity,
       },
     },
     noise: {

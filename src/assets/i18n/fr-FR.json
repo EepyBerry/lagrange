@@ -298,12 +298,15 @@
         "transform_axialtilt": "Inclinaison axiale",
         "transform_rotation": "Rotation",
 
-        "pbr": "Paramètres PBR",
-        "pbr_waterlevel": "Niveau de mer",
-        "pbr_waterroughness": "Rugosité du liquide",
-        "pbr_watermetalness": "Métallicité du liquide",
-        "pbr_groundroughness": "Rugosité du sol",
-        "pbr_groundmetalness": "Métallicité du sol"
+        "waterlevel": "Niveau de mer",
+        "metallicroughness": "Métallicité/rugosité",
+        "metallicroughness_waterroughness": "Rugosité du liquide",
+        "metallicroughness_watermetalness": "Métallicité du liquide",
+        "metallicroughness_groundroughness": "Rugosité du sol",
+        "metallicroughness_groundmetalness": "Métallicité du sol",
+        "emissivity": "Émissivité",
+        "emissivity_waterintensity": "Intensité du liquide",
+        "emissivity_groundintensity": "Intensité du sol"
       },
       "surface": {
         "$title": "Surface",

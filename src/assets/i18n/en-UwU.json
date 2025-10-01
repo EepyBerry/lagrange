@@ -299,11 +299,14 @@
         "transform_rotation": "Wotation",
 
         "pbr": "PBR p-pawametews",
-        "pbr_waterlevel": "Watew wevew",
-        "pbr_waterroughness": "Watew woughnyess",
-        "pbr_watermetalness": "Watew metawnyess",
-        "pbr_groundroughness": "Gwound woughnyess",
-        "pbr_groundmetalness": "Gwound metawnyess"
+        "waterlevel": "Watew wevew",
+        "metallicroughness_waterroughness": "Watew woughnyess",
+        "metallicroughness_watermetalness": "Watew metawnyess",
+        "metallicroughness_groundroughness": "Gwound woughnyess",
+        "metallicroughness_groundmetalness": "Gwound metawnyess",
+        "emissivity": "Emissivity",
+        "emissivity_waterintensity": "Watew intensity",
+        "emissivity_groundintensity": "Gwound intensity"
       },
       "surface": {
         "$title": "Suwface",

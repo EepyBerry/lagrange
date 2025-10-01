@@ -298,12 +298,15 @@
         "transform_axialtilt": "Axial tilt",
         "transform_rotation": "Rotation",
 
-        "pbr": "PBR parameters",
-        "pbr_waterlevel": "Water level",
-        "pbr_waterroughness": "Water roughness",
-        "pbr_watermetalness": "Water metalness",
-        "pbr_groundroughness": "Ground roughness",
-        "pbr_groundmetalness": "Ground metalness"
+        "waterlevel": "Water level",
+        "metallicroughness": "Metallic Roughness",
+        "metallicroughness_waterroughness": "Water roughness",
+        "metallicroughness_watermetalness": "Water metalness",
+        "metallicroughness_groundroughness": "Ground roughness",
+        "metallicroughness_groundmetalness": "Ground metalness",
+        "emissivity": "Emissivity",
+        "emissivity_waterintensity": "Water intensity",
+        "emissivity_groundintensity": "Ground intensity"
       },
       "surface": {
         "$title": "Surface",

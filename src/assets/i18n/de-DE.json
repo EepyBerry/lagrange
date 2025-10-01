@@ -298,12 +298,15 @@
         "transform_axialtilt": "Axiale Neigung",
         "transform_rotation": "Drehung",
 
-        "pbr": "PBR Parameter",
-        "pbr_waterlevel": "Meeresspiegel",
-        "pbr_waterroughness": "Rauheit  der Flüssigkeit",
-        "pbr_watermetalness": "Metallizität der Flüssigkeit",
-        "pbr_groundroughness": "Bodenrauheit",
-        "pbr_groundmetalness": "Bodenmetallizität"
+        "waterlevel": "Meeresspiegel",
+        "metallicroughness": "Metallizität/Rauheit",
+        "metallicroughness_waterroughness": "Rauheit der Flüssigkeit",
+        "metallicroughness_watermetalness": "Metallizität der Flüssigkeit",
+        "metallicroughness_groundroughness": "Bodenrauheit",
+        "metallicroughness_groundmetalness": "Bodenmetallizität",
+        "emissivity": "Emissivität",
+        "emissivity_waterintensity": "Intensität der Flüssigkeit",
+        "emissivity_groundintensity": "Bodenintensität"
       },
       "surface": {
         "$title": "Oberfläche",

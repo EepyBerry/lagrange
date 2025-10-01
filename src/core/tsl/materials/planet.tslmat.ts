@@ -48,7 +48,6 @@ import { applyBump } from '../features/bump'
 import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes'
 import { sobel } from '../utils/sobel.tlsutil'
 import { flattenUV } from '../utils/vertex.tlsutil'
-import { brighten, darken } from '../utils/color.tslutil'
 
 export type PlanetUniformData = {
   radius: number
@@ -372,6 +371,6 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
   private applyEmissiveIntensity(colour: ShaderNodeObject<Node>, FLAG_LAND: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
     const emissiveFactor = mix(this.uniforms.pbr.emissive.x, this.uniforms.pbr.emissive.y, FLAG_LAND).toVar('emissiveFactor')
-    return colour.mul(emissiveFactor)
+    return colour.mul(this.uniforms.flags.element(int(4))).mul(emissiveFactor)
   }
 }

@@ -15,24 +15,35 @@
       </template>
     </ParameterGroup>
     <ParameterGroup :toggleable="true">
-      <template #title>{{ $t('editor.controls.planet_rendering.pbr') }}</template>
+      <template #title>{{ $t('editor.controls.planet_rendering.metallicroughness') }}</template>
       <template #content>
         <ParameterSlider id="p-wlevel" v-model="LG_PLANET_DATA.planetWaterLevel" :step="0.01" :min="0" :max="1">
-          {{ $t('editor.controls.planet_rendering.pbr_waterlevel') }}
+          {{ $t('editor.controls.planet_rendering.waterlevel') }}
         </ParameterSlider>
         <ParameterDivider />
         <ParameterSlider id="p-wrough" v-model="LG_PLANET_DATA.planetWaterRoughness" :step="0.01" :min="0" :max="1">
-          {{ $t('editor.controls.planet_rendering.pbr_waterroughness') }}
+          {{ $t('editor.controls.planet_rendering.metallicroughness_waterroughness') }}
         </ParameterSlider>
         <ParameterSlider id="p-wmetal" v-model="LG_PLANET_DATA.planetWaterMetalness" :step="0.01" :min="0" :max="1">
-          {{ $t('editor.controls.planet_rendering.pbr_watermetalness') }}
+          {{ $t('editor.controls.planet_rendering.metallicroughness_watermetalness') }}
         </ParameterSlider>
         <ParameterDivider />
         <ParameterSlider id="p-grough" v-model="LG_PLANET_DATA.planetGroundRoughness" :step="0.01" :min="0" :max="1">
-          {{ $t('editor.controls.planet_rendering.pbr_groundroughness') }}
+          {{ $t('editor.controls.planet_rendering.metallicroughness_groundroughness') }}
         </ParameterSlider>
         <ParameterSlider id="p-gmetal" v-model="LG_PLANET_DATA.planetGroundMetalness" :step="0.01" :min="0" :max="1">
-          {{ $t('editor.controls.planet_rendering.pbr_groundmetalness') }}
+          {{ $t('editor.controls.planet_rendering.metallicroughness_groundmetalness') }}
+        </ParameterSlider>
+      </template>
+    </ParameterGroup>
+    <ParameterGroup v-model="LG_PLANET_DATA.showEmissive" :toggleable="LG_PLANET_DATA.showEmissive">
+      <template #title>{{ $t('editor.controls.planet_rendering.emissivity') }}</template>
+      <template #content>
+        <ParameterSlider id="e-wemissive" v-model="LG_PLANET_DATA.planetWaterEmissiveIntensity" :step="0.01" :min="0" :max="10">
+          {{ $t('editor.controls.planet_rendering.emissivity_waterintensity') }}
+        </ParameterSlider>
+        <ParameterSlider id="e-gemissive" v-model="LG_PLANET_DATA.planetGroundEmissiveIntensity" :step="0.01" :min="0" :max="10">
+          {{ $t('editor.controls.planet_rendering.emissivity_groundintensity') }}
         </ParameterSlider>
       </template>
     </ParameterGroup>

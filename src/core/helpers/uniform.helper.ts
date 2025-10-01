@@ -91,6 +91,9 @@ function registerPlanetRenderingDataUpdates(
   UNIFORM_UPDATE_MAP.value.set('_planetWaterMetalness', () => (planet.uniforms!.pbr.metallicRoughness.value.x = data.planetWaterMetalness))
   UNIFORM_UPDATE_MAP.value.set('_planetGroundRoughness', () => (planet.uniforms!.pbr.metallicRoughness.value.y = data.planetGroundRoughness))
   UNIFORM_UPDATE_MAP.value.set('_planetGroundMetalness', () => (planet.uniforms!.pbr.metallicRoughness.value.z = data.planetGroundMetalness))
+  UNIFORM_UPDATE_MAP.value.set('_showEmissive', () => (planet.uniforms!.flags.array[4] = +data.showEmissive))
+  UNIFORM_UPDATE_MAP.value.set('_planetWaterEmissiveIntensity', () => (planet.uniforms!.pbr.emissive.value.x = data.planetWaterEmissiveIntensity))
+  UNIFORM_UPDATE_MAP.value.set('_planetGroundEmissiveIntensity', () => (planet.uniforms!.pbr.emissive.value.y = data.planetGroundEmissiveIntensity))
 }
 
 // prettier-ignore
