@@ -25,6 +25,7 @@ export function convertToPlanetUniformData(
       showDisplacement: data.planetSurfaceShowDisplacement,
       showBumps: data.planetSurfaceShowBumps,
       showBiomes: data.biomesEnabled,
+      showEmissive: data.planetShowEmissive,
     },
     pbr: {
       waterLevel: data.planetWaterLevel,

@@ -129,7 +129,7 @@ export default class PlanetData extends ChangeTracker {
   private _planetGroundMetalness: number
   private _planetWaterLevel: number
   // Emissive
-  private _showEmissive: boolean
+  private _planetShowEmissive: boolean
   private _planetWaterEmissiveIntensity: number
   private _planetGroundEmissiveIntensity: number
 
@@ -211,12 +211,12 @@ export default class PlanetData extends ChangeTracker {
     this.markForChange('_planetWaterLevel')
   }
   
-  public get showEmissive(): boolean {
-    return this._showEmissive
+  public get planetShowEmissive(): boolean {
+    return this._planetShowEmissive
   }
-  public set showEmissive(value: boolean) {
-    this._showEmissive = value
-    this.markForChange('_showEmissive')
+  public set planetShowEmissive(value: boolean) {
+    this._planetShowEmissive = value
+    this.markForChange('_planetShowEmissive')
   }
   public get planetWaterEmissiveIntensity(): number {
     return this._planetWaterEmissiveIntensity
@@ -561,7 +561,7 @@ export default class PlanetData extends ChangeTracker {
     this._planetGroundRoughness = 0.8
     this._planetGroundMetalness = 0.1
     this._planetWaterLevel = 0.5
-    this._showEmissive = false
+    this._planetShowEmissive = false
     this._planetWaterEmissiveIntensity = 2.0
     this._planetGroundEmissiveIntensity = 0.0
 
@@ -691,7 +691,7 @@ export default class PlanetData extends ChangeTracker {
     this.planetGroundRoughness = data._planetGroundRoughness ?? 0.8
     this.planetGroundMetalness = data._planetGroundMetalness ?? 0.1
     this.planetWaterLevel = data._planetWaterLevel ?? 0.5
-    this.showEmissive = data._showEmissive ?? false
+    this.planetShowEmissive = data._planetShowEmissive ?? false
     this.planetWaterEmissiveIntensity = data._planetWaterEmissiveIntensity ?? 2.0
     this.planetGroundEmissiveIntensity = data._planetGroundEmissiveIntensity ?? 0.0
 

@@ -57,6 +57,7 @@ export type PlanetUniformData = {
     showDisplacement: boolean
     showBumps: boolean
     showBiomes: boolean
+    showEmissive: boolean
   }
   pbr: {
     waterLevel: number
@@ -119,7 +120,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       radius: uniform(data.radius, 'float'),
       bumpStrength: uniform(data.bumpStrength, 'float'),
       flags: uniformArray(
-        [+data.flags.showWarping, +data.flags.showDisplacement, +data.flags.showBumps, +data.flags.showBiomes],
+        [+data.flags.showWarping, +data.flags.showDisplacement, +data.flags.showBumps, +data.flags.showBiomes, +data.flags.showEmissive],
         'int',
       ),
       pbr: {

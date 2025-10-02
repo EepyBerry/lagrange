@@ -36,7 +36,7 @@
         </ParameterSlider>
       </template>
     </ParameterGroup>
-    <ParameterGroup v-model="LG_PLANET_DATA.showEmissive" :toggleable="LG_PLANET_DATA.showEmissive">
+    <ParameterGroup v-model="LG_PLANET_DATA.planetShowEmissive" :toggleable="LG_PLANET_DATA.planetShowEmissive">
       <template #title>{{ $t('editor.controls.planet_rendering.emissivity') }}</template>
       <template #content>
         <ParameterSlider id="e-wemissive" v-model="LG_PLANET_DATA.planetWaterEmissiveIntensity" :step="0.01" :min="0" :max="10">
