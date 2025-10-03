@@ -264,7 +264,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     return material
   }
 
-  buildPBRBakeMaterial(): MeshBasicNodeMaterial {
+  buildMetallicRoughnessBakeMaterial(): MeshBasicNodeMaterial {
     // XYZ Warping + displacement
     const vPos = this.applyXYZTransformations(positionLocal)
 
@@ -280,6 +280,27 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const material = new MeshBasicNodeMaterial()
     material.vertexNode = flattenUV(uv())
     material.colorNode = vec4(0.0, outRoughness, outMetalness, 1.0)
+    return material
+  }
+
+  buildEmissivityBakeMaterial(surfaceTex: Texture): MeshBasicNodeMaterial {
+    // XYZ Warping + displacement
+    const vPos = this.applyXYZTransformations(positionLocal)
+
+    // Heightmap & global flags
+    const heightLimit = float(1.0).sub(EPSILON)
+    const height = layer(vPos, this.uniforms.noise, this.uniforms.warping.x).toVar()
+    const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar()
+
+    // render noise as color
+    const texNode = texture(surfaceTex).setName('texNode')
+    const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord')
+    const colour = vec3(texNode.sample(texCoord).xyz)
+
+    // Init material & set outputs
+    const material = new MeshBasicNodeMaterial()
+    material.vertexNode = flattenUV(uv())
+    material.colorNode = vec4(this.applyEmissiveIntensity(colour, FLAG_LAND).xyz, 1.0)
     return material
   }
 

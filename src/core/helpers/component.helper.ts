@@ -12,7 +12,7 @@ import { AtmosphereTSLMaterial } from '@/core/tsl/materials/atmosphere.tslmat'
 import { CloudsTSLMaterial } from '@/core/tsl/materials/clouds.tslmat'
 import { RingTSLMaterial } from '@/core/tsl/materials/ring.tslmat'
 import { idb } from '@/dexie.config'
-import { convertToCloudsUniformData, convertToPlanetUniformData } from '../models/converters/planet-data.converter'
+import { convertToCloudsUniformData, convertToPlanetUniformData, convertToTexturedPlanetUniformData } from '../models/converters/planet-data.converter'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -82,7 +82,7 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
   const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
   const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
 
-  const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data, surfaceTex, biomeTex))
+  const tslMaterial = new PlanetTSLMaterial(convertToTexturedPlanetUniformData(data, surfaceTex, biomeTex))
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
