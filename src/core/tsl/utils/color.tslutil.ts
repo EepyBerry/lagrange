@@ -3,6 +3,25 @@
 import { float, vec4, sub, mat4, Fn, vec3, sin, cos, mat3, dot, type ShaderNodeObject, If, add, pow } from 'three/tsl'
 import type { Node } from 'three/webgpu'
 
+export const brighten = /*@__PURE__*/ Fn(([i_color, i_factor]: ShaderNodeObject<Node>[]) => {
+  return i_color.mul(
+    // @ts-expect-error: Missing overload definition in @types/three
+    mat4(
+      vec4(1.0, 0.0, 0.0, 0.0),
+      vec4(0.0, 1.0, 0.0, 0.0),
+      vec4(0.0, 0.0, 1.0, 0.0),
+      vec4(i_factor, i_factor, i_factor, 1.0),
+    ),
+  )
+}).setLayout({
+  name: 'brighten',
+  type: 'vec4',
+  inputs: [
+    { name: 'i_color', type: 'vec4' },
+    { name: 'i_factor', type: 'float' },
+  ],
+})
+
 export const darken = /*@__PURE__*/ Fn(([i_color, i_factor]: ShaderNodeObject<Node>[]) => {
   return i_color.mul(
     // @ts-expect-error: Missing overload definition in @types/three
@@ -14,7 +33,7 @@ export const darken = /*@__PURE__*/ Fn(([i_color, i_factor]: ShaderNodeObject<No
     ),
   )
 }).setLayout({
-  name: 'tintToMatrix',
+  name: 'darken',
   type: 'vec4',
   inputs: [
     { name: 'i_color', type: 'vec4' },

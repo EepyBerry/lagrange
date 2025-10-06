@@ -122,11 +122,16 @@ export default class PlanetData extends ChangeTracker {
   private _planetRadius: number
   private _planetAxialTilt: number
   private _planetRotation: number
+  // Metallic roughness
   private _planetWaterRoughness: number
   private _planetWaterMetalness: number
   private _planetGroundRoughness: number
   private _planetGroundMetalness: number
   private _planetWaterLevel: number
+  // Emissive
+  private _planetShowEmissive: boolean
+  private _planetWaterEmissiveIntensity: number
+  private _planetGroundEmissiveIntensity: number
 
   // --------------------------------------------------
 
@@ -204,6 +209,28 @@ export default class PlanetData extends ChangeTracker {
   public set planetWaterLevel(value: number) {
     this._planetWaterLevel = clamp(value, 0, 1)
     this.markForChange('_planetWaterLevel')
+  }
+  
+  public get planetShowEmissive(): boolean {
+    return this._planetShowEmissive
+  }
+  public set planetShowEmissive(value: boolean) {
+    this._planetShowEmissive = value
+    this.markForChange('_planetShowEmissive')
+  }
+  public get planetWaterEmissiveIntensity(): number {
+    return this._planetWaterEmissiveIntensity
+  }
+  public set planetWaterEmissiveIntensity(value: number) {
+    this._planetWaterEmissiveIntensity = clamp(value, 0, 10)
+    this.markForChange('_planetWaterEmissiveIntensity')
+  }
+  public get planetGroundEmissiveIntensity(): number {
+    return this._planetGroundEmissiveIntensity
+  }
+  public set planetGroundEmissiveIntensity(value: number) {
+    this._planetGroundEmissiveIntensity = clamp(value, 0, 10)
+    this.markForChange('_planetGroundEmissiveIntensity')
   }
 
   // --------------------------------------------------
@@ -534,6 +561,9 @@ export default class PlanetData extends ChangeTracker {
     this._planetGroundRoughness = 0.8
     this._planetGroundMetalness = 0.1
     this._planetWaterLevel = 0.5
+    this._planetShowEmissive = false
+    this._planetWaterEmissiveIntensity = 2.0
+    this._planetGroundEmissiveIntensity = 0.0
 
     // Surface
     this._planetSurfaceShowBumps = true
@@ -661,6 +691,9 @@ export default class PlanetData extends ChangeTracker {
     this.planetGroundRoughness = data._planetGroundRoughness ?? 0.8
     this.planetGroundMetalness = data._planetGroundMetalness ?? 0.1
     this.planetWaterLevel = data._planetWaterLevel ?? 0.5
+    this.planetShowEmissive = data._planetShowEmissive ?? false
+    this.planetWaterEmissiveIntensity = data._planetWaterEmissiveIntensity ?? 2.0
+    this.planetGroundEmissiveIntensity = data._planetGroundEmissiveIntensity ?? 0.0
 
     // Surface
     this.planetSurfaceShowBumps = data._planetSurfaceShowBumps ?? true

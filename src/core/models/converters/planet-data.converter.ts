@@ -12,11 +12,17 @@ import type { RingParameters } from '../ring-parameters.model'
  * @param biomeTex biome texture (optional, required only for certain materials)
  * @returns a PlanetUniformData object with the required data within
  */
-export function convertToPlanetUniformData(
+export function convertToTexturedPlanetUniformData(
   data: PlanetData,
-  surfaceTex?: DataTexture,
-  biomeTex?: DataTexture,
+  surfaceTex: DataTexture,
+  biomeTex: DataTexture,
 ): PlanetUniformData {
+  return {
+    ...convertToPlanetUniformData(data),
+    textures: { surface: surfaceTex!, biomes: biomeTex! },
+  }
+}
+export function convertToPlanetUniformData(data: PlanetData): PlanetUniformData {
   return {
     radius: data.planetRadius,
     bumpStrength: data.planetSurfaceBumpStrength,
@@ -24,14 +30,21 @@ export function convertToPlanetUniformData(
       showWarping: data.planetSurfaceShowWarping,
       showDisplacement: data.planetSurfaceShowDisplacement,
       showBumps: data.planetSurfaceShowBumps,
-      enableBiomes: data.biomesEnabled,
+      showBiomes: data.biomesEnabled,
+      showEmissive: data.planetShowEmissive,
     },
     pbr: {
       waterLevel: data.planetWaterLevel,
-      waterRoughness: data.planetWaterRoughness,
-      waterMetalness: data.planetWaterMetalness,
-      groundRoughness: data.planetGroundRoughness,
-      groundMetalness: data.planetGroundMetalness,
+      metallicRoughness: {
+        waterRoughness: data.planetWaterRoughness,
+        waterMetalness: data.planetWaterMetalness,
+        groundRoughness: data.planetGroundRoughness,
+        groundMetalness: data.planetGroundMetalness,
+      },
+      emissive: {
+        waterEmissiveIntensity: data.planetWaterEmissiveIntensity,
+        groundEmissiveIntensity: data.planetGroundEmissiveIntensity,
+      },
     },
     noise: {
       frequency: data.planetSurfaceNoise.frequency,
@@ -72,7 +85,6 @@ export function convertToPlanetUniformData(
         octaves: data.biomesHumidityNoise.octaves,
       },
     },
-    textures: surfaceTex && biomeTex ? { surface: surfaceTex!, biomes: biomeTex! } : undefined,
   }
 }
 

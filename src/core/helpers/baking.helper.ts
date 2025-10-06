@@ -6,13 +6,13 @@ import type PlanetData from '@core/models/planet-data.model'
 import { renderToCanvas } from '@/core/utils/render-utils'
 import type { WebGPURenderer } from 'three/webgpu'
 import { PlanetTSLMaterial } from '../tsl/materials/planet.tslmat'
-import { convertToCloudsUniformData, convertToPlanetUniformData, convertToRingUniformData } from '../models/converters/planet-data.converter'
+import { convertToCloudsUniformData, convertToPlanetUniformData, convertToRingUniformData, convertToTexturedPlanetUniformData } from '../models/converters/planet-data.converter'
 import { CloudsTSLMaterial } from '../tsl/materials/clouds.tslmat'
 import { RingTSLMaterial } from '../tsl/materials/ring.tslmat'
 
 export function createBakingPlanet(data: PlanetData, surfaceTex: THREE.DataTexture, biomeTex: THREE.DataTexture): THREE.Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
-  const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data, surfaceTex, biomeTex))
+  const tslMaterial = new PlanetTSLMaterial(convertToTexturedPlanetUniformData(data, surfaceTex, biomeTex))
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildSurfaceBakeMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
@@ -20,13 +20,23 @@ export function createBakingPlanet(data: PlanetData, surfaceTex: THREE.DataTextu
   return mesh
 }
 
-export function createBakingPBRMap(data: PlanetData): THREE.Mesh {
+export function createBakingMetallicRoughnessMap(data: PlanetData): THREE.Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
   geometry.computeTangents()
 
   const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data))
-  const mesh = new THREE.Mesh(geometry, tslMaterial.buildPBRBakeMaterial())
-  mesh.name = Globals.LG_MESH_NAME_PBRMAP
+  const mesh = new THREE.Mesh(geometry, tslMaterial.buildMetallicRoughnessBakeMaterial())
+  mesh.name = Globals.LG_MESH_NAME_METALLICROUGHNESSMAP
+  return mesh
+}
+
+export function createBakingEmissivityMap(data: PlanetData, surfaceTex: THREE.DataTexture): THREE.Mesh {
+  const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
+  geometry.computeTangents()
+
+  const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data))
+  const mesh = new THREE.Mesh(geometry, tslMaterial.buildEmissivityBakeMaterial(surfaceTex))
+  mesh.name = Globals.LG_MESH_NAME_EMISSIVITYMAP
   return mesh
 }
 

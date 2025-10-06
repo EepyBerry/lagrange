@@ -7,15 +7,6 @@ import * as BakingHelper from '@/core/helpers/baking.helper'
 import { EditorSceneCreationMode, type BakingTarget, type EditorSceneData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
 import { regeneratePRNGIfNecessary } from '@/core/utils/math-utils'
-import {
-  bakeMesh,
-  createBakingHeightMap,
-  createBakingClouds,
-  createBakingNormalMap,
-  createBakingPBRMap,
-  createBakingPlanet,
-  createBakingRing,
-} from '../helpers/baking.helper'
 import { exportMeshesToGLTF } from '../helpers/export.helper'
 import { idb } from '@/dexie.config'
 import { sleep } from '@/core/utils/utils'
@@ -192,12 +183,12 @@ export async function exportPlanetToGLTF(progressDialog: {
     // ----------------------------------- Bake planet ----------------------------------
     progressDialog.setProgress(2)
     await sleep(50)
-    const bakePlanet = createBakingPlanet(
+    const bakePlanet = BakingHelper.createBakingPlanet(
       LG_PLANET_DATA.value,
       LG_SCENE_DATA.planet.surfaceTexture!,
       LG_SCENE_DATA.planet.biomesTexture!,
     )
-    const bakePlanetSurfaceTex = await bakeMesh(renderer, camera, renderTarget, bakePlanet)
+    const bakePlanetSurfaceTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakePlanet)
     if (appSettings?.bakingPixelize) {
       bakePlanetSurfaceTex.minFilter = THREE.NearestFilter
       bakePlanetSurfaceTex.magFilter = THREE.NearestFilter
@@ -205,20 +196,26 @@ export async function exportPlanetToGLTF(progressDialog: {
 
     progressDialog.setProgress(3)
     await sleep(50)
-    const bakePBR = createBakingPBRMap(LG_PLANET_DATA.value)
-    const bakePlanetPBRTex = await bakeMesh(renderer, camera, renderTarget, bakePBR)
+    const bakeMetallicRoughness = BakingHelper.createBakingMetallicRoughnessMap(LG_PLANET_DATA.value)
+    const bakePlanetMetallicRoughnessTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeMetallicRoughness)
     if (appSettings?.bakingPixelize) {
-      bakePlanetPBRTex.minFilter = THREE.NearestFilter
-      bakePlanetPBRTex.magFilter = THREE.NearestFilter
+      bakePlanetMetallicRoughnessTex.minFilter = THREE.NearestFilter
+      bakePlanetMetallicRoughnessTex.magFilter = THREE.NearestFilter
+    }
+    const bakeEmissivity = BakingHelper.createBakingEmissivityMap(LG_PLANET_DATA.value, LG_SCENE_DATA.planet.surfaceTexture!)
+    const bakePlanetEmissivityTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeEmissivity)
+    if (appSettings?.bakingPixelize) {
+      bakePlanetEmissivityTex.minFilter = THREE.NearestFilter
+      bakePlanetEmissivityTex.magFilter = THREE.NearestFilter
     }
 
     progressDialog.setProgress(4)
     await sleep(50)
-    const bakeHeight = createBakingHeightMap(LG_PLANET_DATA.value)
-    const bakePlanetHeightTex = await bakeMesh(renderer, camera, renderTarget, bakeHeight)
+    const bakeHeight = BakingHelper.createBakingHeightMap(LG_PLANET_DATA.value)
+    const bakePlanetHeightTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeHeight)
 
-    const bakeNormal = createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex)
-    const bakePlanetNormalTex = await bakeMesh(renderer, camera, renderTarget, bakeNormal)
+    const bakeNormal = BakingHelper.createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex)
+    const bakePlanetNormalTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeNormal)
     if (appSettings?.bakingPixelize) {
       bakePlanetNormalTex.minFilter = THREE.NearestFilter
       bakePlanetNormalTex.magFilter = THREE.NearestFilter
@@ -226,19 +223,20 @@ export async function exportPlanetToGLTF(progressDialog: {
 
     bakePlanet.material = new MeshStandardNodeMaterial({
       map: bakePlanetSurfaceTex,
-      roughnessMap: bakePlanetPBRTex,
-      metalnessMap: bakePlanetPBRTex,
+      roughnessMap: bakePlanetMetallicRoughnessTex,
+      metalnessMap: bakePlanetMetallicRoughnessTex,
+      emissiveMap: bakePlanetEmissivityTex,
       normalMap: bakePlanetNormalTex,
       normalScale: new THREE.Vector2(LG_PLANET_DATA.value.planetSurfaceBumpStrength).multiplyScalar(2.0),
     })
-    bakingTargets.push({ mesh: bakePlanet, textures: [bakePlanetSurfaceTex, bakePlanetPBRTex, bakePlanetHeightTex] })
+    bakingTargets.push({ mesh: bakePlanet, textures: [bakePlanetSurfaceTex, bakePlanetMetallicRoughnessTex, bakePlanetHeightTex] })
 
     // ----------------------------------- Bake clouds ----------------------------------
     if (LG_PLANET_DATA.value.cloudsEnabled) {
       progressDialog.setProgress(5)
       await sleep(50)
-      const bakeClouds = createBakingClouds(LG_PLANET_DATA.value, LG_SCENE_DATA.clouds.texture!)
-      const bakeCloudsTex = await bakeMesh(renderer, camera, renderTarget, bakeClouds)
+      const bakeClouds = BakingHelper.createBakingClouds(LG_PLANET_DATA.value, LG_SCENE_DATA.clouds.texture!)
+      const bakeCloudsTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeClouds)
       if (appSettings?.bakingPixelize) {
         bakeCloudsTex.minFilter = THREE.NearestFilter
         bakeCloudsTex.magFilter = THREE.NearestFilter
@@ -265,8 +263,8 @@ export async function exportPlanetToGLTF(progressDialog: {
         const ringMeshData = LG_SCENE_DATA.rings?.find((r) => r.mesh!.name === params.id)
         if (!ringMeshData) continue
 
-        const bakeRing = createBakingRing(LG_PLANET_DATA.value, ringMeshData.texture!, idx)
-        const bakeRingTex = await bakeMesh(renderer, camera, renderTarget, bakeRing)
+        const bakeRing = BakingHelper.createBakingRing(LG_PLANET_DATA.value, ringMeshData.texture!, idx)
+        const bakeRingTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeRing)
         if (appSettings?.bakingPixelize) {
           bakeRingTex.minFilter = THREE.NearestFilter
           bakeRingTex.magFilter = THREE.NearestFilter
