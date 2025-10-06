@@ -12,7 +12,7 @@ import { AtmosphereTSLMaterial } from '@/core/tsl/materials/atmosphere.tslmat'
 import { CloudsTSLMaterial } from '@/core/tsl/materials/clouds.tslmat'
 import { RingTSLMaterial } from '@/core/tsl/materials/ring.tslmat'
 import { idb } from '@/dexie.config'
-import { convertToCloudsUniformData, convertToPlanetUniformData, convertToTexturedPlanetUniformData } from '../models/converters/planet-data.converter'
+import { convertToCloudsUniformData, convertToTexturedPlanetUniformData } from '../models/converters/planet-data.converter'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS

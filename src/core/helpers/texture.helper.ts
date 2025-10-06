@@ -101,7 +101,7 @@ function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
 
     // Pre-calculate smoothing data
     const biomeAvgSmoothness = avg(...[biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness])
-    const biomeOverlaps = biomeRect.findOverlaps(w, w)
+    const biomeOverlaps = biomeRect.findOverlaps(w, w /* w = h */)
 
     // Adjust strides depending on starting temp & humi
     cellStride = biomeRect.x * 4

@@ -34,4 +34,11 @@ export const sobel = Fn(([i_heights, i_strength]: [UniformMatrix3Node, UniformNu
       .mul(0.5)
       .add(0.5),
   )
+}).setLayout({
+  name: 'LG_SOBEL_sobel',
+  type: 'vec3',
+  inputs: [
+    { name: 'heights', type: 'mat3' },
+    { name: 'strength', type: 'float' }
+  ]
 })

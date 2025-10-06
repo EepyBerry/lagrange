@@ -1,5 +1,4 @@
 import {
-  Color,
   DataTexture,
   MeshBasicNodeMaterial,
   MeshStandardNodeMaterial,
@@ -36,7 +35,6 @@ import {
 import { type TSLMaterial } from './tsl-material'
 import { displace, layer, warp } from '../features/lwd'
 import type {
-  BiomeData,
   DisplacementData,
   NoiseData,
   UniformColorNode,
@@ -47,7 +45,7 @@ import type {
   WarpingData,
 } from '../types'
 import { applyBump } from '../features/bump'
-import { computeHumidity, computeTemperature, getFragmentBiome, sampleBiomeTexture } from '../features/biomes'
+import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes'
 import { sobel } from '../utils/sobel.tlsutil'
 import { flattenUV } from '../utils/vertex.tlsutil'
 
@@ -68,7 +66,7 @@ export type PlanetUniformData = {
       waterMetalness: number
       groundRoughness: number
       groundMetalness: number
-    },
+    }
     emissive: {
       waterEmissiveIntensity: number
       groundEmissiveIntensity: number
@@ -85,7 +83,6 @@ export type PlanetUniformData = {
     temperatureNoise: NoiseData
     humidityMode: number
     humidityNoise: NoiseData
-    params: BiomeData[]
   }
   textures?: {
     surface: DataTexture
@@ -107,7 +104,7 @@ export type PlanetUniforms = {
   flags: UniformArrayNode
   pbr: {
     waterLevel: UniformNumberNode
-    metallicRoughness: UniformVector4Node,
+    metallicRoughness: UniformVector4Node
     emissive: UniformVector2Node
   }
   noise: UniformVector4Node
@@ -121,11 +118,11 @@ export type PlanetUniforms = {
     temperatureNoise: UniformVector4Node
     humidityMode: UniformNumberNode
     humidityNoise: UniformVector4Node
-    params?: UniformArrayNode
   }
   textures?: TextureNode[]
 }
 export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, PlanetUniformData, PlanetUniforms> {
+  // Static uniform declarations
   public readonly uniforms: PlanetUniforms
 
   constructor(data: PlanetUniformData) {
@@ -133,7 +130,13 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       radius: uniform(data.radius, 'float'),
       bumpStrength: uniform(data.bumpStrength, 'float'),
       flags: uniformArray(
-        [+data.flags.showWarping, +data.flags.showDisplacement, +data.flags.showBumps, +data.flags.showBiomes, +data.flags.showEmissive],
+        [
+          +data.flags.showWarping,
+          +data.flags.showDisplacement,
+          +data.flags.showBumps,
+          +data.flags.showBiomes,
+          +data.flags.showEmissive,
+        ],
         'int',
       ),
       pbr: {
@@ -143,17 +146,14 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
             data.pbr.metallicRoughness.waterRoughness,
             data.pbr.metallicRoughness.waterMetalness,
             data.pbr.metallicRoughness.groundRoughness,
-            data.pbr.metallicRoughness.groundMetalness
+            data.pbr.metallicRoughness.groundMetalness,
           ),
           'vec4',
         ),
         emissive: uniform(
-          new Vector2(
-            data.pbr.emissive.waterEmissiveIntensity,
-            data.pbr.emissive.groundEmissiveIntensity
-          ),
+          new Vector2(data.pbr.emissive.waterEmissiveIntensity, data.pbr.emissive.groundEmissiveIntensity),
           'vec4',
-        )
+        ),
       },
       noise: uniform(
         new Vector4(data.noise.frequency, data.noise.amplitude, data.noise.lacunarity, data.noise.octaves),
@@ -208,7 +208,6 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
           ),
           'vec4',
         ),
-        params: uniformArray(data.biomes.params)
       },
       textures: data.textures ? [texture(data.textures.surface), texture(data.textures.biomes)] : undefined,
     }
@@ -244,8 +243,16 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     material.normalNode = transformNormalToView(
       mix(normalLocal, bump, FLAG_LAND.mul(this.uniforms.flags.element(int(2)))),
     )
-    material.roughnessNode = mix(this.uniforms.pbr.metallicRoughness.w, this.uniforms.pbr.metallicRoughness.y, FLAG_LAND)
-    material.metalnessNode = mix(this.uniforms.pbr.metallicRoughness.x, this.uniforms.pbr.metallicRoughness.z, FLAG_LAND)
+    material.roughnessNode = mix(
+      this.uniforms.pbr.metallicRoughness.w,
+      this.uniforms.pbr.metallicRoughness.y,
+      FLAG_LAND,
+    )
+    material.metalnessNode = mix(
+      this.uniforms.pbr.metallicRoughness.x,
+      this.uniforms.pbr.metallicRoughness.z,
+      FLAG_LAND,
+    )
     material.emissiveNode = this.applyEmissiveIntensity(colour, FLAG_LAND)
     return material
   }
@@ -374,7 +381,9 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     heightLimit: ShaderNodeObject<Node>,
     FLAG_BIOMES: ShaderNodeObject<Node>,
   ): ShaderNodeObject<Node> {
-    const temp = float(computeTemperature(vPos, this.uniforms.biomes.temperatureNoise, this.uniforms.biomes.temperatureMode))
+    const temp = float(
+      computeTemperature(vPos, this.uniforms.biomes.temperatureNoise, this.uniforms.biomes.temperatureMode),
+    )
     const humi = float(computeHumidity(vPos, this.uniforms.biomes.humidityNoise, this.uniforms.biomes.humidityMode))
 
     const tHeight = float(mix(0.0, temp, FLAG_BIOMES))
@@ -392,12 +401,17 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const dxHeight = float(layer(vPos.add(dx), this.uniforms.noise, this.uniforms.warping.x)).toVar()
     const dyHeight = float(layer(vPos.add(dy), this.uniforms.noise, this.uniforms.warping.x)).toVar()
     return vec3(
-      applyBump(vPos, dx, dy, height, dxHeight, dyHeight, this.uniforms.radius, this.uniforms.bumpStrength),
+      applyBump(normalLocal, vPos, dx, dy, height, dxHeight, dyHeight, this.uniforms.radius, this.uniforms.bumpStrength),
     ).toVar()
   }
 
-  private applyEmissiveIntensity(colour: ShaderNodeObject<Node>, FLAG_LAND: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
-    const emissiveFactor = mix(this.uniforms.pbr.emissive.x, this.uniforms.pbr.emissive.y, FLAG_LAND).toVar('emissiveFactor')
+  private applyEmissiveIntensity(
+    colour: ShaderNodeObject<Node>,
+    FLAG_LAND: ShaderNodeObject<Node>,
+  ): ShaderNodeObject<Node> {
+    const emissiveFactor = mix(this.uniforms.pbr.emissive.x, this.uniforms.pbr.emissive.y, FLAG_LAND).toVar(
+      'emissiveFactor',
+    )
     return colour.mul(this.uniforms.flags.element(int(4))).mul(emissiveFactor)
   }
 }

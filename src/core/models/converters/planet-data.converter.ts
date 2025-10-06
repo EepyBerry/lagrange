@@ -84,7 +84,6 @@ export function convertToPlanetUniformData(data: PlanetData): PlanetUniformData 
         lacunarity: data.biomesHumidityNoise.lacunarity,
         octaves: data.biomesHumidityNoise.octaves,
       },
-      params: data.biomesParams
     },
   }
 }
