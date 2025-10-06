@@ -1,11 +1,12 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
-import type { Rect, RawRGBA } from '@/core/types'
-import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/core/utils/math-utils'
+import type { RawRGBA } from '@/core/types'
+import { avg, truncateTo } from '@/core/utils/math-utils'
 import { Color, CubeTextureLoader, DataTexture, NearestFilter, Vector2, type MinificationTextureFilter } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { MUL_INT8_TO_UNIT } from '../globals'
 import { alphaBlendColors, toRawRGBA } from '@/core/utils/render-utils'
+import Rect from '../utils/math/rect'
 
 const CUBE_TEXTURE_LOADER = new CubeTextureLoader()
 
@@ -89,18 +90,18 @@ function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
   let cellStride = (Math.ceil(biomes[0].humiMin * w) + biomes[0].tempMin * w) * 4
   for (let i = 0; i < biomes.length; i++) {
     const biome = biomes[i]
-    const biomeRect: Rect = {
-      x: Math.floor(biome.humiMin * w),
-      y: Math.floor(biome.tempMin * w),
-      w: Math.ceil((biome.humiMax - biome.humiMin) * w),
-      h: Math.ceil((biome.tempMax - biome.tempMin) * w),
-    }
+    const biomeRect: Rect = new Rect(
+      Math.floor(biome.humiMin * w),
+      Math.floor(biome.tempMin * w),
+      Math.ceil((biome.humiMax - biome.humiMin) * w),
+      Math.ceil((biome.tempMax - biome.tempMin) * w),
+    )
     const totalPixels = biomeRect.w * biomeRect.h
     const maxBiomeX = (biomeRect.x + biomeRect.w) * 4
 
     // Pre-calculate smoothing data
     const biomeAvgSmoothness = avg(...[biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness])
-    const biomeOverlaps = findRectOverlaps(w, w, biomeRect)
+    const biomeOverlaps = biomeRect.findOverlaps(w, w)
 
     // Adjust strides depending on starting temp & humi
     cellStride = biomeRect.x * 4
@@ -117,7 +118,7 @@ function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
       bufferIdx = lineStride + cellStride
       _writeToRawRGBA(pixelRGBA, buffer, bufferIdx, MUL_INT8_TO_UNIT)
 
-      rectDistance = findMinDistanceToRect(biomeRect, pixelCoords.x, pixelCoords.y, biomeOverlaps)
+      rectDistance = biomeRect.findNearestPoint(pixelCoords.x, pixelCoords.y, biomeOverlaps)
       biomeRGBA.a = truncateTo(clamp(rectDistance / biomeAvgSmoothness, 0, 1), 1e4)
 
       if (pixelRGBA.a > 0) {

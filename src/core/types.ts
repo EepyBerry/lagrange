@@ -53,14 +53,6 @@ export enum GradientMode {
   FULLNOISE = 2,
 }
 
-export type Rect = {
-  x: number
-  y: number
-  w: number
-  h: number
-  r?: number
-  b?: number
-}
 export type RawRGBA = {
   r: number
   g: number

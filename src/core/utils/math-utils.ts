@@ -1,4 +1,3 @@
-import type { Rect } from '@/core/types'
 import seedrandom from 'seedrandom'
 import { ref, type Ref } from 'vue'
 
@@ -58,36 +57,4 @@ export function avg(...values: number[]) {
  */
 export function truncateTo(a: number, multPrecision: number): number {
   return Math.trunc(a * multPrecision) / multPrecision
-}
-
-/**
- * Finds overlaps on a given w*h plane's borders with a given Rect
- * @param w total plane width
- * @param h total plane height
- * @param rect rect to check overlaps on
- * @returns an array containing overlaps for the top, right, bottom & left sides, in that order
- */
-export function findRectOverlaps(w: number, h: number, rect: Rect): number[] {
-  const borderOverlaps = [0, 0, 0, 0]
-  borderOverlaps[0] = rect.y === 0 ? 1 : 0
-  borderOverlaps[1] = rect.x + rect.w >= w ? 1 : 0
-  borderOverlaps[2] = rect.y + rect.h >= h ? 1 : 0
-  borderOverlaps[3] = rect.x === 0 ? 1 : 0
-  return borderOverlaps
-}
-
-/**
- * Finds the nearest point on a rect from the given (x,y) coordinates within that rect
- * @param rect the rect to find the point on
- * @param x point x
- * @param y point y
- * @returns the coordinates of the nearest rect point from (x,y)
- */
-export function findMinDistanceToRect(rect: Rect, x: number, y: number, overlaps: number[]): number {
-  return Math.min(
-    overlaps[3] > 0 ? 1e3 : x - rect.x,
-    overlaps[0] > 0 ? 1e3 : y - rect.y,
-    overlaps[1] > 0 ? 1e3 : rect.x + rect.w - x,
-    overlaps[2] > 0 ? 1e3 : rect.y + rect.h - y,
-  )
 }

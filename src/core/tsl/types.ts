@@ -31,3 +31,11 @@ export type NoiseData = {
   lacunarity: number
   octaves: number
 }
+export type BiomeData = {
+  tempMin: number
+  tempMax: number
+  humiMin: number
+  humiMax: number
+  smoothness: number
+  color: Color
+}

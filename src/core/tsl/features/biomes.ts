@@ -1,5 +1,5 @@
 import { fbm3 } from '../noise/fbm3'
-import { float, step, abs, mix, smoothstep, Fn, vec2, vec4 } from 'three/tsl'
+import { float, step, abs, mix, smoothstep, Fn, vec2, vec4, int, vec3 } from 'three/tsl'
 import type { TextureNode, UniformArrayNode } from 'three/webgpu'
 import type { UniformNumberNode, UniformVector3Node, UniformVector4Node } from '../types'
 

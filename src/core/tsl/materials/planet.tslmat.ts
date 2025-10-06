@@ -36,8 +36,10 @@ import {
 import { type TSLMaterial } from './tsl-material'
 import { displace, layer, warp } from '../features/lwd'
 import type {
+  BiomeData,
   DisplacementData,
   NoiseData,
+  UniformColorNode,
   UniformNumberNode,
   UniformVector2Node,
   UniformVector3Node,
@@ -45,7 +47,7 @@ import type {
   WarpingData,
 } from '../types'
 import { applyBump } from '../features/bump'
-import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes'
+import { computeHumidity, computeTemperature, getFragmentBiome, sampleBiomeTexture } from '../features/biomes'
 import { sobel } from '../utils/sobel.tlsutil'
 import { flattenUV } from '../utils/vertex.tlsutil'
 
@@ -83,11 +85,21 @@ export type PlanetUniformData = {
     temperatureNoise: NoiseData
     humidityMode: number
     humidityNoise: NoiseData
+    params: BiomeData[]
   }
   textures?: {
     surface: DataTexture
     biomes: DataTexture
   }
+}
+
+export type BiomeUniforms = {
+  tempMin: UniformNumberNode
+  tempMax: UniformNumberNode
+  humidityMin: UniformNumberNode
+  humidityMax: UniformNumberNode
+  smoothness: UniformNumberNode
+  color: UniformColorNode
 }
 export type PlanetUniforms = {
   radius: UniformNumberNode
@@ -109,6 +121,7 @@ export type PlanetUniforms = {
     temperatureNoise: UniformVector4Node
     humidityMode: UniformNumberNode
     humidityNoise: UniformVector4Node
+    params?: UniformArrayNode
   }
   textures?: TextureNode[]
 }
@@ -195,6 +208,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
           ),
           'vec4',
         ),
+        params: uniformArray(data.biomes.params)
       },
       textures: data.textures ? [texture(data.textures.surface), texture(data.textures.biomes)] : undefined,
     }
@@ -360,22 +374,13 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     heightLimit: ShaderNodeObject<Node>,
     FLAG_BIOMES: ShaderNodeObject<Node>,
   ): ShaderNodeObject<Node> {
-    const tHeight = float(
-      mix(
-        0.0,
-        computeTemperature(vPos, this.uniforms.biomes.temperatureNoise, this.uniforms.biomes.temperatureMode),
-        FLAG_BIOMES,
-      ),
-    )
+    const temp = float(computeTemperature(vPos, this.uniforms.biomes.temperatureNoise, this.uniforms.biomes.temperatureMode))
+    const humi = float(computeHumidity(vPos, this.uniforms.biomes.humidityNoise, this.uniforms.biomes.humidityMode))
+
+    const tHeight = float(mix(0.0, temp, FLAG_BIOMES))
       .min(heightLimit)
       .toVar()
-    const hHeight = float(
-      mix(
-        0.0,
-        computeHumidity(vPos, this.uniforms.biomes.humidityNoise, this.uniforms.biomes.humidityMode),
-        FLAG_BIOMES,
-      ),
-    )
+    const hHeight = float(mix(0.0, humi, FLAG_BIOMES))
       .min(heightLimit)
       .toVar()
     return mix(colour, sampleBiomeTexture(this.uniforms.textures![1], tHeight, hHeight, colour), FLAG_BIOMES)
