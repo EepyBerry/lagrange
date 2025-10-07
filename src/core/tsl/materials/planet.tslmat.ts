@@ -43,11 +43,11 @@ import type {
   UniformVector3Node,
   UniformVector4Node,
   WarpingData,
-} from '../types'
+} from '../tsl-types'
 import { applyBump } from '../features/bump'
 import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes'
-import { sobel } from '../utils/sobel.tlsutil'
-import { flattenUV } from '../utils/vertex.tlsutil'
+import { sobel } from '../utils/sobel-utils'
+import { flattenUV } from '../utils/vertex-utils'
 
 export type PlanetUniformData = {
   radius: number

@@ -1,5 +1,5 @@
 import { vec3, cross, normalize, mix, Fn } from 'three/tsl'
-import type { UniformNumberNode, UniformVector3Node } from '../types'
+import type { UniformNumberNode, UniformVector3Node } from '../tsl-types'
 
 // Transpiled (GLSL) from Daniel Greenheck:
 // https://github.com/dgreenheck/threejs-procedural-planets

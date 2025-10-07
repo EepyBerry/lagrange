@@ -3,7 +3,7 @@ export default class Rect {
   private _y: number
   private _w: number
   private _h: number
-  
+
   public get x(): number {
     return this._x
   }
@@ -45,27 +45,27 @@ export default class Rect {
    * @param h total plane height
    * @returns an array containing overlaps for the top, right, bottom & left sides, in that order
    */
-  public findOverlaps(w: number, h: number): number[] {
-    const borderOverlaps = [0, 0, 0, 0]
-    borderOverlaps[0] = this.y === 0 ? 1 : 0
-    borderOverlaps[1] = this.x + this.w >= w ? 1 : 0
-    borderOverlaps[2] = this.y + this.h >= h ? 1 : 0
-    borderOverlaps[3] = this.x === 0 ? 1 : 0
+  public findOverlaps(w: number, h: number): boolean[] {
+    const borderOverlaps: boolean[] = [false, false, false, false]
+    borderOverlaps[0] = this.y === 0
+    borderOverlaps[1] = this.x + this.w >= w
+    borderOverlaps[2] = this.y + this.h >= h
+    borderOverlaps[3] = this.x === 0
     return borderOverlaps
   }
-  
+
   /**
    * Finds the nearest point on this rect from the given (x,y) coordinates within that rect
-   * @param x point x
-   * @param y point y
+   * @param px point x
+   * @param py point y
    * @returns the coordinates of the nearest rect point from (x,y)
    */
-  public findNearestPoint(x: number, y: number, overlaps: number[]): number {
+  public findMinDistanceWithin(px: number, py: number, overlaps: boolean[]): number {
     return Math.min(
-      overlaps[3] > 0 ? 1e3 : x - this.x,
-      overlaps[0] > 0 ? 1e3 : y - this.y,
-      overlaps[1] > 0 ? 1e3 : this.x + this.w - x,
-      overlaps[2] > 0 ? 1e3 : this.y + this.h - y,
+      overlaps[3] ? 1e3 : px - this.x,
+      overlaps[0] ? 1e3 : py - this.y,
+      overlaps[1] ? 1e3 : this.x + this.w - px,
+      overlaps[2] ? 1e3 : this.y + this.h - py,
     )
   }
 }

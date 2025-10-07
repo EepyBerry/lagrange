@@ -1,6 +1,6 @@
 import type { ColorRamp } from '@/core/models/color-ramp.model'
 import { EditorBackendType, type RawRGBA } from '@/core/types'
-import { Color, type TypedArray } from 'three'
+import { type TypedArray } from 'three'
 import type { WebGPURenderer } from 'three/webgpu'
 
 /**
@@ -11,10 +11,12 @@ import type { WebGPURenderer } from 'three/webgpu'
  * @returns an `OffscreenCanvas` instance containing data from the buffer
  */
 export function renderToCanvas(renderer: WebGPURenderer, buf: TypedArray, w: number, h: number): OffscreenCanvas {
+  const backendType = Object.hasOwn(renderer.backend, 'gl') ? EditorBackendType.WEBGL : EditorBackendType.WEBGPU
+
   const canvas = new OffscreenCanvas(w, h)
   const ctx = canvas.getContext('2d')!
   const imageData = ctx.createImageData(w, h)
-  imageData.data.set(getBackendType(renderer) === EditorBackendType.WEBGL ? flipBufferY(buf as Uint8Array, w, h) : buf)
+  imageData.data.set(backendType === EditorBackendType.WEBGL ? flipBufferY(buf as Uint8Array, w, h) : buf)
   ctx.putImageData(imageData, 0, 0)
   return canvas
 }
@@ -92,25 +94,6 @@ export function alphaToGrayscale(alpha: number, full = false): string {
     .toString(16)
     .padStart(2, '0')
   return full ? `#${hex + hex + hex}` : hex
-}
-
-/**
- * Converts a THREE.Color object to a RawRGBA object
- * @param color the color
- * @param a alpha value (0-1)
- * @returns
- */
-export function toRawRGBA(color: Color, a: number): RawRGBA {
-  return { r: color.r, g: color.g, b: color.b, a }
-}
-
-/**
- * Get the backend type currently in use by the given renderer
- * @param renderer the renderer
- * @returns the backend type, either `EditorBackendType.WEBGL` or `EditorBackendType.WEBGPU`
- */
-export function getBackendType(renderer: WebGPURenderer): EditorBackendType {
-  return Object.hasOwn(renderer.backend, 'gl') ? EditorBackendType.WEBGL : EditorBackendType.WEBGPU
 }
 
 export async function blobToDataURL(blob: Blob): Promise<string> {

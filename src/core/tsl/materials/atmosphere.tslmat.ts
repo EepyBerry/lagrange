@@ -1,6 +1,6 @@
 import { Color, NodeMaterial, type Vector3 } from 'three/webgpu'
 import type { TSLMaterial } from './tsl-material'
-import type { UniformColorNode, UniformNumberNode, UniformVector3Node } from '../types'
+import type { UniformColorNode, UniformNumberNode, UniformVector3Node } from '../tsl-types'
 import {
   cameraProjectionMatrix,
   cameraProjectionMatrixInverse,
@@ -20,9 +20,9 @@ import {
   vec3,
   vec4,
 } from 'three/tsl'
-import { applyInScatter, rayVsSphere } from '../utils/atmosphere.tslutil'
-import { shiftHue, tintToMatrix, whitescale } from '../utils/color.tslutil'
-import { inverseMat4 } from '../utils/math.tslutil'
+import { applyInScatter, rayVsSphere } from '../utils/atmosphere-utils'
+import { shiftHue, tintToMatrix, whitescale } from '../utils/color-utils'
+import { inverseMat4 } from '../utils/math-utils'
 
 export type AtmosphereData = {
   sunlight: {

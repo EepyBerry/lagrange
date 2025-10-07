@@ -94,6 +94,7 @@ export type PlanetMeshData = {
 
   biomesBuffer: Uint8Array
   biomesTexture?: DataTexture
+  biomesCanvas: OffscreenCanvas[]
 }
 export type CloudsMeshData = {
   mesh?: Mesh

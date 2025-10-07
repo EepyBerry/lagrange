@@ -1,5 +1,5 @@
 import { float, sin, fract, Fn, floor, mix, int, Loop } from 'three/tsl'
-import type { UniformNumberNode, UniformVector3Node, UniformVector4Node } from '../types'
+import type { UniformNumberNode, UniformVector3Node, UniformVector4Node } from '../tsl-types'
 import type { VaryingNode } from 'three/webgpu'
 
 export const rand = /*@__PURE__*/ Fn(([i_n]: [UniformNumberNode]) => {

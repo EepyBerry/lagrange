@@ -1,7 +1,7 @@
 import { fbm3 } from '../noise/fbm3'
 import { float, step, abs, mix, smoothstep, Fn, vec2, vec4, int, vec3 } from 'three/tsl'
 import type { TextureNode, UniformArrayNode } from 'three/webgpu'
-import type { UniformNumberNode, UniformVector3Node, UniformVector4Node } from '../types'
+import type { UniformNumberNode, UniformVector3Node, UniformVector4Node } from '../tsl-types'
 
 export const computeTemperature = /*@__PURE__*/ Fn(
   ([i_position, i_noiseparams, i_mode]: [UniformVector3Node, UniformVector4Node, UniformNumberNode]) => {

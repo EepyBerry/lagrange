@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { degToRad } from 'three/src/math/MathUtils.js'
-import { loadCubeTexture, createRampTexture, createBiomeTexture } from './texture.helper'
+import * as TextureHelper from './texture.helper'
 import type PlanetData from '../models/planet-data.model'
 import { type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type RingMeshData, EditorSceneCreationMode } from '../types'
 import { LensFlareEffect } from '../effects/lens-flare.effect'
@@ -25,7 +25,7 @@ export async function createScene(data: PlanetData, width: number, height: numbe
   // setup cubemap
   const scene = new THREE.Scene()
   if (creationMode === EditorSceneCreationMode.EDITOR) {
-    scene.background = loadCubeTexture('/skybox/', [
+    scene.background = TextureHelper.loadCubeTexture('/skybox/', [
       'space_ft.png',
       'space_bk.png',
       'space_up.png',
@@ -79,8 +79,8 @@ export type CreatePlanetOptions = { mode: CreatePlanetMode, heightMapTex?: THREE
 export enum CreatePlanetMode { EDITOR, BAKING_SURFACE, BAKING_PBR, BAKING_HEIGHTMAP, BAKING_NORMALMAP }
 export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): PlanetMeshData {
   const geometry = createSphereGeometryComponent(data.planetMeshQuality)
-  const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
-  const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
+  const surfaceTex = TextureHelper.createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
+  const biomeTex = TextureHelper.createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
 
   const tslMaterial = new PlanetTSLMaterial(convertToTexturedPlanetUniformData(data, surfaceTex, biomeTex))
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
@@ -95,13 +95,14 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
     surfaceTexture: surfaceTex,
     biomesBuffer: biomeTexBuf,
     biomesTexture: biomeTex,
+    biomesCanvas: TextureHelper.createBiomeCanvases(data.biomesParams, Globals.TEXTURE_SIZES.BIOME)
   }
 }
 
 export function createClouds(data: PlanetData, textureBuffer: Uint8Array): CloudsMeshData {
   const cloudsHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
   const geometry = createSphereGeometryComponent(data.planetMeshQuality, cloudsHeight)
-  const opacityTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
+  const opacityTex = TextureHelper.createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
   const tslMaterial = new CloudsTSLMaterial(convertToCloudsUniformData(data, opacityTex))
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
@@ -156,7 +157,7 @@ export function createRing(
 ): RingMeshData {
   const textureBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
   const ringParams = data.ringsParams[paramsIndex]
-  const ringTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
+  const ringTex = TextureHelper.createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
   const geometry = createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
   const tslMaterial = new RingTSLMaterial({
     innerRadius: ringParams.innerRadius,

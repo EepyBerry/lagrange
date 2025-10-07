@@ -1,7 +1,7 @@
 import type { Color, Vector3 } from 'three'
 import { AdditiveBlending, NodeMaterial, Vector2 } from 'three/webgpu'
 import type { TSLMaterial } from './tsl-material'
-import type { UniformColorNode, UniformNumberNode, UniformVector2Node, UniformVector3Node } from '../types'
+import type { UniformColorNode, UniformNumberNode, UniformVector2Node, UniformVector3Node } from '../tsl-types'
 import { float, Fn, If, Loop, positionGeometry, pow, uniform, uv, vec2, vec3, vec4 } from 'three/tsl'
 import { circle, lensFlare, rndf } from '../features/lens-flare'
 
