@@ -5,9 +5,9 @@ import { Color, CubeTextureLoader, DataTexture, NearestFilter, Vector2, type Min
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { MUL_INT8_TO_UNIT } from '../globals'
-import { alphaBlendColors, mergeCanvases } from '@/core/utils/render-utils'
+import { alphaBlendColors } from '@/core/utils/render-utils'
 import Rect from '../utils/math/rect'
-import { saveAs } from 'file-saver'
+import type { LayerDrawOptions, LayeredDataTexture } from '../utils/texture/layered-data-texture'
 
 const CUBE_TEXTURE_LOADER = new CubeTextureLoader()
 
@@ -73,7 +73,6 @@ function fillRamp(buffer: Uint8Array, w: number, steps: ColorRampStep[]) {
 export function createBiomeTexture(buffer: Uint8Array, w: number, biomes: BiomeParameters[]): DataTexture {
   if (biomes.length > 0) {
     fillBiomes(buffer, w, biomes)
-    createBiomeCanvases(biomes, w)
   }
   const dt = new DataTexture(buffer, w, w)
   // saveAs(new Blob([dt.image.data as BlobPart]), 'berria.raw')
@@ -147,23 +146,12 @@ function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
 
 // ------------------------------------------------------------------------------------------------
 
-export function createBiomeCanvases(biomes: BiomeParameters[], texSize: number): OffscreenCanvas[] {
-  const canvases: OffscreenCanvas[] = []
-  biomes.forEach(b => {
-    const canvas = new OffscreenCanvas(texSize, texSize)
-    fillBiome(canvas, b, texSize)
-    canvases.push(canvas)
-  })
-
-  // start test code
-  const outCanvas = mergeCanvases(canvases.reverse(), texSize)
-  outCanvas.convertToBlob().then(blob => saveAs(blob, 'test.raw'))
-
-  // end test code
-  return canvases
+export function createBiomeLayers(layeredTex: LayeredDataTexture<BiomeParameters>, biomes: BiomeParameters[]) {
+  biomes.forEach(b => layeredTex.addLayer(b))
 }
 
-function fillBiome(canvas: OffscreenCanvas, biome: BiomeParameters, texSize: number) {
+export function fillBiomeLayer(biome: BiomeParameters, ctx: OffscreenCanvasRenderingContext2D, opts?: LayerDrawOptions) {
+  const texSize = opts!.width! // width must exist
   const rect: Rect = new Rect(
     Math.floor(biome.humiMin * texSize),
     Math.floor(biome.tempMin * texSize),
@@ -182,7 +170,6 @@ function fillBiome(canvas: OffscreenCanvas, biome: BiomeParameters, texSize: num
   //   ---> in this context, n = rectAvgSmoothingDistance
   // At each iteration, "shrink" the drawing zone by 1px while taking into account border overlaps, then draw a stroked rect
   // The last step before exiting is to fill the remaining space with the biome color unaltered
-  const ctx = canvas.getContext('2d')!
   ctx.imageSmoothingEnabled = false
   ctx.clearRect(0,0,texSize,texSize)
   let pixelShift = 0

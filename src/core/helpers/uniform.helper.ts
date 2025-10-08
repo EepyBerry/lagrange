@@ -5,10 +5,11 @@ import type { PlanetMeshData, EditorSceneData, AtmosphereMeshData, CloudsMeshDat
 import type { AmbientLight, DirectionalLight, Group } from 'three'
 import type { LensFlareEffect } from '../effects/lens-flare.effect'
 import type PlanetData from '../models/planet-data.model'
-import { recalculateBiomeTexture, recalculateRampTexture } from './texture.helper'
+import * as TextureHelper from './texture.helper'
 import * as ComponentHelper from './component.helper'
+import { ChangeAction, type ChangedProp } from '../models/change-tracker.model'
 
-const UNIFORM_UPDATE_MAP: Ref<Map<string, () => void>> = ref(new Map<string, () => void>())
+const UNIFORM_UPDATE_MAP: Ref<Map<string, (source?: string, action?: ChangeAction) => void>> = ref(new Map<string, () => void>())
 
 export function initUniformUpdateMap(sceneData: EditorSceneData, planetData: PlanetData) {
   registerLightingDataUpdates(planetData, sceneData.sunLight!, sceneData.ambLight!, sceneData.lensFlare!)
@@ -38,8 +39,8 @@ export function clearUniformUpdateMap() {
   UNIFORM_UPDATE_MAP.value.clear()
 }
 
-export function execUniformUpdate(key: string) {
-  UNIFORM_UPDATE_MAP.value.get(key)?.()
+export function execUniformUpdate(changedProp: ChangedProp) {
+  UNIFORM_UPDATE_MAP.value.get(changedProp.prop)?.(changedProp.sourceId, changedProp.action)
 }
 
 // prettier-ignore
@@ -103,7 +104,7 @@ function registerSurfaceDataUpdates(data: PlanetData, planet: PlanetMeshData): v
   // Color
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceColorRamp', () => {
     const v = data.planetSurfaceColorRamp
-    recalculateRampTexture(planet.surfaceBuffer, Globals.TEXTURE_SIZES.SURFACE, v.steps)
+    TextureHelper.recalculateRampTexture(planet.surfaceBuffer, Globals.TEXTURE_SIZES.SURFACE, v.steps)
     planet.surfaceTexture!.needsUpdate = true
   })
 
@@ -148,8 +149,27 @@ function registerBiomeDataUpdates(data: PlanetData, planet: PlanetMeshData): voi
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._amplitude',     () => (planet.uniforms!.biomes.humidityNoise.value.y = data.biomesHumidityNoise.amplitude))
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._lacunarity',    () => (planet.uniforms!.biomes.humidityNoise.value.z = data.biomesHumidityNoise.lacunarity))
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._octaves',       () => (planet.uniforms!.biomes.humidityNoise.value.w = data.biomesHumidityNoise.octaves))
-  UNIFORM_UPDATE_MAP.value.set('_biomesParameters', () => {
-    recalculateBiomeTexture(planet.biomesBuffer!, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
+  UNIFORM_UPDATE_MAP.value.set('_biomesParameters', (sourceId, action) => {
+    const biome = data.findBiomeById(sourceId!)
+    const biomeIdx = data.findBiomeIndexById(sourceId!)
+    switch (action) {
+      case ChangeAction.ADD:
+        planet.biomeLayersTexture.addLayer(biome!)
+        break;
+      case ChangeAction.EDIT:
+        planet.biomeLayersTexture.updateLayer(biomeIdx, biome!)
+        break;
+      case ChangeAction.DELETE:
+        planet.biomeLayersTexture.removeLayer(biomeIdx)
+        break;
+      case ChangeAction.SORT_UP:
+        planet.biomeLayersTexture.moveLayer(biomeIdx, -1)
+        break;
+      case ChangeAction.SORT_DOWN:
+        planet.biomeLayersTexture.moveLayer(biomeIdx, 1)
+        break;
+    }
+    TextureHelper.recalculateBiomeTexture(planet.biomesBuffer!, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
     planet.biomesTexture!.needsUpdate = true
   })
 }
@@ -187,7 +207,7 @@ function registerCloudDataUpdates(data: PlanetData, clouds: CloudsMeshData): voi
   UNIFORM_UPDATE_MAP.value.set('_cloudsColor',             () =>  clouds.uniforms!.color.value = data.cloudsColor)
   UNIFORM_UPDATE_MAP.value.set('_cloudsColorRamp',         () =>  {
     const v = data.cloudsColorRamp
-    recalculateRampTexture(clouds.buffer!, Globals.TEXTURE_SIZES.CLOUDS, v.steps)
+    TextureHelper.recalculateRampTexture(clouds.buffer!, Globals.TEXTURE_SIZES.CLOUDS, v.steps)
     clouds.texture!.needsUpdate = true
   })
 }
@@ -227,7 +247,7 @@ function registerRingsDataUpdates(data: PlanetData, ringsData: RingMeshData[]): 
     })
     UNIFORM_UPDATE_MAP.value.set(`_ringsParameters.${ringParams.id}._colorRamp`, () => {
       const v = ringParams.colorRamp
-      recalculateRampTexture(rd.buffer!, Globals.TEXTURE_SIZES.RING, v.steps)
+      TextureHelper.recalculateRampTexture(rd.buffer!, Globals.TEXTURE_SIZES.RING, v.steps)
       rd.texture!.needsUpdate = true
     })
   })

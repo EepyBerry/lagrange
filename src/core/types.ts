@@ -16,6 +16,8 @@ import type { AtmosphereUniforms } from '@core/tsl/materials/atmosphere.tslmat'
 import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat'
 import type { RingUniforms } from '@core/tsl/materials/ring.tslmat'
 import type { LensFlareUniforms } from '@core/tsl/materials/lens-flare.tslmat'
+import type { LayeredDataTexture } from './utils/texture/layered-data-texture'
+import type { BiomeParameters } from './models/biome-parameters.model'
 
 // ---------------------------------- Editor types ----------------------------------
 export type EditorMessageLevel = 'success' | 'info' | 'warn' | 'wip'
@@ -94,7 +96,7 @@ export type PlanetMeshData = {
 
   biomesBuffer: Uint8Array
   biomesTexture?: DataTexture
-  biomesCanvas: OffscreenCanvas[]
+  biomeLayersTexture: LayeredDataTexture<BiomeParameters>
 }
 export type CloudsMeshData = {
   mesh?: Mesh

@@ -5,8 +5,8 @@ export abstract class ChangeTracker {
   public get changedProps() {
     return this._changedProps
   }
-  public markForChange(prop: string, oldValue?: ChangedPropPair, newValue?: ChangedPropPair) {
-    this._changedProps.push({ prop, oldValue, newValue })
+  public markForChange(prop: string, sourceId?: string, action: ChangeAction = ChangeAction.EDIT) {
+    this._changedProps.push({ prop, sourceId, action })
   }
   public clearChangedProps() {
     this._changedProps.splice(0)
@@ -20,12 +20,9 @@ export abstract class ChangeTracker {
   }
 }
 
-export type ChangedPropPair = {
-  key: string
-  value: string | number | boolean | object
-}
+export enum ChangeAction { ADD, EDIT, DELETE, SORT_UP, SORT_DOWN }
 export type ChangedProp = {
   prop: string
-  oldValue?: ChangedPropPair
-  newValue?: ChangedPropPair
+  sourceId?: string
+  action?: ChangeAction
 }

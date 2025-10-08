@@ -119,7 +119,7 @@ function updateScene() {
       updateRingMeshes()
       UniformHelper.reloadRingDataUpdates(LG_SCENE_DATA, LG_PLANET_DATA.value)
     }
-    UniformHelper.execUniformUpdate(changedProp.prop.split('|')[0])
+    UniformHelper.execUniformUpdate(changedProp)
   }
   LG_PLANET_DATA.value.clearChangedProps()
 }

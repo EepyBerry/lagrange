@@ -4,16 +4,6 @@ import { type TypedArray } from 'three'
 import type { WebGPURenderer } from 'three/webgpu'
 
 /**
- * Merges multiple canvases into one, while respecting their alpha values
- */
-export function mergeCanvases(canvases: OffscreenCanvas[], texSize: number): OffscreenCanvas {
-  const outCanvas = new OffscreenCanvas(texSize, texSize)
-  const outCtx = outCanvas.getContext('2d')!
-  canvases.forEach(c => outCtx.drawImage(c, 0, 0))
-  return outCanvas
-}
-
-/**
  * Renders a buffer onto an OffscreenCanvas
  * @param buf the buffer, represented as a `TypedArray` (usually `UInt8Array`)
  * @param w width of the output (in pixels)

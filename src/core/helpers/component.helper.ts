@@ -13,6 +13,8 @@ import { CloudsTSLMaterial } from '@/core/tsl/materials/clouds.tslmat'
 import { RingTSLMaterial } from '@/core/tsl/materials/ring.tslmat'
 import { idb } from '@/dexie.config'
 import { convertToCloudsUniformData, convertToTexturedPlanetUniformData } from '../models/converters/planet-data.converter'
+import { LayeredDataTexture } from '../utils/texture/layered-data-texture'
+import type { BiomeParameters } from '../models/biome-parameters.model'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -82,7 +84,14 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
   const surfaceTex = TextureHelper.createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
   const biomeTex = TextureHelper.createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
 
-  const tslMaterial = new PlanetTSLMaterial(convertToTexturedPlanetUniformData(data, surfaceTex, biomeTex))
+  const biomeLayersTex = new LayeredDataTexture<BiomeParameters>(
+    Globals.TEXTURE_SIZES.BIOME,
+    Globals.TEXTURE_SIZES.BIOME,
+    data.biomesParams,
+    TextureHelper.fillBiomeLayer
+  )
+
+  const tslMaterial = new PlanetTSLMaterial(convertToTexturedPlanetUniformData(data, surfaceTex, biomeLayersTex.texture))
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
@@ -95,7 +104,7 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
     surfaceTexture: surfaceTex,
     biomesBuffer: biomeTexBuf,
     biomesTexture: biomeTex,
-    biomesCanvas: TextureHelper.createBiomeCanvases(data.biomesParams, Globals.TEXTURE_SIZES.BIOME)
+    biomeLayersTexture: biomeLayersTex
   }
 }
 
