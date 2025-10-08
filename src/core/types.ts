@@ -96,7 +96,7 @@ export type PlanetMeshData = {
 
   biomesBuffer: Uint8Array
   biomesTexture?: DataTexture
-  biomeLayersTexture: LayeredDataTexture<BiomeParameters>
+  biomeLayersTexture?: LayeredDataTexture<BiomeParameters>
 }
 export type CloudsMeshData = {
   mesh?: Mesh

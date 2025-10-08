@@ -150,27 +150,29 @@ function registerBiomeDataUpdates(data: PlanetData, planet: PlanetMeshData): voi
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._lacunarity',    () => (planet.uniforms!.biomes.humidityNoise.value.z = data.biomesHumidityNoise.lacunarity))
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._octaves',       () => (planet.uniforms!.biomes.humidityNoise.value.w = data.biomesHumidityNoise.octaves))
   UNIFORM_UPDATE_MAP.value.set('_biomesParameters', (sourceId, action) => {
+    console.log(sourceId)
     const biome = data.findBiomeById(sourceId!)
     const biomeIdx = data.findBiomeIndexById(sourceId!)
+    if (!biome || !biomeIdx) return
     switch (action) {
       case ChangeAction.ADD:
-        planet.biomeLayersTexture.addLayer(biome!)
+        planet.biomeLayersTexture!.addLayer(biome!)
         break;
       case ChangeAction.EDIT:
-        planet.biomeLayersTexture.updateLayer(biomeIdx, biome!)
+        planet.biomeLayersTexture!.updateLayer(biomeIdx, biome!)
         break;
       case ChangeAction.DELETE:
-        planet.biomeLayersTexture.removeLayer(biomeIdx)
+        planet.biomeLayersTexture!.removeLayer(biomeIdx)
         break;
       case ChangeAction.SORT_UP:
-        planet.biomeLayersTexture.moveLayer(biomeIdx, -1)
+        planet.biomeLayersTexture!.moveLayer(biomeIdx, -1)
         break;
       case ChangeAction.SORT_DOWN:
-        planet.biomeLayersTexture.moveLayer(biomeIdx, 1)
+        planet.biomeLayersTexture!.moveLayer(biomeIdx, 1)
         break;
     }
-    TextureHelper.recalculateBiomeTexture(planet.biomesBuffer!, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
-    planet.biomesTexture!.needsUpdate = true
+    /* TextureHelper.recalculateBiomeTexture(planet.biomesBuffer!, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
+    planet.biomesTexture!.needsUpdate = true */
   })
 }
 

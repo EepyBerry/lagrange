@@ -180,7 +180,7 @@ import { ChangeAction } from '@/core/models/change-tracker.model'
  * @param idx the numbered index of the biome in `LG_PLANET_DATA.value.biomesParams`
  * @param diff index difference: -1 means towards the start of the list (up), 1 means towards the end of the list (down)
  */
-function moveBiome(idx: number, diff: 1 | -1) {
+function moveBiome(idx: number, diff: -1 | 1) {
   const element = LG_PLANET_DATA.value.biomesParams[idx]
   LG_PLANET_DATA.value.biomesParams.splice(idx, 1)
   LG_PLANET_DATA.value.biomesParams.splice(idx + diff, 0, element)

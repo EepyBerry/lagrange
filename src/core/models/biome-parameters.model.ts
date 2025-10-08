@@ -65,7 +65,7 @@ export class BiomeParameters extends ChangeTracker {
   public set tempMin(value: number) {
     this._tempMin = clamp(value, 0.0, 1.0)
     this._tempMax = clamp(this._tempMax, this._tempMin, 1)
-    this.markForChange(`${this._changePrefix}|${this._id}`)
+    this.markForChange(this._changePrefix, this._id)
   }
   public get tempMax(): number {
     return this._tempMax
@@ -73,7 +73,7 @@ export class BiomeParameters extends ChangeTracker {
   public set tempMax(value: number) {
     this._tempMax = clamp(value, 0.0, 1.0)
     this._tempMin = clamp(this._tempMin, 0, this._tempMax)
-    this.markForChange(`${this._changePrefix}|${this._id}`)
+    this.markForChange(this._changePrefix, this._id)
   }
 
   public get humiMin(): number {
@@ -82,7 +82,7 @@ export class BiomeParameters extends ChangeTracker {
   public set humiMin(value: number) {
     this._humiMin = clamp(value, 0.0, 1.0)
     this._humiMax = clamp(this._humiMax, this._humiMin, 1)
-    this.markForChange(`${this._changePrefix}|${this._id}`)
+    this.markForChange(this._changePrefix, this._id)
   }
   public get humiMax(): number {
     return this._humiMax
@@ -90,7 +90,7 @@ export class BiomeParameters extends ChangeTracker {
   public set humiMax(value: number) {
     this._humiMax = clamp(value, 0.0, 1.0)
     this._humiMin = clamp(this._humiMin, 0, this._humiMax)
-    this.markForChange(`${this._changePrefix}|${this._id}`)
+    this.markForChange(this._changePrefix, this._id)
   }
 
   public get color(): Color {
@@ -98,7 +98,7 @@ export class BiomeParameters extends ChangeTracker {
   }
   public set color(value: Color) {
     this._color.set(value)
-    this.markForChange(`${this._changePrefix}|${this._id}`)
+    this.markForChange(this._changePrefix, this._id)
   }
 
   public get smoothness(): number {
@@ -106,7 +106,7 @@ export class BiomeParameters extends ChangeTracker {
   }
   public set smoothness(value: number) {
     this._smoothness = clamp(value, 0.0, 1.0)
-    this.markForChange(`${this._changePrefix}|${this._id}`)
+    this.markForChange(this._changePrefix, this._id)
   }
 
   public static createRandom(changedProps: ChangedProp[], changePrefix: string) {
