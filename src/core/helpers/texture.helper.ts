@@ -5,7 +5,7 @@ import { Color, CubeTextureLoader, DataTexture, NearestFilter, Vector2, type Min
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { MUL_INT8_TO_UNIT } from '../globals'
-import { alphaBlendColors } from '@/core/utils/render-utils'
+import { alphaBlendColors, mergeCanvases } from '@/core/utils/render-utils'
 import Rect from '../utils/math/rect'
 import { saveAs } from 'file-saver'
 
@@ -76,6 +76,7 @@ export function createBiomeTexture(buffer: Uint8Array, w: number, biomes: BiomeP
     createBiomeCanvases(biomes, w)
   }
   const dt = new DataTexture(buffer, w, w)
+  // saveAs(new Blob([dt.image.data as BlobPart]), 'berria.raw')
   dt.needsUpdate = true
   return dt
 }
@@ -155,10 +156,8 @@ export function createBiomeCanvases(biomes: BiomeParameters[], texSize: number):
   })
 
   // start test code
-  const outCanvas = new OffscreenCanvas(texSize, texSize)
-  const outCtx = outCanvas.getContext('2d')!
-  canvases.forEach(c => outCtx.drawImage(c, 0, 0))
-  //setTimeout(() => saveAs(new Blob([outCtx.getImageData(0,0, texSize, texSize).data]), 'test.raw'), 2000)
+  const outCanvas = mergeCanvases(canvases.reverse(), texSize)
+  outCanvas.convertToBlob().then(blob => saveAs(blob, 'test.raw'))
 
   // end test code
   return canvases
@@ -174,9 +173,9 @@ function fillBiome(canvas: OffscreenCanvas, biome: BiomeParameters, texSize: num
 
   // ---- Precalculation phase ----
   // Get average smoothness between w and h; will serve as a smoothing distance when calculating alpha values
-  const rectAvgSmoothingDistance = avg(...[rect.w * biome.smoothness, rect.h * biome.smoothness])
+  const rectAvgSmoothingDistance = Math.floor(avg(...[rect.w * biome.smoothness, rect.h * biome.smoothness]))
   // Get biome overlaps with the global texture borders; overlaps define sections where biome smoothness should NOT be applied
-  const biomeTextureBorderOverlaps = rect.findOverlaps(texSize, texSize /* w = h */)
+  const biomeTextureBorderOverlaps = rect.findOverlaps(texSize, texSize)
 
   // ---- Filling phase ----
   // Loop n-1 times, where n is defined as the number of pixel values between the lighest alpha value and an alpha of 1 (exclusive)
@@ -184,22 +183,28 @@ function fillBiome(canvas: OffscreenCanvas, biome: BiomeParameters, texSize: num
   // At each iteration, "shrink" the drawing zone by 1px while taking into account border overlaps, then draw a stroked rect
   // The last step before exiting is to fill the remaining space with the biome color unaltered
   const ctx = canvas.getContext('2d')!
+  ctx.imageSmoothingEnabled = false
   ctx.clearRect(0,0,texSize,texSize)
   let pixelShift = 0
-  const drawingRect = new Rect(Number(rect.x), Number(rect.y), Number(rect.w), Number(rect.h))
+  // Adapt drawing rect to get crisp, exact-size rects (https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes)
+  const drawingRect = new Rect(Number(rect.x+0.5), Number(rect.y+0.5), Number(rect.w-1), Number(rect.h-1))
   while (pixelShift < rectAvgSmoothingDistance) {
+    // Adjust drawing rect position
     drawingRect.x += biomeTextureBorderOverlaps[3] ? 0 : 1
     drawingRect.y += biomeTextureBorderOverlaps[0] ? 0 : 1
     drawingRect.w -= biomeTextureBorderOverlaps[1] ? 0 : 1
     drawingRect.h -= biomeTextureBorderOverlaps[2] ? 0 : 1
-    
-    console.log(truncateTo(pixelShift / rectAvgSmoothingDistance, 1e4))
-    ctx.strokeStyle = `rgba(${biome.color.r*255}, ${biome.color.g*255}, ${biome.color.b*255}, ${truncateTo(pixelShift / rectAvgSmoothingDistance, 1e4)})`
-    ctx.strokeRect(drawingRect.x, drawingRect.y, drawingRect.w, drawingRect.h)
     pixelShift++
+
+    // draw stroked rect
+    ctx.strokeStyle = `rgba(${biome.color.r*255}, ${biome.color.g*255}, ${biome.color.b*255}, ${
+      clamp(truncateTo(pixelShift / rectAvgSmoothingDistance, 1e4), 0.0, 0.99)
+    })`
+    ctx.strokeRect(drawingRect.x, drawingRect.y, drawingRect.w, drawingRect.h)
   }
+  // fill remaining rect
   ctx.fillStyle = `rgba(${biome.color.r*255}, ${biome.color.g*255}, ${biome.color.b*255}, 1)`
-  ctx.fillRect(drawingRect.x, drawingRect.y, drawingRect.w, drawingRect.h)
+  ctx.fillRect(drawingRect.x++, drawingRect.y++, drawingRect.w--, drawingRect.h--)
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -47,7 +47,7 @@ export function avg(...values: number[]) {
   if (values.length === 0) {
     return 0
   }
-  return values.reduce((prev, cur) => prev + cur, 0) / values.length
+  return values.reduce((prev, cur) => prev + cur) / values.length
 }
 
 /**
