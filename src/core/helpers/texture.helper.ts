@@ -146,13 +146,9 @@ function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
 
 // ------------------------------------------------------------------------------------------------
 
-export function createBiomeLayers(layeredTex: LayeredDataTexture<BiomeParameters>, biomes: BiomeParameters[]) {
-  biomes.forEach(b => layeredTex.addLayer(b))
-}
-
 export function fillBiomeLayer(biome: BiomeParameters, ctx: OffscreenCanvasRenderingContext2D, opts?: LayerDrawOptions) {
   const texSize = opts!.width! // width must exist
-  const rect: Rect = new Rect(
+  const biomeRect: Rect = new Rect(
     Math.floor(biome.humiMin * texSize),
     Math.floor(biome.tempMin * texSize),
     Math.ceil((biome.humiMax - biome.humiMin) * texSize),
@@ -161,32 +157,33 @@ export function fillBiomeLayer(biome: BiomeParameters, ctx: OffscreenCanvasRende
 
   // ---- Precalculation phase ----
   // Get average smoothness between w and h; will serve as a smoothing distance when calculating alpha values
-  const rectAvgSmoothingDistance = Math.floor(avg(...[rect.w * biome.smoothness, rect.h * biome.smoothness]))
+  const rectAvgSmoothingDistance = Math.floor(avg(...[biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness]))
   // Get biome overlaps with the global texture borders; overlaps define sections where biome smoothness should NOT be applied
-  const biomeTextureBorderOverlaps = rect.findOverlaps(texSize, texSize)
+  const biomeTextureBorderOverlaps = biomeRect.findOverlaps(texSize, texSize)
 
-  // ---- Filling phase ----
+  // ---- Canvas preparation phase ----
+  // Configure the target canvas and adapt the drawing rect to account for smoothing.
+  // The later must be adjusted to get crisp, exact-size rects (https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes)
+  ctx.imageSmoothingEnabled = false
+  ctx.clearRect(0,0,texSize,texSize)
+  const drawingRect = biomeRect.clone().adjustToHTMLCanvas()
+
+  // ---- Canvas filling phase ----
   // Loop n-1 times, where n is defined as the number of pixel values between the lighest alpha value and an alpha of 1 (exclusive)
   //   ---> in this context, n = rectAvgSmoothingDistance
   // At each iteration, "shrink" the drawing zone by 1px while taking into account border overlaps, then draw a stroked rect
   // The last step before exiting is to fill the remaining space with the biome color unaltered
-  ctx.imageSmoothingEnabled = false
-  ctx.clearRect(0,0,texSize,texSize)
   let pixelShift = 0
-  // Adapt drawing rect to get crisp, exact-size rects (https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes)
-  const drawingRect = new Rect(Number(rect.x+0.5), Number(rect.y+0.5), Number(rect.w-1), Number(rect.h-1))
   while (pixelShift < rectAvgSmoothingDistance) {
     // Adjust drawing rect position
-    drawingRect.x += biomeTextureBorderOverlaps[3] ? 0 : 1
-    drawingRect.y += biomeTextureBorderOverlaps[0] ? 0 : 1
-    drawingRect.w -= biomeTextureBorderOverlaps[1] ? 0 : 1
-    drawingRect.h -= biomeTextureBorderOverlaps[2] ? 0 : 1
+    drawingRect.shrink(biomeTextureBorderOverlaps)
     pixelShift++
 
     // draw stroked rect
     ctx.strokeStyle = `rgba(${biome.color.r*255}, ${biome.color.g*255}, ${biome.color.b*255}, ${
       clamp(truncateTo(pixelShift / rectAvgSmoothingDistance, 1e4), 0.0, 0.99)
     })`
+    ctx.clearRect(drawingRect.x-0.5, drawingRect.y-0.5, drawingRect.w+1, drawingRect.h+1)
     ctx.strokeRect(drawingRect.x, drawingRect.y, drawingRect.w, drawingRect.h)
   }
   // fill remaining rect

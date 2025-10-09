@@ -669,6 +669,7 @@ export default class PlanetData extends ChangeTracker {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public loadData(data: any) {
+    this.changedProps.splice(0)
     this.planetName = data._planetName?.replaceAll('_', ' ') ?? this._defaultPlanetName
 
     // Lighting
@@ -880,9 +881,11 @@ export default class PlanetData extends ChangeTracker {
   }
 
   public findBiomeById(id: string) {
+    console.log(this._biomesParams)
     return this._biomesParams.find(b => b.id === id)
   }
   public findBiomeIndexById(id: string) {
+    console.log(this._biomesParams)
     return this._biomesParams.findIndex(b => b.id === id)
   }
 

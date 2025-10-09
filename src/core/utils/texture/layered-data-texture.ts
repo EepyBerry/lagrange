@@ -1,3 +1,4 @@
+import saveAs from "file-saver"
 import { DataTexture } from "three"
 
 /**
@@ -34,6 +35,16 @@ export class LayeredDataTexture<DataObject> {
     for (let i = 0; i < dataObjs.length; i++) {
       this.addLayer(dataObjs[i])
     }
+    this.updateTexture()
+  }
+
+  public dispose() {
+    this._layers.splice(0)
+    this._texture.dispose()
+  }
+
+  public debugSaveTexture() {
+    saveAs(new Blob([this._texture.image.data as BlobPart]), 'layeredtex.raw')
   }
 
   public updateTexture() {
@@ -49,14 +60,14 @@ export class LayeredDataTexture<DataObject> {
       console.warn(`Cannot update layer: layer at index ${index} does not exist`)
       return
     }
-    this._layerDrawFunc(data, layer.getContext('2d')!, { width: this._width, height: this._height })
+    this._layerDrawFunc(data, layer.getContext('2d', { willReadFrequently: true })!, { width: this._width, height: this._height })
     this.updateTexture()
   }
 
   public addLayer(data: DataObject): OffscreenCanvas {
     const newLayer = new OffscreenCanvas(this._width, this._height)
     this._layers.push(newLayer)
-    this._layerDrawFunc(data, newLayer.getContext('2d')!, { width: this._width, height: this._height })
+    this._layerDrawFunc(data, newLayer.getContext('2d', { willReadFrequently: true })!, { width: this._width, height: this._height })
     this.updateTexture()
     return newLayer
   }

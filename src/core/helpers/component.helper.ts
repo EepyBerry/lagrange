@@ -90,6 +90,7 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
     data.biomesParams,
     TextureHelper.fillBiomeLayer
   )
+  //setTimeout(() => biomeLayersTex.debugSaveTexture(), 1000)
 
   const tslMaterial = new PlanetTSLMaterial(convertToTexturedPlanetUniformData(data, surfaceTex, biomeLayersTex.texture))
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
