@@ -15,6 +15,7 @@ import { idb } from '@/dexie.config'
 import { convertToCloudsUniformData, convertToTexturedPlanetUniformData } from '../models/converters/planet-data.converter'
 import { LayeredDataTexture } from '../utils/texture/layered-data-texture'
 import type { BiomeParameters } from '../models/biome-parameters.model'
+import saveAs from 'file-saver'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -90,7 +91,8 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
     data.biomesParams,
     TextureHelper.fillBiomeLayer
   )
-  //setTimeout(() => biomeLayersTex.debugSaveTexture(), 1000)
+  //setTimeout(() => biomeLayersTex.debugSaveTexture(), 10000)
+  //setTimeout(() => saveAs(new Blob([biomeTex.image.data as BlobPart]), 'layeredtex.raw'), 10000)
 
   const tslMaterial = new PlanetTSLMaterial(convertToTexturedPlanetUniformData(data, surfaceTex, biomeLayersTex.texture))
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())

@@ -7,7 +7,7 @@ import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import { MUL_INT8_TO_UNIT } from '../globals'
 import { alphaBlendColors } from '@/core/utils/render-utils'
 import Rect from '../utils/math/rect'
-import type { LayerDrawOptions, LayeredDataTexture } from '../utils/texture/layered-data-texture'
+import type { LayerDrawOptions } from '../utils/texture/layered-data-texture'
 
 const CUBE_TEXTURE_LOADER = new CubeTextureLoader()
 
@@ -154,6 +154,13 @@ export function fillBiomeLayer(biome: BiomeParameters, ctx: OffscreenCanvasRende
     Math.ceil((biome.humiMax - biome.humiMin) * texSize),
     Math.ceil((biome.tempMax - biome.tempMin) * texSize),
   )
+  // early return if smoothness is zero
+  if (biome.smoothness <= Number.EPSILON) {
+    biomeRect.adjustToHTMLCanvas()
+    ctx.fillStyle = `rgba(${biome.color.r*255}, ${biome.color.g*255}, ${biome.color.b*255}, 1)`
+    ctx.fillRect(biomeRect.x, biomeRect.y, biomeRect.w, biomeRect.h)
+    return 
+  }
 
   // ---- Precalculation phase ----
   // Get average smoothness between w and h; will serve as a smoothing distance when calculating alpha values
@@ -174,8 +181,9 @@ export function fillBiomeLayer(biome: BiomeParameters, ctx: OffscreenCanvasRende
   // At each iteration, "shrink" the drawing zone by 1px while taking into account border overlaps, then draw a stroked rect
   // The last step before exiting is to fill the remaining space with the biome color unaltered
   let pixelShift = 0
-  while (pixelShift < rectAvgSmoothingDistance) {
-    // Adjust drawing rect position
+  while (pixelShift < rectAvgSmoothingDistance && drawingRect.isValid()) {
+    // Adjust drawing rect position; early return if next position is invalid
+    if (drawingRect.w === 1 || drawingRect.h === 1) return
     drawingRect.shrink(biomeTextureBorderOverlaps)
     pixelShift++
 

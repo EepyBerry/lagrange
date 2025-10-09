@@ -77,7 +77,7 @@ export default class Rect {
     )
   }
 
-  public adjustToHTMLCanvas() {
+  public adjustToHTMLCanvas(): Rect {
     this.x += 0.5
     this.y += 0.5
     this.w--
@@ -85,7 +85,7 @@ export default class Rect {
     return this
   }
 
-  public shrink(borderOverlaps: boolean[]) {
+  public shrink(borderOverlaps: boolean[]): Rect {
     this.x += (borderOverlaps[3] ? 0 : 1)
     this.y += (borderOverlaps[0] ? 0 : 1)
     this.w -= (borderOverlaps[1]
@@ -95,5 +95,9 @@ export default class Rect {
       ? (borderOverlaps[0] ? 0 : 1)
       : (borderOverlaps[0] ? 1 : 2))
     return this
+  }
+
+  public isValid(): boolean {
+    return this.x >= 0 && this.w >= 0 && this.h >= 0
   }
 }

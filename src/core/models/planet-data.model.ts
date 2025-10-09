@@ -881,11 +881,9 @@ export default class PlanetData extends ChangeTracker {
   }
 
   public findBiomeById(id: string) {
-    console.log(this._biomesParams)
     return this._biomesParams.find(b => b.id === id)
   }
   public findBiomeIndexById(id: string) {
-    console.log(this._biomesParams)
     return this._biomesParams.findIndex(b => b.id === id)
   }
 

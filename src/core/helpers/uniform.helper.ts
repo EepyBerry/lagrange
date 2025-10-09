@@ -170,8 +170,8 @@ function registerBiomeDataUpdates(data: PlanetData, planet: PlanetMeshData): voi
         planet.biomeLayersTexture!.moveLayer(biomeIdx, 1)
         break;
     }
-    TextureHelper.recalculateBiomeTexture(planet.biomesBuffer!, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
-    planet.biomesTexture!.needsUpdate = true
+    /* TextureHelper.recalculateBiomeTexture(planet.biomesBuffer!, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
+    planet.biomesTexture!.needsUpdate = true */
   })
 }
 

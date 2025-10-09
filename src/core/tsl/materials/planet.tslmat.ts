@@ -152,7 +152,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
         ),
         emissive: uniform(
           new Vector2(data.pbr.emissive.waterEmissiveIntensity, data.pbr.emissive.groundEmissiveIntensity),
-          'vec4',
+          'vec2',
         ),
       },
       noise: uniform(
