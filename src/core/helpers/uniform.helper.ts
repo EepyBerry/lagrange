@@ -152,7 +152,6 @@ function registerBiomeDataUpdates(data: PlanetData, planet: PlanetMeshData): voi
   UNIFORM_UPDATE_MAP.value.set('_biomesParameters', (sourceId, action) => {
     const biome = data.findBiomeById(sourceId!)
     const biomeIdx = data.findBiomeIndexById(sourceId!)
-    if (!biome || biomeIdx === -1) return
     switch (action) {
       case ChangeAction.ADD:
         planet.biomeLayersTexture!.addLayer(biome!)
@@ -164,10 +163,10 @@ function registerBiomeDataUpdates(data: PlanetData, planet: PlanetMeshData): voi
         planet.biomeLayersTexture!.removeLayer(biomeIdx)
         break;
       case ChangeAction.SORT_UP:
-        planet.biomeLayersTexture!.moveLayer(biomeIdx, -1)
+        planet.biomeLayersTexture!.moveLayer(biomeIdx+1, -1) // biome already moved, shift back
         break;
       case ChangeAction.SORT_DOWN:
-        planet.biomeLayersTexture!.moveLayer(biomeIdx, 1)
+        planet.biomeLayersTexture!.moveLayer(biomeIdx-1, 1) // biome already moved, shift back
         break;
     }
     /* TextureHelper.recalculateBiomeTexture(planet.biomesBuffer!, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)

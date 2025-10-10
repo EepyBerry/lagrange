@@ -10,16 +10,12 @@ import { DataTexture } from 'three'
 export type LayerDrawOptions = { width?: number; height?: number }
 export type Layer = { id: string; canvas: OffscreenCanvas }
 export class LayeredDataTexture<DataObject> {
-  private readonly _layers: Layer[] = []
-  private readonly _workCanvas: OffscreenCanvas
-  private readonly _texture: DataTexture
-  private readonly _width: number
-  private readonly _height: number
-  private readonly _layerDrawFunc: (
-    dataObj: DataObject,
-    layerCtx: OffscreenCanvasRenderingContext2D,
-    opts?: LayerDrawOptions,
-  ) => void
+  private _layers: Layer[] = []
+  private _workCanvas: OffscreenCanvas
+  private _texture: DataTexture
+  private _width: number
+  private _height: number
+  private _layerDrawFunc: (dataObj: DataObject, canvas: OffscreenCanvas, opts?: LayerDrawOptions) => void
 
   public get layers(): Layer[] {
     return this._layers
@@ -32,7 +28,7 @@ export class LayeredDataTexture<DataObject> {
     width: number,
     height: number,
     dataObjs: DataObject[],
-    drawFunc: (dataObj: DataObject, layerCtx: OffscreenCanvasRenderingContext2D, opts?: LayerDrawOptions) => void,
+    drawFunc: (dataObj: DataObject, canvas: OffscreenCanvas, opts?: LayerDrawOptions) => void,
   ) {
     this._width = width
     this._height = height
@@ -69,7 +65,7 @@ export class LayeredDataTexture<DataObject> {
       console.warn(`Cannot update layer: layer at index ${index} does not exist`)
       return
     }
-    this._layerDrawFunc(data, layer.canvas.getContext('2d', { willReadFrequently: true })!, {
+    this._layerDrawFunc(data, layer.canvas, {
       width: this._width,
       height: this._height,
     })
@@ -79,7 +75,7 @@ export class LayeredDataTexture<DataObject> {
   public addLayer(data: DataObject): Layer {
     const newLayer = { id: nanoid(), canvas: new OffscreenCanvas(this._width, this._height) }
     this._layers.push(newLayer)
-    this._layerDrawFunc(data, newLayer.canvas.getContext('2d', { willReadFrequently: true })!, {
+    this._layerDrawFunc(data, newLayer.canvas, {
       width: this._width,
       height: this._height,
     })
@@ -93,11 +89,10 @@ export class LayeredDataTexture<DataObject> {
   }
 
   public moveLayer(index: number, diff: -1 | 1) {
-    console.log(this._layers)
-    const element = this._layers[index]
-    this._layers.splice(index, 1)
-    this._layers.splice(index + diff, 0, element)
+    const element = this.layers[index]
+    this.layers.splice(index, 1)
+    this.layers.splice(index + diff, 0, element)
     this.updateTexture()
-    console.log(this._layers)
+    //this.debugSaveTexture()
   }
 }

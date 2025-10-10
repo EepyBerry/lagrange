@@ -146,7 +146,8 @@ function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
 
 // ------------------------------------------------------------------------------------------------
 
-export function fillBiomeLayer(biome: BiomeParameters, ctx: OffscreenCanvasRenderingContext2D, opts?: LayerDrawOptions) {
+export function fillBiomeLayer(biome: BiomeParameters, canvas: OffscreenCanvas, opts?: LayerDrawOptions) {
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!
   const texSize = opts!.width! // width must exist
   const biomeRect: Rect = new Rect(
     Math.floor(biome.humiMin * texSize),
@@ -182,7 +183,7 @@ export function fillBiomeLayer(biome: BiomeParameters, ctx: OffscreenCanvasRende
   // The last step before exiting is to fill the remaining space with the biome color unaltered
   let pixelShift = 0
   while (pixelShift < rectAvgSmoothingDistance && drawingRect.isValid()) {
-    // Adjust drawing rect position; early return if next position is invalid
+    // Adjust drawing rect position; early return if next rect would redraw on itself
     if (drawingRect.w === 1 || drawingRect.h === 1) return
     drawingRect.shrink(biomeTextureBorderOverlaps)
     pixelShift++
