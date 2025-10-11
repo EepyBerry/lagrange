@@ -1,11 +1,8 @@
 import type { BiomeParameters } from '@/core/models/biome-parameters.model'
-import type { RawRGBA } from '@/core/types'
 import { avg, truncateTo } from '@/core/utils/math-utils'
-import { Color, CubeTextureLoader, DataTexture, NearestFilter, Vector2, type MinificationTextureFilter } from 'three'
+import { Color, CubeTextureLoader, DataTexture, NearestFilter, type MinificationTextureFilter } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
-import { MUL_INT8_TO_UNIT } from '../globals'
-import { alphaBlendColors } from '@/core/utils/render-utils'
 import Rect from '../utils/math/rect'
 import type { LayerDrawOptions } from '../utils/texture/layered-data-texture'
 
@@ -24,7 +21,6 @@ export function loadCubeTexture(path: string, faces: string[], filter?: Minifica
   cubemap.minFilter = filter ?? NearestFilter
   return cubemap
 }
-
 
 // ------------------------------------------------------------------------------------------------
 
@@ -92,8 +88,8 @@ export function fillBiomeLayer(biome: BiomeParameters, canvas: OffscreenCanvas, 
 
   // ---- Precalculation phase ----
   // Get average smoothness between w and h; will serve as a smoothing distance when calculating alpha values
+  // Then, get biome overlaps with the global texture borders; overlaps define sections where biome smoothness should NOT be applied
   const rectAvgSmoothingDistance = Math.floor(avg(...[biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness]))
-  // Get biome overlaps with the global texture borders; overlaps define sections where biome smoothness should NOT be applied
   const biomeTextureBorderOverlaps = biomeRect.findOverlaps(texSize, texSize)
 
   // ---- Canvas preparation phase ----
@@ -125,17 +121,4 @@ export function fillBiomeLayer(biome: BiomeParameters, canvas: OffscreenCanvas, 
   // fill remaining rect
   ctx.fillStyle = `rgba(${biome.color.r*255}, ${biome.color.g*255}, ${biome.color.b*255}, 1)`
   ctx.fillRect(drawingRect.x++, drawingRect.y++, drawingRect.w--, drawingRect.h--)
-}
-
-// ------------------------------------------------------------------------------------------------
-
-function _writeToBuffer(buffer: Uint8Array, index: number, rgba: RawRGBA, multiplier: number = 1) {
-  buffer[index] = clamp(rgba.r * multiplier, 0, 255)
-  buffer[index + 1] = clamp(rgba.g * multiplier, 0, 255)
-  buffer[index + 2] = clamp(rgba.b * multiplier, 0, 255)
-  buffer[index + 3] = clamp(rgba.a * multiplier, 0, 255)
-}
-
-function _toRawRGBA(color: Color, a: number): RawRGBA {
-  return { r: color.r, g: color.g, b: color.b, a }
 }
