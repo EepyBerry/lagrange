@@ -192,7 +192,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     const bakePlanet = BakingHelper.createBakingPlanet(
       LG_PLANET_DATA.value,
       LG_SCENE_DATA.planet.surfaceTexture!,
-      LG_SCENE_DATA.planet.biomesTexture!,
+      LG_SCENE_DATA.planet.biomeLayersTexture!.texture,
     )
     const bakePlanetSurfaceTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakePlanet)
     if (appSettings?.bakingPixelize) {

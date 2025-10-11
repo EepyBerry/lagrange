@@ -10,7 +10,6 @@ export async function buildEditorScene(data: PlanetData, renderWidth: number, re
   const sceneData: Partial<EditorSceneData> = {
     planet: {
       surfaceBuffer: new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4),
-      biomesBuffer: new Uint8Array(Globals.TEXTURE_SIZES.BIOME * Globals.TEXTURE_SIZES.BIOME * 4),
     },
     clouds: {
       buffer: new Uint8Array(Globals.TEXTURE_SIZES.CLOUDS * 4),
@@ -46,8 +45,6 @@ export function disposeEditorScene(sceneData: EditorSceneData) {
 
   sceneData.planet.surfaceBuffer?.fill(0)
   sceneData.planet.surfaceTexture!.dispose()
-  sceneData.planet.biomesBuffer?.fill(0)
-  sceneData.planet.biomesTexture!.dispose()
   sceneData.planet.biomeLayersTexture!.dispose()
   sceneData.clouds.texture!.dispose()
   sceneData.ringAnchor.clear()
@@ -92,7 +89,7 @@ function buildSceneLighting(sceneData: EditorSceneData, data: PlanetData): void 
 }
 
 function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData): void {
-  const planet = ComponentHelper.createPlanet(data, sceneData.planet.surfaceBuffer, sceneData.planet.biomesBuffer)
+  const planet = ComponentHelper.createPlanet(data, sceneData.planet.surfaceBuffer)
   const clouds = ComponentHelper.createClouds(data, sceneData.clouds.buffer)
   const atmosphere = ComponentHelper.createAtmosphere(data, sceneData.sunLight!.position)
   const rings: RingMeshData[] = data.ringsParams.map((_, idx) => ComponentHelper.createRing(data, idx))

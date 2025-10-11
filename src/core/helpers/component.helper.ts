@@ -78,13 +78,9 @@ export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THR
   })
 }
 
-export type CreatePlanetOptions = { mode: CreatePlanetMode, heightMapTex?: THREE.Texture }
-export enum CreatePlanetMode { EDITOR, BAKING_SURFACE, BAKING_PBR, BAKING_HEIGHTMAP, BAKING_NORMALMAP }
-export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): PlanetMeshData {
+export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): PlanetMeshData {
   const geometry = createSphereGeometryComponent(data.planetMeshQuality)
   const surfaceTex = TextureHelper.createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
-  const biomeTex = TextureHelper.createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
-
   const biomeLayersTex = new LayeredDataTexture<BiomeParameters>(
     Globals.TEXTURE_SIZES.BIOME,
     Globals.TEXTURE_SIZES.BIOME,
@@ -105,8 +101,6 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
     uniforms: tslMaterial.uniforms,
     surfaceBuffer: surfaceTexBuf,
     surfaceTexture: surfaceTex,
-    biomesBuffer: biomeTexBuf,
-    biomesTexture: biomeTex,
     biomeLayersTexture: biomeLayersTex
   }
 }

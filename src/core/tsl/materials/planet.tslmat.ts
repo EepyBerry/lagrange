@@ -244,13 +244,13 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       mix(normalLocal, bump, FLAG_LAND.mul(this.uniforms.flags.element(int(2)))),
     )
     material.roughnessNode = mix(
-      this.uniforms.pbr.metallicRoughness.w,
-      this.uniforms.pbr.metallicRoughness.y,
+      this.uniforms.pbr.metallicRoughness.x,
+      this.uniforms.pbr.metallicRoughness.z,
       FLAG_LAND,
     )
     material.metalnessNode = mix(
-      this.uniforms.pbr.metallicRoughness.x,
-      this.uniforms.pbr.metallicRoughness.z,
+      this.uniforms.pbr.metallicRoughness.y,
+      this.uniforms.pbr.metallicRoughness.w,
       FLAG_LAND,
     )
     material.emissiveNode = this.applyEmissiveIntensity(colour, FLAG_LAND)
