@@ -72,21 +72,21 @@ export type PlanetUniformData = {
       groundEmissiveIntensity: number
     }
   }
-  noise: NoiseData
-  warping: WarpingData
-  displacement: {
-    params: DisplacementData
+  surface: {
+    baseTexture?: DataTexture
     noise: NoiseData
+    warping: WarpingData
+    displacement: {
+      params: DisplacementData
+      noise: NoiseData
+    }
   }
   biomes: {
+    baseTexture?: DataTexture
     temperatureMode: number
     temperatureNoise: NoiseData
     humidityMode: number
     humidityNoise: NoiseData
-  }
-  textures?: {
-    surface: DataTexture
-    biomes: DataTexture
   }
 }
 
@@ -107,19 +107,22 @@ export type PlanetUniforms = {
     metallicRoughness: UniformVector4Node
     emissive: UniformVector2Node
   }
-  noise: UniformVector4Node
-  warping: UniformVector4Node
-  displacement: {
-    params: UniformVector3Node
+  surface: {
+    baseTexture?: TextureNode
     noise: UniformVector4Node
+    warping: UniformVector4Node
+    displacement: {
+      params: UniformVector3Node
+      noise: UniformVector4Node
+    }
   }
   biomes: {
+    baseTexture?: TextureNode
     temperatureMode: UniformNumberNode
     temperatureNoise: UniformVector4Node
     humidityMode: UniformNumberNode
     humidityNoise: UniformVector4Node
   }
-  textures?: TextureNode[]
 }
 export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, PlanetUniformData, PlanetUniforms> {
   // Static uniform declarations
@@ -155,39 +158,48 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
           'vec2',
         ),
       },
-      noise: uniform(
-        new Vector4(data.noise.frequency, data.noise.amplitude, data.noise.lacunarity, data.noise.octaves),
-        'vec4',
-      ),
-      warping: uniform(
-        new Vector4(
-          data.warping.layers,
-          data.warping.warpFactor.x,
-          data.warping.warpFactor.y,
-          data.warping.warpFactor.z,
-        ),
-        'vec4',
-      ),
-      displacement: {
-        params: uniform(
-          new Vector3(
-            data.displacement.params.factor,
-            data.displacement.params.epsilon,
-            data.displacement.params.multiplier,
-          ),
-          'vec3',
-        ),
+      surface: {
+        baseTexture: data.surface.baseTexture ? texture(data.surface.baseTexture) : undefined,
         noise: uniform(
           new Vector4(
-            data.displacement.noise.frequency,
-            data.displacement.noise.amplitude,
-            data.displacement.noise.lacunarity,
-            data.displacement.noise.octaves,
+            data.surface.noise.frequency,
+            data.surface.noise.amplitude,
+            data.surface.noise.lacunarity,
+            data.surface.noise.octaves,
           ),
           'vec4',
         ),
+        warping: uniform(
+          new Vector4(
+            data.surface.warping.layers,
+            data.surface.warping.warpFactor.x,
+            data.surface.warping.warpFactor.y,
+            data.surface.warping.warpFactor.z,
+          ),
+          'vec4',
+        ),
+        displacement: {
+          params: uniform(
+            new Vector3(
+              data.surface.displacement.params.factor,
+              data.surface.displacement.params.epsilon,
+              data.surface.displacement.params.multiplier,
+            ),
+            'vec3',
+          ),
+          noise: uniform(
+            new Vector4(
+              data.surface.displacement.noise.frequency,
+              data.surface.displacement.noise.amplitude,
+              data.surface.displacement.noise.lacunarity,
+              data.surface.displacement.noise.octaves,
+            ),
+            'vec4',
+          ),
+        },
       },
       biomes: {
+        baseTexture: data.biomes.baseTexture ? texture(data.biomes.baseTexture) : undefined,
         temperatureMode: uniform(data.biomes.temperatureMode),
         temperatureNoise: uniform(
           new Vector4(
@@ -209,13 +221,12 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
           'vec4',
         ),
       },
-      textures: data.textures ? [texture(data.textures.surface), texture(data.textures.biomes)] : undefined,
     }
   }
 
   buildMaterial(): MeshStandardNodeMaterial {
-    if (this.uniforms.textures === undefined) {
-      throw new Error('Cannot build material with missing uniform: textures')
+    if (!this.uniforms.surface.baseTexture) {
+      throw new Error('Cannot build material with missing uniform: surface.baseTexture')
     }
 
     // XYZ Warping + displacement
@@ -223,13 +234,13 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
     // Heightmap & global flags
     const heightLimit = float(1.0).sub(EPSILON)
-    const height = layer(vPos, this.uniforms.noise, this.uniforms.warping.x).toVar()
+    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar()
     const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar()
     const FLAG_BIOMES = FLAG_LAND.mul(float(this.uniforms.flags.element(int(3))))
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord')
-    let colour = vec3(this.uniforms.textures![0].sample(texCoord).xyz)
+    let colour = vec3(this.uniforms.surface.baseTexture.sample(texCoord).xyz)
 
     // Render biomes
     colour = this.renderBiomes(colour, vPos, heightLimit, FLAG_BIOMES)
@@ -258,8 +269,8 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   }
 
   buildSurfaceBakeMaterial(): MeshBasicNodeMaterial {
-    if (this.uniforms.textures === undefined) {
-      throw new Error('Cannot build material with missing uniform: textures')
+    if (!this.uniforms.surface.baseTexture) {
+      throw new Error('Cannot build material with missing uniform: surface.baseTexture')
     }
 
     // XYZ Warping + displacement
@@ -267,13 +278,13 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
     // Heightmap & global flags
     const heightLimit = float(1.0).sub(EPSILON)
-    const height = layer(vPos, this.uniforms.noise, this.uniforms.warping.x).toVar()
+    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar()
     const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar()
     const FLAG_BIOMES = FLAG_LAND.mul(float(this.uniforms.flags.element(int(3))))
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord')
-    let colour = vec3(this.uniforms.textures![0].sample(texCoord).xyz)
+    let colour = vec3(this.uniforms.surface.baseTexture.sample(texCoord).xyz)
 
     // Render biomes
     colour = this.renderBiomes(colour, vPos, heightLimit, FLAG_BIOMES)
@@ -290,7 +301,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const vPos = this.applyXYZTransformations(positionLocal)
 
     // Heightmap & global flags
-    const height = layer(vPos, this.uniforms.noise, this.uniforms.warping.x).toVar()
+    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar()
     const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar()
 
     // render PBR as green/blue mask
@@ -310,7 +321,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
     // Heightmap & global flags
     const heightLimit = float(1.0).sub(EPSILON)
-    const height = layer(vPos, this.uniforms.noise, this.uniforms.warping.x).toVar()
+    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar()
     const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar()
 
     // render noise as color
@@ -330,7 +341,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const vPos = this.applyXYZTransformations(positionLocal)
 
     // Heightmap & global flags
-    const height = layer(vPos, this.uniforms.noise, this.uniforms.warping.x).toVar()
+    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar()
     const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar()
 
     // Init material & set outputs
@@ -366,11 +377,11 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   // --------------------------------------------------------------------------
 
   private applyXYZTransformations(vPos: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
-    vPos = warp(vPos, this.uniforms.warping, this.uniforms.flags.element(int(0)))
+    vPos = warp(vPos, this.uniforms.surface.warping, this.uniforms.flags.element(int(0)))
     return displace(
       vPos,
-      this.uniforms.displacement.params,
-      this.uniforms.displacement.noise,
+      this.uniforms.surface.displacement.params,
+      this.uniforms.surface.displacement.noise,
       this.uniforms.flags.element(int(1)),
     )
   }
@@ -381,6 +392,10 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     heightLimit: ShaderNodeObject<Node>,
     FLAG_BIOMES: ShaderNodeObject<Node>,
   ): ShaderNodeObject<Node> {
+    if (!this.uniforms.biomes.baseTexture) {
+      throw new Error('Cannot build material with missing uniform: biomes.baseTexture')
+    }
+
     const temp = float(
       computeTemperature(vPos, this.uniforms.biomes.temperatureNoise, this.uniforms.biomes.temperatureMode),
     )
@@ -392,16 +407,26 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const hHeight = float(mix(0.0, humi, FLAG_BIOMES))
       .min(heightLimit)
       .toVar()
-    return mix(colour, sampleBiomeTexture(this.uniforms.textures![1], tHeight, hHeight, colour), FLAG_BIOMES)
+    return mix(colour, sampleBiomeTexture(this.uniforms.biomes.baseTexture, tHeight, hHeight, colour), FLAG_BIOMES)
   }
 
   private applyBumpMap(vPos: ShaderNodeObject<Node>, height: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
-    const dx = vec3(tangentLocal.mul(this.uniforms.warping.yzw).mul(0.005)).toVar()
-    const dy = vec3(bitangentLocal.mul(this.uniforms.warping.yzw).mul(0.005)).toVar()
-    const dxHeight = float(layer(vPos.add(dx), this.uniforms.noise, this.uniforms.warping.x)).toVar()
-    const dyHeight = float(layer(vPos.add(dy), this.uniforms.noise, this.uniforms.warping.x)).toVar()
+    const dx = vec3(tangentLocal.mul(this.uniforms.surface.warping.yzw).mul(0.005)).toVar()
+    const dy = vec3(bitangentLocal.mul(this.uniforms.surface.warping.yzw).mul(0.005)).toVar()
+    const dxHeight = float(layer(vPos.add(dx), this.uniforms.surface.noise, this.uniforms.surface.warping.x)).toVar()
+    const dyHeight = float(layer(vPos.add(dy), this.uniforms.surface.noise, this.uniforms.surface.warping.x)).toVar()
     return vec3(
-      applyBump(normalLocal, vPos, dx, dy, height, dxHeight, dyHeight, this.uniforms.radius, this.uniforms.bumpStrength),
+      applyBump(
+        normalLocal,
+        vPos,
+        dx,
+        dy,
+        height,
+        dxHeight,
+        dyHeight,
+        this.uniforms.radius,
+        this.uniforms.bumpStrength,
+      ),
     ).toVar()
   }
 

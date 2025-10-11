@@ -17,10 +17,10 @@ export function convertToTexturedPlanetUniformData(
   surfaceTex: DataTexture,
   biomeTex: DataTexture,
 ): PlanetUniformData {
-  return {
-    ...convertToPlanetUniformData(data),
-    textures: { surface: surfaceTex!, biomes: biomeTex! },
-  }
+  const uniformData = convertToPlanetUniformData(data)
+  uniformData.surface.baseTexture = surfaceTex
+  uniformData.biomes.baseTexture = biomeTex
+  return uniformData
 }
 export function convertToPlanetUniformData(data: PlanetData): PlanetUniformData {
   return {
@@ -46,30 +46,34 @@ export function convertToPlanetUniformData(data: PlanetData): PlanetUniformData 
         groundEmissiveIntensity: data.planetGroundEmissiveIntensity,
       },
     },
-    noise: {
-      frequency: data.planetSurfaceNoise.frequency,
-      amplitude: data.planetSurfaceNoise.amplitude,
-      lacunarity: data.planetSurfaceNoise.lacunarity,
-      octaves: data.planetSurfaceNoise.octaves,
-    },
-    warping: {
-      layers: data.planetSurfaceNoise.layers,
-      warpFactor: data.planetSurfaceNoise.warpFactor,
-    },
-    displacement: {
-      params: {
-        factor: data.planetSurfaceDisplacement.factor,
-        epsilon: data.planetSurfaceDisplacement.epsilon,
-        multiplier: data.planetSurfaceDisplacement.multiplier,
-      },
+    surface: {
+      baseTexture: undefined,
       noise: {
-        frequency: data.planetSurfaceDisplacement.frequency,
-        amplitude: data.planetSurfaceDisplacement.amplitude,
-        lacunarity: data.planetSurfaceDisplacement.lacunarity,
-        octaves: data.planetSurfaceDisplacement.octaves,
+        frequency: data.planetSurfaceNoise.frequency,
+        amplitude: data.planetSurfaceNoise.amplitude,
+        lacunarity: data.planetSurfaceNoise.lacunarity,
+        octaves: data.planetSurfaceNoise.octaves,
+      },
+      warping: {
+        layers: data.planetSurfaceNoise.layers,
+        warpFactor: data.planetSurfaceNoise.warpFactor,
+      },
+      displacement: {
+        params: {
+          factor: data.planetSurfaceDisplacement.factor,
+          epsilon: data.planetSurfaceDisplacement.epsilon,
+          multiplier: data.planetSurfaceDisplacement.multiplier,
+        },
+        noise: {
+          frequency: data.planetSurfaceDisplacement.frequency,
+          amplitude: data.planetSurfaceDisplacement.amplitude,
+          lacunarity: data.planetSurfaceDisplacement.lacunarity,
+          octaves: data.planetSurfaceDisplacement.octaves,
+        },
       },
     },
     biomes: {
+      baseTexture: undefined,
       temperatureMode: data.biomesTemperatureMode,
       temperatureNoise: {
         frequency: data.biomesTemperatureNoise.frequency,
