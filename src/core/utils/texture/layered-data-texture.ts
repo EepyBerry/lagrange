@@ -10,6 +10,7 @@ import { DataTexture } from 'three'
 export type LayerDrawOptions = { width?: number; height?: number }
 export type Layer = { id: string; canvas: OffscreenCanvas }
 export class LayeredDataTexture<DataObject> {
+  
   private _layers: Layer[] = []
   private _workCanvas: OffscreenCanvas
   private _texture: DataTexture
@@ -65,6 +66,9 @@ export class LayeredDataTexture<DataObject> {
       console.warn(`Cannot update layer: layer at index ${index} does not exist`)
       return
     }
+    if (!data) {
+      return
+    }
     this._layerDrawFunc(data, layer.canvas)
     this.updateTexture()
   }
@@ -87,6 +91,5 @@ export class LayeredDataTexture<DataObject> {
     this.layers.splice(index, 1)
     this.layers.splice(index + diff, 0, element)
     this.updateTexture()
-    //this.debugSaveTexture()
   }
 }

@@ -229,7 +229,9 @@ export default class PlanetData extends ChangeTracker {
     return this._planetGroundEmissiveIntensity
   }
   public set planetGroundEmissiveIntensity(value: number) {
-    this._planetGroundEmissiveIntensity = clamp(value, 0, 10)
+    const v = clamp(value, 0, 10)
+    this._planetGroundEmissiveIntensity = v
+    this._biomesParams.filter((b) => b.emissiveOverride === false).forEach((b) => (b.emissiveIntensity = v))
     this.markForChange('_planetGroundEmissiveIntensity')
   }
 
@@ -739,6 +741,8 @@ export default class PlanetData extends ChangeTracker {
             },
             new Color(params._color),
             params._smoothness ?? 0.25,
+            params._emissiveOverride ?? false,
+            params._emissiveIntensity ?? 0.0,
             params._id,
           ),
       ),

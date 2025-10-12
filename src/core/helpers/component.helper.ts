@@ -94,6 +94,7 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): Plane
     data.biomesParams,
     TextureHelper.fillBiomeEmissivityLayer
   )
+  //setTimeout(() => biomeEmissivityLayersTex.debugSaveTexture(), 10000)
 
   const dataConverter = new PlanetDataConverter(data)
     .withSurfaceTexture(surfaceTex)

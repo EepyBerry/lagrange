@@ -21,7 +21,6 @@ export async function generatePlanetPreview(data: PlanetData): Promise<string> {
     // ---------------------------- Setup renderer & render -----------------------------
     const rawBuffer = new Uint8Array(w * h * 4)
     sceneData.renderer.setRenderTarget(previewRenderTarget)
-    console.log(sceneData.planet.uniforms!)
     await sceneData.renderer.renderAsync(sceneData.scene, sceneData.camera)
     rawBuffer.set(await sceneData.renderer.readRenderTargetPixelsAsync(previewRenderTarget, 0, 0, w, h))
     sceneData.renderer.setRenderTarget(null)

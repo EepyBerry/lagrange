@@ -20,8 +20,8 @@ export class BiomeParameters extends ChangeTracker {
 
   private _color: Color
   private _smoothness: number = 0.2
-  
-  private _emissiveOverride: boolean = true
+
+  private _emissiveOverride: boolean = false
   private _emissiveIntensity: number = 0.0
 
   constructor(
@@ -42,7 +42,7 @@ export class BiomeParameters extends ChangeTracker {
     this._humiMax = dims.humidityMax
     this._color = new Color(color)
     this._smoothness = smoothness
-    this._emissiveOverride = emissiveOverride ?? true
+    this._emissiveOverride = emissiveOverride ?? false
     this._emissiveIntensity = emissiveIntensity ?? 0.0
   }
 
@@ -59,7 +59,7 @@ export class BiomeParameters extends ChangeTracker {
       this._color.clone(),
       this._smoothness,
       this._emissiveOverride,
-      this._emissiveIntensity
+      this._emissiveIntensity,
     )
   }
 
@@ -118,7 +118,7 @@ export class BiomeParameters extends ChangeTracker {
     this._smoothness = clamp(value, 0.0, 1.0)
     this.markForChange(this._changePrefix, this._id)
   }
-  
+
   public get emissiveOverride(): boolean {
     return this._emissiveOverride
   }
@@ -149,7 +149,7 @@ export class BiomeParameters extends ChangeTracker {
       new Color(clampedPRNG(0, 1) * 0xffffff),
       clampedPRNG(0, 1),
       clampedPRNG(0, 1) >= 0.5,
-      clampedPRNG(0, 10)
+      clampedPRNG(0, 10),
     )
   }
 }
