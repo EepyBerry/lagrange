@@ -12,12 +12,17 @@ export class BiomeDimensions {
 }
 export class BiomeParameters extends ChangeTracker {
   private _id: string
+
   private _tempMin: number = 0.0
   private _tempMax: number = 1.0
   private _humiMin: number = 0.0
   private _humiMax: number = 1.0
-  private _smoothness: number = 0.2
+
   private _color: Color
+  private _smoothness: number = 0.2
+  
+  private _emissiveOverride: boolean = true
+  private _emissiveIntensity: number = 0.0
 
   constructor(
     changedPropsRef: ChangedProp[],
@@ -25,6 +30,8 @@ export class BiomeParameters extends ChangeTracker {
     dims: BiomeDimensions,
     color: Color,
     smoothness: number,
+    emissiveOverride?: boolean,
+    emissiveIntensity?: number,
     oldId?: string,
   ) {
     super(changedPropsRef, changePrefix)
@@ -35,6 +42,8 @@ export class BiomeParameters extends ChangeTracker {
     this._humiMax = dims.humidityMax
     this._color = new Color(color)
     this._smoothness = smoothness
+    this._emissiveOverride = emissiveOverride ?? true
+    this._emissiveIntensity = emissiveIntensity ?? 0.0
   }
 
   clone(): BiomeParameters {
@@ -49,6 +58,8 @@ export class BiomeParameters extends ChangeTracker {
       },
       this._color.clone(),
       this._smoothness,
+      this._emissiveOverride,
+      this._emissiveIntensity
     )
   }
 
@@ -100,12 +111,26 @@ export class BiomeParameters extends ChangeTracker {
     this._color.set(value)
     this.markForChange(this._changePrefix, this._id)
   }
-
   public get smoothness(): number {
     return this._smoothness
   }
   public set smoothness(value: number) {
     this._smoothness = clamp(value, 0.0, 1.0)
+    this.markForChange(this._changePrefix, this._id)
+  }
+  
+  public get emissiveOverride(): boolean {
+    return this._emissiveOverride
+  }
+  public set emissiveOverride(value: boolean) {
+    this._emissiveOverride = value
+    this.markForChange(this._changePrefix, this._id)
+  }
+  public get emissiveIntensity(): number {
+    return this._emissiveIntensity
+  }
+  public set emissiveIntensity(value: number) {
+    this._emissiveIntensity = clamp(value, 0, 10)
     this.markForChange(this._changePrefix, this._id)
   }
 
@@ -123,6 +148,8 @@ export class BiomeParameters extends ChangeTracker {
       },
       new Color(clampedPRNG(0, 1) * 0xffffff),
       clampedPRNG(0, 1),
+      clampedPRNG(0, 1) >= 0.5,
+      clampedPRNG(0, 10)
     )
   }
 }

@@ -12,10 +12,11 @@ import { AtmosphereTSLMaterial } from '@/core/tsl/materials/atmosphere.tslmat'
 import { CloudsTSLMaterial } from '@/core/tsl/materials/clouds.tslmat'
 import { RingTSLMaterial } from '@/core/tsl/materials/ring.tslmat'
 import { idb } from '@/dexie.config'
-import { convertToCloudsUniformData, convertToTexturedPlanetUniformData } from '../models/converters/planet-data.converter'
 import { LayeredDataTexture } from '../utils/texture/layered-data-texture'
 import type { BiomeParameters } from '../models/biome-parameters.model'
-import saveAs from 'file-saver'
+import { PlanetDataConverter } from '../models/converters/planet-data.converter'
+import { CloudsDataConverter } from '../models/converters/clouds-data.converter'
+import { RingDataConverter } from '../models/converters/ring-data.converter'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -87,10 +88,18 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): Plane
     data.biomesParams,
     TextureHelper.fillBiomeLayer
   )
-  //setTimeout(() => biomeLayersTex.debugSaveTexture(), 10000)
-  //setTimeout(() => saveAs(new Blob([biomeTex.image.data as BlobPart]), 'layeredtex.raw'), 10000)
+  const biomeEmissivityLayersTex = new LayeredDataTexture<BiomeParameters>(
+    Globals.TEXTURE_SIZES.BIOME,
+    Globals.TEXTURE_SIZES.BIOME,
+    data.biomesParams,
+    TextureHelper.fillBiomeEmissivityLayer
+  )
 
-  const tslMaterial = new PlanetTSLMaterial(convertToTexturedPlanetUniformData(data, surfaceTex, biomeLayersTex.texture))
+  const dataConverter = new PlanetDataConverter(data)
+    .withSurfaceTexture(surfaceTex)
+    .withBiomesTexture(biomeLayersTex.texture)
+    .withBiomesEmissiveTexture(biomeEmissivityLayersTex.texture)
+  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert())
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
@@ -101,16 +110,18 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): Plane
     uniforms: tslMaterial.uniforms,
     surfaceBuffer: surfaceTexBuf,
     surfaceTexture: surfaceTex,
-    biomeLayersTexture: biomeLayersTex
+    biomeLayersTexture: biomeLayersTex,
+    biomeEmissiveLayersTexture: biomeEmissivityLayersTex
   }
 }
 
 export function createClouds(data: PlanetData, textureBuffer: Uint8Array): CloudsMeshData {
   const cloudsHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
   const geometry = createSphereGeometryComponent(data.planetMeshQuality, cloudsHeight)
-  const opacityTex = TextureHelper.createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
+  const texture = TextureHelper.createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
-  const tslMaterial = new CloudsTSLMaterial(convertToCloudsUniformData(data, opacityTex))
+  const dataConverter = new CloudsDataConverter(data, texture)
+  const tslMaterial = new CloudsTSLMaterial(dataConverter.convert())
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
@@ -120,7 +131,7 @@ export function createClouds(data: PlanetData, textureBuffer: Uint8Array): Cloud
     mesh,
     uniforms: tslMaterial.uniforms,
     buffer: textureBuffer,
-    texture: opacityTex,
+    texture,
   }
 }
 
@@ -163,13 +174,11 @@ export function createRing(
 ): RingMeshData {
   const textureBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
   const ringParams = data.ringsParams[paramsIndex]
-  const ringTex = TextureHelper.createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
   const geometry = createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
-  const tslMaterial = new RingTSLMaterial({
-    innerRadius: ringParams.innerRadius,
-    outerRadius: ringParams.outerRadius,
-    texture: ringTex
-  })
+  const ringTex = TextureHelper.createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
+
+  const dataConverter = new RingDataConverter(ringParams, ringTex)
+  const tslMaterial = new RingTSLMaterial(dataConverter.convert())
 
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.name = ringParams.id

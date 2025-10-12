@@ -1,6 +1,6 @@
 import {
   Color,
-  DataTexture,
+  Texture,
   MeshBasicNodeMaterial,
   MeshStandardNodeMaterial,
   Node,
@@ -49,7 +49,7 @@ export type CloudsUniformData = {
     params: DisplacementData
     noise: NoiseData
   }
-  texture: DataTexture
+  texture: Texture
 }
 export type CloudsUniforms = {
   flags: UniformArrayNode

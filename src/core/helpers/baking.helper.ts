@@ -6,13 +6,20 @@ import type PlanetData from '@core/models/planet-data.model'
 import { renderToCanvas } from '@/core/utils/render-utils'
 import type { WebGPURenderer } from 'three/webgpu'
 import { PlanetTSLMaterial } from '../tsl/materials/planet.tslmat'
-import { convertToCloudsUniformData, convertToPlanetUniformData, convertToRingUniformData, convertToTexturedPlanetUniformData } from '../models/converters/planet-data.converter'
+import { PlanetDataConverter } from '../models/converters/planet-data.converter'
 import { CloudsTSLMaterial } from '../tsl/materials/clouds.tslmat'
 import { RingTSLMaterial } from '../tsl/materials/ring.tslmat'
+import { CloudsDataConverter } from '../models/converters/clouds-data.converter'
+import { RingDataConverter } from '../models/converters/ring-data.converter'
 
 export function createBakingPlanet(data: PlanetData, surfaceTex: THREE.DataTexture, biomeTex: THREE.DataTexture): THREE.Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
-  const tslMaterial = new PlanetTSLMaterial(convertToTexturedPlanetUniformData(data, surfaceTex, biomeTex))
+  geometry.computeTangents()
+
+  const dataConverter = new PlanetDataConverter(data)
+    .withSurfaceTexture(surfaceTex)
+    .withBiomesTexture(biomeTex)
+  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert())
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildSurfaceBakeMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
@@ -24,18 +31,22 @@ export function createBakingMetallicRoughnessMap(data: PlanetData): THREE.Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
   geometry.computeTangents()
 
-  const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data))
+  const dataConverter = new PlanetDataConverter(data)
+  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert())
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMetallicRoughnessBakeMaterial())
   mesh.name = Globals.LG_MESH_NAME_METALLICROUGHNESSMAP
   return mesh
 }
 
-export function createBakingEmissivityMap(data: PlanetData, surfaceTex: THREE.DataTexture): THREE.Mesh {
+export function createBakingEmissivityMap(data: PlanetData, surfaceTex: THREE.DataTexture, biomeEmissiveTex: THREE.DataTexture): THREE.Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
   geometry.computeTangents()
 
-  const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data))
-  const mesh = new THREE.Mesh(geometry, tslMaterial.buildEmissivityBakeMaterial(surfaceTex))
+  const dataConverter = new PlanetDataConverter(data)
+    .withSurfaceTexture(surfaceTex)
+    .withBiomesEmissiveTexture(biomeEmissiveTex)
+  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert())
+  const mesh = new THREE.Mesh(geometry, tslMaterial.buildEmissivityBakeMaterial())
   mesh.name = Globals.LG_MESH_NAME_EMISSIVITYMAP
   return mesh
 }
@@ -44,40 +55,45 @@ export function createBakingHeightMap(data: PlanetData): THREE.Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
   geometry.computeTangents()
 
-  const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data))
+  const dataConverter = new PlanetDataConverter(data)
+  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert())
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildHeightMapBakeMaterial())
   mesh.name = Globals.LG_MESH_NAME_HEIGHTMAP
   return mesh
 }
 
 export function createBakingNormalMap(data: PlanetData, heightMapTex: THREE.Texture): THREE.Mesh {
-  const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data))
+  const dataConverter = new PlanetDataConverter(data)
+    .withBakingSurfaceHeightMapTexture(heightMapTex)
+  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert())
   const mesh = new THREE.Mesh(
     new THREE.PlaneGeometry(),
-    tslMaterial.buildNormalMapBakeMaterial(heightMapTex)
+    tslMaterial.buildNormalMapBakeMaterial()
   )
   mesh.name = Globals.LG_MESH_NAME_NORMALMAP
   return mesh
 }
 
-export function createBakingClouds(data: PlanetData, texture: THREE.DataTexture): THREE.Mesh {
+export function createBakingClouds(data: PlanetData, texture: THREE.Texture): THREE.Mesh {
   const cloudHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality, cloudHeight)
 
-  const tslMaterial = new CloudsTSLMaterial(convertToCloudsUniformData(data, texture))
+  const dataConverter = new CloudsDataConverter(data, texture)
+  const tslMaterial = new CloudsTSLMaterial(dataConverter.convert())
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildBakeMaterial())
   mesh.name = Globals.LG_MESH_NAME_CLOUDS
   return mesh
 }
 
-export function createBakingRing(data: PlanetData, texture: THREE.DataTexture, paramsIndex: number): THREE.Mesh {
+export function createBakingRing(data: PlanetData, texture: THREE.Texture, paramsIndex: number): THREE.Mesh {
   const ringParams = data.ringsParams[paramsIndex]
   const geometry = ComponentHelper.createRingGeometryComponent(
     data.planetMeshQuality,
     ringParams.innerRadius,
     ringParams.outerRadius,
   )
-  const material = new RingTSLMaterial(convertToRingUniformData(ringParams, texture))
+  const dataConverter = new RingDataConverter(ringParams, texture)
+  const material = new RingTSLMaterial(dataConverter.convert())
   const mesh = new THREE.Mesh(geometry, material.buildBakeMaterial())
   mesh.name = ringParams.id
   return mesh
@@ -123,6 +139,13 @@ export async function bakeMesh(
   const rawBuffer = new Uint8Array(size.x * size.y * 4)
   renderer.setRenderTarget(renderTarget)
   await renderer.renderAsync(mesh, camera)
+
+  /* await renderer!.debug.getShaderAsync(
+    new THREE.Scene(),
+    camera,
+    mesh,
+  ).then((data) => console.log(data.fragmentShader)) */
+
   rawBuffer.set(await renderer.readRenderTargetPixelsAsync(renderTarget, 0, 0, size.x, size.y))
   renderer.setRenderTarget(null)
 

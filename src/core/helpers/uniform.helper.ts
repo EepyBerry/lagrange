@@ -155,18 +155,25 @@ function registerBiomeDataUpdates(data: PlanetData, planet: PlanetMeshData): voi
     switch (action) {
       case ChangeAction.ADD:
         planet.biomeLayersTexture!.addLayer(biome!)
+        planet.biomeEmissiveLayersTexture!.addLayer(biome!)
         break;
       case ChangeAction.EDIT:
         planet.biomeLayersTexture!.updateLayer(biomeIdx, biome!)
+        planet.biomeEmissiveLayersTexture!.updateLayer(biomeIdx, biome!)
         break;
       case ChangeAction.DELETE:
         planet.biomeLayersTexture!.removeLayer(biomeIdx)
+        planet.biomeEmissiveLayersTexture!.updateLayer(biomeIdx, biome!)
         break;
       case ChangeAction.SORT_UP:
-        planet.biomeLayersTexture!.moveLayer(biomeIdx+1, -1) // biome already moved, shift back
+        // biome already moved, shift back
+        planet.biomeLayersTexture!.moveLayer(biomeIdx+1, -1)
+        planet.biomeEmissiveLayersTexture!.moveLayer(biomeIdx+1, -1)
         break;
       case ChangeAction.SORT_DOWN:
-        planet.biomeLayersTexture!.moveLayer(biomeIdx-1, 1) // biome already moved, shift back
+        // biome already moved, shift back
+        planet.biomeLayersTexture!.moveLayer(biomeIdx-1, 1)
+        planet.biomeEmissiveLayersTexture!.moveLayer(biomeIdx-1, 1)
         break;
     }
     /* TextureHelper.recalculateBiomeTexture(planet.biomesBuffer!, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)

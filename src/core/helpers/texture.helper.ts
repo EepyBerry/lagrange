@@ -4,7 +4,6 @@ import { Color, CubeTextureLoader, DataTexture, NearestFilter, type Minification
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
 import Rect from '../utils/math/rect'
-import type { LayerDrawOptions } from '../utils/texture/layered-data-texture'
 
 const CUBE_TEXTURE_LOADER = new CubeTextureLoader()
 
@@ -69,56 +68,110 @@ function fillRamp(buffer: Uint8Array, w: number, steps: ColorRampStep[]) {
 
 // ------------------------------------------------------------------------------------------------
 
-export function fillBiomeLayer(biome: BiomeParameters, canvas: OffscreenCanvas, opts?: LayerDrawOptions) {
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!
-  const texSize = opts!.width! // width must exist
+export function fillBiomeLayer(biome: BiomeParameters, canvas: OffscreenCanvas): void {
+  const texSize = canvas.width
   const biomeRect: Rect = new Rect(
     Math.floor(biome.humiMin * texSize),
     Math.floor(biome.tempMin * texSize),
     Math.ceil((biome.humiMax - biome.humiMin) * texSize),
     Math.ceil((biome.tempMax - biome.tempMin) * texSize),
   )
-  // early return if smoothness is zero
+  // Early return if smoothness is zero
   if (biome.smoothness <= Number.EPSILON) {
-    biomeRect.adjustToHTMLCanvas()
-    ctx.fillStyle = `rgba(${biome.color.r*255}, ${biome.color.g*255}, ${biome.color.b*255}, 1)`
-    ctx.fillRect(biomeRect.x, biomeRect.y, biomeRect.w, biomeRect.h)
+    fillRect(canvas, biomeRect, biome.color)
     return 
   }
-
-  // ---- Precalculation phase ----
-  // Get average smoothness between w and h; will serve as a smoothing distance when calculating alpha values
-  // Then, get biome overlaps with the global texture borders; overlaps define sections where biome smoothness should NOT be applied
+  // Calculate smoothing distance and fill
   const rectAvgSmoothingDistance = Math.floor(avg(...[biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness]))
-  const biomeTextureBorderOverlaps = biomeRect.findOverlaps(texSize, texSize)
+  shrinkFillRect(canvas, biomeRect, biome.color, rectAvgSmoothingDistance)
+}
+
+export function fillBiomeEmissivityLayer(biome: BiomeParameters, canvas: OffscreenCanvas): void {
+  const texSize = canvas.width
+  const biomeRect: Rect = new Rect(
+    Math.floor(biome.humiMin * texSize),
+    Math.floor(biome.tempMin * texSize),
+    Math.ceil((biome.humiMax - biome.humiMin) * texSize),
+    Math.ceil((biome.tempMax - biome.tempMin) * texSize),
+  )
+  // Modulate emissivity value by biome intensity
+  // Note: only using green channel, which the human eye is more sensitive to
+  const texColor = new Color('#000000')
+  if (biome.emissiveOverride) {
+    texColor.g = biome.emissiveIntensity / 10.0 // 10 = max emissive intensity value
+  }
+  // Early return if smoothness is zero
+  if (biome.smoothness <= Number.EPSILON) {
+    fillRect(canvas, biomeRect, biome.color)
+    return
+  }
+  // Calculate smoothing distance and fill
+  const rectAvgSmoothingDistance = Math.floor(avg(...[biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness]))
+  shrinkFillRect(canvas, biomeRect, texColor, rectAvgSmoothingDistance)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+/**
+ * Fills a section of an OffscreenCanvas with the given color
+ * @param canvas the OffscreenCanvas to draw on
+ * @param startRect the Rect to start drwaing at
+ * @param color base color to draw with
+ */
+function fillRect(canvas: OffscreenCanvas, startRect: Rect, color: Color) {
+    startRect.adjustToHTMLCanvas()
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })!
+    ctx.fillStyle = `#${color.getHexString()}`
+    ctx.fillRect(startRect.x, startRect.y, startRect.w, startRect.h)
+}
+
+/**
+ * Fills a section of an OffscreenCanvas by progressively shrinking the drawing rect according to the given smoothing distance
+ * @param canvas the OffscreenCanvas to draw on
+ * @param startRect the Rect to start drwaing at
+ * @param baseColor base color to draw with
+ * @param smoothingDistance orthogonal distance between the edge of the section and the first rect where pixels have an alpha of 1.0
+ */
+function shrinkFillRect(
+  canvas: OffscreenCanvas,
+  startRect: Rect,
+  baseColor: Color,
+  smoothingDistance: number
+): void {
+  // ---- Precalculation phase ----
+  // Fetch canvas texture width (in all cases, w = h as all textures generated using this function are sent to the GPU)
+  // Then, get overlaps with the global texture borders; overlaps define sections where smoothness should NOT be applied
+  const texSize = canvas.width
+  const startRectOverlaps = startRect.findOverlaps(texSize, texSize)
 
   // ---- Canvas preparation phase ----
   // Configure the target canvas and adapt the drawing rect to account for smoothing.
   // The later must be adjusted to get crisp, exact-size rects (https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes)
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!
   ctx.imageSmoothingEnabled = false
   ctx.clearRect(0,0,texSize,texSize)
-  const drawingRect = biomeRect.clone().adjustToHTMLCanvas()
+  const drawingRect = startRect.clone().adjustToHTMLCanvas()
 
   // ---- Canvas filling phase ----
   // Loop n-1 times, where n is defined as the number of pixel values between the lighest alpha value and an alpha of 1 (exclusive)
-  //   ---> in this context, n = rectAvgSmoothingDistance
+  //   ---> in this context, n = smoothingDistance
   // At each iteration, "shrink" the drawing zone by 1px while taking into account border overlaps, then draw a stroked rect
-  // The last step before exiting is to fill the remaining space with the biome color unaltered
+  // The last step before exiting is to fill the remaining space with the base color unaltered
   let pixelShift = 0
-  while (pixelShift < rectAvgSmoothingDistance && drawingRect.isValid()) {
+  while (pixelShift < smoothingDistance && drawingRect.isValid()) {
     // Adjust drawing rect position; early return if next rect would redraw on itself
     if (drawingRect.w === 1 || drawingRect.h === 1) return
-    drawingRect.shrink(biomeTextureBorderOverlaps)
+    drawingRect.shrink(startRectOverlaps)
     pixelShift++
 
     // draw stroked rect
-    ctx.strokeStyle = `rgba(${biome.color.r*255}, ${biome.color.g*255}, ${biome.color.b*255}, ${
-      clamp(truncateTo(pixelShift / rectAvgSmoothingDistance, 1e4), 0.0, 0.99)
+    ctx.strokeStyle = `rgba(${baseColor.r*255}, ${baseColor.g*255}, ${baseColor.b*255}, ${
+      clamp(truncateTo(pixelShift / smoothingDistance, 1e4), 0.0, 0.99)
     })`
     ctx.clearRect(drawingRect.x-0.5, drawingRect.y-0.5, drawingRect.w+1, drawingRect.h+1)
     ctx.strokeRect(drawingRect.x, drawingRect.y, drawingRect.w, drawingRect.h)
   }
   // fill remaining rect
-  ctx.fillStyle = `rgba(${biome.color.r*255}, ${biome.color.g*255}, ${biome.color.b*255}, 1)`
+  ctx.fillStyle = `rgba(${baseColor.r*255}, ${baseColor.g*255}, ${baseColor.b*255}, 1)`
   ctx.fillRect(drawingRect.x++, drawingRect.y++, drawingRect.w--, drawingRect.h--)
 }

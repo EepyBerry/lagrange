@@ -1,9 +1,8 @@
 import {
-  DataTexture,
+  Texture,
   MeshBasicNodeMaterial,
   MeshStandardNodeMaterial,
   Node,
-  Texture,
   TextureNode,
   UniformArrayNode,
   Vector2,
@@ -37,7 +36,6 @@ import { displace, layer, warp } from '../features/lwd'
 import type {
   DisplacementData,
   NoiseData,
-  UniformColorNode,
   UniformNumberNode,
   UniformVector2Node,
   UniformVector3Node,
@@ -73,7 +71,7 @@ export type PlanetUniformData = {
     }
   }
   surface: {
-    baseTexture?: DataTexture
+    baseTexture?: Texture
     noise: NoiseData
     warping: WarpingData
     displacement: {
@@ -82,21 +80,18 @@ export type PlanetUniformData = {
     }
   }
   biomes: {
-    baseTexture?: DataTexture
+    baseTexture?: Texture
+    emissiveTexture?: Texture
     temperatureMode: number
     temperatureNoise: NoiseData
     humidityMode: number
     humidityNoise: NoiseData
   }
-}
-
-export type BiomeUniforms = {
-  tempMin: UniformNumberNode
-  tempMax: UniformNumberNode
-  humidityMin: UniformNumberNode
-  humidityMax: UniformNumberNode
-  smoothness: UniformNumberNode
-  color: UniformColorNode
+  // uniforms used for baking only
+  baking: {
+    unifiedSurfaceTexture?: Texture
+    heightMapTexture?: Texture
+  }
 }
 export type PlanetUniforms = {
   radius: UniformNumberNode
@@ -118,14 +113,19 @@ export type PlanetUniforms = {
   }
   biomes: {
     baseTexture?: TextureNode
+    emissiveTexture?: TextureNode
     temperatureMode: UniformNumberNode
     temperatureNoise: UniformVector4Node
     humidityMode: UniformNumberNode
     humidityNoise: UniformVector4Node
   }
+  // uniforms used for baking only
+  baking: {
+    unifiedSurfaceTexture?: TextureNode
+    heightMapTexture?: TextureNode
+  }
 }
 export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, PlanetUniformData, PlanetUniforms> {
-  // Static uniform declarations
   public readonly uniforms: PlanetUniforms
 
   constructor(data: PlanetUniformData) {
@@ -159,7 +159,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
         ),
       },
       surface: {
-        baseTexture: data.surface.baseTexture ? texture(data.surface.baseTexture) : undefined,
+        baseTexture: texture(data.surface.baseTexture),
         noise: uniform(
           new Vector4(
             data.surface.noise.frequency,
@@ -199,7 +199,8 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
         },
       },
       biomes: {
-        baseTexture: data.biomes.baseTexture ? texture(data.biomes.baseTexture) : undefined,
+        baseTexture: texture(data.biomes.baseTexture),
+        emissiveTexture: texture(data.biomes.emissiveTexture),
         temperatureMode: uniform(data.biomes.temperatureMode),
         temperatureNoise: uniform(
           new Vector4(
@@ -221,12 +222,19 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
           'vec4',
         ),
       },
+      baking: {
+        unifiedSurfaceTexture: texture(data.baking.unifiedSurfaceTexture),
+        heightMapTexture: texture(data.baking.heightMapTexture)
+      }
     }
   }
 
   buildMaterial(): MeshStandardNodeMaterial {
     if (!this.uniforms.surface.baseTexture) {
       throw new Error('Cannot build material with missing uniform: surface.baseTexture')
+    }
+    if (!this.uniforms.biomes.baseTexture) {
+      throw new Error('Cannot build material with missing uniform: biomes.baseTexture')
     }
 
     // XYZ Warping + displacement
@@ -243,7 +251,8 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     let colour = vec3(this.uniforms.surface.baseTexture.sample(texCoord).xyz)
 
     // Render biomes
-    colour = this.renderBiomes(colour, vPos, heightLimit, FLAG_BIOMES)
+    const biomeTexCoord = this.calculateBiomeTextureCoordinates(vPos, heightLimit, FLAG_BIOMES).toVar('biomeTexCoord')
+    colour = this.renderBiomes(colour, this.uniforms.biomes.baseTexture!, biomeTexCoord, FLAG_BIOMES)
 
     // Render bump-map (under MIT license)
     const bump = this.applyBumpMap(vPos, height)
@@ -264,13 +273,16 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       this.uniforms.pbr.metallicRoughness.w,
       FLAG_LAND,
     )
-    material.emissiveNode = this.applyEmissiveIntensity(colour, FLAG_LAND)
+    material.emissiveNode = this.applyEmissiveIntensity(colour, this.uniforms.biomes.baseTexture, biomeTexCoord, FLAG_LAND)
     return material
   }
 
   buildSurfaceBakeMaterial(): MeshBasicNodeMaterial {
     if (!this.uniforms.surface.baseTexture) {
       throw new Error('Cannot build material with missing uniform: surface.baseTexture')
+    }
+    if (!this.uniforms.biomes.baseTexture) {
+      throw new Error('Cannot build material with missing uniform: biomes.baseTexture')
     }
 
     // XYZ Warping + displacement
@@ -287,7 +299,8 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     let colour = vec3(this.uniforms.surface.baseTexture.sample(texCoord).xyz)
 
     // Render biomes
-    colour = this.renderBiomes(colour, vPos, heightLimit, FLAG_BIOMES)
+    const biomeTexCoord = this.calculateBiomeTextureCoordinates(vPos, heightLimit, FLAG_BIOMES).toVar('biomeTexCoord')
+    colour = this.renderBiomes(colour, this.uniforms.biomes.baseTexture!, biomeTexCoord, FLAG_BIOMES)
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial()
@@ -315,7 +328,14 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     return material
   }
 
-  buildEmissivityBakeMaterial(surfaceTex: Texture): MeshBasicNodeMaterial {
+  buildEmissivityBakeMaterial(): MeshBasicNodeMaterial {
+    if (!this.uniforms.baking.unifiedSurfaceTexture) {
+      throw new Error('Cannot build material with missing uniform: baking.unifiedSurfaceTexture')
+    }
+    if (!this.uniforms.biomes.emissiveTexture) {
+      throw new Error('Cannot build material with missing uniform: biomes.emissiveTexture')
+    }
+    
     // XYZ Warping + displacement
     const vPos = this.applyXYZTransformations(positionLocal)
 
@@ -323,16 +343,19 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const heightLimit = float(1.0).sub(EPSILON)
     const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar()
     const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar()
+    const FLAG_BIOMES = FLAG_LAND.mul(float(this.uniforms.flags.element(int(3))))
 
     // render noise as color
-    const texNode = texture(surfaceTex).setName('texNode')
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord')
-    const colour = vec3(texNode.sample(texCoord).xyz)
+    const colour = vec3(this.uniforms.baking!.unifiedSurfaceTexture!.sample(texCoord).xyz)
+
+    // get biome texcoords for emissivity calculations
+    const biomeTexCoord = this.calculateBiomeTextureCoordinates(vPos, heightLimit, FLAG_BIOMES).toVar('biomeTexCoord')
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial()
     material.vertexNode = flattenUV(uv())
-    material.colorNode = vec4(this.applyEmissiveIntensity(colour, FLAG_LAND).xyz, 1.0)
+    material.colorNode = vec4(this.applyEmissiveIntensity(colour, this.uniforms.biomes.emissiveTexture!, biomeTexCoord, FLAG_LAND).xyz, 1.0)
     return material
   }
 
@@ -351,9 +374,13 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     return material
   }
 
-  buildNormalMapBakeMaterial(heightMap: Texture): MeshBasicNodeMaterial {
-    const texNode = texture(heightMap)
-    const offset = vec3(-1.0 / heightMap.width, 0.0, 1.0 / heightMap.height).toVar('offset')
+  buildNormalMapBakeMaterial(): MeshBasicNodeMaterial {
+    if (!this.uniforms.baking.heightMapTexture) {
+      throw new Error('Cannot build material with missing uniform: baking.heightMapTexture')
+    }
+
+    const texNode = this.uniforms.baking.heightMapTexture
+    const offset = vec3(-1.0 / texNode.value.width, 0.0, 1.0 /  texNode.value.height).toVar('offset')
 
     // Sample height-map at 8 points around the current position
     const s00 = texNode.sample(uv().add(offset.xx)).x.toVar('s00')
@@ -366,7 +393,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const s22 = texNode.sample(uv().add(offset.zz)).x.toVar('s22')
     // @ts-expect-error: Invalid type definitions for mat3(...) using nodes
     const sobelMat = mat3(s00, s01, s02, s10, uv().x, s12, s20, s21, s22).toVar('sobelMat')
-    const normal = sobel(sobelMat, float(heightMap.width).mul(this.uniforms.bumpStrength)).toVar('N')
+    const normal = sobel(sobelMat, float(texNode.value.width).mul(this.uniforms.bumpStrength)).toVar('N')
 
     const material = new MeshBasicNodeMaterial()
     material.vertexNode = flattenUV(uv())
@@ -386,28 +413,28 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     )
   }
 
-  private renderBiomes(
-    colour: ShaderNodeObject<Node>,
+  private calculateBiomeTextureCoordinates(
     vPos: ShaderNodeObject<Node>,
     heightLimit: ShaderNodeObject<Node>,
     FLAG_BIOMES: ShaderNodeObject<Node>,
-  ): ShaderNodeObject<Node> {
-    if (!this.uniforms.biomes.baseTexture) {
-      throw new Error('Cannot build material with missing uniform: biomes.baseTexture')
-    }
-
+  ) {
     const temp = float(
       computeTemperature(vPos, this.uniforms.biomes.temperatureNoise, this.uniforms.biomes.temperatureMode),
     )
     const humi = float(computeHumidity(vPos, this.uniforms.biomes.humidityNoise, this.uniforms.biomes.humidityMode))
+    return vec2(
+      float(mix(0.0, temp, FLAG_BIOMES)).min(heightLimit),
+      float(mix(0.0, humi, FLAG_BIOMES)).min(heightLimit)
+    )
+  }
 
-    const tHeight = float(mix(0.0, temp, FLAG_BIOMES))
-      .min(heightLimit)
-      .toVar()
-    const hHeight = float(mix(0.0, humi, FLAG_BIOMES))
-      .min(heightLimit)
-      .toVar()
-    return mix(colour, sampleBiomeTexture(this.uniforms.biomes.baseTexture, tHeight, hHeight, colour), FLAG_BIOMES)
+  private renderBiomes(
+    colour: ShaderNodeObject<Node>,
+    texture: TextureNode,
+    texCoords: ShaderNodeObject<Node>,
+    FLAG_BIOMES: ShaderNodeObject<Node>,
+  ): ShaderNodeObject<Node> {
+    return mix(colour, sampleBiomeTexture(texture, texCoords.x, texCoords.y, colour), FLAG_BIOMES)
   }
 
   private applyBumpMap(vPos: ShaderNodeObject<Node>, height: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
@@ -431,12 +458,20 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   }
 
   private applyEmissiveIntensity(
-    colour: ShaderNodeObject<Node>,
+    surfaceColor: ShaderNodeObject<Node>,
+    biomeEmissiveTexture: TextureNode,
+    biomeTexCoord: ShaderNodeObject<Node>,
     FLAG_LAND: ShaderNodeObject<Node>,
   ): ShaderNodeObject<Node> {
-    const emissiveFactor = mix(this.uniforms.pbr.emissive.x, this.uniforms.pbr.emissive.y, FLAG_LAND).toVar(
-      'emissiveFactor',
+    // Get base emissive factor (water or ground value)
+    const baseEmissiveFactor = mix(this.uniforms.pbr.emissive.x, this.uniforms.pbr.emissive.y, FLAG_LAND).toVar(
+      'baseEmissiveFactor',
     )
-    return colour.mul(this.uniforms.flags.element(int(4))).mul(emissiveFactor)
+    // Get biome emissive factor from texture (green channel = value, alpha channel = strength factor)
+    const biomeEmissiveColor = vec4(biomeEmissiveTexture.sample(biomeTexCoord)).toVar('biomeEmissiveTexCoord')
+    const resultEmissiveFactor = mix(baseEmissiveFactor, biomeEmissiveColor.y.mul(10.0), biomeEmissiveColor.w).toVar(
+      'biomeEmissiveFactor',
+    )
+    return surfaceColor.mul(this.uniforms.flags.element(int(4))).mul(resultEmissiveFactor)
   }
 }

@@ -15,7 +15,7 @@ export class LayeredDataTexture<DataObject> {
   private _texture: DataTexture
   private _width: number
   private _height: number
-  private _layerDrawFunc: (dataObj: DataObject, canvas: OffscreenCanvas, opts?: LayerDrawOptions) => void
+  private _layerDrawFunc: (dataObj: DataObject, canvas: OffscreenCanvas) => void
 
   public get layers(): Layer[] {
     return this._layers
@@ -28,7 +28,7 @@ export class LayeredDataTexture<DataObject> {
     width: number,
     height: number,
     dataObjs: DataObject[],
-    drawFunc: (dataObj: DataObject, canvas: OffscreenCanvas, opts?: LayerDrawOptions) => void,
+    drawFunc: (dataObj: DataObject, canvas: OffscreenCanvas) => void,
   ) {
     this._width = width
     this._height = height
@@ -65,20 +65,14 @@ export class LayeredDataTexture<DataObject> {
       console.warn(`Cannot update layer: layer at index ${index} does not exist`)
       return
     }
-    this._layerDrawFunc(data, layer.canvas, {
-      width: this._width,
-      height: this._height,
-    })
+    this._layerDrawFunc(data, layer.canvas)
     this.updateTexture()
   }
 
   public addLayer(data: DataObject): Layer {
     const newLayer = { id: nanoid(), canvas: new OffscreenCanvas(this._width, this._height) }
     this._layers.push(newLayer)
-    this._layerDrawFunc(data, newLayer.canvas, {
-      width: this._width,
-      height: this._height,
-    })
+    this._layerDrawFunc(data, newLayer.canvas)
     this.updateTexture()
     return newLayer
   }

@@ -3,7 +3,7 @@ import {
   MeshBasicNodeMaterial,
   MeshStandardNodeMaterial,
   Node,
-  type DataTexture,
+  Texture,
   type TextureNode,
 } from 'three/webgpu'
 import type { UniformNumberNode } from '../tsl-types'
@@ -14,7 +14,7 @@ import { flattenUV } from '../utils/vertex-utils'
 export type RingUniformData = {
   innerRadius: number
   outerRadius: number
-  texture: DataTexture
+  texture: Texture
 }
 export type RingUniforms = {
   innerRadius: UniformNumberNode

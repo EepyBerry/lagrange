@@ -95,6 +95,7 @@ export type PlanetMeshData = {
   surfaceTexture?: DataTexture
 
   biomeLayersTexture?: LayeredDataTexture<BiomeParameters>
+  biomeEmissiveLayersTexture?: LayeredDataTexture<BiomeParameters>
 }
 export type CloudsMeshData = {
   mesh?: Mesh
