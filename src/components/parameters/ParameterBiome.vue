@@ -49,9 +49,18 @@
         {{ $t('editor.controls.biomes.humidity_max') }}
       </ParameterSlider>
       <ParameterDivider />
-      <ParameterSlider :id="lgParam!.id + '-b-smoo'" v-model="lgParam!.smoothness" :step="0.005" :min="0" :max="0.5">
+      <ParameterSlider :id="lgParam!.id + '-b-smoothness'" v-model="lgParam!.smoothness" :step="0.005" :min="0" :max="0.5">
         {{ $t('editor.controls.biomes.smoothness') }}
       </ParameterSlider>
+      <ParameterCheckbox :id="lgParam!.id + '-b-emioverride'" v-model="lgParam!.emissiveOverride" :true-value="true" :false-value="false">
+        {{ $t('editor.controls.biomes.emissive_override') }}
+      </ParameterCheckbox>
+      <template v-if="lgParam!.emissiveOverride">
+        <ParameterSlider :id="lgParam!.id + '-b-emiintensity'" v-model="lgParam!.emissiveIntensity" :disabled="!lgParam!.emissiveOverride" :step="0.005" :min="0" :max="10">
+          {{ $t('editor.controls.biomes.emissive_intensity') }}
+        </ParameterSlider>
+      </template>
+      <ParameterDivider />
       <ParameterColor v-model="lgParam!.color">
         {{ $t('editor.general.noise_color') }}
       </ParameterColor>

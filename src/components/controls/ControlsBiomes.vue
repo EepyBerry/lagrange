@@ -184,7 +184,7 @@ function moveBiome(idx: number, diff: -1 | 1) {
   const element = LG_PLANET_DATA.value.biomesParams[idx]
   LG_PLANET_DATA.value.biomesParams.splice(idx, 1)
   LG_PLANET_DATA.value.biomesParams.splice(idx + diff, 0, element)
-  LG_PLANET_DATA.value.markForChange('_biomesParameters', element.id, diff === -1 ? ChangeAction.SORT_UP : ChangeAction.SORT_DOWN)
+  LG_PLANET_DATA.value.markForChange('_biomesParameters[element]', {arrayIndex:idx, data: element}, diff === -1 ? ChangeAction.SORT_UP : ChangeAction.SORT_DOWN)
 }
 
 /**
@@ -204,7 +204,7 @@ function addBiome() {
     0.2,
   )
   LG_PLANET_DATA.value.biomesParams.push(newBiome)
-  LG_PLANET_DATA.value.markForChange('_biomesParameters', newBiome.id, ChangeAction.ADD)
+  LG_PLANET_DATA.value.markForChange('_biomesParameters[element]', {arrayIndex:LG_PLANET_DATA.value.biomesParams.length-1, data: newBiome}, ChangeAction.ADD)
 }
 
 /**
@@ -217,7 +217,7 @@ function deleteBiome(id: string) {
     throw new Error('Cannot delete non-existent biome!')
   }
   LG_PLANET_DATA.value.biomesParams.splice(biomeIdx, 1)
-  LG_PLANET_DATA.value.markForChange('_biomesParameters', id, ChangeAction.DELETE)
+  LG_PLANET_DATA.value.markForChange('_biomesParameters[element]', {arrayIndex: biomeIdx}, ChangeAction.DELETE)
 }
 </script>
 <style scoped lang="scss">

@@ -9,6 +9,7 @@
         :max="max ?? 100"
         :step="step ?? 1"
         :value="vModel"
+        :disabled="disabled"
         @input="set($event)"
       />
       <span class="rgb"></span>
@@ -22,13 +23,14 @@
       :min="min ?? 0"
       :max="max ?? 100"
       :step="step ?? 1"
+      :disabled="disabled"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 const vModel = defineModel<number>()
-defineProps<{ iid?: string; step?: number; min?: number; max?: number }>()
+defineProps<{ iid?: string; step?: number; min?: number; max?: number, disabled?: boolean }>()
 function set(ev: Event) {
   vModel.value = (ev.target as HTMLInputElement).valueAsNumber
 }
@@ -103,6 +105,13 @@ function set(ev: Event) {
 input.lg[type='number'] {
   width: 3rem;
   text-align: end;
+  
+  &:disabled {
+    background: var(--lg-input-disabled);
+    border-color: var(--lg-border-disabled);
+    cursor: not-allowed;
+    color: var(--lg-text-disabled);
+  }
 }
 input.lg[type='range'] {
   -webkit-appearance: none;
@@ -145,6 +154,33 @@ input.lg[type='range'] {
   &:focus::-moz-range-thumb {
     background: var(--lg-contrast-focus);
     border: 1px solid var(--lg-text);
+  }
+
+  &:disabled {
+    background: var(--lg-input-disabled);
+    border-color: var(--lg-border-disabled);
+    cursor: not-allowed;
+
+    &::-webkit-slider-thumb {
+      background: var(--lg-button-disabled);
+      cursor: not-allowed;
+    }
+    &::-moz-range-thumb {
+      background: var(--lg-button-disabled);
+      cursor: not-allowed;
+    }
+    &:focus {
+      background: var(--lg-button-disabled);
+      cursor: not-allowed;
+    }
+    &:focus::-moz-range-thumb {
+      background: var(--lg-button-disabled);
+      cursor: not-allowed;
+    }
+    &:focus::-webkit-slider-thumb {
+      background: var(--lg-button-disabled);
+      cursor: not-allowed;
+    }
   }
 }
 

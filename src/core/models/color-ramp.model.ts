@@ -114,7 +114,7 @@ export class ColorRamp extends ChangeTracker {
   // Utility functions
 
   private async generateHash() {
-    this._hash = await sha1(JSON.stringify(this))
+    this._hash = await sha1(JSON.stringify(this, (k,v) => k === '_changedProps' ? undefined : v))
   }
 
   public sortSteps() {

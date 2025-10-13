@@ -5,8 +5,8 @@ export abstract class ChangeTracker {
   public get changedProps() {
     return this._changedProps
   }
-  public markForChange(prop: string, sourceId?: string, action: ChangeAction = ChangeAction.EDIT) {
-    this._changedProps.push({ prop, sourceId, action })
+  public markForChange(prop: string, source?: ChangeSource, action: ChangeAction = ChangeAction.EDIT) {
+    this._changedProps.push({ prop, source, action })
   }
   public clearChangedProps() {
     this._changedProps.splice(0)
@@ -20,9 +20,10 @@ export abstract class ChangeTracker {
   }
 }
 
+export type ChangeSource = { arrayIndex?: number, data?: unknown }
 export enum ChangeAction { ADD, EDIT, DELETE, SORT_UP, SORT_DOWN }
 export type ChangedProp = {
   prop: string
-  sourceId?: string
+  source?: ChangeSource
   action?: ChangeAction
 }

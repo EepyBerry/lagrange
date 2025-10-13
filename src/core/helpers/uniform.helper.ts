@@ -7,9 +7,10 @@ import type { LensFlareEffect } from '../effects/lens-flare.effect'
 import type PlanetData from '../models/planet-data.model'
 import * as TextureHelper from './texture.helper'
 import * as ComponentHelper from './component.helper'
-import { ChangeAction, type ChangedProp } from '../models/change-tracker.model'
+import { ChangeAction, type ChangedProp, type ChangeSource } from '../models/change-tracker.model'
+import type { BiomeParameters } from '../models/biome-parameters.model'
 
-const UNIFORM_UPDATE_MAP: Ref<Map<string, (source?: string, action?: ChangeAction) => void>> = ref(new Map<string, () => void>())
+const UNIFORM_UPDATE_MAP: Ref<Map<string, (source?: ChangeSource, action?: ChangeAction) => void>> = ref(new Map<string, () => void>())
 
 export function initUniformUpdateMap(sceneData: EditorSceneData, planetData: PlanetData) {
   registerLightingDataUpdates(planetData, sceneData.sunLight!, sceneData.ambLight!, sceneData.lensFlare!)
@@ -40,7 +41,7 @@ export function clearUniformUpdateMap() {
 }
 
 export function execUniformUpdate(changedProp: ChangedProp) {
-  UNIFORM_UPDATE_MAP.value.get(changedProp.prop)?.(changedProp.sourceId, changedProp.action)
+  UNIFORM_UPDATE_MAP.value.get(changedProp.prop)?.(changedProp.source, changedProp.action)
 }
 
 // prettier-ignore
@@ -149,35 +150,36 @@ function registerBiomeDataUpdates(data: PlanetData, planet: PlanetMeshData): voi
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._amplitude',     () => (planet.uniforms!.biomes.humidityNoise.value.y = data.biomesHumidityNoise.amplitude))
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._lacunarity',    () => (planet.uniforms!.biomes.humidityNoise.value.z = data.biomesHumidityNoise.lacunarity))
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._octaves',       () => (planet.uniforms!.biomes.humidityNoise.value.w = data.biomesHumidityNoise.octaves))
-  UNIFORM_UPDATE_MAP.value.set('_biomesParameters', (sourceId, action) => {
-    const biome = data.findBiomeById(sourceId!)
-    const biomeIdx = data.findBiomeIndexById(sourceId!)
+  UNIFORM_UPDATE_MAP.value.set('_biomesParameters', () => {
+    planet.biomeLayersTexture!.reset(data.biomesParams)
+    planet.biomeEmissiveLayersTexture!.reset(data.biomesParams)
+  })
+  UNIFORM_UPDATE_MAP.value.set('_biomesParameters[element]', (source, action) => {
+    const biome = source!.data! as BiomeParameters
+    const biomeParamsIdx = source!.arrayIndex ?? data.findBiomeIndexById(biome.id)
+    if (biomeParamsIdx === -1) return
     switch (action) {
       case ChangeAction.ADD:
         planet.biomeLayersTexture!.addLayer(biome!)
         planet.biomeEmissiveLayersTexture!.addLayer(biome!)
         break;
       case ChangeAction.EDIT:
-        planet.biomeLayersTexture!.updateLayer(biomeIdx, biome!)
-        planet.biomeEmissiveLayersTexture!.updateLayer(biomeIdx, biome!)
+        planet.biomeLayersTexture!.updateLayer(biomeParamsIdx, biome!)
+        planet.biomeEmissiveLayersTexture!.updateLayer(biomeParamsIdx, biome!)
         break;
       case ChangeAction.DELETE:
-        planet.biomeLayersTexture!.removeLayer(biomeIdx)
-        planet.biomeEmissiveLayersTexture!.updateLayer(biomeIdx, biome!)
+        planet.biomeLayersTexture!.removeLayer(biomeParamsIdx)
+        planet.biomeEmissiveLayersTexture!.removeLayer(biomeParamsIdx)
         break;
       case ChangeAction.SORT_UP:
-        // biome already moved, shift back
-        planet.biomeLayersTexture!.moveLayer(biomeIdx+1, -1)
-        planet.biomeEmissiveLayersTexture!.moveLayer(biomeIdx+1, -1)
+        planet.biomeLayersTexture!.moveLayer(biomeParamsIdx, -1)
+        planet.biomeEmissiveLayersTexture!.moveLayer(biomeParamsIdx, -1)
         break;
       case ChangeAction.SORT_DOWN:
-        // biome already moved, shift back
-        planet.biomeLayersTexture!.moveLayer(biomeIdx-1, 1)
-        planet.biomeEmissiveLayersTexture!.moveLayer(biomeIdx-1, 1)
+        planet.biomeLayersTexture!.moveLayer(biomeParamsIdx, 1)
+        planet.biomeEmissiveLayersTexture!.moveLayer(biomeParamsIdx, 1)
         break;
     }
-    /* TextureHelper.recalculateBiomeTexture(planet.biomesBuffer!, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
-    planet.biomesTexture!.needsUpdate = true */
   })
 }
 

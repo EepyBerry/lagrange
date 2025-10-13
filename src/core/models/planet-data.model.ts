@@ -210,7 +210,7 @@ export default class PlanetData extends ChangeTracker {
     this._planetWaterLevel = clamp(value, 0, 1)
     this.markForChange('_planetWaterLevel')
   }
-  
+
   public get planetShowEmissive(): boolean {
     return this._planetShowEmissive
   }
@@ -339,11 +339,6 @@ export default class PlanetData extends ChangeTracker {
 
   public get biomesParams(): BiomeParameters[] {
     return this._biomesParams
-  }
-  public set biomesParams(value: BiomeParameters[]) {
-    this._biomesParams.splice(0)
-    this._biomesParams.push(...value)
-    this.markForChange('_biomesParameters')
   }
 
   // --------------------------------------------------
@@ -600,7 +595,7 @@ export default class PlanetData extends ChangeTracker {
     this._biomesParams = [
       new BiomeParameters(
         this._changedProps,
-        '_biomesParameters',
+        '_biomesParameters[element]',
         {
           temperatureMin: 0.0,
           temperatureMax: 0.1,
@@ -612,7 +607,7 @@ export default class PlanetData extends ChangeTracker {
       ),
       new BiomeParameters(
         this._changedProps,
-        '_biomesParameters',
+        '_biomesParameters[element]',
         {
           temperatureMin: 0.8,
           temperatureMax: 1.0,
@@ -624,7 +619,7 @@ export default class PlanetData extends ChangeTracker {
       ),
       new BiomeParameters(
         this._changedProps,
-        '_biomesParameters',
+        '_biomesParameters[element]',
         {
           temperatureMin: 0.0,
           temperatureMax: 1.0,
@@ -732,7 +727,7 @@ export default class PlanetData extends ChangeTracker {
       ...(data._biomesParams ?? []).map( (params: any) =>
           new BiomeParameters(
             this.changedProps,
-            '_biomesParameters',
+            '_biomesParameters[element]',
             {
               temperatureMin: params._tempMin ?? 0.0,
               temperatureMax: params._tempMax ?? 0.5,
@@ -837,7 +832,7 @@ export default class PlanetData extends ChangeTracker {
     this.biomesHumidityNoise.randomize()
     this.biomesParams.splice(0)
     for (let i = 0; i < Math.round(clampedPRNG(0, 8)); i++) {
-      this.biomesParams.push(BiomeParameters.createRandom(this.changedProps, '_biomesParameters'))
+      this.biomesParams.push(BiomeParameters.createRandom(this.changedProps, '_biomesParameters[element]'))
     }
 
     // Clouds
@@ -885,10 +880,10 @@ export default class PlanetData extends ChangeTracker {
   }
 
   public findBiomeById(id: string) {
-    return this._biomesParams.find(b => b.id === id)
+    return this._biomesParams.find((b) => b.id === id)
   }
   public findBiomeIndexById(id: string) {
-    return this._biomesParams.findIndex(b => b.id === id)
+    return this._biomesParams.findIndex((b) => b.id === id)
   }
 
   // --------------------------------------------------

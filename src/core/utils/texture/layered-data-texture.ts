@@ -10,7 +10,6 @@ import { DataTexture } from 'three'
 export type LayerDrawOptions = { width?: number; height?: number }
 export type Layer = { id: string; canvas: OffscreenCanvas }
 export class LayeredDataTexture<DataObject> {
-  
   private _layers: Layer[] = []
   private _workCanvas: OffscreenCanvas
   private _texture: DataTexture
@@ -37,9 +36,7 @@ export class LayeredDataTexture<DataObject> {
     this._workCanvas = new OffscreenCanvas(width, height)
     this._texture = new DataTexture(null, width, height)
 
-    for (let i = 0; i < dataObjs.length; i++) {
-      this.addLayer(dataObjs[i])
-    }
+    dataObjs.forEach(d => this.addLayer(d))
     this.updateTexture()
   }
 
@@ -90,6 +87,12 @@ export class LayeredDataTexture<DataObject> {
     const element = this.layers[index]
     this.layers.splice(index, 1)
     this.layers.splice(index + diff, 0, element)
+    this.updateTexture()
+  }
+
+  public reset(dataObjs?: DataObject[]) {
+    this.layers.splice(0)
+    dataObjs?.forEach(d => this.addLayer(d))
     this.updateTexture()
   }
 }

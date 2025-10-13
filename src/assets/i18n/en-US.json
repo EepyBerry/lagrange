@@ -337,7 +337,9 @@
         "temperature_max": "Max. temperature",
         "humidity_min": "Min. humidity",
         "humidity_max": "Max. humidity",
-        "smoothness": "Smoothness"
+        "smoothness": "Smoothness",
+        "emissive_override": "Override emissivity",
+        "emissive_intensity": "Emissive intensity"
       },
       "clouds": {
         "$title": "Clouds",
