@@ -277,7 +277,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       this.uniforms.pbr.metallicRoughness.w,
       FLAG_LAND,
     )
-    material.emissiveNode = this.applyEmissiveIntensity(colour, this.uniforms.biomes.emissiveTexture, biomeTexCoord, FLAG_LAND, FLAG_BIOMES)
+    material.emissiveNode = this.applyEmissiveIntensity(colour, this.uniforms.biomes.baseTexture, this.uniforms.biomes.emissiveTexture, biomeTexCoord, FLAG_LAND, FLAG_BIOMES)
     return material
   }
 
@@ -359,7 +359,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial()
     material.vertexNode = flattenUV(uv())
-    material.colorNode = vec4(this.applyEmissiveIntensity(colour, this.uniforms.biomes.emissiveTexture!, biomeTexCoord, FLAG_LAND, FLAG_BIOMES).xyz, 1.0)
+    material.colorNode = vec4(this.applyEmissiveIntensity(colour, this.uniforms.baking.unifiedSurfaceTexture, this.uniforms.biomes.emissiveTexture!, biomeTexCoord, FLAG_LAND, FLAG_BIOMES).xyz, 1.0)
     return material
   }
 
@@ -463,17 +463,19 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
   private applyEmissiveIntensity(
     fragmentColor: ShaderNodeObject<Node>,
+    biomeTexture: TextureNode,
     biomeEmissiveTexture: TextureNode,
     biomeTexCoord: ShaderNodeObject<Node>,
     FLAG_LAND: ShaderNodeObject<Node>,
     FLAG_BIOMES: ShaderNodeObject<Node>
   ): ShaderNodeObject<Node> {
     // Get biome emissive factor from texture (green channel = value, alpha channel = strength factor)
-    const biomeEmissiveColor = vec4(biomeEmissiveTexture.sample(biomeTexCoord)).toVar('biomeEmissiveTexCoord')
-    const biomeEmissiveFactor = mix(this.uniforms.pbr.emissive.y, biomeEmissiveColor.y.mul(10.0), biomeEmissiveColor.w).toVar(
+    const biomeEmissiveTexel = vec4(biomeEmissiveTexture.sample(biomeTexCoord)).toVar('biomeEmissiveTexel')
+    const biomeEmissiveFactor = mix(this.uniforms.pbr.emissive.y, biomeEmissiveTexel.y.mul(10.0), biomeEmissiveTexel.w).toVar(
       'biomeEmissiveFactor',
     )
     const resultEmissiveFactor = mix(this.uniforms.pbr.emissive.x, biomeEmissiveFactor, FLAG_LAND).setName('resultEmissiveFactor')
+    fragmentColor = mix(fragmentColor, biomeTexture.sample(biomeTexCoord), FLAG_BIOMES)
     return fragmentColor.mul(this.uniforms.flags.element(int(4))).mul(resultEmissiveFactor)
   }
 }

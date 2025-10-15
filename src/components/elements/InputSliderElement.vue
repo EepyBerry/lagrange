@@ -130,7 +130,7 @@ input.lg[type='range'] {
     background: var(--lg-contrast-focus);
     border-radius: 2px;
     border: none;
-    width: 4px;
+    width: 6px;
     height: 1.5rem;
     cursor: pointer;
   }
@@ -139,7 +139,7 @@ input.lg[type='range'] {
     background: var(--lg-contrast-focus);
     border-radius: 2px;
     border: none;
-    width: 4px;
+    width: 6px;
     height: 1.5rem;
     cursor: pointer;
   }
