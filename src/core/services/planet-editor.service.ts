@@ -7,7 +7,7 @@ import * as BakingHelper from '@/core/helpers/baking.helper'
 import { EditorSceneCreationMode, type BakingTarget, type EditorSceneData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
 import { regeneratePRNGIfNecessary } from '@/core/utils/math-utils'
-import { exportMeshesToGLTF } from '../helpers/export.helper'
+import * as ExportHelper from '../helpers/export.helper'
 import { idb } from '@/dexie.config'
 import { sleep } from '@/core/utils/utils'
 import * as UniformHelper from '../helpers/uniform.helper'
@@ -167,7 +167,7 @@ export async function exportPlanetPreview(): Promise<string> {
   await sleep(50)
   LG_SCENE_DATA.lensFlare!.mesh.visible = false
   const dataURL = await PreviewHelper.generatePlanetPreview(LG_PLANET_DATA.value)
-  LG_SCENE_DATA.lensFlare!.mesh.visible = true
+  LG_SCENE_DATA.lensFlare!.mesh.visible = LG_PLANET_DATA.value.lensFlareEnabled
   return dataURL
 }
 
@@ -208,7 +208,13 @@ export async function exportPlanetToGLTF(progressDialog: {
       bakePlanetMetallicRoughnessTex.minFilter = THREE.NearestFilter
       bakePlanetMetallicRoughnessTex.magFilter = THREE.NearestFilter
     }
-    const bakeEmissivity = BakingHelper.createBakingEmissivityMap(LG_PLANET_DATA.value, LG_SCENE_DATA.planet.surfaceTexture!, LG_SCENE_DATA.planet.biomeEmissiveLayersTexture!.texture)
+    LG_SCENE_DATA.planet.biomeEmissiveLayersTexture!.debugSaveTexture()
+    const bakeEmissivity = BakingHelper.createBakingEmissivityMap(
+      LG_PLANET_DATA.value,
+      LG_SCENE_DATA.planet.surfaceTexture!,
+      LG_SCENE_DATA.planet.biomeLayersTexture!.texture,
+      LG_SCENE_DATA.planet.biomeEmissiveLayersTexture!.texture,
+    )
     const bakePlanetEmissivityTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeEmissivity)
     if (appSettings?.bakingPixelize) {
       bakePlanetEmissivityTex.minFilter = THREE.NearestFilter
@@ -235,7 +241,10 @@ export async function exportPlanetToGLTF(progressDialog: {
       normalMap: bakePlanetNormalTex,
       normalScale: new THREE.Vector2(LG_PLANET_DATA.value.planetSurfaceBumpStrength).multiplyScalar(2.0),
     })
-    bakingTargets.push({ mesh: bakePlanet, textures: [bakePlanetSurfaceTex, bakePlanetMetallicRoughnessTex, bakePlanetHeightTex] })
+    bakingTargets.push({
+      mesh: bakePlanet,
+      textures: [bakePlanetSurfaceTex, bakePlanetMetallicRoughnessTex, bakePlanetHeightTex],
+    })
 
     // ----------------------------------- Bake clouds ----------------------------------
     if (LG_PLANET_DATA.value.cloudsEnabled) {
@@ -297,7 +306,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     bakePlanet.rotateOnAxis(bakePlanet.up, degToRad(LG_PLANET_DATA.value.planetRotation))
 
     bakePlanet.name = LG_PLANET_DATA.value.planetName
-    exportMeshesToGLTF([bakePlanet], LG_PLANET_DATA.value.planetName.replaceAll(' ', '_') + `_${w}`)
+    ExportHelper.exportMeshesToGLTF([bakePlanet], LG_PLANET_DATA.value.planetName.replaceAll(' ', '_') + `_${w}`)
   } catch (error) {
     console.error(error)
     progressDialog.setError(error)

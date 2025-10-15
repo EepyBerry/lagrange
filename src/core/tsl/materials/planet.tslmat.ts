@@ -11,9 +11,12 @@ import {
 } from 'three/webgpu'
 import {
   bitangentLocal,
+  bool,
   div,
   EPSILON,
   float,
+  Fn,
+  If,
   int,
   mat3,
   min,
@@ -225,8 +228,8 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       },
       baking: {
         unifiedSurfaceTexture: texture(data.baking.unifiedSurfaceTexture),
-        heightMapTexture: texture(data.baking.heightMapTexture)
-      }
+        heightMapTexture: texture(data.baking.heightMapTexture),
+      },
     }
   }
 
@@ -277,7 +280,14 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       this.uniforms.pbr.metallicRoughness.w,
       FLAG_LAND,
     )
-    material.emissiveNode = this.applyEmissiveIntensity(colour, this.uniforms.biomes.baseTexture, this.uniforms.biomes.emissiveTexture, biomeTexCoord, FLAG_LAND, FLAG_BIOMES)
+    material.emissiveNode = this.applyEmissiveIntensity(
+      colour,
+      this.uniforms.biomes.baseTexture,
+      this.uniforms.biomes.emissiveTexture,
+      biomeTexCoord,
+      FLAG_LAND,
+      FLAG_BIOMES,
+    )
     return material
   }
 
@@ -322,8 +332,8 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar()
 
     // render PBR as green/blue mask
-    const outRoughness = mix(this.uniforms.pbr.metallicRoughness.w, this.uniforms.pbr.metallicRoughness.y, FLAG_LAND)
-    const outMetalness = mix(this.uniforms.pbr.metallicRoughness.x, this.uniforms.pbr.metallicRoughness.z, FLAG_LAND)
+    const outRoughness = mix(this.uniforms.pbr.metallicRoughness.x, this.uniforms.pbr.metallicRoughness.z, FLAG_LAND)
+    const outMetalness = mix(this.uniforms.pbr.metallicRoughness.y, this.uniforms.pbr.metallicRoughness.w, FLAG_LAND)
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial()
@@ -333,33 +343,46 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   }
 
   buildEmissivityBakeMaterial(): MeshBasicNodeMaterial {
-    if (!this.uniforms.baking.unifiedSurfaceTexture) {
-      throw new Error('Cannot build material with missing uniform: baking.unifiedSurfaceTexture')
+    if (!this.uniforms.surface.baseTexture) {
+      throw new Error('Cannot build material with missing uniform: surface.baseTexture')
+    }
+    if (!this.uniforms.biomes.baseTexture) {
+      throw new Error('Cannot build material with missing uniform: biomes.baseTexture')
     }
     if (!this.uniforms.biomes.emissiveTexture) {
       throw new Error('Cannot build material with missing uniform: biomes.emissiveTexture')
     }
-    
+
     // XYZ Warping + displacement
     const vPos = this.applyXYZTransformations(positionLocal)
 
     // Heightmap & global flags
     const heightLimit = float(1.0).sub(EPSILON)
     const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar()
-    const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar()
-    const FLAG_BIOMES = FLAG_LAND.mul(float(this.uniforms.flags.element(int(3))))
+    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, height).toVar()
+    const FLAG_BIOMES_ENABLED = FLAG_SURFACE_TYPE.mul(float(this.uniforms.flags.element(int(3))))
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord')
-    const colour = vec3(this.uniforms.baking!.unifiedSurfaceTexture!.sample(texCoord).xyz)
+    const colour = vec3(this.uniforms.surface!.baseTexture!.sample(texCoord).xyz)
 
     // get biome texcoords for emissivity calculations
-    const biomeTexCoord = this.calculateBiomeTextureCoordinates(vPos, heightLimit, FLAG_BIOMES).toVar('biomeTexCoord')
+    const biomeTexCoord = this.calculateBiomeTextureCoordinates(vPos, heightLimit, FLAG_BIOMES_ENABLED).toVar('biomeTexCoord')
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial()
     material.vertexNode = flattenUV(uv())
-    material.colorNode = vec4(this.applyEmissiveIntensity(colour, this.uniforms.baking.unifiedSurfaceTexture, this.uniforms.biomes.emissiveTexture!, biomeTexCoord, FLAG_LAND, FLAG_BIOMES).xyz, 1.0)
+    material.colorNode = vec4(
+      this.applyEmissiveIntensity(
+        colour,
+        this.uniforms.biomes.baseTexture,
+        this.uniforms.biomes.emissiveTexture!,
+        biomeTexCoord,
+        FLAG_SURFACE_TYPE,
+        FLAG_BIOMES_ENABLED,
+      ).xyz,
+      1.0,
+    )
     return material
   }
 
@@ -369,12 +392,12 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
     // Heightmap & global flags
     const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar()
-    const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar()
+    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, height).toVar()
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial()
     material.vertexNode = flattenUV(uv())
-    material.colorNode = vec4(mix(vec3(this.uniforms.pbr.waterLevel), vec3(height), FLAG_LAND), 1.0)
+    material.colorNode = vec4(mix(vec3(this.uniforms.pbr.waterLevel), vec3(height), FLAG_SURFACE_TYPE), 1.0)
     return material
   }
 
@@ -384,7 +407,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     }
 
     const texNode = this.uniforms.baking.heightMapTexture
-    const offset = vec3(-1.0 / texNode.value.width, 0.0, 1.0 /  texNode.value.height).toVar('offset')
+    const offset = vec3(-1.0 / texNode.value.width, 0.0, 1.0 / texNode.value.height).toVar('offset')
 
     // Sample height-map at 8 points around the current position
     const s00 = texNode.sample(uv().add(offset.xx)).x.toVar('s00')
@@ -420,15 +443,15 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   private calculateBiomeTextureCoordinates(
     vPos: ShaderNodeObject<Node>,
     heightLimit: ShaderNodeObject<Node>,
-    FLAG_BIOMES: ShaderNodeObject<Node>,
+    FLAG_BIOMES_ENABLED: ShaderNodeObject<Node>,
   ) {
     const temp = float(
       computeTemperature(vPos, this.uniforms.biomes.temperatureNoise, this.uniforms.biomes.temperatureMode),
     )
     const humi = float(computeHumidity(vPos, this.uniforms.biomes.humidityNoise, this.uniforms.biomes.humidityMode))
     return vec2(
-      float(mix(0.0, temp, FLAG_BIOMES)).min(heightLimit),
-      float(mix(0.0, humi, FLAG_BIOMES)).min(heightLimit)
+      float(mix(0.0, temp, FLAG_BIOMES_ENABLED)).min(heightLimit),
+      float(mix(0.0, humi, FLAG_BIOMES_ENABLED)).min(heightLimit),
     )
   }
 
@@ -436,9 +459,9 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     colour: ShaderNodeObject<Node>,
     texture: TextureNode,
     texCoords: ShaderNodeObject<Node>,
-    FLAG_BIOMES: ShaderNodeObject<Node>,
+    FLAG_BIOMES_ENABLED: ShaderNodeObject<Node>,
   ): ShaderNodeObject<Node> {
-    return mix(colour, sampleBiomeTexture(texture, texCoords.x, texCoords.y, colour), FLAG_BIOMES)
+    return mix(colour, sampleBiomeTexture(texture, texCoords.x, texCoords.y, colour), FLAG_BIOMES_ENABLED)
   }
 
   private applyBumpMap(vPos: ShaderNodeObject<Node>, height: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
@@ -461,21 +484,31 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     ).toVar()
   }
 
-  private applyEmissiveIntensity(
-    fragmentColor: ShaderNodeObject<Node>,
-    biomeTexture: TextureNode,
-    biomeEmissiveTexture: TextureNode,
-    biomeTexCoord: ShaderNodeObject<Node>,
-    FLAG_LAND: ShaderNodeObject<Node>,
-    FLAG_BIOMES: ShaderNodeObject<Node>
-  ): ShaderNodeObject<Node> {
-    // Get biome emissive factor from texture (green channel = value, alpha channel = strength factor)
-    const biomeEmissiveTexel = vec4(biomeEmissiveTexture.sample(biomeTexCoord)).toVar('biomeEmissiveTexel')
-    const biomeEmissiveFactor = mix(this.uniforms.pbr.emissive.y, biomeEmissiveTexel.y.mul(10.0), biomeEmissiveTexel.w).toVar(
-      'biomeEmissiveFactor',
-    )
-    const resultEmissiveFactor = mix(this.uniforms.pbr.emissive.x, biomeEmissiveFactor, FLAG_LAND).setName('resultEmissiveFactor')
-    fragmentColor = mix(fragmentColor, biomeTexture.sample(biomeTexCoord), FLAG_BIOMES)
-    return fragmentColor.mul(this.uniforms.flags.element(int(4))).mul(resultEmissiveFactor)
-  }
+  private applyEmissiveIntensity = Fn(
+    ([fragmentColor, biomeTexture, biomeEmissiveTexture, biomeTexCoord, FLAG_SURFACE_TYPE, FLAG_BIOMES_ENABLED]: [
+      ShaderNodeObject<Node>,
+      TextureNode,
+      TextureNode,
+      ShaderNodeObject<Node>,
+      ShaderNodeObject<Node>,
+      ShaderNodeObject<Node>,
+    ]) => {
+      const emissiveFactor = mix(this.uniforms.pbr.emissive.x, this.uniforms.pbr.emissive.y, FLAG_SURFACE_TYPE).toVar(
+        'emissiveFactor',
+      )
+
+      // Get biome emissive factor from texture (green channel = value, alpha channel = strength factor)
+      const biomeEmissiveTexel = vec4(biomeEmissiveTexture.sample(biomeTexCoord)).toVar('biomeEmissiveTexel')
+      const biomeColor = biomeTexture.sample(biomeTexCoord)
+      //emissiveFactor.assign(mix(this.uniforms.pbr.emissive.y, biomeEmissiveTexel.y.mul(10.0), biomeEmissiveTexel.w))
+
+      // If on a biome, override fragment color & emissive factor
+      /* If(biomeColor.w.greaterThanEqual(EPSILON), () => {
+        emissiveFactor.assign(mix(this.uniforms.pbr.emissive.y, biomeEmissiveTexel.y.mul(10.0), 1.0))
+      }) */
+
+      //fragmentColor = mix(fragmentColor, biomeTexture.sample(biomeTexCoord), FLAG_BIOMES)
+      return fragmentColor.mul(this.uniforms.flags.element(int(4))).mul(emissiveFactor)
+    },
+  )
 }

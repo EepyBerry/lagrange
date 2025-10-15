@@ -38,12 +38,13 @@ export function createBakingMetallicRoughnessMap(data: PlanetData): THREE.Mesh {
   return mesh
 }
 
-export function createBakingEmissivityMap(data: PlanetData, surfaceTex: THREE.DataTexture, biomeEmissiveTex: THREE.DataTexture): THREE.Mesh {
+export function createBakingEmissivityMap(data: PlanetData, surfaceTex: THREE.DataTexture, biomesTex: THREE.DataTexture, biomeEmissiveTex: THREE.DataTexture): THREE.Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality)
   geometry.computeTangents()
 
   const dataConverter = new PlanetDataConverter(data)
     .withSurfaceTexture(surfaceTex)
+    .withBiomesTexture(biomesTex)
     .withBiomesEmissiveTexture(biomeEmissiveTex)
   const tslMaterial = new PlanetTSLMaterial(dataConverter.convert())
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildEmissivityBakeMaterial())
