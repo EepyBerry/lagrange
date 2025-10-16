@@ -208,7 +208,7 @@ export async function exportPlanetToGLTF(progressDialog: {
       bakePlanetMetallicRoughnessTex.minFilter = THREE.NearestFilter
       bakePlanetMetallicRoughnessTex.magFilter = THREE.NearestFilter
     }
-    LG_SCENE_DATA.planet.biomeEmissiveLayersTexture!.debugSaveTexture()
+    //LG_SCENE_DATA.planet.biomeEmissiveLayersTexture!.debugSaveTexture()
     const bakeEmissivity = BakingHelper.createBakingEmissivityMap(
       LG_PLANET_DATA.value,
       LG_SCENE_DATA.planet.surfaceTexture!,

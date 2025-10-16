@@ -365,10 +365,11 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord')
-    const colour = vec3(this.uniforms.surface!.baseTexture!.sample(texCoord).xyz)
+    let colour = vec3(this.uniforms.surface!.baseTexture!.sample(texCoord).xyz)
 
     // get biome texcoords for emissivity calculations
     const biomeTexCoord = this.calculateBiomeTextureCoordinates(vPos, heightLimit, FLAG_BIOMES_ENABLED).toVar('biomeTexCoord')
+    colour = this.renderBiomes(colour, this.uniforms.biomes.baseTexture!, biomeTexCoord, FLAG_BIOMES_ENABLED)
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial()
@@ -499,7 +500,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
         const biomeTexel = vec4(biomeTexture.sample(flippedBiomeTexCoord)).toVar('biomeTexel')
         const biomeEmissiveTexel = vec4(biomeEmissiveTexture.sample(flippedBiomeTexCoord)).toVar('biomeEmissiveTexel')
         const emissiveFactor = mix(this.uniforms.pbr.emissive.y, biomeEmissiveTexel.y.mul(10.0), biomeEmissiveTexel.w)
-        fragmentColor.mixAssign(biomeTexel, FLAG_BIOMES_ENABLED)
+        fragmentColor.assign(mix(fragmentColor, biomeTexel.xyz, FLAG_BIOMES_ENABLED))
         fragmentColor.mulAssign(mul(float(this.uniforms.flags.element(int(4))), emissiveFactor))
       }).Else(() => {
         fragmentColor.mulAssign(mul(float(this.uniforms.flags.element(int(4))), this.uniforms.pbr.emissive.x))
