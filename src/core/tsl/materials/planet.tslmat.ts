@@ -21,6 +21,7 @@ import {
   mat3,
   min,
   mix,
+  mul,
   normalLocal,
   positionLocal,
   step,
@@ -493,22 +494,17 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       ShaderNodeObject<Node>,
       ShaderNodeObject<Node>,
     ]) => {
-      const emissiveFactor = mix(this.uniforms.pbr.emissive.x, this.uniforms.pbr.emissive.y, FLAG_SURFACE_TYPE).toVar(
-        'emissiveFactor',
-      )
-
-      // Get biome emissive factor from texture (green channel = value, alpha channel = strength factor)
-      const biomeEmissiveTexel = vec4(biomeEmissiveTexture.sample(biomeTexCoord)).toVar('biomeEmissiveTexel')
-      const biomeColor = biomeTexture.sample(biomeTexCoord)
-      //emissiveFactor.assign(mix(this.uniforms.pbr.emissive.y, biomeEmissiveTexel.y.mul(10.0), biomeEmissiveTexel.w))
-
-      // If on a biome, override fragment color & emissive factor
-      /* If(biomeColor.w.greaterThanEqual(EPSILON), () => {
-        emissiveFactor.assign(mix(this.uniforms.pbr.emissive.y, biomeEmissiveTexel.y.mul(10.0), 1.0))
-      }) */
-
-      //fragmentColor = mix(fragmentColor, biomeTexture.sample(biomeTexCoord), FLAG_BIOMES)
-      return fragmentColor.mul(this.uniforms.flags.element(int(4))).mul(emissiveFactor)
+      const flippedBiomeTexCoord = vec2(biomeTexCoord.y, biomeTexCoord.x).setName('flippedBiomeTexCoord')
+      If(FLAG_SURFACE_TYPE.equal(1.0), () => {
+        const biomeTexel = vec4(biomeTexture.sample(flippedBiomeTexCoord)).toVar('biomeTexel')
+        const biomeEmissiveTexel = vec4(biomeEmissiveTexture.sample(flippedBiomeTexCoord)).toVar('biomeEmissiveTexel')
+        const emissiveFactor = mix(this.uniforms.pbr.emissive.y, biomeEmissiveTexel.y.mul(10.0), biomeEmissiveTexel.w)
+        fragmentColor.mixAssign(biomeTexel, FLAG_BIOMES_ENABLED)
+        fragmentColor.mulAssign(mul(float(this.uniforms.flags.element(int(4))), emissiveFactor))
+      }).Else(() => {
+        fragmentColor.mulAssign(mul(float(this.uniforms.flags.element(int(4))), this.uniforms.pbr.emissive.x))
+      })
+      return fragmentColor
     },
   )
 }
