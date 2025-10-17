@@ -220,7 +220,6 @@ export async function exportPlanetToGLTF(progressDialog: {
       bakePlanetEmissivityTex.minFilter = THREE.NearestFilter
       bakePlanetEmissivityTex.magFilter = THREE.NearestFilter
     }
-    saveAs(await bakePlanetEmissivityTex.image.convertToBlob(), 'test.png')
 
     progressDialog.setProgress(4)
     await sleep(50)

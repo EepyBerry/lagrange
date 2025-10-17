@@ -286,8 +286,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       this.uniforms.biomes.baseTexture,
       this.uniforms.biomes.emissiveTexture,
       biomeTexCoord,
-      FLAG_LAND,
-      FLAG_BIOMES
+      FLAG_LAND
     )
     return material
   }
@@ -379,8 +378,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
         this.uniforms.biomes.baseTexture,
         this.uniforms.biomes.emissiveTexture,
         biomeTexCoord,
-        FLAG_SURFACE_TYPE,
-        FLAG_BIOMES_ENABLED
+        FLAG_SURFACE_TYPE
       ).xyz,
       1.0,
     )
@@ -486,11 +484,10 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   }
 
   private applyEmissiveIntensity = Fn(
-    ([fragmentColor, biomeTexture, biomeEmissiveTexture, biomeTexCoord, FLAG_SURFACE_TYPE, FLAG_BIOMES_ENABLED]: [
+    ([fragmentColor, biomeTexture, biomeEmissiveTexture, biomeTexCoord, FLAG_SURFACE_TYPE]: [
       ShaderNodeObject<Node>,
       TextureNode,
       TextureNode,
-      ShaderNodeObject<Node>,
       ShaderNodeObject<Node>,
       ShaderNodeObject<Node>,
     ]) => {
