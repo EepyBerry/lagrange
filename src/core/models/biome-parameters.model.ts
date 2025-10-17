@@ -24,6 +24,9 @@ export class BiomeParameters extends ChangeTracker {
   private _emissiveOverride: boolean = false
   private _emissiveIntensity: number = 0.0
 
+  // Parent values
+  private _parentEmissiveIntensity: number = 0.0
+
   constructor(
     changedPropsRef: ChangedProp[],
     changePrefix: string,
@@ -132,6 +135,13 @@ export class BiomeParameters extends ChangeTracker {
   public set emissiveIntensity(value: number) {
     this._emissiveIntensity = clamp(value, 0, 10)
     this.markForChange(this._changePrefix, { data: this })
+  }
+
+  public get parentEmissiveIntensity(): number {
+    return this._parentEmissiveIntensity
+  }
+  public set parentEmissiveIntensity(value: number) {
+    this._parentEmissiveIntensity = value
   }
 
   public static createRandom(changedProps: ChangedProp[], changePrefix: string) {

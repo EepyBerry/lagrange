@@ -283,9 +283,11 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     )
     material.emissiveNode = this.applyEmissiveIntensity(
       colour,
+      this.uniforms.biomes.baseTexture,
       this.uniforms.biomes.emissiveTexture,
       biomeTexCoord,
       FLAG_LAND,
+      FLAG_BIOMES
     )
     return material
   }
@@ -374,9 +376,11 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     material.fragmentNode = vec4(
       this.applyEmissiveIntensity(
         colour,
+        this.uniforms.biomes.baseTexture,
         this.uniforms.biomes.emissiveTexture,
         biomeTexCoord,
         FLAG_SURFACE_TYPE,
+        FLAG_BIOMES_ENABLED
       ).xyz,
       1.0,
     )
@@ -482,9 +486,11 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   }
 
   private applyEmissiveIntensity = Fn(
-    ([fragmentColor, biomeEmissiveTexture, biomeTexCoord, FLAG_SURFACE_TYPE]: [
+    ([fragmentColor, biomeTexture, biomeEmissiveTexture, biomeTexCoord, FLAG_SURFACE_TYPE, FLAG_BIOMES_ENABLED]: [
       ShaderNodeObject<Node>,
       TextureNode,
+      TextureNode,
+      ShaderNodeObject<Node>,
       ShaderNodeObject<Node>,
       ShaderNodeObject<Node>,
     ]) => {
@@ -492,8 +498,15 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       const emissiveColor = vec3(fragmentColor).toVar('emissiveColor')
       const flippedBiomeTexCoord = vec2(biomeTexCoord.y, biomeTexCoord.x).setName('flippedBiomeTexCoord')
       If(FLAG_SURFACE_TYPE.equal(1.0), () => {
+        // calculate emissive
         const biomeEmissiveTexel = vec4(biomeEmissiveTexture.sample(flippedBiomeTexCoord)).toVar('biomeEmissiveTexel')
         const emissiveFactor = mix(this.uniforms.pbr.emissive.y, biomeEmissiveTexel.y.mul(10.0), biomeEmissiveTexel.w).toVar('emissiveFactor')
+
+        // override color to biome value if we're on a biome
+        const biomeColor = vec3(biomeTexture.sample(flippedBiomeTexCoord).xyz).setName('biomeTexel')
+        emissiveColor.assign(mix(emissiveColor, biomeColor, step(1e-3, biomeEmissiveTexel.w)))
+
+        // Assign and return
         emissiveColor.mulAssign(mul(float(this.uniforms.flags.element(int(4))), emissiveFactor))
       }).Else(() => {
         emissiveColor.mulAssign(mul(float(this.uniforms.flags.element(int(4))), this.uniforms.pbr.emissive.x))

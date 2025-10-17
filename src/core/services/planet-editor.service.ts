@@ -48,11 +48,11 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   LG_SCENE_DATA.renderer!.domElement.ariaLabel = '3D planet viewer'
   canvas.appendChild(LG_SCENE_DATA.renderer!.domElement)
 
-  LG_SCENE_DATA.renderer!.debug.getShaderAsync(
+  /* LG_SCENE_DATA.renderer!.debug.getShaderAsync(
     LG_SCENE_DATA.scene,
     LG_SCENE_DATA.camera,
     LG_SCENE_DATA.planet.mesh!,
-  ).then((data) => console.log(data.fragmentShader))
+  ).then((data) => console.log(data.fragmentShader)) */
 }
 
 // ------------------------------------------------------------------------------------------------ //

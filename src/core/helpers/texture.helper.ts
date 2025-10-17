@@ -97,7 +97,7 @@ export function fillBiomeEmissivityLayer(biome: BiomeParameters, canvas: Offscre
   // Modulate emissivity value by biome intensity (10 = max value)
   // Note: only using green channel, which the human eye is more sensitive to
   const texColor = new Color('#000000')
-  texColor.g = biome.emissiveIntensity / 10.0
+  texColor.g = (biome.emissiveOverride ? biome.emissiveIntensity : biome.parentEmissiveIntensity) / 10.0
   // Early return if smoothness is zero
   if (biome.smoothness <= Number.EPSILON) {
     fillRect(canvas, biomeRect, biome.color)

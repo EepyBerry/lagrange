@@ -231,7 +231,7 @@ export default class PlanetData extends ChangeTracker {
   public set planetGroundEmissiveIntensity(value: number) {
     const v = clamp(value, 0, 10)
     this._planetGroundEmissiveIntensity = v
-    this._biomesParams.filter((b) => b.emissiveOverride === false).forEach((b) => (b.emissiveIntensity = v))
+    this._biomesParams.forEach((b) => (b.parentEmissiveIntensity = v))
     this.markForChange('_planetGroundEmissiveIntensity')
   }
 
@@ -630,6 +630,7 @@ export default class PlanetData extends ChangeTracker {
         0.25,
       ),
     ]
+    this._biomesParams.forEach((b) => (b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity))
 
     // Clouds
     this._cloudsEnabled = true
@@ -724,23 +725,25 @@ export default class PlanetData extends ChangeTracker {
     this.biomesParams.push(
       // prettier-ignore
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(data._biomesParams ?? []).map( (params: any) =>
-          new BiomeParameters(
-            this.changedProps,
-            '_biomesParameters[element]',
-            {
-              temperatureMin: params._tempMin ?? 0.0,
-              temperatureMax: params._tempMax ?? 0.5,
-              humidityMin: params._humiMin ?? 0.0,
-              humidityMax: params._humiMax ?? 1.0,
-            },
-            new Color(params._color),
-            params._smoothness ?? 0.25,
-            params._emissiveOverride ?? false,
-            params._emissiveIntensity ?? 0.0,
-            params._id,
-          ),
-      ),
+      ...(data._biomesParams ?? []).map( (params: any) => {
+        const b = new BiomeParameters(
+          this.changedProps,
+          '_biomesParameters[element]',
+          {
+            temperatureMin: params._tempMin ?? 0.0,
+            temperatureMax: params._tempMax ?? 0.5,
+            humidityMin: params._humiMin ?? 0.0,
+            humidityMax: params._humiMax ?? 1.0,
+          },
+          new Color(params._color),
+          params._smoothness ?? 0.25,
+          params._emissiveOverride ?? false,
+          params._emissiveIntensity ?? 0.0,
+          params._id,
+        )
+        b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity
+        return b
+      })
     )
 
     // Clouds
@@ -811,8 +814,10 @@ export default class PlanetData extends ChangeTracker {
     this.planetRotation = clampedPRNG(0, 360)
     this.planetWaterRoughness = clampedPRNG(0, 1)
     this.planetWaterMetalness = clampedPRNG(0, 1)
+    this.planetWaterEmissiveIntensity = clampedPRNG(0, 10)
     this.planetGroundRoughness = clampedPRNG(0, 1)
     this.planetGroundMetalness = clampedPRNG(0, 1)
+    this.planetGroundEmissiveIntensity = clampedPRNG(0, 10)
     this.planetWaterLevel = clampedPRNG(0, 1)
 
     // Surface
@@ -832,7 +837,9 @@ export default class PlanetData extends ChangeTracker {
     this.biomesHumidityNoise.randomize()
     this.biomesParams.splice(0)
     for (let i = 0; i < Math.round(clampedPRNG(0, 8)); i++) {
-      this.biomesParams.push(BiomeParameters.createRandom(this.changedProps, '_biomesParameters[element]'))
+      const b = BiomeParameters.createRandom(this.changedProps, '_biomesParameters[element]')
+      b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity
+      this.biomesParams.push(b)
     }
 
     // Clouds
