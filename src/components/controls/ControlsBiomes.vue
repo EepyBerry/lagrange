@@ -158,7 +158,7 @@
               @delete="deleteBiome"
             />
           </template>
-          <button class="lg action-add" @click="addBiome">
+          <button v-show="LG_PLANET_DATA.biomesParams.length < 16" class="lg action-add" @click="addBiome">
             <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
             {{ $t('editor.$action_add') }}
           </button>
@@ -173,14 +173,23 @@ import ParameterBiome from '../parameters/ParameterBiome.vue'
 import { GradientMode } from '@/core/types'
 import { BiomeParameters } from '@/core/models/biome-parameters.model'
 import { Color } from 'three'
+import { ChangeAction } from '@/core/models/change-tracker.model'
 
-function moveBiome(idx: number, diff: 1 | -1) {
+/**
+ * Moves a biome up or down the list
+ * @param idx the numbered index of the biome in `LG_PLANET_DATA.value.biomesParams`
+ * @param diff index difference: -1 means towards the start of the list (up), 1 means towards the end of the list (down)
+ */
+function moveBiome(idx: number, diff: -1 | 1) {
   const element = LG_PLANET_DATA.value.biomesParams[idx]
   LG_PLANET_DATA.value.biomesParams.splice(idx, 1)
   LG_PLANET_DATA.value.biomesParams.splice(idx + diff, 0, element)
-  LG_PLANET_DATA.value.markForChange('_biomesParameters')
+  LG_PLANET_DATA.value.markForChange('_biomesParameters[element]', {arrayIndex:idx, data: element}, diff === -1 ? ChangeAction.SORT_UP : ChangeAction.SORT_DOWN)
 }
 
+/**
+ * Creates a new biome that is subsequently added to the end of `LG_PLANET_DATA.value.biomesParams`
+ */
 function addBiome() {
   const newBiome = new BiomeParameters(
     LG_PLANET_DATA.value.changedProps,
@@ -195,16 +204,20 @@ function addBiome() {
     0.2,
   )
   LG_PLANET_DATA.value.biomesParams.push(newBiome)
-  LG_PLANET_DATA.value.markForChange('_biomesParameters')
+  LG_PLANET_DATA.value.markForChange('_biomesParameters[element]', {arrayIndex:LG_PLANET_DATA.value.biomesParams.length-1, data: newBiome}, ChangeAction.ADD)
 }
 
+/**
+ * Deletes a biome
+ * @param id biome ID (nanoid)
+ */
 function deleteBiome(id: string) {
   const biomeIdx = LG_PLANET_DATA.value.biomesParams.findIndex((b) => b.id === id)
   if (biomeIdx < 0) {
     throw new Error('Cannot delete non-existent biome!')
   }
   LG_PLANET_DATA.value.biomesParams.splice(biomeIdx, 1)
-  LG_PLANET_DATA.value.markForChange('_biomesParameters')
+  LG_PLANET_DATA.value.markForChange('_biomesParameters[element]', {arrayIndex: biomeIdx}, ChangeAction.DELETE)
 }
 </script>
 <style scoped lang="scss">

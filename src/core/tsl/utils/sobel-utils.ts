@@ -1,6 +1,6 @@
 import { Fn, float, mat3, mul, normalize, vec3 } from 'three/tsl'
-import type { UniformMatrix3Node, UniformNumberNode } from '../types'
-import { getMatrixElement } from './math.tslutil'
+import type { UniformMatrix3Node, UniformNumberNode } from '../tsl-types'
+import { getMatrixElement } from './math-utils'
 
 export const sobel = Fn(([i_heights, i_strength]: [UniformMatrix3Node, UniformNumberNode]) => {
   const scale = float(i_strength).toVar('scale')
@@ -34,4 +34,11 @@ export const sobel = Fn(([i_heights, i_strength]: [UniformMatrix3Node, UniformNu
       .mul(0.5)
       .add(0.5),
   )
+}).setLayout({
+  name: 'LG_SOBEL_sobel',
+  type: 'vec3',
+  inputs: [
+    { name: 'pHeights', type: 'mat3' },
+    { name: 'pStrength', type: 'float' },
+  ],
 })

@@ -1,5 +1,5 @@
-import { vec3, cross, normalize, mix, Fn, normalLocal } from 'three/tsl'
-import type { UniformNumberNode, UniformVector3Node } from '../types'
+import { vec3, cross, normalize, mix, Fn } from 'three/tsl'
+import type { UniformNumberNode, UniformVector3Node } from '../tsl-types'
 
 // Transpiled (GLSL) from Daniel Greenheck:
 // https://github.com/dgreenheck/threejs-procedural-planets
@@ -25,9 +25,9 @@ import type { UniformNumberNode, UniformVector3Node } from '../types'
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-// TODO: add setLayout when feature is stabilised in TSL
 export const applyBump = /*@__PURE__*/ Fn(
-  ([i_position, i_dx, i_dy, i_height, i_dxHeight, i_dyHeight, i_radius, i_strength]: [
+  ([i_normal, i_position, i_dx, i_dy, i_height, i_dxHeight, i_dyHeight, i_radius, i_strength]: [
+    UniformVector3Node,
     UniformVector3Node,
     UniformVector3Node,
     UniformVector3Node,
@@ -41,12 +41,13 @@ export const applyBump = /*@__PURE__*/ Fn(
     const dxPos = vec3(i_position.add(i_dx)).mul(i_radius.add(i_dxHeight)).toVar('dxPos')
     const dyPos = vec3(i_position.add(i_dy)).mul(i_radius.add(i_dyHeight)).toVar('dyPos')
     const bumpN = vec3(normalize(cross(dxPos.sub(hPos), dyPos.sub(hPos)))).toVar('bumpN')
-    return normalize(mix(normalLocal, bumpN, i_strength))
+    return normalize(mix(i_normal, bumpN, i_strength))
   },
-) /* .setLayout({
+).setLayout({
   name: 'LG_BUMP_applyBump',
   type: 'vec3',
   inputs: [
+    { name: 'normal', type: 'vec3' },
     { name: 'pos', type: 'vec3' },
     { name: 'dx', type: 'vec3' },
     { name: 'dy', type: 'vec3' },
@@ -56,4 +57,4 @@ export const applyBump = /*@__PURE__*/ Fn(
     { name: 'radius', type: 'float' },
     { name: 'strength', type: 'float' },
   ],
-}) */
+})

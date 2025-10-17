@@ -1,6 +1,6 @@
 import {
   Color,
-  DataTexture,
+  Texture,
   MeshBasicNodeMaterial,
   MeshStandardNodeMaterial,
   Node,
@@ -34,8 +34,8 @@ import type {
   UniformVector3Node,
   UniformVector4Node,
   WarpingData,
-} from '../types'
-import { flattenUV } from '../utils/vertex.tlsutil'
+} from '../tsl-types'
+import { flattenUV } from '../utils/vertex-utils'
 
 export type CloudsUniformData = {
   flags: {
@@ -49,7 +49,7 @@ export type CloudsUniformData = {
     params: DisplacementData
     noise: NoiseData
   }
-  texture: DataTexture
+  texture: Texture
 }
 export type CloudsUniforms = {
   flags: UniformArrayNode

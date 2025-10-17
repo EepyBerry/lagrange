@@ -1,10 +1,5 @@
 import type { ShaderNodeObject } from 'three/tsl'
-import type { Color, Matrix3, NodeMaterial, UniformNode, Vector2, Vector3, Vector4 } from 'three/webgpu'
-
-export type UniformNodeMaterial<M extends NodeMaterial, U> = {
-  material: M
-  uniforms: U
-}
+import type { Color, Matrix3, UniformNode, Vector2, Vector3, Vector4 } from 'three/webgpu'
 
 // Convenience type declarations, to avoid repeating stuff
 export type UniformBooleanNode = ShaderNodeObject<UniformNode<boolean>>

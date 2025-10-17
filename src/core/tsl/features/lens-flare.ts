@@ -24,7 +24,7 @@ import {
   max,
   smoothstep,
 } from 'three/tsl'
-import type { UniformNumberNode, UniformVector2Node, UniformVector3Node } from '../types'
+import type { UniformNumberNode, UniformVector2Node, UniformVector3Node } from '../tsl-types'
 import type { VaryingNode } from 'three/webgpu'
 
 export const rand = /*@__PURE__*/ Fn(([i_n]: [UniformNumberNode]) => {

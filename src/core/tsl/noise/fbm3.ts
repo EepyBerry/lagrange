@@ -1,6 +1,6 @@
 import { float, floor, Fn, fract, int, Loop, mul, sub, vec2, vec3, vec4 } from 'three/tsl'
 import type { VaryingNode } from 'three/webgpu'
-import type { UniformNumberNode, UniformVector3Node, UniformVector4Node } from '../types'
+import type { UniformNumberNode, UniformVector3Node, UniformVector4Node } from '../tsl-types'
 
 // X mod 289 operation, float style
 export const mod289f = /*@__PURE__*/ Fn(([i_value]: [UniformNumberNode]) => {

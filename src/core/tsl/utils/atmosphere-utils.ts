@@ -19,7 +19,7 @@ import {
   int,
   vec4,
 } from 'three/tsl'
-import type { UniformNumberNode, UniformVector3Node } from '../types'
+import type { UniformNumberNode, UniformVector3Node } from '../tsl-types'
 import type { Node } from 'three/webgpu'
 
 const MAX = 10000

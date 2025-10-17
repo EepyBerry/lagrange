@@ -16,6 +16,8 @@ import type { AtmosphereUniforms } from '@core/tsl/materials/atmosphere.tslmat'
 import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat'
 import type { RingUniforms } from '@core/tsl/materials/ring.tslmat'
 import type { LensFlareUniforms } from '@core/tsl/materials/lens-flare.tslmat'
+import type { LayeredDataTexture } from './utils/texture/layered-data-texture'
+import type { BiomeParameters } from './models/biome-parameters.model'
 
 // ---------------------------------- Editor types ----------------------------------
 export type EditorMessageLevel = 'success' | 'info' | 'warn' | 'wip'
@@ -53,14 +55,6 @@ export enum GradientMode {
   FULLNOISE = 2,
 }
 
-export type Rect = {
-  x: number
-  y: number
-  w: number
-  h: number
-  r?: number
-  b?: number
-}
 export type RawRGBA = {
   r: number
   g: number
@@ -100,8 +94,8 @@ export type PlanetMeshData = {
   surfaceBuffer: Uint8Array
   surfaceTexture?: DataTexture
 
-  biomesBuffer: Uint8Array
-  biomesTexture?: DataTexture
+  biomeLayersTexture?: LayeredDataTexture<BiomeParameters>
+  biomeEmissiveLayersTexture?: LayeredDataTexture<BiomeParameters>
 }
 export type CloudsMeshData = {
   mesh?: Mesh

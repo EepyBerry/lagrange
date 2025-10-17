@@ -10,6 +10,7 @@
   --lg-logo: #354852;
   --lg-input: #0f191f;
   --lg-input-focus: #15242c;
+  --lg-input-disabled: #1f1f1f;
   --lg-overlay: #2f373e44;
   --lg-border-disabled: #242424;
 
@@ -66,6 +67,7 @@
   --lg-logo: #412c5a;
   --lg-input: #1d1027;
   --lg-input-focus: #311e42;
+  --lg-input-disabled: #181818;
   --lg-overlay: #2f333e44;
 
   --lg-contrast-light: #0b140f;
@@ -105,6 +107,7 @@
   --lg-logo: #573a0b;
   --lg-input: #181108;
   --lg-input-focus: #2c2415;
+  --lg-input-disabled: #141414;
   --lg-overlay: #3e392f44;
 
   --lg-contrast-light: #201900;
@@ -115,7 +118,7 @@
   --lg-button: #573d12;
   --lg-button-hover: #4e3609;
   --lg-button-active: var(--lg-accent);
-  --lg-button-disabled: #313131;
+  --lg-button-disabled: #333333;
   --lg-button-menu-expanded: var(--lg-contrast);
   --lg-button-menu-expanded-hover: #6d5300;
   --lg-button-menu-expanded-active: #5e4800;
