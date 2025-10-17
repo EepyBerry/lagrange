@@ -283,11 +283,9 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     )
     material.emissiveNode = this.applyEmissiveIntensity(
       colour,
-      this.uniforms.biomes.baseTexture,
       this.uniforms.biomes.emissiveTexture,
       biomeTexCoord,
       FLAG_LAND,
-      FLAG_BIOMES,
     )
     return material
   }
@@ -305,17 +303,16 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
     // Heightmap & global flags
     const heightLimit = float(1.0).sub(EPSILON)
-    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar()
-    const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar()
-    const FLAG_BIOMES = FLAG_LAND.mul(float(this.uniforms.flags.element(int(3))))
+    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).setName('height')
+    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, height).setName('FLAG_SURFACE_TYPE')
+    const FLAG_BIOMES_ENABLED = FLAG_SURFACE_TYPE.mul(float(this.uniforms.flags.element(int(3)))).setName('FLAG_BIOMES_ENABLED')
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord')
     let colour = vec3(this.uniforms.surface.baseTexture.sample(texCoord).xyz)
-
     // Render biomes
-    const biomeTexCoord = this.calculateBiomeTextureCoordinates(vPos, heightLimit, FLAG_BIOMES).toVar('biomeTexCoord')
-    colour = this.renderBiomes(colour, this.uniforms.biomes.baseTexture!, biomeTexCoord, FLAG_BIOMES)
+    const biomeTexCoord = this.calculateBiomeTextureCoordinates(vPos, heightLimit, FLAG_BIOMES_ENABLED).toVar('biomeTexCoord')
+    colour = this.renderBiomes(colour, this.uniforms.biomes.baseTexture!, biomeTexCoord, FLAG_BIOMES_ENABLED)
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial()
@@ -374,14 +371,12 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial()
     material.vertexNode = flattenUV(uv())
-    material.colorNode = vec4(
+    material.fragmentNode = vec4(
       this.applyEmissiveIntensity(
         colour,
-        this.uniforms.biomes.baseTexture,
-        this.uniforms.biomes.emissiveTexture!,
+        this.uniforms.biomes.emissiveTexture,
         biomeTexCoord,
         FLAG_SURFACE_TYPE,
-        FLAG_BIOMES_ENABLED,
       ).xyz,
       1.0,
     )
@@ -487,25 +482,23 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   }
 
   private applyEmissiveIntensity = Fn(
-    ([fragmentColor, biomeTexture, biomeEmissiveTexture, biomeTexCoord, FLAG_SURFACE_TYPE, FLAG_BIOMES_ENABLED]: [
+    ([fragmentColor, biomeEmissiveTexture, biomeTexCoord, FLAG_SURFACE_TYPE]: [
       ShaderNodeObject<Node>,
       TextureNode,
-      TextureNode,
-      ShaderNodeObject<Node>,
       ShaderNodeObject<Node>,
       ShaderNodeObject<Node>,
     ]) => {
+      // X/Y axes are flipped on texture, so we must also flip coords
+      const emissiveColor = vec3(fragmentColor).toVar('emissiveColor')
       const flippedBiomeTexCoord = vec2(biomeTexCoord.y, biomeTexCoord.x).setName('flippedBiomeTexCoord')
       If(FLAG_SURFACE_TYPE.equal(1.0), () => {
-        const biomeTexel = vec4(biomeTexture.sample(flippedBiomeTexCoord)).toVar('biomeTexel')
         const biomeEmissiveTexel = vec4(biomeEmissiveTexture.sample(flippedBiomeTexCoord)).toVar('biomeEmissiveTexel')
-        const emissiveFactor = mix(this.uniforms.pbr.emissive.y, biomeEmissiveTexel.y.mul(10.0), biomeEmissiveTexel.w)
-        fragmentColor.assign(mix(fragmentColor, biomeTexel.xyz, FLAG_BIOMES_ENABLED))
-        fragmentColor.mulAssign(mul(float(this.uniforms.flags.element(int(4))), emissiveFactor))
+        const emissiveFactor = mix(this.uniforms.pbr.emissive.y, biomeEmissiveTexel.y.mul(10.0), biomeEmissiveTexel.w).toVar('emissiveFactor')
+        emissiveColor.mulAssign(mul(float(this.uniforms.flags.element(int(4))), emissiveFactor))
       }).Else(() => {
-        fragmentColor.mulAssign(mul(float(this.uniforms.flags.element(int(4))), this.uniforms.pbr.emissive.x))
+        emissiveColor.mulAssign(mul(float(this.uniforms.flags.element(int(4))), this.uniforms.pbr.emissive.x))
       })
-      return fragmentColor
+      return emissiveColor
     },
   )
 }

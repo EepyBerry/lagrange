@@ -47,6 +47,12 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   LG_SCENE_DATA.renderer!.setAnimationLoop(() => renderFrame())
   LG_SCENE_DATA.renderer!.domElement.ariaLabel = '3D planet viewer'
   canvas.appendChild(LG_SCENE_DATA.renderer!.domElement)
+
+  LG_SCENE_DATA.renderer!.debug.getShaderAsync(
+    LG_SCENE_DATA.scene,
+    LG_SCENE_DATA.camera,
+    LG_SCENE_DATA.planet.mesh!,
+  ).then((data) => console.log(data.fragmentShader))
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -66,12 +72,6 @@ function renderFrame() {
     LG_SCENE_DATA.clock!,
   )
   LG_SCENE_DATA.renderer!.render(LG_SCENE_DATA.scene!, LG_SCENE_DATA.camera!)
-
-  /* LG_SCENE_DATA.renderer!.debug.getShaderAsync(
-    LG_SCENE_DATA.scene,
-    LG_SCENE_DATA.camera,
-    LG_SCENE_DATA.planet.mesh!,
-  ).then((data) => console.log(data.fragmentShader)) */
 }
 
 export function updateCameraRendering(w: number, h: number) {
@@ -220,6 +220,7 @@ export async function exportPlanetToGLTF(progressDialog: {
       bakePlanetEmissivityTex.minFilter = THREE.NearestFilter
       bakePlanetEmissivityTex.magFilter = THREE.NearestFilter
     }
+    saveAs(await bakePlanetEmissivityTex.image.convertToBlob(), 'test.png')
 
     progressDialog.setProgress(4)
     await sleep(50)
