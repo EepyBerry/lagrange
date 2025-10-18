@@ -1,6 +1,6 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
 import { ColorMode, GradientMode, PlanetType } from '@core/types'
-import { clampedPRNG, isNumeric } from '@/core/utils/math-utils'
+import { clampedPRNG, isNumeric } from '@core/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeTracker } from './change-tracker.model'

@@ -23,15 +23,15 @@
 </template>
 
 <script setup lang="ts">
-import PlanetEditorControls from '@components/controls/PlanetEditorControls.vue'
-import PlanetInfoControls from '@components/controls/PlanetInfoControls.vue'
+import PlanetEditorControls from '@components/editor/controls/PlanetEditorControls.vue'
+import PlanetInfoControls from '@components/editor/controls/PlanetInfoControls.vue'
 import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue'
 import * as Globals from '@core/globals'
 import { useHead } from '@unhead/vue'
 import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config'
-import { EventBus } from '@/core/event-bus'
+import { EventBus } from '@core/event-bus'
 import { useI18n } from 'vue-i18n'
-import AppNavigation from '@/components/main/AppNavigation.vue'
+import AppNavigation from '@components/global/AppNavigation.vue'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import {
   LG_PLANET_DATA,
@@ -45,15 +45,15 @@ import {
   updateCameraRendering,
   resetPlanet,
   randomizePlanet,
-} from '@/core/services/planet-editor.service'
-import { sleep } from '@/core/utils/utils'
+} from '@core/services/planet-editor.service'
+import { sleep } from '@core/utils/utils'
 import { nanoid } from 'nanoid'
 import WebGL from 'three/addons/capabilities/WebGL.js'
-import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
-import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
-import AppWarnSaveDialog from '@/components/dialogs/AppWarnSaveDialog.vue'
-import AppExportProgressDialog from '@/components/dialogs/AppExportProgressDialog.vue'
-import { regeneratePRNGIfNecessary } from '@/core/utils/math-utils'
+import AppWebGLErrorDialog from '@components/editor/dialogs/WebGLErrorDialog.vue'
+import AppPlanetErrorDialog from '@components/editor/dialogs/PlanetErrorDialog.vue'
+import AppWarnSaveDialog from '@components/editor/dialogs/WarnSaveDialog.vue'
+import AppExportProgressDialog from '@components/editor/dialogs/ExportProgressDialog.vue'
+import { regeneratePRNGIfNecessary } from '@core/utils/math-utils'
 import WebGPU from 'three/addons/capabilities/WebGPU.js'
 
 const route = useRoute()

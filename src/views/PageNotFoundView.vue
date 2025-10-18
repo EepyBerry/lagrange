@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import AppLogo from '@components/elements/AppLogo.vue'
+import AppLogo from '@components/global/elements/AppLogo.vue'
 import { useHead } from '@unhead/vue'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'

@@ -1,5 +1,5 @@
-import type { BiomeParameters } from '@/core/models/biome-parameters.model'
-import { avg, truncateTo } from '@/core/utils/math-utils'
+import type { BiomeParameters } from '@core/models/biome-parameters.model'
+import { avg, truncateTo } from '@core/utils/math-utils'
 import { Color, CubeTextureLoader, DataTexture, NearestFilter, type MinificationTextureFilter } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'

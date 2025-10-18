@@ -79,13 +79,15 @@
     },
     "planetinfo": {
       "$title": "Pwanyet infowmation :3",
-      "name": "Name",
-      "radius": "Wadius",
-      "axialtilt": "Axiaw tiwt",
-      "clouded": "Has cwouds",
-      "atmospheric": "Has atmosphewe",
-      "ringed": "Has wing systyem",
-
+      "basic": {
+        "name": "Name",
+        "radius": "Wadius",
+        "axialtilt": "Axiaw tiwt",
+        "has_biomes": "Has biomes",
+        "has_clouds": "Has cwouds",
+        "has_atmosphere": "Has atmosphewe",
+        "has_rings": "Has wing systyem"
+      },
       "biomes": "Biome composition",
       "biomes_temp": "Tempewature",
       "biomes_humi": "Humidity",
@@ -300,6 +302,7 @@
 
         "pbr": "PBR p-pawametews",
         "waterlevel": "Watew wevew",
+        "metallicroughness": "Metawwic Woughnyess",
         "metallicroughness_waterroughness": "Watew woughnyess",
         "metallicroughness_watermetalness": "Watew metawnyess",
         "metallicroughness_groundroughness": "Gwound woughnyess",
@@ -337,7 +340,9 @@
         "temperature_max": "Max. tempewatuwe",
         "humidity_min": "Min. humidity",
         "humidity_max": "Max. humidity",
-        "smoothness": "Smoothnyess"
+        "smoothness": "Smoothnyess",
+        "emissive_override": "Ovewwide emissivity",
+        "emissive_intensity": "Emissive intensity"
       },
       "clouds": {
         "$title": "Cwouds",

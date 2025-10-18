@@ -1,9 +1,9 @@
 import * as THREE from 'three'
 import * as Globals from '@core/globals'
-import * as ComponentHelper from '@/core/helpers/component.helper'
+import * as ComponentHelper from '@core/helpers/component.helper'
 
 import type PlanetData from '@core/models/planet-data.model'
-import { renderToCanvas } from '@/core/utils/render-utils'
+import { renderToCanvas } from '@core/utils/render-utils'
 import type { WebGPURenderer } from 'three/webgpu'
 import { PlanetTSLMaterial } from '../tsl/materials/planet.tslmat'
 import { PlanetDataConverter } from '../models/converters/planet-data.converter'

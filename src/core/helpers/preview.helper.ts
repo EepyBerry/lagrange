@@ -1,5 +1,5 @@
 import { CanvasTexture, RenderTarget, SRGBColorSpace } from 'three';
-import * as Globals from '@/core/globals'
+import * as Globals from '@core/globals'
 import * as SceneHelper from './scene.helper'
 import type PlanetData from '../models/planet-data.model';
 import { degToRad } from 'three/src/math/MathUtils.js';

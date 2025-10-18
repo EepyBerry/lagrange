@@ -78,14 +78,16 @@
       "$action_confirm": "C'est parti !"
     },
     "planetinfo": {
-      "$title": "Informations planète",
-      "name": "Nom",
-      "radius": "Rayon",
-      "axialtilt": "Inclinaison",
-      "clouded": "Présence de nuages",
-      "atmospheric": "Présence d'atmosphère",
-      "ringed": "Présence d'anneaux",
-
+      "$title": "Informations sur la planète",
+      "basic": {
+        "name": "Nom",
+        "radius": "Rayon",
+        "axialtilt": "Inclinaison",
+        "has_biomes": "Biomes",
+        "has_clouds": "Nuages",
+        "has_atmosphere": "Atmosphère",
+        "has_rings": "Anneaux"
+      },
       "biomes": "Composition des biomes",
       "biomes_temp": "Température",
       "biomes_humi": "Humidité",
@@ -337,7 +339,9 @@
         "temperature_max": "Température max.",
         "humidity_min": "Humidité min.",
         "humidity_max": "Humidité max.",
-        "smoothness": "Facteur de lissage"
+        "smoothness": "Facteur de lissage",
+        "emissive_override": "Émissivité forcée",
+        "emissive_intensity": "Intensité de l'émission"
       },
       "clouds": {
         "$title": "Nuages",

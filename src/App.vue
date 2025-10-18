@@ -13,16 +13,16 @@
 </template>
 
 <script setup lang="ts">
-import AppFooter from '@components/main/AppFooter.vue'
-import * as DexieUtils from '@/core/utils/dexie-utils'
+import AppFooter from '@components/global/AppFooter.vue'
+import * as DexieUtils from '@core/utils/dexie-utils'
 import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
 import { onMounted, ref, type Ref } from 'vue'
-import AppInitDialog from '@components/dialogs/AppInitDialog.vue'
+import AppInitDialog from '@components/global/dialogs/InitDialog.vue'
 import { useI18n } from 'vue-i18n'
 import { mapLocale } from './core/utils/utils'
 import { useHead } from '@unhead/vue'
 import { A11Y_ANIMATE } from './core/globals'
-import AppToastBar from './components/main/AppToastBar.vue'
+import AppToastBar from '@components/global/AppToastBar.vue'
 import { EventBus } from './core/event-bus'
 import { EXTRAS_CAT_MODE, EXTRAS_HOLOGRAM_MODE, EXTRAS_SPECIAL_DAYS } from './core/extras'
 import WebGPU from 'three/examples/jsm/capabilities/WebGPU.js'

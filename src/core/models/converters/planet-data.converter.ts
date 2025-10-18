@@ -1,6 +1,6 @@
 import type { Texture } from 'three'
 import type PlanetData from '../planet-data.model'
-import type { PlanetUniformData } from '@/core/tsl/materials/planet.tslmat'
+import type { PlanetUniformData } from '@core/tsl/materials/planet.tslmat'
 import { ModelConverter } from './model-converter'
 
 export class PlanetDataConverter extends ModelConverter<PlanetData, PlanetUniformData> {

@@ -51,26 +51,26 @@
 </template>
 
 <script setup lang="ts">
-import PlanetCardElement from '@/components/elements/PlanetCardElement.vue'
-import AppNavigation from '@/components/main/AppNavigation.vue'
-import InlineFooter from '@/components/main/InlineFooter.vue'
-import AppPlanetInfoDialog from '@/components/dialogs/AppPlanetInfoDialog.vue'
-import AppDeleteConfirmDialog from '@components/dialogs/AppDeleteConfirmDialog.vue'
+import PlanetCardElement from '@components/global/elements/PlanetCardElement.vue'
+import AppNavigation from '@components/global/AppNavigation.vue'
+import InlineFooter from '@components/global/InlineFooter.vue'
+import AppPlanetInfoDialog from '@components/codex/dialogs/PlanetInfoDialog.vue'
+import AppDeleteConfirmDialog from '@components/codex/dialogs/DeleteConfirmDialog.vue'
 import { idb, type IDBPlanet } from '@/dexie.config'
 import { useHead } from '@unhead/vue'
 import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
-import { EventBus } from '@/core/event-bus'
-import { MD_WIDTH_THRESHOLD, SM_WIDTH_THRESHOLD } from '@/core/globals'
+import { EventBus } from '@core/event-bus'
+import { MD_WIDTH_THRESHOLD, SM_WIDTH_THRESHOLD } from '@core/globals'
 import pako from 'pako'
 import { saveAs } from 'file-saver'
-import PlanetData from '@/core/models/planet-data.model'
+import PlanetData from '@core/models/planet-data.model'
 import JSZip from 'jszip'
-import NewCardElement from '@/components/elements/NewCardElement.vue'
-import { readFileData } from '@/core/helpers/import.helper'
+import NewCardElement from '@components/global/elements/NewCardElement.vue'
+import { readFileData } from '@core/helpers/import.helper'
 import { nanoid } from 'nanoid'
-import { uwuifyPath } from '@/core/extras'
+import { uwuifyPath } from '@core/extras'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)

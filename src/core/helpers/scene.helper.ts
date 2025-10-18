@@ -2,7 +2,7 @@ import type { NodeMaterial } from "three/webgpu";
 import type PlanetData from "../models/planet-data.model";
 import { EditorSceneCreationMode, type EditorSceneData, type RingMeshData } from "../types";
 import * as ComponentHelper from './component.helper';
-import * as Globals from '@/core/globals'
+import * as Globals from '@core/globals'
 import { Group, Clock } from 'three';
 import { degToRad } from "three/src/math/MathUtils.js";
 

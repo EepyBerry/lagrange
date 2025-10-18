@@ -79,13 +79,15 @@
     },
     "planetinfo": {
       "$title": "Planet information",
-      "name": "Name",
-      "radius": "Radius",
-      "axialtilt": "Axial tilt",
-      "clouded": "Has clouds",
-      "atmospheric": "Has atmosphere",
-      "ringed": "Has ring system",
-
+      "basic": {
+        "name": "Name",
+        "radius": "Radius",
+        "axialtilt": "Axial tilt",
+        "has_biomes": "Has biomes",
+        "has_clouds": "Has clouds",
+        "has_atmosphere": "Has atmosphere",
+        "has_rings": "Has ring system"
+      },
       "biomes": "Biome composition",
       "biomes_temp": "Temperature",
       "biomes_humi": "Humidity",

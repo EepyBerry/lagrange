@@ -79,13 +79,15 @@
     },
     "planetinfo": {
       "$title": "Planeteninformationen",
-      "name": "Name",
-      "radius": "Radius",
-      "axialtilt": "Neigung",
-      "clouded": "Präsenz von Wolken",
-      "atmospheric": "Präsenz von Atmosphäre",
-      "ringed": "Präsenz von Ringen",
-
+      "basic": {
+        "name": "Name",
+        "radius": "Radius",
+        "axialtilt": "Neigung",
+        "has_biomes": "Präsenz von Biomen",
+        "has_clouds": "Präsenz von Wolken",
+        "has_atmosphere": "Präsenz von Atmosphäre",
+        "has_rings": "Präsenz von Ringen"
+      },
       "biomes": "Zusammensetzung von Biomen",
       "biomes_temp": "Temperatur",
       "biomes_humi": "Luftfeuchtigkeit",
@@ -337,7 +339,9 @@
         "temperature_max": "Max. Temperatur",
         "humidity_min": "Min. Feuchtigkeit",
         "humidity_max": "Max. Feuchtigkeit",
-        "smoothness": "Glättungsfaktor"
+        "smoothness": "Glättungsfaktor",
+        "emissive_override": "Emissionsgrad überschreiben",
+        "emissive_intensity": "Emissionsintensität"
       },
       "clouds": {
         "$title": "Wolken",
