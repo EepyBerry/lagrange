@@ -49,23 +49,10 @@
                 <td value>{{ planet?.data.planetAxialTilt }}°</td>
               </tr>
               <tr>
-                <td name>{{ $t('dialog.planetinfo.basic.has_atmosphere') }}:</td>
-                <td value>
-                  <iconify-icon
-                    v-if="planet?.data.atmosphereEnabled"
-                    inline
-                    icon="mingcute:check-circle-fill"
-                    width="1.5rem"
-                    aria-hidden="true"
-                  />
-                  <iconify-icon v-else inline icon="mingcute:close-circle-line" width="1.5rem" aria-hidden="true" />
-                </td>
-              </tr>
-              <tr>
                 <td name>{{ $t('dialog.planetinfo.basic.has_biomes') }}:</td>
                 <td value>
                   <iconify-icon
-                    v-if="planet?.data.biomesEnabled"
+                    v-if="planet?.data.biomesEnabled && planet?.data.biomesParams.length > 0"
                     inline
                     icon="mingcute:check-circle-fill"
                     width="1.5rem"
@@ -79,6 +66,19 @@
                 <td value>
                   <iconify-icon
                     v-if="planet?.data.cloudsEnabled"
+                    inline
+                    icon="mingcute:check-circle-fill"
+                    width="1.5rem"
+                    aria-hidden="true"
+                  />
+                  <iconify-icon v-else inline icon="mingcute:close-circle-line" width="1.5rem" aria-hidden="true" />
+                </td>
+              </tr>
+              <tr>
+                <td name>{{ $t('dialog.planetinfo.basic.has_atmosphere') }}:</td>
+                <td value>
+                  <iconify-icon
+                    v-if="planet?.data.atmosphereEnabled"
                     inline
                     icon="mingcute:check-circle-fill"
                     width="1.5rem"
@@ -105,72 +105,67 @@
         </div>
         
         <!-- Planet biomes (if present) -->
-        <div class="planet-details">
+        <div v-if="planet?.data.biomesEnabled && planet?.data.biomesParams.length > 0" class="planet-biomes">
           <span class="deco-polygon">
             <span class="hole"></span>
           </span>
-          <template
-            v-if="
-              planet?.data.biomesEnabled && planet?.data.biomesParams.length && planet?.data.biomesParams.length > 0
-            "
-          >
-            <h3>{{ $t('dialog.planetinfo.biomes') }}</h3>
-            <table class="compact-header">
-              <tbody>
-                <tr>
-                  <td name>{{ $t('dialog.planetinfo.biomes_temp') }}:</td>
-                  <td>{{ $t(getMode(planet?.data.biomesTemperatureMode)).toLocaleLowerCase() }}</td>
-                </tr>
-                <tr>
-                  <td name>{{ $t('dialog.planetinfo.biomes_humi') }}:</td>
-                  <td>{{ $t(getMode(planet?.data.biomesHumidityMode)).toLocaleLowerCase() }}</td>
-                </tr>
-              </tbody>
-            </table>
-            <table id="planet-biome-data">
-              <thead>
-                <tr>
-                  <th aria-hidden="true"></th>
-                  <th>
-                    &nbsp;{{ $t('dialog.planetinfo.biomes_temp') }} -
-                    {{ $t(getMode(planet?.data.biomesTemperatureMode)).toLocaleLowerCase() }}&nbsp;
-                  </th>
-                  <th>
-                    &nbsp;{{ $t('dialog.planetinfo.biomes_humi') }} -
-                    {{ $t(getMode(planet?.data.biomesHumidityMode)).toLocaleLowerCase() }}&nbsp;
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="biome of planet?.data.biomesParams" :key="biome.id">
-                  <td><div class="biome-color" :style="{ background: '#' + biome.color.getHexString() }"></div></td>
-                  <td width="50%">
-                    <div class="biome-bar">
-                      <iconify-icon inline icon="mingcute:high-temperature-line" height="1.5rem" aria-hidden="true" />
-                      <div class="bar">
-                        <span
-                          class="bar-fill"
-                          :style="{ left: biome.tempMin * 100 + '%', right: 100 - biome.tempMax * 100 + '%' }"
-                        ></span>
-                      </div>
+          <h3>{{ $t('dialog.planetinfo.biomes') }}</h3>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div id="biome-graph-container"></div>
+          <!-- <table class="compact-header">
+            <tbody>
+              <tr>
+                <td name>{{ $t('dialog.planetinfo.biomes_temp') }}:</td>
+                <td>{{ $t(getMode(planet?.data.biomesTemperatureMode)).toLocaleLowerCase() }}</td>
+              </tr>
+              <tr>
+                <td name>{{ $t('dialog.planetinfo.biomes_humi') }}:</td>
+                <td>{{ $t(getMode(planet?.data.biomesHumidityMode)).toLocaleLowerCase() }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table id="planet-biome-data">
+            <thead>
+              <tr>
+                <th aria-hidden="true"></th>
+                <th>
+                  &nbsp;{{ $t('dialog.planetinfo.biomes_temp') }} -
+                  {{ $t(getMode(planet?.data.biomesTemperatureMode)).toLocaleLowerCase() }}&nbsp;
+                </th>
+                <th>
+                  &nbsp;{{ $t('dialog.planetinfo.biomes_humi') }} -
+                  {{ $t(getMode(planet?.data.biomesHumidityMode)).toLocaleLowerCase() }}&nbsp;
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="biome of planet?.data.biomesParams" :key="biome.id">
+                <td><div class="biome-color" :style="{ background: '#' + biome.color.getHexString() }"></div></td>
+                <td width="50%">
+                  <div class="biome-bar">
+                    <iconify-icon inline icon="mingcute:high-temperature-line" height="1.5rem" aria-hidden="true" />
+                    <div class="bar">
+                      <span
+                        class="bar-fill"
+                        :style="{ left: biome.tempMin * 100 + '%', right: 100 - biome.tempMax * 100 + '%' }"
+                      ></span>
                     </div>
-                  </td>
-                  <td width="50%">
-                    <div class="biome-bar">
-                      <iconify-icon inline icon="material-symbols:humidity-mid" height="1.5rem" aria-hidden="true" />
-                      <div class="bar">
-                        <span
-                          class="bar-fill"
-                          :style="{ left: biome.humiMin * 100 + '%', right: 100 - biome.humiMax * 100 + '%' }"
-                        ></span>
-                      </div>
+                  </div>
+                </td>
+                <td width="50%">
+                  <div class="biome-bar">
+                    <iconify-icon inline icon="material-symbols:humidity-mid" height="1.5rem" aria-hidden="true" />
+                    <div class="bar">
+                      <span
+                        class="bar-fill"
+                        :style="{ left: biome.humiMin * 100 + '%', right: 100 - biome.humiMax * 100 + '%' }"
+                      ></span>
                     </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </template>
-          <p v-else class="no-biomes">{{ $t('dialog.planetinfo.biomes_none') }}</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table> -->
         </div>
       </div>
     </template>
@@ -185,10 +180,12 @@ import { EXTRAS_HOLOGRAM_MODE } from '@core/extras'
 
 const planet: Ref<IDBPlanet | null> = ref(null)
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
+
 defineExpose({
   open: (p: IDBPlanet) => {
     planet.value = p
     dialogRef.value?.open()
+    setTimeout(buildBiomeGraph, 100)
   },
 })
 
@@ -203,6 +200,9 @@ function getMode(value: number | undefined) {
     default:
       return 'main.unknown_value'
   }
+}
+
+function buildBiomeGraph(): void {
 }
 </script>
 
@@ -262,7 +262,7 @@ function getMode(value: number | undefined) {
       }
     }
   }
-  .planet-details {
+  .planet-biomes {
     grid-area: details;
     position: relative;
     padding-top: 1rem;
@@ -274,78 +274,11 @@ function getMode(value: number | undefined) {
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    table.compact-header {
-      display: none;
-      margin-top: 1rem;
-      width: 100%;
-      text-align: start;
-      [name] {
-        font-weight: 600;
-      }
-      td:nth-child(2) {
-        padding-left: 1rem;
-      }
-      td {
-        width: 50%;
-      }
-    }
-    table#planet-biome-data {
-      width: 100%;
-      margin-top: 1rem;
-      text-wrap: nowrap;
-      th {
-        font-weight: 400;
-        font-size: 0.875rem;
-      }
-      tr > td:first-child {
-        width: 3rem;
-      }
-      [name] {
-        font-weight: 600;
-      }
-    }
-    .biome-color {
-      width: 3rem;
-      height: 2rem;
-      border: 1px solid var(--lg-accent);
-      border-radius: 4px;
-    }
-    .biome-bar {
-      height: 2rem;
-      border: 1px solid var(--lg-accent);
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      overflow: hidden;
-
-      iconify-icon {
-        height: 2rem;
-        width: 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--lg-accent);
-      }
-      .bar {
-        position: relative;
-        height: 100%;
-        flex: 1;
-
-        .bar-fill {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          background: var(--lg-contrast-focus);
-        }
-      }
-    }
-    .no-biomes {
-      text-align: center;
-      font-size: 1rem;
-    }
   }
+}
+#biome-graph-container {
+  width: 100%;
+  height: 100%;
 }
 @media screen and (max-width: 767px) {
   #dialog-planet-info {
@@ -362,14 +295,9 @@ function getMode(value: number | undefined) {
     .planet-preview {
       justify-self: center;
     }
-    .planet-details {
+    .planet-biomes {
       .biome-color {
         width: 2rem;
-      }
-      table#planet-biome-data {
-        tr > td:first-child {
-          width: 2rem;
-        }
       }
     }
   }
@@ -379,15 +307,9 @@ function getMode(value: number | undefined) {
     width: 100%;
     min-width: 0;
 
-    .planet-details {
+    .planet-biomes {
       table.compact-header {
         display: block;
-      }
-      table#planet-biome-data {
-        margin: 0;
-        thead {
-          display: none;
-        }
       }
     }
   }
