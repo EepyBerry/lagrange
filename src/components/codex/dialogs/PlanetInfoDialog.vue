@@ -110,62 +110,7 @@
             <span class="hole"></span>
           </span>
           <h3>{{ $t('dialog.planetinfo.biomes') }}</h3>
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <div id="biome-graph-container"></div>
-          <!-- <table class="compact-header">
-            <tbody>
-              <tr>
-                <td name>{{ $t('dialog.planetinfo.biomes_temp') }}:</td>
-                <td>{{ $t(getMode(planet?.data.biomesTemperatureMode)).toLocaleLowerCase() }}</td>
-              </tr>
-              <tr>
-                <td name>{{ $t('dialog.planetinfo.biomes_humi') }}:</td>
-                <td>{{ $t(getMode(planet?.data.biomesHumidityMode)).toLocaleLowerCase() }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <table id="planet-biome-data">
-            <thead>
-              <tr>
-                <th aria-hidden="true"></th>
-                <th>
-                  &nbsp;{{ $t('dialog.planetinfo.biomes_temp') }} -
-                  {{ $t(getMode(planet?.data.biomesTemperatureMode)).toLocaleLowerCase() }}&nbsp;
-                </th>
-                <th>
-                  &nbsp;{{ $t('dialog.planetinfo.biomes_humi') }} -
-                  {{ $t(getMode(planet?.data.biomesHumidityMode)).toLocaleLowerCase() }}&nbsp;
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="biome of planet?.data.biomesParams" :key="biome.id">
-                <td><div class="biome-color" :style="{ background: '#' + biome.color.getHexString() }"></div></td>
-                <td width="50%">
-                  <div class="biome-bar">
-                    <iconify-icon inline icon="mingcute:high-temperature-line" height="1.5rem" aria-hidden="true" />
-                    <div class="bar">
-                      <span
-                        class="bar-fill"
-                        :style="{ left: biome.tempMin * 100 + '%', right: 100 - biome.tempMax * 100 + '%' }"
-                      ></span>
-                    </div>
-                  </div>
-                </td>
-                <td width="50%">
-                  <div class="biome-bar">
-                    <iconify-icon inline icon="material-symbols:humidity-mid" height="1.5rem" aria-hidden="true" />
-                    <div class="bar">
-                      <span
-                        class="bar-fill"
-                        :style="{ left: biome.humiMin * 100 + '%', right: 100 - biome.humiMax * 100 + '%' }"
-                      ></span>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table> -->
+          <SVGBiomeGraph :biomes="planet.data.biomesParams" />
         </div>
       </div>
     </template>
@@ -177,6 +122,7 @@ import DialogElement from '@components/global/elements/DialogElement.vue'
 import { ref, type Ref } from 'vue'
 import { A11Y_ANIMATE } from '@core/globals'
 import { EXTRAS_HOLOGRAM_MODE } from '@core/extras'
+import SVGBiomeGraph from '../svg/SVGBiomeGraph.vue'
 
 const planet: Ref<IDBPlanet | null> = ref(null)
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
