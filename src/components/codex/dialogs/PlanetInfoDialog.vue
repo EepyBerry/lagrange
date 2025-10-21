@@ -154,7 +154,6 @@ function getMode(value: number | undefined) {
   overflow-y: auto;
 
   .info-grid {
-    margin: 1rem;
     display: grid;
     grid-template-columns: auto 1fr;
     grid-template-areas:
@@ -217,10 +216,6 @@ function getMode(value: number | undefined) {
     flex-direction: column;
     align-items: center;
   }
-}
-#biome-graph-container {
-  width: 100%;
-  height: 100%;
 }
 @media screen and (max-width: 767px) {
   #dialog-planet-info {
