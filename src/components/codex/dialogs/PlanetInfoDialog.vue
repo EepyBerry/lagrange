@@ -40,13 +40,13 @@
               <tr>
                 <td name>{{ $t('dialog.planetinfo.basic.radius') }}:</td>
                 <td value>
-                  {{ planet?.data.planetRadius }}
+                  {{ planet?.data.planetRadius.toFixed(2) }}
                   {{ planet?.data.planetRadius !== 1 ? $t('main.units') : $t('main.unit') }}
                 </td>
               </tr>
               <tr>
                 <td name>{{ $t('dialog.planetinfo.basic.axialtilt') }}:</td>
-                <td value>{{ planet?.data.planetAxialTilt }}°</td>
+                <td value>{{ planet?.data.planetAxialTilt.toFixed(2) }}°</td>
               </tr>
               <tr>
                 <td name>{{ $t('dialog.planetinfo.basic.has_biomes') }}:</td>
@@ -110,7 +110,7 @@
             <span class="hole"></span>
           </span>
           <h3>{{ $t('dialog.planetinfo.biomes') }}</h3>
-          <SVGBiomeGraph :biomes="planet.data.biomesParams" />
+          <SVGBiomeGraph :key="planet.data.biomesParams[0].id" :biomes="planet.data.biomesParams" />
         </div>
       </div>
     </template>
@@ -131,7 +131,6 @@ defineExpose({
   open: (p: IDBPlanet) => {
     planet.value = p
     dialogRef.value?.open()
-    setTimeout(buildBiomeGraph, 100)
   },
 })
 
@@ -146,9 +145,6 @@ function getMode(value: number | undefined) {
     default:
       return 'main.unknown_value'
   }
-}
-
-function buildBiomeGraph(): void {
 }
 </script>
 
