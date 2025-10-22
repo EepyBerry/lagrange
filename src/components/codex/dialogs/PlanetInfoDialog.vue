@@ -27,7 +27,7 @@
         </div>
 
         <!-- Basic planet data -->
-        <div class="planet-basic">
+        <section class="planet-basic">
           <span class="deco-polygon">
             <span class="hole"></span>
           </span>
@@ -102,16 +102,25 @@
               </tr>
             </tbody>
           </table>
-        </div>
+        </section>
         
         <!-- Planet biomes (if present) -->
-        <div v-if="planet?.data.biomesEnabled && planet?.data.biomesParams.length > 0" class="planet-biomes">
+        <section v-if="planet?.data.biomesEnabled && planet?.data.biomesParams.length > 0" class="planet-details biomes">
           <span class="deco-polygon">
             <span class="hole"></span>
           </span>
           <h3>{{ $t('dialog.planetinfo.biomes') }}</h3>
           <SVGBiomeGraph :key="planet.data.biomesParams[0].id" :biomes="planet.data.biomesParams" />
-        </div>
+        </section>
+        
+        <!-- Planet rings (if present) -->
+        <section v-if="planet?.data.ringsEnabled && planet?.data.ringsParams.length > 0" class="planet-details rings">
+          <span class="deco-polygon">
+            <span class="hole"></span>
+          </span>
+          <h3>{{ $t('dialog.planetinfo.rings') }}</h3>
+          <SVGRingsGraph :key="planet.data.ringsParams[0].id" :rings="planet.data.ringsParams" />
+        </section>
       </div>
     </template>
   </DialogElement>
@@ -123,6 +132,7 @@ import { ref, type Ref } from 'vue'
 import { A11Y_ANIMATE } from '@core/globals'
 import { EXTRAS_HOLOGRAM_MODE } from '@core/extras'
 import SVGBiomeGraph from '../svg/SVGBiomeGraph.vue'
+import SVGRingsGraph from '../svg/SVGRingsGraph.vue'
 
 const planet: Ref<IDBPlanet | null> = ref(null)
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
@@ -158,8 +168,9 @@ function getMode(value: number | undefined) {
     grid-template-columns: auto 1fr;
     grid-template-areas:
       'preview basic'
-      'details details';
-    gap: 2rem;
+      'biomes biomes'
+      'rings rings';
+    gap: 0 2rem;
   }
 
   .planet-preview {
@@ -203,10 +214,10 @@ function getMode(value: number | undefined) {
       }
     }
   }
-  .planet-biomes {
-    grid-area: details;
+  .planet-details {
     position: relative;
     padding-top: 1rem;
+    margin-top: 2rem;
 
     border-top: 2px solid var(--lg-accent);
     border-top-left-radius: 4px;
@@ -215,6 +226,9 @@ function getMode(value: number | undefined) {
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    &.biomes { grid-area: biomes; }
+    &.rings { grid-area: rings; }
   }
 }
 @media screen and (max-width: 767px) {
@@ -226,16 +240,12 @@ function getMode(value: number | undefined) {
       grid-template-areas:
         'preview'
         'basic'
-        'details';
-      gap: 1rem;
+        'biomes'
+        'rings';
     }
     .planet-preview {
       justify-self: center;
-    }
-    .planet-biomes {
-      .biome-color {
-        width: 2rem;
-      }
+      margin-bottom: 1rem;
     }
   }
 }
@@ -243,12 +253,6 @@ function getMode(value: number | undefined) {
   #dialog-planet-info {
     width: 100%;
     min-width: 0;
-
-    .planet-biomes {
-      table.compact-header {
-        display: block;
-      }
-    }
   }
 }
 </style>

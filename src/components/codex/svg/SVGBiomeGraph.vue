@@ -103,6 +103,9 @@ function toggleGraphBiome(index: number) {
 
 </script>
 <style scoped lang="scss">
+#svggraph-biomes {
+  margin-top: 0.5rem;
+}
 #svggraph-biomes-order {
   rect:hover { 
     cursor: pointer;
@@ -124,7 +127,10 @@ function toggleGraphBiome(index: number) {
 }
 @media screen and (max-width: 767px) {
   #svggraph-biomes-order {
-    pointer-events: none;
+    pointer-events: all;
+    rect {
+      pointer-events: none;
+    }
   }
 }
 </style>
