@@ -7,8 +7,8 @@
       <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="3" markerHeight="3" orient="auto-start-reverse" fill="white">
         <path d="M 0 0 L 10 5 L 0 10 z" />
       </marker>
-      <marker id="notch" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5">
-        <circle cx="4" cy="4" r="4" stroke="none" fill="red" />
+      <marker id="grad" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="3" markerHeight="3" orient="auto-start-reverse" stroke="white" stroke-width="3">
+        <path d="M5,0 5,10" />
       </marker>
     </defs>
     <svg :x="graphRect.x" :y="graphRect.y" :width="graphRect.w" :height="graphRect.h" overflow="visible">
@@ -16,22 +16,23 @@
         <rect x="0" y="0" width="100%" height="100%" fill="url(#grid)" />
       </g>
       <g id="svggraph-biomes-data">
+        <!-- note: Y coordinates are inverted to match Y axis direction -->
         <rect 
           v-for="bd of biomeData.toReversed()"
           ref="graphAreas"
           :key="bd.id"
-          :x="`${bd.rect.x*100}%`"
-          :y="`${bd.rect.y*100}%`"
+          :x="`${bd.rect.x*100.0}%`"
+          :y="`${(1-bd.rect.y-bd.rect.h)*100.0}%`"
           :width="graphRect.w*bd.rect.w"
           :height="graphRect.h*bd.rect.h"
           :fill="bd.color"
         />
       </g>
       <g id="svggraph-biomes-axes">
-        <line x1="-1" y1="100%" x2="100%" y2="100%" stroke="white" stroke-width="3" marker-mid="url(#notch)" marker-end="url(#arrow)" />
-        <text x="100%" :y="graphRect.h+20" text-anchor="end" font-size="12" fill="white" >{{ $t('dialog.planetinfo.biomes_humi') }}</text>
-        <line x1="0" y1="100%" x2="0" y2="0" stroke="white" stroke-width="3" marker-mid="url(#notch)" marker-end="url(#arrow)" />
-        <text x="0" :y="-10" transform="rotate(-90)" text-anchor="end" font-size="12" fill="white">{{ $t('dialog.planetinfo.biomes_temp') }}</text>
+        <path :d="makeSVGLinearPath([-1,graphRect.h],[graphRect.w,graphRect.h], 3)" fill="none" stroke="white" stroke-width="2" marker-mid="url(#grad)" marker-end="url(#arrow)" />
+        <text x="100%" :y="graphRect.h+20" text-anchor="end" font-size="12" fill="white" >{{ $t('dialog.planetinfo.biomes_humi') }} (%)</text>
+        <path :d="makeSVGLinearPath([0,graphRect.h],[0,0], 3)" fill="none" stroke="white" stroke-width="2" marker-mid="url(#grad)" marker-end="url(#arrow)" />
+        <text x="0" :y="-10" transform="rotate(-90)" text-anchor="end" font-size="12" fill="white">{{ $t('dialog.planetinfo.biomes_temp') }} (%)</text>
       </g>
       <g id="svggraph-biomes-order">
         <rect
@@ -73,6 +74,18 @@ onMounted(() => {
     show: true
   }))
 })
+
+function makeSVGLinearPath(start: number[], end: number[], stops: number) {
+  let path: string = `M${start[0]},${start[1]}`
+  const curValues: number[] = [start[0], start[1]]
+  for (let i=0; i<stops; i++) {
+    curValues[0] += (end[0]-start[0])/(stops+1.0)
+    curValues[1] += (end[1]-start[1])/(stops+1.0)
+    path += ` ${curValues[0]},${curValues[1]}`
+  }
+  return path + ' ' + end
+}
+
 
 function toggleGraphBiome(index: number) {
   biomeData.value[index].show = !biomeData.value[index].show
