@@ -119,7 +119,7 @@
             <span class="hole"></span>
           </span>
           <h3>{{ $t('dialog.planetinfo.rings') }}</h3>
-          <SVGRingsGraph :key="planet.data.ringsParams[0].id" :rings="planet.data.ringsParams" />
+          <SVGRingsGraph :key="planet.data.ringsParams[0].id" :planet-radius="planet.data.planetRadius" :rings="planet.data.ringsParams" />
         </section>
       </div>
     </template>

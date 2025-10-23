@@ -33,6 +33,7 @@
         <text x="100%" :y="graphRect.h+20" text-anchor="end" font-size="12" fill="white" >{{ $t('dialog.planetinfo.biomes_humi') }} (%)</text>
         <path :d="makeSVGLinearPath([0,graphRect.h],[0,0], 3)" fill="none" stroke="white" stroke-width="2" marker-mid="url(#grad)" marker-end="url(#arrow)" />
         <text x="0" :y="-10" transform="rotate(-90)" text-anchor="end" font-size="12" fill="white">{{ $t('dialog.planetinfo.biomes_temp') }} (%)</text>
+        <text x="-5" :y="graphRect.h+5" text-anchor="end" font-size="10" fill="white">0</text>
       </g>
       <g id="svggraph-biomes-order">
         <rect

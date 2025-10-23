@@ -92,7 +92,10 @@
       "biomes_temp": "Temperature",
       "biomes_humi": "Humidity",
       "biomes_mode": "mode",
-      "biomes_none": "This planet has no defined biomes"
+      "biomes_none": "This planet has no defined biomes",
+      "rings": "Ring System",
+      "rings_center": "center",
+      "rings_surface": "surface"
     },
     "settings": {
       "$title": "Settings",

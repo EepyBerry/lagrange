@@ -2,20 +2,29 @@
   <svg id="svggraph-rings" :viewBox="`${svgRect.x} ${svgRect.y} ${svgRect.w} ${svgRect.h}`">
     <svg :x="graphRect.x" :y="graphRect.y" :width="graphRect.w" :height="graphRect.h">
       <g id="svggraph-rings-planet">
-        <path d="M0,20 A 1 1 0 0 1 0 140" fill="none" stroke="white" stroke-width="2" />
-        <line x1="0" y1="80" x2="100%" y2="80" stroke="white" opacity="50%" stroke-dasharray="4" />
-        <line x1="0" y1="76" x2="0" y2="84" stroke="white" stroke-width="4" />
-        <line x1="0" y1="80" x2="5" y2="80" stroke="white" stroke-width="2" />
+        <circle cx="0" cy="90" :r="props.planetRadius*460.0/5.0" fill="none" stroke="white" stroke-width="2" />
+        <line x1="0" y1="90" x2="100%" y2="90" stroke="white" opacity="50%" stroke-dasharray="4" />
+        <line x1="1" y1="86" x2="1" y2="94" stroke="white" stroke-width="2" />
+        <line x1="0" y1="90" x2="5" y2="90" stroke="white" stroke-width="2" />
+        <text x="5" y="84" text-anchor="start" font-style="italic" font-size="10" fill="white">c</text>
+        <text :x="(props.planetRadius*460.0/5.0)+5" y="84" text-anchor="start" font-style="italic" font-size="10" fill="white">s</text>
+    
+        <text x="100%" y="8" text-anchor="end" font-size="10" fill="white">c = {{ $t('dialog.planetinfo.rings_center') }}</text>
+        <text x="100%" y="20" text-anchor="end" font-size="10" fill="white">s = {{ $t('dialog.planetinfo.rings_surface') }}</text>
       </g>
       <g id="svggraph-biomes-data">
-        <path
-          v-for="r of ringData"
-          :key="r.id"
-          :d="makeSVGCurve((r.inner*480)/5.0)"
-          fill="none"
-          stroke="var(--lg-logo)"
-          :stroke-width="(r.outer-r.inner)*32.0"
-        />
+        <g v-for="(r,i) of ringData" :key="r.id">
+          <path
+            :d="makeSVGRingArc((r.center*460.0)/5.0)"
+            fill="none"
+            stroke="var(--lg-logo)"
+            :stroke-width="(r.width*460.0)/5.0"
+          />
+          <line :x1="(r.center*460.0)/5.0" y1="90" :x2="(r.center*460.0)/5.0" y2="58" stroke="white" stroke-width="1" />
+          <text :x="(r.center*460.0)/5.0" y="50" text-anchor="middle" font-size="14" fill="white">
+            {{ String.fromCharCode(i+65) }}
+          </text>
+        </g>
       </g>
     </svg>
   </svg>
@@ -25,23 +34,23 @@ import type { RingParameters } from '@/core/models/ring-parameters.model';
 import Rect from '@core/utils/math/rect';
 import { onMounted, ref, type Ref } from 'vue';
 
-const width = 480, height = 180
+const width = 480, height = 200
 const svgRect = new Rect(0, 0, width, height)
 const graphRect = new Rect(10, 10, width-20, height-20)
 
-const props = defineProps<{ rings: RingParameters[] }>()
-const ringData: Ref<{id: string, inner: number, outer: number}[]> = ref([])
+const props = defineProps<{ planetRadius: number, rings: RingParameters[] }>()
+const ringData: Ref<{id: string, center: number, width: number}[]> = ref([])
 
 onMounted(() => {
   props.rings.forEach(r => ringData.value.push({
     id: r.id,
-    inner: r.innerRadius,
-    outer: r.outerRadius
+    center: (r.innerRadius+r.outerRadius)/2.0,
+    width: r.outerRadius-r.innerRadius
   }))
 })
 
-function makeSVGCurve(width: number) {
-  return `M0,120 Q${width},120 ${width},80`
+function makeSVGRingArc(radius: number) {
+  return `M${radius.toFixed(2)},90 a${radius.toFixed(2)},${radius.toFixed(2)} 0 0 1 ${-radius.toFixed(2)},${radius.toFixed(2)}`
 }
 
 </script>

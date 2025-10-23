@@ -92,7 +92,10 @@
       "biomes_temp": "Temperatur",
       "biomes_humi": "Luftfeuchtigkeit",
       "biomes_mode": "Modus",
-      "biomes_none": "Dieser Planet hat kein definiertes Biom"
+      "biomes_none": "Dieser Planet hat kein definiertes Biom",
+      "rings": "Ringsystem",
+      "rings_center": "Mittelpunkt",
+      "rings_surface": "Oberfläche"
     },
     "settings": {
       "$title": "Einstellungen",

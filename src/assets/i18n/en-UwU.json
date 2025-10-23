@@ -92,7 +92,11 @@
       "biomes_temp": "Tempewature",
       "biomes_humi": "Humidity",
       "biomes_mode": "mode",
-      "biomes_none": "T-this pwanyet has nyo defined biomes... （＞人＜；）"
+      "biomes_none": "T-this pwanyet has nyo defined biomes... （＞人＜；）",
+
+      "rings": "Wing System",
+      "rings_center": "centew",
+      "rings_surface": "suwface"
     },
     "settings": {
       "$title": "Settings",

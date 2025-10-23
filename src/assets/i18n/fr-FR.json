@@ -92,7 +92,11 @@
       "biomes_temp": "Température",
       "biomes_humi": "Humidité",
       "biomes_mode": "mode",
-      "biomes_none": "Cette planète n'a aucun biome défini"
+      "biomes_none": "Cette planète n'a aucun biome défini",
+
+      "rings": "Système d'anneaux",
+      "rings_center": "centre",
+      "rings_surface": "surface"
     },
     "settings": {
       "$title": "Paramètres",
