@@ -41,28 +41,6 @@ export function flipBufferY(buffer: Uint8Array, w: number, h: number): Uint8Arra
 }
 
 /**
- * Mixes two RGBA colours with their alpha components
- * @see https://stackoverflow.com/questions/726549/algorithm-for-additive-color-mixing-for-rgb-values
- * @param c1 first color in RGBA form (0-1)
- * @param c2 second color in RGBA form (0-1)
- * @returns the alpha-blended color in RGBA form (0-1)
- */
-export function alphaBlendColors(c1: RawRGBA, c2: RawRGBA): RawRGBA {
-  return {
-    r: mixRawRGBAChannel(c1.r, c2.r, c1.a, c2.a),
-    g: mixRawRGBAChannel(c1.g, c2.g, c1.a, c2.a),
-    b: mixRawRGBAChannel(c1.b, c2.b, c1.a, c2.a),
-    a: mixRawRGBAAlpha(c1.a, c2.a),
-  }
-}
-function mixRawRGBAChannel(c1: number, c2: number, a1: number, a2: number) {
-  return (c1 * a1 + c2 * a2 * (1 - a1)) / mixRawRGBAAlpha(a1, a2)
-}
-function mixRawRGBAAlpha(a1: number, a2: number) {
-  return a1 + a2 * (1 - a1)
-}
-
-/**
  * Converts a color ramp to a left-to-right CSS `linear-gradient`, according to its steps
  * @param ramp the color ramp to convert
  * @returns an object with `color` and `alpha` gradients
@@ -103,4 +81,15 @@ export async function blobToDataURL(blob: Blob): Promise<string> {
     reader.onerror = reject
     reader.readAsDataURL(blob)
   })
+}
+
+export function makeSVGLinearPath(start: number[], end: number[], stops: number) {
+  let path: string = `M${start[0]},${start[1]}`
+  const curValues: number[] = [start[0], start[1]]
+  for (let i=0; i<stops; i++) {
+    curValues[0] += (end[0]-start[0])/(stops+1.0)
+    curValues[1] += (end[1]-start[1])/(stops+1.0)
+    path += ` ${curValues[0]},${curValues[1]}`
+  }
+  return path + ' ' + end
 }
