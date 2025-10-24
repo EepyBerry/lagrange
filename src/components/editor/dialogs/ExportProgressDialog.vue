@@ -75,7 +75,7 @@ defineExpose({ open, setProgress, setError })
     width: 100%;
     height: 1rem;
     border: 1px solid var(--lg-accent);
-    border-radius: 4px;
+    border-radius: 2px;
 
     .progress {
       position: absolute;
@@ -90,7 +90,7 @@ defineExpose({ open, setProgress, setError })
   background: var(--lg-warn-panel);
   .progress-bar {
     border: 1px solid var(--lg-warn-active);
-    border-radius: 4px;
+    border-radius: 2px;
     .progress {
       background: var(--lg-warn);
     }

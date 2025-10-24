@@ -49,7 +49,7 @@ const props = defineProps<{ planetRadius: number, rings: RingParameters[] }>()
 const ringData: Ref<{id: string, center: number, width: number}[]> = ref([])
 
 onMounted(() => {
-  props.rings.forEach(r => ringData.value.push({
+  props.rings.toSorted((a,b) => a.innerRadius - b.innerRadius).forEach(r => ringData.value.push({
     id: r.id,
     center: (r.innerRadius+r.outerRadius)/2.0,
     width: r.outerRadius-r.innerRadius

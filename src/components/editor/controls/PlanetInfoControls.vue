@@ -230,7 +230,7 @@ function toggleSaveMenu(override?: boolean) {
   .name-wrapper {
     background: var(--lg-primary);
     border: 1px solid var(--lg-accent);
-    border-radius: 4px;
+    border-radius: 2px;
     height: 2.75rem;
     padding: 0 0.25rem 0 0.75rem;
 

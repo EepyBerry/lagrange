@@ -55,7 +55,7 @@ function toggleExpand() {
 
   background: var(--lg-panel);
   border: 1px solid var(--lg-accent);
-  border-radius: 4px;
+  border-radius: 2px;
 
   display: flex;
   flex-direction: column;

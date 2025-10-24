@@ -20,7 +20,7 @@ defineProps<{ type: EditorMessageLevel }>()
 <style scoped lang="scss">
 .notification {
   padding: 0.5rem;
-  border-radius: 4px;
+  border-radius: 2px;
   display: flex;
   gap: 0.5rem;
   align-items: center;

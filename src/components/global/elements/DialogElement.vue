@@ -1,26 +1,24 @@
 <template>
   <dialog ref="dialog" class="lg" @abort="close">
-    <section>
-      <header class="dialog-header">
-        <h2 v-if="showTitle" class="dialog-title">
-          <slot name="title"></slot>
-        </h2>
-        <button
-          v-if="closeable"
-          class="lg icon-button dialog-close"
-          :aria-label="$t('a11y.action_close_dialog')"
-          @click="close"
-        >
-          <iconify-icon icon="mingcute:close-line" width="1.5rem" aria-hidden="true" />
-        </button>
-      </header>
-      <div class="dialog-content">
-        <slot name="content"></slot>
-      </div>
-      <div v-if="showActions" class="dialog-actions">
-        <slot name="actions"></slot>
-      </div>
-    </section>
+    <header class="dialog-header">
+      <h2 v-if="showTitle" class="dialog-title">
+        <slot name="title"></slot>
+      </h2>
+      <button
+        v-if="closeable"
+        class="lg icon-button dialog-close"
+        :aria-label="$t('a11y.action_close_dialog')"
+        @click="close"
+      >
+        <iconify-icon icon="mingcute:close-line" width="1.5rem" aria-hidden="true" />
+      </button>
+    </header>
+    <div class="dialog-content">
+      <slot name="content"></slot>
+    </div>
+    <div v-if="showActions" class="dialog-actions">
+      <slot name="actions"></slot>
+    </div>
   </dialog>
 </template>
 
@@ -76,13 +74,14 @@ defineExpose({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open })
 
 <style scoped lang="scss">
 dialog[open].lg {
+  &:host { scroll-behavior: none; }
   position: fixed;
+  padding: 0;
 
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
-  border-radius: 4px;
+  border-radius: 2px;
   box-shadow: 0 0 32px 16px var(--black);
-  padding: 1rem;
   margin: auto;
   color: var(--lg-text);
 
@@ -92,14 +91,10 @@ dialog[open].lg {
   gap: 4px;
 
   .dialog-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 1rem;
 
     .dialog-title {
       font-weight: 600;
-      padding-bottom: 1rem;
-      padding-right: 2rem;
     }
 
     button.dialog-close {
@@ -110,10 +105,12 @@ dialog[open].lg {
     }
   }
   .dialog-content {
+    padding: 0 1rem 1rem;
     font-size: 0.875rem;
+    overflow-y: auto;
   }
   .dialog-actions {
-    padding-top: 1rem;
+    padding: 0 1rem 1rem;
     display: flex;
     justify-content: center;
     gap: 0.5rem;

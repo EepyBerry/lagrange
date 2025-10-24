@@ -5,7 +5,7 @@
     role="group"
     :aria-expanded="_expanded"
   >
-    <button class="section-title" @click="toggleExpand()" @keydown.enter="toggleExpand()">
+    <button class="lg section-title" @click="toggleExpand()" @keydown.enter="toggleExpand()">
       <h3>
         <iconify-icon :icon="icon" width="1.25rem" aria-hidden="true" />
         <span><slot name="title">SECTION_TITLE</slot></span>
@@ -37,7 +37,7 @@ function toggleExpand() {
   pointer-events: all;
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
-  border-radius: 4px;
+  border-radius: 2px;
   min-width: 26rem;
 
   display: flex;

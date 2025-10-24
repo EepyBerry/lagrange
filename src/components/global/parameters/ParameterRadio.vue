@@ -20,7 +20,7 @@ p {
   justify-content: flex-end;
   gap: 2px;
   background: var(--lg-button-active);
-  border-radius: 4px;
+  border-radius: 2px;
   border: none;
 
   & > :deep(.radio-button:first-of-type) {

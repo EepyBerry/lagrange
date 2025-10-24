@@ -28,9 +28,7 @@
 
         <!-- Basic planet data -->
         <section class="planet-basic">
-          <span class="deco-polygon">
-            <span class="hole"></span>
-          </span>
+          <span class="deco-polygon"></span>
           <table id="planet-basic-data">
             <tbody>
               <tr>
@@ -106,18 +104,14 @@
         
         <!-- Planet biomes (if present) -->
         <section v-if="planet?.data.biomesEnabled && planet?.data.biomesParams.length > 0" class="planet-details biomes">
-          <span class="deco-polygon">
-            <span class="hole"></span>
-          </span>
+          <span class="deco-polygon"></span>
           <h3>{{ $t('dialog.planetinfo.biomes') }}</h3>
           <SVGBiomeGraph :key="planet.data.biomesParams[0].id" :biomes="planet.data.biomesParams" />
         </section>
         
         <!-- Planet rings (if present) -->
         <section v-if="planet?.data.ringsEnabled && planet?.data.ringsParams.length > 0" class="planet-details rings">
-          <span class="deco-polygon">
-            <span class="hole"></span>
-          </span>
+          <span class="deco-polygon"></span>
           <h3>{{ $t('dialog.planetinfo.rings') }}</h3>
           <SVGRingsGraph :key="planet.data.ringsParams[0].id" :planet-radius="planet.data.planetRadius" :rings="planet.data.ringsParams" />
         </section>
@@ -181,7 +175,7 @@ function getMode(value: number | undefined) {
     height: 16rem;
     background: var(--lg-panel);
     border: 1px solid var(--lg-accent);
-    border-radius: 4px;
+    border-radius: 2px;
 
     display: flex;
     align-items: center;
@@ -189,7 +183,7 @@ function getMode(value: number | undefined) {
 
     .planet-image {
       max-width: 16rem;
-      border-radius: 4px;
+      border-radius: 2px;
       //filter: contrast(110%);
     }
   }

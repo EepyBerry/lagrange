@@ -72,7 +72,7 @@ function togglePanel(): void {
   align-self: center;
   width: 3rem;
   height: 2rem;
-  border-radius: 4px;
+  border-radius: 2px;
   border: 1px solid var(--lg-accent);
   cursor: pointer;
 }

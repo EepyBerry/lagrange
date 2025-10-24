@@ -228,7 +228,7 @@ function doClose() {
       .init-checkbox {
         background: var(--lg-panel);
         border: 1px solid var(--lg-input);
-        border-radius: 4px;
+        border-radius: 2px;
         padding: 0.25rem 0.5rem;
         display: flex;
         gap: 2rem;
@@ -260,7 +260,7 @@ function doClose() {
   }
   .controls-container {
     border: 1px solid var(--lg-accent);
-    border-radius: 4px;
+    border-radius: 2px;
 
     display: grid;
     grid-template-rows: 1fr;

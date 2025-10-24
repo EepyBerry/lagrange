@@ -135,7 +135,7 @@ function getPartialId() {
   min-height: 2rem;
   background: var(--lg-panel);
   border: 1px solid var(--lg-accent);
-  border-radius: 4px;
+  border-radius: 2px;
 
   display: flex;
   flex-direction: column;
@@ -201,7 +201,7 @@ function getPartialId() {
   align-self: center;
   width: 1.5rem;
   height: 1.5rem;
-  border-radius: 4px;
+  border-radius: 2px;
   border: 1px solid var(--lg-accent);
 }
 strong {

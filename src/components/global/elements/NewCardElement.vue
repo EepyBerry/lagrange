@@ -22,7 +22,7 @@ import { uwuifyPath } from '@core/extras'
   background: transparent;
   border: 2px dashed var(--lg-accent);
   color: var(--lg-accent);
-  border-radius: 4px;
+  border-radius: 2px;
   overflow: hidden;
 
   transition:

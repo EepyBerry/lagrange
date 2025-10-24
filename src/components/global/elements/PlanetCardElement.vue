@@ -1,8 +1,7 @@
 <template>
   <div ref="cardRoot" class="planet-card">
-    <span class="deco-polygon">
-      <span class="hole"></span>
-    </span>
+    <BorderTopDeco />
+    <CornerDeco class="br" />
     <div class="planet-preview" :class="{ 'extra-hologram': !!EXTRAS_HOLOGRAM_MODE }">
       <img
         v-if="planet.preview"
@@ -61,6 +60,8 @@ import { A11Y_ANIMATE } from '@core/globals'
 import { type IDBPlanet } from '@/dexie.config'
 import { onMounted, ref, type Ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import BorderTopDeco from '../decoration/BorderTopDeco.vue'
+import CornerDeco from '../decoration/CornerDeco.vue'
 
 const cardRoot: Ref<HTMLElement | null> = ref(null)
 
@@ -73,11 +74,13 @@ onMounted(() => setTimeout(() => cardRoot.value?.classList.add('animated')))
 <style scoped lang="scss">
 .planet-card {
   position: relative;
-  padding: 1rem;
+  clip-path: polygon(0 24px, 24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%);
+
+  padding: 1.75rem 1rem 1rem;
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
-  border-radius: 4px;
-  overflow: hidden;
+  border-radius: 2px;
+  overflow: visible;
 
   opacity: 0;
   transition: opacity 100ms ease-in-out;
@@ -93,8 +96,19 @@ onMounted(() => setTimeout(() => cardRoot.value?.classList.add('animated')))
   }
 
   .deco-polygon {
-    left: -1px;
+    left: unset;
+    right: 0;
+    transform: scale(-1,1);
+    background: var(--lg-accent);
   }
+  .deco-icon {
+    z-index: 10;
+    position: absolute;
+    top: -4px;
+    right: 12px;
+    color: var(--black);
+  }
+
   .planet-preview {
     position: relative;
     color: var(--lg-text);
@@ -106,7 +120,7 @@ onMounted(() => setTimeout(() => cardRoot.value?.classList.add('animated')))
 
     .planet-image {
       max-width: 16rem;
-      border-radius: 4px;
+      border-radius: 2px;
       //filter: contrast(110%);
     }
   }
@@ -136,6 +150,10 @@ onMounted(() => setTimeout(() => cardRoot.value?.classList.add('animated')))
       min-width: 2.5rem;
       min-height: 2.5rem;
       font-size: 0.875rem;
+    }
+    
+    button:last-child {
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
     }
   }
 }

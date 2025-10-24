@@ -60,14 +60,4 @@ hr {
   background: var(--lg-accent);
   border-bottom-left-radius: 2px;
   clip-path: polygon(0 0, 100% 0, 75% 100%, 0 100%);
-
-  .hole {
-    position: absolute;
-    top: 2px;
-    left: 4px;
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    background: var(--lg-primary);
-  }
 }

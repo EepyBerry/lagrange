@@ -235,7 +235,7 @@ p {
 .color-ramp {
   position: relative;
   height: 2rem;
-  border-radius: 4px;
+  border-radius: 2px;
   border: 1px solid var(--lg-accent);
   width: 100%;
   overflow: hidden;
@@ -262,7 +262,7 @@ p {
   border-spacing: 0.5rem 0.125rem;
   padding: 0.375rem 0;
 
-  border-radius: 4px;
+  border-radius: 2px;
   border: 1px solid var(--lg-input);
   background: var(--lg-panel);
 
@@ -297,7 +297,7 @@ p {
     align-self: center;
     width: 3rem;
     height: 2rem;
-    border-radius: 4px;
+    border-radius: 2px;
     border: 1px solid var(--lg-accent);
     cursor: pointer;
   }
@@ -322,7 +322,7 @@ p {
 
 button.edit {
   border: none;
-  border-radius: 4px;
+  border-radius: 2px;
   display: flex;
   align-items: center;
   justify-content: center;

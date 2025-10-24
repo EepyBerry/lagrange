@@ -258,7 +258,6 @@ async function deleteTargetedPlanet() {
     padding: 0.5rem 1rem;
     background: var(--lg-primary);
     border: 1px solid var(--lg-accent);
-    border-radius: 4px;
     text-decoration: none;
   }
   a.create-planet:hover {
@@ -272,7 +271,6 @@ async function deleteTargetedPlanet() {
   padding-bottom: 3.75rem;
   margin: 4.75rem 1rem 1rem;
   height: calc(100% - 4.75rem);
-  border-radius: 4px;
 
   display: grid;
   grid-template-rows: repeat(auto-fill, 26rem);
