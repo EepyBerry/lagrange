@@ -80,7 +80,16 @@ async function initDexie() {
   await DexieUtils.injectMissingSettings(settings!)
 
   // Check WebGPU availability
-  if (!WebGPU.isAvailable()) {
+  try {
+    if (!WebGPU.isAvailable()) {
+      console.warn(`WebGPU unavailable, falling back to WebGL` +
+        (location.protocol === 'https' ? '' : ' (likely non-secure context)')
+      )
+      settings = await idb.settings.limit(1).first()
+      await DexieUtils.setRenderingBackendFallback(settings!)
+    }
+  } catch(e) {
+    console.error('Caught error during WebGPU initialization!', e)
     settings = await idb.settings.limit(1).first()
     await DexieUtils.setRenderingBackendFallback(settings!)
   }

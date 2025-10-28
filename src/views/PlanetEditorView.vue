@@ -16,7 +16,7 @@
   <div id="scene-root" ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
 
-  <AppWebGLErrorDialog ref="webglErrorDialogRef" @close="redirectToCodex" />
+  <RendererErrorDialog ref="rendererErrorDialogRef" @close="redirectToCodex" />
   <AppPlanetErrorDialog ref="planetErrorDialogRef" @close="redirectToCodex" />
   <AppWarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
   <AppExportProgressDialog ref="exportProgressDialogRef" />
@@ -49,7 +49,7 @@ import {
 import { sleep } from '@core/utils/utils'
 import { nanoid } from 'nanoid'
 import WebGL from 'three/addons/capabilities/WebGL.js'
-import AppWebGLErrorDialog from '@components/editor/dialogs/WebGLErrorDialog.vue'
+import RendererErrorDialog from '@/components/editor/dialogs/RendererErrorDialog.vue'
 import AppPlanetErrorDialog from '@components/editor/dialogs/PlanetErrorDialog.vue'
 import AppWarnSaveDialog from '@components/editor/dialogs/WarnSaveDialog.vue'
 import AppExportProgressDialog from '@components/editor/dialogs/ExportProgressDialog.vue'
@@ -65,7 +65,7 @@ const head = useHead({
 })!
 
 // Dialogs
-const webglErrorDialogRef: Ref<{ openWithError: (error: HTMLElement) => void } | null> = ref(null)
+const rendererErrorDialogRef: Ref<{ openWithError: (error: HTMLElement) => void } | null> = ref(null)
 const planetErrorDialogRef: Ref<{ openWithError: (error: string, stack?: string) => void } | null> = ref(null)
 const warnSaveDialogRef: Ref<{ open: () => void } | null> = ref(null)
 const exportProgressDialogRef: Ref<{
@@ -111,12 +111,39 @@ onBeforeRouteLeave((_to, _from, next) => {
 })
 
 async function initThree() {
-  try {
-    if (WebGL.isWebGL2Available() || WebGPU.isAvailable()) {
+  const settings = await idb.settings.limit(1).first()
+
+  // Try starting with WebGPU
+  if (settings!.renderingBackend === 'webgl') {
+    try {
+      if (!WebGPU.isAvailable()) {
+        console.error('oh no')
+        throw new DOMException("WebGPU is unavailable in this browser")
+      }
       await initData()
       await initCanvas()
       loadedCorrectly = true
-    } else {
+    } catch(_) {
+      const error = WebGPU.getErrorMessage()
+      error.style.margin = ''
+      error.style.background = ''
+      error.style.color = ''
+      error.style.fontFamily = ''
+      error.style.fontSize = ''
+      error.style.width = ''
+      ;(error.lastChild as HTMLLinkElement).style.color = ''
+      rendererErrorDialogRef.value!.openWithError(error)
+    }
+  // Try starting with WebGL
+  } else {
+    try {
+      if (!WebGL.isWebGL2Available()) {
+        throw new DOMException("WebGL2 is unavailable in this browser")
+      }
+      await initData()
+      await initCanvas()
+      loadedCorrectly = true
+    } catch (_) {
       const error = WebGL.getWebGL2ErrorMessage()
       error.style.margin = ''
       error.style.background = ''
@@ -125,18 +152,14 @@ async function initThree() {
       error.style.fontSize = ''
       error.style.width = ''
       ;(error.lastChild as HTMLLinkElement).style.color = ''
-      webglErrorDialogRef.value!.openWithError(error)
+      if (error instanceof Error) {
+        planetErrorDialogRef.value!.openWithError(error.message, error.stack)
+      } else if (typeof error === 'string') {
+        planetErrorDialogRef.value!.openWithError(error, undefined)
+      }
     }
-  } catch (error: unknown) {
-    console.error(error)
-    if (error instanceof Error) {
-      planetErrorDialogRef.value!.openWithError(error.message, error.stack)
-    } else if (typeof error === 'string') {
-      planetErrorDialogRef.value!.openWithError(error, undefined)
-    }
-  } finally {
-    showSpinner.value = false
   }
+  showSpinner.value = false
 }
 
 async function saveAndRedirectToCodex() {
