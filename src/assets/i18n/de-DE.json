@@ -8,12 +8,10 @@
     "unit": "Einheit",
     "units": "Einheiten",
     "unknown_value": "[UNBEKANNT]",
-
     "nav": {
       "codex": "Kodex",
       "editor": "Editor"
     },
-
     "planet_data": {
       "biome": "Biom",
       "biome_type_arctic": "Arktik",
@@ -23,7 +21,6 @@
       "biome_type_tropical": "Tropisch",
       "biome_type_volcanic": "Volkanisch",
       "biome_type_various": "Divers",
-
       "biome_type_arid": "Aride",
       "biome_type_dry": "Trocken",
       "biome_type_semihumid": "Halb-feucht",
@@ -31,7 +28,7 @@
     }
   },
   "dialog": {
-    "webglerror": {
+    "renderererror": {
       "$title": "Editor kann nicht gestartet werden!",
       "brief": "Der WebGL-Kontext konnte nicht initialisiert werden. Siehe den unten angezeigten Fehler."
     },
@@ -46,7 +43,6 @@
       "update_title": "Update 0.4 - Jovian Expansion !",
       "update_brief": "Fügt zusätzliche Einstellungen hinzu, um Ihre Welten zu diversifizieren, wie XYZ-Verformung, Oberflächenstörungen und Ringe! Sie können jetzt Gasriesen nach Ihren Wünschen (neu) erschaffen!",
       "$tmp_wip": "In Entwicklung. Neue Funktionen in zukünftigen Versionen!",
-
       "shortcuts": "Tastaturkürzel",
       "shortcuts_note": "Tastaturkürzel können in den Einstellungen geändert werden!",
       "shortcuts_lensflare": "Blendenfleck ein-/ausblenden",
@@ -54,7 +50,6 @@
       "shortcuts_clouds": "Wolken ein-/ausblenden",
       "shortcuts_atmosphere": "Atmosphäre ein-/ausblenden",
       "shortcuts_screenshot": "Screenshot",
-
       "topbar": "Obere Leiste - Benennung und Daten",
       "topbar_rename": "Planeten umbenennen",
       "topbar_reset": "Zurücksetzen",
@@ -66,15 +61,12 @@
       "topbar_export": "Einen Planeten exportieren",
       "topbar_export_all": "Vollen Kodex exportieren",
       "topbar_gltf": "Einen Planeten als glTF exportieren",
-
       "footer": "Fußzeile - Verschiedenes",
       "footer_github": "GitHub Seite",
       "footer_settings": "Einstellungen",
       "footer_about": "Über @:main.$title",
-
       "show_next_time": "Dieses Intro beim nächsten Start anzeigen?",
       "enable_persistence": "Datenpersistenz für diese Anwendung aktivieren?",
-
       "$action_confirm": "Auf geht's!"
     },
     "planetinfo": {
@@ -99,7 +91,6 @@
     },
     "settings": {
       "$title": "Einstellungen",
-
       "general": "Allgemein",
       "general_language": "Sprache",
       "general_theme": "Thema Auswahl",
@@ -112,7 +103,6 @@
       "general_font_lowvision": "Sehschwäche - Atkinson Hyperlegible",
       "general_font_dyslexia": "Legasthenie - OpenDyslexic",
       "general_init_dialog": "Ladeeinführung anzeigen",
-
       "editor": "Editor",
       "editor_lensflare": "@:dialog.init.shortcuts_lensflare",
       "editor_biomes": "@:dialog.init.shortcuts_biomes",
@@ -127,15 +117,12 @@
       "editor_rendering_backend_webgl_notification": "Standard WebGL Engine; stabil und allgemein benutzt!",
       "editor_rendering_backend_webgpu_notification": "Modernes WebGPU Engine; derzeit in Entwicklung. Bugs & Fehler sind zu erwarten!",
       "editor_rendering_backend_webgpu_unavailable": "Ihr Browser unterstützt nicht WebGPU. WebGL ist das einzige verfügbare Backend.",
-
       "a11y": "Zugänglichkeit",
       "a11y_effects": "Visuelle Effekte aktivieren",
       "a11y_animations": "Animationen aktivieren",
-
       "extras": "Extras",
       "extras_hologram_mode": "Hologram Modus",
       "extras_special_days": "Spezielle Tage anzeigen",
-
       "advanced": "Erweiterte Einstellungen",
       "advanced_io": "IndexedDB-Daten sichern/wiederherstellen",
       "advanced_import": "Importieren...",
@@ -147,17 +134,14 @@
       "advanced_persist_info": "Die Datenpersistenz hängt von den Browserregeln ab. Diese könnten gelöscht werden, wenn sie deaktiviert sind (z. B. bei wenig Speicherplatz)",
       "advanced_danger_zone": "Rote Zone!",
       "advanced_clear_data": "Daten löschen",
-
       "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {
       "description": "Eine prozedurale App zur Planetenerstellung.",
       "motivation": "Projekt mit dem Ziel, mein Wunder über den Weltraum und die Planeten zu verwirklichen!",
-
       "tech": "Die wichtigsten Tools und Bibliotheken hinter diesem Projekt",
       "prefix_framework": "Framework: ",
       "prefix_engine": "3D-Engine: ",
-
       "changelogs": {
         "$title": "Änderungsprotokoll",
         "02_title": "Update 0.2 - World Collector",
@@ -186,7 +170,6 @@
         "glsl_misc": "Verschiedener GLSL-Code: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
         "contributors": "<b>Ein großes Dankeschön an alle Mitwirkenden an diesem Projekt ❤️</b>"
       },
-
       "built_with_love": "Erstellt mit 🏳️‍🌈 & ❤️",
       "license": "Lizenz ISTSL-NR 1.0"
     },
@@ -239,9 +222,7 @@
     "$action_info": "{planet} Infos",
     "$action_export": "{planet} exportieren",
     "$action_delete": "{planet} löschen",
-
     "no_planets": "Keine Planeten gefunden. Über den Button oben können Sie einen erstellen!",
-
     "topbar_import": "Importieren Sie einen Planeten aus einer Datei",
     "topbar_export": "Alle Planeten exportieren"
   },
@@ -252,27 +233,23 @@
     "$action_add": "Hinzufügen",
     "$action_reseed": "Seed erstellen",
     "$action_random": "Randomizieren",
-
     "general": {
       "displacement": "Oberflächenstörung",
       "displacement_show": "Störung anzeigen",
       "displacement_factor": "Faktor",
       "displacement_epsilon": "Epsilon",
       "displacement_multiplier": "Multiplikator",
-
       "warping": "Verformung",
       "warping_show": "Verformung anzeigen",
       "warping_x": "X Verformung",
       "warping_y": "Y Verformung",
       "warping_z": "Z Verformung",
-
       "noise": "Rausch Parameter",
       "noise_layers": "Anzahl der Schichten",
       "noise_fbm_frequency": "Frequenz",
       "noise_fbm_amplitude": "Amplitude",
       "noise_fbm_lacunarity": "Lückenhaftigkeit",
       "noise_fbm_octaves": "Oktaven",
-
       "noise_color": "Farbe",
       "noise_rgbramp": "Farbverlauf",
       "noise_rgbaramp": "Farbverlauf (RGBA)"
@@ -280,29 +257,24 @@
     "controls": {
       "lighting": {
         "$title": "Helligkeit",
-
         "lensflare": "Blendenfleck",
         "lensflare_show": "Blendenfleck anzeigen",
         "lensflare_points_intensity": "Punktintensität",
         "lensflare_glare_intensity": "Blendintensität",
-
         "sunlight": "Sternenlicht",
         "sunlight_angle": "Winkel",
         "sunlight_intensity": "Intensität",
         "sunlight_color": "Farbe",
-
         "amblight": "Umgebungslicht",
         "amblight_intensity": "Intensität",
         "amblight_color": "Farbe"
       },
       "planet_rendering": {
         "$title": "Planet & Rendering",
-
         "transform": "Verformung",
         "transform_radius": "Radius",
         "transform_axialtilt": "Axiale Neigung",
         "transform_rotation": "Drehung",
-
         "waterlevel": "Meeresspiegel",
         "metallicroughness": "Metallizität/Rauheit",
         "metallicroughness_waterroughness": "Rauheit der Flüssigkeit",
@@ -315,7 +287,6 @@
       },
       "surface": {
         "$title": "Oberfläche",
-
         "bumpmap": "Bump mapping",
         "bumpmap_show": "Beulen anzeigen",
         "bumpmap_strength": "Intensität der Beulen"
@@ -323,19 +294,15 @@
       "biomes": {
         "$title": "Biomen",
         "biomes_show": "Biomen anzeigen",
-
         "texture_resolution": "Auflösung",
         "temperature": "Temperaturgradient",
         "humidity": "Feuchtigkeitsgradient",
-
         "gradient_mode": "Verlaufsmodus",
         "gradient_mode_realistic": "Realistisch",
         "gradient_mode_poletopole": "Von Pol zu Pol",
         "gradient_mode_fullnoise": "Rausch",
-
         "biome_list": "Biome",
         "biome_type": "Typ",
-
         "height_min": "Min. Höhe",
         "height_max": "Max. Höhe",
         "temperature_min": "Min. Temperatur",
@@ -349,21 +316,17 @@
       "clouds": {
         "$title": "Wolken",
         "clouds_show": "Wolken anzeigen",
-
         "transform": "Transform",
         "transform_rotation": "Drehung",
-
         "rgba": "Farbe & Transparenz",
         "rgba_opacityramp": "Transparenzrampe"
       },
       "atmosphere": {
         "$title": "Atmosphäre",
         "atmosphere_show": "Atmosphäre anzeigen",
-
         "transform": "Verformung",
         "transform_height": "Höhe",
         "transform_density": "Dichte",
-
         "rgba": "Farbe & Intensität",
         "rgba_intensity": "Intensität",
         "rgba_mode": "Farbmodus",
@@ -377,11 +340,9 @@
         "$title": "Ringe",
         "ring_show": "Ringe anzeigen",
         "ring_list": "Ringe",
-
         "transform": "Verformung",
         "transform_radius_inner": "Interner Radius",
         "transform_radius_outer": "Externer Radius",
-
         "rgba": "Farbe & Transparenz",
         "rgba_opacity": "Transparenz",
         "rgba_colorramp": "Farbverlauf (RGBA)"
@@ -424,15 +385,12 @@
     "topbar_import": "Eine Planetendatei importieren",
     "topbar_export": "Eine Planetendatei exportieren",
     "topbar_export_all": "Exportieren Sie alle Planeten im .zip Format",
-
     "gradient_mode_realistic": "Niedrige Werte an den Polen, hohe am Äquator",
     "gradient_mode_poletopole": "Niedrige Werte am Nordpol, hohe am Südpol",
     "gradient_mode_fullnoise": "Werte, die vollständig durch Lärm gesteuert werden, ähnlich wie an der Oberfläche",
-
     "rgba_mode_realistic": "Rohe Berechnungen der atmosphärischen Diffusion von Raleigh & Mie mit Tönung",
     "rgba_mode_direct": "Tragt direkt nach der Berechnung eine einzelne Farbe auf",
     "rgba_mode_mixed": "Tragt eine einzelne Farbe auf den ausgewählten Farbton auf",
-
     "footer_github": "GitHub-Repository (im neuen Tab)",
     "footer_settings": "Einstellungen",
     "footer_about": "Über @:main.$title"
@@ -441,7 +399,6 @@
     "logo": "Lagrange Logo",
     "logo_alt": "Geheimes Lagrange Logo !",
     "logo_update_codex": "Aktualisierungs Logo",
-
     "dialog_webgl_error": "WebGL-Fehler modal",
     "dialog_planet_error": "Planetenfehlermodal",
     "dialog_init": "Einführungsmodal",
@@ -453,7 +410,6 @@
     "dialog_delete": "Löschungbestätigungsmodal",
     "dialog_warn_save": "Warnmodal für nicht gespeicherte Daten",
     "dialog_clear_data": "Datendump-Bestätigungsmodal",
-
     "topbar_rename": "@:tooltip.topbar_rename",
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
     "topbar_reset": "@:tooltip.topbar_reset",
@@ -466,11 +422,9 @@
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
     "topbar_export_all": "@:tooltip.topbar_export_all",
-
     "footer_github": "@:tooltip.footer_github",
     "footer_settings": "@:tooltip.footer_settings",
     "footer_about": "@:tooltip.footer_about",
-
     "general_theme_default": "Das Thema Komet (blau) anwenden",
     "general_theme_supernova": "Das Thema Supernova (lila) anwenden",
     "general_theme_voyager": "Das Thema Voyager (orange) anwenden",
@@ -482,13 +436,10 @@
     "editor_baking_pixelize": "Ausgabetexturen pixelieren",
     "editor_rendering_backend_webgl": "@:dialog.settings.editor_rendering_backend_webgl",
     "editor_rendering_backend_webgpu": "@:dialog.settings.editor_rendering_backend_webgpu",
-
     "editor_generic_input": "Parameterwert",
-
     "action_nav_toggle": "Navigationsmenü ein-/ausblenden",
     "action_nav_codex": "Link zum Kodex",
     "action_nav_editor": "Link zum Editor",
-
     "action_edit_keybind": "Taste ändern",
     "action_edit_ramp": "Rampe ändern",
     "action_open_colorpanel": "Das Farbfeld löschen",
@@ -518,12 +469,10 @@
     "day_intersexremembrance": "Erinnern wir uns an diesem Tag an unsere verlorenen intersexuellen Geschwistern",
     "day_transremembrance": "Erinnern wir uns an diesen Tag an unsere verlorenen trans+ Geschwistern",
     "day_polyamory": "Alles Gute zum Tag des polyamorösen Stolzes!",
-
     "week_biawareness": "Alles Gute zum Tag der Sichtbarkeit von Bisexuellen!",
     "week_genderfluidvisibility": "Alles Gute zum Tag der Genderfluid Sichtbarkeit!",
     "week_transawareness": "Alles Gute zum Tag der Trans-Sichtbarkeit!",
     "month_pride": "Schönen Pride-Monat! 🌈",
-
     "overlay1": "ich sehe dich"
   }
 }

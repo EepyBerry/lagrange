@@ -114,52 +114,58 @@ async function initThree() {
   const settings = await idb.settings.limit(1).first()
 
   // Try starting with WebGPU
-  if (settings!.renderingBackend === 'webgl') {
+  if (settings!.renderingBackend === 'webgpu') {
     try {
       if (!WebGPU.isAvailable()) {
-        console.error('oh no')
-        throw new DOMException("WebGPU is unavailable in this browser")
+        showSpinner.value = false
+        const webgpuError = WebGPU.getErrorMessage()
+        webgpuError.style.margin = ''
+        webgpuError.style.background = ''
+        webgpuError.style.color = ''
+        webgpuError.style.fontFamily = ''
+        webgpuError.style.fontSize = ''
+        webgpuError.style.width = ''
+        rendererErrorDialogRef.value!.openWithError(webgpuError)
+        return
       }
       await initData()
       await initCanvas()
       loadedCorrectly = true
-    } catch(_) {
-      const error = WebGPU.getErrorMessage()
-      error.style.margin = ''
-      error.style.background = ''
-      error.style.color = ''
-      error.style.fontFamily = ''
-      error.style.fontSize = ''
-      error.style.width = ''
-      ;(error.lastChild as HTMLLinkElement).style.color = ''
-      rendererErrorDialogRef.value!.openWithError(error)
-    }
-  // Try starting with WebGL
-  } else {
-    try {
-      if (!WebGL.isWebGL2Available()) {
-        throw new DOMException("WebGL2 is unavailable in this browser")
-      }
-      await initData()
-      await initCanvas()
-      loadedCorrectly = true
-    } catch (_) {
-      const error = WebGL.getWebGL2ErrorMessage()
-      error.style.margin = ''
-      error.style.background = ''
-      error.style.color = ''
-      error.style.fontFamily = ''
-      error.style.fontSize = ''
-      error.style.width = ''
-      ;(error.lastChild as HTMLLinkElement).style.color = ''
+      showSpinner.value = false
+    } catch(error) {
       if (error instanceof Error) {
         planetErrorDialogRef.value!.openWithError(error.message, error.stack)
       } else if (typeof error === 'string') {
         planetErrorDialogRef.value!.openWithError(error, undefined)
       }
     }
+  // Try starting with WebGL
+  } else {
+    try {
+      if (!WebGL.isWebGL2Available()) {
+        showSpinner.value = false
+        const webglError = WebGL.getWebGL2ErrorMessage()
+        webglError.style.margin = ''
+        webglError.style.background = ''
+        webglError.style.color = ''
+        webglError.style.fontFamily = ''
+        webglError.style.fontSize = ''
+        webglError.style.width = ''
+        rendererErrorDialogRef.value!.openWithError(webglError)
+        return
+      }
+      await initData()
+      await initCanvas()
+      loadedCorrectly = true
+      showSpinner.value = false
+    } catch (error) {
+      if (error instanceof Error || error instanceof DOMException) {
+        planetErrorDialogRef.value!.openWithError(error.message, error.stack)
+      } else if (typeof error === 'string') {
+        planetErrorDialogRef.value!.openWithError(error, undefined)
+      }
+    }
   }
-  showSpinner.value = false
 }
 
 async function saveAndRedirectToCodex() {

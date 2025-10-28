@@ -8,12 +8,10 @@
     "unit": "unit",
     "units": "units",
     "unknown_value": "[UNKNOWN]",
-
     "nav": {
       "codex": "Codex",
       "editor": "Editow"
     },
-
     "planet_data": {
       "biome": "Biome",
       "biome_type_arctic": "Awctic",
@@ -23,7 +21,6 @@
       "biome_type_tropical": "Twopical",
       "biome_type_volcanic": "Vowcanic",
       "biome_type_various": "Vawious",
-
       "biome_type_arid": "Awid",
       "biome_type_dry": "Dwy",
       "biome_type_semihumid": "Semihumid",
@@ -31,7 +28,7 @@
     }
   },
   "dialog": {
-    "webglerror": {
+    "renderererror": {
       "$title": "Faiwed to stawt the Pwanyet Editow!!! ;;w;;",
       "brief": "T-the WebGL context faiwed to initiawize p-pwopewwy... See bewow for e-error infowmation :c"
     },
@@ -46,7 +43,6 @@
       "update_title": "Update 0.5 - Cowe Ovewhauw!",
       "update_brief": "Intwoduces WebGPU suppowt!!! F-FUWWY COMPATIBWE with existing features!!! You can n-now sewect your pwefewwed w-wendewing engine in the app settings!!! (✿ﾟ▽ﾟ)",
       "$tmp_wip": "Cuwwentwy wowk-in-pwogwess. M-Mowe featuwes awe pwanned fow the nyext vewsions! x3",
-
       "shortcuts": "Showtcuts",
       "shortcuts_note": "Key bindings c-can be weassignyed in the app s-settings!",
       "shortcuts_lensflare": "Toggwe wens fwawe",
@@ -54,7 +50,6 @@
       "shortcuts_clouds": "Toggwe cwouds",
       "shortcuts_atmosphere": "Toggwe atmosphewe",
       "shortcuts_screenshot": "Take scweenshot",
-
       "topbar": "Top baw - Nyaming & data",
       "topbar_rename": "Wenyame pwanyet",
       "topbar_reset": "Weset t-to defauwts",
@@ -66,15 +61,12 @@
       "topbar_export": "Expowt pwanyet",
       "topbar_export_all": "Expowt fuww codex",
       "topbar_gltf": "Expowt as glTF",
-
       "footer": "Footew - Miscewwanyeous",
       "footer_github": "GitHub p-p-page",
       "footer_settings": "App settings :3",
       "footer_about": "About @:main.$title",
-
       "show_next_time": "Show this intwoduction nyext time?",
       "enable_persistence": "Enabwe bwowsew stowage p-pewsistence fow this app? :3",
-
       "$action_confirm": "Get s-stawted!"
     },
     "planetinfo": {
@@ -93,14 +85,12 @@
       "biomes_humi": "Humidity",
       "biomes_mode": "mode",
       "biomes_none": "T-this pwanyet has nyo defined biomes... （＞人＜；）",
-
       "rings": "Wing System",
       "rings_center": "centew",
       "rings_surface": "suwface"
     },
     "settings": {
       "$title": "Settings",
-
       "general": "Genyewaw >:3",
       "general_language": "Wanguage",
       "general_theme": "Choose theme t-to use",
@@ -113,7 +103,6 @@
       "general_font_lowvision": "Wow-vision - Atkinson Hyperlegible",
       "general_font_dyslexia": "Dyswexia - OpenDyslexic",
       "general_init_dialog": "Show init diawog on woad",
-
       "editor": "Editow ^w^",
       "editor_lensflare": "@:dialog.init.shortcuts_lensflare",
       "editor_biomes": "@:dialog.init.shortcuts_biomes",
@@ -128,15 +117,12 @@
       "editor_rendering_backend_webgl_notification": "S-standawd WebGL engine; stabwe a-and VEWY WIDEWY used!!! :3",
       "editor_rendering_backend_webgpu_notification": "M-modewn WebGPU engine; c-cuwwentwy undew devewopment... B-buggies & ewwows are wikewy to occuw!!! ;w;",
       "editor_rendering_backend_webgpu_unavailable": "Ono :c, youw bwowsew does n-nyot suppowt WebGPU... WebGL wiww be the ONWY engine avaiwabwe (；′⌒`)",
-
       "a11y": "Accessibiwity !!!",
       "a11y_effects": "Enyabwe visuaw effects",
       "a11y_animations": "Enyabwe animations",
-
       "extras": "Extwas",
       "extras_hologram_mode": "Howogwam mode",
       "extras_special_days": "Sh-show speciaw days",
-
       "advanced": "Advanced Settings",
       "advanced_io": "Backup/westowe IndexedDB d-data",
       "advanced_import": "Impowt fiwe...",
@@ -148,17 +134,14 @@
       "advanced_persist_info": "S-stowage pewsistence depends on bwowsew wuwes, a-and may be deweted without nyotice if disabwed!!! (e.g. in case of w-wow disk space)",
       "advanced_danger_zone": "Danger Zone!",
       "advanced_clear_data": "Clear all data",
-
       "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {
       "description": "A pwoceduwaw pwanyet-buiwding appwication!!! >w<",
       "motivation": "Made as a p-pet pwoject *blushes* t-to matewiawize my fascinyation with space & pwanyets!",
-
       "tech": "Main toows & libwawies behind this p-pwoject x3",
       "prefix_engine": "3D u-using",
       "prefix_framework": "Powewed by",
-
       "changelogs": {
         "$title": "Main featuwe changewogs",
         "02_title": "Update 0.2 - Wowwd Cowwectow",
@@ -187,7 +170,6 @@
         "glsl_misc": "Miscewwanyeous GLSL snippets: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
         "contributors": "<b>Speciaw thanks to a-aww contwibutows of this pwoject !!! (✿ﾟ▽ﾟ) ❤️</b>"
       },
-
       "built_with_love": "Buiwt with 🏳️‍🌈 & ❤️",
       "license": "ISTSL-NR 1.0 Wicense"
     },
@@ -240,9 +222,7 @@
     "$action_info": "About {planet} :3",
     "$action_export": "Expowt {planet} :O",
     "$action_delete": "Dewete {planet} ;w;",
-
     "no_planets": "No pwanyets found... (っ- ‸ - ς). Y-you can cweate one at the top !!! x3",
-
     "topbar_import": "Import planet from file",
     "topbar_export": "Export all planets"
   },
@@ -253,27 +233,23 @@
     "$action_add": "Add",
     "$action_reseed": "Genyewate seed",
     "$action_random": "Wandomize!!!",
-
     "general": {
       "displacement": "Dispwacement",
       "displacement_show": "Show dispwacement :3",
       "displacement_factor": "Factow",
       "displacement_epsilon": "Epsiwon",
       "displacement_multiplier": "Muwtipliew",
-
       "warping": "Wawping",
       "warping_show": "Show wawping :3",
       "warping_x": "X wawping",
       "warping_y": "Y wawping",
       "warping_z": "Z wawping",
-
       "noise": "Nyoise p-pawametews",
       "noise_layers": "Wayews",
       "noise_fbm_frequency": "Fwequency",
       "noise_fbm_amplitude": "Ampwitude",
       "noise_fbm_lacunarity": "Wacunawity",
       "noise_fbm_octaves": "Octaves",
-
       "noise_color": "Cowow",
       "noise_rgbramp": "Cowow wamp",
       "noise_rgbaramp": "Cowow/awpha wamp"
@@ -281,29 +257,24 @@
     "controls": {
       "lighting": {
         "$title": "Wighting",
-
         "lensflare": "Wens Fwawe",
         "lensflare_show": "Show wens fwawe :3",
         "lensflare_points_intensity": "Points intensity",
         "lensflare_glare_intensity": "Gwawe intensity",
-
         "sunlight": "Sunwight",
         "sunlight_angle": "Angwe",
         "sunlight_intensity": "Intensity",
         "sunlight_color": "Cowow",
-
         "amblight": "Ambient wight",
         "amblight_intensity": "Intensity",
         "amblight_color": "Cowow"
       },
       "planet_rendering": {
         "$title": "Pwanyet & Wendewing",
-
         "transform": "Twansfowm",
         "transform_radius": "Wadius",
         "transform_axialtilt": "Axiaw tiwt",
         "transform_rotation": "Wotation",
-
         "pbr": "PBR p-pawametews",
         "waterlevel": "Watew wevew",
         "metallicroughness": "Metawwic Woughnyess",
@@ -317,7 +288,6 @@
       },
       "surface": {
         "$title": "Suwface",
-
         "bumpmap": "Bump map",
         "bumpmap_show": "Show bumps :3",
         "bumpmap_strength": "Bump stwength"
@@ -325,19 +295,15 @@
       "biomes": {
         "$title": "Biomes",
         "biomes_show": "Show biomes :3",
-
         "texture_resolution": "Wesowution",
         "temperature": "Tempewatuwe gwadient",
         "humidity": "Humidity gwadient",
-
         "gradient_mode": "Gwadient mode",
         "gradient_mode_realistic": "Weawistic",
         "gradient_mode_poletopole": "Powe-to-powe",
         "gradient_mode_fullnoise": "Fuww nyoise",
-
         "biome_list": "Biomes",
         "biome_type": "Type",
-
         "height_min": "Min. height",
         "height_max": "Max. height",
         "temperature_min": "Min. tempewatuwe",
@@ -351,21 +317,17 @@
       "clouds": {
         "$title": "Cwouds",
         "clouds_show": "Show cwouds :3",
-
         "transform": "Twansfowm",
         "transform_rotation": "Wotation",
-
         "rgba": "Cowow & opacity",
         "rgba_opacityramp": "Opacity wamp"
       },
       "atmosphere": {
         "$title": "Atmosphewe",
         "atmosphere_show": "Show atmosphewe :3",
-
         "transform": "Twansfowm",
         "transform_height": "Height",
         "transform_density": "Density",
-
         "rgba": "Cowow  & intensity",
         "rgba_intensity": "Intensity",
         "rgba_mode": "Cowow mode",
@@ -379,11 +341,9 @@
         "$title": "Wing Systyem",
         "ring_show": "Show wing systyem",
         "ring_list": "Wings",
-
         "transform": "Twansfowm",
         "transform_radius_inner": "Innyew wadius",
         "transform_radius_outer": "Outew wadius",
-
         "rgba": "Cowow & opacity",
         "rgba_opacity": "Opacity",
         "rgba_colorramp": "Cowow wamp (RGBA)"
@@ -425,15 +385,12 @@
     "topbar_import": "Impowt pwanyet fiwe",
     "topbar_export": "Expowt pwanyet fiwe",
     "topbar_export_all": "Expowt aww pwanyets as .zip!!!",
-
     "gradient_mode_realistic": "W-wowew vawues on powes, highew vawues awong the e-equatow!!!",
     "gradient_mode_poletopole": "W-wowew vawues on nowth p-powe, highew vawues on south powe!!!",
     "gradient_mode_fullnoise": "Fuwwy noisy vawues, l-liek suwface nyoise!!!",
-
     "rgba_mode_realistic": "Waw Waweigh & Mie scattewing cawcuwashons with hue s-shifting",
     "rgba_mode_direct": "Appwies a singwe cowow o-on top of cawcuwashons",
     "rgba_mode_mixed": "Appwies diwect mode cowow as a t-tint on top of the s-sewected hue",
-
     "footer_github": "GitHub wepositowy!!! (opens in nyew tab OwO)",
     "footer_settings": "Settings",
     "footer_about": "About @:main.$title"
@@ -442,7 +399,6 @@
     "logo": "Wagwange wogo",
     "logo_alt": "Secwet Wagwange wogo!",
     "logo_update_codex": "Update wogo!",
-
     "dialog_webgl_error": "WebGL ewwow diawog",
     "dialog_planet_error": "Pwanyet ewwow diawog",
     "dialog_init": "Intwoduction diawog",
@@ -454,7 +410,6 @@
     "dialog_delete": "Confiwm dewete diawog",
     "dialog_warn_save": "Unsaved data wawning diawog",
     "dialog_clear_data": "Confiwm data cweaw diawog",
-
     "topbar_rename": "@:tooltip.topbar_rename",
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
     "topbar_reset": "@:tooltip.topbar_reset",
@@ -467,11 +422,9 @@
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
     "topbar_export_all": "@:tooltip.topbar_export_all",
-
     "footer_github": "@:tooltip.footer_github",
     "footer_settings": "@:tooltip.footer_settings",
     "footer_about": "@:tooltip.footer_about",
-
     "general_theme_default": "Set Comet theme (bwue)",
     "general_theme_supernova": "Set Supewnyova theme (puwple)",
     "general_theme_voyager": "Set Voyagew theme (owange)",
@@ -483,13 +436,10 @@
     "editor_baking_pixelize": "Pixewize baking output textuwes",
     "editor_rendering_backend_webgl": "@:dialog.settings.editor_rendering_backend_webgl",
     "editor_rendering_backend_webgpu": "@:dialog.settings.editor_rendering_backend_webgpu",
-
     "editor_generic_input": "Pawametew vawue",
-
     "action_nav_toggle": "Toggwe nyavigation menyu",
     "action_nav_codex": "Codex wink",
     "action_nav_editor": "Pwanyet Editow wink",
-
     "action_edit_keybind": "Edit key binding",
     "action_edit_ramp": "Edit wamp",
     "action_open_colorpanel": "Open cowow panyew",
@@ -519,12 +469,10 @@
     "day_intersexremembrance": "Wemembewing ouw fawwen intewsex sibwings this day...",
     "day_transremembrance": "Wemembewing ouw fawwen twans+ sibwings this day...",
     "day_polyamory": "Happy Powyamowy Day!",
-
     "week_biawareness": "Happy Bisexual+ Awawenyess Week!!!",
     "week_genderfluidvisibility": "Happy Gendewfwuid Visibiwity Week!!!",
     "week_transawareness": "Happy Twans Awawenyess Week!",
     "month_pride": "Happy Pwide Month!!! o(*￣▽￣*)o 🌈",
-
     "overlay1": "i see you ༼ つ ◕_◕ ༽つ"
   }
 }

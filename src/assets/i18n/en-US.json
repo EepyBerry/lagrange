@@ -8,12 +8,10 @@
     "unit": "unit",
     "units": "units",
     "unknown_value": "[UNKNOWN]",
-
     "nav": {
       "codex": "Codex",
       "editor": "Editor"
     },
-
     "planet_data": {
       "biome": "Biome",
       "biome_type_arctic": "Arctic",
@@ -23,7 +21,6 @@
       "biome_type_tropical": "Tropical",
       "biome_type_volcanic": "Volcanic",
       "biome_type_various": "Various",
-
       "biome_type_arid": "Arid",
       "biome_type_dry": "Dry",
       "biome_type_semihumid": "Semihumid",
@@ -31,7 +28,7 @@
     }
   },
   "dialog": {
-    "webglerror": {
+    "renderererror": {
       "$title": "Failed to start the Planet Editor!",
       "brief": "The WebGL context failed to initialize properly. See below for error information."
     },
@@ -46,7 +43,6 @@
       "update_title": "Update 0.5 - Core Overhaul!",
       "update_brief": "Introduces WebGPU support; fully compatible with existing features! You can now select your preferred rendering engine in the app settings!",
       "$tmp_wip": "Currently work-in-progress. More features are planned for the next versions!",
-
       "shortcuts": "Shortcuts",
       "shortcuts_note": "Key bindings can be reassigned in the app settings!",
       "shortcuts_lensflare": "Toggle lens flare",
@@ -54,7 +50,6 @@
       "shortcuts_clouds": "Toggle clouds",
       "shortcuts_atmosphere": "Toggle atmosphere",
       "shortcuts_screenshot": "Take screenshot",
-
       "topbar": "Top bar - Naming & data",
       "topbar_rename": "Rename planet",
       "topbar_reset": "Reset to defaults",
@@ -66,15 +61,12 @@
       "topbar_export": "Export planet",
       "topbar_export_all": "Export full codex",
       "topbar_gltf": "Export as glTF",
-
       "footer": "Footer - Miscellaneous",
       "footer_github": "GitHub page",
       "footer_settings": "App settings",
       "footer_about": "About @:main.$title",
-
       "show_next_time": "Show this introduction next time?",
       "enable_persistence": "Enable browser storage persistence for this app?",
-
       "$action_confirm": "Get started!"
     },
     "planetinfo": {
@@ -99,7 +91,6 @@
     },
     "settings": {
       "$title": "Settings",
-
       "general": "General",
       "general_language": "Language",
       "general_theme": "Choose theme to use",
@@ -112,7 +103,6 @@
       "general_font_lowvision": "Low-vision - Atkinson Hyperlegible",
       "general_font_dyslexia": "Dyslexia - OpenDyslexic",
       "general_init_dialog": "Show init dialog on load",
-
       "editor": "Editor",
       "editor_lensflare": "@:dialog.init.shortcuts_lensflare",
       "editor_biomes": "@:dialog.init.shortcuts_biomes",
@@ -127,15 +117,12 @@
       "editor_rendering_backend_webgl_notification": "Standard WebGL engine; stable and widely used!",
       "editor_rendering_backend_webgpu_notification": "Modern WebGPU engine; currently under development. Bugs & errors are likely to occur!",
       "editor_rendering_backend_webgpu_unavailable": "Your browser does not support WebGPU. WebGL will be the only engine available.",
-
       "a11y": "Accessibility",
       "a11y_effects": "Enable visual effects",
       "a11y_animations": "Enable animations",
-
       "extras": "Extras",
       "extras_hologram_mode": "Hologram mode",
       "extras_special_days": "Show special days",
-
       "advanced": "Advanced Settings",
       "advanced_io": "Backup/restore IndexedDB data",
       "advanced_import": "Import file...",
@@ -147,17 +134,14 @@
       "advanced_persist_info": "Storage persistence depends on browser rules, and may be deleted without notice if disabled (e.g. in case of low disk space)",
       "advanced_danger_zone": "Danger Zone!",
       "advanced_clear_data": "Clear all data",
-
       "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {
       "description": "A procedural planet-building application.",
       "motivation": "Made as a pet project to materialize my fascination with space & planets!",
-
       "tech": "Main tools & libraries behind this project",
       "prefix_framework": "Powered by",
       "prefix_engine": "3D using",
-
       "changelogs": {
         "$title": "Main feature changelogs",
         "02_title": "Update 0.2 - World Collector",
@@ -186,7 +170,6 @@
         "glsl_misc": "Miscellaneous GLSL snippets: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
         "contributors": "<b>Special thanks to all contributors of this project ❤️</b>"
       },
-
       "built_with_love": "Built with 🏳️‍🌈 & ❤️",
       "license": "ISTSL-NR 1.0 License"
     },
@@ -239,9 +222,7 @@
     "$action_info": "About {planet}",
     "$action_export": "Export {planet}",
     "$action_delete": "Delete {planet}",
-
     "no_planets": "No planets found. You can create one at the top!",
-
     "topbar_import": "Import planet from file",
     "topbar_export": "Export all planets"
   },
@@ -252,27 +233,23 @@
     "$action_add": "Add",
     "$action_reseed": "Generate seed",
     "$action_random": "Randomize",
-
     "general": {
       "displacement": "Displacement",
       "displacement_show": "Show displacement",
       "displacement_factor": "Factor",
       "displacement_epsilon": "Epsilon",
       "displacement_multiplier": "Multiplier",
-
       "warping": "Warping",
       "warping_show": "Show warping",
       "warping_x": "X warping",
       "warping_y": "Y warping",
       "warping_z": "Z warping",
-
       "noise": "Noise parameters",
       "noise_layers": "Layers",
       "noise_fbm_frequency": "Frequency",
       "noise_fbm_amplitude": "Amplitude",
       "noise_fbm_lacunarity": "Lacunarity",
       "noise_fbm_octaves": "Octaves",
-
       "noise_color": "Color",
       "noise_rgbramp": "Color ramp",
       "noise_rgbaramp": "Color/alpha ramp"
@@ -280,29 +257,24 @@
     "controls": {
       "lighting": {
         "$title": "Lighting",
-
         "lensflare": "Lens Flare",
         "lensflare_show": "Show lens flare",
         "lensflare_points_intensity": "Points intensity",
         "lensflare_glare_intensity": "Glare intensity",
-
         "sunlight": "Sunlight",
         "sunlight_angle": "Angle",
         "sunlight_intensity": "Intensity",
         "sunlight_color": "Color",
-
         "amblight": "Ambient light",
         "amblight_intensity": "Intensity",
         "amblight_color": "Color"
       },
       "planet_rendering": {
         "$title": "Planet & Rendering",
-
         "transform": "Transform",
         "transform_radius": "Radius",
         "transform_axialtilt": "Axial tilt",
         "transform_rotation": "Rotation",
-
         "waterlevel": "Water level",
         "metallicroughness": "Metallic Roughness",
         "metallicroughness_waterroughness": "Water roughness",
@@ -315,7 +287,6 @@
       },
       "surface": {
         "$title": "Surface",
-
         "bumpmap": "Bump map",
         "bumpmap_show": "Show bumps",
         "bumpmap_strength": "Bump strength"
@@ -323,19 +294,15 @@
       "biomes": {
         "$title": "Biomes",
         "biomes_show": "Show biomes",
-
         "texture_resolution": "Resolution",
         "temperature": "Temperature gradient",
         "humidity": "Humidity gradient",
-
         "gradient_mode": "Gradient mode",
         "gradient_mode_realistic": "Realistic",
         "gradient_mode_poletopole": "Pole-to-pole",
         "gradient_mode_fullnoise": "Full noise",
-
         "biome_list": "Biomes",
         "biome_type": "Type",
-
         "height_min": "Min. height",
         "height_max": "Max. height",
         "temperature_min": "Min. temperature",
@@ -349,21 +316,17 @@
       "clouds": {
         "$title": "Clouds",
         "clouds_show": "Show clouds",
-
         "transform": "Transform",
         "transform_rotation": "Rotation",
-
         "rgba": "Color & opacity",
         "rgba_opacityramp": "Opacity ramp"
       },
       "atmosphere": {
         "$title": "Atmosphere",
         "atmosphere_show": "Show atmosphere",
-
         "transform": "Transform",
         "transform_height": "Height",
         "transform_density": "Density",
-
         "rgba": "Color & intensity",
         "rgba_intensity": "Intensity",
         "rgba_mode": "Color mode",
@@ -377,11 +340,9 @@
         "$title": "Ring System",
         "ring_show": "Show ring system",
         "ring_list": "Rings",
-
         "transform": "Transform",
         "transform_radius_inner": "Inner radius",
         "transform_radius_outer": "Outer radius",
-
         "rgba": "Color & opacity",
         "rgba_opacity": "Opacity",
         "rgba_colorramp": "Color ramp (RGBA)"
@@ -423,15 +384,12 @@
     "topbar_import": "Import planet file",
     "topbar_export": "Export planet file",
     "topbar_export_all": "Export all planets as .zip",
-
     "gradient_mode_realistic": "Lower values on poles, higher values along the equator",
     "gradient_mode_poletopole": "Lower values on north pole, higher values on south pole",
     "gradient_mode_fullnoise": "Fully noisy values, akin to surface noise",
-
     "rgba_mode_realistic": "Raw Raleigh & Mie scattering calculations with hue shifting",
     "rgba_mode_direct": "Applies a single color on top of calculations",
     "rgba_mode_mixed": "Applies direct mode color as a tint on top of the selected hue",
-
     "footer_github": "GitHub repository (opens in new tab)",
     "footer_settings": "Settings",
     "footer_about": "About @:main.$title"
@@ -440,7 +398,6 @@
     "logo": "Lagrange logo",
     "logo_alt": "Secret Lagrange logo!",
     "logo_update_codex": "Update logo",
-
     "dialog_webgl_error": "WebGL error dialog",
     "dialog_planet_error": "Planet error dialog",
     "dialog_init": "Introduction dialog",
@@ -452,7 +409,6 @@
     "dialog_delete": "Confirm delete dialog",
     "dialog_warn_save": "Unsaved data warning dialog",
     "dialog_clear_data": "Confirm data clear dialog",
-
     "topbar_rename": "@:tooltip.topbar_rename",
     "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
     "topbar_reset": "@:tooltip.topbar_reset",
@@ -465,11 +421,9 @@
     "topbar_import": "@:tooltip.topbar_import",
     "topbar_export": "@:tooltip.topbar_export",
     "topbar_export_all": "@:tooltip.topbar_export_all",
-
     "footer_github": "@:tooltip.footer_github",
     "footer_settings": "@:tooltip.footer_settings",
     "footer_about": "@:tooltip.footer_about",
-
     "general_theme_default": "Set Comet theme (blue)",
     "general_theme_supernova": "Set Supernova theme (purple)",
     "general_theme_voyager": "Set Voyager theme (orange)",
@@ -481,13 +435,10 @@
     "editor_baking_pixelize": "Pixelize baking output textures",
     "editor_rendering_backend_webgl": "@:dialog.settings.editor_rendering_backend_webgl",
     "editor_rendering_backend_webgpu": "@:dialog.settings.editor_rendering_backend_webgpu",
-
     "editor_generic_input": "Parameter value",
-
     "action_nav_toggle": "Toggle navigation menu",
     "action_nav_codex": "Codex link",
     "action_nav_editor": "Planet Editor link",
-
     "action_edit_keybind": "Edit key binding",
     "action_edit_ramp": "Edit ramp",
     "action_open_colorpanel": "Open color panel",
@@ -517,12 +468,10 @@
     "day_intersexremembrance": "Remembering our fallen intersex siblings this day",
     "day_transremembrance": "Remembering our fallen trans+ siblings this day",
     "day_polyamory": "Happy Polyamory Day!",
-
     "week_biawareness": "Happy Bisexual+ Awareness Week!",
     "week_genderfluidvisibility": "Happy Genderfluid Visibility Week!",
     "week_transawareness": "Happy Trans Awareness Week!",
     "month_pride": "Happy Pride Month! 🌈",
-
     "overlay1": "i see you"
   }
 }

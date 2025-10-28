@@ -10,11 +10,11 @@
   >
     <template #title>
       <iconify-icon icon="mingcute:warning-line" width="2rem" aria-hidden="true" />
-      <span>{{ $t('dialog.webglerror.$title') }}</span>
+      <span>{{ $t('dialog.renderererror.$title') }}</span>
     </template>
     <template #content>
       <div class="error-info">
-        <p>{{ $t('dialog.webglerror.brief') }}</p>
+        <p>{{ $t('dialog.renderererror.brief') }}</p>
       </div>
       <hr class="error-divider" />
       <div ref="errorContainerRef" class="error-container"></div>
