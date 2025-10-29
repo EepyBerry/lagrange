@@ -30,7 +30,7 @@
   "dialog": {
     "renderererror": {
       "$title": "Impossible de démarrer l'Éditeur!",
-      "brief": "Échec d'initilisation du contexte WebGL. Consulter l'erreur affichée ci-dessous."
+      "brief": "Échec d'initilisation du contexte de rendu. Consulter l'erreur affichée ci-dessous."
     },
     "planeterror": {
       "$title": "Impossible de démarrer l'Éditeur!",

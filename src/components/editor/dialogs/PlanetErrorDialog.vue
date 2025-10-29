@@ -68,6 +68,7 @@ defineExpose({ openWithError })
   .error-container {
     min-height: 2rem;
     text-align: center;
+    font-family: monospace;
     padding: 1rem;
   }
   .stack-line {

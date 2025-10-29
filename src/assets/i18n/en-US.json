@@ -30,7 +30,7 @@
   "dialog": {
     "renderererror": {
       "$title": "Failed to start the Planet Editor!",
-      "brief": "The WebGL context failed to initialize properly. See below for error information."
+      "brief": "The rendering context failed to initialize properly. See below for error information."
     },
     "planeterror": {
       "$title": "Failed to start the Planet Editor!",

@@ -55,6 +55,7 @@ import AppWarnSaveDialog from '@components/editor/dialogs/WarnSaveDialog.vue'
 import AppExportProgressDialog from '@components/editor/dialogs/ExportProgressDialog.vue'
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils'
 import WebGPUPatchwork from '@/core/patchwork/WebGPU.patchwork'
+import { setRenderingBackendFallback } from '@/core/utils/dexie-utils'
 
 const route = useRoute()
 const router = useRouter()
@@ -112,20 +113,15 @@ onBeforeRouteLeave((_to, _from, next) => {
 
 async function initThree() {
   const settings = await idb.settings.limit(1).first()
+  console.log(settings)
 
-  // Try starting with WebGPU
+  // Try starting with WebGPU (fallback to WebGL in case of failure)
   if (settings!.renderingBackend === 'webgpu') {
     try {
-      if (!WebGPUPatchwork.isAvailable()) {
+      if (!(await WebGPUPatchwork.isAvailable())) {
         showSpinner.value = false
         const webgpuError = WebGPUPatchwork.getErrorMessage()
-        webgpuError.style.margin = ''
-        webgpuError.style.background = ''
-        webgpuError.style.color = ''
-        webgpuError.style.fontFamily = ''
-        webgpuError.style.fontSize = ''
-        webgpuError.style.width = ''
-        rendererErrorDialogRef.value!.openWithError(webgpuError)
+        rendererErrorDialogRef.value!.openWithError(webgpuError);
         return
       }
       await initData()
@@ -133,6 +129,8 @@ async function initThree() {
       loadedCorrectly = true
       showSpinner.value = false
     } catch(error) {
+      settings!.renderingBackend = 'webgl'
+      setRenderingBackendFallback(settings!)
       if (error instanceof Error) {
         planetErrorDialogRef.value!.openWithError(error.message, error.stack)
       } else if (typeof error === 'string') {

@@ -30,7 +30,7 @@
   "dialog": {
     "renderererror": {
       "$title": "Editor kann nicht gestartet werden!",
-      "brief": "Der WebGL-Kontext konnte nicht initialisiert werden. Siehe den unten angezeigten Fehler."
+      "brief": "Der Rendering-Kontext konnte nicht initialisiert werden. Siehe den unten angezeigten Fehler."
     },
     "planeterror": {
       "$title": "Editor kann nicht gestartet werden!",
