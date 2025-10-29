@@ -54,7 +54,7 @@ import AppPlanetErrorDialog from '@components/editor/dialogs/PlanetErrorDialog.v
 import AppWarnSaveDialog from '@components/editor/dialogs/WarnSaveDialog.vue'
 import AppExportProgressDialog from '@components/editor/dialogs/ExportProgressDialog.vue'
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils'
-import WebGPU from 'three/addons/capabilities/WebGPU.js'
+import WebGPUPatchwork from '@/core/patchwork/WebGPU.patchwork'
 
 const route = useRoute()
 const router = useRouter()
@@ -116,9 +116,9 @@ async function initThree() {
   // Try starting with WebGPU
   if (settings!.renderingBackend === 'webgpu') {
     try {
-      if (!WebGPU.isAvailable()) {
+      if (!WebGPUPatchwork.isAvailable()) {
         showSpinner.value = false
-        const webgpuError = WebGPU.getErrorMessage()
+        const webgpuError = WebGPUPatchwork.getErrorMessage()
         webgpuError.style.margin = ''
         webgpuError.style.background = ''
         webgpuError.style.color = ''

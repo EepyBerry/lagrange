@@ -118,7 +118,7 @@
                       name="rendering-backend-select"
                       :value="'webgpu'"
                       :button-aria-label="$t('a11y.editor_rendering_backend_webgpu')"
-                      :disabled="!WebGPU.isAvailable()"
+                      :disabled="!WebGPUPatchwork.isAvailable()"
                     >
                       <iconify-icon class="icon" icon="simple-icons:webgpu" width="1.5rem" aria-hidden="true" />
                       {{ $t('dialog.settings.editor_rendering_backend_webgpu') }}
@@ -132,7 +132,7 @@
                       : $t('dialog.settings.editor_rendering_backend_webgpu_notification')
                   }}
                 </NotificationElement>
-                <NotificationElement v-if="!WebGPU.isAvailable()" type="warn">
+                <NotificationElement v-if="!WebGPUPatchwork.isAvailable()" type="warn">
                   {{ $t('dialog.settings.editor_rendering_backend_webgpu_unavailable') }}
                 </NotificationElement>
                 <ParameterDivider />
@@ -370,7 +370,7 @@ import { EventBus } from '@core/event-bus'
 import { EXTRAS_CAT_MODE, EXTRAS_HOLOGRAM_MODE, EXTRAS_SPECIAL_DAYS } from '@core/extras'
 import { saveAs } from 'file-saver'
 import { readFileSettings } from '@core/helpers/import.helper'
-import WebGPU from 'three/examples/jsm/capabilities/WebGPU.js'
+import WebGPUPatchwork from '@/core/patchwork/WebGPU.patchwork'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
