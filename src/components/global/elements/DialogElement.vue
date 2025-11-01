@@ -1,5 +1,7 @@
 <template>
   <dialog ref="dialog" class="lg" @abort="close">
+    <CornerDeco class="tl" :class="{ 'warn': isWarn }" />
+    <CornerDeco class="br" :class="{ 'warn': isWarn }" />
     <header class="dialog-header">
       <h2 v-if="showTitle" class="dialog-title">
         <slot name="title"></slot>
@@ -25,6 +27,7 @@
 <script setup lang="ts">
 import { EventBus } from '@core/event-bus'
 import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue'
+import CornerDeco from '../decoration/CornerDeco.vue'
 
 const dialog: Ref<HTMLDialogElement | null> = ref(null)
 const ignoresNativeEvents = ref(false)
@@ -45,7 +48,8 @@ const $props = defineProps<{
   showTitle?: boolean
   showActions?: boolean
   closeable?: boolean
-  preventClickClose?: boolean
+  preventClickClose?: boolean,
+  isWarn?: boolean
 }>()
 onMounted(() => {
   dialog.value?.addEventListener('click', handleClick)
@@ -84,6 +88,7 @@ dialog[open].lg {
   box-shadow: 0 0 32px 16px var(--black);
   margin: auto;
   color: var(--lg-text);
+  clip-path: polygon(0 24px, 24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%);
 
   display: flex;
   flex-direction: column;
@@ -116,6 +121,9 @@ dialog[open].lg {
     gap: 0.5rem;
     & > * {
       flex-grow: 1;
+    }
+    & > *:last-child {
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
     }
   }
 }

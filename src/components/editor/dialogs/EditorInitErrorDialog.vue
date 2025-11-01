@@ -6,6 +6,7 @@
     :show-actions="allowRendererFallback"
     closeable
     prevent-click-close
+    is-warn
     :aria-label="$t('a11y.dialog_editor_error')"
     @close="$emit('close', _wantsFallback)"
   >
