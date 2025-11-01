@@ -16,10 +16,9 @@
   <div id="scene-root" ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
 
-  <RendererErrorDialog ref="rendererErrorDialogRef" @close="redirectToCodex" />
-  <AppPlanetErrorDialog ref="planetErrorDialogRef" @close="redirectToCodex" />
-  <AppWarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
-  <AppExportProgressDialog ref="exportProgressDialogRef" />
+  <EditorErrorDialog ref="editorErrorDialogRef" @close="redirectToCodex" />
+  <WarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
+  <ExportProgressDialog ref="exportProgressDialogRef" />
 </template>
 
 <script setup lang="ts">
@@ -48,14 +47,13 @@ import {
 } from '@core/services/planet-editor.service'
 import { sleep } from '@core/utils/utils'
 import { nanoid } from 'nanoid'
-import WebGL from 'three/addons/capabilities/WebGL.js'
-import RendererErrorDialog from '@/components/editor/dialogs/RendererErrorDialog.vue'
-import AppPlanetErrorDialog from '@components/editor/dialogs/PlanetErrorDialog.vue'
-import AppWarnSaveDialog from '@components/editor/dialogs/WarnSaveDialog.vue'
-import AppExportProgressDialog from '@components/editor/dialogs/ExportProgressDialog.vue'
+import EditorErrorDialog from '@/components/editor/dialogs/EditorInitErrorDialog.vue'
+import WarnSaveDialog from '@components/editor/dialogs/WarnSaveDialog.vue'
+import ExportProgressDialog from '@components/editor/dialogs/ExportProgressDialog.vue'
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils'
-import WebGPUPatchwork from '@/core/patchwork/WebGPU.patchwork'
-import { setRenderingBackendFallback } from '@/core/utils/dexie-utils'
+import WebGPU from '@/core/capabilities/WebGPU'
+import * as DexieService from '@core/services/dexie.service'
+import WebGL from '@/core/capabilities/WebGL'
 
 const route = useRoute()
 const router = useRouter()
@@ -66,8 +64,7 @@ const head = useHead({
 })!
 
 // Dialogs
-const rendererErrorDialogRef: Ref<{ openWithError: (error: HTMLElement) => void } | null> = ref(null)
-const planetErrorDialogRef: Ref<{ openWithError: (error: string, stack?: string) => void } | null> = ref(null)
+const editorErrorDialogRef: Ref<{ openWithError: (error: string, stack?: string, isWebGPUError?: boolean) => void } | null> = ref(null)
 const warnSaveDialogRef: Ref<{ open: () => void } | null> = ref(null)
 const exportProgressDialogRef: Ref<{
   open: () => void
@@ -115,13 +112,13 @@ async function initThree() {
   const settings = await idb.settings.limit(1).first()
   console.log(settings)
 
-  // Try starting with WebGPU (fallback to WebGL in case of failure)
+  // Try starting with WebGPU (fallback to WebGL2 in case of failure)
   if (settings!.renderingBackend === 'webgpu') {
     try {
-      if (!(await WebGPUPatchwork.isAvailable())) {
+      if (!(await WebGPU.isAvailable())) {
         showSpinner.value = false
-        const webgpuError = WebGPUPatchwork.getErrorMessage()
-        rendererErrorDialogRef.value!.openWithError(webgpuError);
+        const webgpuErrorMessage = WebGPU.getErrorMessage(i18n)
+        editorErrorDialogRef.value!.openWithError(webgpuErrorMessage, undefined, true);
         return
       }
       await initData()
@@ -129,27 +126,21 @@ async function initThree() {
       loadedCorrectly = true
       showSpinner.value = false
     } catch(error) {
-      settings!.renderingBackend = 'webgl'
-      setRenderingBackendFallback(settings!)
       if (error instanceof Error) {
-        planetErrorDialogRef.value!.openWithError(error.message, error.stack)
+        editorErrorDialogRef.value!.openWithError(error.message, error.stack)
       } else if (typeof error === 'string') {
-        planetErrorDialogRef.value!.openWithError(error, undefined)
+        editorErrorDialogRef.value!.openWithError(error)
+      } else {
+        editorErrorDialogRef.value!.openWithError(i18n.t('main.error.default_unknown'))
       }
     }
-  // Try starting with WebGL
+  // Try starting with WebGL2
   } else {
     try {
       if (!WebGL.isWebGL2Available()) {
         showSpinner.value = false
-        const webglError = WebGL.getWebGL2ErrorMessage()
-        webglError.style.margin = ''
-        webglError.style.background = ''
-        webglError.style.color = ''
-        webglError.style.fontFamily = ''
-        webglError.style.fontSize = ''
-        webglError.style.width = ''
-        rendererErrorDialogRef.value!.openWithError(webglError)
+        const webglErrorMessage = WebGL.getWebGL2ErrorMessage(i18n)
+        editorErrorDialogRef.value!.openWithError(webglErrorMessage);
         return
       }
       await initData()
@@ -158,9 +149,11 @@ async function initThree() {
       showSpinner.value = false
     } catch (error) {
       if (error instanceof Error || error instanceof DOMException) {
-        planetErrorDialogRef.value!.openWithError(error.message, error.stack)
+        editorErrorDialogRef.value!.openWithError(error.message, error.stack)
       } else if (typeof error === 'string') {
-        planetErrorDialogRef.value!.openWithError(error, undefined)
+        editorErrorDialogRef.value!.openWithError(error)
+      } else {
+        editorErrorDialogRef.value!.openWithError(i18n.t('main.error.default_unknown'))
       }
     }
   }
@@ -171,9 +164,14 @@ async function saveAndRedirectToCodex() {
   redirectToCodex()
 }
 
-function redirectToCodex() {
+async function redirectToCodex(allowRendererFallback: boolean = false) {
   setPlanetEditFlag(false) // set edit flag to false to force exit
-  router.push('/codex')
+  if (allowRendererFallback) {
+    await DexieService.setRenderingBackendFallback()
+    router.go(0)
+  } else {
+    router.push('/codex')
+  }
 }
 
 async function initData() {

@@ -25,18 +25,15 @@
       "biome_type_dry": "Sec",
       "biome_type_semihumid": "Semi-humide",
       "biome_type_humid": "Humide"
+    },
+    "error": {
+      "stacktrace": "Stacktrace",
+      "default_unknown": "Une erreur inconnue est survenue. Suivez les instructions au-dessus si vous voyez ce message!",
+      "default_webgl_support": "Votre navigateur et/ou matériel ne semble pas prendre en charge WebGL2.",
+      "default_webgpu_support": "Votre navigateur et/ou matériel ne prend pas encore WebGPU en charge, ou WebGPU est désactivé."
     }
   },
   "dialog": {
-    "renderererror": {
-      "$title": "Impossible de démarrer l'Éditeur!",
-      "brief": "Échec d'initilisation du contexte de rendu. Consulter l'erreur affichée ci-dessous."
-    },
-    "planeterror": {
-      "$title": "Impossible de démarrer l'Éditeur!",
-      "brief": "Échec de chargement de la planète. Consulter l'erreur affichée ci-dessous.",
-      "reporting": "Si possible, vérifiez la console du navigateur et ouvrez un ticket sur GitHub !"
-    },
     "init": {
       "$title": "Bienvenue dans @:main.$title",
       "introduction": "Lagrange est un outils de création de planètes entièrement procédural, parfait pour vos besoins narratifs autour de planètes, systèmes solaires, ou même de galaxies entières !",
@@ -68,6 +65,12 @@
       "show_next_time": "Afficher cette introduction au prochain démarrage ?",
       "enable_persistence": "Activer la persistance des données pour cette application ?",
       "$action_confirm": "C'est parti !"
+    },
+    "editorerror": {
+      "$title": "Impossible de démarrer l'Éditeur!",
+      "brief": "Échec lors de l'initialisation. Consulter l'erreur affichée ci-dessous.",
+      "reporting": "Si possible, vérifiez la console du navigateur et ouvrez un ticket sur GitHub !",
+      "$action_reload_fallback_renderer": "Recharger avec WebGL2"
     },
     "planetinfo": {
       "$title": "Informations sur la planète",
@@ -112,11 +115,11 @@
       "editor_baking_resolution": "Résolution des textures lors du baking (puissances de deux)",
       "editor_baking_pixelize": "Pixéliser les textures lors du baking",
       "editor_rendering_backend": "Sélectionner le moteur de rendu 3D <b>(rechargement nécessaire)</b>",
-      "editor_rendering_backend_webgl": "WebGL",
+      "editor_rendering_backend_webgl": "WebGL2",
       "editor_rendering_backend_webgpu": "WebGPU",
-      "editor_rendering_backend_webgl_notification": "Moteur WebGL standard; stable et couramment utilisé!",
+      "editor_rendering_backend_webgl_notification": "Moteur WebGL2 standard; stable et couramment utilisé!",
       "editor_rendering_backend_webgpu_notification": "Moteur WebGPU moderne; en cours de développement. Des bugs et/ou erreurs peuvent se produire!",
-      "editor_rendering_backend_webgpu_unavailable": "Votre navigateur ne prend pas en charge WebGPU. WebGL sera le seul moteur disponible.",
+      "editor_rendering_backend_webgpu_unavailable": "Votre navigateur ne prend pas en charge WebGPU. WebGL2 sera le seul moteur disponible.",
       "a11y": "Accessibilité",
       "a11y_effects": "Activer les effets visuels",
       "a11y_animations": "Activer les animations",
@@ -399,8 +402,7 @@
     "logo": "Logo Lagrange",
     "logo_alt": "Logo Lagrange secret !",
     "logo_update_codex": "Logo de mise à jour",
-    "dialog_webgl_error": "Modale d'erreur WebGL",
-    "dialog_planet_error": "Modale d'erreur de planète",
+    "dialog_editor_error": "Modale d'erreur de l'éditeur",
     "dialog_init": "Modale d'introduction",
     "dialog_planetinfo": "Modale d'information sur la planète",
     "dialog_settings": "Modale de paramètres",

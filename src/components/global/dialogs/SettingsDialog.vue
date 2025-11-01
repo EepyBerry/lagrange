@@ -118,7 +118,7 @@
                       name="rendering-backend-select"
                       :value="'webgpu'"
                       :button-aria-label="$t('a11y.editor_rendering_backend_webgpu')"
-                      :disabled="!WebGPUPatchwork.isAvailable()"
+                      :disabled="!WebGPU.isAvailable()"
                     >
                       <iconify-icon class="icon" icon="simple-icons:webgpu" width="1.5rem" aria-hidden="true" />
                       {{ $t('dialog.settings.editor_rendering_backend_webgpu') }}
@@ -132,7 +132,7 @@
                       : $t('dialog.settings.editor_rendering_backend_webgpu_notification')
                   }}
                 </NotificationElement>
-                <NotificationElement v-if="!WebGPUPatchwork.isAvailable()" type="warn">
+                <NotificationElement v-if="!(WebGPU.isAvailable())" type="warn">
                   {{ $t('dialog.settings.editor_rendering_backend_webgpu_unavailable') }}
                 </NotificationElement>
                 <ParameterDivider />
@@ -365,12 +365,12 @@ import { A11Y_ANIMATE } from '@core/globals'
 import NotificationElement from '@components/global/elements/NotificationElement.vue'
 import ParameterCategory from '@components/global/parameters/ParameterCategory.vue'
 import AppClearDataConfirmDialog from '@components/codex/dialogs/ClearDataConfirmDialog.vue'
-import { clearData } from '@core/utils/dexie-utils'
+import * as DexieService from '@/core/services/dexie.service'
 import { EventBus } from '@core/event-bus'
 import { EXTRAS_CAT_MODE, EXTRAS_HOLOGRAM_MODE, EXTRAS_SPECIAL_DAYS } from '@core/extras'
 import { saveAs } from 'file-saver'
 import { readFileSettings } from '@core/helpers/import.helper'
-import WebGPUPatchwork from '@/core/patchwork/WebGPU.patchwork'
+import WebGPU from '@/core/capabilities/WebGPU'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
@@ -469,7 +469,7 @@ async function exportData() {
 }
 
 async function clearAllData() {
-  await clearData()
+  await DexieService.clearData()
   await loadData()
   EventBus.sendDataClearEvent()
 }

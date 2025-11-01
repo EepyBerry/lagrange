@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import AppFooter from '@components/global/AppFooter.vue'
-import * as DexieUtils from '@core/utils/dexie-utils'
+import * as DexieService from '@/core/services/dexie.service'
 import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
 import { onMounted, ref, type Ref } from 'vue'
 import AppInitDialog from '@components/global/dialogs/InitDialog.vue'
@@ -37,7 +37,7 @@ const keybinds: Ref<IDBKeyBinding[]> = ref([])
 const settings: Ref<IDBSettings | undefined> = ref(undefined)
 
 onMounted(async () => {
-  await DexieUtils.initStoragePersistence()
+  await DexieService.initStoragePersistence()
   await initDexie()
   keybinds.value = await idb.keyBindings.toArray()
   settings.value = await idb.settings.limit(1).first()
@@ -73,16 +73,16 @@ async function initDexie() {
   let settings = await idb.settings.limit(1).first()
   if (!settings) {
     console.debug('<Lagrange> No settings found in IndexedDB, adding defaults')
-    await DexieUtils.initDefaultSettings()
+    await DexieService.initDefaultSettings()
     settings = await idb.settings.limit(1).first()
   }
-  await DexieUtils.injectMissingSettings(settings!)
+  await DexieService.injectMissingSettings(settings!)
 
   // Init keybinds
   const kb = await idb.keyBindings.limit(4).toArray()
   if (kb.length === 0) {
     console.debug('<Lagrange> No keybinds found in IndexedDB, adding defaults')
-    await DexieUtils.addDefaultKeyBindings()
+    await DexieService.addDefaultKeyBindings()
   }
 
   // Init HTML data (theme, font, effects)

@@ -25,18 +25,15 @@
       "biome_type_dry": "Dwy",
       "biome_type_semihumid": "Semihumid",
       "biome_type_humid": "Humid"
+    },
+    "error": {
+      "stacktrace": "Stacktwace",
+      "default_unknown": "An u-unknown ewwow occuwwed（＞人＜；） P-pwease fowwow the instwuctions above i-if you see this!!!",
+      "default_webgl_support": "Youw device ow b-bwowsew does nyot seem to suppowt WebGL2...",
+      "default_webgpu_support": "Youw device ow b-bwowsew does nyot suppowt WebGPU yet, o-ow WebGPU is disabwed..."
     }
   },
   "dialog": {
-    "renderererror": {
-      "$title": "Faiwed to stawt the Pwanyet Editow!!! ;;w;;",
-      "brief": "T-the wendewing context faiwed to initiawize p-pwopewwy... See bewow for e-error infowmation :c"
-    },
-    "planeterror": {
-      "$title": "Faiwed to stawt the Pwanyet Editow!!! ;;w;;",
-      "brief": "P-pwanyet faiwed to woad p-pwopewwy... See bewow for e-error infowmation :c",
-      "reporting": "If you can, p-pwease check youw bwowsew c-consowe and open an issue on GitHub!!! (^-^)"
-    },
     "init": {
       "$title": "Wewcome :3 t-to @:main.$title",
       "introduction": "Wagwange is a fuwwy pwoceduwaw pwanyet buiwdew, pewfect fow wowwdbuiwding and tying youw wowe t-to a pwopew pwanyet, sowaw system o-ow even an entiwe gawaxy! (・`ω´・)",
@@ -68,6 +65,12 @@
       "show_next_time": "Show this intwoduction nyext time?",
       "enable_persistence": "Enabwe bwowsew stowage p-pewsistence fow this app? :3",
       "$action_confirm": "Get s-stawted!"
+    },
+    "editorerror": {
+      "$title": "Faiwed to stawt the Pwanyet Editow!!! ;;w;;",
+      "brief": "Encountewed an ewwow during in-initiawisation... (；′⌒`) See bewow for m-moar detaiws :c",
+      "reporting": "If you can, p-pwease check youw bwowsew c-consowe and open an issue on GitHub!!! (^-^)",
+      "$action_reload_fallback_renderer": "Wewoad with WebGL2"
     },
     "planetinfo": {
       "$title": "Pwanyet infowmation :3",
@@ -112,11 +115,11 @@
       "editor_baking_resolution": "Baking textuwe wesowution (powews of two)",
       "editor_baking_pixelize": "Pixewize baking output",
       "editor_rendering_backend": "Sewect 3D wendewing e-engine <b>(n-needs app wewoad!!!)</b>",
-      "editor_rendering_backend_webgl": "WebGL",
+      "editor_rendering_backend_webgl": "WebGL2",
       "editor_rendering_backend_webgpu": "WebGPU",
-      "editor_rendering_backend_webgl_notification": "S-standawd WebGL engine; stabwe a-and VEWY WIDEWY used!!! :3",
+      "editor_rendering_backend_webgl_notification": "S-standawd WebGL2 engine; stabwe a-and VEWY WIDEWY used!!! :3",
       "editor_rendering_backend_webgpu_notification": "M-modewn WebGPU engine; c-cuwwentwy undew devewopment... B-buggies & ewwows are wikewy to occuw!!! ;w;",
-      "editor_rendering_backend_webgpu_unavailable": "Ono :c, youw bwowsew does n-nyot suppowt WebGPU... WebGL wiww be the ONWY engine avaiwabwe (；′⌒`)",
+      "editor_rendering_backend_webgpu_unavailable": "Ono :c, youw bwowsew does n-nyot suppowt WebGPU... WebGL2 wiww be the ONWY engine avaiwabwe (；′⌒`)",
       "a11y": "Accessibiwity !!!",
       "a11y_effects": "Enyabwe visuaw effects",
       "a11y_animations": "Enyabwe animations",
@@ -399,8 +402,7 @@
     "logo": "Wagwange wogo",
     "logo_alt": "Secwet Wagwange wogo!",
     "logo_update_codex": "Update wogo!",
-    "dialog_webgl_error": "WebGL ewwow diawog",
-    "dialog_planet_error": "Pwanyet ewwow diawog",
+    "dialog_editor_error": "Editow ewwow diawog",
     "dialog_init": "Intwoduction diawog",
     "dialog_planetinfo": "Pwanyet info diawog",
     "dialog_settings": "Settings diawog",

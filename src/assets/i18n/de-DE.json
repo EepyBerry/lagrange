@@ -25,18 +25,15 @@
       "biome_type_dry": "Trocken",
       "biome_type_semihumid": "Halb-feucht",
       "biome_type_humid": "Feucht"
+    },
+    "error": {
+      "stacktrace": "Stacktrace",
+      "default_unknown": "Ein unbekannter Fehler ist aufgetreten. Bitte folgen Sie die obigen Anweisungen, wenn Sie diese Meldung sehen!",
+      "default_webgl_support": "Ihr Apparat oder Browser unterstützt WebGL2 nicht.",
+      "default_webgpu_support": "Ihr Apparat oder Browser unterstützt WebGPU noch nicht, oder WebGPU ist nicht aktiviert."
     }
   },
   "dialog": {
-    "renderererror": {
-      "$title": "Editor kann nicht gestartet werden!",
-      "brief": "Der Rendering-Kontext konnte nicht initialisiert werden. Siehe den unten angezeigten Fehler."
-    },
-    "planeterror": {
-      "$title": "Editor kann nicht gestartet werden!",
-      "brief": "Der Planet konnte nicht geladen werden. Siehe den unten angezeigten Fehler.",
-      "reporting": "Wenn möglich, überprüfen Sie die Browserkonsole und öffnen Sie ein Issue auf GitHub!"
-    },
     "init": {
       "$title": "Willkommen in @:main.$title",
       "introduction": "Lagrange ist ein vollständig prozedurales Tool zur Planetenerstellung, perfekt für Ihre Erzählbedürfnisse rund um Planeten, Sonnensysteme oder sogar ganze Galaxien!",
@@ -68,6 +65,12 @@
       "show_next_time": "Dieses Intro beim nächsten Start anzeigen?",
       "enable_persistence": "Datenpersistenz für diese Anwendung aktivieren?",
       "$action_confirm": "Auf geht's!"
+    },
+    "editorerror": {
+      "$title": "Editor kann nicht gestartet werden!",
+      "brief": "Fehler bei der Initialisierung des Editors. Siehe den unten angezeigten Fehler.",
+      "reporting": "Wenn möglich, überprüfen Sie die Browserkonsole und öffnen Sie ein Issue auf GitHub!",
+      "$action_reload_fallback_renderer": "Webseite mit WebGL2 aktualisieren"
     },
     "planetinfo": {
       "$title": "Planeteninformationen",
@@ -112,11 +115,11 @@
       "editor_baking_resolution": "Auflösung der Texturen beim Baking (Zweierpotenzen)",
       "editor_baking_pixelize": "Texturen beim Baking verpixeln",
       "editor_rendering_backend": "3D-Rendering-Engine auswählen <b>(benötigt App Neustart)</b>",
-      "editor_rendering_backend_webgl": "WebGL",
+      "editor_rendering_backend_webgl": "WebGL2",
       "editor_rendering_backend_webgpu": "WebGPU",
-      "editor_rendering_backend_webgl_notification": "Standard WebGL Engine; stabil und allgemein benutzt!",
+      "editor_rendering_backend_webgl_notification": "Standard WebGL2 Engine; stabil und allgemein benutzt!",
       "editor_rendering_backend_webgpu_notification": "Modernes WebGPU Engine; derzeit in Entwicklung. Bugs & Fehler sind zu erwarten!",
-      "editor_rendering_backend_webgpu_unavailable": "Ihr Browser unterstützt nicht WebGPU. WebGL ist das einzige verfügbare Backend.",
+      "editor_rendering_backend_webgpu_unavailable": "Ihr Browser unterstützt nicht WebGPU. WebGL2 ist das einzige verfügbare Backend.",
       "a11y": "Zugänglichkeit",
       "a11y_effects": "Visuelle Effekte aktivieren",
       "a11y_animations": "Animationen aktivieren",
@@ -177,7 +180,7 @@
       "$title": "Export im Gange",
       "step_1": "Vorbereitung",
       "step_2": "Oberfläche Baking",
-      "step_3": "PBR Daten Baking",
+      "step_3": "Rendering-Daten Baking",
       "step_4": "Normale Baking",
       "step_5": "Wolken Baking",
       "step_6": "Ringe Baking",
@@ -399,8 +402,7 @@
     "logo": "Lagrange Logo",
     "logo_alt": "Geheimes Lagrange Logo !",
     "logo_update_codex": "Aktualisierungs Logo",
-    "dialog_webgl_error": "WebGL-Fehler modal",
-    "dialog_planet_error": "Planetenfehlermodal",
+    "dialog_editor_error": "Editor-Fehlermodal",
     "dialog_init": "Einführungsmodal",
     "dialog_planetinfo": "Informationenmodal über den Planeten",
     "dialog_settings": "Parametermodal",

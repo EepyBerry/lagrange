@@ -1,32 +1,41 @@
 <template>
   <DialogElement
-    id="dialog-error"
+    id="dialog-editorerror"
     ref="dialogRef"
-    :show-title="true"
-    :closeable="true"
-    :prevent-click-close="true"
-    :aria-label="$t('a11y.dialog_planet_error')"
-    @close="$emit('close')"
+    show-title
+    :show-actions="allowRendererFallback"
+    closeable
+    prevent-click-close
+    :aria-label="$t('a11y.dialog_editor_error')"
+    @close="$emit('close', _wantsFallback)"
   >
     <template #title>
       <iconify-icon icon="mingcute:warning-line" width="2rem" aria-hidden="true" />
-      <span>{{ $t('dialog.planeterror.$title') }}</span>
+      <span>{{ $t('dialog.editorerror.$title') }}</span>
     </template>
     <template #content>
       <div class="error-info">
-        <p>{{ $t('dialog.planeterror.brief') }}</p>
+        <p>{{ $t('dialog.editorerror.brief') }}</p>
         <p>
-          <b>{{ $t('dialog.planeterror.reporting') }}</b>
+          <b>{{ $t('dialog.editorerror.reporting') }}</b>
         </p>
       </div>
       <hr class="error-divider" />
       <p class="error-container">{{ _error }}</p>
-      <CollapsibleSection v-show="false" class="warn">
-        <template #title>Stacktrace</template>
+      <CollapsibleSection v-show="_stack.length > 0" class="warn code">
+        <template #title>{{ $t('main.error.stacktrace') }}</template>
         <template #content>
-          <p v-for="(line, i) of _stack" :key="i" class="stack-line">{{ line }}</p>
+          <div class="code-block">
+            <pre v-for="(line, i) of _stack" :key="i">{{ line }}</pre>
+          </div>
         </template>
       </CollapsibleSection>
+    </template>
+    <template #actions>
+      <button class="lg warn" autofocus @click="closeWithFallback">
+        <iconify-icon icon="tabler:reload" width="1.25rem" aria-hidden="true" />
+        {{ $t('dialog.editorerror.$action_reload_fallback_renderer') }}
+      </button>
     </template>
   </DialogElement>
 </template>
@@ -35,23 +44,31 @@ import { ref, type Ref } from 'vue'
 import DialogElement from '@components/global/elements/DialogElement.vue'
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue'
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
+const allowRendererFallback: Ref<boolean> = ref(false)
 
 const _error: Ref<string> = ref('')
 const _stack: Ref<string[]> = ref([])
+const _wantsFallback: Ref<boolean> = ref(false)
 
-function openWithError(error: string, stack?: string) {
+function openWithError(error: string, stack?: string, isWebGPUError: boolean = false) {
   _error.value = error
+  allowRendererFallback.value = isWebGPUError
   if (stack) {
-    _stack.value.push(...stack.replaceAll('\n', ' ').split(' '))
+    _stack.value.push(...stack.replaceAll('\n', '¤').split('¤').filter(d => d.length > 0))
   }
   dialogRef.value?.open()
+}
+
+async function closeWithFallback() {
+  _wantsFallback.value = true
+  dialogRef.value!.close()
 }
 
 defineEmits(['close'])
 defineExpose({ openWithError })
 </script>
 <style scoped lang="scss">
-#dialog-error {
+#dialog-editorerror {
   z-index: 100;
   border: 1px solid var(--lg-warn);
   background: var(--lg-warn-panel);
@@ -70,9 +87,6 @@ defineExpose({ openWithError })
     text-align: center;
     font-family: monospace;
     padding: 1rem;
-  }
-  .stack-line {
-    margin-bottom: 4px;
   }
 }
 </style>

@@ -79,7 +79,7 @@ function toggleExpand() {
 }
 .collapsible-section.warn {
   background: var(--lg-warn-panel);
-  border: 1px solid var(--lg-warn);
+  border-color: var(--lg-warn-active);
 }
 
 @media screen and (max-width: 1199px) {

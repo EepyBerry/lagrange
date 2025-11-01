@@ -25,18 +25,15 @@
       "biome_type_dry": "Dry",
       "biome_type_semihumid": "Semihumid",
       "biome_type_humid": "Humid"
+    },
+    "error": {
+      "stacktrace": "Stacktrace",
+      "default_unknown": "An unknown error occurred. Please follow the instructions above if you see this!",
+      "default_webgl_support": "Your device or browser does not seem to support WebGL2.",
+      "default_webgpu_support": "Your device or browser does not support WebGPU yet, or WebGPU is disabled."
     }
   },
   "dialog": {
-    "renderererror": {
-      "$title": "Failed to start the Planet Editor!",
-      "brief": "The rendering context failed to initialize properly. See below for error information."
-    },
-    "planeterror": {
-      "$title": "Failed to start the Planet Editor!",
-      "brief": "Planet failed to load properly. See below for error information.",
-      "reporting": "If you can, please check your browser console and open an issue on GitHub!"
-    },
     "init": {
       "$title": "Welcome to @:main.$title",
       "introduction": "Lagrange is a fully procedural planet builder, perfect for worldbuilding and tying your lore to a proper planet, solar system or even an entire galaxy!",
@@ -68,6 +65,12 @@
       "show_next_time": "Show this introduction next time?",
       "enable_persistence": "Enable browser storage persistence for this app?",
       "$action_confirm": "Get started!"
+    },
+    "editorerror": {
+      "$title": "Failed to start the Planet Editor!",
+      "brief": "Encountered an error during initialization. See below for more details.",
+      "reporting": "If you can, please check your browser console and open an issue on GitHub!",
+      "$action_reload_fallback_renderer": "Reload with WebGL2"
     },
     "planetinfo": {
       "$title": "Planet information",
@@ -112,11 +115,11 @@
       "editor_baking_resolution": "Baking texture resolution (powers of two)",
       "editor_baking_pixelize": "Pixelize baking output",
       "editor_rendering_backend": "Select 3D rendering engine <b>(needs app reload)</b>",
-      "editor_rendering_backend_webgl": "WebGL",
+      "editor_rendering_backend_webgl": "WebGL2",
       "editor_rendering_backend_webgpu": "WebGPU",
-      "editor_rendering_backend_webgl_notification": "Standard WebGL engine; stable and widely used!",
+      "editor_rendering_backend_webgl_notification": "Standard WebGL2 engine; stable and widely used!",
       "editor_rendering_backend_webgpu_notification": "Modern WebGPU engine; currently under development. Bugs & errors are likely to occur!",
-      "editor_rendering_backend_webgpu_unavailable": "Your browser does not support WebGPU. WebGL will be the only engine available.",
+      "editor_rendering_backend_webgpu_unavailable": "Your browser does not support WebGPU. WebGL2 will be the only engine available.",
       "a11y": "Accessibility",
       "a11y_effects": "Enable visual effects",
       "a11y_animations": "Enable animations",
@@ -398,8 +401,7 @@
     "logo": "Lagrange logo",
     "logo_alt": "Secret Lagrange logo!",
     "logo_update_codex": "Update logo",
-    "dialog_webgl_error": "WebGL error dialog",
-    "dialog_planet_error": "Planet error dialog",
+    "dialog_editor_error": "Editor error dialog",
     "dialog_init": "Introduction dialog",
     "dialog_planetinfo": "Planet info dialog",
     "dialog_settings": "Settings dialog",

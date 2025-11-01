@@ -1,5 +1,5 @@
 import { idb, KeyBindingAction, type IDBSettings } from '@/dexie.config'
-import { prefersReducedMotion } from './utils'
+import { prefersReducedMotion } from '../utils/utils'
 import { I18N_SUPPORTED_LANGS } from '@/i18n.config'
 
 export async function initDefaultSettings(): Promise<void> {
@@ -52,8 +52,9 @@ export async function injectMissingSettings(settings: IDBSettings): Promise<void
   })
 }
 
-export async function setRenderingBackendFallback(settings: IDBSettings) {
-  idb.settings.update(settings.id, {
+export async function setRenderingBackendFallback() {
+  const settings = await idb.settings.limit(1).first()
+  idb.settings.update(settings!.id, {
     renderingBackend: 'webgl',
   })
 }
