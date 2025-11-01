@@ -285,6 +285,7 @@ async function deleteTargetedPlanet() {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    flex-grow: 1;
 
     span {
       padding: 0 1rem;
