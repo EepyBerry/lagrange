@@ -1,8 +1,7 @@
 <template>
-  <div id="editor-header" :class="{ compact: !!showCompactNavigation }">
-    <AppNavigation :compact-mode="showCompactNavigation" />
+  <div id="editor-header">
+    <AppNavigation />
     <PlanetInfoControls
-      :compact-mode="showCompactInfo"
       @rename="patchMetaHead"
       @save="savePlanet"
       @copy="savePlanet(true)"
@@ -10,6 +9,7 @@
       @gltf="exportPlanet"
       @random="randPlanet"
     />
+    <span class="filler"></span>
   </div>
   <PlanetEditorControls :compact-mode="showCompactControls" />
 
@@ -78,10 +78,8 @@ const $planetEntityId: Ref<string> = ref('')
 const $planetEntityPreviewDataURL: Ref<string | undefined> = ref('')
 
 // Responsiveness
-const centerInfoControls: Ref<boolean> = ref(true)
 const showCompactInfo: Ref<boolean> = ref(false)
 const showCompactControls: Ref<boolean> = ref(false)
-const showCompactNavigation: Ref<boolean> = ref(false)
 
 // THREE canvas/scene root
 const sceneRoot: Ref<HTMLCanvasElement | null> = ref(null)
@@ -279,8 +277,6 @@ function onWindowResize() {
 function computeResponsiveness() {
   showCompactInfo.value = window.innerWidth <= Globals.XS_WIDTH_THRESHOLD
   showCompactControls.value = window.innerWidth <= Globals.SM_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
-  showCompactNavigation.value = window.innerWidth < Globals.MD_WIDTH_THRESHOLD
-  centerInfoControls.value = window.innerWidth > Globals.MD_WIDTH_THRESHOLD
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -332,16 +328,14 @@ function exportPlanet() {
   z-index: 15;
   position: absolute;
   inset: 0 0 auto 0;
-  margin: 1rem 0;
+  margin: 1rem;
 
-  display: flex;
+  display: grid;
+  grid-template-columns: 2rem 1fr 2rem;
+  grid-template-rows: 1fr;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-
-  &.compact {
-    justify-content: space-between;
-  }
 }
 
 #scene-root {
@@ -356,6 +350,15 @@ function exportPlanet() {
 @media screen and (max-width: 1199px) {
   #editor-header {
     margin: 0.5rem;
+    grid-template-columns: 1fr auto;
+    .filler { display: none; }
+  }
+}
+@media screen and (max-width: 767px) {
+  #editor-header {
+    grid-template-columns: unset;
+    grid-template-rows: unset;
+    display: flex;
   }
 }
 </style>

@@ -1,120 +1,92 @@
 <template>
-  <template v-if="compactMode">
-    <button ref="buttonOpen" class="lg nav" :aria-label="$t('a11y.action_nav_toggle')">
-      <iconify-icon v-if="isOpen" icon="material-symbols:menu-open-rounded" width="1.75rem" aria-hidden="true" />
-      <iconify-icon v-else icon="material-symbols:menu-rounded" width="1.75rem" aria-hidden="true" />
-    </button>
-
-    <aside id="nav-compact" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
-      <nav>
-        <hr />
-        <RouterLink :to="uwuifyPath('/codex')" class="lg nav" :aria-label="$t('a11y.action_nav_codex')">
-          <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
-          {{ $t('main.nav.codex') }}
-        </RouterLink>
-        <hr />
-        <RouterLink
-          :to="uwuifyPath('/planet-editor/new')"
-          class="lg nav"
-          :class="{ 'router-link-active': !!route.params.id }"
-          :aria-label="$t('a11y.action_nav_editor')"
-          @click="router.push('/planet-editor/new')"
-        >
-          <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
-          {{ $t('main.nav.editor') }}
-        </RouterLink>
-      </nav>
-    </aside>
-  </template>
-  <template v-else>
-    <aside id="nav-full" ref="sidebar" :class="{ open: isOpen }" @click="handleClick">
-      <nav>
-        <RouterLink :to="uwuifyPath('/codex')" class="lg nav" :aria-label="$t('a11y.action_nav_codex')">
-          <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
-          {{ $t('main.nav.codex') }}
-        </RouterLink>
-        <hr />
-        <RouterLink
-          :to="uwuifyPath('/planet-editor/new')"
-          class="lg nav"
-          :class="{ 'router-link-active': !!route.params.id }"
-          :aria-label="$t('a11y.action_nav_editor')"
-          @click="router.push('/planet-editor/new')"
-        >
-          <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
-          {{ $t('main.nav.editor') }}
-        </RouterLink>
-      </nav>
-    </aside>
-  </template>
+  <button id="nav-toggle" ref="navMenuTrigger" class="lg nav" :class="{ active: isNavMenuOpen }" :aria-label="$t('a11y.action_nav_toggle')">
+    <iconify-icon v-if="isNavMenuOpen" icon="material-symbols:menu-open-rounded" width="1.75rem" aria-hidden="true" />
+    <iconify-icon v-else icon="material-symbols:menu-rounded" width="1.75rem" aria-hidden="true" />
+  </button>
+  <nav id="nav-menu" ref="navMenu" class="lg floating" :style="navFloatingStyles.floatingStyles.value">
+    <RouterLink :to="uwuifyPath('/codex')" class="lg nav" :aria-label="$t('a11y.action_nav_codex')">
+      <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
+      {{ $t('main.nav.codex') }}
+    </RouterLink>
+    <RouterLink
+      :to="uwuifyPath('/planet-editor/new')"
+      class="lg nav"
+      :class="{ 'router-link-active': !!route.params.id }"
+      :aria-label="$t('a11y.action_nav_editor')"
+      @click="router.push('/planet-editor/new')"
+    >
+      <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
+      {{ $t('main.nav.editor') }}
+    </RouterLink>
+  </nav>
 </template>
 
 <script setup lang="ts">
-import { EventBus } from '@core/event-bus'
+import { EventBus } from '@/core/event-bus'
 import { uwuifyPath } from '@core/extras'
-import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
+import { useFloating, autoUpdate, offset, type Placement } from '@floating-ui/vue'
+import { onMounted, ref, watch, type Ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
+import * as Globals from '@core/globals'
 
 const router = useRouter()
 const route = useRoute()
-const buttonOpen: Ref<HTMLElement | null> = ref(null)
-const sidebar: Ref<HTMLElement | null> = ref(null)
-const isOpen: Ref<boolean> = ref(false)
+const navMenuTrigger: Ref<HTMLElement | null> = ref(null)
+const navMenu: Ref<HTMLElement | null> = ref(null)
+const navFloatingPlacement: Ref<Placement> = ref('right')
+const navFloatingStyles = useFloating(navMenuTrigger, navMenu, {
+  whileElementsMounted: autoUpdate,
+  placement: navFloatingPlacement,
+  middleware: [offset(8)],
+})
+const isNavMenuOpen: Ref<boolean> = ref(false)
 
-defineProps<{ compactMode: boolean }>()
-onMounted(async () => {
-  EventBus.registerWindowEventListener('keydown', handleKey)
-})
-onUnmounted(() => {
-  EventBus.deregisterWindowEventListener('keydown', handleKey)
-})
+onMounted(() => EventBus.registerWindowEventListener('resize', updateNavFloatingLayout))
 watch(
   () => EventBus.clickEvent.value,
-  async (evt) => await handleClick(evt!),
+  (evt) => {
+    if (!evt) return;
+    if (evt.target === navMenuTrigger.value) {
+      toggleNavMenu()
+    } else if (!navMenu.value?.contains(evt.target as Node)) {
+      toggleNavMenu(false)
+    }
+  }
 )
 
-function handleClick(evt: MouseEvent) {
-  if (evt.target === buttonOpen.value) {
-    isOpen.value = !isOpen.value
-  } else if (evt.target !== sidebar.value && isOpen.value) {
-    isOpen.value = false
+function updateNavFloatingLayout() {
+  if (window.innerWidth < Globals.SM_WIDTH_THRESHOLD) {
+    navFloatingPlacement.value = 'bottom-start'
+  } else {
+    navFloatingPlacement.value = 'right'
   }
 }
-
-function handleKey(evt: KeyboardEvent) {
-  if (evt.key.toUpperCase() === 'ESCAPE') {
-    isOpen.value = false
+function toggleNavMenu(override?: boolean) {
+  if (override !== undefined) {
+    navMenu.value!.style.visibility = override ? 'visible' : 'hidden'
+    isNavMenuOpen.value = override
+  } else {
+    navMenu.value!.style.visibility = navMenu.value!.style.visibility === 'visible' ? 'hidden' : 'visible'
+    isNavMenuOpen.value = navMenu.value!.style.visibility === 'visible'
   }
 }
 </script>
 
 <style scoped lang="scss">
-#nav-full {
-  position: absolute;
-  left: 1rem;
+#nav-toggle {
+  max-width: calc(2.75rem + 2px);
+}
+#nav-menu {
+  z-index: 1;
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: row;
 }
 
-#nav-compact {
-  position: absolute;
-  left: 3.375rem;
-  display: none;
-  &.open {
-    display: initial;
-  }
-}
 @media screen and (max-width: 767px) {
-  #nav-compact {
-    left: 0;
-    top: 3.375rem;
-
-    nav {
-      display: flex;
-      flex-direction: column;
-
-      hr {
-        display: none;
-      }
-    }
+  #nav-menu {
+    flex-direction: column;
   }
 }
 </style>

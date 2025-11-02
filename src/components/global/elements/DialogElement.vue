@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="dialog" class="lg" @abort="close">
+  <dialog ref="dialog" class="lg" autofocus @abort="close">
     <CornerDeco class="tl" :class="{ 'warn': isWarn }" />
     <CornerDeco class="br" :class="{ 'warn': isWarn }" />
     <header class="dialog-header">

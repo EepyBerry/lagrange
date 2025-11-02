@@ -1,5 +1,5 @@
 <template>
-  <div id="planet-info" :class="{ compact: !!compactMode }">
+  <div id="planet-info">
     <div class="name-wrapper">
       <input
         v-if="editMode"
@@ -55,7 +55,7 @@
     >
       <iconify-icon icon="mingcute:shuffle-2-fill" width="1.5rem" aria-hidden="true" />
     </button>
-    <div id="random-menu" ref="randomMenu" class="lg floating" :style="randomFloating.floatingStyles.value">
+    <div id="randomizer-menu" ref="randomMenu" class="lg floating" :style="randomFloating.floatingStyles.value">
       <div class="floating-content">
         <label for="random-seed">Seed</label>
         <input id="random-seed" v-model="PRNG_SEED" class="lg" type="text" />
@@ -147,8 +147,6 @@ watch(
   () => EventBus.clickEvent.value,
   (evt) => onWindowClick(evt!),
 )
-
-defineProps<{ compactMode: boolean }>()
 const $emit = defineEmits(['rename', 'reset', 'save', 'copy', 'gltf', 'random'])
 
 function onWindowClick(evt: MouseEvent) {
@@ -208,20 +206,14 @@ function toggleSaveMenu(override?: boolean) {
 
 <style scoped lang="scss">
 #planet-info {
-  z-index: 10;
   pointer-events: all;
   height: 2.75rem;
 
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
-
   align-self: center;
-
-  &.compact {
-    justify-self: flex-end;
-  }
+  gap: 0.5rem;
 
   hr {
     height: 1.5rem;
@@ -252,7 +244,7 @@ function toggleSaveMenu(override?: boolean) {
     }
   }
 
-  #random-menu {
+  #randomizer-menu {
     padding: 0.5rem;
     display: flex;
     flex-direction: column;
@@ -264,11 +256,6 @@ function toggleSaveMenu(override?: boolean) {
 @media screen and (max-width: 767px) {
   #planet-info {
     width: 100%;
-    border-radius: 0;
-    border-left: none;
-    border-top: none;
-    border-right: none;
-
     height: 2.5rem;
     flex: 1;
 
@@ -276,8 +263,7 @@ function toggleSaveMenu(override?: boolean) {
       flex: 1;
       font-size: 1em;
       justify-content: space-between;
-      width: 100%;
-      min-width: 0;
+      width: 0;
     }
     .name-wrapper > p {
       max-width: 100%;
