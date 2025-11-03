@@ -155,7 +155,6 @@ function getMode(value: number | undefined) {
 <style scoped lang="scss">
 #dialog-planet-info {
   min-width: 24rem;
-  overflow-y: auto;
 
   .info-grid {
     display: grid;
@@ -241,12 +240,6 @@ function getMode(value: number | undefined) {
       justify-self: center;
       margin-bottom: 1rem;
     }
-  }
-}
-@media screen and (max-width: 567px) {
-  #dialog-planet-info {
-    width: 100%;
-    min-width: 0;
   }
 }
 </style>

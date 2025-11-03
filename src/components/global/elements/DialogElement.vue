@@ -15,11 +15,13 @@
         <iconify-icon icon="mingcute:close-line" width="1.5rem" aria-hidden="true" />
       </button>
     </header>
-    <div class="dialog-content">
-      <slot name="content"></slot>
-    </div>
-    <div v-if="showActions" class="dialog-actions">
-      <slot name="actions"></slot>
+    <div class="dialog-inner">
+      <div class="dialog-content">
+        <slot name="content"></slot>
+      </div>
+      <div v-if="showActions" class="dialog-actions">
+        <slot name="actions"></slot>
+      </div>
     </div>
   </dialog>
 </template>
@@ -81,22 +83,24 @@ dialog[open].lg {
   &:host { scroll-behavior: none; }
   position: fixed;
   padding: 0;
+  overflow: hidden;
 
-  background: var(--lg-primary);
-  border: 1px solid var(--lg-accent);
+  background: var(--lg-accent);
+  border: none;
   border-radius: 2px;
-  box-shadow: 0 0 32px 16px var(--black);
   margin: auto;
   color: var(--lg-text);
-  clip-path: polygon(0 24px, 24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%);
+  clip-path: polygon(0 23px, 23px 0, 100% 0, 100% calc(100% - 23px), calc(100% - 23px) 100%, 0 100%);
 
   display: flex;
   flex-direction: column;
   align-items: space-between;
-  gap: 4px;
+  gap: 0;
 
   .dialog-header {
     padding: 1rem;
+    margin: 1px 1px 0;
+    background: var(--lg-primary);
 
     .dialog-title {
       font-weight: 600;
@@ -109,10 +113,16 @@ dialog[open].lg {
       right: 0.5rem;
     }
   }
+
+  .dialog-inner {
+    height: 100%;
+    margin: 0 1px 1px;
+    overflow-y: auto;
+    background: var(--lg-primary);
+  }
   .dialog-content {
     padding: 0 1rem 1rem;
     font-size: 0.875rem;
-    overflow-y: auto;
   }
   .dialog-actions {
     padding: 0 1rem 1rem;
@@ -128,19 +138,18 @@ dialog[open].lg {
   }
 }
 dialog[open].lg::backdrop {
-  background: rgb(0 0 0 / 40%);
+  background: rgb(0 0 0 / 50%);
 }
-dialog.lg.warn {
+dialog[open].lg.warn {
   background: var(--lg-warn-panel);
   border: 1px solid var(--lg-warn);
-}
-
-@media screen and (max-width: 767px) {
-  dialog[open].lg {
-    max-width: calc(100% - 1rem);
-    padding: 0.75rem;
+  .dialog-header,
+  .dialog-inner {
+    background: var(--lg-warn-panel);
+    scrollbar-color: var(--lg-warn) var(--code-background);
   }
 }
+
 @media screen and (max-width: 567px) {
   dialog[open].lg {
     width: 100%;

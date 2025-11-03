@@ -2,6 +2,7 @@
   <DialogElement
     id="dialog-editorerror"
     ref="dialogRef"
+    class="warn"
     show-title
     :show-actions="allowRendererFallback"
     closeable
@@ -70,9 +71,7 @@ defineExpose({ openWithError })
 </script>
 <style scoped lang="scss">
 #dialog-editorerror {
-  z-index: 100;
-  border: 1px solid var(--lg-warn);
-  background: var(--lg-warn-panel);
+  z-index: 10;
   max-width: 48rem;
 
   hr.error-divider {

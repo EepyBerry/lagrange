@@ -1,7 +1,7 @@
 <template>
   <span id="codex-background"></span>
-  <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
-    <AppNavigation :compact-mode="showCompactNavigation" />
+  <div id="codex-header">
+    <AppNavigation />
     <div id="codex-header-controls">
       <RouterLink class="lg dark create-planet" :to="uwuifyPath('/planet-editor/new')" :title="$t('codex.$action_add')">
         <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
@@ -62,7 +62,7 @@ import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 import { EventBus } from '@core/event-bus'
-import { MD_WIDTH_THRESHOLD, SM_WIDTH_THRESHOLD } from '@core/globals'
+import { SM_WIDTH_THRESHOLD } from '@core/globals'
 import pako from 'pako'
 import { saveAs } from 'file-saver'
 import PlanetData from '@core/models/planet-data.model'
@@ -80,7 +80,6 @@ const planetInfoDialogRef: Ref<{ open: (planet: IDBPlanet) => void } | null> = r
 
 const deleteTarget: Ref<IDBPlanet | null> = ref(null)
 const deleteDialogRef: Ref<{ open: (planetName: string) => void } | null> = ref(null)
-const showCompactNavigation: Ref<boolean> = ref(false)
 const showInlineFooter: Ref<boolean> = ref(false)
 
 useHead({
@@ -119,7 +118,6 @@ function onWindowResize() {
 }
 
 function computeResponsiveness() {
-  showCompactNavigation.value = window.innerWidth < MD_WIDTH_THRESHOLD
   showInlineFooter.value = window.innerWidth < SM_WIDTH_THRESHOLD
 }
 
@@ -247,10 +245,6 @@ async function deleteTargetedPlanet() {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-  }
-
-  &.compact {
-    justify-content: space-between;
   }
 
   a.create-planet {
