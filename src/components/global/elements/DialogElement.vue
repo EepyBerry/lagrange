@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="dialog" class="lg" autofocus @abort="close">
+  <dialog ref="dialog" class="lg" @abort="close">
     <CornerDeco class="tl" :class="{ 'warn': isWarn }" />
     <CornerDeco class="br" :class="{ 'warn': isWarn }" />
     <header class="dialog-header">
@@ -8,6 +8,7 @@
       </h2>
       <button
         v-if="closeable"
+        tabindex="0"
         class="lg icon-button dialog-close"
         :aria-label="$t('a11y.action_close_dialog')"
         @click="close"
@@ -15,7 +16,7 @@
         <iconify-icon icon="mingcute:close-line" width="1.5rem" aria-hidden="true" />
       </button>
     </header>
-    <div class="dialog-inner">
+    <div ref="dialogInner" class="dialog-inner" tabindex="-1">
       <div class="dialog-content">
         <slot name="content"></slot>
       </div>
@@ -32,6 +33,8 @@ import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue'
 import CornerDeco from '../decoration/CornerDeco.vue'
 
 const dialog: Ref<HTMLDialogElement | null> = ref(null)
+const dialogInner: Ref<HTMLDivElement | null> = ref(null)
+
 const ignoresNativeEvents = ref(false)
 const handleCancel = (evt: Event) => {
   evt.preventDefault()
@@ -65,6 +68,7 @@ onBeforeUnmount(() => {
 function open() {
   EventBus.disableWindowEventListener('keydown')
   dialog.value?.showModal()
+  dialogInner.value?.focus()
 }
 function close() {
   EventBus.enableWindowEventListener('keydown')
