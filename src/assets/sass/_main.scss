@@ -46,6 +46,9 @@ body {
   display: flex;
   flex-direction: column;
 }
+body:has(dialog[open]) {
+  overflow:hidden;
+}
 
 hr {
   border: 1px solid var(--lg-accent);
