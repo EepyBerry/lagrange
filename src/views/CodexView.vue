@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import PlanetCardElement from '@components/global/elements/PlanetCardElement.vue'
+import PlanetCardElement from '@components/codex/PlanetCardElement.vue'
 import AppNavigation from '@components/global/AppNavigation.vue'
 import InlineFooter from '@components/global/InlineFooter.vue'
 import AppPlanetInfoDialog from '@components/codex/dialogs/PlanetInfoDialog.vue'
@@ -267,9 +267,8 @@ async function deleteTargetedPlanet() {
   height: calc(100% - 4.75rem);
 
   display: grid;
-  grid-template-rows: repeat(auto-fill, 26rem);
   grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
-  gap: 1rem;
+  gap: 2rem;
 
   &.empty {
     font-style: italic;

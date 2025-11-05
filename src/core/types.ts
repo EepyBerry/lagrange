@@ -40,6 +40,7 @@ export enum ShaderFileType {
 // ----------------------------------- Editor types ---------------------------------
 export enum PlanetType {
   PLANET,
+  MOON,
   STAR,
 }
 

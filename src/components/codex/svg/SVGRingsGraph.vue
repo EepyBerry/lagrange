@@ -37,7 +37,7 @@
 </template>
 <script setup lang="ts">
 import type { RingParameters } from '@/core/models/ring-parameters.model';
-import { makeSVGLinearPath } from '@/core/utils/render-utils';
+import { makeSVGLinearPath } from '@/core/utils/svg-utils';
 import Rect from '@core/utils/math/rect';
 import { onMounted, ref, type Ref } from 'vue';
 

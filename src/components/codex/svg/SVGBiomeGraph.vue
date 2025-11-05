@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import { BiomeParameters } from '@/core/models/biome-parameters.model';
 import Rect from '@/core/utils/math/rect';
-import { makeSVGLinearPath } from '@/core/utils/render-utils';
+import { makeSVGLinearPath } from '@/core/utils/svg-utils';
 import { onMounted, ref, type Ref } from 'vue';
 
 const width = 480, height = 270
