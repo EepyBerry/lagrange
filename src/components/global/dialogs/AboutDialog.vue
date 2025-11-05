@@ -2,10 +2,11 @@
   <DialogElement
     id="dialog-about"
     ref="dialogRef"
-    :show-title="false"
+    show-title
     :closeable="true"
     :aria-label="$t('a11y.dialog_about')"
   >
+    <template #title>&nbsp;</template>
     <template #content>
       <div class="about-grid">
         <div class="about-logo">

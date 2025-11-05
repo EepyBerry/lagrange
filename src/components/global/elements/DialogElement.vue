@@ -104,7 +104,7 @@ dialog[open].lg {
   .dialog-header {
     padding: 1rem;
     margin: 1px 1px 0;
-    background: var(--lg-primary);
+    background: var(--lg-primary-static);
 
     .dialog-title {
       font-weight: 600;

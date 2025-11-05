@@ -1,4 +1,4 @@
-import { CanvasTexture, RenderTarget, SRGBColorSpace } from 'three';
+import { CanvasTexture, RenderTarget, SRGBColorSpace, Vector3 } from 'three';
 import * as Globals from '@core/globals'
 import * as SceneHelper from './scene.helper'
 import type PlanetData from '../models/planet-data.model';
@@ -17,6 +17,14 @@ export async function generatePlanetPreview(data: PlanetData): Promise<string> {
     sceneData.camera.setRotationFromAxisAngle(Globals.AXIS_Y, degToRad(data.initCamAngle))
     sceneData.camera.updateProjectionMatrix()
     sceneData.lensFlare!.mesh.visible = false
+
+    // Adjust preview rotation for ringed planets, must be normalized to avoid issues w/ card display
+    if (data.ringsEnabled && data.ringsParams.length > 0) {
+      const planetRotAxis = new Vector3(1,0,0)
+      sceneData.planetGroup.setRotationFromAxisAngle(Globals.AXIS_Y, 0.0)
+      planetRotAxis.applyAxisAngle(Globals.AXIS_Y, degToRad(data.initCamAngle))
+      sceneData.planetGroup.rotateOnAxis(planetRotAxis, degToRad(5.0))
+    }
 
     // ---------------------------- Setup renderer & render -----------------------------
     const rawBuffer = new Uint8Array(w * h * 4)

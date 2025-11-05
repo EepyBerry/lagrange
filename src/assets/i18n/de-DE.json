@@ -9,6 +9,7 @@
     "units": "Einheiten",
     "unknown_value": "[UNBEKANNT]",
     "nav": {
+      "menu": "Menu",
       "codex": "Kodex",
       "editor": "Editor"
     },

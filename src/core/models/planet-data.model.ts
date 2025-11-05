@@ -893,6 +893,10 @@ export default class PlanetData extends ChangeTracker {
     return this._biomesParams.findIndex((b) => b.id === id)
   }
 
+  public findOutermostRingRadius() {
+    return Math.max(...this._ringsParams.map(r => r.outerRadius))
+  }
+
   // --------------------------------------------------
   // |               Static functions                 |
   // --------------------------------------------------
