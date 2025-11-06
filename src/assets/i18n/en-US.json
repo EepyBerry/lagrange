@@ -79,6 +79,8 @@
         "name": "Name",
         "radius": "Radius",
         "axialtilt": "Axial tilt",
+        "type": "Type",
+        "classification": "Classification",
         "has_biomes": "Has biomes",
         "has_clouds": "Has clouds",
         "has_atmosphere": "Has atmosphere",

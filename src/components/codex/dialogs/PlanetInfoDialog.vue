@@ -14,21 +14,41 @@
     <template #content>
       <div class="info-grid">
         <!-- Planet preview image -->
-        <div class="planet-preview" :class="{ 'extra-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
-          <img
-            v-if="planet?.preview"
-            class="planet-image"
-            :src="planet?.preview"
-            :aria-label="planet?.data.planetName"
-            :alt="planet?.data.planetName"
-          />
-          <iconify-icon v-else icon="ph:planet-thin" width="auto" aria-hidden="true" />
-          <span v-if="!!EXTRAS_CRT_EFFECT" class="effect-crt"></span>
+        <div class="planet-preview-wrapper">
+          <div class="planet-preview" :class="{ 'extra-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
+            <img
+              v-if="planet?.preview"
+              class="planet-image"
+              :src="planet?.preview"
+              :aria-label="planet?.data.planetName"
+              :alt="planet?.data.planetName"
+            />
+            <iconify-icon v-else icon="ph:planet-thin" width="auto" aria-hidden="true" />
+            <span v-if="!!EXTRAS_CRT_EFFECT" class="effect-crt"></span>
+          </div>
+          <div class="planet-features">
+            <PlanetCardFeatureBoxElement
+              icon="mingcute:mountain-2-line"
+              :active="planet?.data.biomesEnabled"
+            />
+            <PlanetCardFeatureBoxElement
+              icon="mingcute:clouds-line"
+              :active="planet?.data.cloudsEnabled"
+            />
+            <PlanetCardFeatureBoxElement
+              icon="material-symbols:line-curve-rounded"
+              :active="planet?.data.atmosphereEnabled"
+            />
+            <PlanetCardFeatureBoxElement
+              icon="mingcute:planet-line"
+              :active="planet?.data.ringsEnabled"
+            />
+          </div>
         </div>
 
         <!-- Basic planet data -->
         <section class="planet-basic">
-          <span class="deco-polygon"></span>
+          <SeparatorGreebleDeco />
           <table id="planet-basic-data">
             <tbody>
               <tr>
@@ -47,56 +67,12 @@
                 <td value>{{ planet?.data.planetAxialTilt.toFixed(2) }}°</td>
               </tr>
               <tr>
-                <td name>{{ $t('dialog.planetinfo.basic.has_biomes') }}:</td>
-                <td value>
-                  <iconify-icon
-                    v-if="planet?.data.biomesEnabled && planet?.data.biomesParams.length > 0"
-                    inline
-                    icon="mingcute:check-circle-fill"
-                    width="1.5rem"
-                    aria-hidden="true"
-                  />
-                  <iconify-icon v-else inline icon="mingcute:close-circle-line" width="1.5rem" aria-hidden="true" />
-                </td>
+                <td name>{{ $t('dialog.planetinfo.basic.type')}}:</td>
+                <td value>{{  planet?.data.planetType }}</td>
               </tr>
               <tr>
-                <td name>{{ $t('dialog.planetinfo.basic.has_clouds') }}:</td>
-                <td value>
-                  <iconify-icon
-                    v-if="planet?.data.cloudsEnabled"
-                    inline
-                    icon="mingcute:check-circle-fill"
-                    width="1.5rem"
-                    aria-hidden="true"
-                  />
-                  <iconify-icon v-else inline icon="mingcute:close-circle-line" width="1.5rem" aria-hidden="true" />
-                </td>
-              </tr>
-              <tr>
-                <td name>{{ $t('dialog.planetinfo.basic.has_atmosphere') }}:</td>
-                <td value>
-                  <iconify-icon
-                    v-if="planet?.data.atmosphereEnabled"
-                    inline
-                    icon="mingcute:check-circle-fill"
-                    width="1.5rem"
-                    aria-hidden="true"
-                  />
-                  <iconify-icon v-else inline icon="mingcute:close-circle-line" width="1.5rem" aria-hidden="true" />
-                </td>
-              </tr>
-              <tr>
-                <td name>{{ $t('dialog.planetinfo.basic.has_rings') }}:</td>
-                <td value>
-                  <iconify-icon
-                    v-if="planet?.data.ringsEnabled"
-                    inline
-                    icon="mingcute:check-circle-fill"
-                    width="1.5rem"
-                    aria-hidden="true"
-                  />
-                  <iconify-icon v-else inline icon="mingcute:close-circle-line" width="1.5rem" aria-hidden="true" />
-                </td>
+                <td name>{{ $t('dialog.planetinfo.basic.classification')}}:</td>
+                <td value>Unknown</td>
               </tr>
             </tbody>
           </table>
@@ -104,6 +80,7 @@
         
         <!-- Planet biomes (if present) -->
         <section v-if="planet?.data.biomesEnabled && planet?.data.biomesParams.length > 0" class="planet-details biomes">
+          <SeparatorGreebleDeco class="flip-x" />
           <span class="deco-polygon"></span>
           <h3>{{ $t('dialog.planetinfo.biomes') }}</h3>
           <SVGBiomeGraph :key="planet.data.biomesParams[0].id" :biomes="planet.data.biomesParams" />
@@ -111,6 +88,7 @@
         
         <!-- Planet rings (if present) -->
         <section v-if="planet?.data.ringsEnabled && planet?.data.ringsParams.length > 0" class="planet-details rings">
+          <SeparatorGreebleDeco />
           <span class="deco-polygon"></span>
           <h3>{{ $t('dialog.planetinfo.rings') }}</h3>
           <SVGRingsGraph :key="planet.data.ringsParams[0].id" :planet-radius="planet.data.planetRadius" :rings="planet.data.ringsParams" />
@@ -126,6 +104,8 @@ import { ref, type Ref } from 'vue'
 import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT } from '@core/extras'
 import SVGBiomeGraph from '../svg/SVGBiomeGraph.vue'
 import SVGRingsGraph from '../svg/SVGRingsGraph.vue'
+import SeparatorGreebleDeco from '@/components/global/decoration/SeparatorGreebleDeco.vue'
+import PlanetCardFeatureBoxElement from '../elements/PlanetCardFeatureBoxElement.vue'
 
 const planet: Ref<IDBPlanet | null> = ref(null)
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
@@ -165,34 +145,44 @@ function getMode(value: number | undefined) {
     gap: 0 2rem;
   }
 
-  .planet-preview {
+  .planet-preview-wrapper {
     grid-area: preview;
-    align-self: center;
-    position: relative;
-    width: 16rem;
-    height: 16rem;
-    background: var(--lg-panel);
-    border: 1px solid var(--lg-accent);
-    border-radius: 2px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .planet-image {
-      max-width: 16rem;
+    .planet-preview {
+      z-index: 1;
+      align-self: center;
+      position: relative;
+      width: 16rem;
+      height: 16rem;
+      background: var(--lg-panel);
+      border: 1px solid var(--lg-accent);
       border-radius: 2px;
-      //filter: contrast(110%);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .planet-image {
+        max-width: 16rem;
+        border-radius: 2px;
+        image-rendering: optimizeQuality;
+      }
+    }
+    .planet-features {
+      display: flex;
+      flex-direction: row;
+      gap: 0.25rem;
     }
   }
+
   .planet-basic {
     position: relative;
     height: fit-content;
-    padding-top: 1.5rem;
-
-    border-top: 2px solid var(--lg-accent);
-    border-top-left-radius: 4px;
     font-size: 1.05rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
     table#planet-basic-data {
       tr:nth-child(3) > td {
@@ -204,15 +194,21 @@ function getMode(value: number | undefined) {
       [name] {
         font-weight: 600;
       }
+
+      td.planet-basic-data-features {
+        width: 100%;
+        gap: 0.25rem;
+        .features-wrapper { 
+          display: flex;
+          gap: 0.25rem;
+         }
+      }
     }
   }
   .planet-details {
     position: relative;
-    padding-top: 1rem;
-    margin-top: 2rem;
+    margin-top: 1rem;
 
-    border-top: 2px solid var(--lg-accent);
-    border-top-left-radius: 4px;
     font-size: 1.05rem;
 
     display: flex;

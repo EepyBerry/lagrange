@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import PlanetCardElement from '@components/codex/PlanetCardElement.vue'
+import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue'
 import AppNavigation from '@components/global/AppNavigation.vue'
 import InlineFooter from '@components/global/InlineFooter.vue'
 import AppPlanetInfoDialog from '@components/codex/dialogs/PlanetInfoDialog.vue'

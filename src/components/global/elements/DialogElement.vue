@@ -105,6 +105,8 @@ dialog[open].lg {
     padding: 1rem;
     margin: 1px 1px 0;
     background: var(--lg-primary-static);
+    display: flex;
+    justify-content: space-between;
 
     .dialog-title {
       font-weight: 600;
@@ -112,9 +114,11 @@ dialog[open].lg {
 
     button.dialog-close {
       z-index: 1;
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
+      min-width: 1.75rem;
+      min-height: 1.75rem;
+    }
+    button.dialog-close:hover, button.dialog-close:focus {
+      iconify-icon { transform: scale(1.125); }
     }
   }
 
