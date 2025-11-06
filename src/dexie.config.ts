@@ -27,7 +27,8 @@ interface IDBSettings {
   bakingPixelize?: boolean
   enableEffects?: boolean
   enableAnimations?: boolean
-  extrasHologramMode?: boolean
+  extrasCRTEffect?: boolean
+  extrasHologramEffect?: boolean
   extrasShowSpecialDays?: boolean
 }
 

@@ -21,10 +21,9 @@ import AppInitDialog from '@components/global/dialogs/InitDialog.vue'
 import { useI18n } from 'vue-i18n'
 import { mapLocale } from './core/utils/utils'
 import { useHead } from '@unhead/vue'
-import { A11Y_ANIMATE } from './core/globals'
 import AppToastBar from '@components/global/AppToastBar.vue'
 import { EventBus } from './core/event-bus'
-import { EXTRAS_CAT_MODE, EXTRAS_HOLOGRAM_MODE, EXTRAS_SPECIAL_DAYS } from './core/extras'
+import { EXTRAS_CAT_MODE, EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, EXTRAS_SPECIAL_DAYS } from './core/extras'
 
 const i18n = useI18n()
 useHead({
@@ -58,8 +57,8 @@ onMounted(async () => {
   }
 
   // Set initial global values
-  A11Y_ANIMATE.value = settings.value!.enableAnimations ?? true
-  EXTRAS_HOLOGRAM_MODE.value = settings.value!.extrasHologramMode ?? false
+  EXTRAS_CRT_EFFECT.value = settings.value!.extrasCRTEffect ?? false
+  EXTRAS_HOLOGRAM_EFFECT.value = settings.value!.extrasHologramEffect ?? false
   EXTRAS_SPECIAL_DAYS.value = settings.value!.extrasShowSpecialDays ?? true
 
   // Open init dialog if necessary
@@ -89,6 +88,7 @@ async function initDexie() {
   document.documentElement.setAttribute('data-theme', settings!.theme ?? 'default')
   document.documentElement.setAttribute('data-font', settings!.font ?? 'default')
   document.documentElement.setAttribute('data-effects', settings!.enableEffects ? 'on' : 'off')
+  document.documentElement.setAttribute('data-animations', settings!.enableAnimations ? 'on' : 'off')
 }
 
 async function disableInitDialog() {

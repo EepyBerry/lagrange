@@ -20,7 +20,7 @@ a.lg {
     pointer-events: none;
   }
 }
-button.lg:hover {
+button.lg:hover, button.lg:focus {
   cursor: pointer;
   background: var(--lg-button-hover);
 }
@@ -52,7 +52,7 @@ button.lg.nav {
     transform: rotate(-45deg);
   }
 }
-button.lg.nav:hover {
+button.lg.nav:hover, button.lg.nav:focus {
   background: var(--lg-contrast-medium);
 }
 button.lg.nav:active {
@@ -82,7 +82,9 @@ a.lg.dark {
   }
 }
 button.lg.dark:hover,
-a.lg.dark:hover {
+button.lg.dark:focus,
+a.lg.dark:hover,
+a.lg.dark:focus {
   background: var(--lg-button-active);
   &.active {
     background: var(--lg-contrast-focus);
@@ -93,7 +95,7 @@ a.lg.dark:hover {
 button.lg.icon-button {
   background: transparent;
 }
-button.lg.icon-button:hover {
+button.lg.icon-button:hover, button.lg.icon-button:hover {
   background: transparent;
   filter: brightness(80%);
 }
@@ -113,7 +115,9 @@ a.lg.link-button:visited {
   text-decoration: none;
 }
 a.lg.link-button:hover,
-a.lg.link-button:visited:hover {
+a.lg.link-button:focus,
+a.lg.link-button:visited:hover,
+a.lg.link-button:visited:focus {
   background: var(--lg-button-hover);
   color: var(--lg-text);
   text-decoration: none;

@@ -1,7 +1,7 @@
 import type { Composer } from "vue-i18n";
 
 /**
- * Custom class to check WebGPU capabilities, based on three.js code
+ * Custom class to check WebGL2 capabilities, based on three.js code
  * @see https://github.com/mrdoob/three.js/blob/dev/examples/jsm/capabilities/WebGL.js
  */
 export default class WebGL {

@@ -160,14 +160,12 @@
 
 .lg.success {
   background: var(--lg-success);
-  background: var(--lg-success);
 }
-.lg.success:not(:disabled):hover {
-  background: var(--lg-success-hover);
+.lg.success:not(:disabled):hover,
+.lg.success:not(:disabled):focus {
   background: var(--lg-success-hover);
 }
 .lg.success:not(:disabled):active {
-  background: var(--lg-success-active);
   background: var(--lg-success-active);
 }
 
@@ -175,24 +173,21 @@
   background: var(--lg-warn);
   background: var(--lg-warn);
 }
-.lg.warn:not(:disabled):hover {
-  background: var(--lg-warn-hover);
+.lg.warn:not(:disabled):hover,
+.lg.warn:not(:disabled):focus {
   background: var(--lg-warn-hover);
 }
 .lg.warn:not(:disabled):active {
-  background: var(--lg-warn-active);
   background: var(--lg-warn-active);
 }
 
 .lg.contrast {
   background: var(--lg-contrast);
-  background: var(--lg-contrast);
 }
-.lg.contrast:not(:disabled):hover {
-  background: var(--lg-contrast-focus);
+.lg.contrast:not(:disabled):hover,
+.lg.contrast:not(:disabled):focus {
   background: var(--lg-contrast-focus);
 }
 .lg.contrast:not(:disabled):active {
-  background: var(--lg-contrast-medium);
   background: var(--lg-contrast-medium);
 }

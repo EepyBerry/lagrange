@@ -26,6 +26,7 @@
         <iconify-icon icon="mingcute:folder-zip-line" width="1.5rem" aria-hidden="true" />
       </button>
     </div>
+    <span class="filler"></span>
   </div>
   <div v-if="planets.length > 0" id="codex-grid">
     <!-- prettier-ignore-attribute -->
@@ -230,12 +231,12 @@ async function deleteTargetedPlanet() {
 #codex-header {
   z-index: 15;
   position: fixed;
-  backdrop-filter: blur(8px) brightness(25%);
   inset: 0 0 auto 0;
+  margin: 1rem;
 
-  padding: 1rem;
-  margin: 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: 2rem 1fr 2rem;
+  grid-template-rows: 1fr;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
@@ -299,14 +300,9 @@ async function deleteTargetedPlanet() {
     background-image: url('/background/space-960w.jpg');
   }
   #codex-header {
-    inset: auto 0;
-    padding: 0.5rem;
-    :deep(aside) {
-      left: 3.875rem;
-    }
-    #codex-header-controls {
-      justify-content: flex-end;
-    }
+    margin: 0.5rem;
+    grid-template-columns: 1fr auto;
+    .filler { display: none; }
   }
   #codex-grid {
     padding-bottom: 3.25rem;
@@ -314,12 +310,6 @@ async function deleteTargetedPlanet() {
   }
 }
 @media screen and (max-width: 767px) {
-  #codex-header {
-    :deep(aside) {
-      left: unset;
-      top: 3.75rem;
-    }
-  }
   #codex-background {
     background-image: url('/background/space-540w.jpg');
   }

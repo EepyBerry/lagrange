@@ -17,7 +17,7 @@ export async function initDefaultSettings(): Promise<void> {
     enableEffects: !prefersReducedMotion(),
     enableAnimations: !prefersReducedMotion(),
     // extras
-    extrasHologramMode: false,
+    extrasHologramEffect: false,
     extrasShowSpecialDays: true,
   })
 }
@@ -47,7 +47,8 @@ export async function injectMissingSettings(settings: IDBSettings): Promise<void
     enableEffects: settings.enableEffects ?? !prefersReducedMotion(),
     enableAnimations: settings.enableAnimations ?? !prefersReducedMotion(),
     // extras
-    extrasHologramMode: settings.extrasHologramMode ?? false,
+    extrasCRTEffect: settings.extrasCRTEffect ?? false,
+    extrasHologramEffect: settings.extrasHologramEffect ?? false,
     extrasShowSpecialDays: settings.extrasShowSpecialDays ?? true,
   })
 }
@@ -75,7 +76,7 @@ export async function clearData(): Promise<void> {
     enableEffects: !prefersReducedMotion(),
     enableAnimations: !prefersReducedMotion(),
     // extras
-    extrasHologramMode: false,
+    extrasHologramEffect: false,
   })
   await idb.keyBindings.clear()
   await addDefaultKeyBindings()

@@ -1,6 +1,6 @@
 <template>
   <div ref="cardRoot" class="planet-card">
-    <div class="planet-preview" :class="{ 'extra-hologram': !!EXTRAS_HOLOGRAM_MODE }">
+    <div class="planet-preview" :class="{ 'effect-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
       <svg viewBox="0 0 256 256">
         <g class="planet-preview-gizmo">
           <g class="planet-preview-gizmo-inner">
@@ -23,7 +23,7 @@
         :alt="planet.data.planetName"
       />
       <iconify-icon v-else icon="ph:planet-thin" width="auto" />
-      <span class="crt" :class="{ animated: A11Y_ANIMATE }"></span>
+      <span v-if="!!EXTRAS_CRT_EFFECT" class="effect-crt"></span>
     </div>
     <p class="planet-name">
       <span>
@@ -69,8 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { EXTRAS_HOLOGRAM_MODE, uwuifyPath } from '@core/extras'
-import { A11Y_ANIMATE } from '@core/globals'
+import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, uwuifyPath } from '@core/extras'
 import { type IDBPlanet } from '@/dexie.config'
 import { onMounted, ref, type Ref } from 'vue'
 import { RouterLink } from 'vue-router'
@@ -129,9 +128,8 @@ function getPlanetCircleRadius() {
       z-index: 0;
       max-width: 16rem;
       border-radius: 8px;
-      transition: all 100ms ease-in-out;
     }
-    .crt {
+    .effect-crt {
       border-radius: 50%;
       width: v-bind(planetRadius);
       height: v-bind(planetRadius);
@@ -184,27 +182,31 @@ function getPlanetCircleRadius() {
   }
 }
 .planet-card:hover, .planet-card:focus-within {
+  .planet-name {
+    background: var(--lg-contrast);
+  }
   .planet-card-actions {
     opacity: 1;
   }
-  svg{
+  svg * {
+    stroke: var(--lg-contrast);
+  }
+  svg {
     .planet-preview-gizmo {
       transform: scale(0.975);
-      * {
-        stroke: var(--lg-contrast);
-      }
     }
     .planet-preview-gizmo-inner {
       transform: rotate(15deg);
-      * {
-        stroke: var(--lg-contrast);
-      }
     }
   }
 }
 
+:root[data-animations='off'] {
+   .planet-card { transition: none; }
+   svg .planet-preview-gizmo, svg .planet-preview-gizmo-inner { transition: none; }
+}
 @media screen and (prefers-reduced-motion) {
-  .planet-card {
+  .planet-card * {
     transition: none;
   }
 }

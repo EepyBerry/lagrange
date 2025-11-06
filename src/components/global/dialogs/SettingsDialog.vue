@@ -271,12 +271,20 @@
             <div class="settings-extras">
               <ParameterGrid>
                 <ParameterCheckbox
-                  id="settings-hologram-mode"
-                  v-model="appSettings.extrasHologramMode"
+                  id="settings-crt-effect"
+                  v-model="appSettings.extrasCRTEffect"
                   :true-value="true"
                   :false-value="false"
                 >
-                  {{ $t('dialog.settings.extras_hologram_mode') }}:
+                  {{ $t('dialog.settings.extras_crt_effect') }}:
+                </ParameterCheckbox>
+                <ParameterCheckbox
+                  id="settings-hologram-effect"
+                  v-model="appSettings.extrasHologramEffect"
+                  :true-value="true"
+                  :false-value="false"
+                >
+                  {{ $t('dialog.settings.extras_hologram_effect') }}:
                 </ParameterCheckbox>
                 <ParameterCheckbox
                   id="settings-special-days"
@@ -361,13 +369,12 @@ import { useI18n } from 'vue-i18n'
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue'
 import { mapLocale } from '@core/utils/utils'
 import ParameterKeyBinding from '@components/global/parameters/ParameterKeyBinding.vue'
-import { A11Y_ANIMATE } from '@core/globals'
 import NotificationElement from '@components/global/elements/NotificationElement.vue'
 import ParameterCategory from '@components/global/parameters/ParameterCategory.vue'
 import AppClearDataConfirmDialog from '@components/codex/dialogs/ClearDataConfirmDialog.vue'
 import * as DexieService from '@/core/services/dexie.service'
 import { EventBus } from '@core/event-bus'
-import { EXTRAS_CAT_MODE, EXTRAS_HOLOGRAM_MODE, EXTRAS_SPECIAL_DAYS } from '@core/extras'
+import { EXTRAS_CAT_MODE, EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, EXTRAS_SPECIAL_DAYS } from '@core/extras'
 import { saveAs } from 'file-saver'
 import { readFileSettings } from '@core/helpers/import.helper'
 import WebGPU from '@/core/capabilities/WebGPU'
@@ -394,7 +401,7 @@ const appSettings: Ref<IDBSettings> = ref({
   bakingPixelize: false,
   enableAnimations: true,
   enableEffects: true,
-  extrasHologramMode: false,
+  extrasHologramEffect: false,
   extrasShowSpecialDays: true,
 })
 const persistStorage: Ref<boolean> = ref(false)
@@ -493,8 +500,9 @@ async function updateSettings() {
   document.documentElement.setAttribute('data-theme', appSettings.value!.theme)
   document.documentElement.setAttribute('data-font', appSettings.value!.font)
   document.documentElement.setAttribute('data-effects', appSettings.value!.enableEffects ? 'on' : 'off')
-  A11Y_ANIMATE.value = appSettings.value!.enableAnimations!
-  EXTRAS_HOLOGRAM_MODE.value = appSettings.value!.extrasHologramMode!
+  document.documentElement.setAttribute('data-animations', appSettings.value!.enableAnimations ? 'on' : 'off')
+  EXTRAS_CRT_EFFECT.value = appSettings.value!.extrasCRTEffect!
+  EXTRAS_HOLOGRAM_EFFECT.value = appSettings.value!.extrasHologramEffect!
   EXTRAS_SPECIAL_DAYS.value = appSettings.value!.extrasShowSpecialDays!
 
   await idb.settings.update(appSettings.value!.id, {
@@ -507,7 +515,7 @@ async function updateSettings() {
     bakingPixelize: appSettings.value!.bakingPixelize,
     enableEffects: appSettings.value!.enableEffects,
     enableAnimations: appSettings.value!.enableAnimations,
-    extrasHologramMode: appSettings.value!.extrasHologramMode,
+    extrasHologramEffect: appSettings.value!.extrasHologramEffect,
     extrasShowSpecialDays: appSettings.value!.extrasShowSpecialDays,
   })
 }

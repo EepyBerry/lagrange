@@ -14,7 +14,7 @@
     <template #content>
       <div class="info-grid">
         <!-- Planet preview image -->
-        <div class="planet-preview" :class="{ 'extra-hologram': !!EXTRAS_HOLOGRAM_MODE }">
+        <div class="planet-preview" :class="{ 'extra-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
           <img
             v-if="planet?.preview"
             class="planet-image"
@@ -23,7 +23,7 @@
             :alt="planet?.data.planetName"
           />
           <iconify-icon v-else icon="ph:planet-thin" width="auto" aria-hidden="true" />
-          <span class="crt" :class="{ animated: A11Y_ANIMATE }"></span>
+          <span v-if="!!EXTRAS_CRT_EFFECT" class="effect-crt"></span>
         </div>
 
         <!-- Basic planet data -->
@@ -123,8 +123,7 @@
 import type { IDBPlanet } from '@/dexie.config'
 import DialogElement from '@components/global/elements/DialogElement.vue'
 import { ref, type Ref } from 'vue'
-import { A11Y_ANIMATE } from '@core/globals'
-import { EXTRAS_HOLOGRAM_MODE } from '@core/extras'
+import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT } from '@core/extras'
 import SVGBiomeGraph from '../svg/SVGBiomeGraph.vue'
 import SVGRingsGraph from '../svg/SVGRingsGraph.vue'
 
