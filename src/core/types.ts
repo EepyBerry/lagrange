@@ -41,7 +41,19 @@ export enum ShaderFileType {
 export enum PlanetType {
   PLANET,
   MOON,
-  STAR,
+  GAS_GIANT,
+}
+export enum PlanetClassification {
+  GENERIC_TELLURIC,
+  GENERIC_LUNAR,
+  GENERIC_GASEOUS,
+  TELLURIC_ICE,
+  TELLURIC_OCEAN,
+  TELLURIC_TROPICAL,
+  TELLURIC_ARID,
+  TELLURIC_CHTHONIAN,
+  TELLURIC_LAVA,
+  INDETERMINATE,
 }
 
 export enum ColorMode {

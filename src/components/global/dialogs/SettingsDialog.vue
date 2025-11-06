@@ -515,6 +515,7 @@ async function updateSettings() {
     bakingPixelize: appSettings.value!.bakingPixelize,
     enableEffects: appSettings.value!.enableEffects,
     enableAnimations: appSettings.value!.enableAnimations,
+    extrasCRTEffect: appSettings.value!.extrasCRTEffect,
     extrasHologramEffect: appSettings.value!.extrasHologramEffect,
     extrasShowSpecialDays: appSettings.value!.extrasShowSpecialDays,
   })

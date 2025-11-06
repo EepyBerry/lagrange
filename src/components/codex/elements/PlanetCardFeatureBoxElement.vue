@@ -16,7 +16,7 @@ defineProps<{ icon: string, active?: boolean }>()
 <style scoped lang="scss">
 .planet-feature-box {
   flex: 1;
-  min-height: 2.5rem;
+  min-height: 2rem;
   background: var(--lg-accent);
   border: 1px solid var(--lg-accent);
   border-bottom-left-radius: 2px;
@@ -26,6 +26,7 @@ defineProps<{ icon: string, active?: boolean }>()
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  cursor: help;
 
   iconify-icon {
     min-width: 1.5rem;
@@ -33,7 +34,6 @@ defineProps<{ icon: string, active?: boolean }>()
 
   &:not(.active) {
     background: var(--lg-panel);
-    transform: translateY(-1rem);
     align-items: flex-end;
     iconify-icon {
       opacity: 0.375;

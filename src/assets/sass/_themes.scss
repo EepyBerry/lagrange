@@ -59,6 +59,10 @@
   );
   --lg-logo-update: #453264;
   --lg-update-05-background: linear-gradient(90deg, #453264 0%, #251642 100%);
+
+  --lg-planet-type-moon: #707070;
+  --lg-planet-type-planet: #11a331;
+  --lg-planet-type-gasgiant: #dfb80e;
 }
 :root[data-theme='supernova'] {
   --lg-primary: linear-gradient(to bottom, #110a20 0%, #06030c 100%);

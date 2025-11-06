@@ -1,5 +1,5 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
-import { ColorMode, GradientMode, PlanetType } from '@core/types'
+import { ColorMode, GradientMode, PlanetClassification, PlanetType } from '@core/types'
 import { clampedPRNG, isNumeric } from '@core/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
@@ -117,6 +117,7 @@ export default class PlanetData extends ChangeTracker {
   // --------------------------------------------------
 
   private _planetType: PlanetType = PlanetType.PLANET
+  private _planetClassification: PlanetClassification = PlanetClassification.INDETERMINATE
   private _planetMeshQuality: number
 
   private _planetRadius: number
@@ -141,6 +142,13 @@ export default class PlanetData extends ChangeTracker {
   public set planetType(ptype: PlanetType) {
     this._planetType = ptype
     this.markForChange('_planetType')
+  }
+  public get planetClassification(): PlanetClassification {
+    return this._planetClassification
+  }
+  public set planetClassification(value: PlanetClassification) {
+    this._planetClassification = value
+    this.markForChange('_planetClassification')
   }
   public get planetMeshQuality() {
     return this._planetMeshQuality
@@ -549,6 +557,7 @@ export default class PlanetData extends ChangeTracker {
 
     // Planet & Rendering
     this._planetType = PlanetType.PLANET
+    this._planetClassification = PlanetClassification.INDETERMINATE
     this._planetMeshQuality = 64.0
     this._planetRadius = 1.0
     this._planetAxialTilt = -15.0
@@ -682,6 +691,7 @@ export default class PlanetData extends ChangeTracker {
 
     // Planet & Rendering
     this.planetType = data._planetType ?? PlanetType.PLANET
+    this.planetClassification = data._planetClassification ?? PlanetClassification.INDETERMINATE
     this.planetRadius = data._planetRadius ?? 1.0
     this.planetAxialTilt = data._planetAxialTilt ?? 15.0
     this.planetRotation = data._planetRotation ?? 0.0
@@ -808,7 +818,8 @@ export default class PlanetData extends ChangeTracker {
     this.ambLightIntensity = clampedPRNG(0, 1)
 
     // Planet & Rendering
-    this.planetType = Math.round(clampedPRNG(0, 1)) as PlanetType
+    this.planetType = Math.round(clampedPRNG(0, 2)) as PlanetType
+    this.planetClassification = Math.round(clampedPRNG(0, 9)) as PlanetClassification
     this.planetRadius = clampedPRNG(0.5, 1)
     this.planetAxialTilt = clampedPRNG(-180, 180)
     this.planetRotation = clampedPRNG(0, 360)

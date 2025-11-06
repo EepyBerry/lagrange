@@ -18,14 +18,6 @@ export async function generatePlanetPreview(data: PlanetData): Promise<string> {
     sceneData.camera.updateProjectionMatrix()
     sceneData.lensFlare!.mesh.visible = false
 
-    // Adjust preview rotation for ringed planets, must be normalized to avoid issues w/ card display
-    if (data.ringsEnabled && data.ringsParams.length > 0) {
-      const planetRotAxis = new Vector3(1,0,0)
-      sceneData.planetGroup.setRotationFromAxisAngle(Globals.AXIS_Y, 0.0)
-      planetRotAxis.applyAxisAngle(Globals.AXIS_Y, degToRad(data.initCamAngle))
-      sceneData.planetGroup.rotateOnAxis(planetRotAxis, degToRad(5.0))
-    }
-
     // ---------------------------- Setup renderer & render -----------------------------
     const rawBuffer = new Uint8Array(w * h * 4)
     sceneData.renderer.setRenderTarget(previewRenderTarget)
@@ -39,7 +31,7 @@ export async function generatePlanetPreview(data: PlanetData): Promise<string> {
 
     // ------------------------------- Clean-up resources -------------------------------
     previewRenderTarget.dispose()
-    SceneHelper.disposeEditorScene(sceneData)
+    SceneHelper.disposeScene(sceneData)
     return await blobToDataURL(blob)
   } catch (err) {
     console.error('<Lagrange> Could not save planet preview!', err)

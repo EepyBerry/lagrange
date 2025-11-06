@@ -14,52 +14,82 @@
     <template #content>
       <div class="info-grid">
         <!-- Planet preview image -->
-        <div class="planet-preview-wrapper">
-          <div class="planet-preview" :class="{ 'extra-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
-            <img
-              v-if="planet?.preview"
-              class="planet-image"
-              :src="planet?.preview"
-              :aria-label="planet?.data.planetName"
-              :alt="planet?.data.planetName"
-            />
-            <iconify-icon v-else icon="ph:planet-thin" width="auto" aria-hidden="true" />
-            <span v-if="!!EXTRAS_CRT_EFFECT" class="effect-crt"></span>
-          </div>
-          <div class="planet-features">
-            <PlanetCardFeatureBoxElement
-              icon="mingcute:mountain-2-line"
-              :active="planet?.data.biomesEnabled"
-            />
-            <PlanetCardFeatureBoxElement
-              icon="mingcute:clouds-line"
-              :active="planet?.data.cloudsEnabled"
-            />
-            <PlanetCardFeatureBoxElement
-              icon="material-symbols:line-curve-rounded"
-              :active="planet?.data.atmosphereEnabled"
-            />
-            <PlanetCardFeatureBoxElement
-              icon="mingcute:planet-line"
-              :active="planet?.data.ringsEnabled"
-            />
-          </div>
+        <div class="planet-preview" :class="{ 'extra-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
+          <svg viewBox="0 0 256 256" aria-hidden="true">
+              <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+8, 30, 150)" fill="none" stroke="var(--lg-contrast)" stroke-width="1.5" />
+              <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+11.5, 55, 60)" fill="none" stroke="var(--lg-contrast)" stroke-width="6" />
+              <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+11.5, 63, 90)" fill="none" stroke="var(--lg-contrast)" stroke-width="6" />
+              <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+11.5, 110, 125)" fill="none" stroke="var(--lg-contrast)" stroke-width="6" />
+          </svg>
+          <img
+            v-if="planet?.preview"
+            class="planet-image"
+            :src="planet?.preview"
+            :aria-label="planet?.data.planetName"
+            :alt="planet?.data.planetName"
+          />
+          <iconify-icon v-else icon="ph:planet-thin" width="auto" aria-hidden="true" />
+          <span v-if="!!EXTRAS_CRT_EFFECT" class="effect-crt"></span>
         </div>
 
         <!-- Basic planet data -->
         <section class="planet-basic">
+          <div id="planet-basic-name"><p>{{ planet?.data.planetName }}</p></div>
           <SeparatorGreebleDeco />
-          <table id="planet-basic-data">
+          <div id="planet-basic-data" role="grid">
+            <MeasurementBoxElement 
+              :str-value="planet?.data.planetRadius.toFixed(2)" 
+              icon="lucide:radius"
+              :value-label="$t('dialog.planetinfo.basic.radius')"
+              role="gridcell"
+            />           
+            <MeasurementBoxElement 
+              :str-value="planet?.data.planetAxialTilt.toFixed(2)" 
+              icon="tabler:angle"
+              :value-label="$t('dialog.planetinfo.basic.axialtilt')"
+              role="gridcell"
+            />
+            <div id="planet-basic-data-features">
+              <p>Features</p>
+              <ul>
+                <li><PlanetCardFeatureBoxElement
+                  icon="mingcute:mountain-2-line"
+                  :active="planet?.data.biomesEnabled"
+                  :aria-label="$t('dialog.planetinfo.basic.has_biomes')"
+                  :title="$t('dialog.planetinfo.basic.has_biomes')"
+                  role="gridcell"
+                /></li>
+                <li><PlanetCardFeatureBoxElement
+                  icon="mingcute:clouds-line"
+                  :active="planet?.data.cloudsEnabled"
+                  :aria-label="$t('dialog.planetinfo.basic.has_clouds')"
+                  :title="$t('dialog.planetinfo.basic.has_clouds')"
+                  role="gridcell"
+                /></li>
+                <li><PlanetCardFeatureBoxElement
+                  icon="material-symbols:line-curve-rounded"
+                  :active="planet?.data.atmosphereEnabled"
+                  :aria-label="$t('dialog.planetinfo.basic.has_atmosphere')"
+                  :title="$t('dialog.planetinfo.basic.has_atmosphere')"
+                  role="gridcell"
+                /></li>
+                <li><PlanetCardFeatureBoxElement
+                  icon="mingcute:planet-line"
+                  :active="planet?.data.ringsEnabled"
+                  :aria-label="$t('dialog.planetinfo.basic.has_rings')"
+                  :title="$t('dialog.planetinfo.basic.has_rings')"
+                  role="gridcell"
+                /></li>
+              </ul>
+            </div>
+          </div>
+          <!-- <table id="planet-basic-data">
             <tbody>
-              <tr>
-                <td name>{{ $t('dialog.planetinfo.basic.name') }}:</td>
-                <td value>{{ planet?.data.planetName }}</td>
-              </tr>
               <tr>
                 <td name>{{ $t('dialog.planetinfo.basic.radius') }}:</td>
                 <td value>
                   {{ planet?.data.planetRadius.toFixed(2) }}
-                  {{ planet?.data.planetRadius !== 1 ? $t('main.units') : $t('main.unit') }}
+                  {{  }}
                 </td>
               </tr>
               <tr>
@@ -68,14 +98,22 @@
               </tr>
               <tr>
                 <td name>{{ $t('dialog.planetinfo.basic.type')}}:</td>
-                <td value>{{  planet?.data.planetType }}</td>
+                <td value>{{ $t(getI18nPlanetType(planet?.data.planetType)) }}</td>
               </tr>
               <tr>
                 <td name>{{ $t('dialog.planetinfo.basic.classification')}}:</td>
-                <td value>Unknown</td>
+                <td value>{{  $t(getI18nPlanetClassification(planet?.data.planetClassification)) }}</td>
+              </tr>
+              <tr>
+                <td name>{{  $t('dialog.planetinfo.basic.features') }}:</td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  
+                </td>
               </tr>
             </tbody>
-          </table>
+          </table> -->
         </section>
         
         <!-- Planet biomes (if present) -->
@@ -106,13 +144,17 @@ import SVGBiomeGraph from '../svg/SVGBiomeGraph.vue'
 import SVGRingsGraph from '../svg/SVGRingsGraph.vue'
 import SeparatorGreebleDeco from '@/components/global/decoration/SeparatorGreebleDeco.vue'
 import PlanetCardFeatureBoxElement from '../elements/PlanetCardFeatureBoxElement.vue'
+import { makeSVGCircleArc } from '@/core/utils/svg-utils'
+import MeasurementBoxElement from '@/components/global/elements/MeasurementBoxElement.vue'
 
 const planet: Ref<IDBPlanet | null> = ref(null)
+const planetRadius: Ref<string> = ref('100%')
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 
 defineExpose({
   open: (p: IDBPlanet) => {
     planet.value = p
+    planetRadius.value = planet.value.data.planetRadius*100.0 + '%'
     dialogRef.value?.open()
   },
 })
@@ -128,6 +170,9 @@ function getMode(value: number | undefined) {
     default:
       return 'main.unknown_value'
   }
+}
+function getPlanetCircleRadius() {
+  return 128.0 * (planet.value?.data.planetRadius ?? 0)
 }
 </script>
 
@@ -145,63 +190,86 @@ function getMode(value: number | undefined) {
     gap: 0 2rem;
   }
 
-  .planet-preview-wrapper {
+  .planet-preview {
     grid-area: preview;
+    z-index: 1;
+    align-self: center;
+    position: relative;
+    width: 16rem;
+    height: 16rem;
+    border-radius: 2px;
 
-    .planet-preview {
-      z-index: 1;
-      align-self: center;
-      position: relative;
-      width: 16rem;
-      height: 16rem;
-      background: var(--lg-panel);
-      border: 1px solid var(--lg-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg { 
+      position: absolute; 
+      inset: 0; 
+      overflow: visible;
+    }
+    .planet-image {
+      max-width: 16rem;
       border-radius: 2px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      .planet-image {
-        max-width: 16rem;
-        border-radius: 2px;
-        image-rendering: optimizeQuality;
-      }
+      image-rendering: optimizeQuality;
     }
-    .planet-features {
-      display: flex;
-      flex-direction: row;
-      gap: 0.25rem;
+    .effect-crt {
+      border-radius: 50%;
+      width: v-bind(planetRadius);
+      height: v-bind(planetRadius);
     }
+  }
+  .planet-features {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25rem;
   }
 
   .planet-basic {
     position: relative;
     height: fit-content;
     font-size: 1.05rem;
+    min-width: 16rem;
 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 
-    table#planet-basic-data {
-      tr:nth-child(3) > td {
-        padding-bottom: 1rem;
-      }
-      td:nth-child(2) {
-        padding-left: 1rem;
-      }
-      [name] {
-        font-weight: 600;
-      }
+    #planet-basic-name {
+      background: var(--lg-panel);
+      border: 2px solid var(--lg-accent);
+      text-align: center;
+      font-weight: 500;
+      font-size: 1.25rem;
+      overflow: hidden;
 
-      td.planet-basic-data-features {
-        width: 100%;
-        gap: 0.25rem;
-        .features-wrapper { 
+      p {
+        padding: 0 6px;
+        max-width: 24ch;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+    #planet-basic-data {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 0.5rem;
+
+      #planet-basic-data-features-title {
+        display: flex;
+      }
+      #planet-basic-data-features {
+        grid-column: span 2;
+        ul {
+          width: 100%;
           display: flex;
-          gap: 0.25rem;
-         }
+          li {
+            padding: 0;
+            list-style: none;
+            flex: 1;
+          }
+        }
       }
     }
   }

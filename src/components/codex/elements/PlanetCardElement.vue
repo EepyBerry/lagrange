@@ -1,9 +1,10 @@
 <template>
   <div ref="cardRoot" class="planet-card">
     <div class="planet-preview" :class="{ 'effect-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
+      <!-- decoration -->
       <svg viewBox="0 0 256 256">
         <g class="planet-preview-gizmo">
-          <g class="planet-preview-gizmo-inner">
+          <g class="planet-preview-gizmo inner">
             <circle cx="128" cy="128" :r="getPlanetCircleRadius()+8" fill="transparent" stroke="var(--lg-accent)" stroke-width="1.5" />
             <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+11.5, 120, 140)" fill="none" stroke="var(--lg-accent)" stroke-width="6" />
             <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+11.5, 145, 150)" fill="none" stroke="var(--lg-accent)" stroke-width="6" />
@@ -12,17 +13,22 @@
           <circle cx="128" :cy="128 + getPlanetCircleRadius()+8" r="5" fill="var(--lg-primary-static)" />
           <circle cx="128" :cy="128 + getPlanetCircleRadius()+8" r="6" fill="transparent" stroke="var(--lg-accent)" stroke-width="1.5" />
         </g>
-
         <line x1="128" :y1="128 + getPlanetCircleRadius()+14" x2="128" y2="272" stroke="var(--lg-accent)" stroke-width="1.5" stroke-dasharray="6 4" />
       </svg>
-      <img
-        v-if="planet.preview"
-        class="planet-image"
-        :src="planet.preview"
-        :aria-label="planet.data.planetName"
-        :alt="planet.data.planetName"
-      />
-      <iconify-icon v-else icon="ph:planet-thin" width="auto" />
+
+      <!-- preview -->
+      <div class="planet-preview-inner">
+        <img
+          v-if="planet.preview"
+          class="planet-image"
+          :src="planet.preview"
+          :aria-label="planet.data.planetName"
+          :alt="planet.data.planetName"
+        />
+        <iconify-icon v-else icon="ph:planet-thin" width="auto" />
+      </div>
+
+      <!-- effects -->
       <span v-if="!!EXTRAS_CRT_EFFECT" class="effect-crt"></span>
     </div>
     <p class="planet-name">
@@ -74,6 +80,7 @@ import { type IDBPlanet } from '@/dexie.config'
 import { onMounted, ref, type Ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { makeSVGCircleArc } from '@/core/utils/svg-utils'
+import { PlanetType } from '@/core/types'
 
 const cardRoot: Ref<HTMLElement | null> = ref(null)
 
@@ -84,9 +91,15 @@ defineEmits(['info', 'export', 'delete'])
 onMounted(() => setTimeout(() => cardRoot.value!.style.opacity = '1'))
 
 function getPlanetCircleRadius() {
-  return $props.planet.data.ringsEnabled
-    ? (128.0 * $props.planet.data.planetRadius) - ($props.planet.data.findOutermostRingRadius()*128.0/5.0) + 4
-    : 128.0 * $props.planet.data.planetRadius
+  return 128.0 * $props.planet.data.planetRadius
+}
+function getPlanetTypeColor() {
+  switch ($props.planet.data.planetType) {
+    case PlanetType.PLANET: return 'var(--lg-planet-type-planet)';
+    case PlanetType.MOON: return 'var(--lg-planet-type-moon)';
+    case PlanetType.GAS_GIANT: return 'var(--lg-planet-type-gasgiant)';
+    default: return '--'
+  }
 }
 </script>
 
@@ -119,16 +132,24 @@ function getPlanetCircleRadius() {
       position: absolute; 
       inset: 0; 
       overflow: visible;
-      .planet-preview-gizmo, .planet-preview-gizmo-inner {
+      .planet-preview-gizmo {
         transform-origin: 50% 50%;
         transition: all 150ms ease-in-out;
       }
     }
-    .planet-image {
-      z-index: 0;
-      max-width: 16rem;
-      border-radius: 8px;
+    .planet-preview-inner {
+      width: 100%;
+      height: 100%;
+      .planet-image {
+        z-index: 0;
+        max-width: 16rem;
+        border-radius: 8px;
+      }
+      .planet-indicator {
+        opacity: 0.375;
+      }
     }
+    
     .effect-crt {
       border-radius: 50%;
       width: v-bind(planetRadius);
@@ -155,7 +176,6 @@ function getPlanetCircleRadius() {
       cursor: text;
     }
   }
-
   .planet-card-actions {
     display: flex;
     align-items: center;
@@ -185,17 +205,18 @@ function getPlanetCircleRadius() {
   .planet-name {
     background: var(--lg-contrast);
   }
-  .planet-card-actions {
+  .planet-card-actions, .planet-indicator {
     opacity: 1;
   }
-  svg * {
-    stroke: var(--lg-contrast);
-  }
   svg {
-    .planet-preview-gizmo {
+    line { stroke: var(--lg-contrast); }
+    .planet-preview-gizmo:not(.inner) {
       transform: scale(0.975);
+      * {
+        stroke: var(--lg-contrast);
+      }
     }
-    .planet-preview-gizmo-inner {
+    .planet-preview-gizmo.inner {
       transform: rotate(15deg);
     }
   }

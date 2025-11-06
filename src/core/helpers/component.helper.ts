@@ -42,11 +42,7 @@ export async function createScene(data: PlanetData, width: number, height: numbe
 
   // Make spherical before creating camera
   const spherical = creationMode === EditorSceneCreationMode.PREVIEW
-    ? new THREE.Spherical(
-        data.initCamDistance + (data.ringsEnabled ? data.findOutermostRingRadius()*0.5 : 0) - 1.5,
-        Math.PI / 2.0,
-        degToRad(data.initCamAngle)
-      )
+    ? new THREE.Spherical(data.initCamDistance - 1.5,Math.PI / 2.0, degToRad(data.initCamAngle))
     : new THREE.Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle))
 
   // setup scene (renderer, cam, lighting)

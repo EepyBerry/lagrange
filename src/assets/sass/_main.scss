@@ -46,6 +46,12 @@ body {
   display: flex;
   flex-direction: column;
 }
+body:has(dialog[open]) {
+  touch-action: none;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: none;
+}
 
 hr {
   border: 1px solid var(--lg-accent);

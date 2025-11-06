@@ -23,7 +23,7 @@
           <path
             :d="makeSVGRingArc((r.center*460.0)/5.0)"
             fill="none"
-            stroke="var(--lg-logo)"
+            stroke="var(--lg-contrast)"
             :stroke-width="(r.width*460.0)/5.0"
           />
           <line :x1="(r.center*460.0)/5.0" y1="90" :x2="(r.center*460.0)/5.0" y2="58" stroke="white" stroke-width="1" />

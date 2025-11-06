@@ -130,7 +130,7 @@ function updateScene() {
 export function disposeScene() {
   watchForPlanetUpdates = false
   console.debug('<Lagrange> Clearing scene... ')
-  SceneHelper.disposeEditorScene(LG_SCENE_DATA)
+  SceneHelper.disposeScene(LG_SCENE_DATA)
   UniformHelper.clearUniformUpdateMap()
   console.debug('<Lagrange> ...done!')
 }
