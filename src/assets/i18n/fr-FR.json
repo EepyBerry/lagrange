@@ -15,14 +15,17 @@
     },
     "planet_data": {
       "class_planet_telluric": "Tellurique",
-      "class_moon_rocky": "Lunaire",
-      "class_gasgiant_cold": "Gazeux",
       "class_planet_ice": "Glacial",
       "class_planet_ocean": "Océanique",
       "class_planet_tropical": "Tropical",
       "class_planet_arid": "Aride",
       "class_planet_chthonian": "Chthonien",
       "class_planet_magmatic": "Magmatique",
+      "class_moon_rocky": "Rocheux",
+      "class_moon_ice": "Glacial",
+      "class_moon_chthonian": "Chthonien",
+      "class_gasgiant_cold": "Géante Froide",
+      "class_gasgiant_hot": "Géante Chaude",
       "class_indeterminate": "Indéterminé",
       "biome_type_arctic": "Arctique",
       "biome_type_tundra": "Toundra",
@@ -92,7 +95,7 @@
         "type_moon": "Lune",
         "type_planet": "Planète",
         "type_gasgiant": "Géante Gazeuse",
-        "classification": "Class",
+        "class": "Class",
         "features": "Features",
         "has_biomes": "Biomes",
         "has_clouds": "Nuages",
@@ -275,6 +278,12 @@
       "noise_rgbaramp": "Rampe de couleurs (RGBA)"
     },
     "controls": {
+      "basic_data": {
+        "$title": "Données de base",
+        "classification": "Classification",
+        "classification_type": "Type d'objet",
+        "classification_class": "Classe de l'objet"
+      },
       "lighting": {
         "$title": "Luminosité",
         "lensflare": "Lens Flare",

@@ -15,14 +15,17 @@
     },
     "planet_data": {
       "class_planet_telluric": "Tewwuwic",
-      "class_moon_rocky": "Lunaw",
-      "class_gasgiant_cold": "Gaseous",
       "class_planet_ice": "Gwaciaw",
       "class_planet_ocean": "Oceanic",
       "class_planet_tropical": "Twopicaw",
       "class_planet_arid": "Awid",
       "class_planet_chthonian": "Chthonyan",
       "class_planet_magmatic": "Myagmatic",
+      "class_moon_rocky": "Wocky",
+      "class_moon_ice": "Gwaciaw",
+      "class_moon_chthonian": "Chthonyan",
+      "class_gasgiant_cold": "Cowd Giant",
+      "class_gasgiant_hot": "Hot Giant",
       "class_indeterminate": "Indetewminyate",
       "biome_type_arctic": "Awctic",
       "biome_type_tundra": "Tundwa",
@@ -92,7 +95,7 @@
         "type_moon": "Moon",
         "type_planet": "Pwanyet",
         "type_gasgiant": "Gas Giant",
-        "classification": "Cwass",
+        "class": "Cwass",
         "features": "Featuwes",
         "has_biomes": "Has biomes",
         "has_clouds": "Has cwouds",
@@ -275,6 +278,12 @@
       "noise_rgbaramp": "Cowow/awpha wamp"
     },
     "controls": {
+      "basic_data": {
+        "$title": "Basic Data",
+        "classification": "Cwassification",
+        "classification_type": "Objyect type",
+        "classification_class": "Objyect cwass"
+      },
       "lighting": {
         "$title": "Wighting",
         "lensflare": "Wens Fwawe",

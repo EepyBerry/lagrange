@@ -162,16 +162,16 @@ function getPlanetClassStyle(): string[] {
   if (!planet.value) return defaultStyle
   switch (planet.value.data.planetClass) {
     case PlanetClass.PLANET_TELLURIC:    return defaultStyle
-    case PlanetClass.PLANET_ICE:         return ['var(--lg-planet-class-ice-background)', 'var(--lg-planet-class-telluric-ice-text)']
-    case PlanetClass.PLANET_OCEAN:       return ['var(--lg-planet-class-ocean-background)', 'var(--lg-planet-class-telluric-ocean-text)']
-    case PlanetClass.PLANET_TROPICAL:    return ['var(--lg-planet-class-tropical-background)', 'var(--lg-planet-class-telluric-tropical-text)']
-    case PlanetClass.PLANET_ARID:        return ['var(--lg-planet-class-arid-background)', 'var(--lg-planet-class-telluric-arid-text)']
-    case PlanetClass.PLANET_CHTHONIAN:   return ['var(--lg-planet-class-chthonian-background)', 'var(--lg-planet-class-telluric-chthonian-text)']
+    case PlanetClass.PLANET_ICE:         return ['var(--lg-planet-class-ice-background)', 'var(--lg-planet-class-ice-text)']
+    case PlanetClass.PLANET_OCEAN:       return ['var(--lg-planet-class-ocean-background)', 'var(--lg-planet-class-ocean-text)']
+    case PlanetClass.PLANET_TROPICAL:    return ['var(--lg-planet-class-tropical-background)', 'var(--lg-planet-class-tropical-text)']
+    case PlanetClass.PLANET_ARID:        return ['var(--lg-planet-class-arid-background)', 'var(--lg-planet-class-arid-text)']
+    case PlanetClass.PLANET_CHTHONIAN:   return ['var(--lg-planet-class-chthonian-background)', 'var(--lg-planet-class-chthonian-text)']
     case PlanetClass.PLANET_MAGMATIC:    return ['var(--lg-planet-class-magmatic-background)', 'var(--lg-planet-class-magmatic-text)']
     case PlanetClass.MOON_ROCKY:         return defaultStyle
-    case PlanetClass.MOON_ICE:           return ['var(--lg-planet-class-ice-background)', 'var(--lg-planet-class-telluric-ice-text)']
-    case PlanetClass.MOON_CHTHONIAN:     return ['var(--lg-planet-class-chthonian-background)', 'var(--lg-planet-class-telluric-chthonian-text)']
-    case PlanetClass.GASGIANT_COLD:      return ['var(--lg-planet-class-ice-background)', 'var(--lg-planet-class-telluric-ice-text)']
+    case PlanetClass.MOON_ICE:           return ['var(--lg-planet-class-ice-background)', 'var(--lg-planet-class-ice-text)']
+    case PlanetClass.MOON_CHTHONIAN:     return ['var(--lg-planet-class-chthonian-background)', 'var(--lg-planet-class-chthonian-text)']
+    case PlanetClass.GASGIANT_COLD:      return ['var(--lg-planet-class-ice-background)', 'var(--lg-planet-class-ice-text)']
     case PlanetClass.GASGIANT_HOT:       return ['var(--lg-planet-class-magmatic-background)', 'var(--lg-planet-class-magmatic-text)']
     case PlanetClass.INDETERMINATE:      return defaultStyle
   }
