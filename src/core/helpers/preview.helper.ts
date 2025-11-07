@@ -1,4 +1,4 @@
-import { CanvasTexture, RenderTarget, SRGBColorSpace, Vector3 } from 'three';
+import { CanvasTexture, RenderTarget, SRGBColorSpace } from 'three';
 import * as Globals from '@core/globals'
 import * as SceneHelper from './scene.helper'
 import type PlanetData from '../models/planet-data.model';
@@ -17,6 +17,9 @@ export async function generatePlanetPreview(data: PlanetData): Promise<string> {
     sceneData.camera.setRotationFromAxisAngle(Globals.AXIS_Y, degToRad(data.initCamAngle))
     sceneData.camera.updateProjectionMatrix()
     sceneData.lensFlare!.mesh.visible = false
+    // artificially boost atmosphere for preview
+    sceneData.atmosphere.uniforms!.render.density.value *= 1.25
+    sceneData.atmosphere.uniforms!.render.intensity.value *= 1.25
 
     // ---------------------------- Setup renderer & render -----------------------------
     const rawBuffer = new Uint8Array(w * h * 4)

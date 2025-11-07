@@ -291,6 +291,9 @@
       },
       "planet_rendering": {
         "$title": "Planet & Rendering",
+        "data": "Data",
+        "data_type": "Object type",
+        "data_classification" : "Object class",
         "transform": "Transform",
         "transform_radius": "Radius",
         "transform_axialtilt": "Axial tilt",
