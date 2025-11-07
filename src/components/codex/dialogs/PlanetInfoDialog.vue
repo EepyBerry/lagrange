@@ -14,7 +14,7 @@
     <template #content>
       <div class="info-grid">
         <!-- Planet preview image -->
-        <div class="planet-preview" :class="{ 'extra-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
+        <section id="planet-preview" :class="{ 'extra-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
           <svg viewBox="0 0 256 256" aria-hidden="true">
               <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+8, 30, 150)" fill="none" stroke="var(--lg-contrast)" stroke-width="1.5" />
               <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+11.5, 55, 60)" fill="none" stroke="var(--lg-contrast)" stroke-width="6" />
@@ -30,90 +30,77 @@
           />
           <iconify-icon v-else icon="ph:planet-thin" width="auto" aria-hidden="true" />
           <span v-if="!!EXTRAS_CRT_EFFECT" class="effect-crt"></span>
-        </div>
+        </section>
+
+        <!-- planet name -->
+        <section id="planet-name">
+          <div class="banner"><p role="title">{{ planet?.data.planetName }}</p></div>
+          <SeparatorGreebleDeco />
+        </section>
 
         <!-- Basic planet data -->
-        <section class="planet-basic">
-          <div id="planet-basic-name"><p>{{ planet?.data.planetName }}</p></div>
-          <SeparatorGreebleDeco />
-          <div id="planet-basic-data" role="grid">
-            <MeasurementBoxElement 
-              :str-value="planet?.data.planetRadius.toFixed(2)" 
-              icon="lucide:radius"
-              :value-label="$t('dialog.planetinfo.basic.radius')"
-              role="gridcell"
-            />           
-            <MeasurementBoxElement 
-              :str-value="planet?.data.planetAxialTilt.toFixed(2)" 
-              icon="tabler:angle"
-              :value-label="$t('dialog.planetinfo.basic.axialtilt')"
-              role="gridcell"
-            />
-            <div id="planet-basic-data-features">
-              <p>Features</p>
-              <ul>
-                <li><PlanetCardFeatureBoxElement
-                  icon="mingcute:mountain-2-line"
-                  :active="planet?.data.biomesEnabled"
-                  :aria-label="$t('dialog.planetinfo.basic.has_biomes')"
-                  :title="$t('dialog.planetinfo.basic.has_biomes')"
-                  role="gridcell"
-                /></li>
-                <li><PlanetCardFeatureBoxElement
-                  icon="mingcute:clouds-line"
-                  :active="planet?.data.cloudsEnabled"
-                  :aria-label="$t('dialog.planetinfo.basic.has_clouds')"
-                  :title="$t('dialog.planetinfo.basic.has_clouds')"
-                  role="gridcell"
-                /></li>
-                <li><PlanetCardFeatureBoxElement
-                  icon="material-symbols:line-curve-rounded"
-                  :active="planet?.data.atmosphereEnabled"
-                  :aria-label="$t('dialog.planetinfo.basic.has_atmosphere')"
-                  :title="$t('dialog.planetinfo.basic.has_atmosphere')"
-                  role="gridcell"
-                /></li>
-                <li><PlanetCardFeatureBoxElement
-                  icon="mingcute:planet-line"
-                  :active="planet?.data.ringsEnabled"
-                  :aria-label="$t('dialog.planetinfo.basic.has_rings')"
-                  :title="$t('dialog.planetinfo.basic.has_rings')"
-                  role="gridcell"
-                /></li>
-              </ul>
-            </div>
+        <section id="planet-basic-data">
+          <GenericBoxElement
+            id="planet-basic-data-type" 
+            ref="planetBasicDataTypeRef"
+            :value-label="$t('dialog.planetinfo.basic.type')">
+            {{ $t(getI18nPlanetType()) }}
+          </GenericBoxElement>
+          <GenericBoxElement 
+            id="planet-basic-data-class"
+            ref="planetBasicDataClassRef"
+            :value-label="$t('dialog.planetinfo.basic.classification')"
+            :background-color="getPlanetClassStyle()[0]"
+            :text-color="getPlanetClassStyle()[1]">
+            {{ $t(getI18nPlanetClassification()) }}
+          </GenericBoxElement>
+
+          <MeasurementBoxElement 
+            :str-value="planet?.data.planetRadius.toFixed(2)"
+            icon="lucide:radius"
+            :value-label="$t('dialog.planetinfo.basic.radius')"
+            role="gridcell"
+          />           
+          <MeasurementBoxElement 
+            :str-value="planet?.data.planetAxialTilt.toFixed(2)" 
+            unit="°"
+            icon="tabler:angle"
+            :value-label="$t('dialog.planetinfo.basic.axialtilt')"
+            role="gridcell"
+          />
+          <div id="planet-basic-data-features">
+            <p role="heading">{{ $t('dialog.planetinfo.basic.features') }}</p>
+            <ul>
+              <li><PlanetCardFeatureBoxElement
+                icon="mingcute:mountain-2-line"
+                :active="planet?.data.biomesEnabled"
+                :aria-label="$t('dialog.planetinfo.basic.has_biomes')"
+                :title="$t('dialog.planetinfo.basic.has_biomes')"
+                role="gridcell"
+              /></li>
+              <li><PlanetCardFeatureBoxElement
+                icon="mingcute:clouds-line"
+                :active="planet?.data.cloudsEnabled"
+                :aria-label="$t('dialog.planetinfo.basic.has_clouds')"
+                :title="$t('dialog.planetinfo.basic.has_clouds')"
+                role="gridcell"
+              /></li>
+              <li><PlanetCardFeatureBoxElement
+                icon="material-symbols:line-curve-rounded"
+                :active="planet?.data.atmosphereEnabled"
+                :aria-label="$t('dialog.planetinfo.basic.has_atmosphere')"
+                :title="$t('dialog.planetinfo.basic.has_atmosphere')"
+                role="gridcell"
+              /></li>
+              <li><PlanetCardFeatureBoxElement
+                icon="mingcute:planet-line"
+                :active="planet?.data.ringsEnabled"
+                :aria-label="$t('dialog.planetinfo.basic.has_rings')"
+                :title="$t('dialog.planetinfo.basic.has_rings')"
+                role="gridcell"
+              /></li>
+            </ul>
           </div>
-          <!-- <table id="planet-basic-data">
-            <tbody>
-              <tr>
-                <td name>{{ $t('dialog.planetinfo.basic.radius') }}:</td>
-                <td value>
-                  {{ planet?.data.planetRadius.toFixed(2) }}
-                  {{  }}
-                </td>
-              </tr>
-              <tr>
-                <td name>{{ $t('dialog.planetinfo.basic.axialtilt') }}:</td>
-                <td value>{{ planet?.data.planetAxialTilt.toFixed(2) }}°</td>
-              </tr>
-              <tr>
-                <td name>{{ $t('dialog.planetinfo.basic.type')}}:</td>
-                <td value>{{ $t(getI18nPlanetType(planet?.data.planetType)) }}</td>
-              </tr>
-              <tr>
-                <td name>{{ $t('dialog.planetinfo.basic.classification')}}:</td>
-                <td value>{{  $t(getI18nPlanetClassification(planet?.data.planetClassification)) }}</td>
-              </tr>
-              <tr>
-                <td name>{{  $t('dialog.planetinfo.basic.features') }}:</td>
-              </tr>
-              <tr>
-                <td colspan="2">
-                  
-                </td>
-              </tr>
-            </tbody>
-          </table> -->
         </section>
         
         <!-- Planet biomes (if present) -->
@@ -146,10 +133,16 @@ import SeparatorGreebleDeco from '@/components/global/decoration/SeparatorGreebl
 import PlanetCardFeatureBoxElement from '../elements/PlanetCardFeatureBoxElement.vue'
 import { makeSVGCircleArc } from '@/core/utils/svg-utils'
 import MeasurementBoxElement from '@/components/global/elements/MeasurementBoxElement.vue'
+import GenericBoxElement from '@/components/global/elements/GenericBoxElement.vue'
+import { getI18nPlanetClassification, getI18nPlanetType } from '@/core/utils/i18n-utils'
+import { PlanetClassification } from '@/core/types'
 
 const planet: Ref<IDBPlanet | null> = ref(null)
 const planetRadius: Ref<string> = ref('100%')
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
+
+const planetBasicDataTypeRef: Ref<HTMLElement | null> = ref(null)
+const planetBasicDataClassRef: Ref<HTMLElement | null> = ref(null)
 
 defineExpose({
   open: (p: IDBPlanet) => {
@@ -159,20 +152,26 @@ defineExpose({
   },
 })
 
-function getMode(value: number | undefined) {
-  switch (value) {
-    case 0:
-      return 'editor.controls.biomes.gradient_mode_realistic'
-    case 1:
-      return 'editor.controls.biomes.gradient_mode_poletopole'
-    case 2:
-      return 'editor.controls.biomes.gradient_mode_fullnoise'
-    default:
-      return 'main.unknown_value'
-  }
-}
 function getPlanetCircleRadius() {
   return 128.0 * (planet.value?.data.planetRadius ?? 0)
+}
+
+// prettier-ignore
+function getPlanetClassStyle(): string[] {
+  const defaultStyle = ['var(--lg-input)', 'var(--lg-text)']
+  if (!planet.value) return defaultStyle
+  switch (planet.value.data.planetClassification) {
+    case PlanetClassification.GENERIC_TELLURIC:     return defaultStyle
+    case PlanetClassification.GENERIC_LUNAR:        return defaultStyle
+    case PlanetClassification.GENERIC_GASEOUS:      return defaultStyle
+    case PlanetClassification.TELLURIC_ICE:         return ['var(--lg-planet-class-telluric-ice-background)', 'var(--lg-planet-class-telluric-ice-text)']
+    case PlanetClassification.TELLURIC_OCEAN:       return ['var(--lg-planet-class-telluric-ocean-background)', 'var(--lg-planet-class-telluric-ocean-text)']
+    case PlanetClassification.TELLURIC_TROPICAL:    return ['var(--lg-planet-class-telluric-tropical-background)', 'var(--lg-planet-class-telluric-tropical-text)']
+    case PlanetClassification.TELLURIC_ARID:        return ['var(--lg-planet-class-telluric-arid-background)', 'var(--lg-planet-class-telluric-arid-text)']
+    case PlanetClassification.TELLURIC_CHTHONIAN:   return ['var(--lg-planet-class-telluric-chthonian-background)', 'var(--lg-planet-class-telluric-chthonian-text)']
+    case PlanetClassification.TELLURIC_LAVA:        return ['var(--lg-planet-class-telluric-lava-background)', 'var(--lg-planet-class-telluric-lava-text)']
+    case PlanetClassification.INDETERMINATE:        return defaultStyle
+  }
 }
 </script>
 
@@ -184,13 +183,14 @@ function getPlanetCircleRadius() {
     display: grid;
     grid-template-columns: auto 1fr;
     grid-template-areas:
+      'name name'
       'preview basic'
       'biomes biomes'
       'rings rings';
     gap: 0 2rem;
   }
 
-  .planet-preview {
+  #planet-preview {
     grid-area: preview;
     z-index: 1;
     align-self: center;
@@ -225,50 +225,60 @@ function getPlanetCircleRadius() {
     gap: 0.25rem;
   }
 
-  .planet-basic {
+
+  #planet-name {
+    grid-area: name;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .banner {
+      background: var(--lg-panel);
+      border: 2px solid var(--lg-accent);
+      border-bottom: 0;
+      text-align: center;
+      font-weight: 500;
+      font-size: 1.25rem;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      p {
+        padding: 0 6px;
+        max-width: 32ch;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+  }
+  #planet-basic-data {
     position: relative;
     height: fit-content;
     font-size: 1.05rem;
     min-width: 16rem;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.5rem;
+    font-size: 1rem;
 
-    #planet-basic-name {
-      background: var(--lg-panel);
-      border: 2px solid var(--lg-accent);
-      text-align: center;
-      font-weight: 500;
-      font-size: 1.25rem;
-      overflow: hidden;
-
-      p {
-        padding: 0 6px;
-        max-width: 24ch;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
+    #planet-basic-data-type, #planet-basic-data-class {
+      grid-column: span 2;
     }
-    #planet-basic-data {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto auto;
-      gap: 0.5rem;
-
-      #planet-basic-data-features-title {
+    #planet-basic-data-features-title {
+      display: flex;
+    }
+    #planet-basic-data-features {
+      grid-column: span 2;
+      p { font-size: 0.875rem; }
+      ul {
+        width: 100%;
         display: flex;
-      }
-      #planet-basic-data-features {
-        grid-column: span 2;
-        ul {
-          width: 100%;
-          display: flex;
-          li {
-            padding: 0;
-            list-style: none;
-            flex: 1;
-          }
+        gap: 4px;
+        li {
+          padding: 0;
+          list-style: none;
+          flex: 1;
         }
       }
     }
@@ -289,17 +299,19 @@ function getPlanetCircleRadius() {
 }
 @media screen and (max-width: 767px) {
   #dialog-planet-info {
+    width: 100%;
     .info-grid {
       justify-content: center;
       align-items: center;
       grid-template-columns: 1fr;
       grid-template-areas:
+        'name'
         'preview'
         'basic'
         'biomes'
         'rings';
     }
-    .planet-preview {
+    #planet-preview {
       justify-self: center;
       margin-bottom: 1rem;
     }

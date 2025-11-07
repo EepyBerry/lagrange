@@ -95,6 +95,7 @@ function toggleGraphBiome(index: number) {
 <style scoped lang="scss">
 #svggraph-biomes {
   margin-top: 0.5rem;
+  max-width: 600px;
 }
 #svggraph-biomes-order {
   rect:hover { 

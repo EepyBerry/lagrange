@@ -6,6 +6,7 @@
       <h2 v-if="showTitle" class="dialog-title">
         <slot name="title"></slot>
       </h2>
+      <span v-else class="filler" />
       <button
         v-if="closeable"
         tabindex="0"

@@ -1,30 +1,45 @@
 <template>
-  <div :id="'measurement-'+valueLabel.toLocaleLowerCase()">
-    <p :id="'measurement-'+valueLabel.toLocaleLowerCase()+'-label'">{{ valueLabel }}</p>
+  <div class="measurement-box" role="region">
+    <p>{{ valueLabel }}</p>
     <div class="measurement-box-inner">
       <iconify-icon
         :icon="icon"
         width="1.5rem"
         aria-hidden="true"
       />
-      <p :aria-labelledby="'measurement-'+valueLabel+'-label'">{{ strValue }}</p>
+      <p>{{ strValue }}{{ unit }}</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{ strValue?: string, icon: string, valueLabel: string }>()
+defineProps<{ strValue?: string, unit?: string, icon: string, valueLabel: string }>()
 </script>
 
 <style scoped lang="scss">
+.measurement-box > p {
+  font-size: 0.875rem;
+}
 .measurement-box-inner {
-  padding: 0.25rem;
-  background: var(--lg-accent);
   border-radius: 2px;
 
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 2rem 1fr;
   align-items: center;
-  justify-content: space-around;
+  iconify-icon {
+    background: var(--lg-contrast);
+    border: 1px solid var(--lg-contrast);
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;;
+  }
+  p {
+    background: var(--lg-input);
+    border: 1px solid var(--lg-accent);
+    border-left: 0;
+  }
+  & > * {
+    padding: 0.25rem;
+    text-align: center;
+  }
 }
 </style>

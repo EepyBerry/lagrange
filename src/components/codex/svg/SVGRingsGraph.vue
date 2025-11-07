@@ -64,5 +64,6 @@ function makeSVGRingArc(radius: number) {
 <style scoped lang="scss">
 #svggraph-rings {
   margin-top: 0.5rem;
+  max-width: 600px;
 }
 </style>

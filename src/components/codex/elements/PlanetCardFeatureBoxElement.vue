@@ -25,7 +25,6 @@ defineProps<{ icon: string, active?: boolean }>()
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
   cursor: help;
 
   iconify-icon {
