@@ -117,7 +117,7 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): Plane
 }
 
 export function createClouds(data: PlanetData, textureBuffer: Uint8Array): CloudsMeshData {
-  const cloudsHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
+  const cloudsHeight = data.cloudsHeight / Globals.ATMOSPHERE_SCALING_DIVIDER
   const geometry = createSphereGeometryComponent(data.planetMeshQuality, cloudsHeight)
   const texture = TextureHelper.createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
@@ -139,7 +139,7 @@ export function createClouds(data: PlanetData, textureBuffer: Uint8Array): Cloud
 export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): AtmosphereMeshData {
   const geometry = createSphereGeometryComponent(
     data.planetMeshQuality,
-    data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
+    data.atmosphereHeight / Globals.ATMOSPHERE_SCALING_DIVIDER
   )
   const tslMaterial = new AtmosphereTSLMaterial({
     sunlight: {
@@ -147,11 +147,11 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): Atmos
       intensity: data.sunLightIntensity
     },
     transform: {
-      radius: data.planetRadius + (data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER),
+      radius: data.planetRadius + (data.atmosphereHeight / Globals.ATMOSPHERE_SCALING_DIVIDER),
       surfaceRadius: data.planetRadius,
     },
     render: {
-      density: data.atmosphereDensityScale,
+      density: data.atmosphereDensityScale / Globals.ATMOSPHERE_SCALING_DIVIDER,
       intensity: data.atmosphereIntensity,
       colorMode: data.atmosphereColorMode,
       hue: data.atmosphereHue,

@@ -36,7 +36,7 @@ export const AXIS_NZ = new Vector3(0, 0, -1)
 
 // Miscellaneous
 export const SUN_INIT_POS = new Vector3(0, 0, 4e3)
-export const ATMOSPHERE_HEIGHT_DIVIDER = 200.0
+export const ATMOSPHERE_SCALING_DIVIDER = 200.0
 
 // Textures
 export const TEXTURE_SIZES = {
