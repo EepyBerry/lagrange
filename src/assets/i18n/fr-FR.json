@@ -97,10 +97,14 @@
         "type_gasgiant": "Géante Gazeuse",
         "class": "Class",
         "features": "Features",
-        "has_biomes": "Biomes",
-        "has_clouds": "Nuages",
-        "has_atmosphere": "Atmosphère",
-        "has_rings": "Anneaux"
+        "has_biomes": "Présence de biomes",
+        "has_clouds": "Présence de nuages",
+        "has_atmosphere": "Présence d'atmosphère",
+        "has_rings": "Présence d'anneaux",
+        "no_biomes": "Absence de biomes",
+        "no_clouds": "Absence de nuages",
+        "no_atmosphere": "Absence d'atmosphère",
+        "no_rings": "Absence d'anneaux"
       },
       "biomes": "Composition des biomes",
       "biomes_temp": "Température",

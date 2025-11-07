@@ -74,29 +74,29 @@
               <li><PlanetCardFeatureBoxElement
                 icon="mingcute:mountain-2-line"
                 :active="planet?.data.biomesEnabled"
-                :aria-label="$t('dialog.planetinfo.basic.has_biomes')"
-                :title="$t('dialog.planetinfo.basic.has_biomes')"
+                :aria-label="$t(planet?.data.biomesEnabled ? 'dialog.planetinfo.basic.has_biomes' : 'dialog.planetinfo.basic.no_biomes')"
+                :title="$t(planet?.data.biomesEnabled ? 'dialog.planetinfo.basic.has_biomes' : 'dialog.planetinfo.basic.no_biomes')"
                 role="gridcell"
               /></li>
               <li><PlanetCardFeatureBoxElement
                 icon="mingcute:clouds-line"
                 :active="planet?.data.cloudsEnabled"
-                :aria-label="$t('dialog.planetinfo.basic.has_clouds')"
-                :title="$t('dialog.planetinfo.basic.has_clouds')"
+                :aria-label="$t(planet?.data.cloudsEnabled ? 'dialog.planetinfo.basic.has_clouds' : 'dialog.planetinfo.basic.no_clouds')"
+                :title="$t(planet?.data.cloudsEnabled ? 'dialog.planetinfo.basic.has_clouds' : 'dialog.planetinfo.basic.no_clouds')"
                 role="gridcell"
               /></li>
               <li><PlanetCardFeatureBoxElement
                 icon="material-symbols:line-curve-rounded"
                 :active="planet?.data.atmosphereEnabled"
-                :aria-label="$t('dialog.planetinfo.basic.has_atmosphere')"
-                :title="$t('dialog.planetinfo.basic.has_atmosphere')"
+                :aria-label="$t(planet?.data.atmosphereEnabled ? 'dialog.planetinfo.basic.has_atmosphere' : 'dialog.planetinfo.basic.no_atmosphere')"
+                :title="$t(planet?.data.atmosphereEnabled ? 'dialog.planetinfo.basic.has_atmosphere' : 'dialog.planetinfo.basic.no_atmosphere')"
                 role="gridcell"
               /></li>
               <li><PlanetCardFeatureBoxElement
                 icon="mingcute:planet-line"
                 :active="planet?.data.ringsEnabled"
-                :aria-label="$t('dialog.planetinfo.basic.has_rings')"
-                :title="$t('dialog.planetinfo.basic.has_rings')"
+                :aria-label="$t(planet?.data.ringsEnabled ? 'dialog.planetinfo.basic.has_rings' : 'dialog.planetinfo.basic.no_rings')"
+                :title="$t(planet?.data.ringsEnabled ? 'dialog.planetinfo.basic.has_rings' : 'dialog.planetinfo.basic.no_rings')"
                 role="gridcell"
               /></li>
             </ul>

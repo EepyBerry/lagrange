@@ -100,7 +100,11 @@
         "has_biomes": "Präsenz von Biomen",
         "has_clouds": "Präsenz von Wolken",
         "has_atmosphere": "Präsenz von Atmosphäre",
-        "has_rings": "Präsenz von Ringen"
+        "has_rings": "Präsenz von Ringen",
+        "no_biomes": "Keine Biome",
+        "no_clouds": "Keine Wolken",
+        "no_atmosphere": "Keine Atmosphäre",
+        "no_rings": "Keine Ringe"
       },
       "biomes": "Zusammensetzung von Biomen",
       "biomes_temp": "Temperatur",

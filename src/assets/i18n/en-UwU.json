@@ -100,7 +100,11 @@
         "has_biomes": "Has biomes",
         "has_clouds": "Has cwouds",
         "has_atmosphere": "Has atmosphewe",
-        "has_rings": "Has wing systyem"
+        "has_rings": "Has wing systyem",
+        "no_biomes": "No biomes",
+        "no_clouds": "No cwouds",
+        "no_atmosphere": "No atmosphewe",
+        "no_rings": "No wing systyem"
       },
       "biomes": "Biome composition",
       "biomes_temp": "Tempewature",

@@ -100,7 +100,11 @@
         "has_biomes": "Has biomes",
         "has_clouds": "Has clouds",
         "has_atmosphere": "Has atmosphere",
-        "has_rings": "Has ring system"
+        "has_rings": "Has ring system",
+        "no_biomes": "No biomes",
+        "no_clouds": "No clouds",
+        "no_atmosphere": "No atmosphere",
+        "no_rings": "No ring system"
       },
       "biomes": "Biome composition",
       "biomes_temp": "Temperature",
