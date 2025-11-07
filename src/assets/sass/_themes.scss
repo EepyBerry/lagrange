@@ -63,18 +63,18 @@
   --lg-logo-update: #453264;
   --lg-update-05-background: linear-gradient(90deg, #453264 0%, #251642 100%);
 
-  --lg-planet-class-telluric-ice-background: #d1f6ff;
-  --lg-planet-class-telluric-ice-text: #091641;
-  --lg-planet-class-telluric-ocean-background: #10256b;
-  --lg-planet-class-telluric-ocean-text: var(--lg-text);
-  --lg-planet-class-telluric-tropical-background: #335f00;
-  --lg-planet-class-telluric-tropical-text: var(--lg-text);
-  --lg-planet-class-telluric-arid-background: #9e6700;
-  --lg-planet-class-telluric-arid-text: var(--lg-text);
-  --lg-planet-class-telluric-chthonian-background: #110805;
-  --lg-planet-class-telluric-chthonian-text: #ffa047;
-  --lg-planet-class-telluric-lava-background: #ee6b1e;
-  --lg-planet-class-telluric-lava-text: #110805;
+  --lg-planet-class-ice-background: #d1f6ff;
+  --lg-planet-class-ice-text: #091641;
+  --lg-planet-class-ocean-background: #10256b;
+  --lg-planet-class-ocean-text: var(--lg-text);
+  --lg-planet-class-tropical-background: #335f00;
+  --lg-planet-class-tropical-text: var(--lg-text);
+  --lg-planet-class-arid-background: #9e6700;
+  --lg-planet-class-arid-text: var(--lg-text);
+  --lg-planet-class-chthonian-background: #110805;
+  --lg-planet-class-chthonian-text: #ffa047;
+  --lg-planet-class-magmatic-background: #ee6b1e;
+  --lg-planet-class-magmatic-text: #110805;
 }
 :root[data-theme='supernova'] {
   --lg-primary: linear-gradient(to bottom, #110a20 0%, #06030c 100%);

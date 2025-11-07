@@ -14,15 +14,18 @@
       "editor": "Editor"
     },
     "planet_data": {
-      "class_generic_telluric": "Telluric",
-      "class_generic_lunar": "Lunar",
-      "class_generic_gaseous": "Gaseous",
-      "class_telluric_ice": "Glacial",
-      "class_telluric_ocean": "Oceanic",
-      "class_telluric_tropical": "Tropical",
-      "class_telluric_arid": "Arid",
-      "class_telluric_chthonian": "Chthonian",
-      "class_telluric_lava": "Magmatic",
+      "class_planet_telluric": "Telluric",
+      "class_planet_ice": "Glacial",
+      "class_planet_ocean": "Oceanic",
+      "class_planet_tropical": "Tropical",
+      "class_planet_arid": "Arid",
+      "class_planet_chthonian": "Chthonian",
+      "class_planet_magmatic": "Magmatic",
+      "class_moon_rocky": "Rocky",
+      "class_moon_ice": "Glacial",
+      "class_moon_chthonian": "Chthonian",
+      "class_gasgiant_cold": "Cold Giant",
+      "class_gasgiant_hot": "Hot Giant",
       "class_indeterminate": "Indeterminate",
       "biome_type_arctic": "Arctic",
       "biome_type_tundra": "Tundra",
@@ -92,7 +95,7 @@
         "type_moon": "Moon",
         "type_planet": "Planet",
         "type_gasgiant": "Gas Giant",
-        "classification": "Class",
+        "class": "Class",
         "features": "Features",
         "has_biomes": "Has biomes",
         "has_clouds": "Has clouds",
@@ -275,6 +278,12 @@
       "noise_rgbaramp": "Color/alpha ramp"
     },
     "controls": {
+      "basic_data": {
+        "$title": "Basic Data",
+        "classification": "Classification",
+        "classification_type": "Object type",
+        "classification_class": "Object class"
+      },
       "lighting": {
         "$title": "Lighting",
         "lensflare": "Lens Flare",
@@ -291,9 +300,6 @@
       },
       "planet_rendering": {
         "$title": "Planet & Rendering",
-        "data": "Data",
-        "data_type": "Object type",
-        "data_classification" : "Object class",
         "transform": "Transform",
         "transform_radius": "Radius",
         "transform_axialtilt": "Axial tilt",

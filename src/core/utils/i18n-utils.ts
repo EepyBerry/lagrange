@@ -1,24 +1,44 @@
-import { PlanetType, PlanetClassification } from "../types"
+import { PlanetType, PlanetClass } from '../types'
 
 export function getI18nPlanetType(planetType?: PlanetType): string {
   switch (planetType) {
-    case PlanetType.PLANET: return 'dialog.planetinfo.basic.type_planet';
-    case PlanetType.MOON: return 'dialog.planetinfo.basic.type_moon';
-    case PlanetType.GAS_GIANT: return 'dialog.planetinfo.basic.type_gasgiant';
-    default: return 'main.unknown_value'
+    case PlanetType.PLANET:
+      return 'dialog.planetinfo.basic.type_planet'
+    case PlanetType.MOON:
+      return 'dialog.planetinfo.basic.type_moon'
+    case PlanetType.GASGIANT:
+      return 'dialog.planetinfo.basic.type_gasgiant'
+    default:
+      return 'main.unknown_value'
   }
 }
-export function getI18nPlanetClassification(planetClassification?: PlanetClassification): string {
-  switch (planetClassification) {
-    case PlanetClassification.GENERIC_TELLURIC: return 'main.planet_data.class_generic_telluric'
-    case PlanetClassification.GENERIC_LUNAR: return 'main.planet_data.class_generic_lunar'
-    case PlanetClassification.GENERIC_GASEOUS: return 'main.planet_data.class_generic_gaseous'
-    case PlanetClassification.TELLURIC_ICE: return 'main.planet_data.class_telluric_ice'
-    case PlanetClassification.TELLURIC_OCEAN: return 'main.planet_data.class_telluric_ocean'
-    case PlanetClassification.TELLURIC_TROPICAL: return 'main.planet_data.class_telluric_tropical'
-    case PlanetClassification.TELLURIC_ARID: return 'main.planet_data.class_telluric_arid'
-    case PlanetClassification.TELLURIC_CHTHONIAN: return 'main.planet_data.class_telluric_chthonian'
-    case PlanetClassification.TELLURIC_LAVA: return 'main.planet_data.class_telluric_lava'
-    default: return 'main.planet_data.class_indeterminate'
+export function getI18nPlanetClass(planetClass?: PlanetClass): string {
+  switch (planetClass) {
+    case PlanetClass.PLANET_TELLURIC:
+      return 'main.planet_data.class_planet_telluric'
+    case PlanetClass.PLANET_ICE:
+      return 'main.planet_data.class_planet_ice'
+    case PlanetClass.PLANET_OCEAN:
+      return 'main.planet_data.class_planet_ocean'
+    case PlanetClass.PLANET_TROPICAL:
+      return 'main.planet_data.class_planet_tropical'
+    case PlanetClass.PLANET_ARID:
+      return 'main.planet_data.class_planet_arid'
+    case PlanetClass.PLANET_CHTHONIAN:
+      return 'main.planet_data.class_planet_chthonian'
+    case PlanetClass.PLANET_MAGMATIC:
+      return 'main.planet_data.class_planet_magmatic'
+    case PlanetClass.MOON_ROCKY:
+      return 'main.planet_data.class_moon_rocky'
+    case PlanetClass.MOON_ICE:
+      return 'main.planet_data.class_moon_ice'
+    case PlanetClass.MOON_CHTHONIAN:
+      return 'main.planet_data.class_moon_chthonian'
+    case PlanetClass.GASGIANT_COLD:
+      return 'main.planet_data.class_gasgiant_cold'
+    case PlanetClass.GASGIANT_HOT:
+      return 'main.planet_data.class_gasgiant_hot'
+    default:
+      return 'main.planet_data.class_indeterminate'
   }
 }

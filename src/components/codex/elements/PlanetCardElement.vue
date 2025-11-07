@@ -97,7 +97,7 @@ function getPlanetTypeColor() {
   switch ($props.planet.data.planetType) {
     case PlanetType.PLANET: return 'var(--lg-planet-type-planet)';
     case PlanetType.MOON: return 'var(--lg-planet-type-moon)';
-    case PlanetType.GAS_GIANT: return 'var(--lg-planet-type-gasgiant)';
+    case PlanetType.GASGIANT: return 'var(--lg-planet-type-gasgiant)';
     default: return '--'
   }
 }

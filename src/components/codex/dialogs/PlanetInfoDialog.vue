@@ -44,15 +44,15 @@
             id="planet-basic-data-type" 
             ref="planetBasicDataTypeRef"
             :value-label="$t('dialog.planetinfo.basic.type')">
-            {{ $t(getI18nPlanetType()) }}
+            {{ $t(getI18nPlanetType(planet?.data.planetType)) }}
           </GenericBoxElement>
           <GenericBoxElement 
             id="planet-basic-data-class"
             ref="planetBasicDataClassRef"
-            :value-label="$t('dialog.planetinfo.basic.classification')"
+            :value-label="$t('dialog.planetinfo.basic.class')"
             :background-color="getPlanetClassStyle()[0]"
             :text-color="getPlanetClassStyle()[1]">
-            {{ $t(getI18nPlanetClassification()) }}
+            {{ $t(getI18nPlanetClass(planet?.data.planetClass)) }}
           </GenericBoxElement>
 
           <MeasurementBoxElement 
@@ -134,8 +134,8 @@ import PlanetCardFeatureBoxElement from '../elements/PlanetCardFeatureBoxElement
 import { makeSVGCircleArc } from '@/core/utils/svg-utils'
 import MeasurementBoxElement from '@/components/global/elements/MeasurementBoxElement.vue'
 import GenericBoxElement from '@/components/global/elements/GenericBoxElement.vue'
-import { getI18nPlanetClassification, getI18nPlanetType } from '@/core/utils/i18n-utils'
-import { PlanetClassification } from '@/core/types'
+import { getI18nPlanetClass, getI18nPlanetType } from '@/core/utils/i18n-utils'
+import { PlanetClass } from '@/core/types'
 
 const planet: Ref<IDBPlanet | null> = ref(null)
 const planetRadius: Ref<string> = ref('100%')
@@ -160,17 +160,20 @@ function getPlanetCircleRadius() {
 function getPlanetClassStyle(): string[] {
   const defaultStyle = ['var(--lg-input)', 'var(--lg-text)']
   if (!planet.value) return defaultStyle
-  switch (planet.value.data.planetClassification) {
-    case PlanetClassification.GENERIC_TELLURIC:     return defaultStyle
-    case PlanetClassification.GENERIC_LUNAR:        return defaultStyle
-    case PlanetClassification.GENERIC_GASEOUS:      return defaultStyle
-    case PlanetClassification.TELLURIC_ICE:         return ['var(--lg-planet-class-telluric-ice-background)', 'var(--lg-planet-class-telluric-ice-text)']
-    case PlanetClassification.TELLURIC_OCEAN:       return ['var(--lg-planet-class-telluric-ocean-background)', 'var(--lg-planet-class-telluric-ocean-text)']
-    case PlanetClassification.TELLURIC_TROPICAL:    return ['var(--lg-planet-class-telluric-tropical-background)', 'var(--lg-planet-class-telluric-tropical-text)']
-    case PlanetClassification.TELLURIC_ARID:        return ['var(--lg-planet-class-telluric-arid-background)', 'var(--lg-planet-class-telluric-arid-text)']
-    case PlanetClassification.TELLURIC_CHTHONIAN:   return ['var(--lg-planet-class-telluric-chthonian-background)', 'var(--lg-planet-class-telluric-chthonian-text)']
-    case PlanetClassification.TELLURIC_LAVA:        return ['var(--lg-planet-class-telluric-lava-background)', 'var(--lg-planet-class-telluric-lava-text)']
-    case PlanetClassification.INDETERMINATE:        return defaultStyle
+  switch (planet.value.data.planetClass) {
+    case PlanetClass.PLANET_TELLURIC:    return defaultStyle
+    case PlanetClass.PLANET_ICE:         return ['var(--lg-planet-class-ice-background)', 'var(--lg-planet-class-telluric-ice-text)']
+    case PlanetClass.PLANET_OCEAN:       return ['var(--lg-planet-class-ocean-background)', 'var(--lg-planet-class-telluric-ocean-text)']
+    case PlanetClass.PLANET_TROPICAL:    return ['var(--lg-planet-class-tropical-background)', 'var(--lg-planet-class-telluric-tropical-text)']
+    case PlanetClass.PLANET_ARID:        return ['var(--lg-planet-class-arid-background)', 'var(--lg-planet-class-telluric-arid-text)']
+    case PlanetClass.PLANET_CHTHONIAN:   return ['var(--lg-planet-class-chthonian-background)', 'var(--lg-planet-class-telluric-chthonian-text)']
+    case PlanetClass.PLANET_MAGMATIC:    return ['var(--lg-planet-class-magmatic-background)', 'var(--lg-planet-class-magmatic-text)']
+    case PlanetClass.MOON_ROCKY:         return defaultStyle
+    case PlanetClass.MOON_ICE:           return ['var(--lg-planet-class-ice-background)', 'var(--lg-planet-class-telluric-ice-text)']
+    case PlanetClass.MOON_CHTHONIAN:     return ['var(--lg-planet-class-chthonian-background)', 'var(--lg-planet-class-telluric-chthonian-text)']
+    case PlanetClass.GASGIANT_COLD:      return ['var(--lg-planet-class-ice-background)', 'var(--lg-planet-class-telluric-ice-text)']
+    case PlanetClass.GASGIANT_HOT:       return ['var(--lg-planet-class-magmatic-background)', 'var(--lg-planet-class-magmatic-text)']
+    case PlanetClass.INDETERMINATE:      return defaultStyle
   }
 }
 </script>

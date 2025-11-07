@@ -1,4 +1,18 @@
 <template>
+    <!-- Basic data -->
+  <CollapsibleSection
+    icon="mingcute:paper-2-line"
+    :expand="false"
+    :compact-mode="compactMode"
+    :allow-icon-mode="true"
+    :button-aria-label="$t('editor.controls.basic_data.$title')"
+  >
+    <template #title>{{ $t('editor.controls.basic_data.$title') }}</template>
+    <template #content>
+      <ControlsBasicData />
+    </template>
+  </CollapsibleSection>
+
   <!-- Lighting -->
   <CollapsibleSection
     icon="mingcute:sun-line"
@@ -106,5 +120,6 @@ import ControlsBiomes from './ControlsBiomes.vue'
 import ControlsClouds from './ControlsClouds.vue'
 import ControlsAtmosphere from './ControlsAtmosphere.vue'
 import ControlsRing from './ControlsRings.vue'
+import ControlsBasicData from './ControlsBasicData.vue'
 defineProps<{ compactMode: boolean }>()
 </script>

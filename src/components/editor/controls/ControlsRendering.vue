@@ -1,6 +1,6 @@
 <template>
   <ParameterGrid>
-    <ParameterGroup :toggleable="true">
+    <ParameterGroup toggleable>
       <template #title>{{ $t('editor.controls.planet_rendering.transform') }}</template>
       <template #content>
         <ParameterSlider id="p-tilt" v-model="LG_PLANET_DATA.planetRadius" :step="0.01" :min="0.5" :max="1">
@@ -14,7 +14,21 @@
         </ParameterSlider>
       </template>
     </ParameterGroup>
-    <ParameterGroup :toggleable="true">
+    <ParameterGroup toggleable>
+      <template #title>{{ $t('editor.controls.planet_rendering.transform') }}</template>
+      <template #content>
+        <ParameterSlider id="p-tilt" v-model="LG_PLANET_DATA.planetRadius" :step="0.01" :min="0.5" :max="1">
+          {{ $t('editor.controls.planet_rendering.transform_radius') }}
+        </ParameterSlider>
+        <ParameterSlider id="p-tilt" v-model="LG_PLANET_DATA.planetAxialTilt" :step="1" :min="-180" :max="180">
+          {{ $t('editor.controls.planet_rendering.transform_axialtilt') }} <sup>(°)</sup>
+        </ParameterSlider>
+        <ParameterSlider id="p-rot" v-model="LG_PLANET_DATA.planetRotation" :step="1" :min="0" :max="360">
+          {{ $t('editor.controls.planet_rendering.transform_rotation') }} <sup>(°)</sup>
+        </ParameterSlider>
+      </template>
+    </ParameterGroup>
+    <ParameterGroup toggleable>
       <template #title>{{ $t('editor.controls.planet_rendering.metallicroughness') }}</template>
       <template #content>
         <ParameterSlider id="p-wlevel" v-model="LG_PLANET_DATA.planetWaterLevel" :step="0.01" :min="0" :max="1">
