@@ -33,10 +33,8 @@ defineProps<{ icon: string, active?: boolean }>()
 
   &:not(.active) {
     background: var(--lg-panel);
-    align-items: flex-end;
     iconify-icon {
       opacity: 0.375;
-      padding-bottom: 0.25rem;
     }
   }
 }

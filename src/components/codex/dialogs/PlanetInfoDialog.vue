@@ -317,6 +317,26 @@ function getPlanetClassStyle(): string[] {
     #planet-preview {
       justify-self: center;
       margin-bottom: 1rem;
+      svg {
+        transform: rotate(90deg);
+      }
+    }
+    #planet-basic-data {
+      #planet-basic-data-type {
+        grid-column: 1;
+      }
+      #planet-basic-data-class {
+        grid-column: 2;
+      }
+    }
+  }
+}
+@media screen and (max-width: 567px) {
+  #dialog-planet-info {
+    #planet-basic-data {
+      #planet-basic-data-type, #planet-basic-data-class {
+        grid-column: span 2;
+      }
     }
   }
 }
