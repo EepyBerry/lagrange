@@ -17,7 +17,7 @@ import { uwuifyPath } from '@core/extras'
 <style scoped lang="scss">
 .planet-card-link,
 .planet-card-link:visited {
-  min-height: 26rem;
+  min-height: 378px;
   padding: 1rem;
   background: transparent;
   border: 2px dashed var(--lg-accent);

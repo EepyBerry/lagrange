@@ -4,7 +4,6 @@
     ref="dialogRef"
     :show-actions="true"
     :closeable="true"
-    :prevent-click-close="true"
     :aria-label="$t('a11y.dialog_init')"
   >
     <template #content>
@@ -21,8 +20,6 @@
             <p class="intro-text">
               {{ $t('dialog.init.introduction') }}
             </p>
-            <br />
-
             <CollapsibleSection icon="mingcute:news-line" style="background: var(--lg-update-05-background)">
               <template #title>{{ $t('dialog.init.update_title') }}</template>
               <template #content>
@@ -49,7 +46,7 @@
                 />)
               </span>
             </p>
-            <ul class="controls">
+            <ul class="controls-container controls">
               <li class="lg">
                 <span class="keybind">{{ keybinds[0]?.key }}</span>
                 <span>{{ $t('dialog.init.shortcuts_lensflare') }}</span>
@@ -132,7 +129,7 @@
         <CollapsibleSection icon="mingcute:layout-bottom-close-line">
           <template #title>{{ $t('dialog.init.footer') }}</template>
           <template #content>
-            <ul class="controls">
+            <ul class="controls-container controls">
               <li class="lg">
                 <iconify-icon icon="mingcute:information-line" width="1.25rem" aria-hidden="true" />
                 {{ $t('dialog.init.footer_about') }}
@@ -242,7 +239,7 @@ function doClose() {
     }
   }
   .intro {
-    padding: 1rem 0;
+    padding-bottom: 1rem;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -253,12 +250,16 @@ function doClose() {
       font-size: 1.75rem;
       margin-bottom: 1rem;
     }
+    .intro-text {
+      margin-bottom: 1rem;
+    }
     h3 {
       margin-top: 0.5rem;
       margin-bottom: 0.75rem;
     }
   }
   .controls-container {
+    background-color: var(--lg-panel);
     border: 1px solid var(--lg-accent);
     border-radius: 2px;
 
@@ -267,10 +268,13 @@ function doClose() {
     grid-template-columns: 10% 1fr;
     align-items: center;
     justify-content: flex-start;
+
     .controls-group-name {
       grid-column: 1;
       height: 100%;
-      background-color: var(--lg-contrast-medium);
+      background-color: var(--lg-contrast);
+      font-weight: 500;
+
       display: flex;
       align-items: center;
       justify-content: center;
@@ -298,8 +302,8 @@ function doClose() {
         display: flex;
         align-items: center;
         justify-content: center;
-        min-width: 2rem;
-        min-height: 2rem;
+        min-width: 2.5rem;
+        min-height: 2.5rem;
         background: var(--lg-panel);
         border: 1px solid var(--lg-accent);
         border-radius: 0.25rem;

@@ -223,12 +223,11 @@ function getPlanetTypeColor() {
 }
 
 :root[data-animations='off'] {
-   .planet-card { transition: none; }
-   svg .planet-preview-gizmo, svg .planet-preview-gizmo-inner { transition: none; }
+  .planet-card { transition: none; }
+  svg .planet-preview-gizmo, svg .planet-preview-gizmo-inner { transition: none; }
 }
 @media screen and (prefers-reduced-motion) {
-  .planet-card * {
-    transition: none;
-  }
+  .planet-card { transition: none; }
+  svg .planet-preview-gizmo, svg .planet-preview-gizmo-inner { transition: none; }
 }
 </style>

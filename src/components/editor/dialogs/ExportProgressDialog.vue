@@ -81,7 +81,7 @@ defineExpose({ open, setProgress, setError })
       position: absolute;
       left: 0;
       height: 100%;
-      background: var(--lg-contrast-focus);
+      background: var(--lg-input-contrast-focus);
     }
   }
 }

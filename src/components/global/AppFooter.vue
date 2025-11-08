@@ -1,5 +1,9 @@
 <template>
-  <footer v-show="$route.name !== 'page-not-found'" :class="{ transparent: $route.name !== 'codex' }">
+  <footer v-show="$route.name !== 'page-not-found'">
+    <span class="footer-corner lb" />
+    <span class="footer-corner l" />
+    <span class="footer-corner rb" />
+    <span class="footer-corner r" />
     <div id="footer-nav">
       <button
         class="lg dark"
@@ -9,7 +13,6 @@
       >
         <iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true" />
       </button>
-      <hr />
       <button
         class="lg dark"
         :title="$t('tooltip.footer_settings')"
@@ -18,9 +21,8 @@
       >
         <iconify-icon icon="mingcute:settings-6-line" width="1.5rem" aria-hidden="true" />
       </button>
-      <hr />
       <a
-        class="lg dark"
+        class="lg dark link"
         href="https://github.com/EepyBerry/lagrange"
         target="_blank"
         rel="noopener"
@@ -28,7 +30,6 @@
         :aria-label="$t('a11y.footer_github')"
       >
         <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" />
-        <iconify-icon class="link-icon" icon="mingcute:right-small-fill" width="2rem" aria-hidden="true" />
       </a>
       <ExtraSpecialDayElement />
     </div>
@@ -50,13 +51,50 @@ const settingsDialog: Ref<{ open: () => void; close: () => void } | null> = ref(
 footer {
   position: fixed;
   bottom: 0;
-  padding: 1rem;
+  padding: 0.5rem;
   display: flex;
   align-items: flex-end;
   align-self: center;
   gap: 1rem;
   z-index: 5;
 
+  background: var(--lg-panel);
+  border: 1px solid var(--lg-accent);
+  border-bottom: 0;
+
+  .footer-corner {
+    position: absolute;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+
+    $corner-width: 1.5rem;
+    $corner-height: 3.5rem;
+    $corner-border-width: calc(1.5rem + 1px);
+    $corner-border-height: calc(3.5rem + 1px);
+
+    &.lb {
+      left: calc(0px - $corner-border-width);
+      border-width: 0 0 $corner-border-height $corner-width;
+      border-color: transparent transparent var(--lg-accent) transparent;
+    }
+    &.l {
+      left: -$corner-width;
+      border-width: 0 0 $corner-height $corner-width;
+      border-color: transparent transparent var(--lg-panel) transparent;
+    }
+    &.rb {
+      right: calc(0px - $corner-border-width);
+      border-width: $corner-border-height 0 0 $corner-width;
+      border-color: transparent transparent transparent var(--lg-accent);
+    }
+    &.r {
+      right: -$corner-width;
+      border-width: $corner-height 0 0 $corner-width;
+      border-color: transparent transparent transparent var(--lg-panel);
+    }
+  }
   #footer-nav {
     display: flex;
     flex-direction: row;
@@ -70,23 +108,16 @@ footer {
     }
   }
 }
-footer:not(.transparent) {
-  backdrop-filter: blur(8px) brightness(25%);
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
 @media screen and (max-width: 1199px) {
-  footer,
-  footer:not(.transparent) {
-    padding: 0.5rem;
+  footer {
     align-self: flex-end;
     border-top-right-radius: 0;
+    border-right: 0;
   }
 }
 
 @media screen and (max-width: 767px) {
-  footer,
-  footer:not(.transparent) {
+  footer {
     display: none;
   }
 }

@@ -41,7 +41,10 @@ const navFloatingStyles = useFloating(navMenuTrigger, navMenu, {
 })
 const isNavMenuOpen: Ref<boolean> = ref(false)
 
-onMounted(() => EventBus.registerWindowEventListener('resize', updateNavFloatingLayout))
+onMounted(() => {
+  EventBus.registerWindowEventListener('resize', updateNavFloatingLayout)
+  updateNavFloatingLayout()
+})
 watch(
   () => EventBus.clickEvent.value,
   (evt) => {
@@ -72,10 +75,7 @@ function toggleNavMenu(override?: boolean) {
 }
 </script>
 
-<style scoped lang="scss">
-#nav-toggle {
-  max-width: calc(2.75rem + 2px);
-}
+<style lang="scss">
 #nav-menu {
   z-index: 1;
   background: none;

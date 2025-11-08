@@ -127,7 +127,7 @@ input.lg[type='range'] {
     z-index: 1;
     -webkit-appearance: none;
     appearance: none;
-    background: var(--lg-contrast-focus);
+    background: var(--lg-input-contrast-focus);
     border-radius: 2px;
     border: none;
     width: 6px;
@@ -136,7 +136,7 @@ input.lg[type='range'] {
   }
   &::-moz-range-thumb {
     z-index: 1;
-    background: var(--lg-contrast-focus);
+    background: var(--lg-input-contrast-focus);
     border-radius: 2px;
     border: none;
     width: 6px;
@@ -148,11 +148,11 @@ input.lg[type='range'] {
     background: var(--lg-input-focus);
   }
   &:focus::-webkit-slider-thumb {
-    background: var(--lg-contrast-focus);
+    background: var(--lg-input-contrast-focus);
     border: 1px solid var(--lg-text);
   }
   &:focus::-moz-range-thumb {
-    background: var(--lg-contrast-focus);
+    background: var(--lg-input-contrast-focus);
     border: 1px solid var(--lg-text);
   }
 
@@ -196,13 +196,13 @@ input.lg[type='range'] {
     &::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      background: var(--lg-contrast-focus);
+      background: var(--lg-input-contrast-focus);
       width: 6px;
       height: 2rem;
       cursor: pointer;
     }
     &::-moz-range-thumb {
-      background: var(--lg-contrast-focus);
+      background: var(--lg-input-contrast-focus);
       width: 6px;
       height: 2rem;
       cursor: pointer;

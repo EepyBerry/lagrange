@@ -30,8 +30,7 @@ defineProps<{ compactMode: boolean }>()
 
   .sidebar {
     width: 100%;
-    padding: 1rem;
-    padding-right: 1.5rem;
+    padding: 0.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;

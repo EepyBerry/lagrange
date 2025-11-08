@@ -1,6 +1,5 @@
 <template>
-  <div id="editor-header">
-    <AppNavigation />
+  <ViewHeader id="editor-header" class="xs-fullwidth">
     <PlanetInfoControls
       @rename="patchMetaHead"
       @save="savePlanet"
@@ -10,7 +9,7 @@
       @random="randPlanet"
     />
     <span class="filler"></span>
-  </div>
+  </ViewHeader>
   <PlanetEditorControls :compact-mode="showCompactControls" />
 
   <div id="scene-root" ref="sceneRoot"></div>
@@ -30,7 +29,6 @@ import { useHead } from '@unhead/vue'
 import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config'
 import { EventBus } from '@core/event-bus'
 import { useI18n } from 'vue-i18n'
-import AppNavigation from '@components/global/AppNavigation.vue'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import {
   LG_PLANET_DATA,
@@ -54,6 +52,7 @@ import { regeneratePRNGIfNecessary } from '@core/utils/math-utils'
 import WebGPU from '@/core/capabilities/WebGPU'
 import * as DexieService from '@core/services/dexie.service'
 import WebGL from '@/core/capabilities/WebGL'
+import ViewHeader from '@/components/global/ViewHeader.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -78,7 +77,6 @@ const $planetEntityId: Ref<string> = ref('')
 const $planetEntityPreviewDataURL: Ref<string | undefined> = ref('')
 
 // Responsiveness
-const showCompactInfo: Ref<boolean> = ref(false)
 const showCompactControls: Ref<boolean> = ref(false)
 
 // THREE canvas/scene root
@@ -275,7 +273,6 @@ function onWindowResize() {
 }
 
 function computeResponsiveness() {
-  showCompactInfo.value = window.innerWidth <= Globals.XS_WIDTH_THRESHOLD
   showCompactControls.value = window.innerWidth <= Globals.SM_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
 }
 
@@ -323,19 +320,12 @@ function exportPlanet() {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 #editor-header {
-  z-index: 15;
   position: absolute;
-  inset: 0 0 auto 0;
-  margin: 1rem;
-
-  display: grid;
-  grid-template-columns: 2rem 1fr 2rem;
-  grid-template-rows: 1fr;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  .view-header-controls {
+    gap: 0;
+  }
 }
 
 #scene-root {
@@ -344,21 +334,6 @@ function exportPlanet() {
 
   & > canvas {
     background: transparent;
-  }
-}
-
-@media screen and (max-width: 1199px) {
-  #editor-header {
-    margin: 0.5rem;
-    grid-template-columns: 1fr auto;
-    .filler { display: none; }
-  }
-}
-@media screen and (max-width: 767px) {
-  #editor-header {
-    grid-template-columns: unset;
-    grid-template-rows: unset;
-    display: flex;
   }
 }
 </style>

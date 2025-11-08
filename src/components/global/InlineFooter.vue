@@ -3,7 +3,7 @@
   <hr />
   <div id="footer-nav">
     <a
-      class="lg dark"
+      class="lg dark link"
       href="https://github.com/EepyBerry/lagrange"
       target="_blank"
       rel="noopener"
@@ -11,7 +11,6 @@
       :aria-label="$t('a11y.footer_github')"
     >
       <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" />
-      <iconify-icon class="link-icon" icon="mingcute:right-small-fill" width="2rem" aria-hidden="true" />
     </a>
     <button
       class="lg dark"

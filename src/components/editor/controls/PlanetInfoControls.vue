@@ -206,9 +206,6 @@ function toggleSaveMenu(override?: boolean) {
 
 <style scoped lang="scss">
 #planet-info {
-  pointer-events: all;
-  height: 2.75rem;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -223,7 +220,7 @@ function toggleSaveMenu(override?: boolean) {
     background: var(--lg-primary);
     border: 1px solid var(--lg-accent);
     border-radius: 2px;
-    height: 2.75rem;
+    height: 2.5rem;
     padding: 0 0.25rem 0 0.75rem;
 
     display: flex;

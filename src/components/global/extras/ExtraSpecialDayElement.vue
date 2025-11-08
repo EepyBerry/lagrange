@@ -18,8 +18,8 @@ const specialDay: Ref<SpecialDayInfo | undefined> = ref(checkSpecialDay())
 
 <style lang="scss">
 .special-day-box {
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 2px;
 
   display: flex;

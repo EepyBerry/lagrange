@@ -1,33 +1,34 @@
 <template>
   <span id="codex-background"></span>
-  <div id="codex-header">
-    <AppNavigation />
-    <div id="codex-header-controls">
-      <RouterLink class="lg dark create-planet" :to="uwuifyPath('/planet-editor/new')" :title="$t('codex.$action_add')">
-        <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
-        {{ $t('codex.$action_add') }}
-      </RouterLink>
-      <hr />
-      <input ref="fileInput" type="file" accept=".lagrange" multiple hidden @change="importPlanetFile" />
-      <button
-        class="lg dark"
-        :aria-label="$t('a11y.topbar_import')"
-        :title="$t('tooltip.topbar_import')"
-        @click="openFileDialog"
-      >
-        <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
-      </button>
-      <button
-        class="lg dark"
-        :aria-label="$t('a11y.topbar_export_all')"
-        :title="$t('tooltip.topbar_export_all')"
-        @click="exportPlanets"
-      >
-        <iconify-icon icon="mingcute:folder-zip-line" width="1.5rem" aria-hidden="true" />
-      </button>
-    </div>
-    <span class="filler"></span>
-  </div>
+  <ViewHeader id="codex-header">
+    <!-- file input -->
+    <input ref="fileInput" type="file" accept=".lagrange" multiple hidden @change="importPlanetFile" />
+    <button
+      class="lg dark"
+      :aria-label="$t('a11y.topbar_import')"
+      :title="$t('tooltip.topbar_import')"
+      @click="openFileDialog"
+    >
+      <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
+    </button>
+
+    <!-- new planet -->
+    <RouterLink id="codex-header-controls-newplanet" class="lg dark" :to="uwuifyPath('/planet-editor/new')" :title="$t('codex.$action_add')">
+      <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
+      {{ $t('codex.$action_add') }}
+    </RouterLink>
+
+    <!-- export planets -->
+    <button
+      class="lg dark"
+      :aria-label="$t('a11y.topbar_export_all')"
+      :title="$t('tooltip.topbar_export_all')"
+      @click="exportPlanets"
+    >
+      <iconify-icon icon="mingcute:folder-zip-line" width="1.5rem" aria-hidden="true" />
+    </button>
+  </ViewHeader>
+
   <div v-if="planets.length > 0" id="codex-grid">
     <!-- prettier-ignore-attribute -->
     <PlanetCardElement
@@ -53,7 +54,6 @@
 
 <script setup lang="ts">
 import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue'
-import AppNavigation from '@components/global/AppNavigation.vue'
 import InlineFooter from '@components/global/InlineFooter.vue'
 import AppPlanetInfoDialog from '@components/codex/dialogs/PlanetInfoDialog.vue'
 import AppDeleteConfirmDialog from '@components/codex/dialogs/DeleteConfirmDialog.vue'
@@ -68,10 +68,11 @@ import pako from 'pako'
 import { saveAs } from 'file-saver'
 import PlanetData from '@core/models/planet-data.model'
 import JSZip from 'jszip'
-import NewCardElement from '@components/global/elements/NewCardElement.vue'
+import NewCardElement from '@/components/codex/elements/NewCardElement.vue'
 import { readFileData } from '@core/helpers/import.helper'
 import { nanoid } from 'nanoid'
 import { uwuifyPath } from '@core/extras'
+import ViewHeader from '@/components/global/ViewHeader.vue'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
@@ -218,7 +219,7 @@ async function deleteTargetedPlanet() {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 #codex-background {
   z-index: -1;
   position: fixed;
@@ -229,42 +230,18 @@ async function deleteTargetedPlanet() {
   background-repeat: repeat;
 }
 #codex-header {
-  z-index: 15;
   position: fixed;
-  inset: 0 0 auto 0;
-  margin: 1rem;
 
-  display: grid;
-  grid-template-columns: 2rem 1fr 2rem;
-  grid-template-rows: 1fr;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-
-  #codex-header-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-
-  a.create-planet {
-    height: 2.75rem;
-    padding: 0.5rem 1rem;
-    background: var(--lg-primary);
-    border: 1px solid var(--lg-accent);
+  #codex-header-controls-newplanet {
+    padding: 0 1rem;
+    background: var(--lg-contrast-light);
+    border: 1px solid var(--lg-contrast);
     text-decoration: none;
-  }
-  a.create-planet:hover {
-    background: var(--lg-button-active);
-  }
-  hr {
-    height: 1.5rem;
+    &:hover { background: var(--lg-button-active); }
   }
 }
 #codex-grid {
-  padding-bottom: 3.75rem;
-  margin: 4.75rem 1rem 1rem;
+  margin: 4rem 1rem 4rem;
   height: calc(100% - 4.75rem);
 
   display: grid;
@@ -299,23 +276,13 @@ async function deleteTargetedPlanet() {
   #codex-background {
     background-image: url('/background/space-960w.jpg');
   }
-  #codex-header {
-    margin: 0.5rem;
-    grid-template-columns: 1fr auto;
-    .filler { display: none; }
-  }
-  #codex-grid {
-    padding-bottom: 3.25rem;
-    margin: 3.75rem 0.5rem 0.5rem;
-  }
 }
 @media screen and (max-width: 767px) {
   #codex-background {
     background-image: url('/background/space-540w.jpg');
   }
   #codex-grid {
-    margin: 3.75rem 0.5rem 0;
-    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
   }
   #codex-footer {
     padding: 0 0.5rem 0.5rem;
