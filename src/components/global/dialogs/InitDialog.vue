@@ -302,8 +302,8 @@ function doClose() {
         display: flex;
         align-items: center;
         justify-content: center;
-        min-width: 2.5rem;
-        min-height: 2.5rem;
+        min-width: 2rem;
+        min-height: 2rem;
         background: var(--lg-panel);
         border: 1px solid var(--lg-accent);
         border-radius: 0.25rem;
