@@ -9,7 +9,7 @@ nav {
 
 nav > a.lg.nav {
   height: 2.75rem;
-  background: var(--lg-contrast-light);
+  background: var(--lg-button-dark-contrast);
   border: 1px solid var(--lg-contrast);
   border-radius: 2px;
   width: 100%;
@@ -25,7 +25,7 @@ nav > a.lg.nav {
   }
 }
 nav > a.lg.nav:hover {
-  background: var(--lg-contrast-medium);
+  background: var(--lg-button-dark-contrast-hover);
 }
 nav > a.lg.nav.router-link-active {
   background: var(--lg-contrast);

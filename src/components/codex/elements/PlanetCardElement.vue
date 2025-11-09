@@ -25,7 +25,7 @@
           :aria-label="planet.data.planetName"
           :alt="planet.data.planetName"
         />
-        <iconify-icon v-else icon="ph:planet-thin" width="auto" />
+        <iconify-icon v-else class="planet-image-fallback" icon="bi:question-circle" :width="planet.data.planetRadius * 128.0" />
       </div>
 
       <!-- effects -->
@@ -147,6 +147,15 @@ function getPlanetTypeColor() {
       }
       .planet-indicator {
         opacity: 0.375;
+      }
+
+      .planet-image-fallback {
+        z-index: 0;
+        width: 16rem;
+        height: 16rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     }
     

@@ -58,10 +58,10 @@
     <div id="randomizer-menu" ref="randomMenu" class="lg floating" :style="randomFloating.floatingStyles.value">
       <div class="floating-content">
         <label for="random-seed">Seed</label>
-        <input id="random-seed" v-model="PRNG_SEED" class="lg" type="text" />
+        <input id="random-seed" v-model="MathUtils.PRNG_SEED.value" class="lg" type="text" />
       </div>
       <div class="floating-actions">
-        <button class="lg" @click="generateSeed">
+        <button class="lg" @click="MathUtils.regenerateSeed()">
           <iconify-icon icon="tabler:seeding" width="1.5rem" aria-hidden="true" />
           {{ $t('editor.$action_reseed') }}
         </button>
@@ -116,7 +116,7 @@ import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
 import { ref, watch, type Ref } from 'vue'
 import { EventBus } from '@core/event-bus'
 import { autoUpdate, offset, useFloating } from '@floating-ui/vue'
-import { PRNG_SEED, regenerateSeed } from '@core/utils/math-utils'
+import * as MathUtils from '@core/utils/math-utils'
 
 const editMode: Ref<boolean> = ref(false)
 
@@ -166,10 +166,6 @@ function onWindowClick(evt: MouseEvent) {
 function closeSaveMenuAndEmit(evt: 'rename' | 'reset' | 'save' | 'copy' | 'gltf' | 'random') {
   toggleSaveMenu(false)
   $emit(evt)
-}
-
-function generateSeed() {
-  regenerateSeed()
 }
 
 function toggleEditMode() {
@@ -239,6 +235,10 @@ function toggleSaveMenu(override?: boolean) {
       text-overflow: ellipsis;
       max-width: 24ch;
     }
+  }
+  button { text-wrap: nowrap;}
+  button.active {
+    background: var(--lg-button-active);
   }
 
   #randomizer-menu {

@@ -38,7 +38,7 @@ button.lg:disabled {
 // nav button
 button.lg.nav {
   position: relative;
-  background: var(--lg-contrast-light);
+  background: var(--lg-button-dark-contrast);
   border: 1px solid var(--lg-contrast);
   padding: 0.5rem;
   width: 2.75rem;
@@ -54,7 +54,7 @@ button.lg.nav {
   }
 }
 button.lg.nav:hover {
-  background: var(--lg-contrast-medium);
+  background: var(--lg-button-dark-contrast-hover);
 }
 button.lg.nav:active {
   background: var(--lg-contrast);
@@ -62,7 +62,7 @@ button.lg.nav:active {
 
 // ------------------------------------------------------------------------------------------------
 // dark button
-a.lg.dark.link::before {
+:is(button,a).lg.dark.link::before {
   z-index: 1;
   content: '';
   position: absolute;
@@ -72,11 +72,10 @@ a.lg.dark.link::before {
   height: 0; 
   border-style: solid;
   border-width: 0.5rem 0 0.5rem  0.5rem;
-  border-color: transparent transparent transparent var(--lg-text);
+  border-color: transparent transparent transparent white;
   transform: rotate(-45deg);
 }
-button.lg.dark,
-a.lg.dark {
+:is(button,a).lg.dark {
   position: relative;
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
@@ -84,14 +83,12 @@ a.lg.dark {
   min-height: 2.5rem;
   font-size: 0.875rem;
   overflow: hidden;
-  &:active {
-    background: var(--lg-button-hover);
-    border-color: var(--lg-contrast);
-  }
 }
-button.lg.dark:hover,
-a.lg.dark:hover {
+:is(button,a).lg.dark:hover {
   background: var(--lg-button-active);
+}
+:is(button,a).lg.dark:active {
+  background: var(--lg-button-hover);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -99,7 +96,7 @@ a.lg.dark:hover {
 button.lg.icon-button {
   background: transparent;
 }
-button.lg.icon-button:hover, button.lg.icon-button:hover {
+button.lg.icon-button:hover {
   background: transparent;
   filter: brightness(80%);
 }

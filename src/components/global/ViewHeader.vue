@@ -21,7 +21,7 @@ import AppNavigation from './AppNavigation.vue';
   z-index: 15;
   position: absolute;
   inset: 0 0 auto 0;
-
+  
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   grid-template-rows: 1fr;
@@ -87,6 +87,9 @@ import AppNavigation from './AppNavigation.vue';
   .view-header {
     grid-template-columns: 1fr auto;
     .filler { display: none; }
+  }
+  .view-header-corner.rb, .view-header-corner.r {
+    display: none;
   }
 }
 @media screen and (max-width: 767px) {

@@ -234,7 +234,7 @@ async function deleteTargetedPlanet() {
 
   #codex-header-controls-newplanet {
     padding: 0 1rem;
-    background: var(--lg-contrast-light);
+    background: var(--lg-button-dark-contrast);
     border: 1px solid var(--lg-contrast);
     text-decoration: none;
     &:hover { background: var(--lg-button-active); }
