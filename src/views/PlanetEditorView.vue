@@ -330,7 +330,6 @@ function exportPlanet() {
 
 #scene-root {
   box-shadow: black 5px 10px 10px;
-  z-index: 5;
 
   & > canvas {
     background: transparent;

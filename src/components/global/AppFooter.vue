@@ -53,7 +53,7 @@ footer {
   bottom: 0;
   padding: 0.5rem;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   align-self: center;
   gap: 1rem;
   z-index: 5;
