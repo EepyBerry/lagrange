@@ -4,7 +4,7 @@
     <!-- file input -->
     <input ref="fileInput" type="file" accept=".lagrange" multiple hidden @change="importPlanetFile" />
     <button
-      class="lg dark"
+      class="dark"
       :aria-label="$t('a11y.topbar_import')"
       :title="$t('tooltip.topbar_import')"
       @click="openFileDialog"
@@ -13,14 +13,14 @@
     </button>
 
     <!-- new planet -->
-    <RouterLink id="codex-header-controls-newplanet" class="lg dark" :to="uwuifyPath('/planet-editor/new')" :title="$t('codex.$action_add')">
+    <RouterLink id="codex-header-controls-newplanet" class="dark" :to="uwuifyPath('/planet-editor/new')" :title="$t('codex.$action_add')">
       <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
       {{ $t('codex.$action_add') }}
     </RouterLink>
 
     <!-- export planets -->
     <button
-      class="lg dark"
+      class="dark"
       :aria-label="$t('a11y.topbar_export_all')"
       :title="$t('tooltip.topbar_export_all')"
       @click="exportPlanets"

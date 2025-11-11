@@ -10,7 +10,7 @@
       <button
         v-if="closeable"
         tabindex="0"
-        class="lg icon-button dialog-close"
+        class="icon-button dialog-close"
         :aria-label="$t('a11y.action_close_dialog')"
         @click="close"
       >
@@ -84,7 +84,7 @@ defineExpose({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open })
 </script>
 
 <style scoped lang="scss">
-dialog[open].lg {
+dialog[open] {
   &:host { scroll-behavior: none; }
   position: fixed;
   padding: 0;
@@ -146,10 +146,10 @@ dialog[open].lg {
     }
   }
 }
-dialog[open].lg::backdrop {
+dialog[open]::backdrop {
   background: rgb(0 0 0 / 50%);
 }
-dialog[open].lg.warn {
+dialog[open].warn {
   background: var(--lg-warn-panel);
   border: 1px solid var(--lg-warn);
   .dialog-header,
@@ -160,7 +160,7 @@ dialog[open].lg.warn {
 }
 
 @media screen and (max-width: 567px) {
-  dialog[open].lg {
+  dialog[open] {
     width: 100%;
     min-width: 0;
 

@@ -10,7 +10,7 @@
       <slot>TOAST_MESSAGE</slot>
     </div>
     <button
-      class="lg icon-button"
+      class="icon-button"
       :aria-label="$t('a11y.action_close_toast')"
       :tabindex="visible ? 'auto' : '-1'"
       @click="$emit('close')"

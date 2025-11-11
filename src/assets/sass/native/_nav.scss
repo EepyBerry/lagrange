@@ -7,7 +7,7 @@ nav {
   gap: 0.5rem;
 }
 
-nav > a.lg.nav {
+nav > a.nav {
   height: 2.75rem;
   background: var(--lg-button-dark-contrast);
   border: 1px solid var(--lg-contrast);
@@ -24,10 +24,10 @@ nav > a.lg.nav {
     pointer-events: none;
   }
 }
-nav > a.lg.nav:hover {
+nav > a.nav:hover {
   background: var(--lg-button-dark-contrast-hover);
 }
-nav > a.lg.nav.router-link-active {
+nav > a.nav.router-link-active {
   background: var(--lg-contrast);
   pointer-events: none;
 }
@@ -35,12 +35,4 @@ nav > hr {
   border-color: var(--lg-contrast);
   height: 1.5rem;
   align-self: center;
-}
-
-// links
-a:not(.dark, .nav) {
-  color: var(--lg-link);
-}
-a:not(.dark, .nav):visited {
-  color: var(--lg-link-visited);
 }

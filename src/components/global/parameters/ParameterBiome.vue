@@ -2,7 +2,7 @@
   <div :id="lgParam!.id" class="biome-grid" :class="{ expanded: _expanded }">
     <div class="biome-header">
       <div class="biome-info">
-        <button class="lg icon-button" @click="toggleExpand()" @keydown.enter="toggleExpand()">
+        <button class="icon-button" @click="toggleExpand()" @keydown.enter="toggleExpand()">
           <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.25rem" aria-hidden="true" />
         </button>
         <span class="current-color" :style="{ backgroundColor: `#${lgParam?.color?.getHexString()}` }"></span>
@@ -16,7 +16,7 @@
           <iconify-icon icon="mingcute:down-fill" width="1.25rem" aria-hidden="true" />
         </button>
         <hr class="action-divider" />
-        <button class="lg warn" @click="$emit('delete', lgParam!.id)">
+        <button class="warn" @click="$emit('delete', lgParam!.id)">
           <iconify-icon icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
         </button>
       </span>

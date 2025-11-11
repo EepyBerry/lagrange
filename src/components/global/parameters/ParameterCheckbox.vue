@@ -23,7 +23,7 @@ defineProps<{ id: string; trueValue: AcceptedType; falseValue: AcceptedType; dis
 label {
   grid-column: 1;
 }
-input.lg {
+input {
   grid-column: 2;
   justify-self: end;
   text-align: end;

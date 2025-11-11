@@ -1,10 +1,10 @@
 <template>
-  <span class="lg chip">
+  <span class="chip">
     <slot></slot>
   </span>
 </template>
 <style scoped lang="scss">
-.chip.lg {
+.chip {
   padding: 0 0.375rem;
   border-radius: 0.5rem;
   background: var(--lg-contrast);

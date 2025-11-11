@@ -5,7 +5,7 @@
     role="group"
     :aria-expanded="_expanded"
   >
-    <button class="lg section-title" @click="toggleExpand()" @keydown.enter="toggleExpand()">
+    <button class="section-title" @click="toggleExpand()" @keydown.enter="toggleExpand()">
       <h3>
         <iconify-icon :icon="icon" width="1.25rem" aria-hidden="true" />
         <span><slot name="title">SECTION_TITLE</slot></span>

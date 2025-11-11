@@ -12,7 +12,7 @@
   />
 
   <button
-    class="lg radio-button"
+    class="radio-button"
     :class="{ selected: value === lgParam }"
     :aria-label="buttonAriaLabel"
     :title="title"
@@ -72,7 +72,7 @@ function select() {
   background: var(--lg-button-hover);
 }
 
-input.lg[type='radio'] {
+input[type='radio'] {
   display: none;
 }
 

@@ -24,7 +24,7 @@
         <iconify-icon icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.reset.$action_cancel') }}
       </button>
-      <button class="lg warn" @click="confirmAndClose">
+      <button class="warn" @click="confirmAndClose">
         <iconify-icon icon="tabler:reload" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.reset.$action_confirm') }}
       </button>

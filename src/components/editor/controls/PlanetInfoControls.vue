@@ -14,7 +14,7 @@
       <p v-else @click="toggleEditMode">{{ LG_PLANET_DATA.planetName }}</p>
 
       <button
-        class="lg icon-button"
+        class="icon-button"
         :aria-label="$t(editMode ? 'a11y.topbar_rename_confirm' : 'a11y.topbar_rename')"
         @click="toggleEditMode"
       >
@@ -36,7 +36,7 @@
     </div>
     <hr />
     <button
-      class="lg dark"
+      class="dark"
       :aria-label="$t('a11y.topbar_reset')"
       :title="$t('tooltip.topbar_reset')"
       @click="resetDialog?.open()"
@@ -48,14 +48,14 @@
     <!-- Randomization menu -->
     <button
       ref="randomMenuTrigger"
-      class="lg dark"
+      class="dark"
       :class="{ active: isRandomMenuOpen }"
       :aria-label="$t('a11y.topbar_menu_random')"
       :title="$t('tooltip.topbar_menu_random')"
     >
       <iconify-icon icon="mingcute:shuffle-2-fill" width="1.5rem" aria-hidden="true" />
     </button>
-    <div id="randomizer-menu" ref="randomMenu" class="lg floating" :style="randomFloating.floatingStyles.value">
+    <div id="randomizer-menu" ref="randomMenu" class="floating" :style="randomFloating.floatingStyles.value">
       <div class="floating-content">
         <label for="random-seed">Seed</label>
         <input id="random-seed" v-model="MathUtils.PRNG_SEED.value" class="lg" type="text" />
@@ -65,7 +65,7 @@
           <iconify-icon icon="tabler:seeding" width="1.5rem" aria-hidden="true" />
           {{ $t('editor.$action_reseed') }}
         </button>
-        <button class="lg success" @click="$emit('random')">
+        <button class="success" @click="$emit('random')">
           <iconify-icon icon="mingcute:shuffle-2-fill" width="1.5rem" aria-hidden="true" />
           {{ $t('editor.$action_random') }}
         </button>
@@ -75,7 +75,7 @@
     <!-- Save menu -->
     <button
       ref="saveMenuTrigger"
-      class="lg dark"
+      class="dark"
       :class="{ active: isSaveMenuOpen }"
       :aria-label="$t('a11y.topbar_menu_save')"
       :title="$t('tooltip.topbar_menu_save')"
@@ -86,21 +86,21 @@
         aria-hidden="true"
       />
     </button>
-    <div ref="saveMenu" class="lg floating" :style="saveFloating.floatingStyles.value">
-      <button class="lg dark" :aria-label="$t('a11y.topbar_save')" @click="closeSaveMenuAndEmit('save')">
+    <div ref="saveMenu" class="floating" :style="saveFloating.floatingStyles.value">
+      <button class="dark" :aria-label="$t('a11y.topbar_save')" @click="closeSaveMenuAndEmit('save')">
         <iconify-icon icon="mingcute:save-2-line" width="1.5rem" aria-hidden="true" />
         <p>{{ $t('tooltip.topbar_save') }}</p>
       </button>
       <button
         v-if="!$route.path.endsWith('/new')"
-        class="lg dark"
+        class="dark"
         :aria-label="$t('a11y.topbar_copy')"
         @click="closeSaveMenuAndEmit('copy')"
       >
         <iconify-icon icon="mingcute:copy-2-line" width="1.5rem" aria-hidden="true" />
         <p>{{ $t('tooltip.topbar_copy') }}</p>
       </button>
-      <button class="lg dark" :aria-label="$t('a11y.topbar_gltf')" @click="closeSaveMenuAndEmit('gltf')">
+      <button class="dark" :aria-label="$t('a11y.topbar_gltf')" @click="closeSaveMenuAndEmit('gltf')">
         <iconify-icon icon="simple-icons:gltf" width="1.5rem" aria-hidden="true" />
         <p>{{ $t('tooltip.topbar_gltf') }}</p>
       </button>

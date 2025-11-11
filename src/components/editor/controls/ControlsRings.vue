@@ -11,7 +11,7 @@
             <!-- prettier-ignore-attribute -->
             <ParameterRing v-model="LG_PLANET_DATA.ringsParams[index]" :index="index" @delete="deleteRing" />
           </template>
-          <button class="lg action-add" @click="addRing">
+          <button class="action-add" @click="addRing">
             <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
             {{ $t('editor.$action_add') }}
           </button>

@@ -1,6 +1,6 @@
 <template>
-  <div class="lg-input-wrapper">
-    <div class="lg-input-wrapper-slider">
+  <div class="input-wrapper">
+    <div class="input-wrapper-slider">
       <input
         :id="iid ?? undefined"
         class="lg"
@@ -37,38 +37,38 @@ function set(ev: Event) {
 </script>
 
 <style scoped lang="scss">
-.lg-input-wrapper {
+.input-wrapper {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
   font-family: monospace;
 
-  &.xs input.lg[type='range'] {
+  &.xs input[type='range'] {
     width: 4rem;
   }
-  &.sm input.lg[type='range'] {
+  &.sm input[type='range'] {
     width: 6rem;
   }
-  &.md input.lg[type='range'] {
+  &.md input[type='range'] {
     width: 8rem;
   }
-  &.fw input.lg[type='range'] {
+  &.fw input[type='range'] {
     width: 100%;
   }
 
-  .lg-input-wrapper-slider {
+  .input-wrapper-slider {
     display: inline-flex;
     position: relative;
   }
 }
 
 // extras
-.lg-input-wrapper:not(.rgb) span.rgb {
+.input-wrapper:not(.rgb) span.rgb {
   display: none;
 }
-.lg-input-wrapper.rgb {
-  .lg-input-wrapper-slider > input {
+.input-wrapper.rgb {
+  .input-wrapper-slider > input {
     margin-bottom: 4px;
     height: 1.25rem;
     min-height: 0;
@@ -102,7 +102,7 @@ function set(ev: Event) {
 }
 
 // inputs
-input.lg[type='number'] {
+input[type='number'] {
   width: 3rem;
   text-align: end;
   
@@ -113,7 +113,7 @@ input.lg[type='number'] {
     color: var(--lg-text-disabled);
   }
 }
-input.lg[type='range'] {
+input[type='range'] {
   -webkit-appearance: none;
   width: 8rem;
   appearance: none;
@@ -185,11 +185,11 @@ input.lg[type='range'] {
 }
 
 @media screen and (max-width: 1023px) {
-  input.lg[type='number'] {
+  input[type='number'] {
     height: 2rem;
     font-size: 1rem;
   }
-  input.lg[type='range'] {
+  input[type='range'] {
     height: 2rem;
     font-size: 1rem;
 
@@ -209,8 +209,8 @@ input.lg[type='range'] {
     }
   }
 
-  .lg-input-wrapper.rgb {
-    .lg-input-wrapper-slider > input.lg[type='range'] {
+  .input-wrapper.rgb {
+    .input-wrapper-slider > input[type='range'] {
       height: calc(2rem - 4px);
 
       &::-webkit-slider-thumb {
@@ -224,16 +224,16 @@ input.lg[type='range'] {
 }
 
 @media screen and (max-width: 567px) {
-  .lg-input-wrapper,
-  .lg-input-wrapper-slider {
+  .input-wrapper,
+  .input-wrapper-slider {
     width: 100%;
   }
-  input.lg[type='range'] {
+  input[type='range'] {
     width: 100%;
     text-align: end;
     flex: 1;
   }
-  input.lg[type='number'] {
+  input[type='number'] {
     width: 4rem;
     min-width: 4rem;
   }

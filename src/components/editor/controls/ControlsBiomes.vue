@@ -158,7 +158,7 @@
               @delete="deleteBiome"
             />
           </template>
-          <button v-show="LG_PLANET_DATA.biomesParams.length < 16" class="lg action-add" @click="addBiome">
+          <button v-show="LG_PLANET_DATA.biomesParams.length < 16" class="action-add" @click="addBiome">
             <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
             {{ $t('editor.$action_add') }}
           </button>

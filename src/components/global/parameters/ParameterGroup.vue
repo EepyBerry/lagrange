@@ -88,11 +88,11 @@ function toggleExpand() {
       align-items: center;
       gap: 8px;
 
-      input[type='checkbox'].lg {
+      input[type='checkbox'] {
         pointer-events: all;
         cursor: pointer;
       }
-      input[type='checkbox'].lg.no-model {
+      input[type='checkbox'].no-model {
         opacity: 0;
         visibility: hidden;
         display: none;

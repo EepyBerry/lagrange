@@ -18,7 +18,7 @@
       <div v-show="mode === 'rgba'" ref="htmlAlphaRamp" class="alpha-ramp"></div>
     </div>
     <button
-      class="lg edit"
+      class="edit"
       :class="{ success: panelOpen }"
       :aria-label="$t('a11y.action_edit_ramp')"
       @click="togglePanel"
@@ -33,7 +33,7 @@
         <td class="action">
           <button
             v-if="!lgColorRamp?.isBoundStep(step.id) && mode !== 'opacity'"
-            class="lg warn"
+            class="warn"
             :aria-label="$t('a11y.action_open_colorpanel')"
             :disabled="pickerIdOpen === step.id"
             @click="removeStep(step.id)"
@@ -50,7 +50,7 @@
               :id="step.id"
               ref="htmlFactorInputs"
               v-model="step.factor"
-              class="lg wrapper-input"
+              class="wrapper-input"
               :min="0.001"
               :max="0.999"
               :step="0.001"
@@ -73,7 +73,7 @@
               ></div>
             </span>
             <button
-              class="lg edit"
+              class="edit"
               :class="{ success: pickerIdOpen === step.id }"
               :aria-label="$t('a11y.action_open_colorpanel')"
               @click="togglePicker(step.id)"
@@ -275,7 +275,7 @@ p {
     flex: 1;
     .wrapper-input {
       flex: 1;
-      & > :deep(.lg-input-wrapper-slider) {
+      & > :deep(.input-wrapper-slider) {
         flex: 1;
         input {
           flex: 1;
@@ -333,10 +333,10 @@ button.edit {
     padding: 4px;
   }
 }
-input.lg {
+input {
   text-align: end;
 }
-input.lg:not([type='checkbox'], [type='radio']) {
+input:not([type='checkbox'], [type='radio']) {
   width: 3rem;
 }
 @media screen and (max-width: 1023px) {

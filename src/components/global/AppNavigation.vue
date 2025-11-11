@@ -1,16 +1,16 @@
 <template>
-  <button id="nav-toggle" ref="navMenuTrigger" class="lg nav" :class="{ active: isNavMenuOpen }" :aria-label="$t('a11y.action_nav_toggle')">
+  <button id="nav-toggle" ref="navMenuTrigger" class="nav" :class="{ active: isNavMenuOpen }" :aria-label="$t('a11y.action_nav_toggle')">
     <iconify-icon v-if="isNavMenuOpen" icon="material-symbols:menu-open-rounded" width="1.75rem" aria-hidden="true" />
     <iconify-icon v-else icon="material-symbols:menu-rounded" width="1.75rem" aria-hidden="true" />
   </button>
-  <nav id="nav-menu" ref="navMenu" class="lg floating" :style="navFloatingStyles.floatingStyles.value">
-    <RouterLink :to="uwuifyPath('/codex')" class="lg nav" :aria-label="$t('a11y.action_nav_codex')">
+  <nav id="nav-menu" ref="navMenu" class="floating" :style="navFloatingStyles.floatingStyles.value">
+    <RouterLink :to="uwuifyPath('/codex')" class="nav" :aria-label="$t('a11y.action_nav_codex')">
       <iconify-icon icon="mingcute:book-2-line" width="1.5rem" aria-hidden="true" />
       {{ $t('main.nav.codex') }}
     </RouterLink>
     <RouterLink
       :to="uwuifyPath('/planet-editor/new')"
-      class="lg nav"
+      class="nav"
       :class="{ 'router-link-active': !!route.params.id }"
       :aria-label="$t('a11y.action_nav_editor')"
       @click="router.push('/planet-editor/new')"

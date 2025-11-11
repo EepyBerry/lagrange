@@ -2,32 +2,27 @@
   <span class="filler"></span>
   <hr />
   <div id="footer-nav">
-    <a
-      class="lg dark link"
-      href="https://github.com/EepyBerry/lagrange"
-      target="_blank"
-      rel="noopener"
-      :title="$t('tooltip.footer_github')"
-      :aria-label="$t('a11y.footer_github')"
-    >
-      <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" />
-    </a>
-    <button
-      class="lg dark"
-      :title="$t('tooltip.footer_settings')"
-      :aria-label="$t('a11y.footer_settings')"
-      @click="settingsDialog!.open()"
-    >
-      <iconify-icon icon="mingcute:settings-6-line" width="1.5rem" aria-hidden="true" />
-    </button>
-    <button
-      class="lg dark"
+    <LgvButton
+      variant="dark"
+      icon="mingcute:information-line"
       :title="$t('tooltip.footer_about')"
-      :aria-label="$t('a11y.footer_about')"
+      :a11y-label="$t('a11y.footer_about')"
       @click="infoDialog!.open()"
-    >
-      <iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true" />
-    </button>
+    />
+    <LgvButton
+      variant="dark"
+      icon="mingcute:settings-6-line"
+      :title="$t('tooltip.footer_settings')"
+      :a11y-label="$t('a11y.footer_settings')"
+      @click="settingsDialog!.open()"
+    />
+    <LgvLink
+      variant="dark"
+      class="external"
+      href="https://github.com/EepyBerry/lagrange"
+      icon="mingcute:github-line"
+      :title="$t('tooltip.footer_github')"
+    />
     <ExtraSpecialDayElement />
   </div>
   <AppAboutDialog ref="infoDialog" />
@@ -39,6 +34,9 @@ import { ref, type Ref } from 'vue'
 import AppAboutDialog from '@components/global/dialogs/AboutDialog.vue'
 import AppSettingsDialog from '@components/global/dialogs/SettingsDialog.vue'
 import ExtraSpecialDayElement from '@components/global/extras/ExtraSpecialDayElement.vue'
+import LgvButton from '@/_lib/components/LgvButton.vue'
+import LgvLink from '@/_lib/components/LgvLink.vue'
+
 const infoDialog: Ref<{ open: () => void } | null> = ref(null)
 const settingsDialog: Ref<{ open: () => void } | null> = ref(null)
 </script>
@@ -50,6 +48,7 @@ hr {
   align-self: center;
 }
 #footer-nav {
+  z-index: 15;
   display: flex;
   align-items: center;
   justify-content: space-between;

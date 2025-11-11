@@ -18,14 +18,14 @@ const $emit = defineEmits(['change'])
 label {
   grid-column: 1;
 }
-select.lg {
+select {
   grid-column: 2;
   min-width: 16rem;
   text-align: center;
 }
 
 @media screen and (max-width: 567px) {
-  select.lg {
+  select {
     min-width: 0;
     width: 100%;
     text-align: center;

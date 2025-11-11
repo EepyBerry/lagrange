@@ -5,32 +5,27 @@
     <span class="footer-corner rb" />
     <span class="footer-corner r" />
     <div id="footer-nav">
-      <button
-        class="lg dark"
+      <LgvButton
+        variant="dark"
+        icon="mingcute:information-line"
         :title="$t('tooltip.footer_about')"
-        :aria-label="$t('a11y.footer_about')"
+        :a11y-label="$t('a11y.footer_about')"
         @click="infoDialog!.open()"
-      >
-        <iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true" />
-      </button>
-      <button
-        class="lg dark"
+      />
+      <LgvButton
+        variant="dark"
+        icon="mingcute:settings-6-line"
         :title="$t('tooltip.footer_settings')"
-        :aria-label="$t('a11y.footer_settings')"
+        :a11y-label="$t('a11y.footer_settings')"
         @click="settingsDialog!.open()"
-      >
-        <iconify-icon icon="mingcute:settings-6-line" width="1.5rem" aria-hidden="true" />
-      </button>
-      <a
-        class="lg dark link"
+      />
+      <LgvLink
+        variant="dark"
+        class="external"
         href="https://github.com/EepyBerry/lagrange"
-        target="_blank"
-        rel="noopener"
+        icon="mingcute:github-line"
         :title="$t('tooltip.footer_github')"
-        :aria-label="$t('a11y.footer_github')"
-      >
-        <iconify-icon icon="mingcute:github-line" width="1.5rem" aria-hidden="true" />
-      </a>
+      />
       <ExtraSpecialDayElement />
     </div>
   </footer>
@@ -43,6 +38,8 @@ import { ref, type Ref } from 'vue'
 import AppAboutDialog from '@components/global/dialogs/AboutDialog.vue'
 import AppSettingsDialog from '@components/global/dialogs/SettingsDialog.vue'
 import ExtraSpecialDayElement from '@components/global/extras/ExtraSpecialDayElement.vue'
+import LgvButton from '@/_lib/components/LgvButton.vue'
+import LgvLink from '@/_lib/components/LgvLink.vue'
 const infoDialog: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 const settingsDialog: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 </script>

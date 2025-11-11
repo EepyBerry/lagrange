@@ -1,4 +1,4 @@
-select.lg {
+select {
   background: var(--lg-input);
   border: 1px solid var(--lg-accent);
   border-radius: 2px;
@@ -13,7 +13,7 @@ select.lg {
     cursor: pointer;
   }
 }
-select.lg[disabled] {
+select[disabled] {
   background: var(--lg-input-disabled);
   border: 1px solid var(--lg-border-disabled);
   cursor: not-allowed;

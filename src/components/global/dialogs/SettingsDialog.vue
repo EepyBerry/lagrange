@@ -341,7 +341,7 @@
                   {{ $t('dialog.settings.advanced_danger_zone') }}
                 </ParameterCategory>
                 <ParameterDivider />
-                <button class="lg warn clear-data" style="width: 100%" @click="confirmDialogRef?.open()">
+                <button class="warn clear-data" style="width: 100%" @click="confirmDialogRef?.open()">
                   <iconify-icon icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
                   {{ $t('dialog.settings.advanced_clear_data') }}
                 </button>

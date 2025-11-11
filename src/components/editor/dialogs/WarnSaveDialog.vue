@@ -25,11 +25,11 @@
         <iconify-icon icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.warnsave.$action_cancel') }}
       </button>
-      <button class="lg success" autofocus @click="saveConfirmClose">
+      <button class="success" autofocus @click="saveConfirmClose">
         <iconify-icon icon="mingcute:save-2-line" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.warnsave.$action_saveconfirm') }}
       </button>
-      <button class="lg warn" @click="confirmAndClose">
+      <button class="warn" @click="confirmAndClose">
         <iconify-icon icon="mingcute:exit-line" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.warnsave.$action_confirm') }}
       </button>

@@ -159,7 +159,7 @@
       </div>
     </template>
     <template #actions>
-      <button class="lg success" autofocus @click="doClose">
+      <button class="success" autofocus @click="doClose">
         <iconify-icon icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.init.$action_confirm') }}
       </button>

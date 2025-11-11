@@ -38,7 +38,7 @@
     </p>
     <div class="planet-card-actions">
       <button
-        class="lg contrast"
+        class="contrast"
         style="flex: 0"
         :aria-label="$t('codex.$action_info', { planet: planet.data.planetName })"
         :title="$t('codex.$action_info', { planet: planet.data.planetName })"
@@ -48,14 +48,13 @@
       </button>
       <RouterLink
         :to="uwuifyPath('/planet-editor/' + planet.id)"
-        class="lg link-button"
+        class="button-link"
         :aria-label="$t('codex.$action_edit', { planet: planet.data.planetName })"
         :title="$t('codex.$action_edit', { planet: planet.data.planetName })"
       >
         <iconify-icon icon="mingcute:edit-2-line" width="1.5rem" aria-hidden="true" />
       </RouterLink>
       <button
-        class="lg"
         :aria-label="$t('codex.$action_export', { planet: planet.data.planetName })"
         :title="$t('codex.$action_export', { planet: planet.data.planetName })"
         @click="$emit('export')"
@@ -63,7 +62,7 @@
         <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
       </button>
       <button
-        class="lg warn"
+        class="warn"
         :aria-label="$t('codex.$action_delete', { planet: planet.data.planetName })"
         :title="$t('codex.$action_delete', { planet: planet.data.planetName })"
         @click="$emit('delete')"

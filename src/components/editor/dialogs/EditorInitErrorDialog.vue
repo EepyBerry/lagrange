@@ -34,7 +34,7 @@
       </CollapsibleSection>
     </template>
     <template #actions>
-      <button class="lg warn" autofocus @click="closeWithFallback">
+      <button class="warn" autofocus @click="closeWithFallback">
         <iconify-icon icon="tabler:reload" width="1.25rem" aria-hidden="true" />
         {{ $t('dialog.editorerror.$action_reload_fallback_renderer') }}
       </button>

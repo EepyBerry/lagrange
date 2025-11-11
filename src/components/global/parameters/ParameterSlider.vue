@@ -28,12 +28,12 @@ label {
   grid-column: 1;
   text-wrap: nowrap;
 }
-input.lg {
+input {
   grid-column: 2;
   justify-self: end;
   text-align: end;
 }
-input.lg:not([type='checkbox'], [type='radio'], [type='range']) {
+input:not([type='checkbox'], [type='radio'], [type='range']) {
   width: 3rem;
 }
 
@@ -42,7 +42,7 @@ input.lg:not([type='checkbox'], [type='radio'], [type='range']) {
     grid-column: span 2;
     margin-bottom: -0.375rem;
   }
-  .lg {
+  * {
     grid-column: span 2;
   }
 }

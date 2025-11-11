@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------------------------------
 // standard button
-:is(button, a).lg {
+button {
   background: var(--lg-button);
   border: none;
   border-radius: 2px;
@@ -20,15 +20,15 @@
     pointer-events: none;
   }
 }
-button.lg:hover {
+button:hover {
   cursor: pointer;
   background: var(--lg-button-hover);
 }
-button.lg:active {
+button:active {
   cursor: pointer;
   background: var(--lg-button-active);
 }
-button.lg:disabled {
+button:disabled {
   cursor: not-allowed;
   background: var(--lg-button-disabled);
   color: var(--lg-text-disabled);
@@ -36,7 +36,7 @@ button.lg:disabled {
 
 // ------------------------------------------------------------------------------------------------
 // nav button
-button.lg.nav {
+button.nav {
   position: relative;
   background: var(--lg-button-dark-contrast);
   border: 1px solid var(--lg-contrast);
@@ -53,16 +53,16 @@ button.lg.nav {
     transform: rotate(-45deg);
   }
 }
-button.lg.nav:hover {
+button.nav:hover {
   background: var(--lg-button-dark-contrast-hover);
 }
-button.lg.nav:active {
+button.nav:active {
   background: var(--lg-contrast);
 }
 
 // ------------------------------------------------------------------------------------------------
 // dark button
-:is(button,a).lg.dark.link::before {
+:is(button,a).dark.lgv::before {
   z-index: 1;
   content: '';
   position: absolute;
@@ -75,7 +75,7 @@ button.lg.nav:active {
   border-color: transparent transparent transparent white;
   transform: rotate(-45deg);
 }
-:is(button,a).lg.dark {
+:is(button,a).dark {
   position: relative;
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
@@ -84,46 +84,46 @@ button.lg.nav:active {
   font-size: 0.875rem;
   overflow: hidden;
 }
-:is(button,a).lg.dark:hover {
+:is(button,a).dark:hover {
   background: var(--lg-button-active);
 }
-:is(button,a).lg.dark:active {
+:is(button,a).dark:active {
   background: var(--lg-button-hover);
 }
 
 // ------------------------------------------------------------------------------------------------
 // icon button
-button.lg.icon-button {
+button.icon-button {
   background: transparent;
 }
-button.lg.icon-button:hover {
+button.icon-button:hover {
   background: transparent;
   filter: brightness(80%);
 }
-button.lg.icon-button:active {
+button.icon-button:active {
   background: transparent;
   filter: brightness(60%);
 }
-button.lg.icon-button:disabled {
+button.icon-button:disabled {
   filter: brightness(40%);
   pointer-events: none;
 }
 
 // ------------------------------------------------------------------------------------------------
 // router button
-a.lg.link-button,
-a.lg.link-button:visited {
+a.link-button,
+a.link-button:visited {
   color: var(--lg-text);
   text-decoration: none;
 }
-a.lg.link-button:hover,
-a.lg.link-button:visited:hover {
+a.link-button:hover,
+a.link-button:visited:hover {
   background: var(--lg-button-hover);
   color: var(--lg-text);
   text-decoration: none;
 }
-a.lg.link-button:active,
-a.lg.link-button:visited:active {
+a.link-button:active,
+a.link-button:visited:active {
   background: var(--lg-button-active);
   color: var(--lg-text);
   text-decoration: none;

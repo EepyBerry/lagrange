@@ -5,7 +5,7 @@
   <div class="color-wrapper">
     <span class="current-color" :style="{ backgroundColor: `#${lgColor?.getHexString()}` }" @click="togglePanel"></span>
     <button
-      class="lg edit"
+      class="edit"
       :aria-label="$t('a11y.action_open_colorpanel')"
       :class="{ success: pickerOpen }"
       @click="togglePanel"

@@ -104,7 +104,7 @@
           <p>{{ $t('dialog.about.built_with_love') }}</p>
           <p>
             © 2024-{{ new Date().getFullYear() }} EepyBerry,
-            <a href="https://github.com/EepyBerry/lagrange/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
+            <a class="lgv" href="https://github.com/EepyBerry/lagrange/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
               {{ $t('dialog.about.license') }}
             </a>
           </p>

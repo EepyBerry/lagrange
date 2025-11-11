@@ -2,7 +2,7 @@
   <div :id="lgParam!.id" class="ring-grid" :class="{ expanded: _expanded }">
     <div class="ring-header">
       <div class="ring-info">
-        <button class="lg icon-button" @click="toggleExpand()" @keydown.enter="toggleExpand()">
+        <button class="icon-button" @click="toggleExpand()" @keydown.enter="toggleExpand()">
           <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.25rem" aria-hidden="true" />
         </button>
         <span class="current-color" :style="{ background: colorRampToStyle(lgParam!.colorRamp).color }">
@@ -11,7 +11,7 @@
         <span class="ring-index">{{ getPartialId() }}</span>
       </div>
       <span class="ring-actions">
-        <button class="lg warn" @click="$emit('delete', lgParam!.id)">
+        <button class="warn" @click="$emit('delete', lgParam!.id)">
           <iconify-icon icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
         </button>
       </span>

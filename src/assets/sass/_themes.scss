@@ -19,9 +19,6 @@
   --lg-overlay: #2f373e44;
   --lg-border-disabled: #242424;
 
-  --lg-button-dark-contrast: #0b201f;
-  --lg-button-dark-contrast-hover: #143f3b;
-
   --lg-button: #314d58;
   --lg-button-hover: #274350;
   --lg-button-active: var(--lg-accent);
@@ -29,6 +26,11 @@
   --lg-button-menu-expanded: var(--lg-contrast);
   --lg-button-menu-expanded-hover: #336662;
   --lg-button-menu-expanded-active: #295753;
+
+  --lg-button-dark-hover: var(--lg-button-active);
+  --lg-button-dark-active: var(--lg-button-hover);
+  --lg-button-dark-contrast: #0b201f;
+  --lg-button-dark-contrast-hover: #143f3b;
 
   --lg-link: var(--lg-input-contrast-focus);
   --lg-link-visited: var(--lg-input-contrast-focus);
