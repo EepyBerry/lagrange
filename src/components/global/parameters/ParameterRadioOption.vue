@@ -46,19 +46,21 @@ function select() {
 
 <style scoped lang="scss">
 .radio-button {
-  background: var(--lg-button);
-  color: var(--lg-text);
-  padding: 0 0.5rem;
-  border: none;
-  border-radius: 0;
   flex-grow: 1;
   height: 100%;
+  padding: 0 0.5rem;
+
+  background: var(--lg-button);
+  color: var(--lg-text);
+  border: none;
+  border-radius: 0;
+  font-family: inherit;
+  cursor: pointer;
 
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.25rem;
-  cursor: pointer;
 
   iconify-icon {
     width: 1.25rem;

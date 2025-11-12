@@ -8,7 +8,7 @@
 </template>
 
 <style scoped lang="scss">
-p {
+p.radio-label {
   grid-column: span 2;
 }
 .radio-options {
@@ -22,6 +22,7 @@ p {
   background: var(--lg-button-active);
   border-radius: 2px;
   border: none;
+  font-family: inherit;
 
   & > :deep(.radio-button:first-of-type) {
     border-top-left-radius: 4px;

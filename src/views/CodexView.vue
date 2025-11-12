@@ -12,10 +12,17 @@
     />
 
     <!-- new planet -->
-    <RouterLink id="codex-header-controls-newplanet" class="dark" :to="uwuifyPath('/planet-editor/new')" :title="$t('codex.$action_add')">
-      <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
+    <LgvLink
+      id="codex-header-controls-newplanet"
+      variant="dark"
+      link-type="internal"
+      class="contrast"
+      icon="mingcute:add-line"
+      :href="uwuifyPath('/planet-editor/new')"
+      :title="$t('codex.$action_add')"
+    >
       {{ $t('codex.$action_add') }}
-    </RouterLink>
+    </LgvLink>
 
     <!-- export planets -->
     <LgvButton
@@ -59,7 +66,6 @@ import { idb, type IDBPlanet } from '@/dexie.config'
 import { useHead } from '@unhead/vue'
 import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { RouterLink } from 'vue-router'
 import { EventBus } from '@core/event-bus'
 import { SM_WIDTH_THRESHOLD } from '@core/globals'
 import pako from 'pako'
@@ -72,6 +78,7 @@ import { nanoid } from 'nanoid'
 import { uwuifyPath } from '@core/extras'
 import ViewHeader from '@/components/global/ViewHeader.vue'
 import LgvButton from '@/_lib/components/LgvButton.vue'
+import LgvLink from '@/_lib/components/LgvLink.vue'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
@@ -232,11 +239,7 @@ async function deleteTargetedPlanet() {
   position: fixed;
 
   #codex-header-controls-newplanet {
-    padding: 0 1rem;
-    background: var(--lg-button-dark-contrast);
-    border: 1px solid var(--lg-contrast);
-    text-decoration: none;
-    &:hover { background: var(--lg-button-active); }
+    font-size: 0.875rem;
   }
 }
 #codex-grid {

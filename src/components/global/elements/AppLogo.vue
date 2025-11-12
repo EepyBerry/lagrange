@@ -21,6 +21,7 @@ defineProps<{ showUpdate?: boolean }>()
   width: 240px;
   max-width: 16rem;
   align-self: center;
+  overflow: visible;
 }
 #app-logo-update {
   position: absolute;
@@ -29,6 +30,7 @@ defineProps<{ showUpdate?: boolean }>()
   margin: 0 auto;
   max-width: 16rem;
   align-self: center;
+  overflow: visible;
 }
 
 @media screen and (max-width: 767px) {

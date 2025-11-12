@@ -7,20 +7,20 @@
       <iconify-icon v-if="type === 'wip'" icon="mingcute:traffic-cone-line" width="1.5rem" aria-hidden="true" />
     </div>
     <div class="toast-message">
-      <slot>TOAST_MESSAGE</slot>
+      <slot></slot>
     </div>
-    <button
-      class="icon-button"
+    <LgvButton
+      variant="icon"
+      icon="mingcute:close-line"
       :aria-label="$t('a11y.action_close_toast')"
       :tabindex="visible ? 'auto' : '-1'"
       @click="$emit('close')"
-    >
-      <iconify-icon icon="mingcute:close-line" width="1.5rem" aria-hidden="true" />
-    </button>
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import LgvButton from '@/_lib/components/LgvButton.vue';
 import type { EditorMessageLevel } from '@core/types'
 import { computed, type ComputedRef } from 'vue'
 
@@ -78,6 +78,7 @@ const classObject: ComputedRef<string[]> = computed(() => [$props.visible ? 'vis
   padding: 0.5rem;
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 button {

@@ -308,10 +308,13 @@
               <ParameterGrid>
                 <p>{{ $t('dialog.settings.advanced_io') }}:</p>
                 <div id="actions-io">
-                  <button class="lg" @click="openImportDialog">
-                    <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
+                  <LgvButton
+                    class="sm"
+                    icon="mingcute:upload-line"
+                    @click="openImportDialog"
+                  >
                     {{ $t('dialog.settings.advanced_import') }}
-                  </button>
+                  </LgvButton>
                   <input
                     ref="fileInput"
                     type="file"
@@ -320,20 +323,26 @@
                     @cancel="(evt: Event) => evt.stopImmediatePropagation()"
                     @change="importData"
                   />
-                  <button class="lg" @click="exportData">
-                    <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
+                  <LgvButton
+                    class="sm"
+                    icon="mingcute:download-line"
+                    @click="exportData"
+                  >
                     {{ $t('dialog.settings.advanced_export') }}
-                  </button>
+                  </LgvButton>
                 </div>
                 <p>{{ $t('dialog.settings.advanced_persist') }}:</p>
-                <button class="lg" :disabled="!!persistStorage || failedToPersist" @click="tryPersistStorage">
-                  {{
-                    $t(
+                <LgvButton
+                  class="sm"
+                  icon="mingcute:download-line"
+                  :disabled="!!persistStorage || failedToPersist"
+                  @click="tryPersistStorage"
+                >
+                  {{ $t(
                       'dialog.settings.advanced_persist_' +
                         (persistStorage ? 'success' : failedToPersist ? 'failure' : 'prompt'),
-                    )
-                  }}
-                </button>
+                    ) }}
+                </LgvButton>
                 <NotificationElement type="info">
                   {{ $t('dialog.settings.advanced_persist_info') }}
                 </NotificationElement>
@@ -341,10 +350,9 @@
                   {{ $t('dialog.settings.advanced_danger_zone') }}
                 </ParameterCategory>
                 <ParameterDivider />
-                <button class="warn clear-data" style="width: 100%" @click="confirmDialogRef?.open()">
-                  <iconify-icon icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
+                <LgvButton class="sm warn clear-data" icon="mingcute:delete-2-line" icon-width="1.25rem">
                   {{ $t('dialog.settings.advanced_clear_data') }}
-                </button>
+                </LgvButton>
                 <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
               </ParameterGrid>
             </div>
@@ -378,6 +386,7 @@ import { EXTRAS_CAT_MODE, EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, EXTRAS_SPEC
 import { saveAs } from 'file-saver'
 import { readFileSettings } from '@core/helpers/import.helper'
 import WebGPU from '@/core/capabilities/WebGPU'
+import LgvButton from '@/_lib/components/LgvButton.vue'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)

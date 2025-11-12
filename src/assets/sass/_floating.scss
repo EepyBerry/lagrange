@@ -48,8 +48,6 @@
 
 @media screen and (max-width: 1023px) {
   .floating {
-    font-size: 0.875rem;
-
     .floating-content {
       input {
         height: 2rem;
@@ -58,7 +56,6 @@
     }
 
     button {
-      font-size: 0.875rem;
       height: 2.5rem;
     }
     button.dark {

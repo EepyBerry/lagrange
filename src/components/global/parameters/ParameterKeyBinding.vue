@@ -12,13 +12,21 @@
       />
       <span v-else>{{ selected ? '.....' : keyBind?.key }}</span>
     </div>
-    <button class="lg" :aria-label="$t('a11y.action_edit_keybind')" @click="$emit('toggle')">
+    <LgvButton
+      class="sm contrast"
+      :icon="selected ? 'mingcute:close-line' : 'mingcute:edit-2-line'"
+      icon-width="1.25rem"
+      :a11y-label="$t('a11y.action_edit_keybind')"
+      @click="$emit('toggle')"
+    />
+    <!-- <button class="lg" :aria-label="$t('a11y.action_edit_keybind')" @click="$emit('toggle')">
       <iconify-icon v-if="selected" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
       <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-    </button>
+    </button> -->
   </div>
 </template>
 <script setup lang="ts">
+import LgvButton from '@/_lib/components/LgvButton.vue';
 import type { IDBKeyBinding } from '@/dexie.config'
 
 const $emit = defineEmits(['toggle'])

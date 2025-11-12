@@ -18,7 +18,7 @@
     />
     <LgvLink
       variant="dark"
-      class="external"
+      link-type="external"
       href="https://github.com/EepyBerry/lagrange"
       icon="mingcute:github-line"
       :title="$t('tooltip.footer_github')"

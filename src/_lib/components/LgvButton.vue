@@ -22,6 +22,7 @@ button.lgv {
   border: none;
   border-radius: 2px;
   color: var(--lg-text);
+  font-family: inherit;
   cursor: pointer;
 
   display: flex;
@@ -41,6 +42,10 @@ button.lgv {
     cursor: not-allowed;
     background: var(--lg-button-disabled);
     color: var(--lg-text-disabled);
+  }
+
+  iconify-icon, iconify-icon * { 
+    pointer-events: none;
   }
 
   &.sm { min-width: 2rem; min-height: 2rem; }
@@ -64,16 +69,26 @@ button.lgv {
 
 // dark button
 button.lgv[variant='dark'] {
-  background: var(--lg-primary);
-  border: 1px solid var(--lg-accent);
-  
   min-width: 2.5rem;
   min-height: 2.5rem;
-  font-size: 0.875rem;
   overflow: hidden;
+
+  background: var(--lg-primary);
+  border: 1px solid var(--lg-accent);
 
   &:hover { background: var(--lg-button-dark-hover); }
   &:active { background: var(--lg-button-dark-active); }
+
+  &.contrast {
+    background: var(--lg-button-dark-contrast);
+    border-color: var(--lg-contrast);
+  }
+  &.contrast:not(:disabled):hover {
+    background: var(--lg-button-dark-contrast-hover);
+  }
+  &.contrast:not(:disabled):active {
+    background: var(--lg-button-dark-contrast-active);
+  }
 }
 
 // icon button
@@ -81,10 +96,13 @@ button.lgv[variant='icon'] {
   border: none;
   background: transparent;
 
-  &:hover { filter: brightness(80%); }
-  &:active { filter: brightness(60%); }
+  &:hover { filter: brightness(80%); transform: scale(1.05);}
+  &:active { filter: brightness(60%); transform: scale(0.95); }
   &:disabled { filter: brightness(40%) grayscale(100%); }
 }
 
-.a11y--label { display: none; }
+// a11y
+.a11y--label {
+  display: none;
+}
 </style>

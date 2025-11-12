@@ -1,7 +1,7 @@
 <template>
   <div id="toast-bar">
     <ToastElement :visible="isToastShown" :type="toastType" @close="closeToast">
-      {{ $t(toastMessageRaw) }}
+      <span v-if="toastMessageRaw.length > 0">{{ $t(toastMessageRaw) }}</span>
     </ToastElement>
   </div>
 </template>
@@ -13,7 +13,7 @@ import { EventBus } from '@core/event-bus'
 import type { EditorMessageLevel } from '@core/types'
 
 const toastType: Ref<EditorMessageLevel> = ref('info')
-const toastMessageRaw: Ref<string> = ref('main.test_message')
+const toastMessageRaw: Ref<string> = ref('')
 const isToastShown: Ref<boolean> = ref(false)
 
 let timeoutId: NodeJS.Timeout | null = null

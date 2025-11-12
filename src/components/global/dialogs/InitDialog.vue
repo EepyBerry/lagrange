@@ -159,10 +159,15 @@
       </div>
     </template>
     <template #actions>
-      <button class="success" autofocus @click="doClose">
-        <iconify-icon icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
+      <LgvButton
+        class="success"
+        icon="mingcute:check-line"
+        icon-width="1.25rem"
+        autofocus
+        @click="doClose"
+      >
         {{ $t('dialog.init.$action_confirm') }}
-      </button>
+      </LgvButton>
     </template>
   </DialogElement>
 </template>
@@ -174,6 +179,7 @@ import DialogElement from '@components/global/elements/DialogElement.vue'
 import NotificationElement from '@components/global/elements/NotificationElement.vue'
 import { ref, type Ref } from 'vue'
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue'
+import LgvButton from '@/_lib/components/LgvButton.vue'
 
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 const shouldShowOnNextVisits = ref(true)
