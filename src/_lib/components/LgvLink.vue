@@ -1,12 +1,22 @@
 <template>
-  <a class="lgv" target="_blank" rel="noopener noreferrer nofollow">
-    <iconify-icon v-if="icon" :icon="icon" :width="iconWidth ?? '1.5rem'" aria-hidden="true" />
+  <a v-if="linkType === 'external'" :href="href" class="lgv external" target="_blank" rel="noopener noreferrer nofollow">
+    <iconify-icon v-if="icon" :icon="icon" :width="iconWidth" aria-hidden="true" />
     <slot></slot>
   </a>
+  <RouterLink v-else class="lgv" :to="href">
+    <iconify-icon v-if="icon" :icon="icon" :width="iconWidth" aria-hidden="true" />
+    <slot></slot>
+  </RouterLink>
 </template>
 
 <script setup lang="ts">
-defineProps<{ icon?: string, iconWidth?: string }>()
+type LinkType = 'internal' | 'external'
+withDefaults(defineProps<{ linkType: LinkType, href?: string, icon?: string, iconWidth?: string }>(), {
+  icon: 'mingcute:question-line',
+  iconWidth: '1.5rem',
+  linkType: 'internal',
+  href: '/'
+});
 </script>
 
 <style lang="scss">
@@ -93,6 +103,10 @@ a.lgv[variant='dark'] {
 
   &:hover { background: var(--lg-button-dark-hover); }
   &:active { background: var(--lg-button-dark-active); }
+
+  &.contrast { border-color: var(--lg-contrast); }
+  &.contrast:not(:disabled):hover { background: var(--lg-contrast-hover); }
+  &.contrast:not(:disabled):active { background: var(--lg-contrast-active); }
 }
 a.lgv[variant='dark'].external::before {
   z-index: 1;

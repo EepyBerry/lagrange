@@ -37,38 +37,34 @@
       </span>
     </p>
     <div class="planet-card-actions">
-      <button
+      <LgvButton
         class="contrast"
-        style="flex: 0"
-        :aria-label="$t('codex.$action_info', { planet: planet.data.planetName })"
+        icon="mingcute:information-line"
+        :a11y-label="$t('codex.$action_info', { planet: planet.data.planetName })"
         :title="$t('codex.$action_info', { planet: planet.data.planetName })"
         @click="$emit('info')"
-      >
-        <iconify-icon icon="mingcute:information-line" width="1.5rem" aria-hidden="true" />
-      </button>
-      <RouterLink
-        :to="uwuifyPath('/planet-editor/' + planet.id)"
-        class="button-link"
-        :aria-label="$t('codex.$action_edit', { planet: planet.data.planetName })"
+      />
+      <LgvLink
+        variant="button"
+        link-type="internal"
+        :href="uwuifyPath('/planet-editor/' + planet.id)"
+        icon="mingcute:edit-2-line"
+        :a11y-label="$t('codex.$action_edit', { planet: planet.data.planetName })"
         :title="$t('codex.$action_edit', { planet: planet.data.planetName })"
-      >
-        <iconify-icon icon="mingcute:edit-2-line" width="1.5rem" aria-hidden="true" />
-      </RouterLink>
-      <button
-        :aria-label="$t('codex.$action_export', { planet: planet.data.planetName })"
+      />
+      <LgvButton
+        icon="mingcute:download-line"
+        :a11y-label="$t('codex.$action_export', { planet: planet.data.planetName })"
         :title="$t('codex.$action_export', { planet: planet.data.planetName })"
         @click="$emit('export')"
-      >
-        <iconify-icon icon="mingcute:download-line" width="1.5rem" aria-hidden="true" />
-      </button>
-      <button
+      />
+      <LgvButton
         class="warn"
-        :aria-label="$t('codex.$action_delete', { planet: planet.data.planetName })"
+        icon="mingcute:delete-2-line"
+        :a11y-label="$t('codex.$action_delete', { planet: planet.data.planetName })"
         :title="$t('codex.$action_delete', { planet: planet.data.planetName })"
         @click="$emit('delete')"
-      >
-        <iconify-icon icon="mingcute:delete-2-line" width="1.5rem" aria-hidden="true" />
-      </button>
+      />
     </div>
   </div>
 </template>
@@ -77,9 +73,9 @@
 import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, uwuifyPath } from '@core/extras'
 import { type IDBPlanet } from '@/dexie.config'
 import { onMounted, ref, type Ref } from 'vue'
-import { RouterLink } from 'vue-router'
 import { makeSVGCircleArc } from '@/core/utils/svg-utils'
-import { PlanetType } from '@/core/types'
+import LgvButton from '@/_lib/components/LgvButton.vue'
+import LgvLink from '@/_lib/components/LgvLink.vue'
 
 const cardRoot: Ref<HTMLElement | null> = ref(null)
 
@@ -91,14 +87,6 @@ onMounted(() => setTimeout(() => cardRoot.value!.style.opacity = '1'))
 
 function getPlanetCircleRadius() {
   return 128.0 * $props.planet.data.planetRadius
-}
-function getPlanetTypeColor() {
-  switch ($props.planet.data.planetType) {
-    case PlanetType.PLANET: return 'var(--lg-planet-type-planet)';
-    case PlanetType.MOON: return 'var(--lg-planet-type-moon)';
-    case PlanetType.GASGIANT: return 'var(--lg-planet-type-gasgiant)';
-    default: return '--'
-  }
 }
 </script>
 
@@ -189,22 +177,18 @@ function getPlanetTypeColor() {
     align-items: center;
     gap: 0.375rem;
     opacity: 0.5;
-
-    button, a {
-      min-width: 2.5rem;
-      min-height: 2.5rem;
-      font-size: 0.875rem;
-    }
     
-    *:nth-child(2), *:nth-child(3) {
+    :is(button,a):first-child {
+      flex: 0;
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    }
+    :is(button,a):nth-child(2),
+    :is(button,a):nth-child(3) {
       flex: 1;
       min-width: 3.75rem;
     }
-    
-    button:first-child {
-      clip-path: polygon(0 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px));
-    }
-    button:last-child {
+    :is(button,a):last-child {
+      flex: 0;
       clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
     }
   }

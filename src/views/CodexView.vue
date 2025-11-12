@@ -3,14 +3,13 @@
   <ViewHeader id="codex-header">
     <!-- file input -->
     <input ref="fileInput" type="file" accept=".lagrange" multiple hidden @change="importPlanetFile" />
-    <button
-      class="dark"
-      :aria-label="$t('a11y.topbar_import')"
+    <LgvButton
+      variant="dark"
+      icon="mingcute:upload-line"
+      :a11y-label="$t('a11y.topbar_import')"
       :title="$t('tooltip.topbar_import')"
       @click="openFileDialog"
-    >
-      <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
-    </button>
+    />
 
     <!-- new planet -->
     <RouterLink id="codex-header-controls-newplanet" class="dark" :to="uwuifyPath('/planet-editor/new')" :title="$t('codex.$action_add')">
@@ -19,14 +18,13 @@
     </RouterLink>
 
     <!-- export planets -->
-    <button
-      class="dark"
+    <LgvButton
+      variant="dark"
+      icon="mingcute:folder-zip-line"
       :aria-label="$t('a11y.topbar_export_all')"
       :title="$t('tooltip.topbar_export_all')"
       @click="exportPlanets"
-    >
-      <iconify-icon icon="mingcute:folder-zip-line" width="1.5rem" aria-hidden="true" />
-    </button>
+    />
   </ViewHeader>
 
   <div v-if="planets.length > 0" id="codex-grid">
@@ -73,6 +71,7 @@ import { readFileData } from '@core/helpers/import.helper'
 import { nanoid } from 'nanoid'
 import { uwuifyPath } from '@core/extras'
 import ViewHeader from '@/components/global/ViewHeader.vue'
+import LgvButton from '@/_lib/components/LgvButton.vue'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
