@@ -12,7 +12,7 @@
     <LgvButton
       variant="icon"
       icon="mingcute:close-line"
-      :aria-label="$t('a11y.action_close_toast')"
+      :a11y-label="$t('a11y.action_close_toast')"
       :tabindex="visible ? 'auto' : '-1'"
       @click="$emit('close')"
     />

@@ -29,9 +29,6 @@ function listPlanetTypeValues(): PlanetType[] {
   return Object.entries(PlanetType).filter(([_, elem]) => Number.isInteger(elem)).map(([_, v]) => v) as PlanetType[]
 }
 function listPlanetClassValues(): PlanetClass[] {
-  console.log(Object.entries(PlanetClass)
-    .filter(([_, elem]) => Number.isInteger(elem))
-  )
   return Object.entries(PlanetClass)
     .filter(([_, elem]) => Number.isInteger(elem))
     .filter(([name, _]) => name.includes(PlanetType[LG_PLANET_DATA.value.planetType]))

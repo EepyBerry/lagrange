@@ -1,5 +1,5 @@
 <template>
-  <button class="lgv">
+  <button ref="btnRef" type="button" class="lgv">
     <span v-if="a11yLabel" class="a11y--visually-hidden">{{ a11yLabel }}</span>
     <iconify-icon :icon="icon" :width="iconWidth ?? '1.5rem'" aria-hidden="true" />
     <slot></slot>
@@ -7,6 +7,9 @@
 </template>
 
 <script setup lang="ts">
+import { useTemplateRef } from 'vue';
+
+const btnRef = useTemplateRef('btnRef')
 defineProps<{ icon: string, iconWidth?: string, a11yLabel?: string }>()
 </script>
 
@@ -48,6 +51,7 @@ button.lgv {
     pointer-events: none;
   }
 
+  &.pad { padding: 0 0.75rem; }
   &.sm { min-width: 2rem; min-height: 2rem; }
 
   &.contrast { background: var(--lg-contrast); }

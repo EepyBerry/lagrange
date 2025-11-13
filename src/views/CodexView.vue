@@ -7,7 +7,6 @@
       variant="dark"
       icon="mingcute:upload-line"
       :a11y-label="$t('a11y.topbar_import')"
-      :title="$t('tooltip.topbar_import')"
       @click="openFileDialog"
     />
 
@@ -19,7 +18,6 @@
       class="contrast"
       icon="mingcute:add-line"
       :href="uwuifyPath('/planet-editor/new')"
-      :title="$t('codex.$action_add')"
     >
       {{ $t('codex.$action_add') }}
     </LgvLink>
@@ -29,7 +27,6 @@
       variant="dark"
       icon="mingcute:folder-zip-line"
       :aria-label="$t('a11y.topbar_export_all')"
-      :title="$t('tooltip.topbar_export_all')"
       @click="exportPlanets"
     />
   </ViewHeader>

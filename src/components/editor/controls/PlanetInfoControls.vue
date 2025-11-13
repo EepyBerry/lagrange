@@ -13,79 +13,64 @@
       />
       <p v-else @click="toggleEditMode">{{ LG_PLANET_DATA.planetName }}</p>
 
-      <button
-        class="icon-button"
-        :aria-label="$t(editMode ? 'a11y.topbar_rename_confirm' : 'a11y.topbar_rename')"
+      <LgvButton
+        variant="icon"
+        :icon="editMode ? 'mingcute:check-line' :'mingcute:edit-2-line'"
+        :a11y-label="$t(editMode ? 'a11y.topbar_rename_confirm' : 'a11y.topbar_rename')"
+        icon-width="1.25rem"
         @click="toggleEditMode"
-      >
-        <iconify-icon
-          v-if="editMode"
-          icon="mingcute:check-line"
-          width="1.25rem"
-          aria-hidden="true"
-          :title="$t('tooltip.topbar_rename_confirm')"
-        />
-        <iconify-icon
-          v-else
-          icon="mingcute:edit-2-line"
-          width="1.25rem"
-          aria-hidden="true"
-          :title="$t('tooltip.topbar_rename')"
-        />
-      </button>
+      />
     </div>
     <hr />
-    <button
-      class="dark"
-      :aria-label="$t('a11y.topbar_reset')"
-      :title="$t('tooltip.topbar_reset')"
+    <LgvButton
+      variant="dark"
+      icon="tabler:reload"
+      :a11y-label="$t('a11y.topbar_reset')"
       @click="resetDialog?.open()"
-    >
-      <iconify-icon icon="tabler:reload" width="1.5rem" aria-hidden="true" />
-    </button>
+    />
 
     <!------ BEGIN floating menus ------>
     <!-- Randomization menu -->
-    <button
+    <LgvButton
+      id="planet-info__randomize-menu-trigger"
       ref="randomMenuTrigger"
-      class="dark"
+      variant="dark"
+      icon="mingcute:shuffle-2-fill"
       :class="{ active: isRandomMenuOpen }"
-      :aria-label="$t('a11y.topbar_menu_random')"
-      :title="$t('tooltip.topbar_menu_random')"
-    >
-      <iconify-icon icon="mingcute:shuffle-2-fill" width="1.5rem" aria-hidden="true" />
-    </button>
+      :a11y-label="$t('a11y.topbar_menu_random')"
+    />
     <div id="randomizer-menu" ref="randomMenu" class="floating" :style="randomFloating.floatingStyles.value">
       <div class="floating-content">
         <label for="random-seed">Seed</label>
         <input id="random-seed" v-model="MathUtils.PRNG_SEED.value" class="lg" type="text" />
       </div>
       <div class="floating-actions">
-        <button class="lg" @click="MathUtils.regenerateSeed()">
-          <iconify-icon icon="tabler:seeding" width="1.5rem" aria-hidden="true" />
+        <LgvButton
+          class="sm"
+          icon="tabler:seeding"
+          @click="MathUtils.regenerateSeed()"
+        >
           {{ $t('editor.$action_reseed') }}
-        </button>
-        <button class="success" @click="$emit('random')">
-          <iconify-icon icon="mingcute:shuffle-2-fill" width="1.5rem" aria-hidden="true" />
+        </LgvButton>
+        <LgvButton
+          class="sm success"
+          icon="mingcute:shuffle-2-fill"
+          @click="$emit('random')"
+        >
           {{ $t('editor.$action_random') }}
-        </button>
+        </LgvButton>
       </div>
     </div>
 
     <!-- Save menu -->
-    <button
+     <LgvButton
+      id="planet-info__save-menu-trigger"
       ref="saveMenuTrigger"
-      class="dark"
+      variant="dark"
+      :icon="isSaveMenuOpen ? 'mdi:content-save-minus-outline' : 'mdi:content-save-plus-outline'"
       :class="{ active: isSaveMenuOpen }"
-      :aria-label="$t('a11y.topbar_menu_save')"
-      :title="$t('tooltip.topbar_menu_save')"
-    >
-      <iconify-icon
-        :icon="isSaveMenuOpen ? 'mdi:content-save-minus-outline' : 'mdi:content-save-plus-outline'"
-        width="1.5rem"
-        aria-hidden="true"
-      />
-    </button>
+      :a11y-label="$t('a11y.topbar_menu_save')"
+    />
     <div ref="saveMenu" class="floating" :style="saveFloating.floatingStyles.value">
       <button class="dark" :aria-label="$t('a11y.topbar_save')" @click="closeSaveMenuAndEmit('save')">
         <iconify-icon icon="mingcute:save-2-line" width="1.5rem" aria-hidden="true" />
@@ -113,10 +98,11 @@
 <script setup lang="ts">
 import AppResetConfirmDialog from '../dialogs/ResetConfirmDialog.vue'
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
-import { ref, watch, type Ref } from 'vue'
+import { ref, useTemplateRef, watch, type Ref } from 'vue'
 import { EventBus } from '@core/event-bus'
 import { autoUpdate, offset, useFloating } from '@floating-ui/vue'
 import * as MathUtils from '@core/utils/math-utils'
+import LgvButton from '@/_lib/components/LgvButton.vue'
 
 const editMode: Ref<boolean> = ref(false)
 
@@ -125,8 +111,8 @@ const resetDialog: Ref<{ open: () => void } | null> = ref(null)
 
 // floating-ui start
 const isRandomMenuOpen: Ref<boolean> = ref(false)
-const randomMenuTrigger: Ref<HTMLElement | null> = ref(null)
-const randomMenu: Ref<HTMLElement | null> = ref(null)
+const randomMenuTrigger = useTemplateRef('randomMenuTrigger')
+const randomMenu = useTemplateRef('randomMenu')
 const randomFloating = useFloating(randomMenuTrigger, randomMenu, {
   whileElementsMounted: autoUpdate,
   placement: 'bottom-end',
@@ -134,8 +120,8 @@ const randomFloating = useFloating(randomMenuTrigger, randomMenu, {
 })
 
 const isSaveMenuOpen: Ref<boolean> = ref(false)
-const saveMenuTrigger: Ref<HTMLElement | null> = ref(null)
-const saveMenu: Ref<HTMLElement | null> = ref(null)
+const saveMenuTrigger = useTemplateRef('saveMenuTrigger')
+const saveMenu = useTemplateRef('saveMenu')
 const saveFloating = useFloating(saveMenuTrigger, saveMenu, {
   whileElementsMounted: autoUpdate,
   placement: 'bottom-end',
@@ -150,13 +136,13 @@ watch(
 const $emit = defineEmits(['rename', 'reset', 'save', 'copy', 'gltf', 'random'])
 
 function onWindowClick(evt: MouseEvent) {
-  if (evt.target === randomMenuTrigger.value) {
+  if ((evt.target as HTMLElement).id === randomMenuTrigger.value!.$el.id) {
     toggleRandomMenu()
   } else if (!randomMenu.value?.contains(evt.target as Node)) {
     toggleRandomMenu(false)
   }
 
-  if (evt.target === saveMenuTrigger.value) {
+  if ((evt.target as HTMLElement).id === saveMenuTrigger.value!.$el.id) {
     toggleSaveMenu()
   } else if (!saveMenu.value?.contains(evt.target as Node)) {
     toggleSaveMenu(false)

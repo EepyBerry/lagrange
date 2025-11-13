@@ -8,14 +8,12 @@
       <LgvButton
         variant="dark"
         icon="mingcute:information-line"
-        :title="$t('tooltip.footer_about')"
         :a11y-label="$t('a11y.footer_about')"
         @click="infoDialog!.open()"
       />
       <LgvButton
         variant="dark"
         icon="mingcute:settings-6-line"
-        :title="$t('tooltip.footer_settings')"
         :a11y-label="$t('a11y.footer_settings')"
         @click="settingsDialog!.open()"
       />
@@ -24,7 +22,6 @@
         link-type="external"
         href="https://github.com/EepyBerry/lagrange"
         icon="mingcute:github-line"
-        :title="$t('tooltip.footer_github')"
       />
       <ExtraSpecialDayElement />
     </div>

@@ -25,7 +25,7 @@
       variant="dark"
       link-type="internal"
       class="dark contrast"
-      :active="!!$route.params.id"
+      :class="{ 'router-link-active': !!$route.params.id }"
       :href="uwuifyPath('/planet-editor/new')"
       :a11y-label="$t('a11y.action_nav_editor')"
       icon="mingcute:planet-line"
@@ -63,7 +63,6 @@ watch(
   (evt) => {
     if (!evt) return;
     if ((evt.target as HTMLElement).id === navMenuTrigger.value!.$el.id) {
-      console.log('evt?.target')
       toggleNavMenu()
     } else if (!navMenu.value?.contains(evt.target as Node)) {
       toggleNavMenu(false)
