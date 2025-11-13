@@ -2,23 +2,35 @@
   <div :id="lgParam!.id" class="biome-grid" :class="{ expanded: _expanded }">
     <div class="biome-header">
       <div class="biome-info">
-        <button class="icon-button" @click="toggleExpand()" @keydown.enter="toggleExpand()">
-          <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.25rem" aria-hidden="true" />
-        </button>
+        <LgvButton
+          variant="icon"
+          class="sm"
+          :icon="_expanded ? 'mingcute:down-fill' : 'mingcute:right-fill'"
+          @click="toggleExpand()"
+          @keydown.enter="toggleExpand()"
+        />
         <span class="current-color" :style="{ backgroundColor: `#${lgParam?.color?.getHexString()}` }"></span>
         <span class="biome-index">{{ getPartialId() }}</span>
       </div>
       <span class="biome-actions">
-        <button class="lg" :disabled="index === 0" @click="$emit('moveup', lgParam!.id)">
-          <iconify-icon icon="mingcute:up-fill" width="1.25rem" aria-hidden="true" />
-        </button>
-        <button class="lg" :disabled="index === maxIndex" @click="$emit('movedown', lgParam!.id)">
-          <iconify-icon icon="mingcute:down-fill" width="1.25rem" aria-hidden="true" />
-        </button>
+        <LgvButton
+          class="sm"
+          icon="mingcute:up-fill"
+          :disabled="index === 0"
+          @click="$emit('moveup', lgParam!.id)"
+        />
+        <LgvButton
+          class="sm"
+          icon="mingcute:down-fill"
+          :disabled="index === maxIndex"
+          @click="$emit('movedown', lgParam!.id)"
+        />
         <hr class="action-divider" />
-        <button class="warn" @click="$emit('delete', lgParam!.id)">
-          <iconify-icon icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
-        </button>
+        <LgvButton
+          class="sm warn"
+          icon="mingcute:delete-2-line"
+          @click="$emit('delete', lgParam!.id)"
+        />
       </span>
     </div>
     <div v-show="_expanded" class="biome-content">
@@ -74,6 +86,7 @@ import ParameterDivider from './ParameterDivider.vue'
 import { useI18n } from 'vue-i18n'
 import ParameterColor from './ParameterColor.vue'
 import { onMounted, ref, type Ref } from 'vue'
+import LgvButton from '@/_lib/components/LgvButton.vue'
 
 const lgParam = defineModel<BiomeParameters>()
 const i18n = useI18n()
@@ -140,10 +153,6 @@ function getPartialId() {
   display: flex;
   flex-direction: column;
   padding: 0.5rem;
-
-  &.expanded > .biome-header .indicator {
-    transform: rotateZ(90deg);
-  }
 
   .biome-header {
     grid-column: span 2;

@@ -4,15 +4,13 @@
   </p>
   <div class="color-wrapper">
     <span class="current-color" :style="{ backgroundColor: `#${lgColor?.getHexString()}` }" @click="togglePanel"></span>
-    <button
-      class="edit"
-      :aria-label="$t('a11y.action_open_colorpanel')"
+    <LgvButton
+      class="sm"
       :class="{ success: pickerOpen }"
+      :aria-label="$t('a11y.action_open_colorpanel')"
+      :icon="pickerOpen ? 'mingcute:check-line' : 'mingcute:edit-2-line'"
       @click="togglePanel"
-    >
-      <iconify-icon v-if="pickerOpen" class="icon" icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
-      <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-    </button>
+    />
   </div>
   <ColorPicker
     v-show="pickerOpen"
@@ -29,6 +27,7 @@
 </template>
 
 <script setup lang="ts">
+import LgvButton from '@/_lib/components/LgvButton.vue'
 import { Color } from 'three'
 import { onMounted, ref, watch } from 'vue'
 import { ColorPicker } from 'vue-accessible-color-picker'

@@ -20,18 +20,24 @@
       </div>
     </template>
     <template #actions>
-      <button class="lg" autofocus @click="dialogRef?.close()">
-        <iconify-icon icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+      <LgvButton
+        icon="mingcute:close-line"
+        @click="dialogRef?.close()"
+      >
         {{ $t('dialog.reset.$action_cancel') }}
-      </button>
-      <button class="warn" @click="confirmAndClose">
-        <iconify-icon icon="tabler:reload" width="1.25rem" aria-hidden="true" />
+      </LgvButton>
+      <LgvButton
+        class="warn"
+        icon="tabler:reload"
+        @click="confirmAndClose"
+      >
         {{ $t('dialog.reset.$action_confirm') }}
-      </button>
+      </LgvButton>
     </template>
   </DialogElement>
 </template>
 <script setup lang="ts">
+import LgvButton from '@/_lib/components/LgvButton.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue'
 import { ref, type Ref } from 'vue'
 

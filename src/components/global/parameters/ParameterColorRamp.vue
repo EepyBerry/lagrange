@@ -17,29 +17,26 @@
       </template>
       <div v-show="mode === 'rgba'" ref="htmlAlphaRamp" class="alpha-ramp"></div>
     </div>
-    <button
-      class="edit"
+    <LgvButton
+      class="sm"
       :class="{ success: panelOpen }"
-      :aria-label="$t('a11y.action_edit_ramp')"
+      :icon="panelOpen ? 'mingcute:check-line' : 'mingcute:edit-2-line'"
+      :a11y-label="$t('a11y.action_edit_ramp')"
       @click="togglePanel"
-    >
-      <iconify-icon v-if="panelOpen" class="icon" icon="mingcute:check-line" width="1.25rem" aria-hidden="true" />
-      <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-    </button>
+    />
   </div>
   <table v-show="panelOpen" class="panel-table">
     <template v-for="step of lgColorRamp?.steps" :key="step.id">
       <tr>
         <td class="action">
-          <button
+          <LgvButton
             v-if="!lgColorRamp?.isBoundStep(step.id) && mode !== 'opacity'"
-            class="warn"
-            :aria-label="$t('a11y.action_open_colorpanel')"
+            class="sm warn"
+            icon="mingcute:delete-2-line"
             :disabled="pickerIdOpen === step.id"
+            :a11y-label="$t('a11y.action_open_colorpanel')"
             @click="removeStep(step.id)"
-          >
-            <iconify-icon class="icon" icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
-          </button>
+          />
         </td>
         <td>
           <div class="factor-wrapper">
@@ -72,21 +69,13 @@
                 :style="{ background: alphaToGrayscale(step.alpha, true) }"
               ></div>
             </span>
-            <button
-              class="edit"
+            <LgvButton
+              class="sm"
               :class="{ success: pickerIdOpen === step.id }"
-              :aria-label="$t('a11y.action_open_colorpanel')"
+              :icon="(pickerIdOpen === step.id) ? 'mingcute:check-line' : 'mingcute:edit-2-line'"
+              :a11y-label="$t('a11y.action_open_colorpanel')"
               @click="togglePicker(step.id)"
-            >
-              <iconify-icon
-                v-if="pickerIdOpen === step.id"
-                class="icon"
-                icon="mingcute:check-line"
-                width="1.25rem"
-                aria-hidden="true"
-              />
-              <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-            </button>
+            />
           </div>
         </td>
       </tr>
@@ -105,23 +94,26 @@
         </td>
       </tr>
     </template>
-    <tr v-if="['rgb', 'rgba'].includes(mode ?? 'rgb') || !mode">
+    <tr v-if="['rgb', 'rgba'].includes(mode ?? 'rgb')">
       <td colspan="4">
         <div class="add-step">
-          <button class="lg" :aria-label="$t('a11y.action_add_colorstep')" @click="addStep()">
-            <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
+          <LgvButton
+            class="sm"
+            icon="mingcute:add-line"
+            :a11y-label="$t('a11y.action_add_colorstep')"
+            @click="addStep()"
+          >
             {{ $t('editor.$action_add') }}
-          </button>
+          </LgvButton>
           <iconify-icon class="icon" icon="ph:dot-outline-fill" width="1.25rem" aria-hidden="true" />
-          <button class="lg" :aria-label="$t('a11y.action_sort_colorsteps')" @click="sortSteps()">
-            <iconify-icon
-              class="icon"
-              icon="mingcute:numbers-09-sort-ascending-line"
-              width="1.25rem"
-              aria-hidden="true"
-            />
+          <LgvButton
+            class="sm"
+            icon="mingcute:numbers-09-sort-ascending-line"
+            :a11y-label="$t('a11y.action_sort_colorsteps')"
+            @click="sortSteps()"
+          >
             {{ $t('editor.$action_sort') }}
-          </button>
+          </LgvButton>
         </div>
       </td>
     </tr>
@@ -134,6 +126,7 @@ import { ColorPicker } from 'vue-accessible-color-picker'
 import InputSliderElement from '@components/global/elements/InputSliderElement.vue'
 import { ColorRamp, type ColorRampStep } from '@core/models/color-ramp.model'
 import { alphaToGrayscale, colorRampToStyle } from '@core/utils/render-utils'
+import LgvButton from '@/_lib/components/LgvButton.vue'
 
 const lgColorRamp = defineModel<ColorRamp>()
 

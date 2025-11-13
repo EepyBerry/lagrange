@@ -72,23 +72,31 @@
       :a11y-label="$t('a11y.topbar_menu_save')"
     />
     <div ref="saveMenu" class="floating" :style="saveFloating.floatingStyles.value">
-      <button class="dark" :aria-label="$t('a11y.topbar_save')" @click="closeSaveMenuAndEmit('save')">
-        <iconify-icon icon="mingcute:save-2-line" width="1.5rem" aria-hidden="true" />
-        <p>{{ $t('tooltip.topbar_save') }}</p>
-      </button>
-      <button
+      <LgvButton
+        variant="dark"
+        class="save-menu-button flush"
+        icon="mingcute:save-2-line"
+        @click="closeSaveMenuAndEmit('save')"
+      >
+      {{ $t('tooltip.topbar_save') }}
+      </LgvButton>
+      <LgvButton
         v-if="!$route.path.endsWith('/new')"
-        class="dark"
-        :aria-label="$t('a11y.topbar_copy')"
+        variant="dark"
+        class="save-menu-button flush"
+        icon="mingcute:copy-2-line"
         @click="closeSaveMenuAndEmit('copy')"
       >
-        <iconify-icon icon="mingcute:copy-2-line" width="1.5rem" aria-hidden="true" />
-        <p>{{ $t('tooltip.topbar_copy') }}</p>
-      </button>
-      <button class="dark" :aria-label="$t('a11y.topbar_gltf')" @click="closeSaveMenuAndEmit('gltf')">
-        <iconify-icon icon="simple-icons:gltf" width="1.5rem" aria-hidden="true" />
-        <p>{{ $t('tooltip.topbar_gltf') }}</p>
-      </button>
+      {{ $t('tooltip.topbar_copy') }}
+      </LgvButton>
+      <LgvButton
+        variant="dark"
+        class="save-menu-button flush"
+        icon="simple-icons:gltf"
+        @click="closeSaveMenuAndEmit('gltf')"
+      >
+      {{ $t('tooltip.topbar_gltf') }}
+      </LgvButton>
     </div>
     <!------ END floating menus ------>
     <AppResetConfirmDialog ref="resetDialog" @confirm="$emit('reset')" />
@@ -222,9 +230,8 @@ function toggleSaveMenu(override?: boolean) {
       max-width: 24ch;
     }
   }
-  button { text-wrap: nowrap;}
-  button.active {
-    background: var(--lg-button-active);
+  button.save-menu-button {
+    justify-content: flex-start;
   }
 
   #randomizer-menu {

@@ -1,6 +1,7 @@
 <template>
   <section class="parameter-group" :class="{ expanded: _expanded }" role="group" :aria-expanded="_expanded">
     <button
+      type="button"
       class="group-title"
       :class="{ locked: !toggleable }"
       @click="toggleExpand()"

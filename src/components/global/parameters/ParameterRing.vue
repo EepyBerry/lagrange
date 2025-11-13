@@ -2,18 +2,24 @@
   <div :id="lgParam!.id" class="ring-grid" :class="{ expanded: _expanded }">
     <div class="ring-header">
       <div class="ring-info">
-        <button class="icon-button" @click="toggleExpand()" @keydown.enter="toggleExpand()">
-          <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.25rem" aria-hidden="true" />
-        </button>
+        <LgvButton
+          variant="icon"
+          class="sm"
+          :icon="_expanded ? 'mingcute:down-fill' : 'mingcute:right-fill'"
+          @click="toggleExpand()"
+          @keydown.enter="toggleExpand()"
+        />
         <span class="current-color" :style="{ background: colorRampToStyle(lgParam!.colorRamp).color }">
           <div class="alpha-color" :style="{ background: colorRampToStyle(lgParam!.colorRamp).alpha }"></div>
         </span>
         <span class="ring-index">{{ getPartialId() }}</span>
       </div>
       <span class="ring-actions">
-        <button class="warn" @click="$emit('delete', lgParam!.id)">
-          <iconify-icon icon="mingcute:delete-2-line" width="1.25rem" aria-hidden="true" />
-        </button>
+        <LgvButton
+          class="sm warn"
+          icon="mingcute:delete-2-line"
+          @click="$emit('delete', lgParam!.id)"
+        />
       </span>
     </div>
     <div v-show="_expanded" class="ring-content">
@@ -32,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import LgvButton from '@/_lib/components/LgvButton.vue'
 import type { RingParameters } from '@core/models/ring-parameters.model'
 import { colorRampToStyle } from '@core/utils/render-utils'
 import { onMounted, ref, type Ref } from 'vue'
@@ -65,10 +72,6 @@ function getPartialId() {
   display: flex;
   flex-direction: column;
   padding: 0.5rem;
-
-  &.expanded > .ring-header .indicator {
-    transform: rotateZ(90deg);
-  }
 
   .ring-header {
     grid-column: span 2;

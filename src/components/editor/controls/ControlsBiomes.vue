@@ -158,10 +158,14 @@
               @delete="deleteBiome"
             />
           </template>
-          <button v-show="LG_PLANET_DATA.biomesParams.length < 16" class="action-add" @click="addBiome">
-            <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
+          <LgvButton
+            v-show="LG_PLANET_DATA.biomesParams.length < 16"
+            class="sm action-add"
+            icon="mingcute:add-line"
+            @click="addBiome"
+          >
             {{ $t('editor.$action_add') }}
-          </button>
+          </LgvButton>
         </template>
       </ParameterGroup>
     </template>
@@ -174,6 +178,7 @@ import { GradientMode } from '@core/types'
 import { BiomeParameters } from '@core/models/biome-parameters.model'
 import { Color } from 'three'
 import { ChangeAction } from '@core/models/change-tracker.model'
+import LgvButton from '@/_lib/components/LgvButton.vue'
 
 /**
  * Moves a biome up or down the list

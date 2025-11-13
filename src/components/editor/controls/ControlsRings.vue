@@ -11,10 +11,14 @@
             <!-- prettier-ignore-attribute -->
             <ParameterRing v-model="LG_PLANET_DATA.ringsParams[index]" :index="index" @delete="deleteRing" />
           </template>
-          <button class="action-add" @click="addRing">
-            <iconify-icon class="icon" icon="mingcute:add-line" width="1.25rem" aria-hidden="true" />
+          <LgvButton
+            v-show="LG_PLANET_DATA.ringsParams.length < 16"
+            class="sm action-add"
+            icon="mingcute:add-line"
+            @click="addRing"
+          >
             {{ $t('editor.$action_add') }}
-          </button>
+          </LgvButton>
         </template>
       </ParameterGroup>
     </template>
@@ -24,6 +28,7 @@
 import { RingParameters } from '@core/models/ring-parameters.model'
 import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
 import ParameterRing from '@components/global/parameters/ParameterRing.vue'
+import LgvButton from '@/_lib/components/LgvButton.vue'
 
 function addRing() {
   const newRing = new RingParameters(LG_PLANET_DATA.value.changedProps, '_ringsParameters', 1.5, 1.75)

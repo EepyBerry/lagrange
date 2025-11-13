@@ -21,22 +21,31 @@
       </div>
     </template>
     <template #actions>
-      <button class="lg" autofocus @click="dialogRef?.close()">
-        <iconify-icon icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
+      <LgvButton
+        icon="mingcute:close-line"
+        @click="dialogRef?.close()"
+      >
         {{ $t('dialog.warnsave.$action_cancel') }}
-      </button>
-      <button class="success" autofocus @click="saveConfirmClose">
-        <iconify-icon icon="mingcute:save-2-line" width="1.25rem" aria-hidden="true" />
+      </LgvButton>
+      <LgvButton
+        class="success"
+        icon="mingcute:save-2-line"
+        @click="saveConfirmClose"
+      >
         {{ $t('dialog.warnsave.$action_saveconfirm') }}
-      </button>
-      <button class="warn" @click="confirmAndClose">
-        <iconify-icon icon="mingcute:exit-line" width="1.25rem" aria-hidden="true" />
+      </LgvButton>
+      <LgvButton
+        class="warn"
+        icon="mingcute:exit-line"
+        @click="confirmAndClose"
+      >
         {{ $t('dialog.warnsave.$action_confirm') }}
-      </button>
+      </LgvButton>
     </template>
   </DialogElement>
 </template>
 <script setup lang="ts">
+import LgvButton from '@/_lib/components/LgvButton.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue'
 import { ref, type Ref } from 'vue'
 

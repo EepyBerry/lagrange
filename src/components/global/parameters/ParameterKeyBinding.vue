@@ -13,9 +13,8 @@
       <span v-else>{{ selected ? '.....' : keyBind?.key }}</span>
     </div>
     <LgvButton
-      class="sm contrast"
+      class="sm"
       :icon="selected ? 'mingcute:close-line' : 'mingcute:edit-2-line'"
-      icon-width="1.25rem"
       :a11y-label="$t('a11y.action_edit_keybind')"
       @click="$emit('toggle')"
     />

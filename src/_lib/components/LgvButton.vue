@@ -1,7 +1,7 @@
 <template>
   <button ref="btnRef" type="button" class="lgv">
     <span v-if="a11yLabel" class="a11y--visually-hidden">{{ a11yLabel }}</span>
-    <iconify-icon :icon="icon" :width="iconWidth ?? '1.5rem'" aria-hidden="true" />
+    <iconify-icon :icon="icon" :width="iconWidth ?? getDefaultIconWidth()" aria-hidden="true" />
     <slot></slot>
   </button>
 </template>
@@ -11,6 +11,10 @@ import { useTemplateRef } from 'vue';
 
 const btnRef = useTemplateRef('btnRef')
 defineProps<{ icon: string, iconWidth?: string, a11yLabel?: string }>()
+
+function getDefaultIconWidth() {
+  return btnRef.value?.classList.contains('sm') ? '1.25rem' : '1.5rem'
+}
 </script>
 
 <style lang="scss">
@@ -83,16 +87,14 @@ button.lgv[variant='dark'] {
   &:hover { background: var(--lg-button-dark-hover); }
   &:active { background: var(--lg-button-dark-active); }
 
-  &.contrast {
-    background: var(--lg-button-dark-contrast);
-    border-color: var(--lg-contrast);
+  &.flush {
+    border-width: 0;
+    border-radius: 0;
   }
-  &.contrast:not(:disabled):hover {
-    background: var(--lg-button-dark-contrast-hover);
-  }
-  &.contrast:not(:disabled):active {
-    background: var(--lg-button-dark-contrast-active);
-  }
+
+  &.contrast { background: var(--lg-button-dark-contrast); border-color: var(--lg-contrast); }
+  &.contrast:not(:disabled):hover { background: var(--lg-button-dark-contrast-hover); }
+  &.contrast:not(:disabled):active { background: var(--lg-button-dark-contrast-active); }
 }
 
 // icon button

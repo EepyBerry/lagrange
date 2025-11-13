@@ -149,6 +149,8 @@ export async function randomizePlanet() {
 
 export async function resetPlanet() {
   LG_PLANET_DATA.value.reset()
+  LG_SCENE_DATA.planet.biomeLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams)
+  LG_SCENE_DATA.planet.biomeEmissiveLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams)
 }
 
 export async function takePlanetScreenshot() {
