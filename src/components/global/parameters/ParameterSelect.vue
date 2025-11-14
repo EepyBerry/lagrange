@@ -2,12 +2,21 @@
   <label :for="id">
     <slot>ParameterName</slot>
   </label>
-  <select :id="id" v-model="lgParam" class="lg" :disabled="disabled" @change="$emit('change')">
-    <slot name="options"></slot>
-  </select>
+  <LgvSelect
+    :id="id"
+    v-model="lgParam"
+    :disabled="disabled"
+    @change="$emit('change')"
+  >
+    <template #options>
+      <slot name="options"></slot>
+    </template>
+  </LgvSelect>
 </template>
 
 <script setup lang="ts">
+import LgvSelect from '@/_lib/components/LgvSelect.vue';
+
 type AcceptedType = string | number | boolean
 const lgParam = defineModel<AcceptedType>()
 defineProps<{ id: string; disabled?: boolean }>()

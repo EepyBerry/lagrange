@@ -125,16 +125,16 @@
                     </ParameterRadioOption>
                   </template>
                 </ParameterRadio>
-                <NotificationElement :type="appSettings.renderingBackend === 'webgl' ? 'info' : 'wip'">
+                <LgvNotification :type="appSettings.renderingBackend === 'webgl' ? 'info' : 'wip'">
                   {{
                     appSettings.renderingBackend === 'webgl'
                       ? $t('dialog.settings.editor_rendering_backend_webgl_notification')
                       : $t('dialog.settings.editor_rendering_backend_webgpu_notification')
                   }}
-                </NotificationElement>
-                <NotificationElement v-if="!(WebGPU.isAvailable())" type="warn">
+                </LgvNotification>
+                <LgvNotification v-if="!(WebGPU.isAvailable())" type="warn">
                   {{ $t('dialog.settings.editor_rendering_backend_webgpu_unavailable') }}
-                </NotificationElement>
+                </LgvNotification>
                 <ParameterDivider />
                 <ParameterRadio>
                   <template #title> {{ $t('dialog.settings.editor_baking_resolution') }}: </template>
@@ -343,9 +343,9 @@
                         (persistStorage ? 'success' : failedToPersist ? 'failure' : 'prompt'),
                     ) }}
                 </LgvButton>
-                <NotificationElement type="info">
+                <LgvNotification type="info">
                   {{ $t('dialog.settings.advanced_persist_info') }}
-                </NotificationElement>
+                </LgvNotification>
                 <ParameterCategory>
                   {{ $t('dialog.settings.advanced_danger_zone') }}
                 </ParameterCategory>
@@ -382,7 +382,7 @@ import { useI18n } from 'vue-i18n'
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue'
 import { mapLocale } from '@core/utils/utils'
 import ParameterKeyBinding from '@components/global/parameters/ParameterKeyBinding.vue'
-import NotificationElement from '@components/global/elements/NotificationElement.vue'
+import LgvNotification from '@/_lib/components/LgvNotification.vue'
 import ParameterCategory from '@components/global/parameters/ParameterCategory.vue'
 import AppClearDataConfirmDialog from '@components/codex/dialogs/ClearDataConfirmDialog.vue'
 import * as DexieService from '@/core/services/dexie.service'

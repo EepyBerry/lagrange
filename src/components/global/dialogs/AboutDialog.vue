@@ -23,14 +23,14 @@
             <iconify-icon mode="svg" icon="simple-icons:vuedotjs" width="3rem" style="fill: var(--lg-text)" />
             <div>
               <p>{{ $t('dialog.about.prefix_framework') }} <span class="highlight nowrap">Vue + Vite</span></p>
-              <ChipElement>3.5.21</ChipElement> <ChipElement>7.1.4</ChipElement>
+              <LgvChip class="contrast">3.5.21</LgvChip> <LgvChip class="contrast">7.1.4</LgvChip>
             </div>
           </div>
           <div class="tech-block">
             <iconify-icon mode="svg" icon="logos:threejs" width="3rem" style="fill: var(--lg-text)" />
             <div>
               <p>{{ $t('dialog.about.prefix_engine') }} <span class="highlight">three.js</span></p>
-              <ChipElement>r180</ChipElement>
+              <LgvChip class="contrast">r180</LgvChip>
             </div>
           </div>
         </div>
@@ -118,7 +118,7 @@
 <script setup lang="ts">
 import AppLogo from '@components/global/elements/AppLogo.vue'
 import DialogElement from '@components/global/elements/DialogElement.vue'
-import ChipElement from '@components/global/elements/ChipElement.vue'
+import LgvChip from '@/_lib/components/LgvChip.vue'
 import { onMounted, ref, type Ref } from 'vue'
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue'
 

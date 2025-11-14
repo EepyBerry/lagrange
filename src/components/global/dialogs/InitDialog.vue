@@ -26,9 +26,9 @@
                 {{ $t('dialog.init.update_brief') }}
               </template>
             </CollapsibleSection>
-            <NotificationElement id="tmp-notification" type="wip">
+            <LgvNotification id="tmp-notification" type="wip">
               {{ $t('dialog.init.$tmp_wip') }}
-            </NotificationElement>
+            </LgvNotification>
           </div>
         </section>
 
@@ -176,7 +176,7 @@
 import type { IDBKeyBinding } from '@/dexie.config'
 import AppLogo from '@components/global/elements/AppLogo.vue'
 import DialogElement from '@components/global/elements/DialogElement.vue'
-import NotificationElement from '@components/global/elements/NotificationElement.vue'
+import LgvNotification from '@/_lib/components/LgvNotification.vue'
 import { ref, type Ref } from 'vue'
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue'
 import LgvButton from '@/_lib/components/LgvButton.vue'

@@ -1,15 +1,16 @@
 <template>
-  <span class="chip">
+  <span class="lgv chip">
     <slot></slot>
   </span>
 </template>
 <style scoped lang="scss">
-.chip {
+.lgv.chip {
   padding: 0 0.375rem;
   border-radius: 0.5rem;
-  background: var(--lg-contrast);
+  background: var(--lg-accent);
   height: min-content;
   text-wrap: nowrap;
   word-break: keep-all;
+  &.contrast { background: var(--lg-contrast); }
 }
 </style>
