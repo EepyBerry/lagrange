@@ -1,7 +1,7 @@
 <template>
   <button ref="btnRef" type="button" class="lgv">
     <span v-if="a11yLabel" class="a11y--visually-hidden">{{ a11yLabel }}</span>
-    <iconify-icon :icon="icon" :width="iconWidth ?? getDefaultIconWidth()" aria-hidden="true" />
+    <iconify-icon v-if="icon" :icon="icon" :width="iconWidth ?? getDefaultIconWidth()" aria-hidden="true" />
     <slot></slot>
   </button>
 </template>
@@ -10,7 +10,7 @@
 import { useTemplateRef } from 'vue';
 
 const btnRef = useTemplateRef('btnRef')
-defineProps<{ icon: string, iconWidth?: string, a11yLabel?: string }>()
+defineProps<{ icon?: string, iconWidth?: string, a11yLabel?: string }>()
 
 function getDefaultIconWidth() {
   return btnRef.value?.classList.contains('sm') ? '1.25rem' : '1.5rem'

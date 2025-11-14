@@ -2,7 +2,7 @@
   <section class="parameter-group" :class="{ expanded: _expanded }" role="group" :aria-expanded="_expanded">
     <button
       type="button"
-      class="group-title"
+      class="parameter-group-title"
       :class="{ locked: !toggleable }"
       @click="toggleExpand()"
       @keydown.enter="toggleExpand()"
@@ -19,7 +19,7 @@
       </span>
       <iconify-icon v-if="toggleable" class="indicator" icon="mingcute:right-fill" width="1rem" aria-hidden="true" />
     </button>
-    <div v-show="_expanded" class="group-content">
+    <div v-show="_expanded" class="parameter-group-content">
       <slot name="content">
         <span class="default">Nothing here yet, sorry :c</span>
       </slot>
@@ -63,11 +63,11 @@ function toggleExpand() {
   justify-content: center;
   gap: 4px;
 
-  &.expanded > .group-title > .indicator {
+  &.expanded > .parameter-group-title > .indicator {
     transform: rotateZ(90deg);
   }
 
-  .group-title {
+  .parameter-group-title {
     min-height: 2.25rem;
     font-size: 1rem;
     font-weight: 600;
@@ -107,7 +107,7 @@ function toggleExpand() {
       pointer-events: none;
     }
   }
-  .group-content {
+  .parameter-group-content {
     font-size: 0.875rem;
     font-weight: 300;
     padding: 0 0.5rem 0.5rem;
@@ -118,7 +118,7 @@ function toggleExpand() {
     align-items: center;
     gap: 8px 0;
   }
-  .group-content {
+  .parameter-group-content {
     .default {
       grid-column: span 2;
       text-align: center;
@@ -134,14 +134,14 @@ function toggleExpand() {
 @media screen and (max-width: 1199px) {
   .parameter-group {
     min-width: 16rem;
-    .group-title {
+    .parameter-group-title {
       padding: 0 0.75rem;
     }
   }
 }
 @media screen and (max-width: 767px) {
   .parameter-group {
-    .group-title {
+    .parameter-group-title {
       padding: 0 0.5rem;
     }
   }

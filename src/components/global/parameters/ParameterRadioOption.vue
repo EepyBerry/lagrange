@@ -11,21 +11,22 @@
     :disabled="disabled"
   />
 
-  <button
-    class="radio-button"
+  <LgvButton
+    class="sm radio-button"
     :class="{ selected: value === lgParam }"
     :aria-label="buttonAriaLabel"
+    :icon="icon"
     :title="title"
     :disabled="disabled"
     @click="select()"
   >
-    <iconify-icon v-if="icon" :icon="icon" width="1.25rem" aria-hidden="true" />
     <slot></slot>
-  </button>
+  </LgvButton>
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref } from 'vue'
+import LgvButton from '@/_lib/components/LgvButton.vue';
+import { ref, useTemplateRef, type Ref } from 'vue'
 
 defineProps<{
   name: string
@@ -37,7 +38,7 @@ defineProps<{
   disabled?: boolean
 }>()
 const lgParam = defineModel<string | number | boolean>()
-const htmlRadio: Ref<HTMLInputElement | null> = ref(null)
+const htmlRadio = useTemplateRef('htmlRadio')
 
 function select() {
   ;(htmlRadio.value as HTMLInputElement).click()
@@ -46,32 +47,10 @@ function select() {
 
 <style scoped lang="scss">
 .radio-button {
-  flex-grow: 1;
+  flex: 1;
   height: 100%;
-  padding: 0 0.5rem;
-
-  background: var(--lg-button);
-  color: var(--lg-text);
-  border: none;
-  border-radius: 0;
-  font-family: inherit;
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-
-  iconify-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-}
-.radio-button.selected {
-  background: var(--lg-button-active);
-}
-.radio-button:not(:disabled):hover {
-  background: var(--lg-button-hover);
+  padding: 0 0.75rem;
+  &.selected { background: var(--lg-button-active); cursor: default; }
 }
 
 input[type='radio'] {
@@ -79,8 +58,6 @@ input[type='radio'] {
 }
 
 @media screen and (max-width: 1023px) {
-  .radio-button {
-    font-size: 0.875rem;
-  }
+  .radio-button { font-size: 0.875rem; }
 }
 </style>

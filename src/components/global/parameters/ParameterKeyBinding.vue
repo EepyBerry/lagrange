@@ -18,10 +18,6 @@
       :a11y-label="$t('a11y.action_edit_keybind')"
       @click="$emit('toggle')"
     />
-    <!-- <button class="lg" :aria-label="$t('a11y.action_edit_keybind')" @click="$emit('toggle')">
-      <iconify-icon v-if="selected" class="icon" icon="mingcute:close-line" width="1.25rem" aria-hidden="true" />
-      <iconify-icon v-else class="icon" icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-    </button> -->
   </div>
 </template>
 <script setup lang="ts">

@@ -311,7 +311,7 @@
                   <LgvButton
                     class="sm"
                     icon="mingcute:upload-line"
-                    @click="openImportDialog"
+                    @click="fileInput?.click()"
                   >
                     {{ $t('dialog.settings.advanced_import') }}
                   </LgvButton>
@@ -350,7 +350,12 @@
                   {{ $t('dialog.settings.advanced_danger_zone') }}
                 </ParameterCategory>
                 <ParameterDivider />
-                <LgvButton class="sm warn clear-data" icon="mingcute:delete-2-line" icon-width="1.25rem">
+                <LgvButton
+                  class="sm warn clear-data"
+                  icon="mingcute:delete-2-line"
+                  icon-width="1.25rem"
+                  @click="confirmDialogRef?.open()"
+                >
                   {{ $t('dialog.settings.advanced_clear_data') }}
                 </LgvButton>
                 <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
@@ -365,7 +370,7 @@
 
 <script setup lang="ts">
 import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
-import { onMounted, ref, watch, type Ref } from 'vue'
+import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue'
 import DialogElement from '@components/global/elements/DialogElement.vue'
 import ParameterGrid from '@components/global/parameters/ParameterGrid.vue'
 import ParameterCheckbox from '@components/global/parameters/ParameterCheckbox.vue'
@@ -389,16 +394,13 @@ import WebGPU from '@/core/capabilities/WebGPU'
 import LgvButton from '@/_lib/components/LgvButton.vue'
 
 const i18n = useI18n()
-const fileInput: Ref<HTMLInputElement | null> = ref(null)
-
-const confirmDialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
-const dialogRef: Ref<{
-  open: () => void
-  close: () => void
-  ignoreNativeEvents: (v: boolean) => void
-  isOpen: boolean
-} | null> = ref(null)
 const catModeOverride = ref('en-UwU')
+
+const dialogRef =  useTemplateRef<{
+  open: () => void; close: () => void; ignoreNativeEvents: (v: boolean) => void; isOpen: boolean
+} | null>('dialogRef')
+const fileInput = useTemplateRef('fileInput')
+const confirmDialogRef = useTemplateRef<{ open: () => void; close: () => void } | null>('confirmDialogRef')
 const appSettings: Ref<IDBSettings> = ref({
   id: 0,
   locale: 'en-US',
@@ -410,6 +412,7 @@ const appSettings: Ref<IDBSettings> = ref({
   bakingPixelize: false,
   enableAnimations: true,
   enableEffects: true,
+  extrasCRTEffect: false,
   extrasHologramEffect: false,
   extrasShowSpecialDays: true,
 })
@@ -461,9 +464,6 @@ async function loadData() {
   keyBinds.value.push(...kb)
 }
 
-function openImportDialog() {
-  fileInput.value?.click()
-}
 async function importData(event: Event) {
   const files = (event.target as HTMLInputElement).files
   if (!files || files?.length === 0) {
