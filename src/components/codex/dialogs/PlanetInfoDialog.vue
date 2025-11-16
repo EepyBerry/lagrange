@@ -164,7 +164,7 @@ function getPlanetCircleRadius() {
 
 // prettier-ignore
 function getPlanetClassStyle(): string[] {
-  const defaultStyle = ['var(--lg-input)', 'var(--lg-text)']
+  const defaultStyle = ['var(--lg-panel)', 'var(--lg-text)']
   if (!planet.value) return defaultStyle
   switch (planet.value.data.planetClass) {
     case PlanetClass.PLANET_TELLURIC:    return defaultStyle
