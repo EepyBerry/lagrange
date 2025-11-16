@@ -39,7 +39,7 @@
       {{ planet.data.planetName }}
       </span>
     </p>
-    <div class="planet-card-actions" :class="{ 'fade-out': obliterationDisableControls }">
+    <div class="planet-card-actions" :class="{ 'fade-out': obliterationDisableControls }" :aria-hidden="obliterationDisableControls">
       <LgvButton
         class="contrast"
         icon="mingcute:information-line"
@@ -211,6 +211,7 @@ function getPlanetCircleRadius() {
 
     &.fade-out {
       opacity: 0;
+      visibility: hidden;
       pointer-events: none;
       user-select: none;
     }
