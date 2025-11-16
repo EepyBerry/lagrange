@@ -211,8 +211,8 @@ async function openDeleteConfirmDialog(planet: IDBPlanet) {
 }
 
 async function deleteTargetedPlanet(id: string) {
-  if (EXTRAS_METAL_SLUG_MODE.value) {
-    console.log('obliteration')
+  const settings = await idb.settings.limit(1).first()
+  if (EXTRAS_METAL_SLUG_MODE.value && (settings!.enableAnimations && settings?.enableEffects)) {
     await planetCardRefs.value!.find(c => c!.planet.id === id)?.obliteratePlanet()
     try {
       await idb.planets.delete(id)
