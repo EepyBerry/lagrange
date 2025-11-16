@@ -1,6 +1,10 @@
 <template>
-  <div id="toast-bar">
-    <ToastElement :visible="isToastShown" :type="toastType" @close="closeToast">
+  <div id="toast-bar" :aria-hidden="!isToastShown">
+    <ToastElement 
+      :visible="isToastShown"
+      :type="toastType"
+      @close="closeToast"
+    >
       <span v-if="toastMessageRaw.length > 0">{{ $t(toastMessageRaw) }}</span>
     </ToastElement>
   </div>

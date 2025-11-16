@@ -2,7 +2,7 @@
   <div ref="cardRoot" class="planet-card">
     <div class="planet-preview" :class="{ 'effect-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
       <!-- decoration -->
-      <svg viewBox="0 0 256 256">
+      <svg viewBox="0 0 256 256" role="presentation">
         <g class="planet-preview-gizmo">
           <g class="planet-preview-gizmo inner">
             <circle cx="128" cy="128" :r="getPlanetCircleRadius()+8" fill="transparent" stroke="var(--lg-accent)" stroke-width="1.5" />

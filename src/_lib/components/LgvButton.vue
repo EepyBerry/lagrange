@@ -2,15 +2,25 @@
   <button ref="btnRef" type="button" class="lgv">
     <span v-if="a11yLabel" class="a11y--visually-hidden">{{ a11yLabel }}</span>
     <iconify-icon v-if="icon" :icon="icon" :width="iconWidth ?? getDefaultIconWidth()" aria-hidden="true" />
-    <slot></slot>
+    <span class="lgv--text"><slot></slot></span>
   </button>
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef } from 'vue';
+import { onMounted, useTemplateRef } from 'vue';
 
 const btnRef = useTemplateRef('btnRef')
 defineProps<{ icon?: string, iconWidth?: string, a11yLabel?: string }>()
+onMounted(adjustPadding)
+
+function adjustPadding() {
+  const textLeaf = btnRef.value!.querySelector('.lgv--text')! as HTMLSpanElement
+  if (textLeaf.textContent.length > 0) {
+    btnRef.value?.classList.add('outer-pad')
+  } else {
+    textLeaf.style.display = 'none'
+  }
+}
 
 function getDefaultIconWidth() {
   return btnRef.value?.classList.contains('sm') ? '1.25rem' : '1.5rem'
@@ -55,7 +65,7 @@ button.lgv {
     pointer-events: none;
   }
 
-  &.pad { padding: 0 0.75rem; }
+  &.outer-pad { padding: 0 0.75rem; }
   &.sm { min-width: 2rem; min-height: 2rem; }
 
   &.contrast { background: var(--lg-contrast); }
@@ -105,10 +115,5 @@ button.lgv[variant='icon'] {
   &:hover { filter: brightness(80%); transform: scale(1.05);}
   &:active { filter: brightness(60%); transform: scale(0.95); }
   &:disabled { filter: brightness(40%) grayscale(100%); }
-}
-
-// a11y
-.a11y--label {
-  display: none;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <!-- Basic data -->
+  <!-- Basic data -->
   <CollapsibleSection
     icon="mingcute:paper-2-line"
     :expand="false"

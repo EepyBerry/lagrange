@@ -1,5 +1,10 @@
 <template>
-  <svg id="svggraph-rings" :viewBox="`${svgRect.x} ${svgRect.y} ${svgRect.w} ${svgRect.h}`">
+  <svg 
+    id="svggraph-rings"
+    :viewBox="`${svgRect.x} ${svgRect.y} ${svgRect.w} ${svgRect.h}`"
+    role="figure"
+    :title="$t('dialog.planetinfo.rings')"
+  >
     <defs>
       <marker id="svggraph-rings-grad" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse" stroke="white" stroke-width="1">
         <path d="M4.5,0 4.5,10" />

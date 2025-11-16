@@ -1,5 +1,10 @@
 <template>
-  <div v-if="specialDay && !!EXTRAS_SPECIAL_DAYS" class="special-day-box" :title="$t(specialDay!.translationKey)">
+  <div
+    v-if="specialDay && !!EXTRAS_SPECIAL_DAYS"
+    class="special-day-box"
+    :title="$t(specialDay!.translationKey)"
+  >
+    <span class="a11y--visually-hidden">{{ $t(specialDay!.translationKey) }}</span>
     <div
       class="special-day-emoji"
       :class="{ multi: specialDay!.emoji.length > 1, ...getSpecialOverlay(specialDay!.overlayMode) }"

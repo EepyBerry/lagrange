@@ -1,10 +1,10 @@
 <template>
-  <footer v-show="$route.name !== 'page-not-found'">
+  <footer v-show="$route.name !== 'page-not-found'" id="app-footer">
     <span class="footer-corner lb" />
     <span class="footer-corner l" />
     <span class="footer-corner rb" />
     <span class="footer-corner r" />
-    <div id="footer-nav">
+    <div id="app-footer-nav">
       <LgvButton
         variant="dark"
         icon="mingcute:information-line"
@@ -42,7 +42,7 @@ const settingsDialog: Ref<{ open: () => void; close: () => void } | null> = ref(
 </script>
 
 <style lang="scss">
-footer {
+#app-footer {
   position: fixed;
   bottom: 0;
   padding: 0.5rem;
@@ -89,7 +89,7 @@ footer {
       border-color: transparent transparent transparent var(--lg-panel);
     }
   }
-  #footer-nav {
+  #app-footer-nav {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -103,7 +103,7 @@ footer {
   }
 }
 @media screen and (max-width: 1199px) {
-  footer {
+  #app-footer {
     align-self: flex-end;
     border-top-right-radius: 0;
     border-right: 0;
@@ -111,7 +111,7 @@ footer {
 }
 
 @media screen and (max-width: 767px) {
-  footer {
+  #app-footer {
     display: none;
   }
 }

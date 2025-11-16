@@ -18,13 +18,13 @@
         @click="close"
       />
     </header>
-    <div ref="dialogInner" class="dialog-inner" tabindex="-1">
-      <div class="dialog-content">
+    <div ref="dialogInner" class="dialog-inner" tabindex="-1" aria-hidden="true">
+      <div class="dialog-content" role="group">
         <slot name="content"></slot>
       </div>
-      <div v-if="showActions" class="dialog-actions">
+      <footer v-if="showActions" class="dialog-actions">
         <slot name="actions"></slot>
-      </div>
+      </footer>
     </div>
   </dialog>
 </template>

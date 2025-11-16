@@ -1,6 +1,6 @@
 <template>
   <div class="measurement-box" role="region">
-    <p>{{ valueLabel }}</p>
+    <p>{{ valueLabel }}:</p>
     <div class="measurement-box-inner">
       <iconify-icon
         :icon="icon"

@@ -1,5 +1,10 @@
 <template>
-  <svg id="svggraph-biomes" :viewBox="`${svgRect.x} ${svgRect.y} ${svgRect.w} ${svgRect.h}`">
+  <svg 
+    id="svggraph-biomes"
+    :viewBox="`${svgRect.x} ${svgRect.y} ${svgRect.w} ${svgRect.h}`" 
+    role="figure"
+    :title="$t('dialog.planetinfo.biomes')"
+  >
     <defs>
       <pattern id="grid" :width="graphRect.w/10" :height="graphRect.h/10" patternUnits="userSpaceOnUse">
         <path d="M 0 0 L 45 0 45 45" fill="none" stroke="var(--lg-accent)" stroke-width="2"/>
@@ -46,6 +51,7 @@
           height="16"
           :fill="bd.color"
           :stroke="bd.color"
+          role="button"
           @click="toggleGraphBiome(biomeData.length-1-i)"
         />
       </g>

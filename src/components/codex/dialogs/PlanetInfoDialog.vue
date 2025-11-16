@@ -12,10 +12,18 @@
       {{ $t('dialog.planetinfo.$title') }}
     </template>
     <template #content>
-      <div class="info-grid">
+      <div class="info-grid" role="grid">
+        <!-- planet name -->
+        <section id="planet-name">
+          <div class="banner" role="presentation">
+            <h3>{{ planet?.data.planetName }}</h3>
+          </div>
+          <SeparatorGreebleDeco />
+        </section>
+
         <!-- Planet preview image -->
         <section id="planet-preview" :class="{ 'extra-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
-          <svg viewBox="0 0 256 256" aria-hidden="true">
+          <svg viewBox="0 0 256 256" role="presentation">
               <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+8, 30, 150)" fill="none" stroke="var(--lg-contrast)" stroke-width="1.5" />
               <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+11.5, 55, 60)" fill="none" stroke="var(--lg-contrast)" stroke-width="6" />
               <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+11.5, 63, 90)" fill="none" stroke="var(--lg-contrast)" stroke-width="6" />
@@ -32,18 +40,14 @@
           <span v-if="!!EXTRAS_CRT_EFFECT" class="effect-crt"></span>
         </section>
 
-        <!-- planet name -->
-        <section id="planet-name">
-          <div class="banner"><p role="title">{{ planet?.data.planetName }}</p></div>
-          <SeparatorGreebleDeco />
-        </section>
-
         <!-- Basic planet data -->
-        <section id="planet-basic-data">
+        <section id="planet-basic-data" role="grid">
           <GenericBoxElement
             id="planet-basic-data-type" 
             ref="planetBasicDataTypeRef"
-            :value-label="$t('dialog.planetinfo.basic.type')">
+            :value-label="$t('dialog.planetinfo.basic.type')"
+            role="gridcell"
+          >
             {{ $t(getI18nPlanetType(planet?.data.planetType)) }}
           </GenericBoxElement>
           <GenericBoxElement 
@@ -51,7 +55,9 @@
             ref="planetBasicDataClassRef"
             :value-label="$t('dialog.planetinfo.basic.class')"
             :background-color="getPlanetClassStyle()[0]"
-            :text-color="getPlanetClassStyle()[1]">
+            :text-color="getPlanetClassStyle()[1]"
+            role="gridcell"
+          >
             {{ $t(getI18nPlanetClass(planet?.data.planetClass)) }}
           </GenericBoxElement>
 
@@ -68,34 +74,34 @@
             :value-label="$t('dialog.planetinfo.basic.axialtilt')"
             role="gridcell"
           />
-          <div id="planet-basic-data-features">
-            <p role="heading">{{ $t('dialog.planetinfo.basic.features') }}</p>
+          <div id="planet-basic-data-features" role="gridcell">
+            <p id="label__planet-basic-data-features" >{{ $t('dialog.planetinfo.basic.features') }}:</p>
             <ul>
               <li><PlanetCardFeatureBoxElement
                 icon="mingcute:mountain-2-line"
                 :active="planet?.data.biomesEnabled"
-                :aria-label="$t(planet?.data.biomesEnabled ? 'dialog.planetinfo.basic.has_biomes' : 'dialog.planetinfo.basic.no_biomes')"
+                :aria-label="$t(planet?.data.biomesEnabled ? 'dialog.planetinfo.basic.has_biomes' : 'dialog.planetinfo.basic.no_biomes').toLocaleLowerCase() + ','"
                 :title="$t(planet?.data.biomesEnabled ? 'dialog.planetinfo.basic.has_biomes' : 'dialog.planetinfo.basic.no_biomes')"
                 role="gridcell"
               /></li>
               <li><PlanetCardFeatureBoxElement
                 icon="mingcute:clouds-line"
                 :active="planet?.data.cloudsEnabled"
-                :aria-label="$t(planet?.data.cloudsEnabled ? 'dialog.planetinfo.basic.has_clouds' : 'dialog.planetinfo.basic.no_clouds')"
+                :aria-label="$t(planet?.data.cloudsEnabled ? 'dialog.planetinfo.basic.has_clouds' : 'dialog.planetinfo.basic.no_clouds').toLocaleLowerCase() + ','"
                 :title="$t(planet?.data.cloudsEnabled ? 'dialog.planetinfo.basic.has_clouds' : 'dialog.planetinfo.basic.no_clouds')"
                 role="gridcell"
               /></li>
               <li><PlanetCardFeatureBoxElement
                 icon="material-symbols:line-curve-rounded"
                 :active="planet?.data.atmosphereEnabled"
-                :aria-label="$t(planet?.data.atmosphereEnabled ? 'dialog.planetinfo.basic.has_atmosphere' : 'dialog.planetinfo.basic.no_atmosphere')"
+                :aria-label="$t(planet?.data.atmosphereEnabled ? 'dialog.planetinfo.basic.has_atmosphere' : 'dialog.planetinfo.basic.no_atmosphere').toLocaleLowerCase() + ','"
                 :title="$t(planet?.data.atmosphereEnabled ? 'dialog.planetinfo.basic.has_atmosphere' : 'dialog.planetinfo.basic.no_atmosphere')"
                 role="gridcell"
               /></li>
               <li><PlanetCardFeatureBoxElement
                 icon="mingcute:planet-line"
                 :active="planet?.data.ringsEnabled"
-                :aria-label="$t(planet?.data.ringsEnabled ? 'dialog.planetinfo.basic.has_rings' : 'dialog.planetinfo.basic.no_rings')"
+                :aria-label="$t(planet?.data.ringsEnabled ? 'dialog.planetinfo.basic.has_rings' : 'dialog.planetinfo.basic.no_rings').toLocaleLowerCase()"
                 :title="$t(planet?.data.ringsEnabled ? 'dialog.planetinfo.basic.has_rings' : 'dialog.planetinfo.basic.no_rings')"
                 role="gridcell"
               /></li>
@@ -107,7 +113,7 @@
         <section v-if="planet?.data.biomesEnabled && planet?.data.biomesParams.length > 0" class="planet-details biomes">
           <SeparatorGreebleDeco class="flip-x" />
           <span class="deco-polygon"></span>
-          <h3>{{ $t('dialog.planetinfo.biomes') }}</h3>
+          <h3 id="planet-details-biomes-title">{{ $t('dialog.planetinfo.biomes') }}</h3>
           <SVGBiomeGraph :key="planet.data.biomesParams[0].id" :biomes="planet.data.biomesParams" />
         </section>
         
@@ -115,7 +121,7 @@
         <section v-if="planet?.data.ringsEnabled && planet?.data.ringsParams.length > 0" class="planet-details rings">
           <SeparatorGreebleDeco />
           <span class="deco-polygon"></span>
-          <h3>{{ $t('dialog.planetinfo.rings') }}</h3>
+          <h3 id="planet-details-rings-title">{{ $t('dialog.planetinfo.rings') }}</h3>
           <SVGRingsGraph :key="planet.data.ringsParams[0].id" :planet-radius="planet.data.planetRadius" :rings="planet.data.ringsParams" />
         </section>
       </div>
@@ -245,8 +251,9 @@ function getPlanetClassStyle(): string[] {
       overflow: hidden;
       display: flex;
       justify-content: center;
-      p {
-        padding: 0 6px;
+      h3 {
+        font-size: 1.25rem;
+        padding: 6px;
         max-width: 32ch;
         text-overflow: ellipsis;
         overflow: hidden;

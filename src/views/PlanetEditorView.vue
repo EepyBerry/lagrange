@@ -1,6 +1,6 @@
 <template>
   <ViewHeader id="editor-header" class="xs-fullwidth">
-    <PlanetInfoControls
+    <EditorHeaderControls
       @rename="patchMetaHead"
       @save="savePlanet"
       @copy="savePlanet(true)"
@@ -10,7 +10,7 @@
     />
     <span class="filler"></span>
   </ViewHeader>
-  <PlanetEditorControls :compact-mode="showCompactControls" />
+  <EditorSidebarControls :compact-mode="showCompactControls" />
 
   <div id="scene-root" ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
@@ -21,8 +21,8 @@
 </template>
 
 <script setup lang="ts">
-import PlanetEditorControls from '@components/editor/controls/PlanetEditorControls.vue'
-import PlanetInfoControls from '@components/editor/controls/PlanetInfoControls.vue'
+import EditorSidebarControls from '@/components/editor/controls/EditorSidebarControls.vue'
+import EditorHeaderControls from '@/components/editor/controls/EditorHeaderControls.vue'
 import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue'
 import * as Globals from '@core/globals'
 import { useHead } from '@unhead/vue'
