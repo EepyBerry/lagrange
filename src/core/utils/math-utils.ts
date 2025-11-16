@@ -20,8 +20,16 @@ export function regeneratePRNGIfNecessary(force?: boolean): void {
   currentPRNGSeed = s
 }
 export function clampedPRNG(min: number, max: number, precision: number = 3): number {
-  const v = PRNG.value()
-  return Number(((max - min) * v + min).toPrecision(precision))
+  return Number(((max - min) * PRNG.value() + min).toPrecision(precision))
+}
+export function clampedPRNGSpaced(prev: number, min: number, max: number, precision: number = 3, spacing: number = 1) {
+  let result = clampedPRNG(min, max, precision)
+  let loop = 0
+  while (diff(result, prev) <= spacing && loop < 100) {
+    result = clampedPRNG(min, max, precision)
+    loop++
+  }
+  return result
 }
 
 /**
@@ -48,6 +56,10 @@ export function avg(...values: number[]) {
     return 0
   }
   return values.reduce((prev, cur) => prev + cur) / values.length
+}
+
+export function diff(a: number, b: number) {
+  return Math.abs(Math.max(a, b) - Math.min(a, b))
 }
 
 /**

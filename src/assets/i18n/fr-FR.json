@@ -481,6 +481,8 @@
     "action_close_toast": "Fermer la notification"
   },
   "extras": {
+    "toast_explode_success": "Planète oblitérée !",
+    "toast_explode_failure": "Impossible de détruire la planète",
     "day_newyear": "Bonne année!",
     "day_valentines": "Joyeuse Saint-Valentin! ❤️",
     "day_strawberry": "C'est la Journée des Fraises! 🍓",

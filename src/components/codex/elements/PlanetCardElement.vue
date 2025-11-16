@@ -1,9 +1,12 @@
 <template>
   <div ref="cardRoot" class="planet-card">
+    <!-- effects -->
+    <ExtraMetalSlugPlanetExplosion ref="extraPlanetExplosionRef" @obliteration="obliterationHidePlanetImage = true" />
+
     <div class="planet-preview" :class="{ 'effect-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
       <!-- decoration -->
-      <svg viewBox="0 0 256 256" role="presentation">
-        <g class="planet-preview-gizmo">
+      <svg viewBox="0 0 256 256" role="presentation" >
+        <g v-show="!obliterationHidePlanetImage" class="planet-preview-gizmo">
           <g class="planet-preview-gizmo inner">
             <circle cx="128" cy="128" :r="getPlanetCircleRadius()+8" fill="transparent" stroke="var(--lg-accent)" stroke-width="1.5" />
             <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+11.5, 120, 140)" fill="none" stroke="var(--lg-accent)" stroke-width="6" />
@@ -17,7 +20,7 @@
       </svg>
 
       <!-- preview -->
-      <div class="planet-preview-inner">
+      <div v-show="!obliterationHidePlanetImage" class="planet-preview-inner">
         <img
           v-if="planet.preview"
           class="planet-image"
@@ -36,12 +39,13 @@
       {{ planet.data.planetName }}
       </span>
     </p>
-    <div class="planet-card-actions">
+    <div class="planet-card-actions" :class="{ 'fade-out': obliterationDisableControls }">
       <LgvButton
         class="contrast"
         icon="mingcute:information-line"
         :a11y-label="$t('codex.$action_info', { planet: planet.data.planetName })"
         :title="$t('codex.$action_info', { planet: planet.data.planetName })"
+        :aria-disabled="obliterationDisableControls"
         @click="$emit('info')"
       />
       <LgvLink
@@ -51,11 +55,13 @@
         icon="mingcute:edit-2-line"
         :a11y-label="$t('codex.$action_edit', { planet: planet.data.planetName })"
         :title="$t('codex.$action_edit', { planet: planet.data.planetName })"
+        :aria-disabled="obliterationDisableControls"
       />
       <LgvButton
         icon="mingcute:download-line"
         :a11y-label="$t('codex.$action_export', { planet: planet.data.planetName })"
         :title="$t('codex.$action_export', { planet: planet.data.planetName })"
+        :aria-disabled="obliterationDisableControls"
         @click="$emit('export')"
       />
       <LgvButton
@@ -63,6 +69,7 @@
         icon="mingcute:delete-2-line"
         :a11y-label="$t('codex.$action_delete', { planet: planet.data.planetName })"
         :title="$t('codex.$action_delete', { planet: planet.data.planetName })"
+        :aria-disabled="obliterationDisableControls"
         @click="$emit('delete')"
       />
     </div>
@@ -72,18 +79,28 @@
 <script setup lang="ts">
 import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, uwuifyPath } from '@core/extras'
 import { type IDBPlanet } from '@/dexie.config'
-import { onMounted, ref, type Ref } from 'vue'
+import { onMounted, ref, useTemplateRef } from 'vue'
 import { makeSVGCircleArc } from '@/core/utils/svg-utils'
 import LgvButton from '@/_lib/components/LgvButton.vue'
 import LgvLink from '@/_lib/components/LgvLink.vue'
+import ExtraMetalSlugPlanetExplosion from '@/components/global/extras/ExtraMetalSlugPlanetExplosion.vue'
 
-const cardRoot: Ref<HTMLElement | null> = ref(null)
+const cardRoot = useTemplateRef('cardRoot')
+const extraPlanetExplosionRef = useTemplateRef('extraPlanetExplosionRef')
 
 const $props = defineProps<{ planet: IDBPlanet }>()
 const planetRadius = ref($props.planet.data.planetRadius*100.0 + '%')
+const obliterationDisableControls = ref(false)
+const obliterationHidePlanetImage = ref(false)
 
+defineExpose({ obliteratePlanet })
 defineEmits(['info', 'export', 'delete'])
 onMounted(() => setTimeout(() => cardRoot.value!.style.opacity = '1'))
+
+async function obliteratePlanet() {
+  obliterationDisableControls.value = true
+  await extraPlanetExplosionRef.value!.doEffect()
+}
 
 function getPlanetCircleRadius() {
   return 128.0 * $props.planet.data.planetRadius
@@ -191,13 +208,19 @@ function getPlanetCircleRadius() {
       flex: 0;
       clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
     }
+
+    &.fade-out {
+      opacity: 0;
+      pointer-events: none;
+      user-select: none;
+    }
   }
 }
 .planet-card:hover, .planet-card:focus-within {
   .planet-name {
     background: var(--lg-contrast);
   }
-  .planet-card-actions, .planet-indicator {
+  .planet-card-actions:not(.fade-out), .planet-indicator {
     opacity: 1;
   }
   svg {

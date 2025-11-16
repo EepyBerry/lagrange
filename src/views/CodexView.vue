@@ -34,12 +34,12 @@
   <div v-if="planets.length > 0" id="codex-grid">
     <!-- prettier-ignore-attribute -->
     <PlanetCardElement
-      v-for="planet of planets"
-      :key="planet.id"
+      v-for="(planet, idx) of planets" :key="planet.id"
+      ref="planetCardRef"
       :planet="(planet as IDBPlanet)"
       @info="openPlanetInfoDialog(planet as IDBPlanet)"
       @export="exportPlanet(planet as IDBPlanet)"
-      @delete="openDeleteConfirmDialog(planet as IDBPlanet)"
+      @delete="openDeleteConfirmDialog(idx, planet as IDBPlanet)"
     />
     <NewCardElement />
   </div>
@@ -61,7 +61,7 @@ import AppPlanetInfoDialog from '@components/codex/dialogs/PlanetInfoDialog.vue'
 import AppDeleteConfirmDialog from '@components/codex/dialogs/DeleteConfirmDialog.vue'
 import { idb, type IDBPlanet } from '@/dexie.config'
 import { useHead } from '@unhead/vue'
-import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
+import { onMounted, onUnmounted, ref, useTemplateRef, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { EventBus } from '@core/event-bus'
 import { SM_WIDTH_THRESHOLD } from '@core/globals'
@@ -72,18 +72,20 @@ import JSZip from 'jszip'
 import NewCardElement from '@/components/codex/elements/NewCardElement.vue'
 import { readFileData } from '@core/helpers/import.helper'
 import { nanoid } from 'nanoid'
-import { uwuifyPath } from '@core/extras'
+import { EXTRAS_METAL_SLUG_MODE, uwuifyPath } from '@core/extras'
 import ViewHeader from '@/components/global/ViewHeader.vue'
 import LgvButton from '@/_lib/components/LgvButton.vue'
 import LgvLink from '@/_lib/components/LgvLink.vue'
+import { sleep } from '@/core/utils/utils'
 
-const i18n = useI18n()
-const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const planets: Ref<IDBPlanet[]> = ref([])
 
-const planetInfoDialogRef: Ref<{ open: (planet: IDBPlanet) => void } | null> = ref(null)
+const i18n = useI18n()
+const fileInput = useTemplateRef('fileInput')
+const planetCardRefs = useTemplateRef('planetCardRef')
+const planetInfoDialogRef = useTemplateRef('planetInfoDialogRef')
 
-const deleteTarget: Ref<IDBPlanet | null> = ref(null)
+const deleteTarget: Ref<{ cardIndex: number, planet: IDBPlanet } | null> = ref(null)
 const deleteDialogRef: Ref<{ open: (planetName: string) => void } | null> = ref(null)
 const showInlineFooter: Ref<boolean> = ref(false)
 
@@ -205,19 +207,33 @@ async function openPlanetInfoDialog(planet: IDBPlanet) {
   planetInfoDialogRef.value?.open(planet)
 }
 
-async function openDeleteConfirmDialog(planet: IDBPlanet) {
-  deleteTarget.value = planet
-  deleteDialogRef.value?.open(deleteTarget.value.data.planetName)
+async function openDeleteConfirmDialog(cardIndex: number, planet: IDBPlanet) {
+  deleteTarget.value = { cardIndex, planet }
+  deleteDialogRef.value?.open(deleteTarget.value.planet.data.planetName)
 }
 
 async function deleteTargetedPlanet() {
-  try {
-    await idb.planets.delete(deleteTarget.value!.id)
-    EventBus.sendToastEvent('success', 'toast.delete_success', 3000)
-  } catch (_) {
-    EventBus.sendToastEvent('warn', 'toast.delete_failure', 3000)
-  } finally {
-    await loadPlanets()
+  if (EXTRAS_METAL_SLUG_MODE.value) {
+    console.log('obliteration')
+    await planetCardRefs.value?.at(deleteTarget.value!.cardIndex)!.obliteratePlanet()
+    try {
+      await idb.planets.delete(deleteTarget.value!.planet.id)
+      EventBus.sendToastEvent('success', 'toast.extras_obliterate_success', 3000)
+    } catch (_) {
+      EventBus.sendToastEvent('warn', 'toast.extras_obliterate_failure', 3000)
+    } finally {
+      await sleep(1500)
+      await loadPlanets()
+    }
+  } else {
+    try {
+      await idb.planets.delete(deleteTarget.value!.planet.id)
+      EventBus.sendToastEvent('success', 'toast.delete_success', 3000)
+    } catch (_) {
+      EventBus.sendToastEvent('warn', 'toast.delete_failure', 3000)
+    } finally {
+      await loadPlanets()
+    }
   }
 }
 </script>

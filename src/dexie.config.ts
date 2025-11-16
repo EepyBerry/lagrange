@@ -29,6 +29,7 @@ interface IDBSettings {
   enableAnimations?: boolean
   extrasCRTEffect?: boolean
   extrasHologramEffect?: boolean
+  extrasMetalSlugMode?: boolean
   extrasShowSpecialDays?: boolean
 }
 

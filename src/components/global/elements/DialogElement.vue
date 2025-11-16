@@ -18,7 +18,7 @@
         @click="close"
       />
     </header>
-    <div ref="dialogInner" class="dialog-inner" tabindex="-1" aria-hidden="true">
+    <div ref="dialogInner" class="dialog-inner" tabindex="-1">
       <div class="dialog-content" role="group">
         <slot name="content"></slot>
       </div>

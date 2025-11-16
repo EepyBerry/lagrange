@@ -481,6 +481,8 @@
     "action_close_toast": "Benachrichtigung schließen"
   },
   "extras": {
+    "toast_explode_success": "Planet erfolgreich zerstört!",
+    "toast_explode_failure": "Der Planet konnte nicht zerstört werden",
     "day_newyear": "Gutes Jahr!",
     "day_valentines": "Alles Gute zum Valentinstag! ❤️",
     "day_strawberry": "Es ist Erdbeertag! 🍓",

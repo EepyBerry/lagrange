@@ -481,7 +481,9 @@
     "action_close_toast": "Cwose message"
   },
   "extras": {
-    "day_newyear": "Happy New Yeaw!!! (≧∇≦)ﾉ",
+    "toast_explode_success": "OBWITEWATED pwanyet successfuwwy! ÒwÓ",
+    "toast_explode_failure": "Couwd nyot destwoy pwanyet ;;w;;",
+    "day_newyear": "Happy Nyew Yeaw!!! (≧∇≦)ﾉ",
     "day_valentines": "Happy Vawentine's Day!!! ❤️",
     "day_strawberry": "Happy Stwawbewwy Day!!! 🍓",
     "day_pi": "Happy Pi(e) Day! 🥧",

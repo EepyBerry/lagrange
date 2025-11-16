@@ -3,6 +3,7 @@ import { ref, type Ref } from 'vue'
 
 export const EXTRAS_CRT_EFFECT = ref(false)
 export const EXTRAS_HOLOGRAM_EFFECT = ref(true)
+export const EXTRAS_METAL_SLUG_MODE = ref(false)
 export const EXTRAS_SPECIAL_DAYS = ref(true)
 export const EXTRAS_CAT_MODE: Ref<boolean> = ref(false)
 
