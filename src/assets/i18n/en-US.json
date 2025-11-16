@@ -149,6 +149,8 @@
       "extras": "Extras",
       "extras_crt_effect": "CRT effect",
       "extras_hologram_effect": "Hologram effect",
+      "extras_metal_slug_mode": "METAL SLUG™ mode",
+      "extras_metal_slug_mode_warning": "Warning: uses flashing lights & animations!",
       "extras_special_days": "Show special days",
       "advanced": "Advanced Settings",
       "advanced_io": "Backup/restore IndexedDB data",
@@ -403,7 +405,9 @@
     "save_success": "Saved planet successfully!",
     "settings_import_success": "Imported settings successfully!",
     "save_partial_no_preview": "Saved planet (could not generate planet preview!)",
-    "screenshot_failure": "Failed to export screenshot!"
+    "screenshot_failure": "Failed to export screenshot!",
+    "extras_obliterate_success": "Obliterated planet successfully!",
+    "extras_obliterate_failure": "Could not destroy planet"
   },
   "tooltip": {
     "topbar_rename": "Rename planet",

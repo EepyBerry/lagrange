@@ -24,7 +24,7 @@ import { mapLocale } from './core/utils/utils'
 import { useHead } from '@unhead/vue'
 import AppToastBar from '@components/global/AppToastBar.vue'
 import { EventBus } from './core/event-bus'
-import { EXTRAS_CAT_MODE, EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, EXTRAS_SPECIAL_DAYS } from './core/extras'
+import { EXTRAS_CAT_MODE, EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, EXTRAS_METAL_SLUG_MODE, EXTRAS_SPECIAL_DAYS } from './core/extras'
 
 const i18n = useI18n()
 useHead({
@@ -60,6 +60,7 @@ onMounted(async () => {
   // Set initial global values
   EXTRAS_CRT_EFFECT.value = settings.value!.extrasCRTEffect ?? false
   EXTRAS_HOLOGRAM_EFFECT.value = settings.value!.extrasHologramEffect ?? false
+  EXTRAS_METAL_SLUG_MODE.value = settings.value!.extrasMetalSlugMode ?? false
   EXTRAS_SPECIAL_DAYS.value = settings.value!.extrasShowSpecialDays ?? true
 
   // Open init dialog if necessary

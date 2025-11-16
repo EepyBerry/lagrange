@@ -287,6 +287,17 @@
                   {{ $t('dialog.settings.extras_hologram_effect') }}:
                 </ParameterCheckbox>
                 <ParameterCheckbox
+                  id="settings-metal-slug-mode"
+                  v-model="appSettings.extrasMetalSlugMode"
+                  :true-value="true"
+                  :false-value="false"
+                >
+                  {{ $t('dialog.settings.extras_metal_slug_mode') }}:
+                </ParameterCheckbox>
+                <LgvNotification type="warn">
+                  {{  $t('dialog.settings.extras_metal_slug_mode_warning') }}
+                </LgvNotification>
+                <ParameterCheckbox
                   id="settings-special-days"
                   v-model="appSettings.extrasShowSpecialDays"
                   :true-value="true"
@@ -387,7 +398,7 @@ import ParameterCategory from '@components/global/parameters/ParameterCategory.v
 import AppClearDataConfirmDialog from '@components/codex/dialogs/ClearDataConfirmDialog.vue'
 import * as DexieService from '@/core/services/dexie.service'
 import { EventBus } from '@core/event-bus'
-import { EXTRAS_CAT_MODE, EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, EXTRAS_SPECIAL_DAYS } from '@core/extras'
+import { EXTRAS_CAT_MODE, EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, EXTRAS_METAL_SLUG_MODE, EXTRAS_SPECIAL_DAYS } from '@core/extras'
 import { saveAs } from 'file-saver'
 import { readFileSettings } from '@core/helpers/import.helper'
 import WebGPU from '@/core/capabilities/WebGPU'
@@ -414,6 +425,7 @@ const appSettings: Ref<IDBSettings> = ref({
   enableEffects: true,
   extrasCRTEffect: false,
   extrasHologramEffect: false,
+  extrasMetalSlugMode: false,
   extrasShowSpecialDays: true,
 })
 const persistStorage: Ref<boolean> = ref(false)
@@ -512,6 +524,7 @@ async function updateSettings() {
   document.documentElement.setAttribute('data-animations', appSettings.value!.enableAnimations ? 'on' : 'off')
   EXTRAS_CRT_EFFECT.value = appSettings.value!.extrasCRTEffect!
   EXTRAS_HOLOGRAM_EFFECT.value = appSettings.value!.extrasHologramEffect!
+  EXTRAS_METAL_SLUG_MODE.value = appSettings.value!.extrasMetalSlugMode!
   EXTRAS_SPECIAL_DAYS.value = appSettings.value!.extrasShowSpecialDays!
 
   await idb.settings.update(appSettings.value!.id, {
@@ -526,6 +539,7 @@ async function updateSettings() {
     enableAnimations: appSettings.value!.enableAnimations,
     extrasCRTEffect: appSettings.value!.extrasCRTEffect,
     extrasHologramEffect: appSettings.value!.extrasHologramEffect,
+    extrasMetalSlugMode: appSettings.value!.extrasMetalSlugMode,
     extrasShowSpecialDays: appSettings.value!.extrasShowSpecialDays,
   })
 }

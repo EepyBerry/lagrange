@@ -34,8 +34,8 @@
   <div v-if="planets.length > 0" id="codex-grid">
     <!-- prettier-ignore-attribute -->
     <PlanetCardElement
-      v-for="planet of planets"
-      :key="planet.id"
+      v-for="planet of planets" :key="planet.id"
+      ref="planetCardRef"
       :planet="(planet as IDBPlanet)"
       @info="openPlanetInfoDialog(planet as IDBPlanet)"
       @export="exportPlanet(planet as IDBPlanet)"
@@ -51,7 +51,7 @@
     <InlineFooter />
   </div>
   <AppPlanetInfoDialog ref="planetInfoDialogRef" />
-  <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="deleteTargetedPlanet" />
+  <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="(id) => deleteTargetedPlanet(id)" />
 </template>
 
 <script setup lang="ts">
@@ -61,7 +61,7 @@ import AppPlanetInfoDialog from '@components/codex/dialogs/PlanetInfoDialog.vue'
 import AppDeleteConfirmDialog from '@components/codex/dialogs/DeleteConfirmDialog.vue'
 import { idb, type IDBPlanet } from '@/dexie.config'
 import { useHead } from '@unhead/vue'
-import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
+import { onMounted, onUnmounted, ref, useTemplateRef, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { EventBus } from '@core/event-bus'
 import { SM_WIDTH_THRESHOLD } from '@core/globals'
@@ -72,19 +72,19 @@ import JSZip from 'jszip'
 import NewCardElement from '@/components/codex/elements/NewCardElement.vue'
 import { readFileData } from '@core/helpers/import.helper'
 import { nanoid } from 'nanoid'
-import { uwuifyPath } from '@core/extras'
+import { EXTRAS_METAL_SLUG_MODE, uwuifyPath } from '@core/extras'
 import ViewHeader from '@/components/global/ViewHeader.vue'
 import LgvButton from '@/_lib/components/LgvButton.vue'
 import LgvLink from '@/_lib/components/LgvLink.vue'
 
-const i18n = useI18n()
-const fileInput: Ref<HTMLInputElement | null> = ref(null)
 const planets: Ref<IDBPlanet[]> = ref([])
 
-const planetInfoDialogRef: Ref<{ open: (planet: IDBPlanet) => void } | null> = ref(null)
+const i18n = useI18n()
+const fileInput = useTemplateRef('fileInput')
+const planetCardRefs = useTemplateRef('planetCardRef')
+const planetInfoDialogRef = useTemplateRef('planetInfoDialogRef')
 
-const deleteTarget: Ref<IDBPlanet | null> = ref(null)
-const deleteDialogRef: Ref<{ open: (planetName: string) => void } | null> = ref(null)
+const deleteDialogRef = useTemplateRef('deleteDialogRef')
 const showInlineFooter: Ref<boolean> = ref(false)
 
 useHead({
@@ -110,7 +110,8 @@ watch(
 
 async function loadPlanets() {
   const idbPlanets = await idb.planets.orderBy('data._planetName').toArray()
-  planets.value = idbPlanets.map((pl) => ({ ...pl, data: PlanetData.createFrom(pl.data) }))
+  planets.value.splice(0)
+  planets.value.push(...idbPlanets.map((pl) => ({ ...pl, data: PlanetData.createFrom(pl.data) })))
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -206,18 +207,30 @@ async function openPlanetInfoDialog(planet: IDBPlanet) {
 }
 
 async function openDeleteConfirmDialog(planet: IDBPlanet) {
-  deleteTarget.value = planet
-  deleteDialogRef.value?.open(deleteTarget.value.data.planetName)
+  deleteDialogRef.value?.open(planet)
 }
 
-async function deleteTargetedPlanet() {
-  try {
-    await idb.planets.delete(deleteTarget.value!.id)
-    EventBus.sendToastEvent('success', 'toast.delete_success', 3000)
-  } catch (_) {
-    EventBus.sendToastEvent('warn', 'toast.delete_failure', 3000)
-  } finally {
-    await loadPlanets()
+async function deleteTargetedPlanet(id: string) {
+  const settings = await idb.settings.limit(1).first()
+  if (EXTRAS_METAL_SLUG_MODE.value && (settings!.enableAnimations && settings?.enableEffects)) {
+    await planetCardRefs.value!.find(c => c!.planet.id === id)?.obliteratePlanet()
+    try {
+      await idb.planets.delete(id)
+      EventBus.sendToastEvent('success', 'toast.extras_obliterate_success', 3000)
+    } catch (_) {
+      EventBus.sendToastEvent('warn', 'toast.extras_obliterate_failure', 3000)
+    } finally {
+      await loadPlanets()
+    }
+  } else {
+    try {
+      await idb.planets.delete(id)
+      EventBus.sendToastEvent('success', 'toast.delete_success', 3000)
+    } catch (_) {
+      EventBus.sendToastEvent('warn', 'toast.delete_failure', 3000)
+    } finally {
+      await loadPlanets()
+    }
   }
 }
 </script>
