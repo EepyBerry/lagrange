@@ -1,5 +1,5 @@
-import type { BiomeParameters } from '@/core/models/biome-parameters.model'
-import { avg, truncateTo } from '@/core/utils/math-utils'
+import type { BiomeParameters } from '@core/models/biome-parameters.model'
+import { avg, truncateTo } from '@core/utils/math-utils'
 import { Color, CubeTextureLoader, DataTexture, NearestFilter, type MinificationTextureFilter } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
@@ -144,7 +144,7 @@ function shrinkFillRect(
 
   // ---- Canvas preparation phase ----
   // Configure the target canvas and adapt the drawing rect to account for smoothing.
-  // The later must be adjusted to get crisp, exact-size rects (https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes)
+  // The latter must be adjusted to get crisp, exact-size rects (https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes)
   const ctx = canvas.getContext('2d', { willReadFrequently: true })!
   ctx.imageSmoothingEnabled = false
   ctx.clearRect(0,0,texSize,texSize)

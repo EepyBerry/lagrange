@@ -1,5 +1,5 @@
 import type { Texture } from 'three'
-import type { RingUniformData } from '@/core/tsl/materials/ring.tslmat'
+import type { RingUniformData } from '@core/tsl/materials/ring.tslmat'
 import type { RingParameters } from '../ring-parameters.model'
 import { ModelConverter } from './model-converter'
 

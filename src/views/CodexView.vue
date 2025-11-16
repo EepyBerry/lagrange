@@ -1,32 +1,36 @@
 <template>
   <span id="codex-background"></span>
-  <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
-    <AppNavigation :compact-mode="showCompactNavigation" />
-    <div id="codex-header-controls">
-      <RouterLink class="lg dark create-planet" :to="uwuifyPath('/planet-editor/new')" :title="$t('codex.$action_add')">
-        <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
-        {{ $t('codex.$action_add') }}
-      </RouterLink>
-      <hr />
-      <input ref="fileInput" type="file" accept=".lagrange" multiple hidden @change="importPlanetFile" />
-      <button
-        class="lg dark"
-        :aria-label="$t('a11y.topbar_import')"
-        :title="$t('tooltip.topbar_import')"
-        @click="openFileDialog"
-      >
-        <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
-      </button>
-      <button
-        class="lg dark"
-        :aria-label="$t('a11y.topbar_export_all')"
-        :title="$t('tooltip.topbar_export_all')"
-        @click="exportPlanets"
-      >
-        <iconify-icon icon="mingcute:folder-zip-line" width="1.5rem" aria-hidden="true" />
-      </button>
-    </div>
-  </div>
+  <ViewHeader id="codex-header">
+    <!-- file input -->
+    <input ref="fileInput" type="file" accept=".lagrange" multiple hidden @change="importPlanetFile" />
+    <LgvButton
+      variant="dark"
+      icon="mingcute:upload-line"
+      :a11y-label="$t('a11y.topbar_import')"
+      @click="openFileDialog"
+    />
+
+    <!-- new planet -->
+    <LgvLink
+      id="codex-header-controls-newplanet"
+      variant="dark"
+      link-type="internal"
+      class="contrast"
+      icon="mingcute:add-line"
+      :href="uwuifyPath('/planet-editor/new')"
+    >
+      {{ $t('codex.$action_add') }}
+    </LgvLink>
+
+    <!-- export planets -->
+    <LgvButton
+      variant="dark"
+      icon="mingcute:folder-zip-line"
+      :aria-label="$t('a11y.topbar_export_all')"
+      @click="exportPlanets"
+    />
+  </ViewHeader>
+
   <div v-if="planets.length > 0" id="codex-grid">
     <!-- prettier-ignore-attribute -->
     <PlanetCardElement
@@ -51,26 +55,27 @@
 </template>
 
 <script setup lang="ts">
-import PlanetCardElement from '@/components/elements/PlanetCardElement.vue'
-import AppNavigation from '@/components/main/AppNavigation.vue'
-import InlineFooter from '@/components/main/InlineFooter.vue'
-import AppPlanetInfoDialog from '@/components/dialogs/AppPlanetInfoDialog.vue'
-import AppDeleteConfirmDialog from '@components/dialogs/AppDeleteConfirmDialog.vue'
+import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue'
+import InlineFooter from '@components/global/InlineFooter.vue'
+import AppPlanetInfoDialog from '@components/codex/dialogs/PlanetInfoDialog.vue'
+import AppDeleteConfirmDialog from '@components/codex/dialogs/DeleteConfirmDialog.vue'
 import { idb, type IDBPlanet } from '@/dexie.config'
 import { useHead } from '@unhead/vue'
 import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { RouterLink } from 'vue-router'
-import { EventBus } from '@/core/event-bus'
-import { MD_WIDTH_THRESHOLD, SM_WIDTH_THRESHOLD } from '@/core/globals'
+import { EventBus } from '@core/event-bus'
+import { SM_WIDTH_THRESHOLD } from '@core/globals'
 import pako from 'pako'
 import { saveAs } from 'file-saver'
-import PlanetData from '@/core/models/planet-data.model'
+import PlanetData from '@core/models/planet-data.model'
 import JSZip from 'jszip'
-import NewCardElement from '@/components/elements/NewCardElement.vue'
-import { readFileData } from '@/core/helpers/import.helper'
+import NewCardElement from '@/components/codex/elements/NewCardElement.vue'
+import { readFileData } from '@core/helpers/import.helper'
 import { nanoid } from 'nanoid'
-import { uwuifyPath } from '@/core/extras'
+import { uwuifyPath } from '@core/extras'
+import ViewHeader from '@/components/global/ViewHeader.vue'
+import LgvButton from '@/_lib/components/LgvButton.vue'
+import LgvLink from '@/_lib/components/LgvLink.vue'
 
 const i18n = useI18n()
 const fileInput: Ref<HTMLInputElement | null> = ref(null)
@@ -80,7 +85,6 @@ const planetInfoDialogRef: Ref<{ open: (planet: IDBPlanet) => void } | null> = r
 
 const deleteTarget: Ref<IDBPlanet | null> = ref(null)
 const deleteDialogRef: Ref<{ open: (planetName: string) => void } | null> = ref(null)
-const showCompactNavigation: Ref<boolean> = ref(false)
 const showInlineFooter: Ref<boolean> = ref(false)
 
 useHead({
@@ -119,7 +123,6 @@ function onWindowResize() {
 }
 
 function computeResponsiveness() {
-  showCompactNavigation.value = window.innerWidth < MD_WIDTH_THRESHOLD
   showInlineFooter.value = window.innerWidth < SM_WIDTH_THRESHOLD
 }
 
@@ -219,7 +222,7 @@ async function deleteTargetedPlanet() {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 #codex-background {
   z-index: -1;
   position: fixed;
@@ -230,54 +233,19 @@ async function deleteTargetedPlanet() {
   background-repeat: repeat;
 }
 #codex-header {
-  z-index: 15;
   position: fixed;
-  backdrop-filter: blur(8px) brightness(25%);
-  inset: 0 0 auto 0;
 
-  padding: 1rem;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-
-  #codex-header-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-
-  &.compact {
-    justify-content: space-between;
-  }
-
-  a.create-planet {
-    height: 2.75rem;
-    padding: 0.5rem 1rem;
-    background: var(--lg-primary);
-    border: 1px solid var(--lg-accent);
-    border-radius: 4px;
-    text-decoration: none;
-  }
-  a.create-planet:hover {
-    background: var(--lg-button-active);
-  }
-  hr {
-    height: 1.5rem;
+  #codex-header-controls-newplanet {
+    font-size: 0.875rem;
   }
 }
 #codex-grid {
-  padding-bottom: 3.75rem;
-  margin: 4.75rem 1rem 1rem;
+  margin: 4rem 1rem 4rem;
   height: calc(100% - 4.75rem);
-  border-radius: 4px;
 
   display: grid;
-  grid-template-rows: repeat(auto-fill, 26rem);
   grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
-  gap: 1rem;
+  gap: 2rem;
 
   &.empty {
     font-style: italic;
@@ -287,6 +255,7 @@ async function deleteTargetedPlanet() {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    flex-grow: 1;
 
     span {
       padding: 0 1rem;
@@ -306,34 +275,13 @@ async function deleteTargetedPlanet() {
   #codex-background {
     background-image: url('/background/space-960w.jpg');
   }
-  #codex-header {
-    inset: auto 0;
-    padding: 0.5rem;
-    :deep(aside) {
-      left: 3.875rem;
-    }
-    #codex-header-controls {
-      justify-content: flex-end;
-    }
-  }
-  #codex-grid {
-    padding-bottom: 3.25rem;
-    margin: 3.75rem 0.5rem 0.5rem;
-  }
 }
 @media screen and (max-width: 767px) {
-  #codex-header {
-    :deep(aside) {
-      left: unset;
-      top: 3.75rem;
-    }
-  }
   #codex-background {
     background-image: url('/background/space-540w.jpg');
   }
   #codex-grid {
-    margin: 3.75rem 0.5rem 0;
-    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
   }
   #codex-footer {
     padding: 0 0.5rem 0.5rem;

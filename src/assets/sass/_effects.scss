@@ -1,11 +1,10 @@
 // ------------------------------------------------------------------------------------------------
 // Effect: CRT (greatly simplified)
 
-:root[data-effects='on'] .crt {
+.effect-crt {
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 8px;
   background: repeating-linear-gradient(
     0deg,
     var(--lg-primary-static),
@@ -15,15 +14,13 @@
   );
   background-size: 100%;
   opacity: 0.125;
-  animation: none;
-}
-:root[data-effects='on'] .crt.animated {
-  --duration: 18s;
+  
+  --duration: 30s;
   animation: crtscroll var(--duration) infinite linear forwards;
   -webkit-animation: crtscroll var(--duration) infinite linear forwards;
   -moz-animation: crtscroll var(--duration) infinite linear forwards;
 }
-.extra-hologram {
+.effect-hologram {
   img {
     filter: sepia(100%) saturate(250%) hue-rotate(180deg);
   }
@@ -57,15 +54,17 @@
 }
 
 // ------------------------------------------------------------------------------------------------
-// Disable all animations if prefers-reduced-motion is active
-// Disable all effects if data-effects is set to off
+// Accessibility changes (efefcts, animations, prefers-reduced-motion)
 
-:root[data-effects='off'] .crt {
+:root[data-effects='off'] .effect-crt {
   display: none;
+}
+:root[data-animations='off'] .effect-crt {
+  animation: none;
 }
 
 @media screen and (prefers-reduced-motion) {
-  .crt.animated {
+  .effect-crt.animated {
     animation: none;
   }
 }

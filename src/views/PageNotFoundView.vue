@@ -9,7 +9,7 @@
       <h1 v-if="msgVariant === 3" class="title">{{ $t('404.text_03') }}</h1>
       <h1 v-if="msgVariant === 4" class="title ultra">{{ $t('404.text_04') }}</h1>
       <p class="subtitle">{{ $t('404.subtext') }}</p>
-      <a class="home-link lg link-button" href="/">
+      <a class="home-link" href="/">
         <iconify-icon icon="mingcute:book-2-line" height="1.5rem" />
         {{ $t('404.link') }}
       </a>
@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import AppLogo from '@components/elements/AppLogo.vue'
+import AppLogo from '@components/global/elements/AppLogo.vue'
 import { useHead } from '@unhead/vue'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'

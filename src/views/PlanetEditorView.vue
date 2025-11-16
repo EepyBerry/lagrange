@@ -1,8 +1,6 @@
 <template>
-  <div id="editor-header" :class="{ compact: !!showCompactNavigation }">
-    <AppNavigation :compact-mode="showCompactNavigation" />
-    <PlanetInfoControls
-      :compact-mode="showCompactInfo"
+  <ViewHeader id="editor-header" class="xs-fullwidth">
+    <EditorHeaderControls
       @rename="patchMetaHead"
       @save="savePlanet"
       @copy="savePlanet(true)"
@@ -10,28 +8,27 @@
       @gltf="exportPlanet"
       @random="randPlanet"
     />
-  </div>
-  <PlanetEditorControls :compact-mode="showCompactControls" />
+    <span class="filler"></span>
+  </ViewHeader>
+  <EditorSidebarControls :compact-mode="showCompactControls" />
 
   <div id="scene-root" ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
 
-  <AppWebGLErrorDialog ref="webglErrorDialogRef" @close="redirectToCodex" />
-  <AppPlanetErrorDialog ref="planetErrorDialogRef" @close="redirectToCodex" />
-  <AppWarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
-  <AppExportProgressDialog ref="exportProgressDialogRef" />
+  <EditorErrorDialog ref="editorErrorDialogRef" @close="redirectToCodex" />
+  <WarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
+  <ExportProgressDialog ref="exportProgressDialogRef" />
 </template>
 
 <script setup lang="ts">
-import PlanetEditorControls from '@components/controls/PlanetEditorControls.vue'
-import PlanetInfoControls from '@components/controls/PlanetInfoControls.vue'
+import EditorSidebarControls from '@/components/editor/controls/EditorSidebarControls.vue'
+import EditorHeaderControls from '@/components/editor/controls/EditorHeaderControls.vue'
 import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue'
 import * as Globals from '@core/globals'
 import { useHead } from '@unhead/vue'
 import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config'
-import { EventBus } from '@/core/event-bus'
+import { EventBus } from '@core/event-bus'
 import { useI18n } from 'vue-i18n'
-import AppNavigation from '@/components/main/AppNavigation.vue'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import {
   LG_PLANET_DATA,
@@ -45,16 +42,17 @@ import {
   updateCameraRendering,
   resetPlanet,
   randomizePlanet,
-} from '@/core/services/planet-editor.service'
-import { sleep } from '@/core/utils/utils'
+} from '@core/services/planet-editor.service'
+import { sleep } from '@core/utils/utils'
 import { nanoid } from 'nanoid'
-import WebGL from 'three/addons/capabilities/WebGL.js'
-import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
-import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
-import AppWarnSaveDialog from '@/components/dialogs/AppWarnSaveDialog.vue'
-import AppExportProgressDialog from '@/components/dialogs/AppExportProgressDialog.vue'
-import { regeneratePRNGIfNecessary } from '@/core/utils/math-utils'
-import WebGPU from 'three/addons/capabilities/WebGPU.js'
+import EditorErrorDialog from '@/components/editor/dialogs/EditorInitErrorDialog.vue'
+import WarnSaveDialog from '@components/editor/dialogs/WarnSaveDialog.vue'
+import ExportProgressDialog from '@components/editor/dialogs/ExportProgressDialog.vue'
+import { regeneratePRNGIfNecessary } from '@core/utils/math-utils'
+import WebGPU from '@/core/capabilities/WebGPU'
+import * as DexieService from '@core/services/dexie.service'
+import WebGL from '@/core/capabilities/WebGL'
+import ViewHeader from '@/components/global/ViewHeader.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -65,8 +63,7 @@ const head = useHead({
 })!
 
 // Dialogs
-const webglErrorDialogRef: Ref<{ openWithError: (error: HTMLElement) => void } | null> = ref(null)
-const planetErrorDialogRef: Ref<{ openWithError: (error: string, stack?: string) => void } | null> = ref(null)
+const editorErrorDialogRef: Ref<{ openWithError: (error: string, stack?: string, isWebGPUError?: boolean) => void } | null> = ref(null)
 const warnSaveDialogRef: Ref<{ open: () => void } | null> = ref(null)
 const exportProgressDialogRef: Ref<{
   open: () => void
@@ -80,10 +77,7 @@ const $planetEntityId: Ref<string> = ref('')
 const $planetEntityPreviewDataURL: Ref<string | undefined> = ref('')
 
 // Responsiveness
-const centerInfoControls: Ref<boolean> = ref(true)
-const showCompactInfo: Ref<boolean> = ref(false)
 const showCompactControls: Ref<boolean> = ref(false)
-const showCompactNavigation: Ref<boolean> = ref(false)
 
 // THREE canvas/scene root
 const sceneRoot: Ref<HTMLCanvasElement | null> = ref(null)
@@ -111,31 +105,53 @@ onBeforeRouteLeave((_to, _from, next) => {
 })
 
 async function initThree() {
-  try {
-    if (WebGL.isWebGL2Available() || WebGPU.isAvailable()) {
+  const settings = await idb.settings.limit(1).first()
+  console.log(settings)
+
+  // Try starting with WebGPU (fallback to WebGL2 in case of failure)
+  if (settings!.renderingBackend === 'webgpu') {
+    try {
+      if (!(await WebGPU.isAvailable())) {
+        showSpinner.value = false
+        const webgpuErrorMessage = WebGPU.getErrorMessage(i18n)
+        editorErrorDialogRef.value!.openWithError(webgpuErrorMessage, undefined, true);
+        return
+      }
       await initData()
       await initCanvas()
       loadedCorrectly = true
-    } else {
-      const error = WebGL.getWebGL2ErrorMessage()
-      error.style.margin = ''
-      error.style.background = ''
-      error.style.color = ''
-      error.style.fontFamily = ''
-      error.style.fontSize = ''
-      error.style.width = ''
-      ;(error.lastChild as HTMLLinkElement).style.color = ''
-      webglErrorDialogRef.value!.openWithError(error)
+      showSpinner.value = false
+    } catch(error) {
+      if (error instanceof Error) {
+        editorErrorDialogRef.value!.openWithError(error.message, error.stack)
+      } else if (typeof error === 'string') {
+        editorErrorDialogRef.value!.openWithError(error)
+      } else {
+        editorErrorDialogRef.value!.openWithError(i18n.t('main.error.default_unknown'))
+      }
     }
-  } catch (error: unknown) {
-    console.error(error)
-    if (error instanceof Error) {
-      planetErrorDialogRef.value!.openWithError(error.message, error.stack)
-    } else if (typeof error === 'string') {
-      planetErrorDialogRef.value!.openWithError(error, undefined)
+  // Try starting with WebGL2
+  } else {
+    try {
+      if (!WebGL.isWebGL2Available()) {
+        showSpinner.value = false
+        const webglErrorMessage = WebGL.getWebGL2ErrorMessage(i18n)
+        editorErrorDialogRef.value!.openWithError(webglErrorMessage);
+        return
+      }
+      await initData()
+      await initCanvas()
+      loadedCorrectly = true
+      showSpinner.value = false
+    } catch (error) {
+      if (error instanceof Error || error instanceof DOMException) {
+        editorErrorDialogRef.value!.openWithError(error.message, error.stack)
+      } else if (typeof error === 'string') {
+        editorErrorDialogRef.value!.openWithError(error)
+      } else {
+        editorErrorDialogRef.value!.openWithError(i18n.t('main.error.default_unknown'))
+      }
     }
-  } finally {
-    showSpinner.value = false
   }
 }
 
@@ -144,9 +160,14 @@ async function saveAndRedirectToCodex() {
   redirectToCodex()
 }
 
-function redirectToCodex() {
+async function redirectToCodex(allowRendererFallback: boolean = false) {
   setPlanetEditFlag(false) // set edit flag to false to force exit
-  router.push('/codex')
+  if (allowRendererFallback) {
+    await DexieService.setRenderingBackendFallback()
+    router.go(0)
+  } else {
+    router.push('/codex')
+  }
 }
 
 async function initData() {
@@ -252,10 +273,7 @@ function onWindowResize() {
 }
 
 function computeResponsiveness() {
-  showCompactInfo.value = window.innerWidth <= Globals.XS_WIDTH_THRESHOLD
   showCompactControls.value = window.innerWidth <= Globals.SM_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
-  showCompactNavigation.value = window.innerWidth < Globals.MD_WIDTH_THRESHOLD
-  centerInfoControls.value = window.innerWidth > Globals.MD_WIDTH_THRESHOLD
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -302,35 +320,19 @@ function exportPlanet() {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 #editor-header {
-  z-index: 15;
   position: absolute;
-  inset: 0 0 auto 0;
-  margin: 1rem 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-
-  &.compact {
-    justify-content: space-between;
+  .view-header-controls {
+    gap: 0;
   }
 }
 
 #scene-root {
   box-shadow: black 5px 10px 10px;
-  z-index: 5;
 
   & > canvas {
     background: transparent;
-  }
-}
-
-@media screen and (max-width: 1199px) {
-  #editor-header {
-    margin: 0.5rem;
   }
 }
 </style>

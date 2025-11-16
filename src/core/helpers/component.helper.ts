@@ -7,10 +7,10 @@ import { type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type
 import { LensFlareEffect } from '../effects/lens-flare.effect'
 import * as Globals from '@core/globals'
 import { WebGPURenderer } from 'three/webgpu'
-import { PlanetTSLMaterial } from '@/core/tsl/materials/planet.tslmat'
-import { AtmosphereTSLMaterial } from '@/core/tsl/materials/atmosphere.tslmat'
-import { CloudsTSLMaterial } from '@/core/tsl/materials/clouds.tslmat'
-import { RingTSLMaterial } from '@/core/tsl/materials/ring.tslmat'
+import { PlanetTSLMaterial } from '@core/tsl/materials/planet.tslmat'
+import { AtmosphereTSLMaterial } from '@core/tsl/materials/atmosphere.tslmat'
+import { CloudsTSLMaterial } from '@core/tsl/materials/clouds.tslmat'
+import { RingTSLMaterial } from '@core/tsl/materials/ring.tslmat'
 import { idb } from '@/dexie.config'
 import { LayeredDataTexture } from '../utils/texture/layered-data-texture'
 import type { BiomeParameters } from '../models/biome-parameters.model'
@@ -42,7 +42,7 @@ export async function createScene(data: PlanetData, width: number, height: numbe
 
   // Make spherical before creating camera
   const spherical = creationMode === EditorSceneCreationMode.PREVIEW
-    ? new THREE.Spherical(data.initCamDistance - (data.ringsEnabled ? 0.75 : 1.5), Math.PI / 2.0, degToRad(data.initCamAngle))
+    ? new THREE.Spherical(data.initCamDistance - 1.5,Math.PI / 2.0, degToRad(data.initCamAngle))
     : new THREE.Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle))
 
   // setup scene (renderer, cam, lighting)
@@ -117,7 +117,7 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): Plane
 }
 
 export function createClouds(data: PlanetData, textureBuffer: Uint8Array): CloudsMeshData {
-  const cloudsHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
+  const cloudsHeight = data.cloudsHeight / Globals.ATMOSPHERE_SCALING_DIVIDER
   const geometry = createSphereGeometryComponent(data.planetMeshQuality, cloudsHeight)
   const texture = TextureHelper.createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
@@ -139,7 +139,7 @@ export function createClouds(data: PlanetData, textureBuffer: Uint8Array): Cloud
 export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): AtmosphereMeshData {
   const geometry = createSphereGeometryComponent(
     data.planetMeshQuality,
-    data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
+    data.atmosphereHeight / Globals.ATMOSPHERE_SCALING_DIVIDER
   )
   const tslMaterial = new AtmosphereTSLMaterial({
     sunlight: {
@@ -147,11 +147,11 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): Atmos
       intensity: data.sunLightIntensity
     },
     transform: {
-      radius: data.planetRadius + (data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER),
+      radius: data.planetRadius + (data.atmosphereHeight / Globals.ATMOSPHERE_SCALING_DIVIDER),
       surfaceRadius: data.planetRadius,
     },
     render: {
-      density: data.atmosphereDensityScale,
+      density: data.atmosphereDensityScale / Globals.ATMOSPHERE_SCALING_DIVIDER,
       intensity: data.atmosphereIntensity,
       colorMode: data.atmosphereColorMode,
       hue: data.atmosphereHue,

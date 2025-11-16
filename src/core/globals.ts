@@ -1,5 +1,4 @@
 import { Vector3 } from 'three'
-import { ref } from 'vue'
 
 // Responsiveness width thresholds
 export const XS_WIDTH_THRESHOLD = 568
@@ -12,9 +11,6 @@ export const LOCALE_MAP: { [k: string]: string } = {
   fr: 'fr-FR',
   de: 'de-DE',
 }
-
-// Accessibility
-export const A11Y_ANIMATE = ref(true)
 
 // Scene object names
 export const LG_MESH_NAME_PLANET = 'Planet'
@@ -40,7 +36,7 @@ export const AXIS_NZ = new Vector3(0, 0, -1)
 
 // Miscellaneous
 export const SUN_INIT_POS = new Vector3(0, 0, 4e3)
-export const ATMOSPHERE_HEIGHT_DIVIDER = 200.0
+export const ATMOSPHERE_SCALING_DIVIDER = 200.0
 
 // Textures
 export const TEXTURE_SIZES = {

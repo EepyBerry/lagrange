@@ -1,7 +1,7 @@
 import { clamp } from 'three/src/math/MathUtils.js'
 import { ChangeTracker, type ChangedProp } from './change-tracker.model'
 import { Vector3 } from 'three'
-import { clampedPRNG } from '@/core/utils/math-utils'
+import { clampedPRNG } from '@core/utils/math-utils'
 
 export class NoiseParameters extends ChangeTracker {
   private _frequency: number = 3

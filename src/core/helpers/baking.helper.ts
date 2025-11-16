@@ -1,9 +1,9 @@
 import * as THREE from 'three'
 import * as Globals from '@core/globals'
-import * as ComponentHelper from '@/core/helpers/component.helper'
+import * as ComponentHelper from '@core/helpers/component.helper'
 
 import type PlanetData from '@core/models/planet-data.model'
-import { renderToCanvas } from '@/core/utils/render-utils'
+import { renderToCanvas } from '@core/utils/render-utils'
 import type { WebGPURenderer } from 'three/webgpu'
 import { PlanetTSLMaterial } from '../tsl/materials/planet.tslmat'
 import { PlanetDataConverter } from '../models/converters/planet-data.converter'
@@ -76,7 +76,7 @@ export function createBakingNormalMap(data: PlanetData, heightMapTex: THREE.Text
 }
 
 export function createBakingClouds(data: PlanetData, texture: THREE.Texture): THREE.Mesh {
-  const cloudHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
+  const cloudHeight = data.cloudsHeight / Globals.ATMOSPHERE_SCALING_DIVIDER
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality, cloudHeight)
 
   const dataConverter = new CloudsDataConverter(data, texture)

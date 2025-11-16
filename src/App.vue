@@ -1,5 +1,6 @@
 <template>
   <main>
+    <span class="blur" />
     <RouterView></RouterView>
   </main>
   <AppToastBar />
@@ -13,19 +14,17 @@
 </template>
 
 <script setup lang="ts">
-import AppFooter from '@components/main/AppFooter.vue'
-import * as DexieUtils from '@/core/utils/dexie-utils'
+import AppFooter from '@components/global/AppFooter.vue'
+import * as DexieService from '@/core/services/dexie.service'
 import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
 import { onMounted, ref, type Ref } from 'vue'
-import AppInitDialog from '@components/dialogs/AppInitDialog.vue'
+import AppInitDialog from '@components/global/dialogs/InitDialog.vue'
 import { useI18n } from 'vue-i18n'
 import { mapLocale } from './core/utils/utils'
 import { useHead } from '@unhead/vue'
-import { A11Y_ANIMATE } from './core/globals'
-import AppToastBar from './components/main/AppToastBar.vue'
+import AppToastBar from '@components/global/AppToastBar.vue'
 import { EventBus } from './core/event-bus'
-import { EXTRAS_CAT_MODE, EXTRAS_HOLOGRAM_MODE, EXTRAS_SPECIAL_DAYS } from './core/extras'
-import WebGPU from 'three/examples/jsm/capabilities/WebGPU.js'
+import { EXTRAS_CAT_MODE, EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, EXTRAS_SPECIAL_DAYS } from './core/extras'
 
 const i18n = useI18n()
 useHead({
@@ -38,7 +37,7 @@ const keybinds: Ref<IDBKeyBinding[]> = ref([])
 const settings: Ref<IDBSettings | undefined> = ref(undefined)
 
 onMounted(async () => {
-  await DexieUtils.initStoragePersistence()
+  await DexieService.initStoragePersistence()
   await initDexie()
   keybinds.value = await idb.keyBindings.toArray()
   settings.value = await idb.settings.limit(1).first()
@@ -59,8 +58,8 @@ onMounted(async () => {
   }
 
   // Set initial global values
-  A11Y_ANIMATE.value = settings.value!.enableAnimations ?? true
-  EXTRAS_HOLOGRAM_MODE.value = settings.value!.extrasHologramMode ?? false
+  EXTRAS_CRT_EFFECT.value = settings.value!.extrasCRTEffect ?? false
+  EXTRAS_HOLOGRAM_EFFECT.value = settings.value!.extrasHologramEffect ?? false
   EXTRAS_SPECIAL_DAYS.value = settings.value!.extrasShowSpecialDays ?? true
 
   // Open init dialog if necessary
@@ -74,28 +73,23 @@ async function initDexie() {
   let settings = await idb.settings.limit(1).first()
   if (!settings) {
     console.debug('<Lagrange> No settings found in IndexedDB, adding defaults')
-    await DexieUtils.initDefaultSettings()
+    await DexieService.initDefaultSettings()
     settings = await idb.settings.limit(1).first()
   }
-  await DexieUtils.injectMissingSettings(settings!)
-
-  // Check WebGPU availability
-  if (!WebGPU.isAvailable()) {
-    settings = await idb.settings.limit(1).first()
-    await DexieUtils.setRenderingBackendFallback(settings!)
-  }
+  await DexieService.injectMissingSettings(settings!)
 
   // Init keybinds
   const kb = await idb.keyBindings.limit(4).toArray()
   if (kb.length === 0) {
     console.debug('<Lagrange> No keybinds found in IndexedDB, adding defaults')
-    await DexieUtils.addDefaultKeyBindings()
+    await DexieService.addDefaultKeyBindings()
   }
 
   // Init HTML data (theme, font, effects)
   document.documentElement.setAttribute('data-theme', settings!.theme ?? 'default')
   document.documentElement.setAttribute('data-font', settings!.font ?? 'default')
   document.documentElement.setAttribute('data-effects', settings!.enableEffects ? 'on' : 'off')
+  document.documentElement.setAttribute('data-animations', settings!.enableAnimations ? 'on' : 'off')
 }
 
 async function disableInitDialog() {
@@ -123,5 +117,13 @@ main {
   flex-direction: column;
   overflow: hidden;
   background: transparent;
+  .blur {
+    z-index: 1;
+    position: fixed;
+    inset: 0 -4rem;
+    box-shadow: inset 0 0 2.5rem 1.5rem var(--black);
+    pointer-events: none;
+    user-select: none;
+  }
 }
 </style>

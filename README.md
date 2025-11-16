@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/ThreeJS-r173-%23049EF4?logo=threedotjs&labelColor=%2335495E&logoColor=white">
 </p>
 
-A WebGL & WebGPU project using VueJS and ThreeJS! <br>
+A WebGL2 & WebGPU project using VueJS and ThreeJS! <br>
 Lagrange is a browser application to help you create your own planets, using procedural noise as a foundation to build upon.
 
 **🪐✨ [Check out the app here!](https://lagrange.eepyberry.me) ✨🪐**
@@ -40,10 +40,10 @@ _(**note:** this is something I am working on during my free time, which means t
 
 ## ⚠️ Requirements
 
-**IMPORTANT:** to properly run the application, [**WebGL 2.0 browser support**](https://get.webgl.org/webgl2/) is required! <br>
+**IMPORTANT:** to properly run the application, [**WebGL2 browser support**](https://get.webgl.org/webgl2/) is required! <br>
 Additionally, [**WebGPU browser support**](https://webgpureport.org/) is required to use the WebGPU rendering engine. <br>
 
-The following websites will give you more information on your WebGL & WebGPU capabilites: [**WebGL Report**](https://webglreport.com/?v=2), [**WebGPU Report**](https://webgpureport.org/)
+The following websites will give you more information on your WebGL2 & WebGPU capabilites: [**WebGL Report**](https://webglreport.com/?v=2), [**WebGPU Report**](https://webgpureport.org/)
 
 Please check both of them thoroughly before submitting an issue, thanks! <3
 
@@ -104,9 +104,9 @@ This project is heavily inspired by the awesome projects below:
 **Special thanks** to the awesome people below, without whom this project would likely not exist:
 
 <ul>
-  <li>(pre-0.5) Three.js extensions: <a href=\"https://github.com/FarazzShaikh\" target=\"\"><b>Faraz Shaikh</b></a> (CustomShaderMaterial)</li>
-  <li>Main GLSL code snippets: <a href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)</li>
-  <li>Miscellaneous GLSL code: <a href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)</li>
+  <li>(pre-0.5) Three.js extensions: <a class=\"lgv\" href=\"https://github.com/FarazzShaikh\" target=\"\"><b>Faraz Shaikh</b></a> (CustomShaderMaterial)</li>
+  <li>Main GLSL code snippets: <a class=\"lgv\" href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a class=\"lgv\" href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a class=\"lgv\" href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)</li>
+  <li>Miscellaneous GLSL code: <a class=\"lgv\" href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)</li>
 </ul>
 
 ## 📓 Licensing

@@ -2,14 +2,14 @@ import { ref, type Ref } from 'vue'
 import * as THREE from 'three'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import * as Globals from '@core/globals'
-import * as ComponentHelper from '@/core/helpers/component.helper'
-import * as BakingHelper from '@/core/helpers/baking.helper'
+import * as ComponentHelper from '@core/helpers/component.helper'
+import * as BakingHelper from '@core/helpers/baking.helper'
 import { EditorSceneCreationMode, type BakingTarget, type EditorSceneData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
-import { regeneratePRNGIfNecessary } from '@/core/utils/math-utils'
+import { regeneratePRNGIfNecessary } from '@core/utils/math-utils'
 import * as ExportHelper from '../helpers/export.helper'
 import { idb } from '@/dexie.config'
-import { sleep } from '@/core/utils/utils'
+import { sleep } from '@core/utils/utils'
 import * as UniformHelper from '../helpers/uniform.helper'
 import * as SceneHelper from '../helpers/scene.helper'
 import * as PreviewHelper from '../helpers/preview.helper'
@@ -130,7 +130,7 @@ function updateScene() {
 export function disposeScene() {
   watchForPlanetUpdates = false
   console.debug('<Lagrange> Clearing scene... ')
-  SceneHelper.disposeEditorScene(LG_SCENE_DATA)
+  SceneHelper.disposeScene(LG_SCENE_DATA)
   UniformHelper.clearUniformUpdateMap()
   console.debug('<Lagrange> ...done!')
 }
@@ -149,6 +149,8 @@ export async function randomizePlanet() {
 
 export async function resetPlanet() {
   LG_PLANET_DATA.value.reset()
+  LG_SCENE_DATA.planet.biomeLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams)
+  LG_SCENE_DATA.planet.biomeEmissiveLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams)
 }
 
 export async function takePlanetScreenshot() {

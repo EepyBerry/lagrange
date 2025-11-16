@@ -1,8 +1,8 @@
-.lg.floating {
+.floating {
   visibility: hidden; // will be overridden
   background: var(--lg-panel);
   border: 1px solid var(--lg-accent);
-  border-radius: 4px;
+  border-radius: 2px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -32,11 +32,11 @@
     }
   }
 
-  button.lg {
+  button {
     border: none;
     padding: 0 0.5rem;
   }
-  button.lg.dark {
+  button.dark {
     min-width: 2.5rem;
     min-height: 2.5rem;
     border: none;
@@ -47,21 +47,18 @@
 }
 
 @media screen and (max-width: 1023px) {
-  .lg.floating {
-    font-size: 0.875rem;
-
+  .floating {
     .floating-content {
-      input.lg {
+      input {
         height: 2rem;
         font-size: 1rem;
       }
     }
 
-    button.lg {
-      font-size: 0.875rem;
+    button {
       height: 2.5rem;
     }
-    button.lg.dark {
+    button.dark {
       font-size: 1rem;
       height: 2.5rem;
     }

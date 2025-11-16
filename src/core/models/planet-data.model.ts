@@ -1,6 +1,6 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
-import { ColorMode, GradientMode, PlanetType } from '@core/types'
-import { clampedPRNG, isNumeric } from '@/core/utils/math-utils'
+import { ColorMode, GradientMode, PlanetClass, PlanetType } from '@core/types'
+import { clampedPRNG, isNumeric } from '@core/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeTracker } from './change-tracker.model'
@@ -117,6 +117,7 @@ export default class PlanetData extends ChangeTracker {
   // --------------------------------------------------
 
   private _planetType: PlanetType = PlanetType.PLANET
+  private _planetClass: PlanetClass = PlanetClass.INDETERMINATE
   private _planetMeshQuality: number
 
   private _planetRadius: number
@@ -141,6 +142,13 @@ export default class PlanetData extends ChangeTracker {
   public set planetType(ptype: PlanetType) {
     this._planetType = ptype
     this.markForChange('_planetType')
+  }
+  public get planetClass(): PlanetClass {
+    return this._planetClass
+  }
+  public set planetClass(value: PlanetClass) {
+    this._planetClass = value
+    this.markForChange('_planetClass')
   }
   public get planetMeshQuality() {
     return this._planetMeshQuality
@@ -549,6 +557,7 @@ export default class PlanetData extends ChangeTracker {
 
     // Planet & Rendering
     this._planetType = PlanetType.PLANET
+    this._planetClass = PlanetClass.INDETERMINATE
     this._planetMeshQuality = 64.0
     this._planetRadius = 1.0
     this._planetAxialTilt = -15.0
@@ -682,6 +691,7 @@ export default class PlanetData extends ChangeTracker {
 
     // Planet & Rendering
     this.planetType = data._planetType ?? PlanetType.PLANET
+    this.planetClass = data._planetClass ?? PlanetClass.INDETERMINATE
     this.planetRadius = data._planetRadius ?? 1.0
     this.planetAxialTilt = data._planetAxialTilt ?? 15.0
     this.planetRotation = data._planetRotation ?? 0.0
@@ -743,7 +753,7 @@ export default class PlanetData extends ChangeTracker {
         )
         b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity
         return b
-      })
+      }),
     )
 
     // Clouds
@@ -808,7 +818,8 @@ export default class PlanetData extends ChangeTracker {
     this.ambLightIntensity = clampedPRNG(0, 1)
 
     // Planet & Rendering
-    this.planetType = Math.round(clampedPRNG(0, 1)) as PlanetType
+    this.planetType = Math.round(clampedPRNG(0, 2)) as PlanetType
+    this.planetClass = Math.round(clampedPRNG(0, 9)) as PlanetClass
     this.planetRadius = clampedPRNG(0.5, 1)
     this.planetAxialTilt = clampedPRNG(-180, 180)
     this.planetRotation = clampedPRNG(0, 360)
@@ -891,6 +902,10 @@ export default class PlanetData extends ChangeTracker {
   }
   public findBiomeIndexById(id: string) {
     return this._biomesParams.findIndex((b) => b.id === id)
+  }
+
+  public findOutermostRingRadius() {
+    return Math.max(...this._ringsParams.map((r) => r.outerRadius))
   }
 
   // --------------------------------------------------

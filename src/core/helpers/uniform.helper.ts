@@ -76,7 +76,7 @@ function registerPlanetRenderingDataUpdates(
     planetGroup.scale.setScalar(v)
     planet.uniforms!.radius.value = v
     atmosphere.uniforms!.transform.surfaceRadius.value = v
-    atmosphere.uniforms!.transform.radius.value = v + (data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER)
+    atmosphere.uniforms!.transform.radius.value = v + (data.atmosphereHeight / Globals.ATMOSPHERE_SCALING_DIVIDER)
   })
   UNIFORM_UPDATE_MAP.value.set('_planetAxialTilt', () => {
     const v = degToRad(isNaN(data.planetAxialTilt) ? 0 : data.planetAxialTilt)
@@ -225,10 +225,10 @@ function registerCloudDataUpdates(data: PlanetData, clouds: CloudsMeshData): voi
 function registerAtmosphereDataUpdates(data: PlanetData, atmosphere: AtmosphereMeshData): void {
   UNIFORM_UPDATE_MAP.value.set('_atmosphereEnabled', () => atmosphere.mesh!.visible = data.atmosphereEnabled)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereHeight',  () => {
-    const atmosHeight = data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
+    const atmosHeight = data.atmosphereHeight / Globals.ATMOSPHERE_SCALING_DIVIDER
     atmosphere.uniforms!.transform.radius.value = data.planetRadius + atmosHeight
   })
-  UNIFORM_UPDATE_MAP.value.set('_atmosphereDensityScale', () =>  atmosphere.uniforms!.render.density.value = data.atmosphereDensityScale / Globals.ATMOSPHERE_HEIGHT_DIVIDER)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereDensityScale', () =>  atmosphere.uniforms!.render.density.value = data.atmosphereDensityScale / Globals.ATMOSPHERE_SCALING_DIVIDER)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereIntensity',    () =>  atmosphere.uniforms!.render.intensity.value = data.atmosphereIntensity)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereColorMode',    () =>  atmosphere.uniforms!.render.colorMode.value = data.atmosphereColorMode)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereHue',          () =>  atmosphere.uniforms!.render.hue.value = data.atmosphereHue)

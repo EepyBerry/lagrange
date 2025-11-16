@@ -40,7 +40,23 @@ export enum ShaderFileType {
 // ----------------------------------- Editor types ---------------------------------
 export enum PlanetType {
   PLANET,
-  STAR,
+  MOON,
+  GASGIANT,
+}
+export enum PlanetClass {
+  PLANET_TELLURIC,
+  PLANET_ICE,
+  PLANET_OCEAN,
+  PLANET_TROPICAL,
+  PLANET_ARID,
+  PLANET_CHTHONIAN,
+  PLANET_MAGMATIC,
+  MOON_ROCKY,
+  MOON_ICE,
+  MOON_CHTHONIAN,
+  GASGIANT_COLD,
+  GASGIANT_HOT,
+  INDETERMINATE,
 }
 
 export enum ColorMode {
