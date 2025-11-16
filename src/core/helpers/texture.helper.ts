@@ -99,7 +99,7 @@ export function fillBiomeEmissivityLayer(biome: BiomeParameters, canvas: Offscre
   const texColor = new Color('#000000')
   texColor.g = (biome.emissiveOverride ? biome.emissiveIntensity : biome.parentEmissiveIntensity) / 10.0
   // Early return if smoothness is zero
-  if (biome.smoothness <= Number.EPSILON) {
+  if (biome.smoothness <= 1e-4) {
     fillRect(canvas, biomeRect, biome.color)
     return
   }
