@@ -9,7 +9,7 @@
   >
     <template #title>
       <iconify-icon icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
-      {{ $t('dialog.delete.$title', { planet }) }}
+      {{ $t('dialog.delete.$title', { planet: planet?.data.planetName ?? 'PLANET_NAME' }) }}
     </template>
     <template #content>
       <div class="delete-text">
@@ -38,28 +38,29 @@
 </template>
 <script setup lang="ts">
 import LgvButton from '@/_lib/components/LgvButton.vue';
+import type { IDBPlanet } from '@/dexie.config';
 import DialogElement from '@components/global/elements/DialogElement.vue'
 import { ref, type Ref } from 'vue'
 
-const planet = ref('')
+const planet: Ref<IDBPlanet | null> = ref(null)
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
 
 const $emit = defineEmits(['confirm'])
 defineExpose({
-  open: (p: string) => {
+  open: (p: IDBPlanet) => {
     planet.value = p
     dialogRef.value?.open()
   },
 })
 
 function cancelAndClose() {
-  planet.value = ''
+  planet.value = null
   dialogRef.value?.close()
 }
 
 function confirmAndClose() {
-  $emit('confirm')
-  planet.value = ''
+  $emit('confirm', planet.value!.id)
+  planet.value = null
   dialogRef.value?.close()
 }
 </script>

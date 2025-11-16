@@ -93,7 +93,7 @@ const planetRadius = ref($props.planet.data.planetRadius*100.0 + '%')
 const obliterationDisableControls = ref(false)
 const obliterationHidePlanetImage = ref(false)
 
-defineExpose({ obliteratePlanet })
+defineExpose({ planet: $props.planet, obliteratePlanet })
 defineEmits(['info', 'export', 'delete'])
 onMounted(() => setTimeout(() => cardRoot.value!.style.opacity = '1'))
 

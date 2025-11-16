@@ -36,6 +36,7 @@ defineExpose({ doEffect: async () => {
   await sleep($props.lgDelay);
   largeExplosionRef.value!.src = largeExplosionSrc
   $emit('obliteration')
+  await sleep(1500)
 }})
 
 </script>

@@ -34,12 +34,12 @@
   <div v-if="planets.length > 0" id="codex-grid">
     <!-- prettier-ignore-attribute -->
     <PlanetCardElement
-      v-for="(planet, idx) of planets" :key="planet.id"
+      v-for="planet of planets" :key="planet.id"
       ref="planetCardRef"
       :planet="(planet as IDBPlanet)"
       @info="openPlanetInfoDialog(planet as IDBPlanet)"
       @export="exportPlanet(planet as IDBPlanet)"
-      @delete="openDeleteConfirmDialog(idx, planet as IDBPlanet)"
+      @delete="openDeleteConfirmDialog(planet as IDBPlanet)"
     />
     <NewCardElement />
   </div>
@@ -51,7 +51,7 @@
     <InlineFooter />
   </div>
   <AppPlanetInfoDialog ref="planetInfoDialogRef" />
-  <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="deleteTargetedPlanet" />
+  <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="(id) => deleteTargetedPlanet(id)" />
 </template>
 
 <script setup lang="ts">
@@ -76,7 +76,6 @@ import { EXTRAS_METAL_SLUG_MODE, uwuifyPath } from '@core/extras'
 import ViewHeader from '@/components/global/ViewHeader.vue'
 import LgvButton from '@/_lib/components/LgvButton.vue'
 import LgvLink from '@/_lib/components/LgvLink.vue'
-import { sleep } from '@/core/utils/utils'
 
 const planets: Ref<IDBPlanet[]> = ref([])
 
@@ -85,8 +84,7 @@ const fileInput = useTemplateRef('fileInput')
 const planetCardRefs = useTemplateRef('planetCardRef')
 const planetInfoDialogRef = useTemplateRef('planetInfoDialogRef')
 
-const deleteTarget: Ref<{ cardIndex: number, planet: IDBPlanet } | null> = ref(null)
-const deleteDialogRef: Ref<{ open: (planetName: string) => void } | null> = ref(null)
+const deleteDialogRef = useTemplateRef('deleteDialogRef')
 const showInlineFooter: Ref<boolean> = ref(false)
 
 useHead({
@@ -112,7 +110,8 @@ watch(
 
 async function loadPlanets() {
   const idbPlanets = await idb.planets.orderBy('data._planetName').toArray()
-  planets.value = idbPlanets.map((pl) => ({ ...pl, data: PlanetData.createFrom(pl.data) }))
+  planets.value.splice(0)
+  planets.value.push(...idbPlanets.map((pl) => ({ ...pl, data: PlanetData.createFrom(pl.data) })))
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -207,27 +206,25 @@ async function openPlanetInfoDialog(planet: IDBPlanet) {
   planetInfoDialogRef.value?.open(planet)
 }
 
-async function openDeleteConfirmDialog(cardIndex: number, planet: IDBPlanet) {
-  deleteTarget.value = { cardIndex, planet }
-  deleteDialogRef.value?.open(deleteTarget.value.planet.data.planetName)
+async function openDeleteConfirmDialog(planet: IDBPlanet) {
+  deleteDialogRef.value?.open(planet)
 }
 
-async function deleteTargetedPlanet() {
+async function deleteTargetedPlanet(id: string) {
   if (EXTRAS_METAL_SLUG_MODE.value) {
     console.log('obliteration')
-    await planetCardRefs.value?.at(deleteTarget.value!.cardIndex)!.obliteratePlanet()
+    await planetCardRefs.value!.find(c => c!.planet.id === id)?.obliteratePlanet()
     try {
-      await idb.planets.delete(deleteTarget.value!.planet.id)
+      await idb.planets.delete(id)
       EventBus.sendToastEvent('success', 'toast.extras_obliterate_success', 3000)
     } catch (_) {
       EventBus.sendToastEvent('warn', 'toast.extras_obliterate_failure', 3000)
     } finally {
-      await sleep(1500)
       await loadPlanets()
     }
   } else {
     try {
-      await idb.planets.delete(deleteTarget.value!.planet.id)
+      await idb.planets.delete(id)
       EventBus.sendToastEvent('success', 'toast.delete_success', 3000)
     } catch (_) {
       EventBus.sendToastEvent('warn', 'toast.delete_failure', 3000)
