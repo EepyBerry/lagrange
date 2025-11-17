@@ -36,7 +36,7 @@ export class LayeredDataTexture<DataObject> {
     this._workCanvas = new OffscreenCanvas(width, height)
     this._texture = new DataTexture(null, width, height)
 
-    dataObjs.forEach(d => this.addLayer(d))
+    dataObjs.forEach((d) => this.addLayer(d))
     this.updateTexture()
   }
 
@@ -55,6 +55,16 @@ export class LayeredDataTexture<DataObject> {
     this._layers.toReversed().forEach((layer) => ctx.drawImage(layer.canvas, 0, 0))
     this._texture.image = ctx.getImageData(0, 0, this._width, this._height)
     this._texture.needsUpdate = true
+  }
+
+  public updateAllLayers(data: DataObject[]) {
+    if (data.length !== this._layers.length) {
+      console.warn(
+        `Layer count (${this._layers.length}) does not match data count (${data.length})! Please report this on GitHub if you see this message.`,
+      )
+    }
+    this._layers.forEach((layer, i) => this._layerDrawFunc(data[i], layer.canvas))
+    this.updateTexture()
   }
 
   public updateLayer(index: number, data: DataObject) {
@@ -92,7 +102,7 @@ export class LayeredDataTexture<DataObject> {
 
   public reset(dataObjs?: DataObject[]) {
     this.layers.splice(0)
-    dataObjs?.forEach(d => this.addLayer(d))
+    dataObjs?.forEach((d) => this.addLayer(d))
     this.updateTexture()
   }
 }
