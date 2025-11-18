@@ -21,6 +21,7 @@ import {
 } from 'three/tsl'
 import type { UniformNumberNode, UniformVector3Node } from '../tsl-types'
 import type { Node } from 'three/webgpu'
+import { ATMOSPHERE_SCALING_DIVIDER } from '@/core/globals'
 
 const MAX = 10000
 const NUM_OUT_SCATTER = 2
@@ -62,7 +63,7 @@ export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<N
   b.mulAssign(sqrt(b))
   b.mulAssign(add(2.0, gg))
 
-  return div(3.0 / 8.0, PI)
+  return div(1.5, PI)
     .mul(a)
     .div(b)
 }).setLayout({
@@ -81,7 +82,7 @@ export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<N
 // g : 0
 // F = 3/16PI * ( 1 + c^2 )
 export const computeRayleigh = /*@__PURE__*/ Fn(([i_cc]: ShaderNodeObject<Node>[]) => {
-  return div(3.0 / 16.0, PI).mul(add(1.0, i_cc))
+  return div(0.75, PI).mul(add(1.0, i_cc))
 }).setLayout({
   name: 'LG_ATMOS_computeRayleigh',
   type: 'float',
@@ -95,16 +96,13 @@ export const computeDensity = /*@__PURE__*/ Fn(
     UniformNumberNode,
     UniformNumberNode,
   ]) => {
-    const actualScaleHeight = float(8500.0).toVar('actualScaleHeight') // The scale height on Earth in meters
+    const actualScaleHeight = float(ATMOSPHERE_SCALING_DIVIDER).toVar('actualScaleHeight')
     const scale = float(i_density.div(actualScaleHeight)).toVar('scale') // Scaling factor based on the gap
     const altitude = float(length(i_p).sub(i_surfaceRadius)).toVar('altitude')
 
     // Initial density at the surface (sea level). Set this to your desired value.
     // Earth's air density at sea level is approximately 1.225 kg/m^3
-    const rho_0 = float(20.0).toVar('rho_0')
-
-    //TBD, why does it looks better with these tunings?
-    rho_0.mulAssign(0.08125)
+    const rho_0 = float(i_density).mul(actualScaleHeight).toVar('rho_0')
 
     // Use exponential decay formula to calculate density
     const rho = float(rho_0.mul(exp(max(altitude, 0.0).negate().div(actualScaleHeight.mul(scale))))).toVar('rho')
@@ -129,16 +127,16 @@ export const optic = /*@__PURE__*/ Fn(
     UniformNumberNode,
     UniformNumberNode,
   ]) => {
-    const s = vec3(i_q.sub(i_p).div(float(NUM_OUT_SCATTER))).toVar('s')
-    const v = vec3(i_p.add(s.mul(0.5))).toVar('v')
+    const stepValue = vec3(i_q.sub(i_p).div(float(NUM_OUT_SCATTER))).toVar('s')
+    const v = vec3(i_p.add(stepValue.mul(0.5))).toVar('v')
     const sum = float(0.0).toVar('sum')
 
     Loop({ start: int(0), end: NUM_OUT_SCATTER, condition: '<' }, () => {
       sum.addAssign(computeDensity(v, i_ph, i_surfaceRadius, i_density))
-      v.addAssign(s)
+      v.addAssign(stepValue)
     })
 
-    sum.mulAssign(length(s))
+    sum.mulAssign(length(stepValue))
     return sum
   },
 ).setLayout({

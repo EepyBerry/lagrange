@@ -106,7 +106,6 @@ onBeforeRouteLeave((_to, _from, next) => {
 
 async function initThree() {
   const settings = await idb.settings.limit(1).first()
-  console.log(settings)
 
   // Try starting with WebGPU (fallback to WebGL2 in case of failure)
   if (settings!.renderingBackend === 'webgpu') {

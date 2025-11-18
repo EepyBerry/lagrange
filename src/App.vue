@@ -1,6 +1,6 @@
 <template>
   <main>
-    <span class="blur" />
+    <span v-if="$route.path.includes('/codex')" class="blur" />
     <RouterView></RouterView>
   </main>
   <AppToastBar />
