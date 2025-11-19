@@ -129,7 +129,7 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
       If(this.uniforms.render.colorMode.equal(int(2)), () => {
         colorNode.assign(IShifted.mul(tint).mul(this.uniforms.render.intensity))
       })
-      //return vec4(linearToSRGB(colorNode.rgb), colorNode.a)
+      colorNode.a.clampAssign(0.0, 1.0)
       return colorNode
     }).setLayout({
       name: 'fragmentNode',
