@@ -76,7 +76,7 @@ export function createBakingNormalMap(data: PlanetData, heightMapTex: THREE.Text
 }
 
 export function createBakingClouds(data: PlanetData, texture: THREE.Texture): THREE.Mesh {
-  const cloudHeight = data.cloudsHeight / Globals.ATMOSPHERE_SCALING_DIVIDER
+  const cloudHeight = data.cloudsHeight
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality, cloudHeight)
 
   const dataConverter = new CloudsDataConverter(data, texture)

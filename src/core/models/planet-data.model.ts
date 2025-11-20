@@ -461,7 +461,7 @@ export default class PlanetData extends ChangeTracker {
     return this._atmosphereHeight
   }
   public set atmosphereHeight(value: number) {
-    this._atmosphereHeight = clamp(value, 1.0, 8.0)
+    this._atmosphereHeight = clamp(value, 0.0, 0.05)
     this.markForChange('_atmosphereHeight')
   }
   public get atmosphereDensityScale(): number {
@@ -553,7 +553,7 @@ export default class PlanetData extends ChangeTracker {
     this._sunLightColor = new Color(0xfff6e8)
     this._sunLightIntensity = 10.0
     this._ambLightColor = new Color(0xffffff)
-    this._ambLightIntensity = 0.02
+    this._ambLightIntensity = 0.0
 
     // Planet & Rendering
     this._planetType = PlanetType.PLANET
@@ -644,7 +644,7 @@ export default class PlanetData extends ChangeTracker {
     // Clouds
     this._cloudsEnabled = true
     this._cloudsRotation = 0.0
-    this._cloudsHeight = 1.0
+    this._cloudsHeight = 1.005
     this._cloudsShowWarping = false
     this._cloudsShowDisplacement = false
     this._cloudsDisplacement = new DisplacementParameters(this._changedProps, '_cloudsDisplacement', 2.0, 0.2, 2.0, 6)
@@ -658,9 +658,9 @@ export default class PlanetData extends ChangeTracker {
 
     // Atmosphere
     this._atmosphereEnabled = true
-    this._atmosphereHeight = 8.0
-    this._atmosphereDensityScale = 3.0
-    this._atmosphereIntensity = 2.0
+    this._atmosphereHeight = 0.015
+    this._atmosphereDensityScale = 1.25
+    this._atmosphereIntensity = 1.5
     this._atmosphereColorMode = ColorMode.REALISTIC
     this._atmosphereHue = 0.0
     this._atmosphereTint = new Color(0xffffff)

@@ -83,9 +83,8 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
       const eye = vec3(cameraPosition).toVar('eye')
       const rayDir = rayDirection(modelWorldMatrix, posGeo, eye).toVar('rayDir')
       const sunglightDir = vec3(normalize(this.uniforms.sunlight.position.sub(posWorld.xyz))).toVar('sunlightDir')
+      
       const e = vec2(rayVsSphere(eye, rayDir, this.uniforms.transform.radius)).toVar('e')
-
-      // if e.X > e.Y, something went horribly wrong so exit early
       If(e.x.greaterThan(e.y), () => Discard())
 
       // find if the pixel is part of the surface
