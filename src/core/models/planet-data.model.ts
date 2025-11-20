@@ -658,8 +658,8 @@ export default class PlanetData extends ChangeTracker {
 
     // Atmosphere
     this._atmosphereEnabled = true
-    this._atmosphereHeight = 0.015
-    this._atmosphereDensityScale = 1.25
+    this._atmosphereHeight = 0.025
+    this._atmosphereDensityScale = 3.0
     this._atmosphereIntensity = 1.5
     this._atmosphereColorMode = ColorMode.REALISTIC
     this._atmosphereHue = 0.0
