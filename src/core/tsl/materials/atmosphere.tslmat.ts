@@ -2,15 +2,13 @@ import { Color, NodeMaterial, type Vector3 } from 'three/webgpu'
 import type { TSLMaterial } from './tsl-material'
 import type { UniformColorNode, UniformNumberNode, UniformVector3Node } from '../tsl-types'
 import {
-  cameraProjectionMatrix,
-  cameraProjectionMatrixInverse,
-  cameraViewMatrix,
-  div,
+  cameraPosition,
+  Discard,
   Fn,
   If,
   int,
   min,
-  modelViewMatrix,
+  modelWorldMatrix,
   normalize,
   PI,
   positionGeometry,
@@ -20,9 +18,8 @@ import {
   vec3,
   vec4,
 } from 'three/tsl'
-import { applyInScatter, rayVsSphere } from '../utils/atmosphere-utils'
+import { applyInScatter, rayDirection, rayVsSphere } from '../utils/atmosphere-utils'
 import { shiftHue, tintToMatrix, whitescale } from '../utils/color-utils'
-import { inverseMat4 } from '../utils/math-utils'
 
 export type AtmosphereData = {
   sunlight: {
@@ -83,22 +80,13 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
 
   buildMaterial(): NodeMaterial {
     const fragmentNode = Fn(([posGeo, posWorld]: [UniformVector3Node, UniformVector3Node]) => {
-      // calculate rays
-      const clipSpacePos = cameraProjectionMatrix.mul(modelViewMatrix).mul(vec4(posGeo, 1.0)).toVar('clipSpacePos')
-      const ndc = div(clipSpacePos.xyz, clipSpacePos.w).toVar('ndc')
-      const clipRay = vec4(ndc.x, ndc.y, -1.0, 1.0).toVar('clipRay')
-      const inverseRay = cameraProjectionMatrixInverse.mul(clipRay).toVar('inverseRay')
-      const viewRay = vec3(inverseRay.x, inverseRay.y, -1.0).toVar('viewRay')
-
-      // calculate directions & e
-      const worldRay = vec4(inverseMat4(cameraViewMatrix).mul(vec4(viewRay, 0.0))).toVar('worldRay')
-      const rayDir = vec3(normalize(worldRay.xyz)).toVar('rayDir')
-      const eye = vec3(posWorld.xyz).toVar('eye')
+      const eye = vec3(cameraPosition).toVar('eye')
+      const rayDir = rayDirection(modelWorldMatrix, posGeo, eye).toVar('rayDir')
       const sunglightDir = vec3(normalize(this.uniforms.sunlight.position.sub(posWorld.xyz))).toVar('sunlightDir')
       const e = vec2(rayVsSphere(eye, rayDir, this.uniforms.transform.radius)).toVar('e')
 
       // if e.X > e.Y, something went horribly wrong so exit early
-      If(e.x.greaterThan(e.y), () => vec4(0.0))
+      If(e.x.greaterThan(e.y), () => Discard())
 
       // find if the pixel is part of the surface
       const f = vec2(rayVsSphere(eye, rayDir, this.uniforms.transform.surfaceRadius)).toVar('f')

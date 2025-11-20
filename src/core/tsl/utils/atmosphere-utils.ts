@@ -18,6 +18,9 @@ import {
   Loop,
   int,
   vec4,
+  negate,
+  mat4,
+  normalize,
 } from 'three/tsl'
 import type { UniformNumberNode, UniformVector3Node } from '../tsl-types'
 import type { Node } from 'three/webgpu'
@@ -26,6 +29,26 @@ import { ATMOSPHERE_SCALING_DIVIDER } from '@/core/globals'
 const MAX = 10000
 const NUM_OUT_SCATTER = 2
 const NUM_IN_SCATTER = 10
+
+/**
+ * Camera-to-atmosphere ray direction calculation
+ */
+export const rayDirection = /*@__PURE__*/ Fn(
+  ([i_modelWorldMatrix, i_position, i_camPosition]: ShaderNodeObject<Node>[]) => {
+    const m = mat4(i_modelWorldMatrix).toVar('m')
+    const pos = vec3(i_position).toVar('pos')
+    const ray = m.mul(pos).sub(vec4(i_camPosition, 1.0))
+    return normalize(ray.toVec3())
+  },
+).setLayout({
+  name: 'LG_ATMOS_rayDirection',
+  type: 'vec3',
+  inputs: [
+    { name: 'i_modelWorldMatrix', type: 'mat4' },
+    { name: 'i_position', type: 'vec3' },
+    { name: 'i_camPosition', type: 'vec3' },
+  ],
+})
 
 /**
  * Ray & sphere intersection function
@@ -38,7 +61,7 @@ export const rayVsSphere = /*@__PURE__*/ Fn(([i_position, i_direction, i_r]: Sha
   If(d.lessThan(0.0), () => vec2(MAX, float(MAX).negate()))
 
   d.assign(sqrt(d))
-  return vec2(b.negate().sub(d), b.negate().add(d))
+  return vec2(negate(b).sub(d), negate(b).add(d))
 }).setLayout({
   name: 'LG_ATMOS_rayVsSphere',
   type: 'vec2',
@@ -55,7 +78,7 @@ export const rayVsSphere = /*@__PURE__*/ Fn(([i_position, i_direction, i_r]: Sha
 // g : ( -0.75, -0.999 )
 //      3 * ( 1 - g^2 )               1 + c^2
 // F = ----------------- * -------------------------------
-//      8pi * ( 2 + g^2 )     ( 1 + g^2 - 2 * g * c )^(3/2)
+//      1.5 * ( 2 + g^2 )     ( 1 + g^2 - 2 * g * c )^(3/2)
 export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<Node>[]) => {
   const gg = float(i_g.mul(i_g)).toVar('gg')
   const a = float(sub(1.0, gg).mul(add(1.0, i_cc))).toVar('a')
@@ -63,9 +86,7 @@ export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<N
   b.mulAssign(sqrt(b))
   b.mulAssign(add(2.0, gg))
 
-  return div(1.5, PI)
-    .mul(a)
-    .div(b)
+  return div(1.5, PI).mul(a).div(b)
 }).setLayout({
   name: 'LG_ATMOS_computeMie',
   type: 'float',
@@ -80,9 +101,9 @@ export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<N
  * Rayleigh function
  */
 // g : 0
-// F = 3/16PI * ( 1 + c^2 )
+// F = 3/4 * ( 1 + c^2 )
 export const computeRayleigh = /*@__PURE__*/ Fn(([i_cc]: ShaderNodeObject<Node>[]) => {
-  return div(0.75, PI).mul(add(1.0, i_cc))
+  return float(0.75).mul(add(1.0, i_cc))
 }).setLayout({
   name: 'LG_ATMOS_computeRayleigh',
   type: 'float',
