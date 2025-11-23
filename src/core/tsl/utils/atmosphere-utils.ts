@@ -75,7 +75,7 @@ export const rayVsSphere = /*@__PURE__*/ Fn(([i_position, i_direction, i_r]: Sha
 // g : ( -0.75, -0.999 )
 //      3 * ( 1 - g^2 )               1 + c^2
 // F = ----------------- * -------------------------------
-//      1.5 * ( 2 + g^2 )     ( 1 + g^2 - 2 * g * c )^(3/2)
+//  (8 * PI/3) * (2 + g^2)   (1 + g^2 - 2 * g * c)^(3/2)
 export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<Node>[]) => {
   const gg = float(i_g.mul(i_g)).toVar('gg')
   const a = float(sub(1.0, gg).mul(add(1.0, i_cc))).toVar('a')
@@ -83,7 +83,9 @@ export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<N
   b.mulAssign(sqrt(b))
   b.mulAssign(add(2.0, gg))
 
-  return float(1.5).mul(a).div(b)
+  return float((8 * Math.PI) / 3.0)
+    .mul(a)
+    .div(b)
 }).setLayout({
   name: 'LG_ATMOS_computeMie',
   type: 'float',
