@@ -446,6 +446,8 @@ export default class PlanetData extends ChangeTracker {
   private _atmosphereColorMode: number
   private _atmosphereHue: number
   private _atmosphereTint: Color
+  // Advanced values
+  private _atmosphereMieScatteringConstant: number
 
   // --------------------------------------------------
 
@@ -499,6 +501,13 @@ export default class PlanetData extends ChangeTracker {
   public set atmosphereTint(value: Color) {
     this._atmosphereTint.set(value)
     this.markForChange('_atmosphereTint')
+  }
+  public get atmosphereMieScatteringConstant(): number {
+    return this._atmosphereMieScatteringConstant
+  }
+  public set atmosphereMieScatteringConstant(value: number) {
+    this._atmosphereMieScatteringConstant = clamp(value, -0.999, 0.999)
+    this.markForChange('_atmosphereMieScatteringConstant')
   }
 
   // --------------------------------------------------
@@ -664,6 +673,7 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereColorMode = ColorMode.REALISTIC
     this._atmosphereHue = 0.0
     this._atmosphereTint = new Color(0xffffff)
+    this._atmosphereMieScatteringConstant = -0.78
 
     // Ring
     this._ringsEnabled = false
@@ -782,6 +792,7 @@ export default class PlanetData extends ChangeTracker {
     this.atmosphereColorMode = data._atmosphereColorMode ?? ColorMode.REALISTIC
     this.atmosphereHue = data._atmosphereHue ?? 0.0
     this.atmosphereTint.set(data._atmosphereTint ?? 0xffffff)
+    this._atmosphereMieScatteringConstant = data._atmosphereMieScatteringConstant ?? -0.78
 
     // Ring
     this.ringsEnabled = data._ringsEnabled ?? false
@@ -875,6 +886,7 @@ export default class PlanetData extends ChangeTracker {
     this.atmosphereColorMode = Math.round(clampedPRNG(0, 2)) as ColorMode
     this.atmosphereHue = clampedPRNG(0, 2)
     this.atmosphereTint.set(clampedPRNG(0, 1) * 0xffffff)
+    this._atmosphereMieScatteringConstant = clampedPRNG(-0.999, 0.999)
 
     // Ring
     this.ringsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))

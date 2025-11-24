@@ -27,6 +27,17 @@ const MAX = 10000
 const NUM_OUT_SCATTER = 2
 const NUM_IN_SCATTER = 10
 
+/*
+ * DISCLAIMER:
+ * The functions in this class were extracted and manually transpiled & adapted from two distinct sources:
+ * - "Atmospheric Scattering Sample" by gltracy, 2014: https://www.shadertoy.com/view/lslXDr
+ * - "gl_tests" by TJGreen0211, 2018: https://github.com/TJGreen0211/gl_tests/blob/master/atmosphere/shaders/atmosphere.frag
+ * 
+ * Of note, the original proposal behind this code is titled "Display of The Earth Taking into Account Atmospheric Scattering",
+ * published by Nishita et al. in 1993, and presented at SIGGRAPH '93.
+ * The paper is available here for reading: https://dl.acm.org/doi/10.1145/166117.166140
+ */
+
 /**
  * Camera-to-atmosphere ray direction calculation
  */
@@ -176,27 +187,29 @@ export const applyInScatter = /*@__PURE__*/ Fn(
     UniformNumberNode, // light intensity
     UniformVector3Node, // radius, surface radius, density (passed to rayVsSphere & computeDensity)
   ]) => {
+    // density ratios
     const ph_ray = float(0.05)
     const ph_mie = float(0.02)
     const ph_alpha = float(0.25)
 
     const k_ray = vec3(3.8, 13.5, 33.1)
     const k_mie = vec3(21.0)
-    const k_mie_ex = float(1.1)
     const k_alpha = float(2.0)
 
-    const sum_ray = vec3(0.0).toVar('sum_ray')
-    const sum_mie = vec3(0.0).toVar('sum_mie')
-    const sum_alpha = float(0.0).toVar('sum_alpha')
-
-    const n_ray0 = float(0.0).toVar()
-    const n_mie0 = float(0.0).toVar()
+    const n_ray0 = float(0.0).toVar('n_ray0')
+    const n_mie0 = float(0.0).toVar('n_mie0')
 
     const len = float(i_e.y.sub(i_e.x).div(float(NUM_IN_SCATTER))).toVar('len')
     const stepValue = vec3(i_dir.mul(len)).toVar('stepValue')
     const v = vec3(i_o.add(i_dir.mul(i_e.x.add(len.mul(0.5))))).toVar('v')
 
+    const sum_ray = vec3(0.0).toVar('sum_ray')
+    const sum_mie = vec3(0.0).toVar('sum_mie')
+    const sum_alpha = float(0.0).toVar('sum_alpha')
     Loop({ start: int(0), end: NUM_IN_SCATTER, condition: '<' }, () => {
+      const f = vec2(rayVsSphere(v, i_lightDir, i_uniforms.x)).toVar('f')
+      const u = vec3(v.add(i_lightDir.mul(f.y))).toVar('u')
+
       const d_ray = float(computeDensity(v, ph_ray, i_uniforms.x, i_uniforms.y, i_uniforms.z).mul(len)).toVar('d_ray')
       const d_mie = float(computeDensity(v, ph_mie, i_uniforms.x, i_uniforms.y, i_uniforms.z).mul(len)).toVar('d_mie')
       const d_alpha = float(computeDensity(v, ph_alpha, i_uniforms.x, i_uniforms.y, i_uniforms.z).mul(len)).toVar(
@@ -206,15 +219,10 @@ export const applyInScatter = /*@__PURE__*/ Fn(
       n_ray0.addAssign(d_ray)
       n_mie0.addAssign(d_mie)
 
-      const f = vec2(rayVsSphere(v, i_lightDir, i_uniforms.x)).toVar('f')
-      const u = vec3(v.add(i_lightDir.mul(f.y))).toVar('u')
-
       const n_ray1 = float(optic(v, u, ph_ray, i_uniforms.x, i_uniforms.y, i_uniforms.z)).toVar('n_ray1')
       const n_mie1 = float(optic(v, u, ph_mie, i_uniforms.x, i_uniforms.y, i_uniforms.z)).toVar('n_mie1')
 
-      const att = vec3(
-        exp(n_ray0.add(n_ray1).negate().mul(k_ray).sub(n_mie0.add(n_mie1).mul(k_mie).mul(k_mie_ex))),
-      ).toVar('att')
+      const att = vec3(exp(n_ray0.add(n_ray1).negate().mul(k_ray).sub(n_mie0.add(n_mie1).mul(k_mie)))).toVar('att')
 
       sum_ray.addAssign(d_ray.mul(att))
       sum_mie.addAssign(d_mie.mul(att))

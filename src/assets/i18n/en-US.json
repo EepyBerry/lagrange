@@ -369,7 +369,9 @@
         "rgba_mode_direct": "Direct",
         "rgba_mode_mixed": "Mixed",
         "rgba_hue": "Hue",
-        "rgba_tint": "Tint"
+        "rgba_tint": "Tint",
+        "advanced": "Advanced",
+        "advanced_mie_constant": "Mie scattering constant (g)"
       },
       "ring": {
         "$title": "Ring System",
