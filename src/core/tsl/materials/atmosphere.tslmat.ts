@@ -21,7 +21,7 @@ import {
 import { applyInScatter, rayDirection, rayVsSphere } from '../utils/atmosphere-utils'
 import { shiftHue, tintToMatrix, whitescale } from '../utils/color-utils'
 
-export type AtmosphereData = {
+export type AtmosphereUniformsData = {
   sunlight: {
     position: Vector3
     intensity: number
@@ -36,6 +36,12 @@ export type AtmosphereData = {
     colorMode: number
     hue: number
     tint: Color
+    advanced: {
+      mieScatteringConstant: number
+      rayleighDensityRatio: number
+      mieDensityRatio: number
+      opticalDensityRatio: number
+    }
   }
 }
 export type AtmosphereUniforms = {
@@ -53,12 +59,18 @@ export type AtmosphereUniforms = {
     colorMode: UniformNumberNode
     hue: UniformNumberNode
     tint: UniformColorNode
+    advanced: {
+      mieScatteringConstant: UniformNumberNode
+      rayleighDensityRatio: UniformNumberNode
+      mieDensityRatio: UniformNumberNode
+      opticalDensityRatio: UniformNumberNode
+    }
   }
 }
-export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, AtmosphereData, AtmosphereUniforms> {
+export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, AtmosphereUniformsData, AtmosphereUniforms> {
   public readonly uniforms: AtmosphereUniforms
 
-  constructor(data: AtmosphereData) {
+  constructor(data: AtmosphereUniformsData) {
     this.uniforms = {
       sunlight: {
         position: uniform(data.sunlight.position, 'vec3').setName('uLightPosition'),
@@ -74,6 +86,12 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
         colorMode: uniform(data.render.colorMode, 'int').setName('uColorMode'),
         hue: uniform(data.render.hue).setName('uHue'),
         tint: uniform(data.render.tint).setName('uTint'),
+        advanced: {
+          mieScatteringConstant: uniform(data.render.advanced.mieScatteringConstant).setName('uMieScatteringConstant'),
+          rayleighDensityRatio: uniform(data.render.advanced.rayleighDensityRatio).setName('uRayleighDensityRatio'),
+          mieDensityRatio: uniform(data.render.advanced.mieDensityRatio).setName('uMieDensityRatio'),
+          opticalDensityRatio: uniform(data.render.advanced.opticalDensityRatio).setName('uOpticalDensityRatio')
+        }
       },
     }
   }
@@ -97,9 +115,14 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
           eye,
           rayDir,
           e,
-          sunglightDir,
-          this.uniforms.sunlight.intensity,
+          vec4(sunglightDir, this.uniforms.sunlight.intensity),
           vec3(this.uniforms.transform.radius, this.uniforms.transform.surfaceRadius, this.uniforms.render.density),
+          vec4(
+            this.uniforms.render.advanced.mieScatteringConstant,
+            this.uniforms.render.advanced.rayleighDensityRatio,
+            this.uniforms.render.advanced.mieDensityRatio,
+            this.uniforms.render.advanced.opticalDensityRatio
+          )
         ),
       ).toVar('I')
       //I.powAssign(vec4(1.0 / 2.2))

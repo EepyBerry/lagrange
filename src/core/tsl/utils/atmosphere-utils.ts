@@ -20,12 +20,8 @@ import {
   mat4,
   normalize,
 } from 'three/tsl'
-import type { UniformNumberNode, UniformVector3Node } from '../tsl-types'
+import type { UniformNumberNode, UniformVector2Node, UniformVector3Node, UniformVector4Node } from '../tsl-types'
 import type { Node } from 'three/webgpu'
-
-const MAX = 10000
-const NUM_OUT_SCATTER = 2
-const NUM_IN_SCATTER = 10
 
 /*
  * DISCLAIMER:
@@ -37,6 +33,10 @@ const NUM_IN_SCATTER = 10
  * published by Nishita et al. in 1993, and presented at SIGGRAPH '93.
  * The paper is available here for reading: https://dl.acm.org/doi/10.1145/166117.166140
  */
+
+const MAX = 10000
+const NUM_OUT_SCATTER = 2
+const NUM_IN_SCATTER = 10
 
 /**
  * Camera-to-atmosphere ray direction calculation
@@ -179,48 +179,48 @@ export const optic = /*@__PURE__*/ Fn(
 })
 
 export const applyInScatter = /*@__PURE__*/ Fn(
-  ([i_o, i_dir, i_e, i_lightDir, i_lightIntensity, i_uniforms]: [
+  ([i_o, i_dir, i_e, i_light, i_atmos, i_constants]: [
     ShaderNodeObject<Node>,
     ShaderNodeObject<Node>,
-    ShaderNodeObject<Node>,
-    ShaderNodeObject<Node>,
-    UniformNumberNode, // light intensity
+    UniformVector2Node,
+    UniformVector4Node, // XYZ = direction, W = intensity
     UniformVector3Node, // radius, surface radius, density (passed to rayVsSphere & computeDensity)
+    UniformVector4Node, // mie scattering, rayleigh density ratio (phRay), mie density ratio (phMie), optical density ratio (phOptical)
   ]) => {
     // density ratios
-    const ph_ray = float(0.05)
-    const ph_mie = float(0.02)
-    const ph_alpha = float(0.25)
+    const mieScatteringConstant = float(i_constants.x).toVar('mieScatteringConstant')
+    const phRay = float(i_constants.y).toVar('phRay')
+    const phMie = float(i_constants.z).toVar('phMie')
+    const phOptical = float(i_constants.w).toVar('phOptical')
 
     const k_ray = vec3(3.8, 13.5, 33.1)
     const k_mie = vec3(21.0)
     const k_alpha = float(2.0)
 
-    const n_ray0 = float(0.0).toVar('n_ray0')
-    const n_mie0 = float(0.0).toVar('n_mie0')
-
     const len = float(i_e.y.sub(i_e.x).div(float(NUM_IN_SCATTER))).toVar('len')
     const stepValue = vec3(i_dir.mul(len)).toVar('stepValue')
     const v = vec3(i_o.add(i_dir.mul(i_e.x.add(len.mul(0.5))))).toVar('v')
 
+    const n_ray0 = float(0.0).toVar('n_ray0')
+    const n_mie0 = float(0.0).toVar('n_mie0')
     const sum_ray = vec3(0.0).toVar('sum_ray')
     const sum_mie = vec3(0.0).toVar('sum_mie')
     const sum_alpha = float(0.0).toVar('sum_alpha')
     Loop({ start: int(0), end: NUM_IN_SCATTER, condition: '<' }, () => {
-      const f = vec2(rayVsSphere(v, i_lightDir, i_uniforms.x)).toVar('f')
-      const u = vec3(v.add(i_lightDir.mul(f.y))).toVar('u')
+      const f = vec2(rayVsSphere(v, i_light.xyz, i_atmos.x)).toVar('f')
+      const u = vec3(v.add(i_light.xyz.mul(f.y))).toVar('u')
 
-      const d_ray = float(computeDensity(v, ph_ray, i_uniforms.x, i_uniforms.y, i_uniforms.z).mul(len)).toVar('d_ray')
-      const d_mie = float(computeDensity(v, ph_mie, i_uniforms.x, i_uniforms.y, i_uniforms.z).mul(len)).toVar('d_mie')
-      const d_alpha = float(computeDensity(v, ph_alpha, i_uniforms.x, i_uniforms.y, i_uniforms.z).mul(len)).toVar(
+      const d_ray = float(computeDensity(v, phRay, i_atmos.x, i_atmos.y, i_atmos.z).mul(len)).toVar('d_ray')
+      const d_mie = float(computeDensity(v, phMie, i_atmos.x, i_atmos.y, i_atmos.z).mul(len)).toVar('d_mie')
+      const d_alpha = float(computeDensity(v, phOptical, i_atmos.x, i_atmos.y, i_atmos.z).mul(len)).toVar(
         'd_alpha',
       )
 
       n_ray0.addAssign(d_ray)
       n_mie0.addAssign(d_mie)
 
-      const n_ray1 = float(optic(v, u, ph_ray, i_uniforms.x, i_uniforms.y, i_uniforms.z)).toVar('n_ray1')
-      const n_mie1 = float(optic(v, u, ph_mie, i_uniforms.x, i_uniforms.y, i_uniforms.z)).toVar('n_mie1')
+      const n_ray1 = float(optic(v, u, phRay, i_atmos.x, i_atmos.y, i_atmos.z)).toVar('n_ray1')
+      const n_mie1 = float(optic(v, u, phMie, i_atmos.x, i_atmos.y, i_atmos.z)).toVar('n_mie1')
 
       const att = vec3(exp(n_ray0.add(n_ray1).negate().mul(k_ray).sub(n_mie0.add(n_mie1).mul(k_mie)))).toVar('att')
 
@@ -232,17 +232,17 @@ export const applyInScatter = /*@__PURE__*/ Fn(
       v.addAssign(stepValue)
     })
 
-    const c = float(dot(i_dir, negate(i_lightDir))).toVar('c')
+    const c = float(dot(i_dir, negate(i_light.xyz))).toVar('c')
     const cc = float(c.mul(c)).toVar('cc')
     const scatter = vec3(
       sum_ray
         .mul(k_ray)
         .mul(computeRayleigh(cc))
-        .add(sum_mie.mul(k_mie).mul(computeMie(float(-0.78), c, cc))),
+        .add(sum_mie.mul(k_mie).mul(computeMie(float(mieScatteringConstant), c, cc))),
     ).toVar('scatter')
 
     const alpha = float(sum_alpha.mul(k_alpha)).toVar('alpha')
-    return vec4(scatter.mul(i_lightIntensity), alpha)
+    return vec4(scatter.mul(i_light.w), alpha)
   },
 ).setLayout({
   name: 'LG_ATMOS_applyInScatter',
@@ -251,8 +251,8 @@ export const applyInScatter = /*@__PURE__*/ Fn(
     { name: 'i_o', type: 'vec3' },
     { name: 'i_dir', type: 'vec3' },
     { name: 'i_e', type: 'vec2' },
-    { name: 'i_lightDir', type: 'vec3' },
-    { name: 'i_lightIntensity', type: 'float' },
-    { name: 'i_uniforms', type: 'vec3' },
+    { name: 'i_light', type: 'vec4' },
+    { name: 'i_atmos', type: 'vec3' },
+    { name: 'i_constants', type: 'vec4' }
   ],
 })

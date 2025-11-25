@@ -237,6 +237,10 @@ function registerAtmosphereDataUpdates(data: PlanetData, atmosphere: AtmosphereM
   UNIFORM_UPDATE_MAP.value.set('_atmosphereColorMode',    () =>  atmosphere.uniforms!.render.colorMode.value = data.atmosphereColorMode)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereHue',          () =>  atmosphere.uniforms!.render.hue.value = data.atmosphereHue)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereTint',         () =>  atmosphere.uniforms!.render.tint.value = data.atmosphereTint)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereMieScatteringConstant',  () =>  atmosphere.uniforms!.render.advanced.mieScatteringConstant.value = data.atmosphereMieScatteringConstant)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereRayleighDensityRatio',   () =>  atmosphere.uniforms!.render.advanced.rayleighDensityRatio.value = data.atmosphereRayleighDensityRatio)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereMieDensityRatio',        () =>  atmosphere.uniforms!.render.advanced.mieDensityRatio.value = data.atmosphereMieDensityRatio)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereOpticalDensityRatio',   () =>  atmosphere.uniforms!.render.advanced.opticalDensityRatio.value = data.atmosphereOpticalDensityRatio)
 }
 
 // prettier-ignore

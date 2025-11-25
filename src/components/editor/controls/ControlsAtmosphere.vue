@@ -84,6 +84,47 @@
           </template>
         </template>
       </ParameterGroup>
+      <ParameterGroup :toggleable="true">
+        <template #title>{{ $t('editor.controls.atmosphere.advanced') }}</template>
+        <template #content>
+          <ParameterSlider
+            id="a-advmieconst"
+            v-model="LG_PLANET_DATA.atmosphereMieScatteringConstant"
+            :step="0.001"
+            :min="-0.999"
+            :max="0"
+          >
+            {{ $t('editor.controls.atmosphere.advanced_mie_constant') }}
+          </ParameterSlider>
+          <ParameterSlider
+            id="a-advrayph"
+            v-model="LG_PLANET_DATA.atmosphereRayleighDensityRatio"
+            :step="0.01"
+            :min="0"
+            :max="1"
+          >
+            {{ $t('editor.controls.atmosphere.advanced_rayleigh_density_ratio') }}
+          </ParameterSlider>
+          <ParameterSlider
+            id="a-advmieph"
+            v-model="LG_PLANET_DATA.atmosphereMieDensityRatio"
+            :step="0.01"
+            :min="0"
+            :max="1"
+          >
+            {{ $t('editor.controls.atmosphere.advanced_mie_density_ratio') }}
+          </ParameterSlider>
+          <ParameterSlider
+            id="a-advopticalph"
+            v-model="LG_PLANET_DATA.atmosphereOpticalDensityRatio"
+            :step="0.01"
+            :min="0"
+            :max="1"
+          >
+            {{ $t('editor.controls.atmosphere.advanced_optical_density_ratio') }}
+          </ParameterSlider>
+        </template>
+      </ParameterGroup>
     </template>
   </ParameterGrid>
 </template>

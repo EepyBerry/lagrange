@@ -17,6 +17,7 @@ import type { BiomeParameters } from '../models/biome-parameters.model'
 import { PlanetDataConverter } from '../models/converters/planet-data.converter'
 import { CloudsDataConverter } from '../models/converters/clouds-data.converter'
 import { RingDataConverter } from '../models/converters/ring-data.converter'
+import { AtmosphereDataConverter } from '../models/converters/atmosphere-data.converter'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -141,23 +142,8 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): Atmos
     data.planetMeshQuality,
     1.0 + data.atmosphereHeight
   )
-  const tslMaterial = new AtmosphereTSLMaterial({
-    sunlight: {
-      position: sunPos,
-      intensity: data.sunLightIntensity
-    },
-    transform: {
-      radius: data.planetRadius + data.atmosphereHeight,
-      surfaceRadius: data.planetRadius,
-    },
-    render: {
-      density: data.atmosphereDensityScale,
-      intensity: data.atmosphereIntensity,
-      colorMode: data.atmosphereColorMode,
-      hue: data.atmosphereHue,
-      tint: data.atmosphereTint,
-    }
-  })
+  const dataConverter = new AtmosphereDataConverter(data, sunPos)
+  const tslMaterial = new AtmosphereTSLMaterial(dataConverter.convert())
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.userData.lens = 'no-occlusion'
   mesh.name = Globals.LG_MESH_NAME_ATMOSPHERE

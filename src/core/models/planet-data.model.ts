@@ -448,6 +448,9 @@ export default class PlanetData extends ChangeTracker {
   private _atmosphereTint: Color
   // Advanced values
   private _atmosphereMieScatteringConstant: number
+  private _atmosphereRayleighDensityRatio: number
+  private _atmosphereMieDensityRatio: number
+  private _atmosphereOpticalDensityRatio: number
 
   // --------------------------------------------------
 
@@ -502,12 +505,34 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereTint.set(value)
     this.markForChange('_atmosphereTint')
   }
+
   public get atmosphereMieScatteringConstant(): number {
     return this._atmosphereMieScatteringConstant
   }
   public set atmosphereMieScatteringConstant(value: number) {
-    this._atmosphereMieScatteringConstant = clamp(value, -0.999, 0.999)
+    this._atmosphereMieScatteringConstant = clamp(value, -0.999, 0)
     this.markForChange('_atmosphereMieScatteringConstant')
+  }
+  public get atmosphereRayleighDensityRatio(): number {
+    return this._atmosphereRayleighDensityRatio
+  }
+  public set atmosphereRayleighDensityRatio(value: number) {
+    this._atmosphereRayleighDensityRatio = clamp(value, 0.0, 1.0)
+    this.markForChange('_atmosphereRayleighDensityRatio')
+  }
+  public get atmosphereMieDensityRatio(): number {
+    return this._atmosphereMieDensityRatio
+  }
+  public set atmosphereMieDensityRatio(value: number) {
+    this._atmosphereMieDensityRatio = clamp(value, 0.0, 1.0)
+    this.markForChange('_atmosphereMieDensityRatio')
+  }
+  public get atmosphereOpticalDensityRatio(): number {
+    return this._atmosphereOpticalDensityRatio
+  }
+  public set atmosphereOpticalDensityRatio(value: number) {
+    this._atmosphereOpticalDensityRatio = clamp(value, 0.0, 1.0)
+    this.markForChange('_atmosphereOpticalDensityRatio')
   }
 
   // --------------------------------------------------
@@ -674,6 +699,9 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereHue = 0.0
     this._atmosphereTint = new Color(0xffffff)
     this._atmosphereMieScatteringConstant = -0.78
+    this._atmosphereRayleighDensityRatio = 0.05
+    this._atmosphereMieDensityRatio = 0.02
+    this._atmosphereOpticalDensityRatio = 0.25
 
     // Ring
     this._ringsEnabled = false
@@ -793,6 +821,9 @@ export default class PlanetData extends ChangeTracker {
     this.atmosphereHue = data._atmosphereHue ?? 0.0
     this.atmosphereTint.set(data._atmosphereTint ?? 0xffffff)
     this._atmosphereMieScatteringConstant = data._atmosphereMieScatteringConstant ?? -0.78
+    this._atmosphereRayleighDensityRatio = data._atmosphereRayleighDensityRatio ?? 0.05
+    this._atmosphereMieDensityRatio = data._atmosphereMieDensityRatio ?? 0.02
+    this._atmosphereOpticalDensityRatio = data._atmosphereOpticalDensityRatio ?? 0.25
 
     // Ring
     this.ringsEnabled = data._ringsEnabled ?? false
@@ -886,7 +917,10 @@ export default class PlanetData extends ChangeTracker {
     this.atmosphereColorMode = Math.round(clampedPRNG(0, 2)) as ColorMode
     this.atmosphereHue = clampedPRNG(0, 2)
     this.atmosphereTint.set(clampedPRNG(0, 1) * 0xffffff)
-    this._atmosphereMieScatteringConstant = clampedPRNG(-0.999, 0.999)
+    this.atmosphereMieScatteringConstant = clampedPRNG(-0.999, 0.999)
+    this.atmosphereRayleighDensityRatio = clampedPRNG(0, 1)
+    this.atmosphereMieDensityRatio = clampedPRNG(0, 1)
+    this.atmosphereOpticalDensityRatio = clampedPRNG(0, 1)
 
     // Ring
     this.ringsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
