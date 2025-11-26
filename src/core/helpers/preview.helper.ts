@@ -26,10 +26,10 @@ export async function generatePlanetPreview(data: PlanetData): Promise<string> {
 
     // ---------------------------- Setup renderer & render -----------------------------
     const rawBuffer = new Uint8Array(w * h * 4)
-    postProcessing.renderer.setRenderTarget(previewRenderTarget)
+    sceneData.renderer.setRenderTarget(previewRenderTarget)
     await postProcessing.renderAsync()
-    rawBuffer.set(await postProcessing.renderer.readRenderTargetPixelsAsync(previewRenderTarget, 0, 0, w, h))
-    postProcessing.renderer.setRenderTarget(null)
+    rawBuffer.set(await sceneData.renderer.readRenderTargetPixelsAsync(previewRenderTarget, 0, 0, w, h))
+    sceneData.renderer.setRenderTarget(null)
 
     // ----------------- Create preview canvas & write data from buffer -----------------
     const tex = new CanvasTexture(renderToCanvas(sceneData.renderer, rawBuffer, w, h))
