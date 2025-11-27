@@ -885,12 +885,12 @@ export default class PlanetData extends ChangeTracker {
     this._biomesTemperatureNoise.randomize()
     this._biomesHumidityMode = Math.round(clampedPRNG(0, 2)) as GradientMode
     this._biomesHumidityNoise.randomize()
-    this._biomesParams.splice(0)
+    /* this._biomesParams.splice(0)
     for (let i = 0; i < Math.round(clampedPRNG(0, 8)); i++) {
       const b = BiomeParameters.createRandom(this.changedProps, '_biomesParams[element]')
       b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity
       this._biomesParams.push(b)
-    }
+    } */
 
     // Clouds
     this._cloudsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
@@ -908,9 +908,9 @@ export default class PlanetData extends ChangeTracker {
 
     // Atmosphere
     this._atmosphereEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
-    this._atmosphereHeight = clampedPRNG(0.25, 8)
-    this._atmosphereDensityScale = clampedPRNG(0.25, 10)
-    this._atmosphereIntensity = clampedPRNG(0, 2)
+    this._atmosphereHeight = clampedPRNG(0.0055, 0.05)
+    this._atmosphereDensityScale = clampedPRNG(0.25, 20)
+    this._atmosphereIntensity = clampedPRNG(0.25, 5.0)
     this._atmosphereColorMode = Math.round(clampedPRNG(0, 2)) as ColorMode
     this._atmosphereHue = clampedPRNG(0, 2)
     this._atmosphereTint.set(clampedPRNG(0, 1) * 0xffffff)
@@ -925,8 +925,6 @@ export default class PlanetData extends ChangeTracker {
     for (let i = 0; i < Math.round(clampedPRNG(0, 4)); i++) {
       this._ringsParams.push(RingParameters.createRandom(this._changedProps, '_ringsParams'))
     }
-    //this.markForChange('_ringsParams')
-    //this.markForChange('_biomesParams')
     //this.markAllForChange()
   }
 
