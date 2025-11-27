@@ -635,7 +635,7 @@ export default class PlanetData extends ChangeTracker {
     this._biomesParams = [
       new BiomeParameters(
         this._changedProps,
-        '_biomesParameters[element]',
+        '_biomesParams[element]',
         {
           temperatureMin: 0.0,
           temperatureMax: 0.1,
@@ -647,7 +647,7 @@ export default class PlanetData extends ChangeTracker {
       ),
       new BiomeParameters(
         this._changedProps,
-        '_biomesParameters[element]',
+        '_biomesParams[element]',
         {
           temperatureMin: 0.8,
           temperatureMax: 1.0,
@@ -659,7 +659,7 @@ export default class PlanetData extends ChangeTracker {
       ),
       new BiomeParameters(
         this._changedProps,
-        '_biomesParameters[element]',
+        '_biomesParams[element]',
         {
           temperatureMin: 0.0,
           temperatureMax: 1.0,
@@ -773,7 +773,7 @@ export default class PlanetData extends ChangeTracker {
       ...(data._biomesParams ?? []).map( (params: any) => {
         const b = new BiomeParameters(
           this.changedProps,
-          '_biomesParameters[element]',
+          '_biomesParams[element]',
           {
             temperatureMin: params._tempMin ?? 0.0,
             temperatureMax: params._tempMax ?? 0.5,
@@ -831,7 +831,7 @@ export default class PlanetData extends ChangeTracker {
       ...(data._ringsParams ?? []).map((params: any) =>
           new RingParameters(
             this.changedProps,
-            '_ringsParameters',
+            '_ringsParams',
             params._innerRadius ?? 1.25,
             params._outerRadius ?? 1.5,
             params._colorRamp?._steps,
@@ -887,7 +887,7 @@ export default class PlanetData extends ChangeTracker {
     this._biomesHumidityNoise.randomize()
     this._biomesParams.splice(0)
     for (let i = 0; i < Math.round(clampedPRNG(0, 8)); i++) {
-      const b = BiomeParameters.createRandom(this.changedProps, '_biomesParameters[element]')
+      const b = BiomeParameters.createRandom(this.changedProps, '_biomesParams[element]')
       b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity
       this._biomesParams.push(b)
     }
@@ -923,10 +923,10 @@ export default class PlanetData extends ChangeTracker {
     this._ringsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
     this._ringsParams.splice(0)
     for (let i = 0; i < Math.round(clampedPRNG(0, 4)); i++) {
-      this._ringsParams.push(RingParameters.createRandom(this._changedProps, '_ringsParameters'))
+      this._ringsParams.push(RingParameters.createRandom(this._changedProps, '_ringsParams'))
     }
-    //this.markForChange('_ringsParameters')
-    //this.markForChange('_biomesParameters')
+    //this.markForChange('_ringsParams')
+    //this.markForChange('_biomesParams')
     //this.markAllForChange()
   }
 

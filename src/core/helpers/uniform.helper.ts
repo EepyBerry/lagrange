@@ -29,7 +29,7 @@ export function initUniformUpdateMap(sceneData: EditorSceneData, planetData: Pla
 }
 
 export function reloadRingDataUpdates(sceneData: EditorSceneData, planetData: PlanetData) {
-  const ringKeys = [...UNIFORM_UPDATE_MAP.value.keys()].filter((k) => k.startsWith('_ringsParameters'))
+  const ringKeys = [...UNIFORM_UPDATE_MAP.value.keys()].filter((k) => k.startsWith('_ringsParams'))
   ringKeys.forEach((k) => {
     UNIFORM_UPDATE_MAP.value.delete(k)
   })
@@ -154,11 +154,11 @@ function registerBiomeDataUpdates(data: PlanetData, planet: PlanetMeshData): voi
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._amplitude',     () => (planet.uniforms!.biomes.humidityNoise.value.y = data.biomesHumidityNoise.amplitude))
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._lacunarity',    () => (planet.uniforms!.biomes.humidityNoise.value.z = data.biomesHumidityNoise.lacunarity))
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._octaves',       () => (planet.uniforms!.biomes.humidityNoise.value.w = data.biomesHumidityNoise.octaves))
-  UNIFORM_UPDATE_MAP.value.set('_biomesParameters', () => {
+  UNIFORM_UPDATE_MAP.value.set('_biomesParams', () => {
     planet.biomeLayersTexture!.reset(data.biomesParams)
     planet.biomeEmissiveLayersTexture!.reset(data.biomesParams)
   })
-  UNIFORM_UPDATE_MAP.value.set('_biomesParameters[element]', (source, action) => {
+  UNIFORM_UPDATE_MAP.value.set('_biomesParams[element]', (source, action) => {
     const biome = source!.data! as BiomeParameters
     const biomeParamsIdx = source!.arrayIndex ?? data.findBiomeIndexById(biome.id)
     if (biomeParamsIdx === -1) return
@@ -253,17 +253,17 @@ function registerRingsDataUpdates(data: PlanetData, ringsData: RingMeshData[]): 
     const ringParams = ringsParams.find(r => r.id === rd.mesh!.name)
     if (!ringParams) return
 
-    UNIFORM_UPDATE_MAP.value.set(`_ringsParameters.${ringParams.id}._innerRadius`, () => {
+    UNIFORM_UPDATE_MAP.value.set(`_ringsParams.${ringParams.id}._innerRadius`, () => {
       rd.mesh!.geometry.dispose()
       rd.mesh!.geometry = ComponentHelper.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
       rd.uniforms!.innerRadius.value = ringParams.innerRadius
     })
-    UNIFORM_UPDATE_MAP.value.set(`_ringsParameters.${ringParams.id}._outerRadius`, () => {
+    UNIFORM_UPDATE_MAP.value.set(`_ringsParams.${ringParams.id}._outerRadius`, () => {
       rd.mesh!.geometry.dispose()
       rd.mesh!.geometry = ComponentHelper.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
       rd.uniforms!.outerRadius.value = ringParams.outerRadius
     })
-    UNIFORM_UPDATE_MAP.value.set(`_ringsParameters.${ringParams.id}._colorRamp`, () => {
+    UNIFORM_UPDATE_MAP.value.set(`_ringsParams.${ringParams.id}._colorRamp`, () => {
       const v = ringParams.colorRamp
       TextureHelper.recalculateRampTexture(rd.buffer!, Globals.TEXTURE_SIZES.RING, v.steps)
       rd.texture!.needsUpdate = true

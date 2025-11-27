@@ -115,7 +115,7 @@ function updateScene() {
     hasPlanetBeenEdited.value = true
   }
   for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
-    if (changedProp.prop === '_ringsParameters') {
+    if (changedProp.prop === '_ringsParams') {
       updateRingMeshes()
       UniformHelper.reloadRingDataUpdates(LG_SCENE_DATA, LG_PLANET_DATA.value)
     }

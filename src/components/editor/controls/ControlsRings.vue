@@ -31,9 +31,9 @@ import ParameterRing from '@components/global/parameters/ParameterRing.vue'
 import LgvButton from '@/_lib/components/LgvButton.vue'
 
 function addRing() {
-  const newRing = new RingParameters(LG_PLANET_DATA.value.changedProps, '_ringsParameters', 1.5, 1.75)
+  const newRing = new RingParameters(LG_PLANET_DATA.value.changedProps, '_ringsParams', 1.5, 1.75)
   LG_PLANET_DATA.value.ringsParams.push(newRing)
-  LG_PLANET_DATA.value.markForChange('_ringsParameters')
+  LG_PLANET_DATA.value.markForChange('_ringsParams')
 }
 
 function deleteRing(id: string) {
@@ -42,7 +42,7 @@ function deleteRing(id: string) {
     throw new Error('Cannot delete non-existent ring!')
   }
   LG_PLANET_DATA.value.ringsParams.splice(ringIdx, 1)
-  LG_PLANET_DATA.value.markForChange('_ringsParameters')
+  LG_PLANET_DATA.value.markForChange('_ringsParams')
 }
 </script>
 <style scoped lang="scss">
