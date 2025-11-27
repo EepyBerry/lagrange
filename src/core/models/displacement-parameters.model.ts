@@ -108,12 +108,12 @@ export class DisplacementParameters extends ChangeTracker {
 
   // Note: adjusted ranges to get more coherent data
   public randomize() {
-    this.factor = clampedPRNG(0, 0.25)
-    this.epsilon = clampedPRNG(0.0005, 0.25)
-    this.multiplier = clampedPRNG(0, 3)
-    this.frequency = clampedPRNG(0.25, 3)
-    this.amplitude = clampedPRNG(0.25, 1.25)
-    this.lacunarity = clampedPRNG(1.5, 3)
-    this.octaves = Math.round(clampedPRNG(2, 8))
+    this._factor = clampedPRNG(0, 0.25)
+    this._epsilon = clampedPRNG(0.0005, 0.25)
+    this._multiplier = clampedPRNG(0, 3)
+    this._frequency = clampedPRNG(0.25, 3)
+    this._amplitude = clampedPRNG(0.25, 1.25)
+    this._lacunarity = clampedPRNG(1.5, 3)
+    this._octaves = Math.round(clampedPRNG(2, 8))
   }
 }

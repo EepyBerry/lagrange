@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import LgvButton from '@/_lib/components/LgvButton.vue'
 import { Color } from 'three'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import { ColorPicker } from 'vue-accessible-color-picker'
 
 const lgColor = defineModel<Color>()
@@ -37,10 +37,6 @@ const pickerInitColor = ref('')
 const pickerOpen = ref(false)
 
 onMounted(() => initPickerColor())
-watch(
-  () => lgColor.value?.getHexString(),
-  () => initPickerColor(),
-)
 
 function initPickerColor() {
   pickerInitColor.value = '#' + lgColor.value?.getHexString()
@@ -48,6 +44,7 @@ function initPickerColor() {
 
 function setColor(hex: string): void {
   lgColor.value = new Color(hex.substring(0, 7)) // Strip alpha
+  pickerInitColor.value = '#' + lgColor.value?.getHexString()
 }
 
 function togglePanel(): void {

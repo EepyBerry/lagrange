@@ -119,13 +119,13 @@ export class NoiseParameters extends ChangeTracker {
 
   // Note: adjusted ranges to get more coherent data
   public randomize() {
-    this.layers = Math.round(clampedPRNG(1, 3))
-    this.frequency = clampedPRNG(1, 7)
-    this.amplitude = clampedPRNG(0.25, 1.25)
-    this.lacunarity = clampedPRNG(1.5, 3)
-    this.octaves = Math.round(clampedPRNG(2, 8))
-    this.xWarpFactor = clampedPRNG(0, 8)
-    this.yWarpFactor = clampedPRNG(0, 8)
-    this.zWarpFactor = clampedPRNG(0, 8)
+    this._layers = Math.round(clampedPRNG(1, 3))
+    this._frequency = clampedPRNG(1, 7)
+    this._amplitude = clampedPRNG(0.25, 1.25)
+    this._lacunarity = clampedPRNG(1.5, 3)
+    this._octaves = Math.round(clampedPRNG(2, 8))
+    this._warpFactor.x = clampedPRNG(0, 8)
+    this._warpFactor.y = clampedPRNG(0, 8)
+    this._warpFactor.z = clampedPRNG(0, 8)
   }
 }

@@ -198,7 +198,7 @@ function moveBiome(idx: number, diff: -1 | 1) {
 function addBiome() {
   const newBiome = new BiomeParameters(
     LG_PLANET_DATA.value.changedProps,
-    '_biomesParameters',
+    '_biomesParameters[element]',
     {
       temperatureMin: 0.0,
       temperatureMax: 1.0,

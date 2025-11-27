@@ -1,4 +1,4 @@
-import { ref, type Ref } from 'vue'
+import { ref, toRaw, type Ref } from 'vue'
 import * as Globals from '@core/globals'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import type { PlanetMeshData, EditorSceneData, AtmosphereMeshData, CloudsMeshData, RingMeshData } from '../types'
@@ -41,6 +41,7 @@ export function clearUniformUpdateMap() {
 }
 
 export function execUniformUpdate(changedProp: ChangedProp) {
+  console.debug('Detected property change! ', toRaw(changedProp))
   UNIFORM_UPDATE_MAP.value.get(changedProp.prop)?.(changedProp.source, changedProp.action)
 }
 
