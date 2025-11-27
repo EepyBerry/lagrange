@@ -7,7 +7,7 @@
       <ParameterGroup :toggleable="true">
         <template #title>{{ $t('editor.controls.atmosphere.transform') }}</template>
         <template #content>
-          <ParameterSlider id="a-height" v-model="LG_PLANET_DATA.atmosphereHeight" :step="0.05" :min="0.25" :max="8">
+          <ParameterSlider id="a-height" v-model="LG_PLANET_DATA.atmosphereHeight" :step="0.0001" :min="0.0055" :max="0.05">
             {{ $t('editor.controls.atmosphere.transform_height') }}
           </ParameterSlider>
           <ParameterSlider
@@ -15,7 +15,7 @@
             v-model="LG_PLANET_DATA.atmosphereDensityScale"
             :step="0.05"
             :min="0.25"
-            :max="10"
+            :max="20"
           >
             {{ $t('editor.controls.atmosphere.transform_density') }}
           </ParameterSlider>
@@ -82,6 +82,47 @@
               {{ $t('editor.controls.atmosphere.rgba_tint') }}
             </ParameterColor>
           </template>
+        </template>
+      </ParameterGroup>
+      <ParameterGroup :toggleable="true">
+        <template #title>{{ $t('editor.controls.atmosphere.advanced') }}</template>
+        <template #content>
+          <ParameterSlider
+            id="a-advmieconst"
+            v-model="LG_PLANET_DATA.atmosphereMieScatteringConstant"
+            :step="0.001"
+            :min="-0.999"
+            :max="0"
+          >
+            {{ $t('editor.controls.atmosphere.advanced_mie_constant') }}
+          </ParameterSlider>
+          <ParameterSlider
+            id="a-advrayph"
+            v-model="LG_PLANET_DATA.atmosphereRayleighDensityRatio"
+            :step="0.01"
+            :min="0"
+            :max="1"
+          >
+            {{ $t('editor.controls.atmosphere.advanced_rayleigh_density_ratio') }}
+          </ParameterSlider>
+          <ParameterSlider
+            id="a-advmieph"
+            v-model="LG_PLANET_DATA.atmosphereMieDensityRatio"
+            :step="0.01"
+            :min="0"
+            :max="1"
+          >
+            {{ $t('editor.controls.atmosphere.advanced_mie_density_ratio') }}
+          </ParameterSlider>
+          <ParameterSlider
+            id="a-advopticalph"
+            v-model="LG_PLANET_DATA.atmosphereOpticalDensityRatio"
+            :step="0.01"
+            :min="0"
+            :max="1"
+          >
+            {{ $t('editor.controls.atmosphere.advanced_optical_density_ratio') }}
+          </ParameterSlider>
         </template>
       </ParameterGroup>
     </template>

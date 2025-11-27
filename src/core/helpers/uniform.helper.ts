@@ -76,7 +76,7 @@ function registerPlanetRenderingDataUpdates(
     planetGroup.scale.setScalar(v)
     planet.uniforms!.radius.value = v
     atmosphere.uniforms!.transform.surfaceRadius.value = v
-    atmosphere.uniforms!.transform.radius.value = v + (data.atmosphereHeight / Globals.ATMOSPHERE_SCALING_DIVIDER)
+    atmosphere.uniforms!.transform.radius.value = data.planetRadius + data.atmosphereHeight
   })
   UNIFORM_UPDATE_MAP.value.set('_planetAxialTilt', () => {
     const v = degToRad(isNaN(data.planetAxialTilt) ? 0 : data.planetAxialTilt)
@@ -228,14 +228,19 @@ function registerCloudDataUpdates(data: PlanetData, clouds: CloudsMeshData): voi
 function registerAtmosphereDataUpdates(data: PlanetData, atmosphere: AtmosphereMeshData): void {
   UNIFORM_UPDATE_MAP.value.set('_atmosphereEnabled', () => atmosphere.mesh!.visible = data.atmosphereEnabled)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereHeight',  () => {
-    const atmosHeight = data.atmosphereHeight / Globals.ATMOSPHERE_SCALING_DIVIDER
-    atmosphere.uniforms!.transform.radius.value = data.planetRadius + atmosHeight
+    atmosphere.mesh!.geometry.dispose()
+    atmosphere.mesh!.geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality, 1.0 + data.atmosphereHeight)
+    atmosphere.uniforms!.transform.radius.value = data.planetRadius + data.atmosphereHeight
   })
-  UNIFORM_UPDATE_MAP.value.set('_atmosphereDensityScale', () =>  atmosphere.uniforms!.render.density.value = data.atmosphereDensityScale / Globals.ATMOSPHERE_SCALING_DIVIDER)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereDensityScale', () =>  atmosphere.uniforms!.render.density.value = data.atmosphereDensityScale)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereIntensity',    () =>  atmosphere.uniforms!.render.intensity.value = data.atmosphereIntensity)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereColorMode',    () =>  atmosphere.uniforms!.render.colorMode.value = data.atmosphereColorMode)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereHue',          () =>  atmosphere.uniforms!.render.hue.value = data.atmosphereHue)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereTint',         () =>  atmosphere.uniforms!.render.tint.value = data.atmosphereTint)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereMieScatteringConstant',  () =>  atmosphere.uniforms!.render.advanced.mieScatteringConstant.value = data.atmosphereMieScatteringConstant)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereRayleighDensityRatio',   () =>  atmosphere.uniforms!.render.advanced.rayleighDensityRatio.value = data.atmosphereRayleighDensityRatio)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereMieDensityRatio',        () =>  atmosphere.uniforms!.render.advanced.mieDensityRatio.value = data.atmosphereMieDensityRatio)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereOpticalDensityRatio',   () =>  atmosphere.uniforms!.render.advanced.opticalDensityRatio.value = data.atmosphereOpticalDensityRatio)
 }
 
 // prettier-ignore

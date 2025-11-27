@@ -17,6 +17,7 @@ import type { BiomeParameters } from '../models/biome-parameters.model'
 import { PlanetDataConverter } from '../models/converters/planet-data.converter'
 import { CloudsDataConverter } from '../models/converters/clouds-data.converter'
 import { RingDataConverter } from '../models/converters/ring-data.converter'
+import { AtmosphereDataConverter } from '../models/converters/atmosphere-data.converter'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -117,8 +118,7 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): Plane
 }
 
 export function createClouds(data: PlanetData, textureBuffer: Uint8Array): CloudsMeshData {
-  const cloudsHeight = data.cloudsHeight / Globals.ATMOSPHERE_SCALING_DIVIDER
-  const geometry = createSphereGeometryComponent(data.planetMeshQuality, cloudsHeight)
+  const geometry = createSphereGeometryComponent(data.planetMeshQuality, data.cloudsHeight)
   const texture = TextureHelper.createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
   const dataConverter = new CloudsDataConverter(data, texture)
@@ -137,27 +137,13 @@ export function createClouds(data: PlanetData, textureBuffer: Uint8Array): Cloud
 }
 
 export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): AtmosphereMeshData {
+  // note: geometry is scaled via the planetGroup: always set to [1.0 + height]
   const geometry = createSphereGeometryComponent(
     data.planetMeshQuality,
-    data.atmosphereHeight / Globals.ATMOSPHERE_SCALING_DIVIDER
+    1.0 + data.atmosphereHeight
   )
-  const tslMaterial = new AtmosphereTSLMaterial({
-    sunlight: {
-      position: sunPos,
-      intensity: data.sunLightIntensity
-    },
-    transform: {
-      radius: data.planetRadius + (data.atmosphereHeight / Globals.ATMOSPHERE_SCALING_DIVIDER),
-      surfaceRadius: data.planetRadius,
-    },
-    render: {
-      density: data.atmosphereDensityScale / Globals.ATMOSPHERE_SCALING_DIVIDER,
-      intensity: data.atmosphereIntensity,
-      colorMode: data.atmosphereColorMode,
-      hue: data.atmosphereHue,
-      tint: data.atmosphereTint,
-    }
-  })
+  const dataConverter = new AtmosphereDataConverter(data, sunPos)
+  const tslMaterial = new AtmosphereTSLMaterial(dataConverter.convert())
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.userData.lens = 'no-occlusion'
   mesh.name = Globals.LG_MESH_NAME_ATMOSPHERE
@@ -271,8 +257,8 @@ export function createAmbientLight(color: THREE.ColorRepresentation, intensity: 
   return light
 }
 
-export function createSphereGeometryComponent(quality: number, addtlRadius: number = 0): THREE.SphereGeometry {
-  return new THREE.SphereGeometry(1.0 + addtlRadius, quality, quality / 2.0)
+export function createSphereGeometryComponent(quality: number, radius: number = 1.0): THREE.SphereGeometry {
+  return new THREE.SphereGeometry(radius, quality, quality / 2.0)
 }
 
 export function createRingGeometryComponent(

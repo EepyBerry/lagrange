@@ -10,21 +10,53 @@ import {
   add,
   div,
   mul,
-  PI,
   sub,
   length,
   exp,
-  max,
   Loop,
   int,
   vec4,
+  negate,
+  mat4,
+  normalize,
 } from 'three/tsl'
-import type { UniformNumberNode, UniformVector3Node } from '../tsl-types'
+import type { UniformNumberNode, UniformVector2Node, UniformVector3Node, UniformVector4Node } from '../tsl-types'
 import type { Node } from 'three/webgpu'
+
+/*
+ * DISCLAIMER:
+ * The functions in this class were extracted and manually transpiled & adapted from two distinct sources:
+ * - "Atmospheric Scattering Sample" by gltracy, 2014: https://www.shadertoy.com/view/lslXDr
+ * - "gl_tests" by TJGreen0211, 2018: https://github.com/TJGreen0211/gl_tests/blob/master/atmosphere/shaders/atmosphere.frag
+ * 
+ * Of note, the original proposal behind this code is titled "Display of The Earth Taking into Account Atmospheric Scattering",
+ * published by Nishita et al. in 1993, and presented at SIGGRAPH '93.
+ * The paper is available here for reading: https://dl.acm.org/doi/10.1145/166117.166140
+ */
 
 const MAX = 10000
 const NUM_OUT_SCATTER = 2
 const NUM_IN_SCATTER = 10
+
+/**
+ * Camera-to-atmosphere ray direction calculation
+ */
+export const rayDirection = /*@__PURE__*/ Fn(
+  ([i_modelWorldMatrix, i_position, i_camPosition]: ShaderNodeObject<Node>[]) => {
+    const m = mat4(i_modelWorldMatrix).toVar('m')
+    const pos = vec3(i_position).toVar('pos')
+    const ray = m.mul(pos).sub(vec4(i_camPosition, 1.0))
+    return normalize(ray.toVec3())
+  },
+).setLayout({
+  name: 'LG_ATMOS_rayDirection',
+  type: 'vec3',
+  inputs: [
+    { name: 'i_modelWorldMatrix', type: 'mat4' },
+    { name: 'i_position', type: 'vec3' },
+    { name: 'i_camPosition', type: 'vec3' },
+  ],
+})
 
 /**
  * Ray & sphere intersection function
@@ -37,7 +69,7 @@ export const rayVsSphere = /*@__PURE__*/ Fn(([i_position, i_direction, i_r]: Sha
   If(d.lessThan(0.0), () => vec2(MAX, float(MAX).negate()))
 
   d.assign(sqrt(d))
-  return vec2(b.negate().sub(d), b.negate().add(d))
+  return vec2(negate(b).sub(d), negate(b).add(d))
 }).setLayout({
   name: 'LG_ATMOS_rayVsSphere',
   type: 'vec2',
@@ -54,7 +86,7 @@ export const rayVsSphere = /*@__PURE__*/ Fn(([i_position, i_direction, i_r]: Sha
 // g : ( -0.75, -0.999 )
 //      3 * ( 1 - g^2 )               1 + c^2
 // F = ----------------- * -------------------------------
-//      8pi * ( 2 + g^2 )     ( 1 + g^2 - 2 * g * c )^(3/2)
+//  (8 * PI/3) * (2 + g^2)   (1 + g^2 - 2 * g * c)^(3/2)
 export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<Node>[]) => {
   const gg = float(i_g.mul(i_g)).toVar('gg')
   const a = float(sub(1.0, gg).mul(add(1.0, i_cc))).toVar('a')
@@ -62,7 +94,7 @@ export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<N
   b.mulAssign(sqrt(b))
   b.mulAssign(add(2.0, gg))
 
-  return div(3.0 / 8.0, PI)
+  return float((8 * Math.PI) / 3.0)
     .mul(a)
     .div(b)
 }).setLayout({
@@ -79,9 +111,9 @@ export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<N
  * Rayleigh function
  */
 // g : 0
-// F = 3/16PI * ( 1 + c^2 )
+// F = 3/4 * ( 1 + c^2 )
 export const computeRayleigh = /*@__PURE__*/ Fn(([i_cc]: ShaderNodeObject<Node>[]) => {
-  return div(3.0 / 16.0, PI).mul(add(1.0, i_cc))
+  return float(0.75).mul(add(1.0, i_cc))
 }).setLayout({
   name: 'LG_ATMOS_computeRayleigh',
   type: 'float',
@@ -89,26 +121,18 @@ export const computeRayleigh = /*@__PURE__*/ Fn(([i_cc]: ShaderNodeObject<Node>[
 })
 
 export const computeDensity = /*@__PURE__*/ Fn(
-  ([i_p, i_ph, i_surfaceRadius, i_density]: [
+  ([i_p, i_ph, i_radius, i_surfaceRadius, i_density]: [
     ShaderNodeObject<Node>,
     ShaderNodeObject<Node>,
+    UniformNumberNode,
     UniformNumberNode,
     UniformNumberNode,
   ]) => {
-    const actualScaleHeight = float(8500.0).toVar('actualScaleHeight') // The scale height on Earth in meters
-    const scale = float(i_density.div(actualScaleHeight)).toVar('scale') // Scaling factor based on the gap
-    const altitude = float(length(i_p).sub(i_surfaceRadius)).toVar('altitude')
-
-    // Initial density at the surface (sea level). Set this to your desired value.
-    // Earth's air density at sea level is approximately 1.225 kg/m^3
-    const rho_0 = float(20.0).toVar('rho_0')
-
-    //TBD, why does it looks better with these tunings?
-    rho_0.mulAssign(0.08125)
-
-    // Use exponential decay formula to calculate density
-    const rho = float(rho_0.mul(exp(max(altitude, 0.0).negate().div(actualScaleHeight.mul(scale))))).toVar('rho')
-    return rho.mul(i_ph)
+    const rho = float(i_density).toVar('rho')
+    const scalingFactor = float(1.0).div(i_radius.sub(i_surfaceRadius)).toVar('scalingFactor')
+    return exp(negate(length(i_p).sub(i_surfaceRadius)).mul(scalingFactor))
+      .mul(rho)
+      .mul(i_ph)
   },
 ).setLayout({
   name: 'LG_ATMOS_computeDensity',
@@ -116,30 +140,30 @@ export const computeDensity = /*@__PURE__*/ Fn(
   inputs: [
     { name: 'i_p', type: 'vec3' },
     { name: 'i_ph', type: 'float' },
+    { name: 'i_radius', type: 'float' },
     { name: 'i_surfaceRadius', type: 'float' },
     { name: 'i_density', type: 'float' },
   ],
 })
 
 export const optic = /*@__PURE__*/ Fn(
-  ([i_p, i_q, i_ph, i_surfaceRadius, i_density]: [
+  ([i_p, i_q, i_ph, i_radius, i_surfaceRadius, i_density]: [
     ShaderNodeObject<Node>,
     ShaderNodeObject<Node>,
     ShaderNodeObject<Node>,
+    UniformNumberNode,
     UniformNumberNode,
     UniformNumberNode,
   ]) => {
-    const s = vec3(i_q.sub(i_p).div(float(NUM_OUT_SCATTER))).toVar('s')
-    const v = vec3(i_p.add(s.mul(0.5))).toVar('v')
+    const stepValue = vec3(div(i_q.sub(i_p), float(NUM_OUT_SCATTER))).toVar('stepValue')
+    const v = vec3(i_p.add(stepValue.mul(0.5))).toVar('v')
+
     const sum = float(0.0).toVar('sum')
-
     Loop({ start: int(0), end: NUM_OUT_SCATTER, condition: '<' }, () => {
-      sum.addAssign(computeDensity(v, i_ph, i_surfaceRadius, i_density))
-      v.addAssign(s)
+      sum.addAssign(computeDensity(v, i_ph, i_radius, i_surfaceRadius, i_density))
+      v.addAssign(stepValue)
     })
-
-    sum.mulAssign(length(s))
-    return sum
+    return sum.mul(length(stepValue))
   },
 ).setLayout({
   name: 'LG_ATMOS_optic',
@@ -148,77 +172,77 @@ export const optic = /*@__PURE__*/ Fn(
     { name: 'i_p', type: 'vec3' },
     { name: 'i_q', type: 'vec3' },
     { name: 'i_ph', type: 'float' },
+    { name: 'i_radius', type: 'float' },
     { name: 'i_surfaceRadius', type: 'float' },
     { name: 'i_density', type: 'float' },
   ],
 })
 
 export const applyInScatter = /*@__PURE__*/ Fn(
-  ([i_o, i_dir, i_e, i_lightDir, i_lightIntensity, i_uniforms]: [
+  ([i_o, i_dir, i_e, i_light, i_atmos, i_constants]: [
     ShaderNodeObject<Node>,
     ShaderNodeObject<Node>,
-    ShaderNodeObject<Node>,
-    ShaderNodeObject<Node>,
-    UniformNumberNode, // light intensity
+    UniformVector2Node,
+    UniformVector4Node, // XYZ = direction, W = intensity
     UniformVector3Node, // radius, surface radius, density (passed to rayVsSphere & computeDensity)
+    UniformVector4Node, // mie scattering, rayleigh density ratio (phRay), mie density ratio (phMie), optical density ratio (phOptical)
   ]) => {
-    const ph_ray = float(0.15)
-    const ph_mie = float(0.05)
-    const ph_alpha = float(0.25)
+    // density ratios
+    const mieScatteringConstant = float(i_constants.x).toVar('mieScatteringConstant')
+    const phRay = float(i_constants.y).toVar('phRay')
+    const phMie = float(i_constants.z).toVar('phMie')
+    const phOptical = float(i_constants.w).toVar('phOptical')
 
     const k_ray = vec3(3.8, 13.5, 33.1)
     const k_mie = vec3(21.0)
-    const k_mie_ex = float(1.1)
     const k_alpha = float(2.0)
 
+    const len = float(i_e.y.sub(i_e.x).div(float(NUM_IN_SCATTER))).toVar('len')
+    const stepValue = vec3(i_dir.mul(len)).toVar('stepValue')
+    const v = vec3(i_o.add(i_dir.mul(i_e.x.add(len.mul(0.5))))).toVar('v')
+
+    const n_ray0 = float(0.0).toVar('n_ray0')
+    const n_mie0 = float(0.0).toVar('n_mie0')
     const sum_ray = vec3(0.0).toVar('sum_ray')
     const sum_mie = vec3(0.0).toVar('sum_mie')
     const sum_alpha = float(0.0).toVar('sum_alpha')
-
-    const n_ray0 = float(0.0).toVar()
-    const n_mie0 = float(0.0).toVar()
-
-    const len = float(i_e.y.sub(i_e.x).div(float(NUM_IN_SCATTER))).toVar('len')
-    const s = vec3(i_dir.mul(len)).toVar()
-    const v = vec3(i_o.add(i_dir.mul(i_e.x.add(len.mul(0.5))))).toVar('v')
-
     Loop({ start: int(0), end: NUM_IN_SCATTER, condition: '<' }, () => {
-      const d_ray = float(computeDensity(v, ph_ray, i_uniforms.y, i_uniforms.z).mul(len)).toVar('d_ray')
-      const d_mie = float(computeDensity(v, ph_mie, i_uniforms.y, i_uniforms.z).mul(len)).toVar('d_mie')
-      const d_alpha = float(computeDensity(v, ph_alpha, i_uniforms.y, i_uniforms.z).mul(len)).toVar('d_alpha')
+      const f = vec2(rayVsSphere(v, i_light.xyz, i_atmos.x)).toVar('f')
+      const u = vec3(v.add(i_light.xyz.mul(f.y))).toVar('u')
+
+      const d_ray = float(computeDensity(v, phRay, i_atmos.x, i_atmos.y, i_atmos.z).mul(len)).toVar('d_ray')
+      const d_mie = float(computeDensity(v, phMie, i_atmos.x, i_atmos.y, i_atmos.z).mul(len)).toVar('d_mie')
+      const d_alpha = float(computeDensity(v, phOptical, i_atmos.x, i_atmos.y, i_atmos.z).mul(len)).toVar(
+        'd_alpha',
+      )
 
       n_ray0.addAssign(d_ray)
       n_mie0.addAssign(d_mie)
 
-      const f = vec2(rayVsSphere(v, i_lightDir, i_uniforms.x)).toVar('f')
-      const u = vec3(v.add(i_lightDir.mul(f.y))).toVar('u')
+      const n_ray1 = float(optic(v, u, phRay, i_atmos.x, i_atmos.y, i_atmos.z)).toVar('n_ray1')
+      const n_mie1 = float(optic(v, u, phMie, i_atmos.x, i_atmos.y, i_atmos.z)).toVar('n_mie1')
 
-      const n_ray1 = float(optic(v, u, ph_ray, i_uniforms.y, i_uniforms.z)).toVar('n_ray1')
-      const n_mie1 = float(optic(v, u, ph_mie, i_uniforms.y, i_uniforms.z)).toVar('n_mie1')
-
-      const att = vec3(
-        exp(n_ray0.add(n_ray1).negate().mul(k_ray).sub(n_mie0.add(n_mie1).mul(k_mie).mul(k_mie_ex))),
-      ).toVar('att')
+      const att = vec3(exp(n_ray0.add(n_ray1).negate().mul(k_ray).sub(n_mie0.add(n_mie1).mul(k_mie)))).toVar('att')
 
       sum_ray.addAssign(d_ray.mul(att))
       sum_mie.addAssign(d_mie.mul(att))
 
       // The optical density is only a factor of the density of the traveled media
       sum_alpha.addAssign(d_alpha)
-      v.addAssign(s)
+      v.addAssign(stepValue)
     })
 
-    const c = float(dot(i_dir, i_lightDir.negate())).toVar('c')
+    const c = float(dot(i_dir, negate(i_light.xyz))).toVar('c')
     const cc = float(c.mul(c)).toVar('cc')
     const scatter = vec3(
       sum_ray
         .mul(k_ray)
         .mul(computeRayleigh(cc))
-        .add(sum_mie.mul(k_mie).mul(computeMie(float(-0.78), c, cc))),
+        .add(sum_mie.mul(k_mie).mul(computeMie(float(mieScatteringConstant), c, cc))),
     ).toVar('scatter')
 
     const alpha = float(sum_alpha.mul(k_alpha)).toVar('alpha')
-    return vec4(scatter.mul(i_lightIntensity), alpha)
+    return vec4(scatter.mul(i_light.w), alpha)
   },
 ).setLayout({
   name: 'LG_ATMOS_applyInScatter',
@@ -227,8 +251,8 @@ export const applyInScatter = /*@__PURE__*/ Fn(
     { name: 'i_o', type: 'vec3' },
     { name: 'i_dir', type: 'vec3' },
     { name: 'i_e', type: 'vec2' },
-    { name: 'i_lightDir', type: 'vec3' },
-    { name: 'i_lightIntensity', type: 'float' },
-    { name: 'i_uniforms', type: 'vec3' },
+    { name: 'i_light', type: 'vec4' },
+    { name: 'i_atmos', type: 'vec3' },
+    { name: 'i_constants', type: 'vec4' }
   ],
 })

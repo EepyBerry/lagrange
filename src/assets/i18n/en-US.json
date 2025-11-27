@@ -369,7 +369,12 @@
         "rgba_mode_direct": "Direct",
         "rgba_mode_mixed": "Mixed",
         "rgba_hue": "Hue",
-        "rgba_tint": "Tint"
+        "rgba_tint": "Tint",
+        "advanced": "Advanced",
+        "advanced_mie_constant": "Scattering constant (g)",
+        "advanced_rayleigh_density_ratio": "Rayleigh density ratio",
+        "advanced_mie_density_ratio": "Mie density ratio",
+        "advanced_optical_density_ratio": "Optical density ratio"
       },
       "ring": {
         "$title": "Ring System",
