@@ -26,7 +26,7 @@
 </template>
 <script setup lang="ts">
 import { RingParameters } from '@core/models/ring-parameters.model'
-import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
+import { LG_PLANET_DATA } from '@/core/services/editor.service'
 import ParameterRing from '@components/global/parameters/ParameterRing.vue'
 import LgvButton from '@/_lib/components/LgvButton.vue'
 

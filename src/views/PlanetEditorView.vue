@@ -42,7 +42,7 @@ import {
   updateCameraRendering,
   resetPlanet,
   randomizePlanet,
-} from '@core/services/planet-editor.service'
+} from '@/core/services/editor.service'
 import { sleep } from '@core/utils/utils'
 import { nanoid } from 'nanoid'
 import EditorErrorDialog from '@/components/editor/dialogs/EditorInitErrorDialog.vue'

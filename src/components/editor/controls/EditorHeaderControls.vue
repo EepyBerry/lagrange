@@ -105,7 +105,7 @@
 
 <script setup lang="ts">
 import AppResetConfirmDialog from '../dialogs/ResetConfirmDialog.vue'
-import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
+import { LG_PLANET_DATA } from '@/core/services/editor.service'
 import { ref, useTemplateRef, watch, type Ref } from 'vue'
 import { EventBus } from '@core/event-bus'
 import { autoUpdate, offset, useFloating } from '@floating-ui/vue'

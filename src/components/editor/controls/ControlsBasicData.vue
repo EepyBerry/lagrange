@@ -23,7 +23,7 @@
 import ParameterSelect from '@/components/global/parameters/ParameterSelect.vue';
 import { PlanetClass, PlanetType } from '@/core/types';
 import { getI18nPlanetClass, getI18nPlanetType } from '@/core/utils/i18n-utils';
-import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
+import { LG_PLANET_DATA } from '@/core/services/editor.service'
 
 function listPlanetTypeValues(): PlanetType[] {
   return Object.entries(PlanetType).filter(([_, elem]) => Number.isInteger(elem)).map(([_, v]) => v) as PlanetType[]

@@ -172,7 +172,7 @@
   </ParameterGrid>
 </template>
 <script setup lang="ts">
-import { LG_PLANET_DATA } from '@core/services/planet-editor.service'
+import { LG_PLANET_DATA } from '@/core/services/editor.service'
 import ParameterBiome from '@components/global/parameters/ParameterBiome.vue'
 import { GradientMode } from '@core/types'
 import { BiomeParameters } from '@core/models/biome-parameters.model'
