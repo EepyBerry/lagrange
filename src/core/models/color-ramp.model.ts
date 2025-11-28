@@ -155,7 +155,7 @@ export class ColorRamp extends ChangeTracker {
 
   public removeStep(stepId: string) {
     if (this.isBoundStep(stepId)) {
-      console.warn('(ColorRamp) Cannot delete ramp bounds! (factor=0|1)')
+      console.warn('<Lagrange> (ColorRamp) Cannot delete ramp bounds! (factor=0|1)')
       return
     }
     const index = this._steps.findIndex((s) => s.id === stepId)

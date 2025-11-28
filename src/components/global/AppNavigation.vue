@@ -84,7 +84,6 @@ function toggleNavMenu(override?: boolean) {
   } else {
     navMenu.value!.style.visibility = navMenu.value!.style.visibility === 'visible' ? 'hidden' : 'visible'
     isNavMenuOpen.value = navMenu.value!.style.visibility === 'visible'
-    console.log(navMenu.value!.style.visibility)
   }
 }
 </script>

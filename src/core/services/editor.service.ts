@@ -1,10 +1,10 @@
-import { ref, type Ref } from 'vue'
+import { ref, watch, type Ref } from 'vue'
 import * as THREE from 'three'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import * as Globals from '@core/globals'
 import * as ComponentHelper from '@core/helpers/component.helper'
 import * as BakingHelper from '@core/helpers/baking.helper'
-import { EditorSceneCreationMode, type BakingTarget, type EditorSceneData } from '@core/types'
+import { EditorSceneCreationMode, EditorState, type BakingTarget, type EditorSceneData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils'
 import * as ExportHelper from '../helpers/export.helper'
@@ -19,7 +19,8 @@ import { EventBus } from '../event-bus'
 
 // Exposed data
 export const LG_PLANET_DATA: Ref<PlanetData> = ref(new PlanetData())
-export const LG_FLAG_RANDOMIZATION: Ref<boolean> = ref(false)
+export const LG_EDITOR_STATE: Ref<EditorState> = ref(EditorState.INITIALIZATION)
+watch(LG_EDITOR_STATE, (v) => console.debug('<Lagrange> EditorState => ' + v))
 
 // Internal attributes
 let editorSceneData!: EditorSceneData
@@ -32,6 +33,7 @@ const hasPlanetBeenEdited: Ref<boolean> = ref(false)
 // ------------------------------------------------------------------------------------------------ //
 
 export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
+  LG_EDITOR_STATE.value = EditorState.INITIALIZATION
   await sleep(50)
   enableEditorRendering = true
   editorSceneData = await SceneHelper.buildEditorScene(
@@ -49,6 +51,7 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   editorSceneData.renderer!.setAnimationLoop(() => renderFrame())
   editorSceneData.renderer!.domElement.ariaLabel = '3D planet viewer'
   canvas.appendChild(editorSceneData.renderer!.domElement)
+  LG_EDITOR_STATE.value = EditorState.EDITION
 
   /* LG_SCENE_DATA.renderer!.debug.getShaderAsync(
     LG_SCENE_DATA.scene,
@@ -130,6 +133,7 @@ function updateScene() {
  * Removes every object from the scene, then removes the scene itself
  */
 export function disposeScene() {
+  LG_EDITOR_STATE.value = EditorState.SCENE_DISPOSAL
   watchForPlanetUpdates = false
   console.debug('<Lagrange> Clearing scene... ')
   SceneHelper.disposeScene(editorSceneData)
@@ -142,17 +146,21 @@ export function disposeScene() {
 // ------------------------------------------------------------------------------------------------ //
 
 export async function randomizePlanet() {
+  LG_EDITOR_STATE.value = EditorState.RANDOMIZATION
   await sleep(50)
   regeneratePRNGIfNecessary()
   LG_PLANET_DATA.value.randomize()
   updateRingMeshes()
   UniformHelper.reloadRingDataUpdates(editorSceneData, LG_PLANET_DATA.value)
+  LG_EDITOR_STATE.value = EditorState.EDITION
 }
 
 export async function resetPlanet() {
+  LG_EDITOR_STATE.value = EditorState.RESET
   LG_PLANET_DATA.value.reset()
   editorSceneData.planet.biomeLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams)
   editorSceneData.planet.biomeEmissiveLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams)
+  LG_EDITOR_STATE.value = EditorState.EDITION
 }
 
 export async function takePlanetScreenshot() {
@@ -168,10 +176,12 @@ export async function takePlanetScreenshot() {
 }
 
 export async function exportPlanetPreview(): Promise<string> {
+  LG_EDITOR_STATE.value = EditorState.PREVIEW_GENERATION
   await sleep(50)
   editorSceneData.lensFlare!.mesh.visible = false
   const dataURL = await PreviewHelper.generatePlanetPreview(LG_PLANET_DATA.value)
   editorSceneData.lensFlare!.mesh.visible = LG_PLANET_DATA.value.lensFlareEnabled
+  LG_EDITOR_STATE.value = EditorState.EDITION
   return dataURL
 }
 
@@ -180,6 +190,7 @@ export async function exportPlanetToGLTF(progressDialog: {
   setProgress: (value: number) => void
   setError: (error: unknown) => void
 }) {
+  LG_EDITOR_STATE.value = EditorState.EXPORT
   progressDialog.setProgress(1)
   await sleep(50)
   const bakingTargets: BakingTarget[] = []
@@ -329,6 +340,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     renderer.dispose()
     progressDialog.setProgress(8)
     await sleep(50)
+    LG_EDITOR_STATE.value = EditorState.EDITION
   }
 }
 

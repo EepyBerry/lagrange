@@ -36,7 +36,7 @@ const lgColor = defineModel<Color>()
 const pickerInitColor = ref('')
 const pickerOpen = ref(false)
 
-onMounted(() => initPickerColor())
+onMounted(initPickerColor)
 
 function initPickerColor() {
   pickerInitColor.value = '#' + lgColor.value?.getHexString()
