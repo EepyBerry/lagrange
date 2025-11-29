@@ -563,9 +563,6 @@ export default class PlanetData extends ChangeTracker {
   public get changedProps() {
     return this._changedProps
   }
-  public markAllForChange() {
-    this._changedProps.push(...Object.keys(this).map((o) => ({ prop: o })))
-  }
 
   // --------------------------------------------------
   // |                  Constructor                   |
@@ -706,7 +703,7 @@ export default class PlanetData extends ChangeTracker {
   }
 
   // --------------------------------------------------
-  // |                  Load/reset                    |
+  // |               Load/reset/update                |
   // --------------------------------------------------
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -885,12 +882,12 @@ export default class PlanetData extends ChangeTracker {
     this._biomesTemperatureNoise.randomize()
     this._biomesHumidityMode = Math.round(clampedPRNG(0, 2)) as GradientMode
     this._biomesHumidityNoise.randomize()
-    /* this._biomesParams.splice(0)
+    this._biomesParams.splice(0)
     for (let i = 0; i < Math.round(clampedPRNG(0, 8)); i++) {
       const b = BiomeParameters.createRandom(this.changedProps, '_biomesParams[element]')
       b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity
       this._biomesParams.push(b)
-    } */
+    }
 
     // Clouds
     this._cloudsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
@@ -925,7 +922,6 @@ export default class PlanetData extends ChangeTracker {
     for (let i = 0; i < Math.round(clampedPRNG(0, 4)); i++) {
       this._ringsParams.push(RingParameters.createRandom(this._changedProps, '_ringsParams'))
     }
-    //this.markAllForChange()
   }
 
   public reset() {
@@ -937,6 +933,10 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05)
     this._cloudsNoise.reset(4.0, 0.6, 1.75, 6, 1, 1.0)
     this.markAllForChange()
+  }
+  
+  public markAllForChange() {
+    this._changedProps.push(...Object.keys(this).map((o) => ({ prop: o })))
   }
 
   public findBiomeById(id: string) {

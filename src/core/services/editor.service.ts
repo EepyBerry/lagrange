@@ -112,6 +112,7 @@ export function updateRingMeshes() {
       ringsMeshData.push(newRing)
       editorSceneData.ringAnchor!.add(newRing.mesh!)
     })
+  editorSceneData.ringAnchor.visible = LG_PLANET_DATA.value.ringsEnabled
 }
 
 function updateScene() {
@@ -150,8 +151,9 @@ export async function randomizePlanet() {
   await sleep(50)
   regeneratePRNGIfNecessary()
   LG_PLANET_DATA.value.randomize()
-  updateRingMeshes()
-  UniformHelper.reloadRingDataUpdates(editorSceneData, LG_PLANET_DATA.value)
+  editorSceneData.planet.biomeLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams)
+  editorSceneData.planet.biomeEmissiveLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams)
+  LG_PLANET_DATA.value.markAllForChange()
   LG_EDITOR_STATE.value = EditorState.EDITION
 }
 

@@ -41,7 +41,7 @@ export function clearUniformUpdateMap() {
 }
 
 export function execUniformUpdate(changedProp: ChangedProp) {
-  console.debug('Detected property change! ', toRaw(changedProp))
+  //console.debug('Detected property change! ', toRaw(changedProp))
   UNIFORM_UPDATE_MAP.value.get(changedProp.prop)?.(changedProp.source, changedProp.action)
 }
 
