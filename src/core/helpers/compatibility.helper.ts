@@ -21,7 +21,7 @@ export function convertLegacyRingStorage(self: PlanetData, legacyData: LegacyRin
     self.ringsEnabled = legacyData._ringEnabled ?? false
     const convertedParams = new RingParameters(
       self.changedProps,
-      '_ringsParameters',
+      '_ringsParams',
       legacyData._ringInnerRadius ?? 1.25,
       legacyData._ringOuterRadius ?? 1.5,
       legacyData._ringColorRamp?._steps,

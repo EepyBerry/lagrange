@@ -42,7 +42,8 @@ import {
   updateCameraRendering,
   resetPlanet,
   randomizePlanet,
-} from '@core/services/planet-editor.service'
+  LG_EDITOR_STATE,
+} from '@/core/services/editor.service'
 import { sleep } from '@core/utils/utils'
 import { nanoid } from 'nanoid'
 import EditorErrorDialog from '@/components/editor/dialogs/EditorInitErrorDialog.vue'
@@ -53,6 +54,7 @@ import WebGPU from '@/core/capabilities/WebGPU'
 import * as DexieService from '@core/services/dexie.service'
 import WebGL from '@/core/capabilities/WebGL'
 import ViewHeader from '@/components/global/ViewHeader.vue'
+import { EditorState } from '@/core/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -121,6 +123,7 @@ async function initThree() {
       loadedCorrectly = true
       showSpinner.value = false
     } catch(error) {
+      LG_EDITOR_STATE.value = EditorState.ERROR
       if (error instanceof Error) {
         editorErrorDialogRef.value!.openWithError(error.message, error.stack)
       } else if (typeof error === 'string') {
@@ -143,6 +146,7 @@ async function initThree() {
       loadedCorrectly = true
       showSpinner.value = false
     } catch (error) {
+      LG_EDITOR_STATE.value = EditorState.ERROR
       if (error instanceof Error || error instanceof DOMException) {
         editorErrorDialogRef.value!.openWithError(error.message, error.stack)
       } else if (typeof error === 'string') {

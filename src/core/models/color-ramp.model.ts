@@ -84,7 +84,6 @@ export class ColorRamp extends ChangeTracker {
     this._maxSize = maxSize
     this._steps = steps
     this._lockedSize = lockedSize
-    this.markForChange(this._changePrefix)
   }
 
   clone(): ColorRamp {
@@ -117,9 +116,9 @@ export class ColorRamp extends ChangeTracker {
     this._hash = await sha1(JSON.stringify(this, (k,v) => k === '_changedProps' ? undefined : v))
   }
 
-  public sortSteps() {
+  public sortSteps(markChange: boolean = true) {
     this._steps.sort((a, b) => a.factor - b.factor)
-    this.markForChange(this._changePrefix)
+    if (markChange) this.markForChange(this._changePrefix)
     this.generateHash()
   }
 
@@ -156,7 +155,7 @@ export class ColorRamp extends ChangeTracker {
 
   public removeStep(stepId: string) {
     if (this.isBoundStep(stepId)) {
-      console.warn('(ColorRamp) Cannot delete ramp bounds! (factor=0|1)')
+      console.warn('<Lagrange> (ColorRamp) Cannot delete ramp bounds! (factor=0|1)')
       return
     }
     const index = this._steps.findIndex((s) => s.id === stepId)
@@ -192,8 +191,7 @@ export class ColorRamp extends ChangeTracker {
         ColorRampStep.newWithAlpha(clampedPRNG(0, 1) * 0xffffff, clampedPRNG(0, 1), factor, i === 0 || i === max - 1),
       )
     }
-    this.sortSteps()
-    this.markForChange(this._changePrefix)
+    this.sortSteps(false)
     this.generateHash()
   }
 }

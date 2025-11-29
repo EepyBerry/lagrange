@@ -563,12 +563,6 @@ export default class PlanetData extends ChangeTracker {
   public get changedProps() {
     return this._changedProps
   }
-  public markAllForChange() {
-    this._changedProps.push(...Object.keys(this).map((o) => ({ prop: o })))
-  }
-  public clearChangedProps() {
-    this._changedProps.splice(0)
-  }
 
   // --------------------------------------------------
   // |                  Constructor                   |
@@ -638,7 +632,7 @@ export default class PlanetData extends ChangeTracker {
     this._biomesParams = [
       new BiomeParameters(
         this._changedProps,
-        '_biomesParameters[element]',
+        '_biomesParams[element]',
         {
           temperatureMin: 0.0,
           temperatureMax: 0.1,
@@ -650,7 +644,7 @@ export default class PlanetData extends ChangeTracker {
       ),
       new BiomeParameters(
         this._changedProps,
-        '_biomesParameters[element]',
+        '_biomesParams[element]',
         {
           temperatureMin: 0.8,
           temperatureMax: 1.0,
@@ -662,7 +656,7 @@ export default class PlanetData extends ChangeTracker {
       ),
       new BiomeParameters(
         this._changedProps,
-        '_biomesParameters[element]',
+        '_biomesParams[element]',
         {
           temperatureMin: 0.0,
           temperatureMax: 1.0,
@@ -709,7 +703,7 @@ export default class PlanetData extends ChangeTracker {
   }
 
   // --------------------------------------------------
-  // |                  Load/reset                    |
+  // |               Load/reset/update                |
   // --------------------------------------------------
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -776,7 +770,7 @@ export default class PlanetData extends ChangeTracker {
       ...(data._biomesParams ?? []).map( (params: any) => {
         const b = new BiomeParameters(
           this.changedProps,
-          '_biomesParameters[element]',
+          '_biomesParams[element]',
           {
             temperatureMin: params._tempMin ?? 0.0,
             temperatureMax: params._tempMax ?? 0.5,
@@ -834,7 +828,7 @@ export default class PlanetData extends ChangeTracker {
       ...(data._ringsParams ?? []).map((params: any) =>
           new RingParameters(
             this.changedProps,
-            '_ringsParameters',
+            '_ringsParams',
             params._innerRadius ?? 1.25,
             params._outerRadius ?? 1.5,
             params._colorRamp?._steps,
@@ -850,86 +844,84 @@ export default class PlanetData extends ChangeTracker {
   // Note: adjusted ranges to get more coherent data
   public randomize() {
     // Lighting
-    this.lensFlareEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
-    this.lensFlarePointsIntensity = clampedPRNG(0, 1)
-    this.lensFlareGlareIntensity = clampedPRNG(0, 1)
-    this.sunLightAngle = clampedPRNG(-90, 90)
-    this.sunLightColor.set(clampedPRNG(0.5, 1) * 0xffffff)
-    this.sunLightIntensity = clampedPRNG(10, 35)
-    this.ambLightColor.set(clampedPRNG(0.5, 1) * 0xffffff)
-    this.ambLightIntensity = clampedPRNG(0, 1)
+    this._lensFlareEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
+    this._lensFlarePointsIntensity = clampedPRNG(0, 1)
+    this._lensFlareGlareIntensity = clampedPRNG(0, 1)
+    this._sunLightAngle = clampedPRNG(-90, 90)
+    this._sunLightColor.set(clampedPRNG(0.5, 1) * 0xffffff)
+    this._sunLightIntensity = clampedPRNG(10, 35)
+    this._ambLightColor.set(clampedPRNG(0.5, 1) * 0xffffff)
+    this._ambLightIntensity = clampedPRNG(0, 1)
 
     // Planet & Rendering
-    this.planetType = Math.round(clampedPRNG(0, 2)) as PlanetType
-    this.planetClass = Math.round(clampedPRNG(0, 9)) as PlanetClass
-    this.planetRadius = clampedPRNG(0.5, 1)
-    this.planetAxialTilt = clampedPRNG(-180, 180)
-    this.planetRotation = clampedPRNG(0, 360)
-    this.planetWaterRoughness = clampedPRNG(0, 1)
-    this.planetWaterMetalness = clampedPRNG(0, 1)
-    this.planetWaterEmissiveIntensity = clampedPRNG(0, 10)
-    this.planetGroundRoughness = clampedPRNG(0, 1)
-    this.planetGroundMetalness = clampedPRNG(0, 1)
-    this.planetGroundEmissiveIntensity = clampedPRNG(0, 10)
-    this.planetWaterLevel = clampedPRNG(0, 1)
+    this._planetType = Math.round(clampedPRNG(0, 2)) as PlanetType
+    this._planetClass = Math.round(clampedPRNG(0, 9)) as PlanetClass
+    this._planetRadius = clampedPRNG(0.5, 1)
+    this._planetAxialTilt = clampedPRNG(-180, 180)
+    this._planetRotation = clampedPRNG(0, 360)
+    this._planetWaterRoughness = clampedPRNG(0, 1)
+    this._planetWaterMetalness = clampedPRNG(0, 1)
+    this._planetWaterEmissiveIntensity = clampedPRNG(0, 10)
+    this._planetGroundRoughness = clampedPRNG(0, 1)
+    this._planetGroundMetalness = clampedPRNG(0, 1)
+    this._planetGroundEmissiveIntensity = clampedPRNG(0, 10)
+    this._planetWaterLevel = clampedPRNG(0, 1)
 
     // Surface
-    this.planetSurfaceShowBumps = Boolean(Math.round(clampedPRNG(0, 1)))
-    this.planetSurfaceBumpStrength = clampedPRNG(0, 0.2)
-    this.planetSurfaceShowWarping = Boolean(Math.round(clampedPRNG(0, 1)))
-    this.planetSurfaceShowDisplacement = Boolean(Math.round(clampedPRNG(0, 1)))
-    this.planetSurfaceDisplacement.randomize()
-    this.planetSurfaceNoise.randomize()
-    this.planetSurfaceColorRamp.randomize(8)
+    this._planetSurfaceShowBumps = Boolean(Math.round(clampedPRNG(0, 1)))
+    this._planetSurfaceBumpStrength = clampedPRNG(0, 0.2)
+    this._planetSurfaceShowWarping = Boolean(Math.round(clampedPRNG(0, 1)))
+    this._planetSurfaceShowDisplacement = Boolean(Math.round(clampedPRNG(0, 1)))
+    this._planetSurfaceDisplacement.randomize()
+    this._planetSurfaceNoise.randomize()
+    this._planetSurfaceColorRamp.randomize(8)
 
     // Biomes
-    this.biomesEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
-    this.biomesTemperatureMode = Math.round(clampedPRNG(0, 2)) as GradientMode
-    this.biomesTemperatureNoise.randomize()
-    this.biomesHumidityMode = Math.round(clampedPRNG(0, 2)) as GradientMode
-    this.biomesHumidityNoise.randomize()
-    this.biomesParams.splice(0)
+    this._biomesEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
+    this._biomesTemperatureMode = Math.round(clampedPRNG(0, 2)) as GradientMode
+    this._biomesTemperatureNoise.randomize()
+    this._biomesHumidityMode = Math.round(clampedPRNG(0, 2)) as GradientMode
+    this._biomesHumidityNoise.randomize()
+    this._biomesParams.splice(0)
     for (let i = 0; i < Math.round(clampedPRNG(0, 8)); i++) {
-      const b = BiomeParameters.createRandom(this.changedProps, '_biomesParameters[element]')
+      const b = BiomeParameters.createRandom(this.changedProps, '_biomesParams[element]')
       b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity
-      this.biomesParams.push(b)
+      this._biomesParams.push(b)
     }
 
     // Clouds
-    this.cloudsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
-    this.cloudsRotation = clampedPRNG(0, 360)
-    this.cloudsShowWarping = Boolean(Math.round(clampedPRNG(0, 1)))
-    this.cloudsShowDisplacement = Boolean(Math.round(clampedPRNG(0, 1)))
-    this.cloudsDisplacement.randomize()
-    this.cloudsNoise.randomize()
-    this.cloudsColor.set(clampedPRNG(0, 1) * 0xffffff)
-    this.cloudsColorRamp.loadFromSteps([
+    this._cloudsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
+    this._cloudsRotation = clampedPRNG(0, 360)
+    this._cloudsShowWarping = Boolean(Math.round(clampedPRNG(0, 1)))
+    this._cloudsShowDisplacement = Boolean(Math.round(clampedPRNG(0, 1)))
+    this._cloudsDisplacement.randomize()
+    this._cloudsNoise.randomize()
+    this._cloudsColor.set(clampedPRNG(0, 1) * 0xffffff)
+    this._cloudsColorRamp.loadFromSteps([
       new ColorRampStep(0x000000, 0.0, true),
       new ColorRampStep(clampedPRNG(0, 1) * 0xffffff, clampedPRNG(0, 1)),
       new ColorRampStep(clampedPRNG(0, 1) * 0xffffff, 1.0, true),
     ])
 
     // Atmosphere
-    this.atmosphereEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
-    this.atmosphereHeight = clampedPRNG(0.25, 8)
-    this.atmosphereDensityScale = clampedPRNG(0.25, 10)
-    this.atmosphereIntensity = clampedPRNG(0, 2)
-    this.atmosphereColorMode = Math.round(clampedPRNG(0, 2)) as ColorMode
-    this.atmosphereHue = clampedPRNG(0, 2)
-    this.atmosphereTint.set(clampedPRNG(0, 1) * 0xffffff)
-    this.atmosphereMieScatteringConstant = clampedPRNG(-0.999, 0.999)
-    this.atmosphereRayleighDensityRatio = clampedPRNG(0, 1)
-    this.atmosphereMieDensityRatio = clampedPRNG(0, 1)
-    this.atmosphereOpticalDensityRatio = clampedPRNG(0, 1)
+    this._atmosphereEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
+    this._atmosphereHeight = clampedPRNG(0.0055, 0.05)
+    this._atmosphereDensityScale = clampedPRNG(0.25, 20)
+    this._atmosphereIntensity = clampedPRNG(0.25, 5.0)
+    this._atmosphereColorMode = Math.round(clampedPRNG(0, 2)) as ColorMode
+    this._atmosphereHue = clampedPRNG(0, 2)
+    this._atmosphereTint.set(clampedPRNG(0, 1) * 0xffffff)
+    this._atmosphereMieScatteringConstant = clampedPRNG(-0.999, 0.999)
+    this._atmosphereRayleighDensityRatio = clampedPRNG(0, 1)
+    this._atmosphereMieDensityRatio = clampedPRNG(0, 1)
+    this._atmosphereOpticalDensityRatio = clampedPRNG(0, 1)
 
     // Ring
-    this.ringsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
-    this.ringsParams.splice(0)
+    this._ringsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
+    this._ringsParams.splice(0)
     for (let i = 0; i < Math.round(clampedPRNG(0, 4)); i++) {
-      this.ringsParams.push(RingParameters.createRandom(this._changedProps, '_ringsParameters'))
+      this._ringsParams.push(RingParameters.createRandom(this._changedProps, '_ringsParams'))
     }
-    this.markForChange('_ringsParameters')
-    this.markAllForChange()
   }
 
   public reset() {
@@ -941,6 +933,10 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05)
     this._cloudsNoise.reset(4.0, 0.6, 1.75, 6, 1, 1.0)
     this.markAllForChange()
+  }
+  
+  public markAllForChange() {
+    this._changedProps.push(...Object.keys(this).map((o) => ({ prop: o })))
   }
 
   public findBiomeById(id: string) {

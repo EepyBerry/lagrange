@@ -21,7 +21,13 @@ export abstract class ChangeTracker {
 }
 
 export type ChangeSource = { arrayIndex?: number, data?: unknown }
-export enum ChangeAction { ADD, EDIT, DELETE, SORT_UP, SORT_DOWN }
+export enum ChangeAction {
+  ADD = 'ADD',
+  EDIT = 'EDIT',
+  DELETE = 'DELETE',
+  SORT_UP = 'SORT_UP',
+  SORT_DOWN = 'SORT_DOWN',
+}
 export type ChangedProp = {
   prop: string
   source?: ChangeSource

@@ -1,10 +1,10 @@
-import { ref, type Ref } from 'vue'
+import { ref, watch, type Ref } from 'vue'
 import * as THREE from 'three'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import * as Globals from '@core/globals'
 import * as ComponentHelper from '@core/helpers/component.helper'
 import * as BakingHelper from '@core/helpers/baking.helper'
-import { EditorSceneCreationMode, type BakingTarget, type EditorSceneData } from '@core/types'
+import { EditorSceneCreationMode, EditorState, type BakingTarget, type EditorSceneData } from '@core/types'
 import PlanetData from '@core/models/planet-data.model'
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils'
 import * as ExportHelper from '../helpers/export.helper'
@@ -17,36 +17,41 @@ import { MeshStandardNodeMaterial, type NodeMaterial } from 'three/webgpu'
 import { saveAs } from 'file-saver'
 import { EventBus } from '../event-bus'
 
-// Editor constants
-let LG_SCENE_DATA!: EditorSceneData
+// Exposed data
 export const LG_PLANET_DATA: Ref<PlanetData> = ref(new PlanetData())
+export const LG_EDITOR_STATE: Ref<EditorState> = ref(EditorState.INITIALIZATION)
+watch(LG_EDITOR_STATE, (v) => console.debug('<Lagrange> EditorState => ' + v))
 
-const hasPlanetBeenEdited: Ref<boolean> = ref(false)
+// Internal attributes
+let editorSceneData!: EditorSceneData
 let enableEditorRendering = true
 let watchForPlanetUpdates = false
+const hasPlanetBeenEdited: Ref<boolean> = ref(false)
 
 // ------------------------------------------------------------------------------------------------ //
 //                                           BOOTSTRAPPING                                          //
 // ------------------------------------------------------------------------------------------------ //
 
 export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
+  LG_EDITOR_STATE.value = EditorState.INITIALIZATION
   await sleep(50)
   enableEditorRendering = true
-  LG_SCENE_DATA = await SceneHelper.buildEditorScene(
+  editorSceneData = await SceneHelper.buildEditorScene(
     LG_PLANET_DATA.value,
     w,
     h,
     pixelRatio,
     EditorSceneCreationMode.EDITOR,
   )
-  UniformHelper.initUniformUpdateMap(LG_SCENE_DATA, LG_PLANET_DATA.value)
-  ComponentHelper.createOrbitControls(LG_SCENE_DATA.camera, LG_SCENE_DATA.renderer.domElement)
+  UniformHelper.initUniformUpdateMap(editorSceneData, LG_PLANET_DATA.value)
+  ComponentHelper.createOrbitControls(editorSceneData.camera, editorSceneData.renderer.domElement)
 
   // Configure renderer
-  LG_SCENE_DATA.renderer!.setSize(w, h)
-  LG_SCENE_DATA.renderer!.setAnimationLoop(() => renderFrame())
-  LG_SCENE_DATA.renderer!.domElement.ariaLabel = '3D planet viewer'
-  canvas.appendChild(LG_SCENE_DATA.renderer!.domElement)
+  editorSceneData.renderer!.setSize(w, h)
+  editorSceneData.renderer!.setAnimationLoop(() => renderFrame())
+  editorSceneData.renderer!.domElement.ariaLabel = '3D planet viewer'
+  canvas.appendChild(editorSceneData.renderer!.domElement)
+  LG_EDITOR_STATE.value = EditorState.EDITION
 
   /* LG_SCENE_DATA.renderer!.debug.getShaderAsync(
     LG_SCENE_DATA.scene,
@@ -65,19 +70,19 @@ function renderFrame() {
   }
   updateScene()
   watchForPlanetUpdates = true
-  LG_SCENE_DATA.lensFlare!.update(
-    LG_SCENE_DATA.renderer!,
-    LG_SCENE_DATA.scene!,
-    LG_SCENE_DATA.camera!,
-    LG_SCENE_DATA.clock!,
+  editorSceneData.lensFlare!.update(
+    editorSceneData.renderer!,
+    editorSceneData.scene!,
+    editorSceneData.camera!,
+    editorSceneData.clock!,
   )
-  LG_SCENE_DATA.renderer!.render(LG_SCENE_DATA.scene!, LG_SCENE_DATA.camera!)
+  editorSceneData.renderer!.render(editorSceneData.scene!, editorSceneData.camera!)
 }
 
 export function updateCameraRendering(w: number, h: number) {
-  LG_SCENE_DATA.camera!.aspect = w / h
-  LG_SCENE_DATA.camera!.updateProjectionMatrix()
-  LG_SCENE_DATA.renderer!.setSize(w, h)
+  editorSceneData.camera!.aspect = w / h
+  editorSceneData.camera!.updateProjectionMatrix()
+  editorSceneData.renderer!.setSize(w, h)
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -85,7 +90,7 @@ export function updateCameraRendering(w: number, h: number) {
 // ------------------------------------------------------------------------------------------------ //
 
 export function updateRingMeshes() {
-  const ringsMeshData = LG_SCENE_DATA.rings!
+  const ringsMeshData = editorSceneData.rings!
   const ringsParams = LG_PLANET_DATA.value.ringsParams
 
   // Remove old ring meshes
@@ -97,7 +102,7 @@ export function updateRingMeshes() {
       data.buffer = null
     })
   ringsMeshData.splice(0)
-  LG_SCENE_DATA.ringAnchor!.clear()
+  editorSceneData.ringAnchor!.clear()
 
   // Create new ring meshes
   ringsParams
@@ -105,8 +110,9 @@ export function updateRingMeshes() {
     .forEach((_, idx) => {
       const newRing = ComponentHelper.createRing(LG_PLANET_DATA.value, idx)
       ringsMeshData.push(newRing)
-      LG_SCENE_DATA.ringAnchor!.add(newRing.mesh!)
+      editorSceneData.ringAnchor!.add(newRing.mesh!)
     })
+  editorSceneData.ringAnchor.visible = LG_PLANET_DATA.value.ringsEnabled
 }
 
 function updateScene() {
@@ -115,9 +121,9 @@ function updateScene() {
     hasPlanetBeenEdited.value = true
   }
   for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
-    if (changedProp.prop === '_ringsParameters') {
+    if (changedProp.prop === '_ringsParams') {
       updateRingMeshes()
-      UniformHelper.reloadRingDataUpdates(LG_SCENE_DATA, LG_PLANET_DATA.value)
+      UniformHelper.reloadRingDataUpdates(editorSceneData, LG_PLANET_DATA.value)
     }
     UniformHelper.execUniformUpdate(changedProp)
   }
@@ -128,9 +134,10 @@ function updateScene() {
  * Removes every object from the scene, then removes the scene itself
  */
 export function disposeScene() {
+  LG_EDITOR_STATE.value = EditorState.SCENE_DISPOSAL
   watchForPlanetUpdates = false
   console.debug('<Lagrange> Clearing scene... ')
-  SceneHelper.disposeScene(LG_SCENE_DATA)
+  SceneHelper.disposeScene(editorSceneData)
   UniformHelper.clearUniformUpdateMap()
   console.debug('<Lagrange> ...done!')
 }
@@ -140,23 +147,28 @@ export function disposeScene() {
 // ------------------------------------------------------------------------------------------------ //
 
 export async function randomizePlanet() {
+  LG_EDITOR_STATE.value = EditorState.RANDOMIZATION
   await sleep(50)
   regeneratePRNGIfNecessary()
   LG_PLANET_DATA.value.randomize()
-  updateRingMeshes()
-  UniformHelper.reloadRingDataUpdates(LG_SCENE_DATA, LG_PLANET_DATA.value)
+  editorSceneData.planet.biomeLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams)
+  editorSceneData.planet.biomeEmissiveLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams)
+  LG_PLANET_DATA.value.markAllForChange()
+  LG_EDITOR_STATE.value = EditorState.EDITION
 }
 
 export async function resetPlanet() {
+  LG_EDITOR_STATE.value = EditorState.RESET
   LG_PLANET_DATA.value.reset()
-  LG_SCENE_DATA.planet.biomeLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams)
-  LG_SCENE_DATA.planet.biomeEmissiveLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams)
+  editorSceneData.planet.biomeLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams)
+  editorSceneData.planet.biomeEmissiveLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams)
+  LG_EDITOR_STATE.value = EditorState.EDITION
 }
 
 export async function takePlanetScreenshot() {
   try {
-    await LG_SCENE_DATA.renderer.render(LG_SCENE_DATA.scene, LG_SCENE_DATA.camera)
-    LG_SCENE_DATA.renderer.domElement.toBlob((blob) =>
+    await editorSceneData.renderer.render(editorSceneData.scene, editorSceneData.camera)
+    editorSceneData.renderer.domElement.toBlob((blob) =>
       saveAs(blob as Blob, `${LG_PLANET_DATA.value.planetName.replaceAll(' ', '_')}-${new Date().toISOString()}.png`),
     )
   } catch (err) {
@@ -166,10 +178,12 @@ export async function takePlanetScreenshot() {
 }
 
 export async function exportPlanetPreview(): Promise<string> {
+  LG_EDITOR_STATE.value = EditorState.PREVIEW_GENERATION
   await sleep(50)
-  LG_SCENE_DATA.lensFlare!.mesh.visible = false
+  editorSceneData.lensFlare!.mesh.visible = false
   const dataURL = await PreviewHelper.generatePlanetPreview(LG_PLANET_DATA.value)
-  LG_SCENE_DATA.lensFlare!.mesh.visible = LG_PLANET_DATA.value.lensFlareEnabled
+  editorSceneData.lensFlare!.mesh.visible = LG_PLANET_DATA.value.lensFlareEnabled
+  LG_EDITOR_STATE.value = EditorState.EDITION
   return dataURL
 }
 
@@ -178,6 +192,7 @@ export async function exportPlanetToGLTF(progressDialog: {
   setProgress: (value: number) => void
   setError: (error: unknown) => void
 }) {
+  LG_EDITOR_STATE.value = EditorState.EXPORT
   progressDialog.setProgress(1)
   await sleep(50)
   const bakingTargets: BakingTarget[] = []
@@ -193,8 +208,8 @@ export async function exportPlanetToGLTF(progressDialog: {
     await sleep(50)
     const bakePlanet = BakingHelper.createBakingPlanet(
       LG_PLANET_DATA.value,
-      LG_SCENE_DATA.planet.surfaceTexture!,
-      LG_SCENE_DATA.planet.biomeLayersTexture!.texture,
+      editorSceneData.planet.surfaceTexture!,
+      editorSceneData.planet.biomeLayersTexture!.texture,
     )
     const bakePlanetSurfaceTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakePlanet)
     if (appSettings?.bakingPixelize) {
@@ -205,7 +220,12 @@ export async function exportPlanetToGLTF(progressDialog: {
     progressDialog.setProgress(3)
     await sleep(50)
     const bakeMetallicRoughness = BakingHelper.createBakingMetallicRoughnessMap(LG_PLANET_DATA.value)
-    const bakePlanetMetallicRoughnessTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeMetallicRoughness)
+    const bakePlanetMetallicRoughnessTex = await BakingHelper.bakeMesh(
+      renderer,
+      camera,
+      renderTarget,
+      bakeMetallicRoughness,
+    )
     if (appSettings?.bakingPixelize) {
       bakePlanetMetallicRoughnessTex.minFilter = THREE.NearestFilter
       bakePlanetMetallicRoughnessTex.magFilter = THREE.NearestFilter
@@ -213,9 +233,9 @@ export async function exportPlanetToGLTF(progressDialog: {
     //LG_SCENE_DATA.planet.biomeEmissiveLayersTexture!.debugSaveTexture()
     const bakeEmissivity = BakingHelper.createBakingEmissivityMap(
       LG_PLANET_DATA.value,
-      LG_SCENE_DATA.planet.surfaceTexture!,
-      LG_SCENE_DATA.planet.biomeLayersTexture!.texture,
-      LG_SCENE_DATA.planet.biomeEmissiveLayersTexture!.texture,
+      editorSceneData.planet.surfaceTexture!,
+      editorSceneData.planet.biomeLayersTexture!.texture,
+      editorSceneData.planet.biomeEmissiveLayersTexture!.texture,
     )
     const bakePlanetEmissivityTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeEmissivity)
     if (appSettings?.bakingPixelize) {
@@ -252,7 +272,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     if (LG_PLANET_DATA.value.cloudsEnabled) {
       progressDialog.setProgress(5)
       await sleep(50)
-      const bakeClouds = BakingHelper.createBakingClouds(LG_PLANET_DATA.value, LG_SCENE_DATA.clouds.texture!)
+      const bakeClouds = BakingHelper.createBakingClouds(LG_PLANET_DATA.value, editorSceneData.clouds.texture!)
       const bakeCloudsTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeClouds)
       if (appSettings?.bakingPixelize) {
         bakeCloudsTex.minFilter = THREE.NearestFilter
@@ -277,7 +297,7 @@ export async function exportPlanetToGLTF(progressDialog: {
       ringGroup.name = Globals.LG_MESH_NAME_RING_ANCHOR
       for (let idx = 0; idx < LG_PLANET_DATA.value.ringsParams.length; idx++) {
         const params = LG_PLANET_DATA.value.ringsParams[idx]
-        const ringMeshData = LG_SCENE_DATA.rings?.find((r) => r.mesh!.name === params.id)
+        const ringMeshData = editorSceneData.rings?.find((r) => r.mesh!.name === params.id)
         if (!ringMeshData) continue
 
         const bakeRing = BakingHelper.createBakingRing(LG_PLANET_DATA.value, ringMeshData.texture!, idx)
@@ -322,6 +342,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     renderer.dispose()
     progressDialog.setProgress(8)
     await sleep(50)
+    LG_EDITOR_STATE.value = EditorState.EDITION
   }
 }
 

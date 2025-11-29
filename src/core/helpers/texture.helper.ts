@@ -69,6 +69,7 @@ function fillRamp(buffer: Uint8Array, w: number, steps: ColorRampStep[]) {
 // ------------------------------------------------------------------------------------------------
 
 export function fillBiomeLayer(biome: BiomeParameters, canvas: OffscreenCanvas): void {
+  if (!biome || !canvas) return
   const texSize = canvas.width
   const biomeRect: Rect = new Rect(
     Math.floor(biome.humiMin * texSize),
@@ -87,6 +88,7 @@ export function fillBiomeLayer(biome: BiomeParameters, canvas: OffscreenCanvas):
 }
 
 export function fillBiomeEmissivityLayer(biome: BiomeParameters, canvas: OffscreenCanvas): void {
+  if (!biome || !canvas) return
   const texSize = canvas.width
   const biomeRect: Rect = new Rect(
     Math.floor(biome.humiMin * texSize),

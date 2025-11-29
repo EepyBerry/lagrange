@@ -71,7 +71,7 @@ export class RingParameters extends ChangeTracker {
   public static createRandom(changedProps: ChangedProp[], changePrefix: string) {
     const innerRadius = clampedPRNG(1.25, 4.75)
     const params = new RingParameters(changedProps, changePrefix, innerRadius, clampedPRNG(innerRadius, 5))
-    params.colorRamp.randomize(3)
+    params._colorRamp.randomize(3)
     return params
   }
 }

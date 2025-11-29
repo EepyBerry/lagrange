@@ -29,6 +29,16 @@ export enum EditorBackendType {
   WEBGL,
   WEBGPU,
 }
+export enum EditorState {
+  INITIALIZATION = 'INITIALIZATION',
+  EDITION = 'EDITION',
+  RANDOMIZATION = 'RANDOMIZATION',
+  RESET = 'RESET',
+  PREVIEW_GENERATION = 'PREVIEW_GENERATION',
+  SCENE_DISPOSAL = 'SCENE_DISPOSAL',
+  EXPORT = 'EXPORT',
+  ERROR = 'ERROR',
+}
 
 // ---------------------------------- Shader loader ---------------------------------
 export enum ShaderFileType {

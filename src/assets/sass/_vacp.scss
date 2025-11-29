@@ -1,4 +1,9 @@
 .vacp-color-picker {
+  --vacp-spacing: 6px;
+  --vacp-font-family: inherit;
+  --vacp-font-size: 1rem;
+  --vacp-color-focus: var(--lg-input-contrast-focus);
+
   display: grid;
   grid-gap: 6px;
   grid-template-columns: 1fr min-content;
@@ -21,6 +26,10 @@
     background: transparent;
     cursor: pointer;
   }
+  button.vacp-format-switch-button {
+    align-self: flex-end;
+  }
+
   input[id^='color-picker-color-'] {
     background: var(--lg-input);
     border-radius: 2px;
@@ -36,4 +45,8 @@
   padding: 0;
   border: 0;
   white-space: nowrap;
+}
+
+:where(.vacp-color-picker) button {
+  border-radius: 2px;
 }

@@ -60,7 +60,7 @@ export class LayeredDataTexture<DataObject> {
   public updateAllLayers(data: DataObject[]) {
     if (data.length !== this._layers.length) {
       console.warn(
-        `Layer count (${this._layers.length}) does not match data count (${data.length})! Please report this on GitHub if you see this message.`,
+        `<Lagrange> Layer count (${this._layers.length}) does not match data count (${data.length})! Please report this on GitHub if you see this message.`,
       )
     }
     this._layers.forEach((layer, i) => this._layerDrawFunc(data[i], layer.canvas))
@@ -70,7 +70,7 @@ export class LayeredDataTexture<DataObject> {
   public updateLayer(index: number, data: DataObject) {
     const layer = this._layers.at(index)
     if (!layer) {
-      console.warn(`Cannot update layer: layer at index ${index} does not exist`)
+      console.warn(`<Lagrange> Cannot update layer: layer at index ${index} does not exist`)
       return
     }
     if (!data) {
