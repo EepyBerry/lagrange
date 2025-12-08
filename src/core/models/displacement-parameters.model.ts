@@ -116,4 +116,17 @@ export class DisplacementParameters extends ChangeTracker {
     this._lacunarity = clampedPRNG(1.5, 3)
     this._octaves = Math.round(clampedPRNG(2, 8))
   }
+
+  /**
+   * Marks all properties of this class for change, using `this._changePrefix`
+   */
+  public override markAllForChange(): void {
+    this.markForChange(`${this._changePrefix}._epsilon`)
+    this.markForChange(`${this._changePrefix}._multiplier`)
+    this.markForChange(`${this._changePrefix}._factor`)
+    this.markForChange(`${this._changePrefix}._frequency`)
+    this.markForChange(`${this._changePrefix}._amplitude`)
+    this.markForChange(`${this._changePrefix}._lacunarity`)
+    this.markForChange(`${this._changePrefix}._octaves`)
+  }
 }

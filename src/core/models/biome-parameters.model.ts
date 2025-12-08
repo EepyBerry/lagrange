@@ -162,4 +162,11 @@ export class BiomeParameters extends ChangeTracker {
       clampedPRNG(0, 10),
     )
   }
+  
+  /**
+   * Marks this biome for change, using `this._changePrefix` only
+   */
+  public override markAllForChange(): void {
+    this.markForChange(this._changePrefix, { data: this })
+  }
 }

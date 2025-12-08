@@ -128,4 +128,16 @@ export class NoiseParameters extends ChangeTracker {
     this._warpFactor.y = clampedPRNG(0, 8)
     this._warpFactor.z = clampedPRNG(0, 8)
   }
+
+  /**
+   * Marks all properties of this class for change, using `this._changePrefix`
+   */
+  public override markAllForChange(): void {
+    this.markForChange(`${this._changePrefix}._frequency`)
+    this.markForChange(`${this._changePrefix}._amplitude`)
+    this.markForChange(`${this._changePrefix}._lacunarity`)
+    this.markForChange(`${this._changePrefix}._octaves`)
+    this.markForChange(`${this._changePrefix}._layers`)
+    this.markForChange(`${this._changePrefix}._warpFactor`)
+  }
 }

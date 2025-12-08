@@ -12,6 +12,13 @@ export abstract class ChangeTracker {
     this._changedProps.splice(0)
   }
 
+  /**
+   * Marks all properties of this object for change. Should be overriden in subclasses when necessary
+   */
+  public markAllForChange(): void {
+    this.changedProps.push(...Object.keys(this).map(k => ({ prop: k, action: ChangeAction.EDIT })))
+  }
+
   constructor(changedPropsRef?: ChangedProp[], changePrefix?: string) {
     if (changedPropsRef && changePrefix) {
       this._changedProps = changedPropsRef
