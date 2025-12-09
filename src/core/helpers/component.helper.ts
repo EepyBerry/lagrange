@@ -6,7 +6,7 @@ import type PlanetData from '../models/planet-data.model'
 import { type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type RingMeshData, EditorSceneCreationMode } from '../types'
 import { LensFlareEffect } from '../effects/lens-flare.effect'
 import * as Globals from '@core/globals'
-import { WebGPURenderer } from 'three/webgpu'
+import { NodeMaterial, WebGPURenderer } from 'three/webgpu'
 import { PlanetTSLMaterial } from '@core/tsl/materials/planet.tslmat'
 import { AtmosphereTSLMaterial } from '@core/tsl/materials/atmosphere.tslmat'
 import { CloudsTSLMaterial } from '@core/tsl/materials/clouds.tslmat'
@@ -18,6 +18,7 @@ import { PlanetDataConverter } from '../models/converters/planet-data.converter'
 import { CloudsDataConverter } from '../models/converters/clouds-data.converter'
 import { RingDataConverter } from '../models/converters/ring-data.converter'
 import { AtmosphereDataConverter } from '../models/converters/atmosphere-data.converter'
+import type { RingParameters } from '../models/ring-parameters.model'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -157,10 +158,9 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): Atmos
 
 export function createRing(
   data: PlanetData,
-  paramsIndex: number,
+  ringParams: RingParameters,
 ): RingMeshData {
   const textureBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
-  const ringParams = data.ringsParams[paramsIndex]
   const geometry = createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
   const ringTex = TextureHelper.createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
 
@@ -177,6 +177,21 @@ export function createRing(
     buffer: textureBuffer,
     texture: ringTex,
   }
+}
+export function disposeRing(data: PlanetData, ringAnchor: THREE.Group, ringsData: RingMeshData[], ringParams: RingParameters) {
+  // get ring data + mesh
+  const ringParamsIdx = data.ringsParams.findIndex((b) => b.id === ringParams.id);
+  const ringMeshData = ringsData.find(r => r.mesh!.name === ringParams.id);
+  if (ringParamsIdx < 0 || !ringMeshData) {
+    throw new Error("Cannot delete non-existent ring of ID: " + ringParams.id)
+  }
+  // delete ring
+  data.ringsParams.splice(ringParamsIdx, 1);
+  ringAnchor.remove(ringMeshData.mesh!);
+  (ringMeshData.mesh!.material as NodeMaterial).dispose();
+  ringMeshData.mesh!.geometry.dispose();
+  ringMeshData.texture!.dispose();
+  ringMeshData.buffer = null;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------

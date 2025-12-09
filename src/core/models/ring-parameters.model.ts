@@ -46,7 +46,7 @@ export class RingParameters extends ChangeTracker {
     if (this.outerRadius < this._innerRadius) {
       this.outerRadius = value // Call setter to trigger change
     }
-    this.markForChange(`${this._changePrefix}[element]._innerRadius`, { data: this })
+    this.markForChange(`${this._changePrefix}._innerRadius`, { data: this })
   }
 
   public get outerRadius(): number {
@@ -57,7 +57,7 @@ export class RingParameters extends ChangeTracker {
     if (this.innerRadius > this._outerRadius) {
       this.innerRadius = value // Call setter to trigger change
     }
-    this.markForChange(`${this._changePrefix}[element]._outerRadius`, { data: this })
+    this.markForChange(`${this._changePrefix}._outerRadius`, { data: this })
   }
 
   public get colorRamp(): ColorRamp {
@@ -79,8 +79,8 @@ export class RingParameters extends ChangeTracker {
    * Marks all properties of this class for change, using `this._changePrefix`
    */
   public override markAllForChange(): void {
-    this.markForChange(`${this._changePrefix}[element]._colorRamp`, { data: this })
-    this.markForChange(`${this._changePrefix}[element]._innerRadius`, { data: this })
-    this.markForChange(`${this._changePrefix}[element]._outerRadius`, { data: this })
+    this.markForChange(`${this._changePrefix}._colorRamp`, { data: this })
+    this.markForChange(`${this._changePrefix}._innerRadius`, { data: this })
+    this.markForChange(`${this._changePrefix}._outerRadius`, { data: this })
   }
 }

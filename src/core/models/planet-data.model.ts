@@ -577,7 +577,7 @@ export default class PlanetData extends ChangeTracker {
     this._lensFlareEnabled = true
     this._lensFlarePointsIntensity = 0.25
     this._lensFlareGlareIntensity = 0.4
-    this._sunLightAngle = -15.0
+    this._sunLightAngle = -30.0
     this._sunLightColor = new Color(0xfff6e8)
     this._sunLightIntensity = 10.0
     this._ambLightColor = new Color(0xffffff)
@@ -715,7 +715,7 @@ export default class PlanetData extends ChangeTracker {
     this.lensFlareEnabled = data._lensFlareEnabled ?? true
     this.lensFlarePointsIntensity = data._lensFlarePointsIntensity ?? 0.25
     this.lensFlareGlareIntensity = data._lensFlareGlareIntensity ?? 0.4
-    this.sunLightAngle = data._sunLightAngle ?? -15.0
+    this.sunLightAngle = data._sunLightAngle ?? -30.0
     this.sunLightColor.set(data._sunLightColor ?? 0xfff6e8)
     this.sunLightIntensity = data._sunLightIntensity ?? 10.0
     this.ambLightColor.set(data._ambLightColor ?? 0xffffff)
@@ -828,7 +828,7 @@ export default class PlanetData extends ChangeTracker {
       ...(data._ringsParams ?? []).map((params: any) =>
           new RingParameters(
             this.changedProps,
-            '_ringsParams',
+            '_ringsParams[element]',
             params._innerRadius ?? 1.25,
             params._outerRadius ?? 1.5,
             params._colorRamp?._steps,
@@ -920,7 +920,7 @@ export default class PlanetData extends ChangeTracker {
     this._ringsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
     this._ringsParams.splice(0)
     for (let i = 0; i < Math.round(clampedPRNG(0, 4)); i++) {
-      this._ringsParams.push(RingParameters.createRandom(this._changedProps, '_ringsParams'))
+      this._ringsParams.push(RingParameters.createRandom(this._changedProps, '_ringsParams[element]'))
     }
   }
 

@@ -25,24 +25,19 @@
   </ParameterGrid>
 </template>
 <script setup lang="ts">
-import { RingParameters } from '@core/models/ring-parameters.model'
 import { LG_PLANET_DATA } from '@/core/services/editor.service'
 import ParameterRing from '@components/global/parameters/ParameterRing.vue'
 import LgvButton from '@/_lib/components/LgvButton.vue'
+import { ChangeAction } from '@/core/models/change-tracker.model'
+import type { RingParameters } from '@/core/models/ring-parameters.model'
 
 function addRing() {
-  const newRing = new RingParameters(LG_PLANET_DATA.value.changedProps, '_ringsParams', 1.5, 1.75)
-  LG_PLANET_DATA.value.ringsParams.push(newRing)
-  LG_PLANET_DATA.value.markForChange('_ringsParams')
+  LG_PLANET_DATA.value.markForChange('_ringsParams', undefined, ChangeAction.ADD)
 }
 
-function deleteRing(id: string) {
-  const ringIdx = LG_PLANET_DATA.value.ringsParams.findIndex((b) => b.id === id)
-  if (ringIdx < 0) {
-    throw new Error('Cannot delete non-existent ring!')
-  }
-  LG_PLANET_DATA.value.ringsParams.splice(ringIdx, 1)
-  LG_PLANET_DATA.value.markForChange('_ringsParams')
+function deleteRing(ringParams: RingParameters) {
+  console.log(ringParams)
+  LG_PLANET_DATA.value.markForChange('_ringsParams', { data: ringParams }, ChangeAction.DELETE)
 }
 </script>
 <style scoped lang="scss">

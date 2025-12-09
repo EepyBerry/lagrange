@@ -18,7 +18,7 @@
         <LgvButton
           class="sm warn"
           icon="mingcute:delete-2-line"
-          @click="$emit('delete', lgParam!.id)"
+          @click="$emit('delete', lgParam!)"
         />
       </span>
     </div>
