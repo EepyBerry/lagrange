@@ -240,7 +240,7 @@ function registerAtmosphereDataUpdates(data: PlanetData, atmosphere: AtmosphereM
 }
 
 // prettier-ignore
-function registerRingsDataUpdates(data: PlanetData, ringAnchor: Group, ringsData: RingMeshData[]): void {
+function registerRingsDataUpdates(data: PlanetData, ringAnchor: Group, ringsMeshData: RingMeshData[]): void {
   UNIFORM_UPDATE_MAP.value.set('_ringsEnabled', () => ringAnchor.visible = data.ringsEnabled)
   UNIFORM_UPDATE_MAP.value.set('_ringsParams', (source, action) => {
     switch (action) {
@@ -250,23 +250,35 @@ function registerRingsDataUpdates(data: PlanetData, ringAnchor: Group, ringsData
         data.ringsParams.push(newParams);
         // create mesh from params
         const newMeshData = ComponentHelper.createRing(data, newParams);
-        ringsData.push(newMeshData);
+        ringsMeshData.push(newMeshData);
         ringAnchor.add(newMeshData.mesh!);
         break;
       }
       case ChangeAction.EDIT: {
-        // TODO: randomize rings here
+        ringsMeshData.forEach(rmd => {
+          ;(rmd.mesh!.material as NodeMaterial).dispose()
+          rmd.mesh!.geometry.dispose()
+          rmd.texture!.dispose()
+          rmd.buffer = null
+        })
+        ringAnchor.clear()
+        ringsMeshData.splice(0)
+        data.ringsParams.forEach(params => {
+          const newRing = ComponentHelper.createRing(data, params)
+          ringsMeshData.push(newRing)
+          ringAnchor!.add(newRing.mesh!)
+        })
         break;
       }
       case ChangeAction.DELETE: {
-        ComponentHelper.disposeRing(data, ringAnchor, ringsData, source!.data! as RingParameters)
+        ComponentHelper.disposeRing(data, ringAnchor, ringsMeshData, source!.data! as RingParameters)
         break;
       }
     }
   })
   UNIFORM_UPDATE_MAP.value.set(`_ringsParams[element]._innerRadius`, (source) => {
     const ringParams = source!.data! as RingParameters
-    const rmd = ringsData.find(r => r.mesh!.name === ringParams.id)
+    const rmd = ringsMeshData.find(r => r.mesh!.name === ringParams.id)
     if (!rmd) return;
     rmd.mesh!.geometry.dispose()
     rmd.mesh!.geometry = ComponentHelper.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
@@ -274,7 +286,7 @@ function registerRingsDataUpdates(data: PlanetData, ringAnchor: Group, ringsData
   })
   UNIFORM_UPDATE_MAP.value.set(`_ringsParams[element]._outerRadius`, (source) => {
     const ringParams = source!.data! as RingParameters
-    const rmd = ringsData.find(r => r.mesh!.name === ringParams.id)
+    const rmd = ringsMeshData.find(r => r.mesh!.name === ringParams.id)
     if (!rmd) return;
     rmd.mesh!.geometry.dispose()
     rmd.mesh!.geometry = ComponentHelper.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
@@ -283,7 +295,7 @@ function registerRingsDataUpdates(data: PlanetData, ringAnchor: Group, ringsData
   UNIFORM_UPDATE_MAP.value.set(`_ringsParams[element]._colorRamp`, (source) => {
     const colorRamp = source!.data! as ColorRamp
     const ringParams = data.ringsParams.find(rp => rp.colorRamp.hash === colorRamp.hash)
-    const rmd = ringsData.find(r => r.mesh!.name === ringParams?.id)
+    const rmd = ringsMeshData.find(r => r.mesh!.name === ringParams?.id)
     if (!ringParams || !rmd) return;
     TextureHelper.recalculateRampTexture(rmd.buffer!, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
     rmd.texture!.needsUpdate = true

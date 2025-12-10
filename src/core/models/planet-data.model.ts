@@ -3,7 +3,7 @@ import { ColorMode, GradientMode, PlanetClass, PlanetType } from '@core/types'
 import { clampedPRNG, isNumeric } from '@core/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
-import { ChangeTracker } from './change-tracker.model'
+import { ChangeAction, ChangeTracker } from './change-tracker.model'
 import { BiomeParameters } from './biome-parameters.model'
 import { clamp } from 'three/src/math/MathUtils.js'
 import { DisplacementParameters } from './displacement-parameters.model'
@@ -936,7 +936,14 @@ export default class PlanetData extends ChangeTracker {
   }
   
   public markAllForChange() {
-    this._changedProps.push(...Object.keys(this).map((o) => ({ prop: o })))
+    this._changedProps.push(...Object.keys(this).map((o) => ({ prop: o, action: ChangeAction.EDIT })))
+    this._planetSurfaceNoise.markAllForChange()
+    this._planetSurfaceDisplacement.markAllForChange()
+    this._cloudsNoise.markAllForChange()
+    this._cloudsDisplacement.markAllForChange()
+    this._biomesHumidityNoise.markAllForChange()
+    this._biomesTemperatureNoise.markAllForChange()
+    this._biomesParams.forEach(b => b.markAllForChange())
   }
 
   public findBiomeById(id: string) {
