@@ -855,7 +855,8 @@ export default class PlanetData extends ChangeTracker {
 
     // Planet & Rendering
     this._planetType = Math.round(clampedPRNG(0, 2)) as PlanetType
-    this._planetClass = Math.round(clampedPRNG(0, 9)) as PlanetClass
+    const availablePlanetClasses = this.getPlanetClassesFromType(this._planetType)
+    this._planetClass = availablePlanetClasses[Math.round(clampedPRNG(0, availablePlanetClasses.length-1))] as PlanetClass
     this._planetRadius = clampedPRNG(0.5, 1)
     this._planetAxialTilt = clampedPRNG(-180, 180)
     this._planetRotation = clampedPRNG(0, 360)
@@ -946,6 +947,10 @@ export default class PlanetData extends ChangeTracker {
     this._biomesParams.forEach(b => b.markAllForChange())
   }
 
+  // --------------------------------------------------
+  // |               Utility functions                |
+  // --------------------------------------------------
+
   public findBiomeById(id: string) {
     return this._biomesParams.find((b) => b.id === id)
   }
@@ -955,6 +960,32 @@ export default class PlanetData extends ChangeTracker {
 
   public findOutermostRingRadius() {
     return Math.max(...this._ringsParams.map((r) => r.outerRadius))
+  }
+
+  private getPlanetClassesFromType(t: PlanetType) {
+    switch (t) {
+      case PlanetType.PLANET:
+        return [
+          PlanetClass.PLANET_TELLURIC,
+          PlanetClass.PLANET_ICE,
+          PlanetClass.PLANET_OCEAN,
+          PlanetClass.PLANET_TROPICAL,
+          PlanetClass.PLANET_ARID,
+          PlanetClass.PLANET_CHTHONIAN,
+          PlanetClass.PLANET_MAGMATIC,
+        ]
+      case PlanetType.MOON:
+        return [
+          PlanetClass.MOON_ICE,
+          PlanetClass.MOON_ROCKY,
+          PlanetClass.MOON_CHTHONIAN
+        ]
+      case PlanetType.GASGIANT:
+        return [
+          PlanetClass.GASGIANT_COLD,
+          PlanetClass.GASGIANT_HOT
+        ]
+    }
   }
 
   // --------------------------------------------------
