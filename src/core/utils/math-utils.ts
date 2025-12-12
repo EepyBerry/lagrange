@@ -32,6 +32,15 @@ export function clampedPRNGSpaced(prev: number, min: number, max: number, precis
   return result
 }
 
+export function randomIntervals(min: number, max: number, intervals: number) {
+  const numbers = []
+  for (let i = 0; i < intervals; i++) {
+    numbers.push(clampedPRNG(min, max))
+  }
+  numbers.sort((a, b) => a - b)
+  return numbers.flatMap((_,i,arr) => i % 2 ? [] : [arr.slice(i, i + 2)]);
+}
+
 /**
  * Simple numeric checking function.
  * @param n the object to check

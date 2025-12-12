@@ -12,7 +12,7 @@
             <ParameterRing v-model="LG_PLANET_DATA.ringsParams[index]" :index="index" @delete="deleteRing" />
           </template>
           <LgvButton
-            v-show="LG_PLANET_DATA.ringsParams.length < 16"
+            v-show="LG_PLANET_DATA.ringsParams.length < 8"
             class="sm action-add"
             icon="mingcute:add-line"
             @click="addRing"

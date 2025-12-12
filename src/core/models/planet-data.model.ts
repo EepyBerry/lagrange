@@ -1,6 +1,6 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
 import { ColorMode, GradientMode, PlanetClass, PlanetType } from '@core/types'
-import { clampedPRNG, isNumeric } from '@core/utils/math-utils'
+import { clampedPRNG, isNumeric, randomIntervals } from '@core/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeAction, ChangeTracker } from './change-tracker.model'
@@ -920,8 +920,13 @@ export default class PlanetData extends ChangeTracker {
     // Ring
     this._ringsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
     this._ringsParams.splice(0)
-    for (let i = 0; i < Math.round(clampedPRNG(0, 4)); i++) {
-      this._ringsParams.push(RingParameters.createRandom(this._changedProps, '_ringsParams[element]'))
+    const ringIntervals = randomIntervals(1.25, 4.75, 2 * Math.round(clampedPRNG(2, 16) / 2))
+    console.log(ringIntervals)
+    for (let i = 0; i < ringIntervals.length; i++) {
+      const newRing = RingParameters.createRandom(this._changedProps, '_ringsParams[element]')
+      newRing.innerRadius = ringIntervals[i][0]
+      newRing.outerRadius = ringIntervals[i][1]
+      this._ringsParams.push(newRing)
     }
   }
 
