@@ -1,6 +1,6 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
 import { ColorMode, GradientMode, PlanetClass, PlanetType } from '@core/types'
-import { clampedPRNG, isNumeric, randomIntervals } from '@core/utils/math-utils'
+import { clampedPRNG, isNumeric, randomColor, randomIntervals } from '@core/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
 import { ChangeAction, ChangeTracker } from './change-tracker.model'
@@ -681,7 +681,7 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
       new ColorRampStep(0x000000, 0.0, true),
       new ColorRampStep(0x000000, 0.6),
-      new ColorRampStep(0xbbbbbb, 1.0, true),
+      new ColorRampStep(0xffffff, 1.0, true),
     ])
 
     // Atmosphere
@@ -802,7 +802,7 @@ export default class PlanetData extends ChangeTracker {
         : [
             new ColorRampStep(0x000000, 0.0, true),
             new ColorRampStep(0x000000, 0.6),
-            new ColorRampStep(0xbbbbbb, 1.0, true),
+            new ColorRampStep(0xffffff, 1.0, true),
           ],
     )
 
@@ -900,8 +900,8 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsColor.set(clampedPRNG(0, 1) * 0xffffff)
     this._cloudsColorRamp.loadFromSteps([
       new ColorRampStep(0x000000, 0.0, true),
-      new ColorRampStep(clampedPRNG(0, 1) * 0xffffff, clampedPRNG(0, 1)),
-      new ColorRampStep(clampedPRNG(0, 1) * 0xffffff, 1.0, true),
+      new ColorRampStep(randomColor(true), clampedPRNG(0.05, 0.95)),
+      new ColorRampStep(randomColor(true), 1.0, true),
     ])
 
     // Atmosphere

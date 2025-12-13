@@ -81,13 +81,6 @@ export enum GradientMode {
   FULLNOISE = 2,
 }
 
-export type RawRGBA = {
-  r: number
-  g: number
-  b: number
-  a: number
-}
-
 // ------------------------------------ Main data -----------------------------------
 export type EditorSceneData = {
   // Scene, renderer, camera

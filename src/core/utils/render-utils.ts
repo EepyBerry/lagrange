@@ -1,5 +1,5 @@
 import type { ColorRamp } from '@core/models/color-ramp.model'
-import { EditorBackendType, type RawRGBA } from '@core/types'
+import { EditorBackendType } from '@core/types'
 import { type TypedArray } from 'three'
 import type { WebGPURenderer } from 'three/webgpu'
 

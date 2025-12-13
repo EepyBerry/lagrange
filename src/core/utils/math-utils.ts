@@ -1,5 +1,16 @@
 import seedrandom from 'seedrandom'
+import { Color } from 'three'
 import { ref, type Ref } from 'vue'
+
+/**
+ * Okay, explanation required for this value:
+ * 
+ * We know that `0x010101` is the darkest possible RGB 8-bit color. Thus, we use it
+ * as a multiplier with a value from `0` to `255` to get a grayscale color
+ * from `(0x)000000` to `(0x)ffffff`
+ * @example 0x5c5c5c = (0x5c * 0x010101) = (92 * 0x010101)
+ */
+const GRAYSCALE_MULTIPLIER = 0x010101
 
 let currentPRNGSeed = Math.random().toString().substring(2)
 
@@ -32,6 +43,29 @@ export function clampedPRNGSpaced(prev: number, min: number, max: number, precis
   return result
 }
 
+export function clampedPRNGHex(min: number, max: number, hexMask: number): number {
+  return clampedPRNG(min, max) * hexMask
+}
+
+/**
+ * Generates a random `THREE.Color`, in grayscale or not
+ * @param grayscale if the color generated should be grayscale
+ * @returns a new color, derived from PRNG
+ */
+export function randomColor(grayscale: boolean): Color {
+  return new Color(grayscale
+    ? Math.round(clampedPRNG(0, 255)) * GRAYSCALE_MULTIPLIER
+    : Math.round(clampedPRNG(0, 0xffffff)))
+}
+
+/**
+ * Generates a sorted array of intervals (pairs of numbers)
+ * @param min min PRNG value
+ * @param max max PRNG value
+ * @param intervals number of intervals to generate
+ * @returns the requested array of intervals
+ * @example randomIntervals(0, 1, 3) => [[0.125, 0.273], [0.543, 0.861], [0.886, 0.892]]
+ */
 export function randomIntervals(min: number, max: number, intervals: number) {
   const numbers = []
   for (let i = 0; i < intervals; i++) {
