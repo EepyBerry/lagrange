@@ -44,7 +44,7 @@
           >
             {{ $t('editor.general.displacement_epsilon') }}
           </ParameterSlider>
-          <ParameterSlider id="s-dmul" v-model="LG_PLANET_DATA.cloudsDisplacement.multiplier" :step="0.01" :max="3">
+          <ParameterSlider id="s-dmul" v-model="LG_PLANET_DATA.cloudsDisplacement.multiplier" :step="0.01" :min="0.25" :max="3">
             {{ $t('editor.general.displacement_multiplier') }}
           </ParameterSlider>
           <ParameterDivider />

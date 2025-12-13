@@ -466,7 +466,7 @@ export default class PlanetData extends ChangeTracker {
     return this._atmosphereHeight
   }
   public set atmosphereHeight(value: number) {
-    this._atmosphereHeight = clamp(value, 0.0055, 0.05)
+    this._atmosphereHeight = clamp(value, 0.0075, 0.025)
     this.markForChange('_atmosphereHeight')
   }
   public get atmosphereDensityScale(): number {
@@ -686,8 +686,8 @@ export default class PlanetData extends ChangeTracker {
 
     // Atmosphere
     this._atmosphereEnabled = true
-    this._atmosphereHeight = 0.025
-    this._atmosphereDensityScale = 3.0
+    this._atmosphereHeight = 0.01
+    this._atmosphereDensityScale = 10.0
     this._atmosphereIntensity = 1.5
     this._atmosphereColorMode = ColorMode.REALISTIC
     this._atmosphereHue = 0.0
@@ -808,8 +808,8 @@ export default class PlanetData extends ChangeTracker {
 
     // Atmosphere
     this.atmosphereEnabled = data._atmosphereEnabled ?? true
-    this.atmosphereHeight = data._atmosphereHeight ?? 8.0
-    this.atmosphereDensityScale = data._atmosphereDensityScale ?? 3.0
+    this.atmosphereHeight = data._atmosphereHeight ?? 0.01
+    this.atmosphereDensityScale = data._atmosphereDensityScale ?? 7.5
     this.atmosphereIntensity = data._atmosphereIntensity ?? 1.35
     this.atmosphereColorMode = data._atmosphereColorMode ?? ColorMode.REALISTIC
     this.atmosphereHue = data._atmosphereHue ?? 0.0
@@ -851,7 +851,7 @@ export default class PlanetData extends ChangeTracker {
     this._sunLightColor.set(clampedPRNG(0.5, 1) * 0xffffff)
     this._sunLightIntensity = clampedPRNG(10, 35)
     this._ambLightColor.set(clampedPRNG(0.5, 1) * 0xffffff)
-    this._ambLightIntensity = clampedPRNG(0, 1)
+    this._ambLightIntensity = clampedPRNG(0, 0.25)
 
     // Planet & Rendering
     this._planetType = Math.round(clampedPRNG(0, 2)) as PlanetType
@@ -906,16 +906,16 @@ export default class PlanetData extends ChangeTracker {
 
     // Atmosphere
     this._atmosphereEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
-    this._atmosphereHeight = clampedPRNG(0.0055, 0.05)
-    this._atmosphereDensityScale = clampedPRNG(0.25, 20)
-    this._atmosphereIntensity = clampedPRNG(0.25, 5.0)
+    this._atmosphereHeight = clampedPRNG(0.0075, 0.025)
+    this._atmosphereDensityScale = clampedPRNG(0.25, 10)
+    this._atmosphereIntensity = clampedPRNG(0.25, 2.5)
     this._atmosphereColorMode = Math.round(clampedPRNG(0, 2)) as ColorMode
     this._atmosphereHue = clampedPRNG(0, 2)
     this._atmosphereTint.set(clampedPRNG(0, 1) * 0xffffff)
-    this._atmosphereMieScatteringConstant = clampedPRNG(-0.999, 0.999)
-    this._atmosphereRayleighDensityRatio = clampedPRNG(0, 1)
-    this._atmosphereMieDensityRatio = clampedPRNG(0, 1)
-    this._atmosphereOpticalDensityRatio = clampedPRNG(0, 1)
+    this._atmosphereMieScatteringConstant = clampedPRNG(-0.999, -0.5)
+    this._atmosphereRayleighDensityRatio = clampedPRNG(0.05, 0.95)
+    this._atmosphereMieDensityRatio = clampedPRNG(0.05, 0.95)
+    this._atmosphereOpticalDensityRatio = clampedPRNG(0.05, 0.95)
 
     // Ring
     this._ringsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))

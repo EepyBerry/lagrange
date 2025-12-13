@@ -58,6 +58,7 @@
           id="s-dmul"
           v-model="LG_PLANET_DATA.planetSurfaceDisplacement.multiplier"
           :step="0.01"
+          :min="0.25"
           :max="3"
         >
           {{ $t('editor.general.displacement_multiplier') }}

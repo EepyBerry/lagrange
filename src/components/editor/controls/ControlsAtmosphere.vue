@@ -7,7 +7,7 @@
       <ParameterGroup :toggleable="true">
         <template #title>{{ $t('editor.controls.atmosphere.transform') }}</template>
         <template #content>
-          <ParameterSlider id="a-height" v-model="LG_PLANET_DATA.atmosphereHeight" :step="0.0001" :min="0.0055" :max="0.05">
+          <ParameterSlider id="a-height" v-model="LG_PLANET_DATA.atmosphereHeight" :step="0.0001" :min="0.0075" :max="0.025">
             {{ $t('editor.controls.atmosphere.transform_height') }}
           </ParameterSlider>
           <ParameterSlider
