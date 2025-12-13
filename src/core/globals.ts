@@ -34,9 +34,6 @@ export const AXIS_NX = new Vector3(-1, 0, 0)
 export const AXIS_NY = new Vector3(0, -1, 0)
 export const AXIS_NZ = new Vector3(0, 0, -1)
 
-// Miscellaneous
-export const SUN_INIT_POS = new Vector3(0, 0, 4e3)
-
 // Textures
 export const TEXTURE_SIZES = {
   SURFACE: 512,
@@ -45,7 +42,5 @@ export const TEXTURE_SIZES = {
   RING: 256,
 }
 
-/**
- * Equal to 1/256.0
- */
-export const MUL_INT8_TO_UNIT = 3.90625e-3
+// Miscellaneous
+export const SUN_INIT_POS = new Vector3(0, 0, 4e3)

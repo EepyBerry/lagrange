@@ -99,6 +99,7 @@ export function updateRingMeshes() {
     .forEach((data) => {
       ;(data.mesh!.material as THREE.Material).dispose()
       data.mesh!.geometry.dispose()
+      data.texture!.dispose()
       data.buffer = null
     })
   ringsMeshData.splice(0)
@@ -106,9 +107,9 @@ export function updateRingMeshes() {
 
   // Create new ring meshes
   ringsParams
-    .filter((params) => !ringsMeshData.some((p) => p.mesh!.name === params.id))
-    .forEach((_, idx) => {
-      const newRing = ComponentHelper.createRing(LG_PLANET_DATA.value, idx)
+    .filter(params => !ringsMeshData.some((p) => p.mesh!.name === params.id))
+    .forEach(params => {
+      const newRing = ComponentHelper.createRing(LG_PLANET_DATA.value, params)
       ringsMeshData.push(newRing)
       editorSceneData.ringAnchor!.add(newRing.mesh!)
     })
@@ -121,10 +122,6 @@ function updateScene() {
     hasPlanetBeenEdited.value = true
   }
   for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
-    if (changedProp.prop === '_ringsParams') {
-      updateRingMeshes()
-      UniformHelper.reloadRingDataUpdates(editorSceneData, LG_PLANET_DATA.value)
-    }
     UniformHelper.execUniformUpdate(changedProp)
   }
   LG_PLANET_DATA.value.clearChangedProps()

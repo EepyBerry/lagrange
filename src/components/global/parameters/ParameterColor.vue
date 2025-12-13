@@ -17,11 +17,15 @@
     class="picker"
     alpha-channel="hide"
     default-format="hex"
+    :visible-formats="['hex']"
     :color="pickerInitColor"
     @color-change="setColor($event.colors.hex)"
   >
     <template #hue-range-input-label>
-      <span class="visually-hidden">Hue</span>
+      <span class="a11y--visually-hidden"></span>
+    </template>
+    <template #alpha-range-input-label>
+      <span class="a11y--visually-hidden"></span>
     </template>
   </ColorPicker>
 </template>

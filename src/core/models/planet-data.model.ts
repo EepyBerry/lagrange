@@ -1,9 +1,9 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model'
 import { ColorMode, GradientMode, PlanetClass, PlanetType } from '@core/types'
-import { clampedPRNG, isNumeric } from '@core/utils/math-utils'
+import { clampedPRNG, isNumeric, randomColor, randomIntervals } from '@core/utils/math-utils'
 import { Color } from 'three'
 import { NoiseParameters } from './noise-parameters.model'
-import { ChangeTracker } from './change-tracker.model'
+import { ChangeAction, ChangeTracker } from './change-tracker.model'
 import { BiomeParameters } from './biome-parameters.model'
 import { clamp } from 'three/src/math/MathUtils.js'
 import { DisplacementParameters } from './displacement-parameters.model'
@@ -466,7 +466,7 @@ export default class PlanetData extends ChangeTracker {
     return this._atmosphereHeight
   }
   public set atmosphereHeight(value: number) {
-    this._atmosphereHeight = clamp(value, 0.0055, 0.05)
+    this._atmosphereHeight = clamp(value, 0.0075, 0.025)
     this.markForChange('_atmosphereHeight')
   }
   public get atmosphereDensityScale(): number {
@@ -577,7 +577,7 @@ export default class PlanetData extends ChangeTracker {
     this._lensFlareEnabled = true
     this._lensFlarePointsIntensity = 0.25
     this._lensFlareGlareIntensity = 0.4
-    this._sunLightAngle = -15.0
+    this._sunLightAngle = -30.0
     this._sunLightColor = new Color(0xfff6e8)
     this._sunLightIntensity = 10.0
     this._ambLightColor = new Color(0xffffff)
@@ -681,13 +681,13 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
       new ColorRampStep(0x000000, 0.0, true),
       new ColorRampStep(0x000000, 0.6),
-      new ColorRampStep(0xbbbbbb, 1.0, true),
+      new ColorRampStep(0xffffff, 1.0, true),
     ])
 
     // Atmosphere
     this._atmosphereEnabled = true
-    this._atmosphereHeight = 0.025
-    this._atmosphereDensityScale = 3.0
+    this._atmosphereHeight = 0.01
+    this._atmosphereDensityScale = 10.0
     this._atmosphereIntensity = 1.5
     this._atmosphereColorMode = ColorMode.REALISTIC
     this._atmosphereHue = 0.0
@@ -715,7 +715,7 @@ export default class PlanetData extends ChangeTracker {
     this.lensFlareEnabled = data._lensFlareEnabled ?? true
     this.lensFlarePointsIntensity = data._lensFlarePointsIntensity ?? 0.25
     this.lensFlareGlareIntensity = data._lensFlareGlareIntensity ?? 0.4
-    this.sunLightAngle = data._sunLightAngle ?? -15.0
+    this.sunLightAngle = data._sunLightAngle ?? -30.0
     this.sunLightColor.set(data._sunLightColor ?? 0xfff6e8)
     this.sunLightIntensity = data._sunLightIntensity ?? 10.0
     this.ambLightColor.set(data._ambLightColor ?? 0xffffff)
@@ -802,14 +802,14 @@ export default class PlanetData extends ChangeTracker {
         : [
             new ColorRampStep(0x000000, 0.0, true),
             new ColorRampStep(0x000000, 0.6),
-            new ColorRampStep(0xbbbbbb, 1.0, true),
+            new ColorRampStep(0xffffff, 1.0, true),
           ],
     )
 
     // Atmosphere
     this.atmosphereEnabled = data._atmosphereEnabled ?? true
-    this.atmosphereHeight = data._atmosphereHeight ?? 8.0
-    this.atmosphereDensityScale = data._atmosphereDensityScale ?? 3.0
+    this.atmosphereHeight = data._atmosphereHeight ?? 0.01
+    this.atmosphereDensityScale = data._atmosphereDensityScale ?? 7.5
     this.atmosphereIntensity = data._atmosphereIntensity ?? 1.35
     this.atmosphereColorMode = data._atmosphereColorMode ?? ColorMode.REALISTIC
     this.atmosphereHue = data._atmosphereHue ?? 0.0
@@ -828,7 +828,7 @@ export default class PlanetData extends ChangeTracker {
       ...(data._ringsParams ?? []).map((params: any) =>
           new RingParameters(
             this.changedProps,
-            '_ringsParams',
+            '_ringsParams[element]',
             params._innerRadius ?? 1.25,
             params._outerRadius ?? 1.5,
             params._colorRamp?._steps,
@@ -851,11 +851,12 @@ export default class PlanetData extends ChangeTracker {
     this._sunLightColor.set(clampedPRNG(0.5, 1) * 0xffffff)
     this._sunLightIntensity = clampedPRNG(10, 35)
     this._ambLightColor.set(clampedPRNG(0.5, 1) * 0xffffff)
-    this._ambLightIntensity = clampedPRNG(0, 1)
+    this._ambLightIntensity = clampedPRNG(0, 0.25)
 
     // Planet & Rendering
     this._planetType = Math.round(clampedPRNG(0, 2)) as PlanetType
-    this._planetClass = Math.round(clampedPRNG(0, 9)) as PlanetClass
+    const availablePlanetClasses = this.getPlanetClassesFromType(this._planetType)
+    this._planetClass = availablePlanetClasses[Math.round(clampedPRNG(0, availablePlanetClasses.length-1))] as PlanetClass
     this._planetRadius = clampedPRNG(0.5, 1)
     this._planetAxialTilt = clampedPRNG(-180, 180)
     this._planetRotation = clampedPRNG(0, 360)
@@ -899,28 +900,33 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsColor.set(clampedPRNG(0, 1) * 0xffffff)
     this._cloudsColorRamp.loadFromSteps([
       new ColorRampStep(0x000000, 0.0, true),
-      new ColorRampStep(clampedPRNG(0, 1) * 0xffffff, clampedPRNG(0, 1)),
-      new ColorRampStep(clampedPRNG(0, 1) * 0xffffff, 1.0, true),
+      new ColorRampStep(randomColor(true), clampedPRNG(0.05, 0.95)),
+      new ColorRampStep(randomColor(true), 1.0, true),
     ])
 
     // Atmosphere
     this._atmosphereEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
-    this._atmosphereHeight = clampedPRNG(0.0055, 0.05)
-    this._atmosphereDensityScale = clampedPRNG(0.25, 20)
-    this._atmosphereIntensity = clampedPRNG(0.25, 5.0)
+    this._atmosphereHeight = clampedPRNG(0.0075, 0.025)
+    this._atmosphereDensityScale = clampedPRNG(0.25, 10)
+    this._atmosphereIntensity = clampedPRNG(0.25, 2.5)
     this._atmosphereColorMode = Math.round(clampedPRNG(0, 2)) as ColorMode
     this._atmosphereHue = clampedPRNG(0, 2)
     this._atmosphereTint.set(clampedPRNG(0, 1) * 0xffffff)
-    this._atmosphereMieScatteringConstant = clampedPRNG(-0.999, 0.999)
-    this._atmosphereRayleighDensityRatio = clampedPRNG(0, 1)
-    this._atmosphereMieDensityRatio = clampedPRNG(0, 1)
-    this._atmosphereOpticalDensityRatio = clampedPRNG(0, 1)
+    this._atmosphereMieScatteringConstant = clampedPRNG(-0.999, -0.5)
+    this._atmosphereRayleighDensityRatio = clampedPRNG(0.05, 0.95)
+    this._atmosphereMieDensityRatio = clampedPRNG(0.05, 0.95)
+    this._atmosphereOpticalDensityRatio = clampedPRNG(0.05, 0.95)
 
     // Ring
     this._ringsEnabled = Boolean(Math.round(clampedPRNG(0, 1)))
     this._ringsParams.splice(0)
-    for (let i = 0; i < Math.round(clampedPRNG(0, 4)); i++) {
-      this._ringsParams.push(RingParameters.createRandom(this._changedProps, '_ringsParams'))
+    const ringIntervals = randomIntervals(1.25, 4.75, 2 * Math.round(clampedPRNG(2, 16) / 2))
+    console.log(ringIntervals)
+    for (let i = 0; i < ringIntervals.length; i++) {
+      const newRing = RingParameters.createRandom(this._changedProps, '_ringsParams[element]')
+      newRing.innerRadius = ringIntervals[i][0]
+      newRing.outerRadius = ringIntervals[i][1]
+      this._ringsParams.push(newRing)
     }
   }
 
@@ -936,8 +942,19 @@ export default class PlanetData extends ChangeTracker {
   }
   
   public markAllForChange() {
-    this._changedProps.push(...Object.keys(this).map((o) => ({ prop: o })))
+    this._changedProps.push(...Object.keys(this).map((o) => ({ prop: o, action: ChangeAction.EDIT })))
+    this._planetSurfaceNoise.markAllForChange()
+    this._planetSurfaceDisplacement.markAllForChange()
+    this._cloudsNoise.markAllForChange()
+    this._cloudsDisplacement.markAllForChange()
+    this._biomesHumidityNoise.markAllForChange()
+    this._biomesTemperatureNoise.markAllForChange()
+    this._biomesParams.forEach(b => b.markAllForChange())
   }
+
+  // --------------------------------------------------
+  // |               Utility functions                |
+  // --------------------------------------------------
 
   public findBiomeById(id: string) {
     return this._biomesParams.find((b) => b.id === id)
@@ -948,6 +965,32 @@ export default class PlanetData extends ChangeTracker {
 
   public findOutermostRingRadius() {
     return Math.max(...this._ringsParams.map((r) => r.outerRadius))
+  }
+
+  private getPlanetClassesFromType(t: PlanetType) {
+    switch (t) {
+      case PlanetType.PLANET:
+        return [
+          PlanetClass.PLANET_TELLURIC,
+          PlanetClass.PLANET_ICE,
+          PlanetClass.PLANET_OCEAN,
+          PlanetClass.PLANET_TROPICAL,
+          PlanetClass.PLANET_ARID,
+          PlanetClass.PLANET_CHTHONIAN,
+          PlanetClass.PLANET_MAGMATIC,
+        ]
+      case PlanetType.MOON:
+        return [
+          PlanetClass.MOON_ICE,
+          PlanetClass.MOON_ROCKY,
+          PlanetClass.MOON_CHTHONIAN
+        ]
+      case PlanetType.GASGIANT:
+        return [
+          PlanetClass.GASGIANT_COLD,
+          PlanetClass.GASGIANT_HOT
+        ]
+    }
   }
 
   // --------------------------------------------------

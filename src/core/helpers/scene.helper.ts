@@ -94,7 +94,7 @@ function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData, creation
   const atmosphere = ComponentHelper.createAtmosphere(data, sceneData.sunLight!.position)
   const rings: RingMeshData[] = []
   if (creationMode === EditorSceneCreationMode.EDITOR) {
-    rings.push(...data.ringsParams.map((_, idx) => ComponentHelper.createRing(data, idx)))
+    rings.push(...data.ringsParams.map(param => ComponentHelper.createRing(data, param)))
   }
 
   // Toggle elements

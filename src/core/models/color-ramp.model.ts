@@ -118,7 +118,7 @@ export class ColorRamp extends ChangeTracker {
 
   public sortSteps(markChange: boolean = true) {
     this._steps.sort((a, b) => a.factor - b.factor)
-    if (markChange) this.markForChange(this._changePrefix)
+    if (markChange) this.markForChange(this._changePrefix, { data: this })
     this.generateHash()
   }
 
@@ -128,7 +128,7 @@ export class ColorRamp extends ChangeTracker {
     }
     this._steps.push(new ColorRampStep('black', this._steps[this._steps.length - 2].factor))
     this.sortSteps()
-    this.markForChange(this._changePrefix)
+    this.markForChange(this._changePrefix, { data: this })
     this.generateHash()
   }
 
@@ -149,7 +149,7 @@ export class ColorRamp extends ChangeTracker {
     this._steps[index].color.set(options.color ? options.color : this._steps[index].color)
     this._steps[index].alpha = options.alpha ?? this._steps[index].alpha
     this._steps[index].factor = options.factor ?? this._steps[index].factor
-    this.markForChange(this._changePrefix)
+    this.markForChange(this._changePrefix, { data: this })
     this.generateHash()
   }
 
@@ -163,7 +163,7 @@ export class ColorRamp extends ChangeTracker {
       throw new Error('Cannot find step with ID ' + stepId)
     }
     this._steps.splice(index, 1)
-    this.markForChange(this._changePrefix)
+    this.markForChange(this._changePrefix, { data: this })
     this.generateHash()
   }
 
@@ -193,5 +193,12 @@ export class ColorRamp extends ChangeTracker {
     }
     this.sortSteps(false)
     this.generateHash()
+  }
+
+  /**
+   * Marks this color ramp for change, using `this._changePrefix` only
+   */
+  public override markAllForChange(): void {
+    this.markForChange(this._changePrefix, { data: this })
   }
 }

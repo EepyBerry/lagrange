@@ -23,11 +23,11 @@ export class DisplacementParameters extends ChangeTracker {
     factor?: number,
   ) {
     super(changedPropsRef, changePrefix)
-    this._frequency = clamp(freq ?? this._frequency, 0, 255)
-    this._amplitude = clamp(amp ?? this._amplitude, 0, 255)
-    this._lacunarity = clamp(lac ?? this._lacunarity, 0, 255)
+    this._frequency = clamp(freq ?? this._frequency, 0, 10.0)
+    this._amplitude = clamp(amp ?? this._amplitude, 0, 1.25)
+    this._lacunarity = clamp(lac ?? this._lacunarity, 0, 3.0)
     this._octaves = clamp(oct ?? this._octaves, 0, 8)
-    this._epsilon = clamp(epsilon ?? 0.001, 0.0, 1.0)
+    this._epsilon = clamp(epsilon ?? 0.001, 0.0, 0.25)
     this._multiplier = clamp(multiplier ?? 2.0, 0.0, 3.0)
     this._factor = clamp(factor ?? 0.05, 0.0, 1.0)
   }
@@ -36,21 +36,21 @@ export class DisplacementParameters extends ChangeTracker {
     return this._epsilon
   }
   public set epsilon(value: number) {
-    this._epsilon = value
+    this._epsilon = clamp(value, 0.0, 0.25)
     this.markForChange(`${this._changePrefix}._epsilon`)
   }
   public get multiplier(): number {
     return this._multiplier
   }
   public set multiplier(value: number) {
-    this._multiplier = value
+    this._multiplier = clamp(value, 0.25, 3.0)
     this.markForChange(`${this._changePrefix}._multiplier`)
   }
   public get factor(): number {
     return this._factor
   }
   public set factor(value: number) {
-    this._factor = value
+    this._factor = clamp(value, 0.0, 1.0)
     this.markForChange(`${this._changePrefix}._factor`)
   }
 
@@ -58,7 +58,7 @@ export class DisplacementParameters extends ChangeTracker {
     return this._frequency
   }
   public set frequency(value: number) {
-    this._frequency = value
+    this._frequency = clamp(value, 0.0, 10)
     this.markForChange(`${this._changePrefix}._frequency`)
   }
 
@@ -66,7 +66,7 @@ export class DisplacementParameters extends ChangeTracker {
     return this._amplitude
   }
   public set amplitude(value: number) {
-    this._amplitude = value
+    this._amplitude = clamp(value, 0.0, 1.25)
     this.markForChange(`${this._changePrefix}._amplitude`)
   }
 
@@ -74,7 +74,7 @@ export class DisplacementParameters extends ChangeTracker {
     return this._lacunarity
   }
   public set lacunarity(value: number) {
-    this._lacunarity = value
+    this._lacunarity = clamp(value, 0.0, 3.0)
     this.markForChange(`${this._changePrefix}._lacunarity`)
   }
 
@@ -82,14 +82,14 @@ export class DisplacementParameters extends ChangeTracker {
     return this._octaves
   }
   public set octaves(value: number) {
-    this._octaves = value
+    this._octaves = clamp(value, 1, 8)
     this.markForChange(`${this._changePrefix}._octaves`)
   }
 
   public loadData(data?: DisplacementParameters) {
     this.frequency = clamp(data?._frequency ?? this._frequency, 0, 10)
-    this.amplitude = clamp(data?._amplitude ?? this._amplitude, 0, 10)
-    this.lacunarity = clamp(data?._lacunarity ?? this._lacunarity, 0, 10)
+    this.amplitude = clamp(data?._amplitude ?? this._amplitude, 0, 1.25)
+    this.lacunarity = clamp(data?._lacunarity ?? this._lacunarity, 0, 3.0)
     this.octaves = clamp(data?._octaves ?? this._octaves, 0, 8)
     this.factor = clamp(data?._factor ?? this._factor, 0.0, 1.0)
     this.epsilon = clamp(data?._epsilon ?? this._epsilon, 0.0, 0.25)
@@ -98,8 +98,8 @@ export class DisplacementParameters extends ChangeTracker {
 
   public reset(freq: number, amp: number, lac: number, oct: number, eps?: number, mul?: number, fac?: number): void {
     this.frequency = clamp(freq, 0, 10)
-    this.amplitude = clamp(amp, 0, 10)
-    this.lacunarity = clamp(lac, 0, 10)
+    this.amplitude = clamp(amp, 0, 1.25)
+    this.lacunarity = clamp(lac, 0, 3.0)
     this.octaves = clamp(oct, 0, 8)
     this.epsilon = clamp(eps ?? 0.001, 0.0, 2.0)
     this.multiplier = clamp(mul ?? 2.0, 0.0, 5.0)
@@ -110,10 +110,23 @@ export class DisplacementParameters extends ChangeTracker {
   public randomize() {
     this._factor = clampedPRNG(0, 0.25)
     this._epsilon = clampedPRNG(0.0005, 0.25)
-    this._multiplier = clampedPRNG(0, 3)
-    this._frequency = clampedPRNG(0.25, 3)
+    this._multiplier = clampedPRNG(0.25, 3.0)
+    this._frequency = clampedPRNG(0.25, 3.0)
     this._amplitude = clampedPRNG(0.25, 1.25)
-    this._lacunarity = clampedPRNG(1.5, 3)
-    this._octaves = Math.round(clampedPRNG(2, 8))
+    this._lacunarity = clampedPRNG(1.5, 2.5)
+    this._octaves = Math.round(clampedPRNG(4, 8))
+  }
+
+  /**
+   * Marks all properties of this class for change, using `this._changePrefix`
+   */
+  public override markAllForChange(): void {
+    this.markForChange(`${this._changePrefix}._epsilon`)
+    this.markForChange(`${this._changePrefix}._multiplier`)
+    this.markForChange(`${this._changePrefix}._factor`)
+    this.markForChange(`${this._changePrefix}._frequency`)
+    this.markForChange(`${this._changePrefix}._amplitude`)
+    this.markForChange(`${this._changePrefix}._lacunarity`)
+    this.markForChange(`${this._changePrefix}._octaves`)
   }
 }

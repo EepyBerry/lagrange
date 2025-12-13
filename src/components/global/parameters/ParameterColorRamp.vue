@@ -88,7 +88,10 @@
             @color-change="updateStepColor(step, $event.colors.hex)"
           >
             <template #hue-range-input-label>
-              <span class="visually-hidden">Hue</span>
+              <span class="a11y--visually-hidden"></span>
+            </template>
+            <template #alpha-range-input-label>
+              <span class="a11y--visually-hidden"></span>
             </template>
           </ColorPicker>
         </td>

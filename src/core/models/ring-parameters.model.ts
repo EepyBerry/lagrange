@@ -21,7 +21,7 @@ export class RingParameters extends ChangeTracker {
     this._id = oldId ?? nanoid()
     this._innerRadius = innerRadius
     this._outerRadius = outerRadius
-    this._colorRamp = new ColorRamp(this._changedProps, `${this._changePrefix}.${this._id}._colorRamp`, [
+    this._colorRamp = new ColorRamp(this._changedProps, `${this._changePrefix}[element]._colorRamp`, [
       new ColorRampStep(0x856f4e, 0.0, true),
       new ColorRampStep(0x000000, 0.5),
       new ColorRampStep(0xbf9a5e, 1.0, true),
@@ -46,7 +46,7 @@ export class RingParameters extends ChangeTracker {
     if (this.outerRadius < this._innerRadius) {
       this.outerRadius = value // Call setter to trigger change
     }
-    this.markForChange(`${this._changePrefix}.${this._id}._innerRadius`)
+    this.markForChange(`${this._changePrefix}._innerRadius`, { data: this })
   }
 
   public get outerRadius(): number {
@@ -57,7 +57,7 @@ export class RingParameters extends ChangeTracker {
     if (this.innerRadius > this._outerRadius) {
       this.innerRadius = value // Call setter to trigger change
     }
-    this.markForChange(`${this._changePrefix}.${this._id}._outerRadius`)
+    this.markForChange(`${this._changePrefix}._outerRadius`, { data: this })
   }
 
   public get colorRamp(): ColorRamp {
@@ -73,5 +73,14 @@ export class RingParameters extends ChangeTracker {
     const params = new RingParameters(changedProps, changePrefix, innerRadius, clampedPRNG(innerRadius, 5))
     params._colorRamp.randomize(3)
     return params
+  }
+
+  /**
+   * Marks all properties of this class for change, using `this._changePrefix`
+   */
+  public override markAllForChange(): void {
+    this.markForChange(`${this._changePrefix}._colorRamp`, { data: this })
+    this.markForChange(`${this._changePrefix}._innerRadius`, { data: this })
+    this.markForChange(`${this._changePrefix}._outerRadius`, { data: this })
   }
 }
