@@ -17,6 +17,9 @@
   border-radius: 2px;
   border: 1px solid var(--lg-input);
 
+  label {
+    padding-right: 0;
+  }
   div.vacp-color-space {
     aspect-ratio: 1/0.4;
   }
@@ -28,6 +31,7 @@
   }
   button.vacp-format-switch-button {
     align-self: flex-end;
+    display: none;
   }
 
   input[id^='color-picker-color-'] {
@@ -35,18 +39,6 @@
     border-radius: 2px;
   }
 }
-.visually-hidden {
-  position: absolute;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  border: 0;
-  white-space: nowrap;
-}
-
 :where(.vacp-color-picker) button {
   border-radius: 2px;
 }
