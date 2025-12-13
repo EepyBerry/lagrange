@@ -24,6 +24,9 @@
     <template #hue-range-input-label>
       <span class="a11y--visually-hidden"></span>
     </template>
+    <template #alpha-range-input-label>
+      <span class="a11y--visually-hidden"></span>
+    </template>
   </ColorPicker>
 </template>
 

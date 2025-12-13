@@ -83,12 +83,14 @@
         <td colspan="4" class="picker-wrapper">
           <ColorPicker
             default-format="hex"
-            :visible-formats="['hex']"
             :alpha-channel="mode === 'rgba' ? 'show' : 'hide'"
             :color="pickerIdInitColor"
             @color-change="updateStepColor(step, $event.colors.hex)"
           >
             <template #hue-range-input-label>
+              <span class="a11y--visually-hidden"></span>
+            </template>
+            <template #alpha-range-input-label>
               <span class="a11y--visually-hidden"></span>
             </template>
           </ColorPicker>

@@ -18,20 +18,25 @@
   border: 1px solid var(--lg-input);
 
   label {
-    padding-right: 0;
+    padding-right: unset;
+  }
+  input {
+    min-height: unset;
   }
   div.vacp-color-space {
-    aspect-ratio: 1/0.4;
+    aspect-ratio: unset;
+    height: 160px;
+  }
+  div.vacp-color-input-group {
+    width: min-content;
+    min-width: 18rem;
   }
 
   button.vacp-copy-button,
   button.vacp-format-switch-button {
+    align-self: flex-end;
     background: transparent;
     cursor: pointer;
-  }
-  button.vacp-format-switch-button {
-    align-self: flex-end;
-    display: none;
   }
 
   input[id^='color-picker-color-'] {
