@@ -30,8 +30,8 @@ export function regeneratePRNGIfNecessary(force?: boolean): void {
   PRNG_SEED.value = s;
   currentPRNGSeed = s;
 }
-export function clampedPRNG(min: number, max: number, precision: number = 3): number {
-  return Number(((max - min) * PRNG.value() + min).toPrecision(precision));
+export function clampedPRNG(min: number, max: number, digits: number = 3): number {
+  return Number(((max - min) * PRNG.value() + min).toFixed(digits));
 }
 export function clampedPRNGSpaced(prev: number, min: number, max: number, precision: number = 3, spacing: number = 1) {
   let result = clampedPRNG(min, max, precision);

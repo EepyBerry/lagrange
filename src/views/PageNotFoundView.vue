@@ -4,11 +4,7 @@
     <div class="text">
       <h1 class="title" :class="{ ultra: msgVariant === 4 }">{{ loadMessage() }}</h1>
       <h2 class="subtitle">{{ $t('404.subtext') }}</h2>
-      <LgvLink
-        variant="button"
-        icon="mingcute:book-2-line"
-        href="/"
-      >
+      <LgvLink variant="button" icon="mingcute:book-2-line" href="/">
         {{ $t('404.link') }}
       </LgvLink>
     </div>
@@ -16,27 +12,26 @@
 </template>
 
 <script setup lang="ts">
-import LgvLink from '@/_lib/components/LgvLink.vue'
-import AppLogo from '@components/global/elements/AppLogo.vue'
-import { useHead } from '@unhead/vue'
-import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
+import LgvLink from '@/_lib/components/LgvLink.vue';
+import AppLogo from '@components/global/elements/AppLogo.vue';
+import { useHead } from '@unhead/vue';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-const i18n = useI18n()
+const i18n = useI18n();
 useHead({
   title: i18n.t('404.$title') + ' · ' + i18n.t('main.$title'),
   meta: [
     { name: 'robots', content: 'noindex' },
     { name: 'description', content: 'Page not found' },
   ],
-})
+});
 
-const msgVariant = ref(0)
+const msgVariant = ref(0);
 function loadMessage(): string {
-  msgVariant.value = Math.floor(Math.random() * 4) + 1
-  return i18n.t(`404.text_${msgVariant.value.toString().padStart(2, '0')}`)
+  msgVariant.value = Math.floor(Math.random() * 4) + 1;
+  return i18n.t(`404.text_${msgVariant.value.toString().padStart(2, '0')}`);
 }
-
 </script>
 
 <style lang="scss">
