@@ -1,6 +1,6 @@
 import { ColorRamp, ColorRampStep } from './color-ramp.model';
 import { ColorMode, GradientMode, PlanetClass, PlanetType } from '@core/types';
-import { clampedPRNG, isNumeric, randomColor, randomIntervals } from '@core/utils/math-utils';
+import { clampedPRNG, isNumeric, randomBoolean, randomColor, randomIntervals } from '@core/utils/math-utils';
 import { Color } from 'three';
 import { NoiseParameters } from './noise-parameters.model';
 import { ChangeAction, ChangeTracker } from './change-tracker.model';
@@ -851,7 +851,7 @@ export default class PlanetData extends ChangeTracker {
   // Note: adjusted ranges to get more coherent data
   public randomize() {
     // Lighting
-    this._lensFlareEnabled = Boolean(Math.round(clampedPRNG(0, 1)));
+    this._lensFlareEnabled = randomBoolean();
     this._lensFlarePointsIntensity = clampedPRNG(0, 1);
     this._lensFlareGlareIntensity = clampedPRNG(0, 1);
     this._sunLightAngle = clampedPRNG(-90, 90);
@@ -876,18 +876,19 @@ export default class PlanetData extends ChangeTracker {
     this._planetGroundMetalness = clampedPRNG(0, 1);
     this._planetGroundEmissiveIntensity = clampedPRNG(0, 10);
     this._planetWaterLevel = clampedPRNG(0, 1);
+    this._planetShowEmissive = randomBoolean();
 
     // Surface
-    this._planetSurfaceShowBumps = Boolean(Math.round(clampedPRNG(0, 1)));
+    this._planetSurfaceShowBumps = randomBoolean();
     this._planetSurfaceBumpStrength = clampedPRNG(0, 0.2);
-    this._planetSurfaceShowWarping = Boolean(Math.round(clampedPRNG(0, 1)));
-    this._planetSurfaceShowDisplacement = Boolean(Math.round(clampedPRNG(0, 1)));
+    this._planetSurfaceShowWarping = randomBoolean();
+    this._planetSurfaceShowDisplacement = randomBoolean();
     this._planetSurfaceDisplacement.randomize();
     this._planetSurfaceNoise.randomize();
     this._planetSurfaceColorRamp.randomize(8);
 
     // Biomes
-    this._biomesEnabled = Boolean(Math.round(clampedPRNG(0, 1)));
+    this._biomesEnabled = randomBoolean();
     this._biomesTemperatureMode = Math.round(clampedPRNG(0, 2)) as GradientMode;
     this._biomesTemperatureNoise.randomize();
     this._biomesHumidityMode = Math.round(clampedPRNG(0, 2)) as GradientMode;
@@ -900,10 +901,10 @@ export default class PlanetData extends ChangeTracker {
     }
 
     // Clouds
-    this._cloudsEnabled = Boolean(Math.round(clampedPRNG(0, 1)));
+    this._cloudsEnabled = randomBoolean();
     this._cloudsRotation = clampedPRNG(0, 360);
-    this._cloudsShowWarping = Boolean(Math.round(clampedPRNG(0, 1)));
-    this._cloudsShowDisplacement = Boolean(Math.round(clampedPRNG(0, 1)));
+    this._cloudsShowWarping = randomBoolean();
+    this._cloudsShowDisplacement = randomBoolean();
     this._cloudsDisplacement.randomize();
     this._cloudsNoise.randomize();
     this._cloudsColor.set(clampedPRNG(0, 1) * 0xffffff);
@@ -914,7 +915,7 @@ export default class PlanetData extends ChangeTracker {
     ]);
 
     // Atmosphere
-    this._atmosphereEnabled = Boolean(Math.round(clampedPRNG(0, 1)));
+    this._atmosphereEnabled = randomBoolean();
     this._atmosphereHeight = clampedPRNG(0.0075, 0.025);
     this._atmosphereDensityScale = clampedPRNG(0.25, 10);
     this._atmosphereIntensity = clampedPRNG(0.25, 2.5);
@@ -927,10 +928,9 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereOpticalDensityRatio = clampedPRNG(0.05, 0.95);
 
     // Ring
-    this._ringsEnabled = Boolean(Math.round(clampedPRNG(0, 1)));
+    this._ringsEnabled = randomBoolean();
     this._ringsParams.splice(0);
     const ringIntervals = randomIntervals(1.25, 4.75, 2 * Math.round(clampedPRNG(2, 16) / 2));
-    console.log(ringIntervals);
     for (let i = 0; i < ringIntervals.length; i++) {
       const newRing = RingParameters.createRandom(this._changedProps, '_ringsParams[element]');
       newRing.innerRadius = ringIntervals[i][0];

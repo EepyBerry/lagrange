@@ -48,6 +48,14 @@ export function clampedPRNGHex(min: number, max: number, hexMask: number): numbe
 }
 
 /**
+ * Generates a random boolean, self-explanatory
+ * @returns the boolean
+ */
+export function randomBoolean(): boolean {
+  return Boolean(Math.round(clampedPRNG(0, 1)));
+}
+
+/**
  * Generates a random `THREE.Color`, in grayscale or not
  * @param grayscale if the color generated should be grayscale
  * @returns a new color, derived from PRNG

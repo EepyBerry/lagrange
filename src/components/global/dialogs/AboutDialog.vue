@@ -74,6 +74,9 @@
                 <ul style="list-style-type: disc; margin-left: 1rem">
                   <li starred>{{ $t('dialog.about.changelogs.05_webgpu') }}</li>
                   <li>{{ $t('dialog.about.changelogs.05_rewrite') }}</li>
+                  <li style="margin-top: 0.5rem" starred>{{ $t('dialog.about.changelogs.051_emissivity') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.051_atmosphere') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.051_ui') }}</li>
                 </ul>
               </template>
             </CollapsibleSection>

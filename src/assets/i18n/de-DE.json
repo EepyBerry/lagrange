@@ -190,7 +190,10 @@
         "043_settings": "(0.4.3) App Einstellungen können jetzt gespeichert und geladen werden! Verwendet eine JSON Datei um die Einstellungen zu speichern ",
         "05_title": "Update 0.5 - Core Overhaul",
         "05_webgpu": "Führt WebGPU Support ein! Renderer Auswahl steht jetzt in den Einstellungen zur Verfügung ",
-        "05_rewrite": "Komplette Umschreibung der internen App Struktur um zukünftige Entwicklungen zu vereinfachen"
+        "05_rewrite": "Komplette Umschreibung der internen App Struktur um zukünftige Entwicklungen zu vereinfachen",
+        "051_emissivity": "(0.5.1) Die Oberflächen und Biomen können jetzt emissiv sein! Das Effekt bleibt beim exportieren vorhanden",
+        "051_atmosphere": "(0.5.1) Der atmosphärische Shader wurde bearbeitet, und enthält neue fortgeschrittene Parameter!",
+        "051_ui": "(0.5.1) Update der Benutzeroberfläche des Codexs, der Modalen, usw. Beinhaltet eine robustere Fehlerbehandlung des Editors am Start."
       },
       "credits": {
         "$title": "Erwähnungen und Dank",

@@ -36,7 +36,6 @@ function addRing() {
 }
 
 function deleteRing(ringParams: RingParameters) {
-  console.log(ringParams);
   LG_PLANET_DATA.value.markForChange('_ringsParams', { data: ringParams }, ChangeAction.DELETE);
 }
 </script>

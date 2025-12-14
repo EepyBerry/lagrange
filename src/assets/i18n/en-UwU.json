@@ -190,7 +190,10 @@
         "043_settings": "(0.4.3) App s-settings can nyow be backed up AND westowed!!! U-uses a JSON fiwe to stowe settings d-data",
         "05_title": "Update 0.5 - Cowe Ovewhauw",
         "05_webgpu": "I-intwoduces WebGPU suppowt!!! Wendewew sewection is now avaiwabwe in the app settings!!!",
-        "05_rewrite": "Fuww wewwite of the intewnyaw app s-stwuctuwe to hewp futuwe devewopment effowts!!!"
+        "05_rewrite": "Fuww wewwite of the intewnyaw app s-stwuctuwe to hewp futuwe devewopment effowts!!!",
+        "051_emissivity": "(0.5.1) Suwfaces and biomes can now be independentwy emissive!!! This effect is p-pwesewved on expowts",
+        "051_atmosphere": "(0.5.1) FUWW w-wefactowing of the atmosphewe shadew, awso incwudes new advanced pawameters!!!",
+        "051_ui": "(0.5.1) UI wefwesh on the Codex, diawogs, and others!!! Incwudes bettew ewwow handwing on editow initiawization"
       },
       "credits": {
         "$title": "Cwedits & attwibushon",

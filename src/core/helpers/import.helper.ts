@@ -14,7 +14,6 @@ export async function readFileSettings(json: File): Promise<{ settings: IDBSetti
       const jsonData = JSON.parse(e.target!.result as string)
       const settings = jsonData.settings as IDBSettings
       const keyBindings = jsonData.keyBindings as IDBKeyBinding[]
-      console.log({ settings, keyBindings })
       resolve({ settings, keyBindings })
     }
     reader.readAsText(json)

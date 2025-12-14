@@ -14,8 +14,11 @@ defineProps<{ icon?: string; iconWidth?: string; a11yLabel?: string }>();
 onMounted(adjustPadding);
 
 function adjustPadding() {
-  const textLeaf = btnRef.value!.querySelector('.lgv--text')! as HTMLSpanElement;
-  if (!textLeaf || !textLeaf.textContent) return;
+  const textLeaf = btnRef.value!.querySelector('.lgv--text') as HTMLSpanElement;
+  if (!textLeaf || !textLeaf.textContent) {
+    textLeaf.style.display = 'none';
+    return;
+  }
   if (textLeaf.textContent.length > 0) {
     btnRef.value?.classList.add('outer-pad');
   } else {
@@ -113,6 +116,12 @@ button.lgv {
   }
   &.warn:not(:disabled):active {
     background: var(--lg-warn-active);
+  }
+
+  .lgv--text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
   }
 }
 
