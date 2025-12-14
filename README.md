@@ -24,6 +24,8 @@ _(**note:** this is something I am working on during my free time, which means t
   <li>⭐ Full rewrite of the internal app structure to help future development efforts!</li>
 </ul>
 
+Check the [releases](https://github.com/EepyBerry/lagrange/releases) page for a more comprehensive changelog!
+
 ## 🖼️ Showcase
 
 <div align="center">
