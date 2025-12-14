@@ -15,11 +15,7 @@
         <span class="ring-index">{{ getPartialId() }}</span>
       </div>
       <span class="ring-actions">
-        <LgvButton
-          class="sm warn"
-          icon="mingcute:delete-2-line"
-          @click="$emit('delete', lgParam!)"
-        />
+        <LgvButton class="sm warn" icon="mingcute:delete-2-line" @click="$emit('delete', lgParam!)" />
       </span>
     </div>
     <div v-show="_expanded" class="ring-content">
@@ -38,25 +34,25 @@
 </template>
 
 <script setup lang="ts">
-import LgvButton from '@/_lib/components/LgvButton.vue'
-import type { RingParameters } from '@core/models/ring-parameters.model'
-import { colorRampToStyle } from '@core/utils/render-utils'
-import { onMounted, ref, type Ref } from 'vue'
+import LgvButton from '@/_lib/components/LgvButton.vue';
+import type { RingParameters } from '@core/models/ring-parameters.model';
+import { colorRampToStyle } from '@core/utils/render-utils';
+import { onMounted, ref, type Ref } from 'vue';
 
-const lgParam = defineModel<RingParameters>()
+const lgParam = defineModel<RingParameters>();
 
-const _expanded: Ref<boolean> = ref(true)
-const _props = defineProps<{ index: number; expand?: boolean }>()
+const _expanded: Ref<boolean> = ref(true);
+const _props = defineProps<{ index: number; expand?: boolean }>();
 
-defineEmits(['delete'])
-onMounted(() => (_expanded.value = _props.expand ?? true))
+defineEmits(['delete']);
+onMounted(() => (_expanded.value = _props.expand ?? true));
 
 function toggleExpand() {
-  _expanded.value = !_expanded.value
+  _expanded.value = !_expanded.value;
 }
 
 function getPartialId() {
-  return lgParam.value?.id.substring(0, 6)
+  return lgParam.value?.id.substring(0, 6);
 }
 </script>
 

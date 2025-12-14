@@ -21,14 +21,14 @@
 </template>
 
 <script setup lang="ts">
-import { type Ref, onMounted, ref } from 'vue'
-const _expanded: Ref<boolean> = ref(true)
+import { type Ref, onMounted, ref } from 'vue';
+const _expanded: Ref<boolean> = ref(true);
 
-const _props = defineProps<{ icon?: string; compactMode?: boolean; allowIconMode?: boolean; expand?: boolean }>()
-onMounted(() => (_expanded.value = _props.expand ?? true))
+const _props = defineProps<{ icon?: string; compactMode?: boolean; allowIconMode?: boolean; expand?: boolean }>();
+onMounted(() => (_expanded.value = _props.expand ?? true));
 
 function toggleExpand() {
-  _expanded.value = !_expanded.value
+  _expanded.value = !_expanded.value;
 }
 </script>
 
@@ -90,7 +90,10 @@ function toggleExpand() {
 
     .collapsible-section-title {
       min-width: 0;
-      span, .indicator { display: none; }
+      span,
+      .indicator {
+        display: none;
+      }
     }
   }
   .collapsible-section:not(.compact) {

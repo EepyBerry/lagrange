@@ -18,25 +18,25 @@
 </template>
 
 <script setup lang="ts">
-import AppLogo from '@components/global/elements/AppLogo.vue'
-import { useHead } from '@unhead/vue'
-import { onMounted, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
+import AppLogo from '@components/global/elements/AppLogo.vue';
+import { useHead } from '@unhead/vue';
+import { onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-const i18n = useI18n()
+const i18n = useI18n();
 useHead({
   title: i18n.t('404.$title') + ' · ' + i18n.t('main.$title'),
   meta: [
     { name: 'robots', content: 'noindex' },
     { name: 'description', content: 'Page not found' },
   ],
-})
+});
 
-const msgVariant = ref(0)
+const msgVariant = ref(0);
 
 onMounted(() => {
-  msgVariant.value = Math.floor(Math.random() * 4) + 1
-})
+  msgVariant.value = Math.floor(Math.random() * 4) + 1;
+});
 </script>
 
 <style scoped lang="scss">

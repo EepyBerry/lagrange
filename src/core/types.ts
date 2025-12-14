@@ -8,19 +8,19 @@ import type {
   PerspectiveCamera,
   Scene,
   Texture,
-} from 'three'
-import type { LensFlareEffect } from './effects/lens-flare.effect'
-import type { WebGPURenderer } from 'three/webgpu'
-import type { PlanetUniforms } from '@core/tsl/materials/planet.tslmat'
-import type { AtmosphereUniforms } from '@core/tsl/materials/atmosphere.tslmat'
-import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat'
-import type { RingUniforms } from '@core/tsl/materials/ring.tslmat'
-import type { LensFlareUniforms } from '@core/tsl/materials/lens-flare.tslmat'
-import type { LayeredDataTexture } from './utils/texture/layered-data-texture'
-import type { BiomeParameters } from './models/biome-parameters.model'
+} from 'three';
+import type { LensFlareEffect } from './effects/lens-flare.effect';
+import type { WebGPURenderer } from 'three/webgpu';
+import type { PlanetUniforms } from '@core/tsl/materials/planet.tslmat';
+import type { AtmosphereUniforms } from '@core/tsl/materials/atmosphere.tslmat';
+import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat';
+import type { RingUniforms } from '@core/tsl/materials/ring.tslmat';
+import type { LensFlareUniforms } from '@core/tsl/materials/lens-flare.tslmat';
+import type { LayeredDataTexture } from './utils/texture/layered-data-texture';
+import type { BiomeParameters } from './models/biome-parameters.model';
 
 // ---------------------------------- Editor types ----------------------------------
-export type EditorMessageLevel = 'success' | 'info' | 'warn' | 'wip'
+export type EditorMessageLevel = 'success' | 'info' | 'warn' | 'wip';
 export enum EditorSceneCreationMode {
   EDITOR,
   PREVIEW,
@@ -84,63 +84,63 @@ export enum GradientMode {
 // ------------------------------------ Main data -----------------------------------
 export type EditorSceneData = {
   // Scene, renderer, camera
-  scene: Scene
-  renderer: WebGPURenderer
-  camera: PerspectiveCamera
+  scene: Scene;
+  renderer: WebGPURenderer;
+  camera: PerspectiveCamera;
 
   // Groups
-  planetGroup: Group
-  ringAnchor: Group
+  planetGroup: Group;
+  ringAnchor: Group;
 
   // Main objects
-  planet: PlanetMeshData
-  clouds: CloudsMeshData
-  atmosphere: AtmosphereMeshData
-  rings: RingMeshData[]
-  sunLight: DirectionalLight
-  ambLight: AmbientLight
-  lensFlare?: LensFlareEffect
+  planet: PlanetMeshData;
+  clouds: CloudsMeshData;
+  atmosphere: AtmosphereMeshData;
+  rings: RingMeshData[];
+  sunLight: DirectionalLight;
+  ambLight: AmbientLight;
+  lensFlare?: LensFlareEffect;
 
   // Misc
-  clock?: Clock
-}
+  clock?: Clock;
+};
 
 // ------------------------------------ Mesh data -----------------------------------
 export type PlanetMeshData = {
-  mesh?: Mesh
-  uniforms?: PlanetUniforms
+  mesh?: Mesh;
+  uniforms?: PlanetUniforms;
 
-  surfaceBuffer: Uint8Array
-  surfaceTexture?: DataTexture
+  surfaceBuffer: Uint8Array;
+  surfaceTexture?: DataTexture;
 
-  biomeLayersTexture?: LayeredDataTexture<BiomeParameters>
-  biomeEmissiveLayersTexture?: LayeredDataTexture<BiomeParameters>
-}
+  biomeLayersTexture?: LayeredDataTexture<BiomeParameters>;
+  biomeEmissiveLayersTexture?: LayeredDataTexture<BiomeParameters>;
+};
 export type CloudsMeshData = {
-  mesh?: Mesh
-  uniforms?: CloudsUniforms
+  mesh?: Mesh;
+  uniforms?: CloudsUniforms;
 
-  buffer: Uint8Array
-  texture?: DataTexture
-}
+  buffer: Uint8Array;
+  texture?: DataTexture;
+};
 export type AtmosphereMeshData = {
-  mesh?: Mesh
-  uniforms?: AtmosphereUniforms
-}
+  mesh?: Mesh;
+  uniforms?: AtmosphereUniforms;
+};
 export type RingMeshData = {
-  mesh?: Mesh
-  uniforms?: RingUniforms
+  mesh?: Mesh;
+  uniforms?: RingUniforms;
 
-  buffer: Uint8Array | null
-  texture?: DataTexture
-}
+  buffer: Uint8Array | null;
+  texture?: DataTexture;
+};
 export type LensFlareMeshdata = {
-  mesh?: Mesh
-  uniforms?: LensFlareUniforms
-}
+  mesh?: Mesh;
+  uniforms?: LensFlareUniforms;
+};
 
 // ----------------------------------- Baking types ---------------------------------
 export type BakingTarget = {
-  mesh: Mesh
-  textures: Texture[]
-}
+  mesh: Mesh;
+  textures: Texture[];
+};

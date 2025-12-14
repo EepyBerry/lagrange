@@ -39,10 +39,22 @@
     <ParameterGroup v-model="LG_PLANET_DATA.planetShowEmissive" :toggleable="LG_PLANET_DATA.planetShowEmissive">
       <template #title>{{ $t('editor.controls.planet_rendering.emissivity') }}</template>
       <template #content>
-        <ParameterSlider id="e-wemissive" v-model="LG_PLANET_DATA.planetWaterEmissiveIntensity" :step="0.01" :min="0" :max="10">
+        <ParameterSlider
+          id="e-wemissive"
+          v-model="LG_PLANET_DATA.planetWaterEmissiveIntensity"
+          :step="0.01"
+          :min="0"
+          :max="10"
+        >
           {{ $t('editor.controls.planet_rendering.emissivity_waterintensity') }}
         </ParameterSlider>
-        <ParameterSlider id="e-gemissive" v-model="LG_PLANET_DATA.planetGroundEmissiveIntensity" :step="0.01" :min="0" :max="10">
+        <ParameterSlider
+          id="e-gemissive"
+          v-model="LG_PLANET_DATA.planetGroundEmissiveIntensity"
+          :step="0.01"
+          :min="0"
+          :max="10"
+        >
           {{ $t('editor.controls.planet_rendering.emissivity_groundintensity') }}
         </ParameterSlider>
       </template>
@@ -50,5 +62,5 @@
   </ParameterGrid>
 </template>
 <script setup lang="ts">
-import { LG_PLANET_DATA } from '@/core/services/editor.service'
+import { LG_PLANET_DATA } from '@/core/services/editor.service';
 </script>

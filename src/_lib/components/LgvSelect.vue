@@ -5,8 +5,8 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ id: string }>()
-const model = defineModel<unknown>()
+defineProps<{ id: string }>();
+const model = defineModel<unknown>();
 </script>
 
 <style lang="scss">
@@ -21,7 +21,10 @@ select.lgv {
   text-overflow: ellipsis;
   cursor: pointer;
 
-  &:hover, &:focus { border-color: var(--lg-contrast); }
+  &:hover,
+  &:focus {
+    border-color: var(--lg-contrast);
+  }
   & > option:hover {
     cursor: pointer;
   }
@@ -31,5 +34,4 @@ select.lgv[disabled] {
   border: 1px solid var(--lg-border-disabled);
   cursor: not-allowed;
 }
-
 </style>

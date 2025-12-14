@@ -1,11 +1,5 @@
 <template>
-  <DialogElement
-    id="dialog-about"
-    ref="dialogRef"
-    show-title
-    :closeable="true"
-    :aria-label="$t('a11y.dialog_about')"
-  >
+  <DialogElement id="dialog-about" ref="dialogRef" show-title :closeable="true" :aria-label="$t('a11y.dialog_about')">
     <template #title>&nbsp;</template>
     <template #content>
       <div class="about-grid">
@@ -104,7 +98,12 @@
           <p>{{ $t('dialog.about.built_with_love') }}</p>
           <p>
             © 2024-{{ new Date().getFullYear() }} EepyBerry,
-            <a class="lgv" href="https://github.com/EepyBerry/lagrange/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
+            <a
+              class="lgv"
+              href="https://github.com/EepyBerry/lagrange/blob/main/LICENSE"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {{ $t('dialog.about.license') }}
             </a>
           </p>
@@ -116,17 +115,17 @@
 </template>
 
 <script setup lang="ts">
-import AppLogo from '@components/global/elements/AppLogo.vue'
-import DialogElement from '@components/global/elements/DialogElement.vue'
-import LgvChip from '@/_lib/components/LgvChip.vue'
-import { onMounted, ref, type Ref } from 'vue'
-import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue'
+import AppLogo from '@components/global/elements/AppLogo.vue';
+import DialogElement from '@components/global/elements/DialogElement.vue';
+import LgvChip from '@/_lib/components/LgvChip.vue';
+import { onMounted, ref, type Ref } from 'vue';
+import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 
-const version = ref('UNKNOWN_VERSION')
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
-defineExpose({ open: () => dialogRef.value?.open(), close: () => dialogRef.value?.close() })
+const version = ref('UNKNOWN_VERSION');
+const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
+defineExpose({ open: () => dialogRef.value?.open(), close: () => dialogRef.value?.close() });
 
-onMounted(() => (version.value = import.meta.env.APP_VERSION))
+onMounted(() => (version.value = import.meta.env.APP_VERSION));
 </script>
 
 <style scoped lang="scss">

@@ -64,24 +64,24 @@ hr {
   font-family: monospace;
   overflow-x: auto;
 
-  &>* {
+  & > * {
     width: max-content;
     margin-bottom: 4px;
   }
 
-  &>*:last-child {
+  & > *:last-child {
     margin-bottom: 0;
   }
 }
 
 .a11y--visually-hidden {
-	position: absolute;
-	overflow: hidden;
-	clip: rect(0 0 0 0);
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	border: 0;
-	white-space: nowrap;
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  border: 0;
+  white-space: nowrap;
 }

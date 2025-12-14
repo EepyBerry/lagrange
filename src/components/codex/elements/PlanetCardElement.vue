@@ -5,18 +5,55 @@
 
     <div class="planet-preview" :class="{ 'effect-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
       <!-- decoration -->
-      <svg viewBox="0 0 256 256" role="presentation" >
+      <svg viewBox="0 0 256 256" role="presentation">
         <g v-show="!obliterationHidePlanetImage" class="planet-preview-gizmo">
           <g class="planet-preview-gizmo inner">
-            <circle cx="128" cy="128" :r="getPlanetCircleRadius()+8" fill="transparent" stroke="var(--lg-accent)" stroke-width="1.5" />
-            <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+11.5, 120, 140)" fill="none" stroke="var(--lg-accent)" stroke-width="6" />
-            <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+11.5, 145, 150)" fill="none" stroke="var(--lg-accent)" stroke-width="6" />
-            <path :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius()+11.5, 330, 360)" fill="none" stroke="var(--lg-accent)" stroke-width="6" />
+            <circle
+              cx="128"
+              cy="128"
+              :r="getPlanetCircleRadius() + 8"
+              fill="transparent"
+              stroke="var(--lg-accent)"
+              stroke-width="1.5"
+            />
+            <path
+              :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius() + 11.5, 120, 140)"
+              fill="none"
+              stroke="var(--lg-accent)"
+              stroke-width="6"
+            />
+            <path
+              :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius() + 11.5, 145, 150)"
+              fill="none"
+              stroke="var(--lg-accent)"
+              stroke-width="6"
+            />
+            <path
+              :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius() + 11.5, 330, 360)"
+              fill="none"
+              stroke="var(--lg-accent)"
+              stroke-width="6"
+            />
           </g>
-          <circle cx="128" :cy="128 + getPlanetCircleRadius()+8" r="5" fill="var(--lg-primary-static)" />
-          <circle cx="128" :cy="128 + getPlanetCircleRadius()+8" r="6" fill="transparent" stroke="var(--lg-accent)" stroke-width="1.5" />
+          <circle cx="128" :cy="128 + getPlanetCircleRadius() + 8" r="5" fill="var(--lg-primary-static)" />
+          <circle
+            cx="128"
+            :cy="128 + getPlanetCircleRadius() + 8"
+            r="6"
+            fill="transparent"
+            stroke="var(--lg-accent)"
+            stroke-width="1.5"
+          />
         </g>
-        <line x1="128" :y1="128 + getPlanetCircleRadius()+14" x2="128" y2="272" stroke="var(--lg-accent)" stroke-width="1.5" stroke-dasharray="6 4" />
+        <line
+          x1="128"
+          :y1="128 + getPlanetCircleRadius() + 14"
+          x2="128"
+          y2="272"
+          stroke="var(--lg-accent)"
+          stroke-width="1.5"
+          stroke-dasharray="6 4"
+        />
       </svg>
 
       <!-- preview -->
@@ -28,7 +65,12 @@
           :aria-label="planet.data.planetName"
           :alt="planet.data.planetName"
         />
-        <iconify-icon v-else class="planet-image-fallback" icon="bi:question-circle" :width="planet.data.planetRadius * 128.0" />
+        <iconify-icon
+          v-else
+          class="planet-image-fallback"
+          icon="bi:question-circle"
+          :width="planet.data.planetRadius * 128.0"
+        />
       </div>
 
       <!-- effects -->
@@ -36,10 +78,14 @@
     </div>
     <p class="planet-name">
       <span>
-      {{ planet.data.planetName }}
+        {{ planet.data.planetName }}
       </span>
     </p>
-    <div class="planet-card-actions" :class="{ 'fade-out': obliterationDisableControls }" :aria-hidden="obliterationDisableControls">
+    <div
+      class="planet-card-actions"
+      :class="{ 'fade-out': obliterationDisableControls }"
+      :aria-hidden="obliterationDisableControls"
+    >
       <LgvButton
         class="contrast"
         icon="mingcute:information-line"
@@ -77,33 +123,33 @@
 </template>
 
 <script setup lang="ts">
-import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, uwuifyPath } from '@core/extras'
-import { type IDBPlanet } from '@/dexie.config'
-import { onMounted, ref, useTemplateRef } from 'vue'
-import { makeSVGCircleArc } from '@/core/utils/svg-utils'
-import LgvButton from '@/_lib/components/LgvButton.vue'
-import LgvLink from '@/_lib/components/LgvLink.vue'
-import ExtraMetalSlugPlanetExplosion from '@/components/global/extras/ExtraMetalSlugPlanetExplosion.vue'
+import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, uwuifyPath } from '@core/extras';
+import { type IDBPlanet } from '@/dexie.config';
+import { onMounted, ref, useTemplateRef } from 'vue';
+import { makeSVGCircleArc } from '@/core/utils/svg-utils';
+import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvLink from '@/_lib/components/LgvLink.vue';
+import ExtraMetalSlugPlanetExplosion from '@/components/global/extras/ExtraMetalSlugPlanetExplosion.vue';
 
-const cardRoot = useTemplateRef('cardRoot')
-const extraPlanetExplosionRef = useTemplateRef('extraPlanetExplosionRef')
+const cardRoot = useTemplateRef('cardRoot');
+const extraPlanetExplosionRef = useTemplateRef('extraPlanetExplosionRef');
 
-const $props = defineProps<{ planet: IDBPlanet }>()
-const planetRadius = ref($props.planet.data.planetRadius*100.0 + '%')
-const obliterationDisableControls = ref(false)
-const obliterationHidePlanetImage = ref(false)
+const $props = defineProps<{ planet: IDBPlanet }>();
+const planetRadius = ref($props.planet.data.planetRadius * 100.0 + '%');
+const obliterationDisableControls = ref(false);
+const obliterationHidePlanetImage = ref(false);
 
-defineExpose({ planet: $props.planet, obliteratePlanet })
-defineEmits(['info', 'export', 'delete'])
-onMounted(() => setTimeout(() => cardRoot.value!.style.opacity = '1'))
+defineExpose({ planet: $props.planet, obliteratePlanet });
+defineEmits(['info', 'export', 'delete']);
+onMounted(() => setTimeout(() => (cardRoot.value!.style.opacity = '1')));
 
 async function obliteratePlanet() {
-  obliterationDisableControls.value = true
-  await extraPlanetExplosionRef.value!.doEffect()
+  obliterationDisableControls.value = true;
+  await extraPlanetExplosionRef.value!.doEffect();
 }
 
 function getPlanetCircleRadius() {
-  return 128.0 * $props.planet.data.planetRadius
+  return 128.0 * $props.planet.data.planetRadius;
 }
 </script>
 
@@ -132,9 +178,9 @@ function getPlanetCircleRadius() {
     align-items: center;
     justify-content: center;
 
-    svg { 
-      position: absolute; 
-      inset: 0; 
+    svg {
+      position: absolute;
+      inset: 0;
       overflow: visible;
       .planet-preview-gizmo {
         transform-origin: 50% 50%;
@@ -162,13 +208,13 @@ function getPlanetCircleRadius() {
         justify-content: center;
       }
     }
-    
+
     .effect-crt {
       border-radius: 50%;
       width: v-bind(planetRadius);
       height: v-bind(planetRadius);
     }
-  } 
+  }
   .planet-name {
     background: var(--lg-accent);
     clip-path: polygon(0 8px, 8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
@@ -179,7 +225,7 @@ function getPlanetCircleRadius() {
 
       background: var(--lg-primary);
       clip-path: polygon(0 7px, 7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%);
-      
+
       max-width: 24ch;
       font-weight: 500;
       font-size: 1.25rem;
@@ -194,17 +240,17 @@ function getPlanetCircleRadius() {
     align-items: center;
     gap: 0.375rem;
     opacity: 0.5;
-    
-    :is(button,a):first-child {
+
+    :is(button, a):first-child {
       flex: 0;
       clip-path: polygon(0 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px));
     }
-    :is(button,a):nth-child(2),
-    :is(button,a):nth-child(3) {
+    :is(button, a):nth-child(2),
+    :is(button, a):nth-child(3) {
       flex: 1;
       min-width: 3.75rem;
     }
-    :is(button,a):last-child {
+    :is(button, a):last-child {
       flex: 0;
       clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
     }
@@ -217,15 +263,19 @@ function getPlanetCircleRadius() {
     }
   }
 }
-.planet-card:hover, .planet-card:focus-within {
+.planet-card:hover,
+.planet-card:focus-within {
   .planet-name {
     background: var(--lg-contrast);
   }
-  .planet-card-actions:not(.fade-out), .planet-indicator {
+  .planet-card-actions:not(.fade-out),
+  .planet-indicator {
     opacity: 1;
   }
   svg {
-    line { stroke: var(--lg-contrast); }
+    line {
+      stroke: var(--lg-contrast);
+    }
     .planet-preview-gizmo:not(.inner) {
       transform: scale(0.975);
       * {
@@ -239,11 +289,21 @@ function getPlanetCircleRadius() {
 }
 
 :root[data-animations='off'] {
-  .planet-card { transition: none; }
-  svg .planet-preview-gizmo, svg .planet-preview-gizmo-inner { transition: none; }
+  .planet-card {
+    transition: none;
+  }
+  svg .planet-preview-gizmo,
+  svg .planet-preview-gizmo-inner {
+    transition: none;
+  }
 }
 @media screen and (prefers-reduced-motion) {
-  .planet-card { transition: none; }
-  svg .planet-preview-gizmo, svg .planet-preview-gizmo-inner { transition: none; }
+  .planet-card {
+    transition: none;
+  }
+  svg .planet-preview-gizmo,
+  svg .planet-preview-gizmo-inner {
+    transition: none;
+  }
 }
 </style>

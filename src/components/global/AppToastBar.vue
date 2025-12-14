@@ -1,48 +1,44 @@
 <template>
   <div id="toast-bar" :aria-hidden="!isToastShown">
-    <ToastElement 
-      :visible="isToastShown"
-      :type="toastType"
-      @close="closeToast"
-    >
+    <ToastElement :visible="isToastShown" :type="toastType" @close="closeToast">
       <span v-if="toastMessageRaw.length > 0">{{ $t(toastMessageRaw) }}</span>
     </ToastElement>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, type Ref } from 'vue'
-import ToastElement from '@components/global/elements/ToastElement.vue'
-import { EventBus } from '@core/event-bus'
-import type { EditorMessageLevel } from '@core/types'
+import { ref, watch, type Ref } from 'vue';
+import ToastElement from '@components/global/elements/ToastElement.vue';
+import { EventBus } from '@core/event-bus';
+import type { EditorMessageLevel } from '@core/types';
 
-const toastType: Ref<EditorMessageLevel> = ref('info')
-const toastMessageRaw: Ref<string> = ref('')
-const isToastShown: Ref<boolean> = ref(false)
+const toastType: Ref<EditorMessageLevel> = ref('info');
+const toastMessageRaw: Ref<string> = ref('');
+const isToastShown: Ref<boolean> = ref(false);
 
-let timeoutId: NodeJS.Timeout | null = null
+let timeoutId: NodeJS.Timeout | null = null;
 
 watch(EventBus.toastEvent, (evt) => {
-  if (evt === null) return
-  showToast(evt.type, evt.translationKey, evt.millis)
-})
+  if (evt === null) return;
+  showToast(evt.type, evt.translationKey, evt.millis);
+});
 
 function showToast(type: EditorMessageLevel, translationKey: string, millis: number) {
   if (timeoutId !== null) {
     // if a timeout is currently running, clear it
-    clearTimeout(timeoutId)
-    closeToast()
+    clearTimeout(timeoutId);
+    closeToast();
   }
 
-  toastType.value = type
-  toastMessageRaw.value = translationKey
-  isToastShown.value = true
-  timeoutId = setTimeout(closeToast, millis)
+  toastType.value = type;
+  toastMessageRaw.value = translationKey;
+  isToastShown.value = true;
+  timeoutId = setTimeout(closeToast, millis);
 }
 
 function closeToast() {
-  isToastShown.value = false
-  timeoutId = null
+  isToastShown.value = false;
+  timeoutId = null;
 }
 </script>
 

@@ -16,7 +16,8 @@
   .deco.greeble {
     position: absolute;
     top: 0;
-    height: 5px; background: var(--lg-accent);
+    height: 5px;
+    background: var(--lg-accent);
   }
   .deco.greeble:first-child {
     left: 5%;

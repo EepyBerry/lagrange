@@ -28,25 +28,25 @@
 </template>
 
 <script setup lang="ts">
-import { type Ref, onMounted, ref, watch } from 'vue'
+import { type Ref, onMounted, ref, watch } from 'vue';
 
-const _toggleParam = defineModel<boolean | undefined>({ default: undefined })
-const _expanded: Ref<boolean> = ref(true)
+const _toggleParam = defineModel<boolean | undefined>({ default: undefined });
+const _expanded: Ref<boolean> = ref(true);
 
-const _props = defineProps<{ expand?: boolean; toggleable?: boolean }>()
-onMounted(() => (_expanded.value = _props.expand ?? true))
+const _props = defineProps<{ expand?: boolean; toggleable?: boolean }>();
+onMounted(() => (_expanded.value = _props.expand ?? true));
 watch(
   () => _toggleParam.value,
   (v) => {
-    if (!v) _expanded.value = false
+    if (!v) _expanded.value = false;
   },
-)
+);
 
 function handleCheckboxClick(evt: Event) {
-  evt.stopImmediatePropagation()
+  evt.stopImmediatePropagation();
 }
 function toggleExpand() {
-  _expanded.value = !_expanded.value
+  _expanded.value = !_expanded.value;
 }
 </script>
 

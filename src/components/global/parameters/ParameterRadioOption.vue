@@ -26,22 +26,22 @@
 
 <script setup lang="ts">
 import LgvButton from '@/_lib/components/LgvButton.vue';
-import { ref, useTemplateRef, type Ref } from 'vue'
+import { ref, useTemplateRef, type Ref } from 'vue';
 
 defineProps<{
-  name: string
-  id: string
-  value: string | number | boolean | object
-  icon?: string
-  buttonAriaLabel: string
-  title?: string
-  disabled?: boolean
-}>()
-const lgParam = defineModel<string | number | boolean>()
-const htmlRadio = useTemplateRef('htmlRadio')
+  name: string;
+  id: string;
+  value: string | number | boolean | object;
+  icon?: string;
+  buttonAriaLabel: string;
+  title?: string;
+  disabled?: boolean;
+}>();
+const lgParam = defineModel<string | number | boolean>();
+const htmlRadio = useTemplateRef('htmlRadio');
 
 function select() {
-  ;(htmlRadio.value as HTMLInputElement).click()
+  (htmlRadio.value as HTMLInputElement).click();
 }
 </script>
 
@@ -50,7 +50,10 @@ function select() {
   flex: 1;
   height: 100%;
   padding: 0 0.75rem;
-  &.selected { background: var(--lg-button-active); cursor: default; }
+  &.selected {
+    background: var(--lg-button-active);
+    cursor: default;
+  }
 }
 
 input[type='radio'] {
@@ -58,6 +61,8 @@ input[type='radio'] {
 }
 
 @media screen and (max-width: 1023px) {
-  .radio-button { font-size: 0.875rem; }
+  .radio-button {
+    font-size: 0.875rem;
+  }
 }
 </style>

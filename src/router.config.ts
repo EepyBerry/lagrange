@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import CodexView from './views/CodexView.vue'
-import PlanetEditorView from './views/PlanetEditorView.vue'
-import PageNotFoundView from './views/PageNotFoundView.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import CodexView from './views/CodexView.vue';
+import PlanetEditorView from './views/PlanetEditorView.vue';
+import PageNotFoundView from './views/PageNotFoundView.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -33,6 +33,6 @@ const router = createRouter({
       meta: { title: 'Page Not Found' },
     },
   ],
-})
+});
 
-export default router
+export default router;

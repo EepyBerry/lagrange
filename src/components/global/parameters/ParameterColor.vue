@@ -31,28 +31,28 @@
 </template>
 
 <script setup lang="ts">
-import LgvButton from '@/_lib/components/LgvButton.vue'
-import { Color } from 'three'
-import { onMounted, ref } from 'vue'
-import { ColorPicker } from 'vue-accessible-color-picker'
+import LgvButton from '@/_lib/components/LgvButton.vue';
+import { Color } from 'three';
+import { onMounted, ref } from 'vue';
+import { ColorPicker } from 'vue-accessible-color-picker';
 
-const lgColor = defineModel<Color>()
-const pickerInitColor = ref('')
-const pickerOpen = ref(false)
+const lgColor = defineModel<Color>();
+const pickerInitColor = ref('');
+const pickerOpen = ref(false);
 
-onMounted(initPickerColor)
+onMounted(initPickerColor);
 
 function initPickerColor() {
-  pickerInitColor.value = '#' + lgColor.value?.getHexString()
+  pickerInitColor.value = '#' + lgColor.value?.getHexString();
 }
 
 function setColor(hex: string): void {
-  lgColor.value = new Color(hex.substring(0, 7)) // Strip alpha
-  pickerInitColor.value = '#' + lgColor.value?.getHexString()
+  lgColor.value = new Color(hex.substring(0, 7)); // Strip alpha
+  pickerInitColor.value = '#' + lgColor.value?.getHexString();
 }
 
 function togglePanel(): void {
-  pickerOpen.value = !pickerOpen.value
+  pickerOpen.value = !pickerOpen.value;
 }
 </script>
 

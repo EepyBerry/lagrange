@@ -1,5 +1,5 @@
-import { vec3, cross, normalize, mix, Fn } from 'three/tsl'
-import type { UniformNumberNode, UniformVector3Node } from '../tsl-types'
+import { vec3, cross, normalize, mix, Fn } from 'three/tsl';
+import type { UniformNumberNode, UniformVector3Node } from '../tsl-types';
 
 // Transpiled (GLSL) from Daniel Greenheck:
 // https://github.com/dgreenheck/threejs-procedural-planets
@@ -37,11 +37,11 @@ export const applyBump = /*@__PURE__*/ Fn(
     UniformNumberNode,
     UniformNumberNode,
   ]) => {
-    const hPos = vec3(i_position.mul(i_radius.add(i_height))).toVar('hPos')
-    const dxPos = vec3(i_position.add(i_dx)).mul(i_radius.add(i_dxHeight)).toVar('dxPos')
-    const dyPos = vec3(i_position.add(i_dy)).mul(i_radius.add(i_dyHeight)).toVar('dyPos')
-    const bumpN = vec3(normalize(cross(dxPos.sub(hPos), dyPos.sub(hPos)))).toVar('bumpN')
-    return normalize(mix(i_normal, bumpN, i_strength))
+    const hPos = vec3(i_position.mul(i_radius.add(i_height))).toVar('hPos');
+    const dxPos = vec3(i_position.add(i_dx)).mul(i_radius.add(i_dxHeight)).toVar('dxPos');
+    const dyPos = vec3(i_position.add(i_dy)).mul(i_radius.add(i_dyHeight)).toVar('dyPos');
+    const bumpN = vec3(normalize(cross(dxPos.sub(hPos), dyPos.sub(hPos)))).toVar('bumpN');
+    return normalize(mix(i_normal, bumpN, i_strength));
   },
 ).setLayout({
   name: 'LG_BUMP_applyBump',
@@ -57,4 +57,4 @@ export const applyBump = /*@__PURE__*/ Fn(
     { name: 'radius', type: 'float' },
     { name: 'strength', type: 'float' },
   ],
-})
+});

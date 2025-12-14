@@ -36,54 +36,54 @@
 </template>
 
 <script setup lang="ts">
-import { EventBus } from '@/core/event-bus'
-import { uwuifyPath } from '@core/extras'
-import { useFloating, autoUpdate, offset, type Placement } from '@floating-ui/vue'
-import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue'
-import LgvButton from '@/_lib/components/LgvButton.vue'
-import * as Globals from '@core/globals'
-import LgvLink from '@/_lib/components/LgvLink.vue'
+import { EventBus } from '@/core/event-bus';
+import { uwuifyPath } from '@core/extras';
+import { useFloating, autoUpdate, offset, type Placement } from '@floating-ui/vue';
+import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import LgvButton from '@/_lib/components/LgvButton.vue';
+import * as Globals from '@core/globals';
+import LgvLink from '@/_lib/components/LgvLink.vue';
 
-const navMenuTrigger = useTemplateRef('navMenuTrigger')
-const navMenu = useTemplateRef('navMenu')
-const navFloatingPlacement: Ref<Placement> = ref('right')
+const navMenuTrigger = useTemplateRef('navMenuTrigger');
+const navMenu = useTemplateRef('navMenu');
+const navFloatingPlacement: Ref<Placement> = ref('right');
 const navFloatingStyles = useFloating(navMenuTrigger, navMenu, {
   whileElementsMounted: autoUpdate,
   placement: navFloatingPlacement,
   middleware: [offset(8)],
-})
-const isNavMenuOpen: Ref<boolean> = ref(false)
+});
+const isNavMenuOpen: Ref<boolean> = ref(false);
 
 onMounted(() => {
-  EventBus.registerWindowEventListener('resize', updateNavFloatingLayout)
-  updateNavFloatingLayout()
-})
+  EventBus.registerWindowEventListener('resize', updateNavFloatingLayout);
+  updateNavFloatingLayout();
+});
 watch(
   () => EventBus.clickEvent.value,
   (evt) => {
     if (!evt) return;
     if ((evt.target as HTMLElement).id === navMenuTrigger.value!.$el.id) {
-      toggleNavMenu()
+      toggleNavMenu();
     } else if (!navMenu.value?.contains(evt.target as Node)) {
-      toggleNavMenu(false)
+      toggleNavMenu(false);
     }
-  }
-)
+  },
+);
 
 function updateNavFloatingLayout() {
   if (window.innerWidth < Globals.SM_WIDTH_THRESHOLD) {
-    navFloatingPlacement.value = 'bottom-start'
+    navFloatingPlacement.value = 'bottom-start';
   } else {
-    navFloatingPlacement.value = 'right'
+    navFloatingPlacement.value = 'right';
   }
 }
 function toggleNavMenu(override?: boolean) {
   if (override !== undefined) {
-    navMenu.value!.style.visibility = override ? 'visible' : 'hidden'
-    isNavMenuOpen.value = override
+    navMenu.value!.style.visibility = override ? 'visible' : 'hidden';
+    isNavMenuOpen.value = override;
   } else {
-    navMenu.value!.style.visibility = navMenu.value!.style.visibility === 'visible' ? 'hidden' : 'visible'
-    isNavMenuOpen.value = navMenu.value!.style.visibility === 'visible'
+    navMenu.value!.style.visibility = navMenu.value!.style.visibility === 'visible' ? 'hidden' : 'visible';
+    isNavMenuOpen.value = navMenu.value!.style.visibility === 'visible';
   }
 }
 </script>
@@ -103,7 +103,7 @@ function toggleNavMenu(override?: boolean) {
   align-items: center;
   gap: 0.5rem;
 
-  & > a { 
+  & > a {
     flex: 1;
     height: 2.75rem;
     width: 100%;

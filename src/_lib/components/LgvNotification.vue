@@ -12,9 +12,9 @@
 </template>
 
 <script setup lang="ts">
-import type { EditorMessageLevel } from '@core/types'
+import type { EditorMessageLevel } from '@core/types';
 
-defineProps<{ type: EditorMessageLevel }>()
+defineProps<{ type: EditorMessageLevel }>();
 </script>
 
 <style scoped lang="scss">

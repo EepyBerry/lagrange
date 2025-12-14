@@ -7,7 +7,13 @@
       <ParameterGroup :toggleable="true">
         <template #title>{{ $t('editor.controls.atmosphere.transform') }}</template>
         <template #content>
-          <ParameterSlider id="a-height" v-model="LG_PLANET_DATA.atmosphereHeight" :step="0.0001" :min="0.0075" :max="0.025">
+          <ParameterSlider
+            id="a-height"
+            v-model="LG_PLANET_DATA.atmosphereHeight"
+            :step="0.0001"
+            :min="0.0075"
+            :max="0.025"
+          >
             {{ $t('editor.controls.atmosphere.transform_height') }}
           </ParameterSlider>
           <ParameterSlider
@@ -129,6 +135,6 @@
   </ParameterGrid>
 </template>
 <script setup lang="ts">
-import { LG_PLANET_DATA } from '@/core/services/editor.service'
-import { ColorMode } from '@core/types'
+import { LG_PLANET_DATA } from '@/core/services/editor.service';
+import { ColorMode } from '@core/types';
 </script>

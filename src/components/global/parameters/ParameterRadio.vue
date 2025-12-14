@@ -35,7 +35,8 @@ p.radio-label {
 }
 
 @media screen and (max-width: 1023px) {
-  .radio-options, .radio-options > * {
+  .radio-options,
+  .radio-options > * {
     height: 2.75rem;
   }
 }

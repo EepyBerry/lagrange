@@ -159,13 +159,7 @@
       </div>
     </template>
     <template #actions>
-      <LgvButton
-        class="success"
-        icon="mingcute:check-line"
-        icon-width="1.25rem"
-        autofocus
-        @click="doClose"
-      >
+      <LgvButton class="success" icon="mingcute:check-line" icon-width="1.25rem" autofocus @click="doClose">
         {{ $t('dialog.init.$action_confirm') }}
       </LgvButton>
     </template>
@@ -173,30 +167,30 @@
 </template>
 
 <script setup lang="ts">
-import type { IDBKeyBinding } from '@/dexie.config'
-import AppLogo from '@components/global/elements/AppLogo.vue'
-import DialogElement from '@components/global/elements/DialogElement.vue'
-import LgvNotification from '@/_lib/components/LgvNotification.vue'
-import { ref, type Ref } from 'vue'
-import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue'
-import LgvButton from '@/_lib/components/LgvButton.vue'
+import type { IDBKeyBinding } from '@/dexie.config';
+import AppLogo from '@components/global/elements/AppLogo.vue';
+import DialogElement from '@components/global/elements/DialogElement.vue';
+import LgvNotification from '@/_lib/components/LgvNotification.vue';
+import { ref, type Ref } from 'vue';
+import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
+import LgvButton from '@/_lib/components/LgvButton.vue';
 
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
-const shouldShowOnNextVisits = ref(true)
-const shouldEnableStoragePersistence = ref(true)
+const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
+const shouldShowOnNextVisits = ref(true);
+const shouldEnableStoragePersistence = ref(true);
 
-const $emit = defineEmits(['disableInitDialog', 'enablePersistence'])
-defineProps<{ keybinds: IDBKeyBinding[] }>()
-defineExpose({ open: () => dialogRef.value?.open() })
+const $emit = defineEmits(['disableInitDialog', 'enablePersistence']);
+defineProps<{ keybinds: IDBKeyBinding[] }>();
+defineExpose({ open: () => dialogRef.value?.open() });
 
 function doClose() {
   if (!shouldShowOnNextVisits.value) {
-    $emit('disableInitDialog')
+    $emit('disableInitDialog');
   }
   if (shouldEnableStoragePersistence.value) {
-    $emit('enablePersistence')
+    $emit('enablePersistence');
   }
-  dialogRef.value?.close()
+  dialogRef.value?.close();
 }
 </script>
 
