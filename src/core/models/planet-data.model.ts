@@ -585,7 +585,7 @@ export default class PlanetData extends ChangeTracker {
 
     // Planet & Rendering
     this._planetType = PlanetType.PLANET;
-    this._planetClass = PlanetClass.INDETERMINATE;
+    this._planetClass = PlanetClass.PLANET_TELLURIC;
     this._planetMeshQuality = 64.0;
     this._planetRadius = 1.0;
     this._planetAxialTilt = -15.0;
@@ -730,7 +730,7 @@ export default class PlanetData extends ChangeTracker {
 
     // Planet & Rendering
     this.planetType = data._planetType ?? PlanetType.PLANET;
-    this.planetClass = data._planetClass ?? PlanetClass.INDETERMINATE;
+    this.planetClass = data._planetClass ?? PlanetClass.PLANET_TELLURIC;
     this.planetRadius = data._planetRadius ?? 1.0;
     this.planetAxialTilt = data._planetAxialTilt ?? 15.0;
     this.planetRotation = data._planetRotation ?? 0.0;
@@ -976,7 +976,7 @@ export default class PlanetData extends ChangeTracker {
     return Math.max(...this._ringsParams.map((r) => r.outerRadius));
   }
 
-  private getPlanetClassesFromType(t: PlanetType) {
+  public getPlanetClassesFromType(t: PlanetType) {
     switch (t) {
       case PlanetType.PLANET:
         return [
@@ -987,11 +987,12 @@ export default class PlanetData extends ChangeTracker {
           PlanetClass.PLANET_ARID,
           PlanetClass.PLANET_CHTHONIAN,
           PlanetClass.PLANET_MAGMATIC,
+          PlanetClass.INDETERMINATE,
         ];
       case PlanetType.MOON:
-        return [PlanetClass.MOON_ICE, PlanetClass.MOON_ROCKY, PlanetClass.MOON_CHTHONIAN];
+        return [PlanetClass.MOON_ICE, PlanetClass.MOON_ROCKY, PlanetClass.MOON_CHTHONIAN, PlanetClass.INDETERMINATE];
       case PlanetType.GASGIANT:
-        return [PlanetClass.GASGIANT_COLD, PlanetClass.GASGIANT_HOT];
+        return [PlanetClass.GASGIANT_COLD, PlanetClass.GASGIANT_HOT, PlanetClass.INDETERMINATE];
     }
   }
 

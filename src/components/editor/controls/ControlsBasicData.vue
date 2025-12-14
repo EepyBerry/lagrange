@@ -3,7 +3,7 @@
     <ParameterGroup toggleable>
       <template #title>{{ $t('editor.controls.basic_data.classification') }}</template>
       <template #content>
-        <ParameterSelect id="b-type" v-model="LG_PLANET_DATA.planetType">
+        <ParameterSelect id="b-type" v-model="LG_PLANET_DATA.planetType" @change="resetPlanetClass">
           {{ $t('editor.controls.basic_data.classification_type') }}:
           <template #options>
             <option v-for="opt in listPlanetTypeValues()" :key="opt" :value="opt">
@@ -35,9 +35,10 @@ function listPlanetTypeValues(): PlanetType[] {
     .map(([_, v]) => v) as PlanetType[];
 }
 function listPlanetClassValues(): PlanetClass[] {
-  return Object.entries(PlanetClass)
-    .filter(([_, elem]) => Number.isInteger(elem))
-    .filter(([name, _]) => name.includes(PlanetType[LG_PLANET_DATA.value.planetType]))
-    .map(([_, v]) => v) as PlanetClass[];
+  return LG_PLANET_DATA.value.getPlanetClassesFromType(LG_PLANET_DATA.value.planetType);
+}
+
+function resetPlanetClass() {
+  LG_PLANET_DATA.value.planetClass = PlanetClass.INDETERMINATE;
 }
 </script>
