@@ -4,6 +4,7 @@ li {
 }
 li[starred] {
   list-style-type: '⭐';
-  background: var(--lg-item-starred);
-  border-radius: 4px;
+  border-radius: 2px;
+  font-weight: 500;
+  color: var(--lg-text-starred);
 }

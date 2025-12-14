@@ -45,29 +45,49 @@ body {
 
   display: flex;
   flex-direction: column;
+
+  #app {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+}
+body:has(dialog[open]) {
+  touch-action: none;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: none;
 }
 
 hr {
   border: 1px solid var(--lg-accent);
 }
 
-.deco-polygon {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 48px;
-  height: 16px;
-  background: var(--lg-accent);
-  border-bottom-left-radius: 2px;
-  clip-path: polygon(0 0, 100% 0, 75% 100%, 0 100%);
+.code-block {
+  padding: 0.75rem;
+  background: var(--code-background);
+  border-radius: 2px;
+  font-family: monospace;
+  overflow-x: auto;
 
-  .hole {
-    position: absolute;
-    top: 2px;
-    left: 4px;
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    background: var(--lg-primary);
+  & > * {
+    width: max-content;
+    margin-bottom: 4px;
   }
+
+  & > *:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.a11y--visually-hidden {
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  border: 0;
+  white-space: nowrap;
 }

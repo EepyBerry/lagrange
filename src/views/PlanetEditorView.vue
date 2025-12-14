@@ -1,8 +1,6 @@
 <template>
-  <div id="editor-header" :class="{ compact: !!showCompactNavigation }">
-    <AppNavigation :compact-mode="showCompactNavigation" />
-    <PlanetInfoControls
-      :compact-mode="showCompactInfo"
+  <ViewHeader id="editor-header" class="xs-fullwidth">
+    <EditorHeaderControls
       @rename="patchMetaHead"
       @save="savePlanet"
       @copy="savePlanet(true)"
@@ -10,29 +8,28 @@
       @gltf="exportPlanet"
       @random="randPlanet"
     />
-  </div>
-  <PlanetEditorControls :compact-mode="showCompactControls" />
+    <span class="filler"></span>
+  </ViewHeader>
+  <EditorSidebarControls :compact-mode="showCompactControls" />
 
   <div id="scene-root" ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
 
-  <AppWebGLErrorDialog ref="webglErrorDialogRef" @close="redirectToCodex" />
-  <AppPlanetErrorDialog ref="planetErrorDialogRef" @close="redirectToCodex" />
-  <AppWarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
-  <AppExportProgressDialog ref="exportProgressDialogRef" />
+  <EditorErrorDialog ref="editorErrorDialogRef" @close="redirectToCodex" />
+  <WarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
+  <ExportProgressDialog ref="exportProgressDialogRef" />
 </template>
 
 <script setup lang="ts">
-import PlanetEditorControls from '@components/controls/PlanetEditorControls.vue'
-import PlanetInfoControls from '@components/controls/PlanetInfoControls.vue'
-import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue'
-import * as Globals from '@core/globals'
-import { useHead } from '@unhead/vue'
-import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config'
-import { EventBus } from '@/core/event-bus'
-import { useI18n } from 'vue-i18n'
-import AppNavigation from '@/components/main/AppNavigation.vue'
-import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
+import EditorSidebarControls from '@/components/editor/controls/EditorSidebarControls.vue';
+import EditorHeaderControls from '@/components/editor/controls/EditorHeaderControls.vue';
+import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue';
+import * as Globals from '@core/globals';
+import { useHead } from '@unhead/vue';
+import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config';
+import { EventBus } from '@core/event-bus';
+import { useI18n } from 'vue-i18n';
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import {
   LG_PLANET_DATA,
   bootstrapEditor,
@@ -45,292 +42,302 @@ import {
   updateCameraRendering,
   resetPlanet,
   randomizePlanet,
-} from '@/core/services/planet-editor.service'
-import { sleep } from '@/core/utils/utils'
-import { nanoid } from 'nanoid'
-import WebGL from 'three/addons/capabilities/WebGL.js'
-import AppWebGLErrorDialog from '@/components/dialogs/AppWebGLErrorDialog.vue'
-import AppPlanetErrorDialog from '@/components/dialogs/AppPlanetErrorDialog.vue'
-import AppWarnSaveDialog from '@/components/dialogs/AppWarnSaveDialog.vue'
-import AppExportProgressDialog from '@/components/dialogs/AppExportProgressDialog.vue'
-import { regeneratePRNGIfNecessary } from '@/core/utils/math-utils'
-import WebGPU from 'three/addons/capabilities/WebGPU.js'
+  LG_EDITOR_STATE,
+} from '@/core/services/editor.service';
+import { sleep } from '@core/utils/utils';
+import { nanoid } from 'nanoid';
+import EditorErrorDialog from '@/components/editor/dialogs/EditorInitErrorDialog.vue';
+import WarnSaveDialog from '@components/editor/dialogs/WarnSaveDialog.vue';
+import ExportProgressDialog from '@components/editor/dialogs/ExportProgressDialog.vue';
+import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
+import WebGPU from '@/core/capabilities/WebGPU';
+import * as DexieService from '@core/services/dexie.service';
+import WebGL from '@/core/capabilities/WebGL';
+import ViewHeader from '@/components/global/ViewHeader.vue';
+import { EditorState } from '@/core/types';
 
-const route = useRoute()
-const router = useRouter()
-const i18n = useI18n()
+const route = useRoute();
+const router = useRouter();
+const i18n = useI18n();
 const head = useHead({
   title: i18n.t('editor.$title') + ' · ' + i18n.t('main.$title'),
   meta: [{ name: 'description', content: 'Planet editor' }],
-})!
+})!;
 
 // Dialogs
-const webglErrorDialogRef: Ref<{ openWithError: (error: HTMLElement) => void } | null> = ref(null)
-const planetErrorDialogRef: Ref<{ openWithError: (error: string, stack?: string) => void } | null> = ref(null)
-const warnSaveDialogRef: Ref<{ open: () => void } | null> = ref(null)
+const editorErrorDialogRef: Ref<{
+  openWithError: (error: string, stack?: string, isWebGPUError?: boolean) => void;
+} | null> = ref(null);
+const warnSaveDialogRef: Ref<{ open: () => void } | null> = ref(null);
 const exportProgressDialogRef: Ref<{
-  open: () => void
-  setProgress: (value: number) => void
-  setError: (value: unknown) => void
-} | null> = ref(null)
-let loadedCorrectly = false
+  open: () => void;
+  setProgress: (value: number) => void;
+  setError: (value: unknown) => void;
+} | null> = ref(null);
+let loadedCorrectly = false;
 
 // Data
-const $planetEntityId: Ref<string> = ref('')
-const $planetEntityPreviewDataURL: Ref<string | undefined> = ref('')
+const $planetEntityId: Ref<string> = ref('');
+const $planetEntityPreviewDataURL: Ref<string | undefined> = ref('');
 
 // Responsiveness
-const centerInfoControls: Ref<boolean> = ref(true)
-const showCompactInfo: Ref<boolean> = ref(false)
-const showCompactControls: Ref<boolean> = ref(false)
-const showCompactNavigation: Ref<boolean> = ref(false)
+const showCompactControls: Ref<boolean> = ref(false);
 
 // THREE canvas/scene root
-const sceneRoot: Ref<HTMLCanvasElement | null> = ref(null)
-const showSpinner: Ref<boolean> = ref(true)
+const sceneRoot: Ref<HTMLCanvasElement | null> = ref(null);
+const showSpinner: Ref<boolean> = ref(true);
 
 onMounted(async () => {
-  await sleep(50)
-  await initThree()
-})
+  await sleep(50);
+  await initThree();
+});
 onUnmounted(() => {
   if (loadedCorrectly) {
-    disposeScene()
+    disposeScene();
   }
-  EventBus.deregisterWindowEventListener('click', onWindowClick)
-  EventBus.deregisterWindowEventListener('resize', onWindowResize)
-  EventBus.deregisterWindowEventListener('keydown', onWindowKeydown)
-})
+  EventBus.deregisterWindowEventListener('click', onWindowClick);
+  EventBus.deregisterWindowEventListener('resize', onWindowResize);
+  EventBus.deregisterWindowEventListener('keydown', onWindowKeydown);
+});
 onBeforeRouteLeave((_to, _from, next) => {
   if (isPlanetEdited()) {
-    next(false)
-    warnSaveDialogRef.value?.open()
+    next(false);
+    warnSaveDialogRef.value?.open();
   } else {
-    next()
+    next();
   }
-})
+});
 
 async function initThree() {
-  try {
-    if (WebGL.isWebGL2Available() || WebGPU.isAvailable()) {
-      await initData()
-      await initCanvas()
-      loadedCorrectly = true
-    } else {
-      const error = WebGL.getWebGL2ErrorMessage()
-      error.style.margin = ''
-      error.style.background = ''
-      error.style.color = ''
-      error.style.fontFamily = ''
-      error.style.fontSize = ''
-      error.style.width = ''
-      ;(error.lastChild as HTMLLinkElement).style.color = ''
-      webglErrorDialogRef.value!.openWithError(error)
+  const settings = await idb.settings.limit(1).first();
+
+  // Try starting with WebGPU (fallback to WebGL2 in case of failure)
+  if (settings!.renderingBackend === 'webgpu') {
+    try {
+      if (!(await WebGPU.isAvailable())) {
+        showSpinner.value = false;
+        const webgpuErrorMessage = WebGPU.getErrorMessage(i18n);
+        editorErrorDialogRef.value!.openWithError(webgpuErrorMessage, undefined, true);
+        return;
+      }
+      await initData();
+      await initCanvas();
+      loadedCorrectly = true;
+      showSpinner.value = false;
+    } catch (error) {
+      LG_EDITOR_STATE.value = EditorState.ERROR;
+      if (error instanceof Error) {
+        editorErrorDialogRef.value!.openWithError(error.message, error.stack);
+      } else if (typeof error === 'string') {
+        editorErrorDialogRef.value!.openWithError(error);
+      } else {
+        editorErrorDialogRef.value!.openWithError(i18n.t('main.error.default_unknown'));
+      }
     }
-  } catch (error: unknown) {
-    console.error(error)
-    if (error instanceof Error) {
-      planetErrorDialogRef.value!.openWithError(error.message, error.stack)
-    } else if (typeof error === 'string') {
-      planetErrorDialogRef.value!.openWithError(error, undefined)
+    // Try starting with WebGL2
+  } else {
+    try {
+      if (!WebGL.isWebGL2Available()) {
+        showSpinner.value = false;
+        const webglErrorMessage = WebGL.getWebGL2ErrorMessage(i18n);
+        editorErrorDialogRef.value!.openWithError(webglErrorMessage);
+        return;
+      }
+      await initData();
+      await initCanvas();
+      loadedCorrectly = true;
+      showSpinner.value = false;
+    } catch (error) {
+      LG_EDITOR_STATE.value = EditorState.ERROR;
+      if (error instanceof Error || error instanceof DOMException) {
+        editorErrorDialogRef.value!.openWithError(error.message, error.stack);
+      } else if (typeof error === 'string') {
+        editorErrorDialogRef.value!.openWithError(error);
+      } else {
+        editorErrorDialogRef.value!.openWithError(i18n.t('main.error.default_unknown'));
+      }
     }
-  } finally {
-    showSpinner.value = false
   }
 }
 
 async function saveAndRedirectToCodex() {
-  await savePlanet()
-  redirectToCodex()
+  await savePlanet();
+  redirectToCodex();
 }
 
-function redirectToCodex() {
-  setPlanetEditFlag(false) // set edit flag to false to force exit
-  router.push('/codex')
+async function redirectToCodex(allowRendererFallback: boolean = false) {
+  setPlanetEditFlag(false); // set edit flag to false to force exit
+  if (allowRendererFallback) {
+    await DexieService.setRenderingBackendFallback();
+    router.go(0);
+  } else {
+    router.push('/codex');
+  }
 }
 
 async function initData() {
   // https://stackoverflow.com/questions/3891641/regex-test-only-works-every-other-time
   if ((route.params.id as string).length > 3) {
-    const idbPlanetData = await idb.planets.filter((p) => p.id === route.params.id).first()
+    const idbPlanetData = await idb.planets.filter((p) => p.id === route.params.id).first();
     if (!idbPlanetData) {
-      console.warn(`<Lagrange> Cannot find planet with ID: ${route.params.id}`)
-      LG_PLANET_DATA.value.reset()
-      throw new Error(`Planet with ID [${route.params.id}] doesn't exist.`)
+      console.warn(`<Lagrange> Cannot find planet with ID: ${route.params.id}`);
+      LG_PLANET_DATA.value.reset();
+      throw new Error(`Planet with ID [${route.params.id}] doesn't exist.`);
     }
-    $planetEntityId.value = idbPlanetData.id
-    $planetEntityPreviewDataURL.value = idbPlanetData.preview
-    LG_PLANET_DATA.value.loadData(idbPlanetData.data)
-    console.info(`<Lagrange> Loaded planet [${LG_PLANET_DATA.value.planetName}] with ID: ${$planetEntityId.value}`)
-    console.debug(toRaw(LG_PLANET_DATA.value))
+    $planetEntityId.value = idbPlanetData.id;
+    $planetEntityPreviewDataURL.value = idbPlanetData.preview;
+    LG_PLANET_DATA.value.loadData(idbPlanetData.data);
+    console.info(`<Lagrange> Loaded planet [${LG_PLANET_DATA.value.planetName}] with ID: ${$planetEntityId.value}`);
+    console.debug(toRaw(LG_PLANET_DATA.value));
   } else {
-    console.warn('No planet ID found in the URL, assuming new planet')
-    LG_PLANET_DATA.value.reset()
+    console.warn('No planet ID found in the URL, assuming new planet');
+    LG_PLANET_DATA.value.reset();
   }
-  regeneratePRNGIfNecessary(true)
-  patchMetaHead()
+  regeneratePRNGIfNecessary(true);
+  patchMetaHead();
 }
 
 async function initCanvas() {
-  computeResponsiveness()
+  computeResponsiveness();
 
   const width = window.innerWidth,
     height = window.innerHeight,
-    pixelRatio = window.devicePixelRatio
+    pixelRatio = window.devicePixelRatio;
   let effectiveWidth = width,
-    effectiveHeight = height
+    effectiveHeight = height;
 
   if (showCompactControls.value) {
-    effectiveWidth = window.outerWidth
-    effectiveHeight = window.outerHeight * 0.5
+    effectiveWidth = window.outerWidth;
+    effectiveHeight = window.outerHeight * 0.5;
   }
 
   // Bootstrap editor service
-  await bootstrapEditor(sceneRoot.value!, effectiveWidth, effectiveHeight, pixelRatio)
+  await bootstrapEditor(sceneRoot.value!, effectiveWidth, effectiveHeight, pixelRatio);
 
   // Register event listeners
-  EventBus.registerWindowEventListener('click', onWindowClick)
-  EventBus.registerWindowEventListener('resize', onWindowResize)
-  EventBus.registerWindowEventListener('keydown', onWindowKeydown)
+  EventBus.registerWindowEventListener('click', onWindowClick);
+  EventBus.registerWindowEventListener('resize', onWindowResize);
+  EventBus.registerWindowEventListener('keydown', onWindowKeydown);
 }
 
 // ------------------------------------------------------------------------------------------------
 
 async function onWindowClick(event: MouseEvent) {
-  EventBus.sendClickEvent(event)
+  EventBus.sendClickEvent(event);
 }
 
 async function onWindowKeydown(event: KeyboardEvent) {
-  const keyBinds = await idb.keyBindings.toArray()
-  const kb = keyBinds.find((k) => k.key === event.key.toUpperCase())
-  if (!kb) return
+  const keyBinds = await idb.keyBindings.toArray();
+  const kb = keyBinds.find((k) => k.key === event.key.toUpperCase());
+  if (!kb) return;
   if (event.shiftKey && kb.key !== 'SHIFT') {
-    return
+    return;
   }
   if (event.ctrlKey && kb.key !== 'CONTROL') {
-    return
+    return;
   }
   if (event.altKey && kb.key !== 'ALT') {
-    return
+    return;
   }
 
   switch (kb.action) {
     case KeyBindingAction.ToggleLensFlare:
-      LG_PLANET_DATA.value.lensFlareEnabled = !LG_PLANET_DATA.value.lensFlareEnabled
-      break
+      LG_PLANET_DATA.value.lensFlareEnabled = !LG_PLANET_DATA.value.lensFlareEnabled;
+      break;
     case KeyBindingAction.ToggleClouds:
-      LG_PLANET_DATA.value.cloudsEnabled = !LG_PLANET_DATA.value.cloudsEnabled
-      break
+      LG_PLANET_DATA.value.cloudsEnabled = !LG_PLANET_DATA.value.cloudsEnabled;
+      break;
     case KeyBindingAction.ToggleAtmosphere:
-      LG_PLANET_DATA.value.atmosphereEnabled = !LG_PLANET_DATA.value.atmosphereEnabled
-      break
+      LG_PLANET_DATA.value.atmosphereEnabled = !LG_PLANET_DATA.value.atmosphereEnabled;
+      break;
     case KeyBindingAction.ToggleBiomes:
-      LG_PLANET_DATA.value.biomesEnabled = !LG_PLANET_DATA.value.biomesEnabled
-      break
+      LG_PLANET_DATA.value.biomesEnabled = !LG_PLANET_DATA.value.biomesEnabled;
+      break;
     case KeyBindingAction.TakeScreenshot: {
-      takePlanetScreenshot()
-      break
+      takePlanetScreenshot();
+      break;
     }
   }
 }
 
 function patchMetaHead() {
-  head!.patch({ title: `[${LG_PLANET_DATA.value.planetName}]` + ' · ' + i18n.t('main.$title') })
+  head!.patch({ title: `[${LG_PLANET_DATA.value.planetName}]` + ' · ' + i18n.t('main.$title') });
 }
 
 // ------------------------------------------------------------------------------------------------
 
 function onWindowResize() {
-  computeResponsiveness()
+  computeResponsiveness();
   let effectiveWidth = window.innerWidth,
-    effectiveHeight = window.innerHeight
+    effectiveHeight = window.innerHeight;
   if (showCompactControls.value) {
-    effectiveWidth = window.outerWidth
-    effectiveHeight = window.outerHeight * 0.5
+    effectiveWidth = window.outerWidth;
+    effectiveHeight = window.outerHeight * 0.5;
   }
-  updateCameraRendering(effectiveWidth, effectiveHeight)
+  updateCameraRendering(effectiveWidth, effectiveHeight);
 }
 
 function computeResponsiveness() {
-  showCompactInfo.value = window.innerWidth <= Globals.XS_WIDTH_THRESHOLD
-  showCompactControls.value = window.innerWidth <= Globals.SM_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth
-  showCompactNavigation.value = window.innerWidth < Globals.MD_WIDTH_THRESHOLD
-  centerInfoControls.value = window.innerWidth > Globals.MD_WIDTH_THRESHOLD
+  showCompactControls.value = window.innerWidth <= Globals.SM_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth;
 }
 
 // ------------------------------------------------------------------------------------------------
 
 async function randPlanet() {
-  showSpinner.value = true
-  await randomizePlanet()
-  showSpinner.value = false
+  showSpinner.value = true;
+  await randomizePlanet();
+  showSpinner.value = false;
 }
 
 async function savePlanet(asCopy: boolean = false) {
-  showSpinner.value = true
-  setPlanetEditFlag(false)
+  showSpinner.value = true;
+  setPlanetEditFlag(false);
 
   // -------- Generate planet preview -------- //
-  const previewDataString = await exportPlanetPreview()
+  const previewDataString = await exportPlanetPreview();
 
   // ----------- Save planet data ------------ //
-  console.debug(toRaw(LG_PLANET_DATA.value))
-  const localData = toRaw(JSON.stringify(LG_PLANET_DATA.value))
-  const planetId = asCopy ? nanoid() : $planetEntityId.value.length > 0 ? $planetEntityId.value : nanoid()
+  console.debug(toRaw(LG_PLANET_DATA.value));
+  const localData = toRaw(JSON.stringify(LG_PLANET_DATA.value));
+  const planetId = asCopy ? nanoid() : $planetEntityId.value.length > 0 ? $planetEntityId.value : nanoid();
   const idbData: IDBPlanet = {
     id: planetId,
     version: '2',
     data: JSON.parse(localData),
     preview: previewDataString.length > 0 ? previewDataString : $planetEntityPreviewDataURL.value,
-  }
-  await idb.planets.put(idbData, idbData.id)
-  $planetEntityId.value = idbData.id
+  };
+  await idb.planets.put(idbData, idbData.id);
+  $planetEntityId.value = idbData.id;
 
-  showSpinner.value = false
-  router.replace(`/planet-editor/${idbData.id}`)
+  showSpinner.value = false;
+  router.replace(`/planet-editor/${idbData.id}`);
   if (previewDataString.length > 0) {
-    EventBus.sendToastEvent('success', 'toast.save_success', 3000)
+    EventBus.sendToastEvent('success', 'toast.save_success', 3000);
   } else {
-    EventBus.sendToastEvent('warn', 'toast.save_partial_no_preview', 3000)
+    EventBus.sendToastEvent('warn', 'toast.save_partial_no_preview', 3000);
   }
 }
 
 function exportPlanet() {
-  exportProgressDialogRef.value!.open()
-  exportProgressDialogRef.value!.setProgress(1)
-  setTimeout(() => exportPlanetToGLTF(exportProgressDialogRef.value!), 0)
+  exportProgressDialogRef.value!.open();
+  exportProgressDialogRef.value!.setProgress(1);
+  setTimeout(() => exportPlanetToGLTF(exportProgressDialogRef.value!), 0);
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 #editor-header {
-  z-index: 15;
   position: absolute;
-  inset: 0 0 auto 0;
-  margin: 1rem 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-
-  &.compact {
-    justify-content: space-between;
+  .view-header-controls {
+    gap: 0;
   }
 }
 
 #scene-root {
   box-shadow: black 5px 10px 10px;
-  z-index: 5;
 
   & > canvas {
     background: transparent;
-  }
-}
-
-@media screen and (max-width: 1199px) {
-  #editor-header {
-    margin: 0.5rem;
   }
 }
 </style>

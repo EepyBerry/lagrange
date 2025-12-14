@@ -1,0 +1,331 @@
+import { ref, watch, type Ref } from 'vue';
+import * as THREE from 'three';
+import { degToRad } from 'three/src/math/MathUtils.js';
+import * as Globals from '@core/globals';
+import * as ComponentHelper from '@core/helpers/component.helper';
+import * as BakingHelper from '@core/helpers/baking.helper';
+import { EditorSceneCreationMode, EditorState, type BakingTarget, type EditorSceneData } from '@core/types';
+import PlanetData from '@core/models/planet-data.model';
+import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
+import * as ExportHelper from '../helpers/export.helper';
+import { idb } from '@/dexie.config';
+import { sleep } from '@core/utils/utils';
+import * as UniformHelper from '../helpers/uniform.helper';
+import * as SceneHelper from '../helpers/scene.helper';
+import * as PreviewHelper from '../helpers/preview.helper';
+import { MeshStandardNodeMaterial, type NodeMaterial } from 'three/webgpu';
+import { saveAs } from 'file-saver';
+import { EventBus } from '../event-bus';
+
+// Exposed data
+export const LG_PLANET_DATA: Ref<PlanetData> = ref(new PlanetData());
+export const LG_EDITOR_STATE: Ref<EditorState> = ref(EditorState.INITIALIZATION);
+watch(LG_EDITOR_STATE, (v) => console.debug('<Lagrange> EditorState => ' + v));
+
+// Internal attributes
+let editorSceneData!: EditorSceneData;
+let enableEditorRendering = true;
+let watchForPlanetUpdates = false;
+const hasPlanetBeenEdited: Ref<boolean> = ref(false);
+
+// ------------------------------------------------------------------------------------------------ //
+//                                           BOOTSTRAPPING                                          //
+// ------------------------------------------------------------------------------------------------ //
+
+export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
+  LG_EDITOR_STATE.value = EditorState.INITIALIZATION;
+  await sleep(50);
+  enableEditorRendering = true;
+  editorSceneData = await SceneHelper.buildEditorScene(
+    LG_PLANET_DATA.value,
+    w,
+    h,
+    pixelRatio,
+    EditorSceneCreationMode.EDITOR,
+  );
+  UniformHelper.initUniformUpdateMap(editorSceneData, LG_PLANET_DATA.value);
+  ComponentHelper.createOrbitControls(editorSceneData.camera, editorSceneData.renderer.domElement);
+
+  // Configure renderer
+  editorSceneData.renderer!.setSize(w, h);
+  editorSceneData.renderer!.setAnimationLoop(() => renderFrame());
+  editorSceneData.renderer!.domElement.ariaLabel = '3D planet viewer';
+  canvas.appendChild(editorSceneData.renderer!.domElement);
+  LG_EDITOR_STATE.value = EditorState.EDITION;
+
+  /* LG_SCENE_DATA.renderer!.debug.getShaderAsync(
+    LG_SCENE_DATA.scene,
+    LG_SCENE_DATA.camera,
+    LG_SCENE_DATA.planet.mesh!,
+  ).then((data) => console.log(data.fragmentShader)) */
+}
+
+// ------------------------------------------------------------------------------------------------ //
+//                                          SCENE RENDERING                                         //
+// ------------------------------------------------------------------------------------------------ //
+
+function renderFrame() {
+  if (!enableEditorRendering) {
+    return;
+  }
+  updateScene();
+  watchForPlanetUpdates = true;
+  editorSceneData.lensFlare!.update(
+    editorSceneData.renderer!,
+    editorSceneData.scene!,
+    editorSceneData.camera!,
+    editorSceneData.clock!,
+  );
+  editorSceneData.renderer!.render(editorSceneData.scene!, editorSceneData.camera!);
+}
+
+export function updateCameraRendering(w: number, h: number) {
+  editorSceneData.camera!.aspect = w / h;
+  editorSceneData.camera!.updateProjectionMatrix();
+  editorSceneData.renderer!.setSize(w, h);
+}
+
+// ------------------------------------------------------------------------------------------------ //
+//                                         SCENE MANAGEMENT                                         //
+// ------------------------------------------------------------------------------------------------ //
+
+function updateScene() {
+  if (watchForPlanetUpdates && LG_PLANET_DATA.value.changedProps.length > 0 && !hasPlanetBeenEdited.value) {
+    console.debug('<Lagrange> Planet has been edited, warning user in case of unsaved data');
+    hasPlanetBeenEdited.value = true;
+  }
+  for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
+    UniformHelper.execUniformUpdate(changedProp);
+  }
+  LG_PLANET_DATA.value.clearChangedProps();
+}
+
+/**
+ * Removes every object from the scene, then removes the scene itself
+ */
+export function disposeScene() {
+  LG_EDITOR_STATE.value = EditorState.SCENE_DISPOSAL;
+  watchForPlanetUpdates = false;
+  console.debug('<Lagrange> Clearing scene... ');
+  SceneHelper.disposeScene(editorSceneData);
+  UniformHelper.clearUniformUpdateMap();
+  console.debug('<Lagrange> ...done!');
+}
+
+// ------------------------------------------------------------------------------------------------ //
+//                                          DATA FUNCTIONS                                          //
+// ------------------------------------------------------------------------------------------------ //
+
+export async function randomizePlanet() {
+  LG_EDITOR_STATE.value = EditorState.RANDOMIZATION;
+  await sleep(50);
+  regeneratePRNGIfNecessary();
+  LG_PLANET_DATA.value.randomize();
+  editorSceneData.planet.biomeLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams);
+  editorSceneData.planet.biomeEmissiveLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams);
+  LG_PLANET_DATA.value.markAllForChange();
+  LG_EDITOR_STATE.value = EditorState.EDITION;
+}
+
+export async function resetPlanet() {
+  LG_EDITOR_STATE.value = EditorState.RESET;
+  LG_PLANET_DATA.value.reset();
+  editorSceneData.planet.biomeLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams);
+  editorSceneData.planet.biomeEmissiveLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams);
+  LG_EDITOR_STATE.value = EditorState.EDITION;
+}
+
+export async function takePlanetScreenshot() {
+  try {
+    await editorSceneData.renderer.render(editorSceneData.scene, editorSceneData.camera);
+    editorSceneData.renderer.domElement.toBlob((blob) =>
+      saveAs(blob as Blob, `${LG_PLANET_DATA.value.planetName.replaceAll(' ', '_')}-${new Date().toISOString()}.png`),
+    );
+  } catch (err) {
+    console.error('<Lagrange> Could not export screenshot!', err);
+    EventBus.sendToastEvent('warn', 'toast.screenshot_failure', 3000);
+  }
+}
+
+export async function exportPlanetPreview(): Promise<string> {
+  LG_EDITOR_STATE.value = EditorState.PREVIEW_GENERATION;
+  await sleep(50);
+  editorSceneData.lensFlare!.mesh.visible = false;
+  const dataURL = await PreviewHelper.generatePlanetPreview(LG_PLANET_DATA.value);
+  editorSceneData.lensFlare!.mesh.visible = LG_PLANET_DATA.value.lensFlareEnabled;
+  LG_EDITOR_STATE.value = EditorState.EDITION;
+  return dataURL;
+}
+
+export async function exportPlanetToGLTF(progressDialog: {
+  open: () => void;
+  setProgress: (value: number) => void;
+  setError: (error: unknown) => void;
+}) {
+  LG_EDITOR_STATE.value = EditorState.EXPORT;
+  progressDialog.setProgress(1);
+  await sleep(50);
+  const bakingTargets: BakingTarget[] = [];
+
+  const appSettings = await idb.settings.limit(1).first();
+  const w = appSettings?.bakingResolution ?? 2048,
+    h = appSettings?.bakingResolution ?? 2048;
+  const { renderer, camera, renderTarget } = await BakingHelper.createBakingObjects(w, h, w / h);
+
+  try {
+    // ----------------------------------- Bake planet ----------------------------------
+    progressDialog.setProgress(2);
+    await sleep(50);
+    const bakePlanet = BakingHelper.createBakingPlanet(
+      LG_PLANET_DATA.value,
+      editorSceneData.planet.surfaceTexture!,
+      editorSceneData.planet.biomeLayersTexture!.texture,
+    );
+    const bakePlanetSurfaceTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakePlanet);
+    if (appSettings?.bakingPixelize) {
+      bakePlanetSurfaceTex.minFilter = THREE.NearestFilter;
+      bakePlanetSurfaceTex.magFilter = THREE.NearestFilter;
+    }
+
+    progressDialog.setProgress(3);
+    await sleep(50);
+    const bakeMetallicRoughness = BakingHelper.createBakingMetallicRoughnessMap(LG_PLANET_DATA.value);
+    const bakePlanetMetallicRoughnessTex = await BakingHelper.bakeMesh(
+      renderer,
+      camera,
+      renderTarget,
+      bakeMetallicRoughness,
+    );
+    if (appSettings?.bakingPixelize) {
+      bakePlanetMetallicRoughnessTex.minFilter = THREE.NearestFilter;
+      bakePlanetMetallicRoughnessTex.magFilter = THREE.NearestFilter;
+    }
+    //LG_SCENE_DATA.planet.biomeEmissiveLayersTexture!.debugSaveTexture()
+    const bakeEmissivity = BakingHelper.createBakingEmissivityMap(
+      LG_PLANET_DATA.value,
+      editorSceneData.planet.surfaceTexture!,
+      editorSceneData.planet.biomeLayersTexture!.texture,
+      editorSceneData.planet.biomeEmissiveLayersTexture!.texture,
+    );
+    const bakePlanetEmissivityTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeEmissivity);
+    if (appSettings?.bakingPixelize) {
+      bakePlanetEmissivityTex.minFilter = THREE.NearestFilter;
+      bakePlanetEmissivityTex.magFilter = THREE.NearestFilter;
+    }
+
+    progressDialog.setProgress(4);
+    await sleep(50);
+    const bakeHeight = BakingHelper.createBakingHeightMap(LG_PLANET_DATA.value);
+    const bakePlanetHeightTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeHeight);
+
+    const bakeNormal = BakingHelper.createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex);
+    const bakePlanetNormalTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeNormal);
+    if (appSettings?.bakingPixelize) {
+      bakePlanetNormalTex.minFilter = THREE.NearestFilter;
+      bakePlanetNormalTex.magFilter = THREE.NearestFilter;
+    }
+
+    bakePlanet.material = new MeshStandardNodeMaterial({
+      map: bakePlanetSurfaceTex,
+      roughnessMap: bakePlanetMetallicRoughnessTex,
+      metalnessMap: bakePlanetMetallicRoughnessTex,
+      emissiveMap: bakePlanetEmissivityTex,
+      normalMap: bakePlanetNormalTex,
+      normalScale: new THREE.Vector2(LG_PLANET_DATA.value.planetSurfaceBumpStrength).multiplyScalar(2.0),
+    });
+    bakingTargets.push({
+      mesh: bakePlanet,
+      textures: [bakePlanetSurfaceTex, bakePlanetMetallicRoughnessTex, bakePlanetHeightTex],
+    });
+
+    // ----------------------------------- Bake clouds ----------------------------------
+    if (LG_PLANET_DATA.value.cloudsEnabled) {
+      progressDialog.setProgress(5);
+      await sleep(50);
+      const bakeClouds = BakingHelper.createBakingClouds(LG_PLANET_DATA.value, editorSceneData.clouds.texture!);
+      const bakeCloudsTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeClouds);
+      if (appSettings?.bakingPixelize) {
+        bakeCloudsTex.minFilter = THREE.NearestFilter;
+        bakeCloudsTex.magFilter = THREE.NearestFilter;
+      }
+
+      bakeClouds.material = new MeshStandardNodeMaterial({
+        map: bakeCloudsTex,
+        opacity: 1.0,
+        transparent: true,
+      });
+      bakingTargets.push({ mesh: bakeClouds, textures: [bakeCloudsTex] });
+      bakePlanet.add(bakeClouds);
+      bakeClouds.setRotationFromAxisAngle(bakeClouds.up, degToRad(LG_PLANET_DATA.value.cloudsRotation));
+    }
+
+    // --------------------------------- Bake ring system -------------------------------
+    if (LG_PLANET_DATA.value.ringsEnabled) {
+      progressDialog.setProgress(6);
+      await sleep(50);
+      const ringGroup = new THREE.Group();
+      ringGroup.name = Globals.LG_MESH_NAME_RING_ANCHOR;
+      for (let idx = 0; idx < LG_PLANET_DATA.value.ringsParams.length; idx++) {
+        const params = LG_PLANET_DATA.value.ringsParams[idx];
+        const ringMeshData = editorSceneData.rings?.find((r) => r.mesh!.name === params.id);
+        if (!ringMeshData) continue;
+
+        const bakeRing = BakingHelper.createBakingRing(LG_PLANET_DATA.value, ringMeshData.texture!, idx);
+        const bakeRingTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeRing);
+        if (appSettings?.bakingPixelize) {
+          bakeRingTex.minFilter = THREE.NearestFilter;
+          bakeRingTex.magFilter = THREE.NearestFilter;
+        }
+
+        bakeRing.material = new MeshStandardNodeMaterial({
+          map: bakeRingTex,
+          side: THREE.DoubleSide,
+          transparent: true,
+        });
+        bakingTargets.push({ mesh: bakeRing, textures: [bakeRingTex] });
+        ringGroup.add(bakeRing);
+        bakeRing.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90));
+      }
+      bakePlanet.add(ringGroup);
+    }
+
+    // ---------------------------- Export meshes and clean up ---------------------------
+    progressDialog.setProgress(7);
+    await sleep(50);
+
+    bakePlanet.scale.setScalar(LG_PLANET_DATA.value.planetRadius);
+    bakePlanet.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt));
+    bakePlanet.rotateOnAxis(bakePlanet.up, degToRad(LG_PLANET_DATA.value.planetRotation));
+
+    bakePlanet.name = LG_PLANET_DATA.value.planetName;
+    ExportHelper.exportMeshesToGLTF([bakePlanet], LG_PLANET_DATA.value.planetName.replaceAll(' ', '_') + `_${w}`);
+  } catch (error) {
+    console.error(error);
+    progressDialog.setError(error);
+  } finally {
+    bakingTargets.forEach((bt) => {
+      bt.textures.forEach((tex) => tex.dispose());
+      (bt.mesh.material as NodeMaterial)?.dispose();
+      bt.mesh.geometry?.dispose();
+    });
+    renderTarget.dispose();
+    renderer.dispose();
+    progressDialog.setProgress(8);
+    await sleep(50);
+    LG_EDITOR_STATE.value = EditorState.EDITION;
+  }
+}
+
+// ------------------------------------------------------------------------------------------------ //
+//                                            ACCESSORS                                             //
+// ------------------------------------------------------------------------------------------------ //
+
+export function isPlanetEdited() {
+  return hasPlanetBeenEdited.value;
+}
+export function setPlanetEditFlag(value: boolean) {
+  hasPlanetBeenEdited.value = value;
+}
+export function setEditorRendering(value: boolean) {
+  enableEditorRendering = value;
+}

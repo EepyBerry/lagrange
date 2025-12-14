@@ -1,11 +1,9 @@
-import type { BiomeParameters } from '@/core/models/biome-parameters.model'
-import type { Rect, RawRGBA } from '@/core/types'
-import { avg, findMinDistanceToRect, findRectOverlaps, truncateTo } from '@/core/utils/math-utils'
-import { Color, CubeTextureLoader, DataTexture, NearestFilter, Vector2, type MinificationTextureFilter } from 'three'
+import type { BiomeParameters } from '@core/models/biome-parameters.model'
+import { avg, truncateTo } from '@core/utils/math-utils'
+import { Color, CubeTextureLoader, DataTexture, NearestFilter, type MinificationTextureFilter } from 'three'
 import type { ColorRampStep } from '../models/color-ramp.model'
 import { clamp, lerp } from 'three/src/math/MathUtils.js'
-import { MUL_INT8_TO_UNIT } from '../globals'
-import { alphaBlendColors, toRawRGBA } from '@/core/utils/render-utils'
+import Rect from '../utils/math/rect'
 
 const CUBE_TEXTURE_LOADER = new CubeTextureLoader()
 
@@ -23,13 +21,13 @@ export function loadCubeTexture(path: string, faces: string[], filter?: Minifica
   return cubemap
 }
 
-
 // ------------------------------------------------------------------------------------------------
 
 export function createRampTexture(buffer: Uint8Array, w: number, steps: ColorRampStep[]): DataTexture {
   if (steps.length > 0) {
     fillRamp(buffer, w, steps)
   }
+
   const dt = new DataTexture(buffer, w, 1)
   dt.needsUpdate = true
   return dt
@@ -59,7 +57,10 @@ function fillRamp(buffer: Uint8Array, w: number, steps: ColorRampStep[]) {
     for (let px = 0; px < totalPixels; px++) {
       lerpColor.lerpColors(currentStep.color, nextStep.color, truncateTo(px / totalPixels, 1e4))
       lerpAlpha = lerp(currentStep.alpha, nextStep.alpha, truncateTo(px / totalPixels, 1e4))
-      _writeToBuffer(buffer, stride, toRawRGBA(lerpColor, lerpAlpha), 255.0)
+      buffer[stride] = clamp(lerpColor.r * 255.0, 0, 255)
+      buffer[stride + 1] = clamp(lerpColor.g * 255.0, 0, 255)
+      buffer[stride + 2] = clamp(lerpColor.b * 255.0, 0, 255)
+      buffer[stride + 3] = clamp(lerpAlpha * 255.0, 0, 255)
       stride += 4
     }
   }
@@ -67,89 +68,110 @@ function fillRamp(buffer: Uint8Array, w: number, steps: ColorRampStep[]) {
 
 // ------------------------------------------------------------------------------------------------
 
-export function createBiomeTexture(buffer: Uint8Array, w: number, biomes: BiomeParameters[]): DataTexture {
-  if (biomes.length > 0) {
-    fillBiomes(buffer, w, biomes)
+export function fillBiomeLayer(biome: BiomeParameters, canvas: OffscreenCanvas): void {
+  if (!biome || !canvas) return
+  const texSize = canvas.width
+  const biomeRect: Rect = new Rect(
+    Math.floor(biome.humiMin * texSize),
+    Math.floor(biome.tempMin * texSize),
+    Math.ceil((biome.humiMax - biome.humiMin) * texSize),
+    Math.ceil((biome.tempMax - biome.tempMin) * texSize),
+  )
+  // Early return if smoothness is zero
+  if (biome.smoothness <= Number.EPSILON) {
+    fillRect(canvas, biomeRect, biome.color)
+    return 
   }
-  const dt = new DataTexture(buffer, w, w)
-  dt.needsUpdate = true
-  return dt
+  // Calculate smoothing distance and fill
+  const rectAvgSmoothingDistance = Math.floor(avg(...[biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness]))
+  shrinkFillRect(canvas, biomeRect, biome.color, rectAvgSmoothingDistance)
 }
 
-export function recalculateBiomeTexture(buffer: Uint8Array, w: number, biomes: BiomeParameters[]): void {
-  if (biomes.length === 0) {
+export function fillBiomeEmissivityLayer(biome: BiomeParameters, canvas: OffscreenCanvas): void {
+  if (!biome || !canvas) return
+  const texSize = canvas.width
+  const biomeRect: Rect = new Rect(
+    Math.floor(biome.humiMin * texSize),
+    Math.floor(biome.tempMin * texSize),
+    Math.ceil((biome.humiMax - biome.humiMin) * texSize),
+    Math.ceil((biome.tempMax - biome.tempMin) * texSize),
+  )
+  // Modulate emissivity value by biome intensity (10 = max value)
+  // Note: only using green channel, which the human eye is more sensitive to
+  const texColor = new Color('#000000')
+  texColor.g = (biome.emissiveOverride ? biome.emissiveIntensity : biome.parentEmissiveIntensity) / 10.0
+  // Early return if smoothness is zero
+  if (biome.smoothness <= 1e-4) {
+    fillRect(canvas, biomeRect, biome.color)
     return
   }
-  buffer.fill(0)
-  fillBiomes(buffer, w, biomes)
+  // Calculate smoothing distance and fill
+  const rectAvgSmoothingDistance = Math.floor(avg(...[biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness]))
+  shrinkFillRect(canvas, biomeRect, texColor, rectAvgSmoothingDistance)
 }
 
-function fillBiomes(buffer: Uint8Array, w: number, biomes: BiomeParameters[]) {
-  let lineStride = 0
-  let cellStride = (Math.ceil(biomes[0].humiMin * w) + biomes[0].tempMin * w) * 4
-  for (let i = 0; i < biomes.length; i++) {
-    const biome = biomes[i]
-    const biomeRect: Rect = {
-      x: Math.floor(biome.humiMin * w),
-      y: Math.floor(biome.tempMin * w),
-      w: Math.ceil((biome.humiMax - biome.humiMin) * w),
-      h: Math.ceil((biome.tempMax - biome.tempMin) * w),
-    }
-    const totalPixels = biomeRect.w * biomeRect.h
-    const maxBiomeX = (biomeRect.x + biomeRect.w) * 4
+// ------------------------------------------------------------------------------------------------
 
-    // Pre-calculate smoothing data
-    const biomeAvgSmoothness = avg(...[biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness])
-    const biomeOverlaps = findRectOverlaps(w, w, biomeRect)
+/**
+ * Fills a section of an OffscreenCanvas with the given color
+ * @param canvas the OffscreenCanvas to draw on
+ * @param startRect the Rect to start drwaing at
+ * @param color base color to draw with
+ */
+function fillRect(canvas: OffscreenCanvas, startRect: Rect, color: Color) {
+    startRect.adjustToHTMLCanvas()
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })!
+    ctx.fillStyle = `#${color.getHexString()}`
+    ctx.fillRect(startRect.x, startRect.y, startRect.w, startRect.h)
+}
 
-    // Adjust strides depending on starting temp & humi
-    cellStride = biomeRect.x * 4
-    lineStride = biomeRect.y * w * 4
+/**
+ * Fills a section of an OffscreenCanvas by progressively shrinking the drawing rect according to the given smoothing distance
+ * @param canvas the OffscreenCanvas to draw on
+ * @param startRect the Rect to start drwaing at
+ * @param baseColor base color to draw with
+ * @param smoothingDistance orthogonal distance between the edge of the section and the first rect where pixels have an alpha of 1.0
+ */
+function shrinkFillRect(
+  canvas: OffscreenCanvas,
+  startRect: Rect,
+  baseColor: Color,
+  smoothingDistance: number
+): void {
+  // ---- Precalculation phase ----
+  // Fetch canvas texture width (in all cases, w = h as all textures generated using this function are sent to the GPU)
+  // Then, get overlaps with the global texture borders; overlaps define sections where smoothness should NOT be applied
+  const texSize = canvas.width
+  const startRectOverlaps = startRect.findOverlaps(texSize, texSize)
 
-    // Prepare coords and pixel/biome colors
-    const pixelCoords: Vector2 = new Vector2(biomeRect.x, biomeRect.y)
-    const pixelRGBA = { r: 0, g: 0, b: 0, a: 0 }
-    const biomeRGBA = { r: biome.color.r, g: biome.color.g, b: biome.color.b, a: 1 }
+  // ---- Canvas preparation phase ----
+  // Configure the target canvas and adapt the drawing rect to account for smoothing.
+  // The latter must be adjusted to get crisp, exact-size rects (https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes)
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!
+  ctx.imageSmoothingEnabled = false
+  ctx.clearRect(0,0,texSize,texSize)
+  const drawingRect = startRect.clone().adjustToHTMLCanvas()
 
-    // Iterate through every single pixel inside the biome rect
-    let rectDistance: number, bufferIdx: number, blendedColor: RawRGBA
-    for (let biomePx = 0; biomePx < totalPixels; biomePx++) {
-      bufferIdx = lineStride + cellStride
-      _writeToRawRGBA(pixelRGBA, buffer, bufferIdx, MUL_INT8_TO_UNIT)
+  // ---- Canvas filling phase ----
+  // Loop n-1 times, where n is defined as the number of pixel values between the lighest alpha value and an alpha of 1 (exclusive)
+  //   ---> in this context, n = smoothingDistance
+  // At each iteration, "shrink" the drawing zone by 1px while taking into account border overlaps, then draw a stroked rect
+  // The last step before exiting is to fill the remaining space with the base color unaltered
+  let pixelShift = 0
+  while (pixelShift < smoothingDistance && drawingRect.isValid()) {
+    // Adjust drawing rect position; early return if next rect would redraw on itself
+    if (drawingRect.w === 1 || drawingRect.h === 1) return
+    drawingRect.shrink(startRectOverlaps)
+    pixelShift++
 
-      rectDistance = findMinDistanceToRect(biomeRect, pixelCoords.x, pixelCoords.y, biomeOverlaps)
-      biomeRGBA.a = truncateTo(clamp(rectDistance / biomeAvgSmoothness, 0, 1), 1e4)
-
-      if (pixelRGBA.a > 0) {
-        blendedColor = alphaBlendColors(pixelRGBA, biomeRGBA)
-        _writeToBuffer(buffer, bufferIdx, blendedColor, 255.0)
-      } else {
-        _writeToBuffer(buffer, bufferIdx, biomeRGBA, 255.0)
-      }
-
-      cellStride += 4
-      pixelCoords.x++
-
-      if (cellStride >= maxBiomeX) {
-        lineStride += w * 4
-        cellStride = biomeRect.x * 4
-        pixelCoords.x = biomeRect.x
-        pixelCoords.y++
-      }
-    }
+    // draw stroked rect
+    ctx.strokeStyle = `rgba(${baseColor.r*255}, ${baseColor.g*255}, ${baseColor.b*255}, ${
+      clamp(truncateTo(pixelShift / smoothingDistance, 1e4), 0.0, 0.99)
+    })`
+    ctx.clearRect(drawingRect.x-0.5, drawingRect.y-0.5, drawingRect.w+1, drawingRect.h+1)
+    ctx.strokeRect(drawingRect.x, drawingRect.y, drawingRect.w, drawingRect.h)
   }
-}
-
-function _writeToRawRGBA(rgba: RawRGBA, buffer: Uint8Array, index: number, multiplier: number = 1) {
-  rgba.r = clamp(buffer[index] * multiplier, 0, 1)
-  rgba.g = clamp(buffer[index + 1] * multiplier, 0, 1)
-  rgba.b = clamp(buffer[index + 2] * multiplier, 0, 1)
-  rgba.a = clamp(buffer[index + 3] * multiplier, 0, 1)
-}
-
-function _writeToBuffer(buffer: Uint8Array, index: number, rgba: RawRGBA, multiplier: number = 1) {
-  buffer[index] = clamp(rgba.r * multiplier, 0, 255)
-  buffer[index + 1] = clamp(rgba.g * multiplier, 0, 255)
-  buffer[index + 2] = clamp(rgba.b * multiplier, 0, 255)
-  buffer[index + 3] = clamp(rgba.a * multiplier, 0, 255)
+  // fill remaining rect
+  ctx.fillStyle = `rgba(${baseColor.r*255}, ${baseColor.g*255}, ${baseColor.b*255}, 1)`
+  ctx.fillRect(drawingRect.x++, drawingRect.y++, drawingRect.w--, drawingRect.h--)
 }

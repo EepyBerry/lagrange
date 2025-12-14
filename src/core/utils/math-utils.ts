@@ -1,28 +1,86 @@
-import type { Rect } from '@/core/types'
-import seedrandom from 'seedrandom'
-import { ref, type Ref } from 'vue'
+import seedrandom from 'seedrandom';
+import { Color } from 'three';
+import { ref, type Ref } from 'vue';
 
-let currentPRNGSeed = Math.random().toString().substring(2)
+/**
+ * Okay, explanation required for this value:
+ *
+ * We know that `0x010101` is the darkest possible RGB 8-bit color. Thus, we use it
+ * as a multiplier with a value from `0` to `255` to get a grayscale color
+ * from `(0x)000000` to `(0x)ffffff`
+ * @example 0x5c5c5c = (0x5c * 0x010101) = (92 * 0x010101)
+ */
+const GRAYSCALE_MULTIPLIER = 0x010101;
+
+let currentPRNGSeed = Math.random().toString().substring(2);
 
 // @ts-expect-error Type definitions missing in 'seedrandom' package
-export const PRNG: Ref<seedrandom.PRNG> = ref(new seedrandom.alea(currentPRNGSeed))
-export const PRNG_SEED: Ref<string> = ref(currentPRNGSeed)
+export const PRNG: Ref<seedrandom.PRNG> = ref(new seedrandom.alea(currentPRNGSeed));
+export const PRNG_SEED: Ref<string> = ref(currentPRNGSeed);
 
 export function regenerateSeed() {
-  PRNG_SEED.value = Math.random().toString().substring(2)
+  PRNG_SEED.value = Math.random().toString().substring(2);
 }
 export function regeneratePRNGIfNecessary(force?: boolean): void {
   if (!force && PRNG_SEED.value === currentPRNGSeed) {
-    return
+    return;
   }
-  const s: string = PRNG_SEED.value
-  PRNG.value = seedrandom.alea(s)
-  PRNG_SEED.value = s
-  currentPRNGSeed = s
+  const s: string = PRNG_SEED.value;
+  PRNG.value = seedrandom.alea(s);
+  PRNG_SEED.value = s;
+  currentPRNGSeed = s;
 }
-export function clampedPRNG(min: number, max: number, precision: number = 3): number {
-  const v = PRNG.value()
-  return Number(((max - min) * v + min).toPrecision(precision))
+export function clampedPRNG(min: number, max: number, digits: number = 3): number {
+  return Number(((max - min) * PRNG.value() + min).toFixed(digits));
+}
+export function clampedPRNGSpaced(prev: number, min: number, max: number, precision: number = 3, spacing: number = 1) {
+  let result = clampedPRNG(min, max, precision);
+  let loop = 0;
+  while (diff(result, prev) <= spacing && loop < 100) {
+    result = clampedPRNG(min, max, precision);
+    loop++;
+  }
+  return result;
+}
+
+export function clampedPRNGHex(min: number, max: number, hexMask: number): number {
+  return clampedPRNG(min, max) * hexMask;
+}
+
+/**
+ * Generates a random boolean, self-explanatory
+ * @returns the boolean
+ */
+export function randomBoolean(): boolean {
+  return Boolean(Math.round(clampedPRNG(0, 1)));
+}
+
+/**
+ * Generates a random `THREE.Color`, in grayscale or not
+ * @param grayscale if the color generated should be grayscale
+ * @returns a new color, derived from PRNG
+ */
+export function randomColor(grayscale: boolean): Color {
+  return new Color(
+    grayscale ? Math.round(clampedPRNG(0, 255)) * GRAYSCALE_MULTIPLIER : Math.round(clampedPRNG(0, 0xffffff)),
+  );
+}
+
+/**
+ * Generates a sorted array of intervals (pairs of numbers)
+ * @param min min PRNG value
+ * @param max max PRNG value
+ * @param intervals number of intervals to generate
+ * @returns the requested array of intervals
+ * @example randomIntervals(0, 1, 3) => [[0.125, 0.273], [0.543, 0.861], [0.886, 0.892]]
+ */
+export function randomIntervals(min: number, max: number, intervals: number) {
+  const numbers = [];
+  for (let i = 0; i < intervals; i++) {
+    numbers.push(clampedPRNG(min, max));
+  }
+  numbers.sort((a, b) => a - b);
+  return numbers.flatMap((_, i, arr) => (i % 2 ? [] : [arr.slice(i, i + 2)]));
 }
 
 /**
@@ -32,11 +90,11 @@ export function clampedPRNG(min: number, max: number, precision: number = 3): nu
  */
 export function isNumeric(n: string | number | boolean): boolean {
   if (['number'].includes(typeof n)) {
-    return true
+    return true;
   } else if (!n) {
-    return false
+    return false;
   }
-  return !isNaN(Number(n))
+  return !isNaN(Number(n));
 }
 
 /**
@@ -46,9 +104,13 @@ export function isNumeric(n: string | number | boolean): boolean {
  */
 export function avg(...values: number[]) {
   if (values.length === 0) {
-    return 0
+    return 0;
   }
-  return values.reduce((prev, cur) => prev + cur, 0) / values.length
+  return values.reduce((prev, cur) => prev + cur) / values.length;
+}
+
+export function diff(a: number, b: number) {
+  return Math.abs(Math.max(a, b) - Math.min(a, b));
 }
 
 /**
@@ -57,37 +119,5 @@ export function avg(...values: number[]) {
  * @param multPrecision the precision as an integer (e.g. 10000 => .toFixed(4))
  */
 export function truncateTo(a: number, multPrecision: number): number {
-  return Math.trunc(a * multPrecision) / multPrecision
-}
-
-/**
- * Finds overlaps on a given w*h plane's borders with a given Rect
- * @param w total plane width
- * @param h total plane height
- * @param rect rect to check overlaps on
- * @returns an array containing overlaps for the top, right, bottom & left sides, in that order
- */
-export function findRectOverlaps(w: number, h: number, rect: Rect): number[] {
-  const borderOverlaps = [0, 0, 0, 0]
-  borderOverlaps[0] = rect.y === 0 ? 1 : 0
-  borderOverlaps[1] = rect.x + rect.w >= w ? 1 : 0
-  borderOverlaps[2] = rect.y + rect.h >= h ? 1 : 0
-  borderOverlaps[3] = rect.x === 0 ? 1 : 0
-  return borderOverlaps
-}
-
-/**
- * Finds the nearest point on a rect from the given (x,y) coordinates within that rect
- * @param rect the rect to find the point on
- * @param x point x
- * @param y point y
- * @returns the coordinates of the nearest rect point from (x,y)
- */
-export function findMinDistanceToRect(rect: Rect, x: number, y: number, overlaps: number[]): number {
-  return Math.min(
-    overlaps[3] > 0 ? 1e3 : x - rect.x,
-    overlaps[0] > 0 ? 1e3 : y - rect.y,
-    overlaps[1] > 0 ? 1e3 : rect.x + rect.w - x,
-    overlaps[2] > 0 ? 1e3 : rect.y + rect.h - y,
-  )
+  return Math.trunc(a * multPrecision) / multPrecision;
 }

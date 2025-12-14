@@ -2,7 +2,7 @@ import type { NodeMaterial } from "three/webgpu";
 import type PlanetData from "../models/planet-data.model";
 import { EditorSceneCreationMode, type EditorSceneData, type RingMeshData } from "../types";
 import * as ComponentHelper from './component.helper';
-import * as Globals from '@/core/globals'
+import * as Globals from '@core/globals'
 import { Group, Clock } from 'three';
 import { degToRad } from "three/src/math/MathUtils.js";
 
@@ -10,7 +10,6 @@ export async function buildEditorScene(data: PlanetData, renderWidth: number, re
   const sceneData: Partial<EditorSceneData> = {
     planet: {
       surfaceBuffer: new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4),
-      biomesBuffer: new Uint8Array(Globals.TEXTURE_SIZES.BIOME * Globals.TEXTURE_SIZES.BIOME * 4),
     },
     clouds: {
       buffer: new Uint8Array(Globals.TEXTURE_SIZES.CLOUDS * 4),
@@ -21,11 +20,11 @@ export async function buildEditorScene(data: PlanetData, renderWidth: number, re
   }
   await buildScene(sceneData as EditorSceneData, data, renderWidth, renderHeight, renderPixelRatio, creationMode)
   buildSceneLighting(sceneData as EditorSceneData, data)
-  buildScenePlanet(sceneData as EditorSceneData, data)
+  buildScenePlanet(sceneData as EditorSceneData, data, creationMode)
   return sceneData as EditorSceneData
 }
 
-export function disposeEditorScene(sceneData: EditorSceneData) {
+export function disposeScene(sceneData: EditorSceneData) {
   sceneData.sunLight.dispose()
   sceneData.ambLight.dispose()
   sceneData.scene.remove(sceneData.sunLight!)
@@ -46,8 +45,7 @@ export function disposeEditorScene(sceneData: EditorSceneData) {
 
   sceneData.planet.surfaceBuffer?.fill(0)
   sceneData.planet.surfaceTexture!.dispose()
-  sceneData.planet.biomesBuffer?.fill(0)
-  sceneData.planet.biomesTexture!.dispose()
+  sceneData.planet.biomeLayersTexture!.dispose()
   sceneData.clouds.texture!.dispose()
   sceneData.ringAnchor.clear()
   sceneData.planetGroup.clear()
@@ -90,11 +88,14 @@ function buildSceneLighting(sceneData: EditorSceneData, data: PlanetData): void 
   sceneData.lensFlare.updatePosition(sceneData.sunLight.position)
 }
 
-function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData): void {
-  const planet = ComponentHelper.createPlanet(data, sceneData.planet.surfaceBuffer, sceneData.planet.biomesBuffer)
+function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData, creationMode: EditorSceneCreationMode): void {
+  const planet = ComponentHelper.createPlanet(data, sceneData.planet.surfaceBuffer)
   const clouds = ComponentHelper.createClouds(data, sceneData.clouds.buffer)
   const atmosphere = ComponentHelper.createAtmosphere(data, sceneData.sunLight!.position)
-  const rings: RingMeshData[] = data.ringsParams.map((_, idx) => ComponentHelper.createRing(data, idx))
+  const rings: RingMeshData[] = []
+  if (creationMode === EditorSceneCreationMode.EDITOR) {
+    rings.push(...data.ringsParams.map(param => ComponentHelper.createRing(data, param)))
+  }
 
   // Toggle elements
   clouds.mesh!.visible = data.cloudsEnabled

@@ -1,37 +1,45 @@
 :root {
   --black: #000;
+  --code-background: #050505;
 
   --lg-text: #f7f7f7;
+  --lg-text-dark: #111111;
   --lg-text-disabled: #b6b6b6;
+
   --lg-primary: #070f13;
   --lg-primary-static: #070f13;
-  --lg-panel: #030608;
   --lg-accent: #1f3642;
+
+  --lg-panel: #030608;
   --lg-logo: #354852;
   --lg-input: #0f191f;
-  --lg-input-focus: #15242c;
+  --lg-input-hover: #132129;
+  --lg-input-focus: #1b2f3a;
+  --lg-input-contrast-focus: #64a19c;
+  --lg-input-disabled: #1f1f1f;
   --lg-overlay: #2f373e44;
   --lg-border-disabled: #242424;
-
-  --lg-contrast-light: #0b201f;
-  --lg-contrast-medium: #143f3b;
-  --lg-contrast: #427773;
-  --lg-contrast-focus: #64a19c;
 
   --lg-button: #314d58;
   --lg-button-hover: #274350;
   --lg-button-active: var(--lg-accent);
   --lg-button-disabled: #535353;
-  --lg-button-menu-expanded: var(--lg-contrast);
-  --lg-button-menu-expanded-hover: #336662;
-  --lg-button-menu-expanded-active: #295753;
+  --lg-button-dark-hover: var(--lg-button-active);
+  --lg-button-dark-active: var(--lg-button-hover);
+  --lg-button-dark-contrast: #0b201f;
+  --lg-button-dark-contrast-hover: var(--lg-contrast-hover);
+  --lg-button-dark-contrast-active: var(--lg-contrast);
 
-  --lg-link: var(--lg-contrast-focus);
-  --lg-link-visited: var(--lg-contrast-focus);
+  --lg-link: var(--lg-input-contrast-focus);
+  --lg-link-visited: var(--lg-input-contrast-focus);
   --lg-link-error: #ffd7c4;
+  --lg-link-disabled: #535353;
 
-  --lg-text-starred: #ffbb00b4;
+  --lg-text-starred: #ffd620;
 
+  --lg-contrast: #427773;
+  --lg-contrast-hover: #326661;
+  --lg-contrast-active: #255550;
   --lg-success: #0b6449;
   --lg-success-hover: #06533c;
   --lg-success-active: #043d2c;
@@ -41,8 +49,8 @@
   --lg-info-active: #072568;
   --lg-info-panel: #11349444;
   --lg-warn: #b63f1a;
-  --lg-warn-hover: #a53614;
-  --lg-warn-active: #912a0b;
+  --lg-warn-hover: #9e3313;
+  --lg-warn-active: #83260a;
   --lg-warn-panel: #2e0f06;
 
   --lg-hue-background: linear-gradient(
@@ -57,33 +65,48 @@
   );
   --lg-logo-update: #453264;
   --lg-update-05-background: linear-gradient(90deg, #453264 0%, #251642 100%);
+
+  --lg-planet-class-ice-background: #d1f6ff;
+  --lg-planet-class-ice-text: #091641;
+  --lg-planet-class-ocean-background: #10256b;
+  --lg-planet-class-ocean-text: var(--lg-text);
+  --lg-planet-class-tropical-background: #335f00;
+  --lg-planet-class-tropical-text: var(--lg-text);
+  --lg-planet-class-arid-background: #6d5000;
+  --lg-planet-class-arid-text: var(--lg-text);
+  --lg-planet-class-chthonian-background: #110805;
+  --lg-planet-class-chthonian-text: #ffa047;
+  --lg-planet-class-magmatic-background: #ff782b;
+  --lg-planet-class-magmatic-text: #110805;
 }
 :root[data-theme='supernova'] {
   --lg-primary: linear-gradient(to bottom, #110a20 0%, #06030c 100%);
   --lg-primary-static: #110a20;
-  --lg-panel: #040107;
   --lg-accent: #2d1b42;
+
+  --lg-panel: #040107;
   --lg-logo: #412c5a;
   --lg-input: #1d1027;
-  --lg-input-focus: #311e42;
+  --lg-input-hover: #281936;
+  --lg-input-focus: #39234d;
+  --lg-input-contrast-focus: #3c8f65;
+  --lg-input-disabled: #181818;
   --lg-overlay: #2f333e44;
 
-  --lg-contrast-light: #0b140f;
-  --lg-contrast-medium: #214232;
-  --lg-contrast: #2f7253;
-  --lg-contrast-focus: #3c8f65;
+  --lg-button-dark-contrast: #0b140f;
+  --lg-button-dark-contrast-hover: #214232;
 
   --lg-button: #3f2757;
   --lg-button-hover: #3b2453;
   --lg-button-active: var(--lg-accent);
   --lg-button-disabled: #3b3b3b;
-  --lg-button-menu-expanded: var(--lg-contrast);
-  --lg-button-menu-expanded-hover: #2f724b;
-  --lg-button-menu-expanded-active: #215a39;
 
-  --lg-link: var(--lg-contrast-focus);
-  --lg-link-visited: var(--lg-contrast-focus);
+  --lg-link: var(--lg-input-contrast-focus);
+  --lg-link-visited: var(--lg-input-contrast-focus);
 
+  --lg-contrast: #2f7253;
+  --lg-contrast-hover: #205f42;
+  --lg-contrast-active: #154d33;
   --lg-success: #0b6449;
   --lg-success-hover: #06533c;
   --lg-success-active: #043d2c;
@@ -93,36 +116,39 @@
   --lg-info-active: #04393d;
   --lg-info-panel: #0b576444;
   --lg-warn: #b61a4e;
-  --lg-warn-hover: #a5144c;
-  --lg-warn-active: #910b43;
+  --lg-warn-hover: #991045;
+  --lg-warn-active: #7a0536;
   --lg-warn-panel: #2e0606;
 }
 :root[data-theme='voyager'] {
   --lg-primary: repeating-linear-gradient(to bottom, #0c0903, #0c0903 0.375rem, #1a1102 0.5rem);
   --lg-primary-static: #0c0903;
-  --lg-panel: #070502;
   --lg-accent: #412c08;
+
+  --lg-panel: #070502;
   --lg-logo: #573a0b;
   --lg-input: #181108;
-  --lg-input-focus: #2c2415;
+  --lg-input-hover: #251f12;
+  --lg-input-focus: #332a19;
+  --lg-input-contrast-focus: #b68c00;
+  --lg-input-disabled: #141414;
   --lg-overlay: #3e392f44;
 
-  --lg-contrast-light: #201900;
-  --lg-contrast-medium: #493800;
-  --lg-contrast: #7e6100;
-  --lg-contrast-focus: #b68c00;
+  --lg-button-dark-disabled: #3b3b3b;
+  --lg-button-dark-contrast: #201900;
+  --lg-button-dark-contrast-hover: #493800;
 
   --lg-button: #573d12;
   --lg-button-hover: #4e3609;
   --lg-button-active: var(--lg-accent);
-  --lg-button-disabled: #313131;
-  --lg-button-menu-expanded: var(--lg-contrast);
-  --lg-button-menu-expanded-hover: #6d5300;
-  --lg-button-menu-expanded-active: #5e4800;
+  --lg-button-disabled: #333333;
 
-  --lg-link: var(--lg-contrast-focus);
-  --lg-link-visited: var(--lg-contrast-focus);
+  --lg-link: var(--lg-input-contrast-focus);
+  --lg-link-visited: var(--lg-contrast);
 
+  --lg-contrast: #9e7900;
+  --lg-contrast-hover: #886800;
+  --lg-contrast-active: #695100;
   --lg-success: #295336;
   --lg-success-hover: #1f4227;
   --lg-success-active: #18311d;
@@ -152,43 +178,4 @@
   body * {
     font-family: 'Open-Dyslexic';
   }
-}
-
-.lg.success {
-  background: var(--lg-success);
-  background: var(--lg-success);
-}
-.lg.success:not(:disabled):hover {
-  background: var(--lg-success-hover);
-  background: var(--lg-success-hover);
-}
-.lg.success:not(:disabled):active {
-  background: var(--lg-success-active);
-  background: var(--lg-success-active);
-}
-
-.lg.warn {
-  background: var(--lg-warn);
-  background: var(--lg-warn);
-}
-.lg.warn:not(:disabled):hover {
-  background: var(--lg-warn-hover);
-  background: var(--lg-warn-hover);
-}
-.lg.warn:not(:disabled):active {
-  background: var(--lg-warn-active);
-  background: var(--lg-warn-active);
-}
-
-.lg.contrast {
-  background: var(--lg-contrast);
-  background: var(--lg-contrast);
-}
-.lg.contrast:not(:disabled):hover {
-  background: var(--lg-contrast-focus);
-  background: var(--lg-contrast-focus);
-}
-.lg.contrast:not(:disabled):active {
-  background: var(--lg-contrast-medium);
-  background: var(--lg-contrast-medium);
 }

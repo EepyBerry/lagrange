@@ -5,10 +5,15 @@ import type { PlanetMeshData, EditorSceneData, AtmosphereMeshData, CloudsMeshDat
 import type { AmbientLight, DirectionalLight, Group } from 'three'
 import type { LensFlareEffect } from '../effects/lens-flare.effect'
 import type PlanetData from '../models/planet-data.model'
-import { recalculateBiomeTexture, recalculateRampTexture } from './texture.helper'
+import * as TextureHelper from './texture.helper'
 import * as ComponentHelper from './component.helper'
+import { ChangeAction, type ChangedProp, type ChangeSource } from '../models/change-tracker.model'
+import type { BiomeParameters } from '../models/biome-parameters.model'
+import { RingParameters } from '../models/ring-parameters.model'
+import type { ColorRamp } from '../models/color-ramp.model'
+import type { NodeMaterial } from 'three/webgpu'
 
-const UNIFORM_UPDATE_MAP: Ref<Map<string, () => void>> = ref(new Map<string, () => void>())
+const UNIFORM_UPDATE_MAP: Ref<Map<string, (source?: ChangeSource, action?: ChangeAction) => void>> = ref(new Map<string, () => void>())
 
 export function initUniformUpdateMap(sceneData: EditorSceneData, planetData: PlanetData) {
   registerLightingDataUpdates(planetData, sceneData.sunLight!, sceneData.ambLight!, sceneData.lensFlare!)
@@ -23,23 +28,16 @@ export function initUniformUpdateMap(sceneData: EditorSceneData, planetData: Pla
   registerBiomeDataUpdates(planetData, sceneData.planet!)
   registerAtmosphereDataUpdates(planetData, sceneData.atmosphere!)
   registerCloudDataUpdates(planetData, sceneData.clouds!)
-  registerRingsDataUpdates(planetData, sceneData.rings!)
-}
-
-export function reloadRingDataUpdates(sceneData: EditorSceneData, planetData: PlanetData) {
-  const ringKeys = [...UNIFORM_UPDATE_MAP.value.keys()].filter((k) => k.startsWith('_ringsParameters'))
-  ringKeys.forEach((k) => {
-    UNIFORM_UPDATE_MAP.value.delete(k)
-  })
-  registerRingsDataUpdates(planetData, sceneData.rings!)
+  registerRingsDataUpdates(planetData, sceneData.ringAnchor, sceneData.rings!)
 }
 
 export function clearUniformUpdateMap() {
   UNIFORM_UPDATE_MAP.value.clear()
 }
 
-export function execUniformUpdate(key: string) {
-  UNIFORM_UPDATE_MAP.value.get(key)?.()
+export function execUniformUpdate(changedProp: ChangedProp) {
+  //console.debug('Detected property change! ', toRaw(changedProp))
+  UNIFORM_UPDATE_MAP.value.get(changedProp.prop)?.(changedProp.source, changedProp.action)
 }
 
 // prettier-ignore
@@ -74,7 +72,7 @@ function registerPlanetRenderingDataUpdates(
     planetGroup.scale.setScalar(v)
     planet.uniforms!.radius.value = v
     atmosphere.uniforms!.transform.surfaceRadius.value = v
-    atmosphere.uniforms!.transform.radius.value = v + (data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER)
+    atmosphere.uniforms!.transform.radius.value = data.planetRadius + data.atmosphereHeight
   })
   UNIFORM_UPDATE_MAP.value.set('_planetAxialTilt', () => {
     const v = degToRad(isNaN(data.planetAxialTilt) ? 0 : data.planetAxialTilt)
@@ -86,11 +84,17 @@ function registerPlanetRenderingDataUpdates(
     planet.mesh!.setRotationFromAxisAngle(planet.mesh!.up, vRad)
     clouds.mesh!.setRotationFromAxisAngle(clouds.mesh!.up, vRad + cloudsRotationRad)
   })
-  UNIFORM_UPDATE_MAP.value.set('_planetWaterLevel', () => (planet.uniforms!.pbr.array[0] = data.planetWaterLevel))
-  UNIFORM_UPDATE_MAP.value.set('_planetWaterRoughness', () => (planet.uniforms!.pbr.array[1] = data.planetWaterRoughness))
-  UNIFORM_UPDATE_MAP.value.set('_planetWaterMetalness', () => (planet.uniforms!.pbr.array[2] = data.planetWaterMetalness))
-  UNIFORM_UPDATE_MAP.value.set('_planetGroundRoughness', () => (planet.uniforms!.pbr.array[3] = data.planetGroundRoughness))
-  UNIFORM_UPDATE_MAP.value.set('_planetGroundMetalness', () => (planet.uniforms!.pbr.array[4] = data.planetGroundMetalness))
+  UNIFORM_UPDATE_MAP.value.set('_planetWaterLevel', () => (planet.uniforms!.pbr.waterLevel.value = data.planetWaterLevel))
+  UNIFORM_UPDATE_MAP.value.set('_planetWaterRoughness', () => (planet.uniforms!.pbr.metallicRoughness.value.x = data.planetWaterRoughness))
+  UNIFORM_UPDATE_MAP.value.set('_planetWaterMetalness', () => (planet.uniforms!.pbr.metallicRoughness.value.y = data.planetWaterMetalness))
+  UNIFORM_UPDATE_MAP.value.set('_planetGroundRoughness', () => (planet.uniforms!.pbr.metallicRoughness.value.z = data.planetGroundRoughness))
+  UNIFORM_UPDATE_MAP.value.set('_planetGroundMetalness', () => (planet.uniforms!.pbr.metallicRoughness.value.w = data.planetGroundMetalness))
+  UNIFORM_UPDATE_MAP.value.set('_planetShowEmissive', () => (planet.uniforms!.flags.array[4] = +data.planetShowEmissive))
+  UNIFORM_UPDATE_MAP.value.set('_planetWaterEmissiveIntensity', () => (planet.uniforms!.pbr.emissive.value.x = data.planetWaterEmissiveIntensity))
+  UNIFORM_UPDATE_MAP.value.set('_planetGroundEmissiveIntensity', () => {
+    planet.uniforms!.pbr.emissive.value.y = data.planetGroundEmissiveIntensity;
+    planet.biomeEmissiveLayersTexture?.updateAllLayers(data.biomesParams)
+  })
 }
 
 // prettier-ignore
@@ -100,34 +104,34 @@ function registerSurfaceDataUpdates(data: PlanetData, planet: PlanetMeshData): v
   // Color
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceColorRamp', () => {
     const v = data.planetSurfaceColorRamp
-    recalculateRampTexture(planet.surfaceBuffer, Globals.TEXTURE_SIZES.SURFACE, v.steps)
+    TextureHelper.recalculateRampTexture(planet.surfaceBuffer, Globals.TEXTURE_SIZES.SURFACE, v.steps)
     planet.surfaceTexture!.needsUpdate = true
   })
 
   // Warping
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowWarping', () => (planet.uniforms!.flags.array[0] = +data.planetSurfaceShowWarping))
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._warpFactor', () => {
-    planet.uniforms!.warping.value.y = data.planetSurfaceNoise.xWarpFactor
-    planet.uniforms!.warping.value.z = data.planetSurfaceNoise.yWarpFactor
-    planet.uniforms!.warping.value.w = data.planetSurfaceNoise.zWarpFactor
+    planet.uniforms!.surface.warping.value.y = data.planetSurfaceNoise.xWarpFactor
+    planet.uniforms!.surface.warping.value.z = data.planetSurfaceNoise.yWarpFactor
+    planet.uniforms!.surface.warping.value.w = data.planetSurfaceNoise.zWarpFactor
   })
 
   // Displacement
   UNIFORM_UPDATE_MAP.value.set('_planetSurfaceShowDisplacement',         () => (planet.uniforms!.flags.array[1] = +data.planetSurfaceShowDisplacement))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._factor',     () => (planet.uniforms!.displacement.params.value.x = data.planetSurfaceDisplacement.factor))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._epsilon',    () => (planet.uniforms!.displacement.params.value.y = data.planetSurfaceDisplacement.epsilon))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._multiplier', () => (planet.uniforms!.displacement.params.value.z = data.planetSurfaceDisplacement.multiplier))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._frequency',  () => (planet.uniforms!.displacement.noise.value.x = data.planetSurfaceDisplacement.frequency))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._amplitude',  () => (planet.uniforms!.displacement.noise.value.y = data.planetSurfaceDisplacement.amplitude))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._lacunarity', () => (planet.uniforms!.displacement.noise.value.z = data.planetSurfaceDisplacement.lacunarity))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._octaves',    () => (planet.uniforms!.displacement.noise.value.w = data.planetSurfaceDisplacement.octaves))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._factor',     () => (planet.uniforms!.surface.displacement.params.value.x = data.planetSurfaceDisplacement.factor))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._epsilon',    () => (planet.uniforms!.surface.displacement.params.value.y = data.planetSurfaceDisplacement.epsilon))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._multiplier', () => (planet.uniforms!.surface.displacement.params.value.z = data.planetSurfaceDisplacement.multiplier))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._frequency',  () => (planet.uniforms!.surface.displacement.noise.value.x = data.planetSurfaceDisplacement.frequency))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._amplitude',  () => (planet.uniforms!.surface.displacement.noise.value.y = data.planetSurfaceDisplacement.amplitude))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._lacunarity', () => (planet.uniforms!.surface.displacement.noise.value.z = data.planetSurfaceDisplacement.lacunarity))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceDisplacement._octaves',    () => (planet.uniforms!.surface.displacement.noise.value.w = data.planetSurfaceDisplacement.octaves))
 
   // Noise
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._layers',     () => (planet.uniforms!.warping.value.x = data.planetSurfaceNoise.layers))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._frequency',  () => (planet.uniforms!.noise.value.x = data.planetSurfaceNoise.frequency),)
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._amplitude',  () => (planet.uniforms!.noise.value.y = data.planetSurfaceNoise.amplitude))
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._lacunarity', () => (planet.uniforms!.noise.value.z = data.planetSurfaceNoise.lacunarity),)
-  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._octaves',    () => (planet.uniforms!.noise.value.w = data.planetSurfaceNoise.octaves),)
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._layers',     () => (planet.uniforms!.surface.warping.value.x = data.planetSurfaceNoise.layers))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._frequency',  () => (planet.uniforms!.surface.noise.value.x = data.planetSurfaceNoise.frequency),)
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._amplitude',  () => (planet.uniforms!.surface.noise.value.y = data.planetSurfaceNoise.amplitude))
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._lacunarity', () => (planet.uniforms!.surface.noise.value.z = data.planetSurfaceNoise.lacunarity),)
+  UNIFORM_UPDATE_MAP.value.set('_planetSurfaceNoise._octaves',    () => (planet.uniforms!.surface.noise.value.w = data.planetSurfaceNoise.octaves),)
 }
 
 // prettier-ignore
@@ -145,9 +149,36 @@ function registerBiomeDataUpdates(data: PlanetData, planet: PlanetMeshData): voi
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._amplitude',     () => (planet.uniforms!.biomes.humidityNoise.value.y = data.biomesHumidityNoise.amplitude))
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._lacunarity',    () => (planet.uniforms!.biomes.humidityNoise.value.z = data.biomesHumidityNoise.lacunarity))
   UNIFORM_UPDATE_MAP.value.set('_biomesHumidityNoise._octaves',       () => (planet.uniforms!.biomes.humidityNoise.value.w = data.biomesHumidityNoise.octaves))
-  UNIFORM_UPDATE_MAP.value.set('_biomesParameters', () => {
-    recalculateBiomeTexture(planet.biomesBuffer!, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
-    planet.biomesTexture!.needsUpdate = true
+  UNIFORM_UPDATE_MAP.value.set('_biomesParams', () => {
+    planet.biomeLayersTexture!.reset(data.biomesParams)
+    planet.biomeEmissiveLayersTexture!.reset(data.biomesParams)
+  })
+  UNIFORM_UPDATE_MAP.value.set('_biomesParams[element]', (source, action) => {
+    const biome = source!.data! as BiomeParameters
+    const biomeParamsIdx = source!.arrayIndex ?? data.findBiomeIndexById(biome.id)
+    if (biomeParamsIdx === -1) return
+    switch (action) {
+      case ChangeAction.ADD:
+        planet.biomeLayersTexture!.addLayer(biome!)
+        planet.biomeEmissiveLayersTexture!.addLayer(biome!)
+        break;
+      case ChangeAction.EDIT:
+        planet.biomeLayersTexture!.updateLayer(biomeParamsIdx, biome!)
+        planet.biomeEmissiveLayersTexture!.updateLayer(biomeParamsIdx, biome!)
+        break;
+      case ChangeAction.DELETE:
+        planet.biomeLayersTexture!.removeLayer(biomeParamsIdx)
+        planet.biomeEmissiveLayersTexture!.removeLayer(biomeParamsIdx)
+        break;
+      case ChangeAction.SORT_UP:
+        planet.biomeLayersTexture!.moveLayer(biomeParamsIdx, -1)
+        planet.biomeEmissiveLayersTexture!.moveLayer(biomeParamsIdx, -1)
+        break;
+      case ChangeAction.SORT_DOWN:
+        planet.biomeLayersTexture!.moveLayer(biomeParamsIdx, 1)
+        planet.biomeEmissiveLayersTexture!.moveLayer(biomeParamsIdx, 1)
+        break;
+    }
   })
 }
 
@@ -184,7 +215,7 @@ function registerCloudDataUpdates(data: PlanetData, clouds: CloudsMeshData): voi
   UNIFORM_UPDATE_MAP.value.set('_cloudsColor',             () =>  clouds.uniforms!.color.value = data.cloudsColor)
   UNIFORM_UPDATE_MAP.value.set('_cloudsColorRamp',         () =>  {
     const v = data.cloudsColorRamp
-    recalculateRampTexture(clouds.buffer!, Globals.TEXTURE_SIZES.CLOUDS, v.steps)
+    TextureHelper.recalculateRampTexture(clouds.buffer!, Globals.TEXTURE_SIZES.CLOUDS, v.steps)
     clouds.texture!.needsUpdate = true
   })
 }
@@ -193,39 +224,83 @@ function registerCloudDataUpdates(data: PlanetData, clouds: CloudsMeshData): voi
 function registerAtmosphereDataUpdates(data: PlanetData, atmosphere: AtmosphereMeshData): void {
   UNIFORM_UPDATE_MAP.value.set('_atmosphereEnabled', () => atmosphere.mesh!.visible = data.atmosphereEnabled)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereHeight',  () => {
-    const atmosHeight = data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
-    atmosphere.uniforms!.transform.radius.value = data.planetRadius + atmosHeight
+    atmosphere.mesh!.geometry.dispose()
+    atmosphere.mesh!.geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality, 1.0 + data.atmosphereHeight)
+    atmosphere.uniforms!.transform.radius.value = data.planetRadius + data.atmosphereHeight
   })
-  UNIFORM_UPDATE_MAP.value.set('_atmosphereDensityScale', () =>  atmosphere.uniforms!.render.density.value = data.atmosphereDensityScale / Globals.ATMOSPHERE_HEIGHT_DIVIDER)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereDensityScale', () =>  atmosphere.uniforms!.render.density.value = data.atmosphereDensityScale)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereIntensity',    () =>  atmosphere.uniforms!.render.intensity.value = data.atmosphereIntensity)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereColorMode',    () =>  atmosphere.uniforms!.render.colorMode.value = data.atmosphereColorMode)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereHue',          () =>  atmosphere.uniforms!.render.hue.value = data.atmosphereHue)
   UNIFORM_UPDATE_MAP.value.set('_atmosphereTint',         () =>  atmosphere.uniforms!.render.tint.value = data.atmosphereTint)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereMieScatteringConstant',  () =>  atmosphere.uniforms!.render.advanced.mieScatteringConstant.value = data.atmosphereMieScatteringConstant)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereRayleighDensityRatio',   () =>  atmosphere.uniforms!.render.advanced.rayleighDensityRatio.value = data.atmosphereRayleighDensityRatio)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereMieDensityRatio',        () =>  atmosphere.uniforms!.render.advanced.mieDensityRatio.value = data.atmosphereMieDensityRatio)
+  UNIFORM_UPDATE_MAP.value.set('_atmosphereOpticalDensityRatio',   () =>  atmosphere.uniforms!.render.advanced.opticalDensityRatio.value = data.atmosphereOpticalDensityRatio)
 }
 
 // prettier-ignore
-function registerRingsDataUpdates(data: PlanetData, ringsData: RingMeshData[]): void {
-  UNIFORM_UPDATE_MAP.value.set('_ringsEnabled', () => ringsData.forEach(rd => rd.mesh!.visible = data.ringsEnabled))
-
-  const ringsParams = data.ringsParams
-  ringsData.forEach(rd => {
-    const ringParams = ringsParams.find(r => r.id === rd.mesh!.name)
-    if (!ringParams) return
-
-    UNIFORM_UPDATE_MAP.value.set(`_ringsParameters.${ringParams.id}._innerRadius`, () => {
-      rd.mesh!.geometry.dispose()
-      rd.mesh!.geometry = ComponentHelper.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
-      rd.uniforms!.innerRadius.value = ringParams.innerRadius
-    })
-    UNIFORM_UPDATE_MAP.value.set(`_ringsParameters.${ringParams.id}._outerRadius`, () => {
-      rd.mesh!.geometry.dispose()
-      rd.mesh!.geometry = ComponentHelper.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
-      rd.uniforms!.outerRadius.value = ringParams.outerRadius
-    })
-    UNIFORM_UPDATE_MAP.value.set(`_ringsParameters.${ringParams.id}._colorRamp`, () => {
-      const v = ringParams.colorRamp
-      recalculateRampTexture(rd.buffer!, Globals.TEXTURE_SIZES.RING, v.steps)
-      rd.texture!.needsUpdate = true
-    })
+function registerRingsDataUpdates(data: PlanetData, ringAnchor: Group, ringsMeshData: RingMeshData[]): void {
+  UNIFORM_UPDATE_MAP.value.set('_ringsEnabled', () => {
+    ringAnchor.visible = data.ringsEnabled
+    ringAnchor.children.forEach(r => r.visible = data.ringsEnabled)
+  })
+  UNIFORM_UPDATE_MAP.value.set('_ringsParams', (source, action) => {
+    switch (action) {
+      case ChangeAction.ADD: {
+        // create params
+        const newParams = new RingParameters(data.changedProps, '_ringsParams[element]', 1.5, 1.75);
+        data.ringsParams.push(newParams);
+        // create mesh from params
+        const newMeshData = ComponentHelper.createRing(data, newParams);
+        ringsMeshData.push(newMeshData);
+        ringAnchor.add(newMeshData.mesh!);
+        break;
+      }
+      case ChangeAction.EDIT: {
+        ringsMeshData.forEach(rmd => {
+          ;(rmd.mesh!.material as NodeMaterial).dispose()
+          rmd.mesh!.geometry.dispose()
+          rmd.texture!.dispose()
+          rmd.buffer = null
+        })
+        ringAnchor.clear()
+        ringsMeshData.splice(0)
+        data.ringsParams.forEach(params => {
+          const newRing = ComponentHelper.createRing(data, params)
+          ringsMeshData.push(newRing)
+          ringAnchor!.add(newRing.mesh!)
+        })
+        break;
+      }
+      case ChangeAction.DELETE: {
+        ComponentHelper.disposeRing(data, ringAnchor, ringsMeshData, source!.data! as RingParameters)
+        break;
+      }
+    }
+  })
+  UNIFORM_UPDATE_MAP.value.set(`_ringsParams[element]._innerRadius`, (source) => {
+    const ringParams = source!.data! as RingParameters
+    const rmd = ringsMeshData.find(r => r.mesh!.name === ringParams.id)
+    if (!rmd) return;
+    rmd.mesh!.geometry.dispose()
+    rmd.mesh!.geometry = ComponentHelper.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
+    rmd.uniforms!.innerRadius.value = ringParams.innerRadius
+  })
+  UNIFORM_UPDATE_MAP.value.set(`_ringsParams[element]._outerRadius`, (source) => {
+    const ringParams = source!.data! as RingParameters
+    const rmd = ringsMeshData.find(r => r.mesh!.name === ringParams.id)
+    if (!rmd) return;
+    rmd.mesh!.geometry.dispose()
+    rmd.mesh!.geometry = ComponentHelper.createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
+    rmd.uniforms!.outerRadius.value = ringParams.outerRadius
+  })
+  UNIFORM_UPDATE_MAP.value.set(`_ringsParams[element]._colorRamp`, (source) => {
+    const colorRamp = source!.data! as ColorRamp
+    const ringParams = data.ringsParams.find(rp => rp.colorRamp.hash === colorRamp.hash)
+    const rmd = ringsMeshData.find(r => r.mesh!.name === ringParams?.id)
+    if (!ringParams || !rmd) return;
+    TextureHelper.recalculateRampTexture(rmd.buffer!, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
+    rmd.texture!.needsUpdate = true
   })
 }

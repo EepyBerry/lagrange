@@ -1,37 +1,42 @@
 <template>
   <span id="codex-background"></span>
-  <div id="codex-header" :class="{ compact: !!showCompactNavigation }">
-    <AppNavigation :compact-mode="showCompactNavigation" />
-    <div id="codex-header-controls">
-      <RouterLink class="lg dark create-planet" :to="uwuifyPath('/planet-editor/new')" :title="$t('codex.$action_add')">
-        <iconify-icon icon="mingcute:add-line" width="1.5rem" aria-hidden="true" />
-        {{ $t('codex.$action_add') }}
-      </RouterLink>
-      <hr />
-      <input ref="fileInput" type="file" accept=".lagrange" multiple hidden @change="importPlanetFile" />
-      <button
-        class="lg dark"
-        :aria-label="$t('a11y.topbar_import')"
-        :title="$t('tooltip.topbar_import')"
-        @click="openFileDialog"
-      >
-        <iconify-icon icon="mingcute:upload-line" width="1.5rem" aria-hidden="true" />
-      </button>
-      <button
-        class="lg dark"
-        :aria-label="$t('a11y.topbar_export_all')"
-        :title="$t('tooltip.topbar_export_all')"
-        @click="exportPlanets"
-      >
-        <iconify-icon icon="mingcute:folder-zip-line" width="1.5rem" aria-hidden="true" />
-      </button>
-    </div>
-  </div>
+  <ViewHeader id="codex-header">
+    <!-- file input -->
+    <input ref="fileInput" type="file" accept=".lagrange" multiple hidden @change="importPlanetFile" />
+    <LgvButton
+      variant="dark"
+      icon="mingcute:upload-line"
+      :a11y-label="$t('a11y.topbar_import')"
+      @click="openFileDialog"
+    />
+
+    <!-- new planet -->
+    <LgvLink
+      id="codex-header-controls-newplanet"
+      variant="dark"
+      link-type="internal"
+      class="contrast"
+      icon="mingcute:add-line"
+      :href="uwuifyPath('/planet-editor/new')"
+    >
+      {{ $t('codex.$action_add') }}
+    </LgvLink>
+
+    <!-- export planets -->
+    <LgvButton
+      variant="dark"
+      icon="mingcute:folder-zip-line"
+      :aria-label="$t('a11y.topbar_export_all')"
+      @click="exportPlanets"
+    />
+  </ViewHeader>
+
   <div v-if="planets.length > 0" id="codex-grid">
     <!-- prettier-ignore-attribute -->
     <PlanetCardElement
       v-for="planet of planets"
       :key="planet.id"
+      ref="planetCardRef"
       :planet="(planet as IDBPlanet)"
       @info="openPlanetInfoDialog(planet as IDBPlanet)"
       @export="exportPlanet(planet as IDBPlanet)"
@@ -47,116 +52,116 @@
     <InlineFooter />
   </div>
   <AppPlanetInfoDialog ref="planetInfoDialogRef" />
-  <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="deleteTargetedPlanet" />
+  <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="(id) => deleteTargetedPlanet(id)" />
 </template>
 
 <script setup lang="ts">
-import PlanetCardElement from '@/components/elements/PlanetCardElement.vue'
-import AppNavigation from '@/components/main/AppNavigation.vue'
-import InlineFooter from '@/components/main/InlineFooter.vue'
-import AppPlanetInfoDialog from '@/components/dialogs/AppPlanetInfoDialog.vue'
-import AppDeleteConfirmDialog from '@components/dialogs/AppDeleteConfirmDialog.vue'
-import { idb, type IDBPlanet } from '@/dexie.config'
-import { useHead } from '@unhead/vue'
-import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { RouterLink } from 'vue-router'
-import { EventBus } from '@/core/event-bus'
-import { MD_WIDTH_THRESHOLD, SM_WIDTH_THRESHOLD } from '@/core/globals'
-import pako from 'pako'
-import { saveAs } from 'file-saver'
-import PlanetData from '@/core/models/planet-data.model'
-import JSZip from 'jszip'
-import NewCardElement from '@/components/elements/NewCardElement.vue'
-import { readFileData } from '@/core/helpers/import.helper'
-import { nanoid } from 'nanoid'
-import { uwuifyPath } from '@/core/extras'
+import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue';
+import InlineFooter from '@components/global/InlineFooter.vue';
+import AppPlanetInfoDialog from '@components/codex/dialogs/PlanetInfoDialog.vue';
+import AppDeleteConfirmDialog from '@components/codex/dialogs/DeleteConfirmDialog.vue';
+import { idb, type IDBPlanet } from '@/dexie.config';
+import { useHead } from '@unhead/vue';
+import { onMounted, onUnmounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { EventBus } from '@core/event-bus';
+import { SM_WIDTH_THRESHOLD } from '@core/globals';
+import pako from 'pako';
+import { saveAs } from 'file-saver';
+import PlanetData from '@core/models/planet-data.model';
+import JSZip from 'jszip';
+import NewCardElement from '@/components/codex/elements/NewCardElement.vue';
+import { readFileData } from '@core/helpers/import.helper';
+import { nanoid } from 'nanoid';
+import { EXTRAS_METAL_SLUG_MODE, uwuifyPath } from '@core/extras';
+import ViewHeader from '@/components/global/ViewHeader.vue';
+import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvLink from '@/_lib/components/LgvLink.vue';
 
-const i18n = useI18n()
-const fileInput: Ref<HTMLInputElement | null> = ref(null)
-const planets: Ref<IDBPlanet[]> = ref([])
+const planets: Ref<IDBPlanet[]> = ref([]);
 
-const planetInfoDialogRef: Ref<{ open: (planet: IDBPlanet) => void } | null> = ref(null)
+const i18n = useI18n();
+const fileInput = useTemplateRef('fileInput');
+const planetCardRefs = useTemplateRef('planetCardRef');
+const planetInfoDialogRef = useTemplateRef('planetInfoDialogRef');
 
-const deleteTarget: Ref<IDBPlanet | null> = ref(null)
-const deleteDialogRef: Ref<{ open: (planetName: string) => void } | null> = ref(null)
-const showCompactNavigation: Ref<boolean> = ref(false)
-const showInlineFooter: Ref<boolean> = ref(false)
+const deleteDialogRef = useTemplateRef('deleteDialogRef');
+const showInlineFooter: Ref<boolean> = ref(false);
 
 useHead({
   title: i18n.t('codex.$title') + ' · ' + i18n.t('main.$title'),
   meta: [{ name: 'description', content: 'Planet editor' }],
-})
+});
 
 onMounted(async () => {
-  computeResponsiveness()
-  await loadPlanets()
-  EventBus.registerWindowEventListener('click', onWindowClick)
-  EventBus.registerWindowEventListener('resize', onWindowResize)
-})
+  computeResponsiveness();
+  await loadPlanets();
+  EventBus.registerWindowEventListener('click', onWindowClick);
+  EventBus.registerWindowEventListener('resize', onWindowResize);
+});
 onUnmounted(() => {
-  EventBus.deregisterWindowEventListener('click', onWindowClick)
-  EventBus.deregisterWindowEventListener('resize', onWindowResize)
-})
+  EventBus.deregisterWindowEventListener('click', onWindowClick);
+  EventBus.deregisterWindowEventListener('resize', onWindowResize);
+});
 
 watch(
   () => EventBus.clearEvent.value,
   async () => await loadPlanets(),
-)
+);
 
 async function loadPlanets() {
-  const idbPlanets = await idb.planets.orderBy('data._planetName').toArray()
-  planets.value = idbPlanets.map((pl) => ({ ...pl, data: PlanetData.createFrom(pl.data) }))
+  const idbPlanets = await idb.planets.orderBy('data._planetName').toArray();
+  planets.value.splice(0);
+  planets.value.push(...idbPlanets.map((pl) => ({ ...pl, data: PlanetData.createFrom(pl.data) })));
 }
 
 // ------------------------------------------------------------------------------------------------
 
 async function onWindowClick(event: MouseEvent) {
-  EventBus.sendClickEvent(event)
+  EventBus.sendClickEvent(event);
 }
 function onWindowResize() {
-  computeResponsiveness()
+  computeResponsiveness();
 }
 
 function computeResponsiveness() {
-  showCompactNavigation.value = window.innerWidth < MD_WIDTH_THRESHOLD
-  showInlineFooter.value = window.innerWidth < SM_WIDTH_THRESHOLD
+  showInlineFooter.value = window.innerWidth < SM_WIDTH_THRESHOLD;
 }
 
 // ------------------------------------------------------------------------------------------------
 
 function openFileDialog() {
-  fileInput.value?.click()
+  fileInput.value?.click();
 }
 
 async function importPlanetFile(event: Event) {
-  const files = (event.target as HTMLInputElement).files
+  const files = (event.target as HTMLInputElement).files;
   if (!files || files?.length === 0) {
-    console.warn('<Lagrange> At least one file should be specified!')
-    return
+    console.warn('<Lagrange> At least one file should be specified!');
+    return;
   }
 
   const readPromises = Array.from(files).map((f) => {
-    const reader = new FileReader()
+    const reader = new FileReader();
     return new Promise<IDBPlanet>((resolve, reject) => {
       reader.onload = async (e) => {
-        const data = readFileData(e.target?.result as ArrayBuffer)
+        const data = readFileData(e.target?.result as ArrayBuffer);
         if (data) {
-          resolve(data)
+          resolve(data);
         } else {
-          reject()
+          reject();
         }
-      }
-      reader.readAsArrayBuffer(f)
-    })
-  })
+      };
+      reader.readAsArrayBuffer(f);
+    });
+  });
 
   try {
-    const newPlanets: PromiseSettledResult<IDBPlanet>[] = await Promise.allSettled(readPromises)
-    const rejectedFiles = newPlanets.filter((p) => p.status === 'rejected')
+    const newPlanets: PromiseSettledResult<IDBPlanet>[] = await Promise.allSettled(readPromises);
+    const rejectedFiles = newPlanets.filter((p) => p.status === 'rejected');
     if (rejectedFiles.length === newPlanets.length) {
-      EventBus.sendToastEvent('warn', 'toast.import_failure', 3000)
-      return
+      EventBus.sendToastEvent('warn', 'toast.import_failure', 3000);
+      return;
     }
 
     const allAdded = await idb.planets.bulkAdd(
@@ -164,62 +169,74 @@ async function importPlanetFile(event: Event) {
         .filter((np) => np.status === 'fulfilled')
         .map((np: PromiseSettledResult<IDBPlanet>) => (np as PromiseFulfilledResult<IDBPlanet>).value)
         .map((np) => ({ ...np, id: nanoid(), timestamp: Date.now(), version: np.version ?? '1' })),
-    )
+    );
     if (allAdded && rejectedFiles.length === 0) {
-      EventBus.sendToastEvent('success', 'toast.import_success', 3000)
+      EventBus.sendToastEvent('success', 'toast.import_success', 3000);
     } else {
-      EventBus.sendToastEvent('warn', 'toast.import_partial', 3000)
+      EventBus.sendToastEvent('warn', 'toast.import_partial', 3000);
     }
   } catch (_) {
-    EventBus.sendToastEvent('warn', 'toast.import_partial', 3000)
+    EventBus.sendToastEvent('warn', 'toast.import_partial', 3000);
   } finally {
-    await loadPlanets()
-    fileInput.value!.value = ''
+    await loadPlanets();
+    fileInput.value!.value = '';
   }
 }
 
 async function exportPlanets() {
-  const idbZip = new JSZip()
+  const idbZip = new JSZip();
   for (const planet of planets.value) {
-    const json = JSON.stringify(planet)
-    const deflated = pako.deflate(json)
-    const planetFilename = planet.data.planetName.replaceAll(' ', '_') + '.lagrange'
-    idbZip.file(planetFilename, deflated)
+    const json = JSON.stringify(planet);
+    const deflated = pako.deflate(json);
+    const planetFilename = planet.data.planetName.replaceAll(' ', '_') + '.lagrange';
+    idbZip.file(planetFilename, deflated);
   }
-  const generatedZip = await idbZip.generateAsync({ type: 'blob' })
-  saveAs(generatedZip, `lagrange-${import.meta.env.APP_VERSION}-planets-${new Date().toISOString()}.zip`)
+  const generatedZip = await idbZip.generateAsync({ type: 'blob' });
+  saveAs(generatedZip, `lagrange-${import.meta.env.APP_VERSION}-planets-${new Date().toISOString()}.zip`);
 }
 
 function exportPlanet(planet: IDBPlanet) {
-  planet.data.changedProps.splice(0)
-  const jsonParams = JSON.stringify(planet)
-  const gzipParams = pako.deflate(jsonParams)
-  const planetFilename = planet.data.planetName.replaceAll(' ', '_')
-  saveAs(new Blob([gzipParams as BufferSource]), `${planetFilename}.lagrange`)
+  planet.data.changedProps.splice(0);
+  const jsonParams = JSON.stringify(planet);
+  const gzipParams = pako.deflate(jsonParams);
+  const planetFilename = planet.data.planetName.replaceAll(' ', '_');
+  saveAs(new Blob([gzipParams as BufferSource]), `${planetFilename}.lagrange`);
 }
 
 async function openPlanetInfoDialog(planet: IDBPlanet) {
-  planetInfoDialogRef.value?.open(planet)
+  planetInfoDialogRef.value?.open(planet);
 }
 
 async function openDeleteConfirmDialog(planet: IDBPlanet) {
-  deleteTarget.value = planet
-  deleteDialogRef.value?.open(deleteTarget.value.data.planetName)
+  deleteDialogRef.value?.open(planet);
 }
 
-async function deleteTargetedPlanet() {
-  try {
-    await idb.planets.delete(deleteTarget.value!.id)
-    EventBus.sendToastEvent('success', 'toast.delete_success', 3000)
-  } catch (_) {
-    EventBus.sendToastEvent('warn', 'toast.delete_failure', 3000)
-  } finally {
-    await loadPlanets()
+async function deleteTargetedPlanet(id: string) {
+  const settings = await idb.settings.limit(1).first();
+  if (EXTRAS_METAL_SLUG_MODE.value && settings!.enableAnimations && settings?.enableEffects) {
+    await planetCardRefs.value!.find((c) => c!.planet.id === id)?.obliteratePlanet();
+    try {
+      await idb.planets.delete(id);
+      EventBus.sendToastEvent('success', 'toast.extras_obliterate_success', 3000);
+    } catch (_) {
+      EventBus.sendToastEvent('warn', 'toast.extras_obliterate_failure', 3000);
+    } finally {
+      await loadPlanets();
+    }
+  } else {
+    try {
+      await idb.planets.delete(id);
+      EventBus.sendToastEvent('success', 'toast.delete_success', 3000);
+    } catch (_) {
+      EventBus.sendToastEvent('warn', 'toast.delete_failure', 3000);
+    } finally {
+      await loadPlanets();
+    }
   }
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 #codex-background {
   z-index: -1;
   position: fixed;
@@ -230,54 +247,19 @@ async function deleteTargetedPlanet() {
   background-repeat: repeat;
 }
 #codex-header {
-  z-index: 15;
   position: fixed;
-  backdrop-filter: blur(8px) brightness(25%);
-  inset: 0 0 auto 0;
 
-  padding: 1rem;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-
-  #codex-header-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-
-  &.compact {
-    justify-content: space-between;
-  }
-
-  a.create-planet {
-    height: 2.75rem;
-    padding: 0.5rem 1rem;
-    background: var(--lg-primary);
-    border: 1px solid var(--lg-accent);
-    border-radius: 4px;
-    text-decoration: none;
-  }
-  a.create-planet:hover {
-    background: var(--lg-button-active);
-  }
-  hr {
-    height: 1.5rem;
+  #codex-header-controls-newplanet {
+    font-size: 0.875rem;
   }
 }
 #codex-grid {
-  padding-bottom: 3.75rem;
-  margin: 4.75rem 1rem 1rem;
+  margin: 4rem 1rem 4rem;
   height: calc(100% - 4.75rem);
-  border-radius: 4px;
 
   display: grid;
-  grid-template-rows: repeat(auto-fill, 26rem);
   grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
-  gap: 1rem;
+  gap: 2rem;
 
   &.empty {
     font-style: italic;
@@ -287,6 +269,7 @@ async function deleteTargetedPlanet() {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    flex-grow: 1;
 
     span {
       padding: 0 1rem;
@@ -306,34 +289,13 @@ async function deleteTargetedPlanet() {
   #codex-background {
     background-image: url('/background/space-960w.jpg');
   }
-  #codex-header {
-    inset: auto 0;
-    padding: 0.5rem;
-    :deep(aside) {
-      left: 3.875rem;
-    }
-    #codex-header-controls {
-      justify-content: flex-end;
-    }
-  }
-  #codex-grid {
-    padding-bottom: 3.25rem;
-    margin: 3.75rem 0.5rem 0.5rem;
-  }
 }
 @media screen and (max-width: 767px) {
-  #codex-header {
-    :deep(aside) {
-      left: unset;
-      top: 3.75rem;
-    }
-  }
   #codex-background {
     background-image: url('/background/space-540w.jpg');
   }
   #codex-grid {
-    margin: 3.75rem 0.5rem 0;
-    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
   }
   #codex-footer {
     padding: 0 0.5rem 0.5rem;

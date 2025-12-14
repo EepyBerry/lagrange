@@ -1,8 +1,8 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from 'node:url';
 
-import { defineConfig } from 'vite'
-import vue, { Options } from '@vitejs/plugin-vue'
-import { visualizer } from 'rollup-plugin-visualizer'
+import { defineConfig } from 'vite';
+import vue, { Options } from '@vitejs/plugin-vue';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 const vuePluginConfig: Options = {
   template: {
@@ -10,7 +10,7 @@ const vuePluginConfig: Options = {
       isCustomElement: (tag) => tag.startsWith('iconify-'),
     },
   },
-}
+};
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -52,4 +52,4 @@ export default defineConfig({
       'top-level-await': true,
     },
   },
-})
+});

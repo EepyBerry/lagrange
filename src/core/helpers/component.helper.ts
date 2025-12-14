@@ -1,18 +1,24 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { degToRad } from 'three/src/math/MathUtils.js'
-import { loadCubeTexture, createRampTexture, createBiomeTexture } from './texture.helper'
+import * as TextureHelper from './texture.helper'
 import type PlanetData from '../models/planet-data.model'
 import { type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type RingMeshData, EditorSceneCreationMode } from '../types'
 import { LensFlareEffect } from '../effects/lens-flare.effect'
 import * as Globals from '@core/globals'
-import { WebGPURenderer } from 'three/webgpu'
-import { PlanetTSLMaterial } from '@/core/tsl/materials/planet.tslmat'
-import { AtmosphereTSLMaterial } from '@/core/tsl/materials/atmosphere.tslmat'
-import { CloudsTSLMaterial } from '@/core/tsl/materials/clouds.tslmat'
-import { RingTSLMaterial } from '@/core/tsl/materials/ring.tslmat'
+import { NodeMaterial, WebGPURenderer } from 'three/webgpu'
+import { PlanetTSLMaterial } from '@core/tsl/materials/planet.tslmat'
+import { AtmosphereTSLMaterial } from '@core/tsl/materials/atmosphere.tslmat'
+import { CloudsTSLMaterial } from '@core/tsl/materials/clouds.tslmat'
+import { RingTSLMaterial } from '@core/tsl/materials/ring.tslmat'
 import { idb } from '@/dexie.config'
-import { convertToCloudsUniformData, convertToPlanetUniformData } from '../models/converters/planet-data.converter'
+import { LayeredDataTexture } from '../utils/texture/layered-data-texture'
+import type { BiomeParameters } from '../models/biome-parameters.model'
+import { PlanetDataConverter } from '../models/converters/planet-data.converter'
+import { CloudsDataConverter } from '../models/converters/clouds-data.converter'
+import { RingDataConverter } from '../models/converters/ring-data.converter'
+import { AtmosphereDataConverter } from '../models/converters/atmosphere-data.converter'
+import type { RingParameters } from '../models/ring-parameters.model'
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -25,7 +31,7 @@ export async function createScene(data: PlanetData, width: number, height: numbe
   // setup cubemap
   const scene = new THREE.Scene()
   if (creationMode === EditorSceneCreationMode.EDITOR) {
-    scene.background = loadCubeTexture('/skybox/', [
+    scene.background = TextureHelper.loadCubeTexture('/skybox/', [
       'space_ft.png',
       'space_bk.png',
       'space_up.png',
@@ -38,7 +44,7 @@ export async function createScene(data: PlanetData, width: number, height: numbe
 
   // Make spherical before creating camera
   const spherical = creationMode === EditorSceneCreationMode.PREVIEW
-    ? new THREE.Spherical(data.initCamDistance - (data.ringsEnabled ? 0.75 : 1.5), Math.PI / 2.0, degToRad(data.initCamAngle))
+    ? new THREE.Spherical(data.initCamDistance - 1.5,Math.PI / 2.0, degToRad(data.initCamAngle))
     : new THREE.Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle))
 
   // setup scene (renderer, cam, lighting)
@@ -75,14 +81,28 @@ export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THR
   })
 }
 
-export type CreatePlanetOptions = { mode: CreatePlanetMode, heightMapTex?: THREE.Texture }
-export enum CreatePlanetMode { EDITOR, BAKING_SURFACE, BAKING_PBR, BAKING_HEIGHTMAP, BAKING_NORMALMAP }
-export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeTexBuf: Uint8Array): PlanetMeshData {
+export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): PlanetMeshData {
   const geometry = createSphereGeometryComponent(data.planetMeshQuality)
-  const surfaceTex = createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
-  const biomeTex = createBiomeTexture(biomeTexBuf, Globals.TEXTURE_SIZES.BIOME, data.biomesParams)
+  const surfaceTex = TextureHelper.createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
+  const biomeLayersTex = new LayeredDataTexture<BiomeParameters>(
+    Globals.TEXTURE_SIZES.BIOME,
+    Globals.TEXTURE_SIZES.BIOME,
+    data.biomesParams,
+    TextureHelper.fillBiomeLayer
+  )
+  const biomeEmissivityLayersTex = new LayeredDataTexture<BiomeParameters>(
+    Globals.TEXTURE_SIZES.BIOME,
+    Globals.TEXTURE_SIZES.BIOME,
+    data.biomesParams,
+    TextureHelper.fillBiomeEmissivityLayer
+  )
+  //setTimeout(() => biomeEmissivityLayersTex.debugSaveTexture(), 10000)
 
-  const tslMaterial = new PlanetTSLMaterial(convertToPlanetUniformData(data, surfaceTex, biomeTex))
+  const dataConverter = new PlanetDataConverter(data)
+    .withSurfaceTexture(surfaceTex)
+    .withBiomesTexture(biomeLayersTex.texture)
+    .withBiomesEmissiveTexture(biomeEmissivityLayersTex.texture)
+  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert())
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
@@ -93,17 +113,17 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, biomeT
     uniforms: tslMaterial.uniforms,
     surfaceBuffer: surfaceTexBuf,
     surfaceTexture: surfaceTex,
-    biomesBuffer: biomeTexBuf,
-    biomesTexture: biomeTex,
+    biomeLayersTexture: biomeLayersTex,
+    biomeEmissiveLayersTexture: biomeEmissivityLayersTex
   }
 }
 
 export function createClouds(data: PlanetData, textureBuffer: Uint8Array): CloudsMeshData {
-  const cloudsHeight = data.cloudsHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
-  const geometry = createSphereGeometryComponent(data.planetMeshQuality, cloudsHeight)
-  const opacityTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
+  const geometry = createSphereGeometryComponent(data.planetMeshQuality, data.cloudsHeight)
+  const texture = TextureHelper.createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
 
-  const tslMaterial = new CloudsTSLMaterial(convertToCloudsUniformData(data, opacityTex))
+  const dataConverter = new CloudsDataConverter(data, texture)
+  const tslMaterial = new CloudsTSLMaterial(dataConverter.convert())
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.castShadow = true
   mesh.receiveShadow = true
@@ -113,32 +133,18 @@ export function createClouds(data: PlanetData, textureBuffer: Uint8Array): Cloud
     mesh,
     uniforms: tslMaterial.uniforms,
     buffer: textureBuffer,
-    texture: opacityTex,
+    texture,
   }
 }
 
 export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): AtmosphereMeshData {
+  // note: geometry is scaled via the planetGroup: always set to [1.0 + height]
   const geometry = createSphereGeometryComponent(
     data.planetMeshQuality,
-    data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER
+    1.0 + data.atmosphereHeight
   )
-  const tslMaterial = new AtmosphereTSLMaterial({
-    sunlight: {
-      position: sunPos,
-      intensity: data.sunLightIntensity
-    },
-    transform: {
-      radius: data.planetRadius + (data.atmosphereHeight / Globals.ATMOSPHERE_HEIGHT_DIVIDER),
-      surfaceRadius: data.planetRadius,
-    },
-    render: {
-      density: data.atmosphereDensityScale,
-      intensity: data.atmosphereIntensity,
-      colorMode: data.atmosphereColorMode,
-      hue: data.atmosphereHue,
-      tint: data.atmosphereTint,
-    }
-  })
+  const dataConverter = new AtmosphereDataConverter(data, sunPos)
+  const tslMaterial = new AtmosphereTSLMaterial(dataConverter.convert())
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.userData.lens = 'no-occlusion'
   mesh.name = Globals.LG_MESH_NAME_ATMOSPHERE
@@ -152,17 +158,14 @@ export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): Atmos
 
 export function createRing(
   data: PlanetData,
-  paramsIndex: number,
+  ringParams: RingParameters,
 ): RingMeshData {
   const textureBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
-  const ringParams = data.ringsParams[paramsIndex]
-  const ringTex = createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
   const geometry = createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
-  const tslMaterial = new RingTSLMaterial({
-    innerRadius: ringParams.innerRadius,
-    outerRadius: ringParams.outerRadius,
-    texture: ringTex
-  })
+  const ringTex = TextureHelper.createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
+
+  const dataConverter = new RingDataConverter(ringParams, ringTex)
+  const tslMaterial = new RingTSLMaterial(dataConverter.convert())
 
   const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
   mesh.name = ringParams.id
@@ -174,6 +177,21 @@ export function createRing(
     buffer: textureBuffer,
     texture: ringTex,
   }
+}
+export function disposeRing(data: PlanetData, ringAnchor: THREE.Group, ringsData: RingMeshData[], ringParams: RingParameters) {
+  // get ring data + mesh
+  const ringParamsIdx = data.ringsParams.findIndex((b) => b.id === ringParams.id);
+  const ringMeshData = ringsData.find(r => r.mesh!.name === ringParams.id);
+  if (ringParamsIdx < 0 || !ringMeshData) {
+    throw new Error("Cannot delete non-existent ring of ID: " + ringParams.id)
+  }
+  // delete ring
+  data.ringsParams.splice(ringParamsIdx, 1);
+  ringAnchor.remove(ringMeshData.mesh!);
+  (ringMeshData.mesh!.material as NodeMaterial).dispose();
+  ringMeshData.mesh!.geometry.dispose();
+  ringMeshData.texture!.dispose();
+  ringMeshData.buffer = null;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------
@@ -254,8 +272,8 @@ export function createAmbientLight(color: THREE.ColorRepresentation, intensity: 
   return light
 }
 
-export function createSphereGeometryComponent(quality: number, addtlRadius: number = 0): THREE.SphereGeometry {
-  return new THREE.SphereGeometry(1.0 + addtlRadius, quality, quality / 2.0)
+export function createSphereGeometryComponent(quality: number, radius: number = 1.0): THREE.SphereGeometry {
+  return new THREE.SphereGeometry(radius, quality, quality / 2.0)
 }
 
 export function createRingGeometryComponent(

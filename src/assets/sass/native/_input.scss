@@ -1,29 +1,27 @@
-input.lg {
+input {
   background: transparent;
   background: var(--lg-input);
   border: 1px solid var(--lg-accent);
-  border-radius: 4px;
+  border-radius: 2px;
   padding-left: 4px;
   padding-right: 4px;
   color: var(--lg-text);
   min-height: 1.5rem;
-}
-input.lg {
   -moz-appearance: textfield;
 }
-input.lg::-webkit-outer-spin-button,
-input.lg::-webkit-inner-spin-button {
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input.lg[type='checkbox'] {
+input[type='checkbox'] {
   accent-color: var(--lg-contrast);
   width: 1rem;
 }
 
 @media screen and (max-width: 767px) {
-  input.lg[type='checkbox'] {
+  input[type='checkbox'] {
     accent-color: var(--lg-contrast);
     width: 1.375rem;
   }
