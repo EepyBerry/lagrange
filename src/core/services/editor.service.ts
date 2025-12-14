@@ -89,33 +89,6 @@ export function updateCameraRendering(w: number, h: number) {
 //                                         SCENE MANAGEMENT                                         //
 // ------------------------------------------------------------------------------------------------ //
 
-export function updateRingMeshes() {
-  const ringsMeshData = editorSceneData.rings!;
-  const ringsParams = LG_PLANET_DATA.value.ringsParams;
-
-  // Remove old ring meshes
-  ringsMeshData
-    .filter((meshData) => !ringsParams.some((params) => params.id === meshData.mesh!.name))
-    .forEach((data) => {
-      (data.mesh!.material as THREE.Material).dispose();
-      data.mesh!.geometry.dispose();
-      data.texture!.dispose();
-      data.buffer = null;
-    });
-  ringsMeshData.splice(0);
-  editorSceneData.ringAnchor!.clear();
-
-  // Create new ring meshes
-  ringsParams
-    .filter((params) => !ringsMeshData.some((p) => p.mesh!.name === params.id))
-    .forEach((params) => {
-      const newRing = ComponentHelper.createRing(LG_PLANET_DATA.value, params);
-      ringsMeshData.push(newRing);
-      editorSceneData.ringAnchor!.add(newRing.mesh!);
-    });
-  editorSceneData.ringAnchor.visible = LG_PLANET_DATA.value.ringsEnabled;
-}
-
 function updateScene() {
   if (watchForPlanetUpdates && LG_PLANET_DATA.value.changedProps.length > 0 && !hasPlanetBeenEdited.value) {
     console.debug('<Lagrange> Planet has been edited, warning user in case of unsaved data');

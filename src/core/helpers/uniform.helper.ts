@@ -241,7 +241,10 @@ function registerAtmosphereDataUpdates(data: PlanetData, atmosphere: AtmosphereM
 
 // prettier-ignore
 function registerRingsDataUpdates(data: PlanetData, ringAnchor: Group, ringsMeshData: RingMeshData[]): void {
-  UNIFORM_UPDATE_MAP.value.set('_ringsEnabled', () => ringAnchor.visible = data.ringsEnabled)
+  UNIFORM_UPDATE_MAP.value.set('_ringsEnabled', () => {
+    ringAnchor.visible = data.ringsEnabled
+    ringAnchor.children.forEach(r => r.visible = data.ringsEnabled)
+  })
   UNIFORM_UPDATE_MAP.value.set('_ringsParams', (source, action) => {
     switch (action) {
       case ChangeAction.ADD: {
