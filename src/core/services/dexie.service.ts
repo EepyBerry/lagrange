@@ -1,6 +1,6 @@
-import { idb, KeyBindingAction, type IDBSettings } from '@/dexie.config'
-import { prefersReducedMotion } from '../utils/utils'
-import { I18N_SUPPORTED_LANGS } from '@/i18n.config'
+import { idb, KeyBindingAction, type IDBSettings } from '@/dexie.config';
+import { prefersReducedMotion } from '../utils/utils';
+import { I18N_SUPPORTED_LANGS } from '@/i18n.config';
 
 export async function initDefaultSettings(): Promise<void> {
   idb.settings.put({
@@ -21,7 +21,7 @@ export async function initDefaultSettings(): Promise<void> {
     extrasHologramEffect: false,
     extrasMetalSlugMode: false,
     extrasShowSpecialDays: true,
-  })
+  });
 }
 
 export async function addDefaultKeyBindings(): Promise<void> {
@@ -31,7 +31,7 @@ export async function addDefaultKeyBindings(): Promise<void> {
     { action: KeyBindingAction.ToggleClouds, key: 'C' },
     { action: KeyBindingAction.ToggleAtmosphere, key: 'A' },
     { action: KeyBindingAction.TakeScreenshot, key: 'X' },
-  ])
+  ]);
 }
 
 export async function injectMissingSettings(settings: IDBSettings): Promise<void> {
@@ -53,18 +53,18 @@ export async function injectMissingSettings(settings: IDBSettings): Promise<void
     extrasHologramEffect: settings.extrasHologramEffect ?? false,
     extrasMetalSlugMode: settings.extrasMetalSlugMode ?? false,
     extrasShowSpecialDays: settings.extrasShowSpecialDays ?? true,
-  })
+  });
 }
 
 export async function setRenderingBackendFallback() {
-  const settings = await idb.settings.limit(1).first()
+  const settings = await idb.settings.limit(1).first();
   idb.settings.update(settings!.id, {
     renderingBackend: 'webgl',
-  })
+  });
 }
 
 export async function clearData(): Promise<void> {
-  const settings = await idb.settings.limit(1).toArray()
+  const settings = await idb.settings.limit(1).toArray();
   await idb.settings.update(settings[0].id, {
     // general
     theme: 'default',
@@ -82,28 +82,28 @@ export async function clearData(): Promise<void> {
     extrasCRTEffect: false,
     extrasHologramEffect: false,
     extrasMetalSlugMode: false,
-  })
-  await idb.keyBindings.clear()
-  await addDefaultKeyBindings()
-  await idb.planets.clear()
+  });
+  await idb.keyBindings.clear();
+  await addDefaultKeyBindings();
+  await idb.planets.clear();
 }
 
 export async function initStoragePersistence() {
   try {
-    const persist = await tryPersistWithoutPromptingUser()
+    const persist = await tryPersistWithoutPromptingUser();
     switch (persist) {
       case 'never':
-        console.warn('<Lagrange> Cannot persist storage, continuing in best-effort mode.')
-        break
+        console.warn('<Lagrange> Cannot persist storage, continuing in best-effort mode.');
+        break;
       case 'persisted':
-        console.info('<Lagrange> Successfully persisted storage silently!')
-        break
+        console.info('<Lagrange> Successfully persisted storage silently!');
+        break;
       case 'prompt':
-        console.warn('<Lagrange> Storage not persisted, user should be prompted first')
-        break
+        console.warn('<Lagrange> Storage not persisted, user should be prompted first');
+        break;
     }
   } catch (_error) {
-    console.error('<Lagrange> Failed to persist storage despite granted permission, continuing in best-effort mode.')
+    console.error('<Lagrange> Failed to persist storage despite granted permission, continuing in best-effort mode.');
   }
 }
 
@@ -117,28 +117,28 @@ export async function initStoragePersistence() {
 */
 export async function tryPersistWithoutPromptingUser(): Promise<string> {
   if (!navigator.storage || !navigator.storage.persisted) {
-    return 'never'
+    return 'never';
   }
-  let persisted = await navigator.storage.persisted()
+  let persisted = await navigator.storage.persisted();
   if (persisted) {
-    return 'persisted'
+    return 'persisted';
   }
   if (!navigator.permissions || !navigator.permissions.query) {
-    return 'prompt' // It MAY be successful to prompt. Don't know.
+    return 'prompt'; // It MAY be successful to prompt. Don't know.
   }
   const permission = await navigator.permissions.query({
     name: 'persistent-storage',
-  })
+  });
   if (permission.state === 'granted') {
-    persisted = await navigator.storage.persist()
+    persisted = await navigator.storage.persist();
     if (persisted) {
-      return 'persisted'
+      return 'persisted';
     } else {
-      throw new Error('Failed to persist local storage')
+      throw new Error('Failed to persist local storage');
     }
   }
   if (permission.state === 'prompt') {
-    return 'prompt'
+    return 'prompt';
   }
-  return 'never'
+  return 'never';
 }

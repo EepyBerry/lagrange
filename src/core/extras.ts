@@ -1,17 +1,17 @@
-import { DateTime } from 'luxon'
-import { ref, type Ref } from 'vue'
+import { DateTime } from 'luxon';
+import { ref, type Ref } from 'vue';
 
-export const EXTRAS_CRT_EFFECT = ref(false)
-export const EXTRAS_HOLOGRAM_EFFECT = ref(true)
-export const EXTRAS_METAL_SLUG_MODE = ref(false)
-export const EXTRAS_SPECIAL_DAYS = ref(true)
-export const EXTRAS_CAT_MODE: Ref<boolean> = ref(false)
+export const EXTRAS_CRT_EFFECT = ref(false);
+export const EXTRAS_HOLOGRAM_EFFECT = ref(true);
+export const EXTRAS_METAL_SLUG_MODE = ref(false);
+export const EXTRAS_SPECIAL_DAYS = ref(true);
+export const EXTRAS_CAT_MODE: Ref<boolean> = ref(false);
 
-export type SpecialDayInfo = { emoji: string[]; translationKey: string; overlayMode?: number }
+export type SpecialDayInfo = { emoji: string[]; translationKey: string; overlayMode?: number };
 
 export function uwuifyPath(path: string): string {
-  if (!EXTRAS_CAT_MODE.value) return path
-  return path + '?uwu'
+  if (!EXTRAS_CAT_MODE.value) return path;
+  return path + '?uwu';
 }
 
 // prettier-ignore
@@ -46,10 +46,10 @@ export function checkSpecialDay(): SpecialDayInfo | undefined {
 }
 
 export function getSpecialOverlay(mode?: number): { [key: string]: boolean } | undefined {
-  if (!mode) return
+  if (!mode) return;
   switch (mode) {
     case 1:
-      return { 'overlay-1': true }
+      return { 'overlay-1': true };
   }
-  return undefined
+  return undefined;
 }

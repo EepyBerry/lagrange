@@ -14,9 +14,9 @@
 </template>
 
 <script setup lang="ts">
-type AcceptedType = string | number | boolean
-const lgParam = defineModel<AcceptedType>()
-defineProps<{ id: string; trueValue: AcceptedType; falseValue: AcceptedType; disabled?: boolean }>()
+type AcceptedType = string | number | boolean;
+const lgParam = defineModel<AcceptedType>();
+defineProps<{ id: string; trueValue: AcceptedType; falseValue: AcceptedType; disabled?: boolean }>();
 </script>
 
 <style scoped lang="scss">

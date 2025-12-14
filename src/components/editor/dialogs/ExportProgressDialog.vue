@@ -28,37 +28,37 @@
   </DialogElement>
 </template>
 <script setup lang="ts">
-import { ref, type Ref } from 'vue'
-import DialogElement from '@components/global/elements/DialogElement.vue'
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
+import { ref, type Ref } from 'vue';
+import DialogElement from '@components/global/elements/DialogElement.vue';
+const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
 
-const bakingSteps = 8
-const _progressStep: Ref<number> = ref(1)
-const _progressError: Ref<unknown> = ref(undefined)
+const bakingSteps = 8;
+const _progressStep: Ref<number> = ref(1);
+const _progressError: Ref<unknown> = ref(undefined);
 
 function open() {
-  dialogRef.value?.open()
-  _progressError.value = undefined
-  setProgress(1)
+  dialogRef.value?.open();
+  _progressError.value = undefined;
+  setProgress(1);
 }
 function setProgress(value: number) {
-  if (_progressError.value) return
+  if (_progressError.value) return;
 
-  _progressStep.value = value
+  _progressStep.value = value;
   if (value === bakingSteps) {
-    setTimeout(dialogRef.value!.close, 1000)
+    setTimeout(dialogRef.value!.close, 1000);
   }
 }
 function setError(value: unknown) {
   if (value instanceof Error) {
-    _progressError.value = value + '\n'
+    _progressError.value = value + '\n';
   } else {
-    _progressError.value = value
+    _progressError.value = value;
   }
 }
 
-defineEmits(['close'])
-defineExpose({ open, setProgress, setError })
+defineEmits(['close']);
+defineExpose({ open, setProgress, setError });
 </script>
 <style scoped lang="scss">
 #dialog-exportprogress {

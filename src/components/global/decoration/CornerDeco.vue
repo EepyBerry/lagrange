@@ -7,7 +7,7 @@
   width: 0px;
   height: 0px;
   border-style: solid;
-    
+
   &.tl {
     top: 0;
     left: 0;

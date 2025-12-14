@@ -132,7 +132,7 @@
                       : $t('dialog.settings.editor_rendering_backend_webgpu_notification')
                   }}
                 </LgvNotification>
-                <LgvNotification v-if="!(WebGPU.isAvailable())" type="warn">
+                <LgvNotification v-if="!WebGPU.isAvailable()" type="warn">
                   {{ $t('dialog.settings.editor_rendering_backend_webgpu_unavailable') }}
                 </LgvNotification>
                 <ParameterDivider />
@@ -295,7 +295,7 @@
                   {{ $t('dialog.settings.extras_metal_slug_mode') }}:
                 </ParameterCheckbox>
                 <LgvNotification type="warn">
-                  {{  $t('dialog.settings.extras_metal_slug_mode_warning') }}
+                  {{ $t('dialog.settings.extras_metal_slug_mode_warning') }}
                 </LgvNotification>
                 <ParameterCheckbox
                   id="settings-special-days"
@@ -319,11 +319,7 @@
               <ParameterGrid>
                 <p>{{ $t('dialog.settings.advanced_io') }}:</p>
                 <div id="actions-io">
-                  <LgvButton
-                    class="sm"
-                    icon="mingcute:upload-line"
-                    @click="fileInput?.click()"
-                  >
+                  <LgvButton class="sm" icon="mingcute:upload-line" @click="fileInput?.click()">
                     {{ $t('dialog.settings.advanced_import') }}
                   </LgvButton>
                   <input
@@ -334,11 +330,7 @@
                     @cancel="(evt: Event) => evt.stopImmediatePropagation()"
                     @change="importData"
                   />
-                  <LgvButton
-                    class="sm"
-                    icon="mingcute:download-line"
-                    @click="exportData"
-                  >
+                  <LgvButton class="sm" icon="mingcute:download-line" @click="exportData">
                     {{ $t('dialog.settings.advanced_export') }}
                   </LgvButton>
                 </div>
@@ -349,10 +341,12 @@
                   :disabled="!!persistStorage || failedToPersist"
                   @click="tryPersistStorage"
                 >
-                  {{ $t(
+                  {{
+                    $t(
                       'dialog.settings.advanced_persist_' +
                         (persistStorage ? 'success' : failedToPersist ? 'failure' : 'prompt'),
-                    ) }}
+                    )
+                  }}
                 </LgvButton>
                 <LgvNotification type="info">
                   {{ $t('dialog.settings.advanced_persist_info') }}
@@ -380,38 +374,47 @@
 </template>
 
 <script setup lang="ts">
-import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config'
-import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue'
-import DialogElement from '@components/global/elements/DialogElement.vue'
-import ParameterGrid from '@components/global/parameters/ParameterGrid.vue'
-import ParameterCheckbox from '@components/global/parameters/ParameterCheckbox.vue'
-import ParameterRadio from '@components/global/parameters/ParameterRadio.vue'
-import ParameterDivider from '@components/global/parameters/ParameterDivider.vue'
-import ParameterRadioOption from '@components/global/parameters/ParameterRadioOption.vue'
-import ParameterSelect from '@components/global/parameters/ParameterSelect.vue'
-import { useI18n } from 'vue-i18n'
-import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue'
-import { mapLocale } from '@core/utils/utils'
-import ParameterKeyBinding from '@components/global/parameters/ParameterKeyBinding.vue'
-import LgvNotification from '@/_lib/components/LgvNotification.vue'
-import ParameterCategory from '@components/global/parameters/ParameterCategory.vue'
-import AppClearDataConfirmDialog from '@components/codex/dialogs/ClearDataConfirmDialog.vue'
-import * as DexieService from '@/core/services/dexie.service'
-import { EventBus } from '@core/event-bus'
-import { EXTRAS_CAT_MODE, EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, EXTRAS_METAL_SLUG_MODE, EXTRAS_SPECIAL_DAYS } from '@core/extras'
-import { saveAs } from 'file-saver'
-import { readFileSettings } from '@core/helpers/import.helper'
-import WebGPU from '@/core/capabilities/WebGPU'
-import LgvButton from '@/_lib/components/LgvButton.vue'
+import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config';
+import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import DialogElement from '@components/global/elements/DialogElement.vue';
+import ParameterGrid from '@components/global/parameters/ParameterGrid.vue';
+import ParameterCheckbox from '@components/global/parameters/ParameterCheckbox.vue';
+import ParameterRadio from '@components/global/parameters/ParameterRadio.vue';
+import ParameterDivider from '@components/global/parameters/ParameterDivider.vue';
+import ParameterRadioOption from '@components/global/parameters/ParameterRadioOption.vue';
+import ParameterSelect from '@components/global/parameters/ParameterSelect.vue';
+import { useI18n } from 'vue-i18n';
+import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
+import { mapLocale } from '@core/utils/utils';
+import ParameterKeyBinding from '@components/global/parameters/ParameterKeyBinding.vue';
+import LgvNotification from '@/_lib/components/LgvNotification.vue';
+import ParameterCategory from '@components/global/parameters/ParameterCategory.vue';
+import AppClearDataConfirmDialog from '@components/codex/dialogs/ClearDataConfirmDialog.vue';
+import * as DexieService from '@/core/services/dexie.service';
+import { EventBus } from '@core/event-bus';
+import {
+  EXTRAS_CAT_MODE,
+  EXTRAS_CRT_EFFECT,
+  EXTRAS_HOLOGRAM_EFFECT,
+  EXTRAS_METAL_SLUG_MODE,
+  EXTRAS_SPECIAL_DAYS,
+} from '@core/extras';
+import { saveAs } from 'file-saver';
+import { readFileSettings } from '@core/helpers/import.helper';
+import WebGPU from '@/core/capabilities/WebGPU';
+import LgvButton from '@/_lib/components/LgvButton.vue';
 
-const i18n = useI18n()
-const catModeOverride = ref('en-UwU')
+const i18n = useI18n();
+const catModeOverride = ref('en-UwU');
 
-const dialogRef =  useTemplateRef<{
-  open: () => void; close: () => void; ignoreNativeEvents: (v: boolean) => void; isOpen: boolean
-} | null>('dialogRef')
-const fileInput = useTemplateRef('fileInput')
-const confirmDialogRef = useTemplateRef<{ open: () => void; close: () => void } | null>('confirmDialogRef')
+const dialogRef = useTemplateRef<{
+  open: () => void;
+  close: () => void;
+  ignoreNativeEvents: (v: boolean) => void;
+  isOpen: boolean;
+} | null>('dialogRef');
+const fileInput = useTemplateRef('fileInput');
+const confirmDialogRef = useTemplateRef<{ open: () => void; close: () => void } | null>('confirmDialogRef');
 const appSettings: Ref<IDBSettings> = ref({
   id: 0,
   locale: 'en-US',
@@ -427,105 +430,105 @@ const appSettings: Ref<IDBSettings> = ref({
   extrasHologramEffect: false,
   extrasMetalSlugMode: false,
   extrasShowSpecialDays: true,
-})
-const persistStorage: Ref<boolean> = ref(false)
-const failedToPersist: Ref<boolean> = ref(false)
-const selectedAction: Ref<string | null> = ref(null)
-const keyBinds: Ref<IDBKeyBinding[]> = ref([])
+});
+const persistStorage: Ref<boolean> = ref(false);
+const failedToPersist: Ref<boolean> = ref(false);
+const selectedAction: Ref<string | null> = ref(null);
+const keyBinds: Ref<IDBKeyBinding[]> = ref([]);
 
-let dataLoaded = false
+let dataLoaded = false;
 
 defineExpose({
   open: async () => {
     if (!dataLoaded) {
-      await loadData()
-      dataLoaded = true
+      await loadData();
+      dataLoaded = true;
     }
-    dialogRef.value?.open()
+    dialogRef.value?.open();
   },
-})
+});
 
 onMounted(async () => {
   if (navigator.storage) {
-    persistStorage.value = await navigator.storage.persisted()
+    persistStorage.value = await navigator.storage.persisted();
   }
-})
+});
 
 watch(
   [() => appSettings.value, () => dialogRef.value?.isOpen],
   ([_, isDialogOpen]) => {
     if (!dataLoaded) {
-      return
+      return;
     }
-    updateSettings()
+    updateSettings();
     if (!isDialogOpen && selectedAction.value) {
-      const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value)
-      keyBinds.value[kbidx].key = '[unset]'
-      toggleAction(selectedAction.value)
+      const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value);
+      keyBinds.value[kbidx].key = '[unset]';
+      toggleAction(selectedAction.value);
     }
   },
   { deep: true },
-)
+);
 
 async function loadData() {
-  const settings = await idb.settings.limit(1).first()
-  const kb = await idb.keyBindings.toArray()
-  appSettings.value!.locale = i18n.locale.value
-  appSettings.value = settings!
-  keyBinds.value.splice(0)
-  keyBinds.value.push(...kb)
+  const settings = await idb.settings.limit(1).first();
+  const kb = await idb.keyBindings.toArray();
+  appSettings.value!.locale = i18n.locale.value;
+  appSettings.value = settings!;
+  keyBinds.value.splice(0);
+  keyBinds.value.push(...kb);
 }
 
 async function importData(event: Event) {
-  const files = (event.target as HTMLInputElement).files
+  const files = (event.target as HTMLInputElement).files;
   if (!files || files?.length === 0) {
-    console.warn('<Lagrange> At least one file should be specified!')
-    return
+    console.warn('<Lagrange> At least one file should be specified!');
+    return;
   }
-  const data = await readFileSettings(files[0])
-  appSettings.value = data.settings!
-  keyBinds.value.splice(0)
-  keyBinds.value.push(...data.keyBindings)
-  updateSettings()
-  EventBus.sendToastEvent('success', 'toast.settings_import_success', 5000)
+  const data = await readFileSettings(files[0]);
+  appSettings.value = data.settings!;
+  keyBinds.value.splice(0);
+  keyBinds.value.push(...data.keyBindings);
+  updateSettings();
+  EventBus.sendToastEvent('success', 'toast.settings_import_success', 5000);
 }
 
 async function exportData() {
-  const settings = await idb.settings.limit(1).first()
-  const keyBindings = await idb.keyBindings.toArray()
-  saveAs(new Blob([JSON.stringify({ settings, keyBindings }, null, 2)]), 'lagrange_data.json')
+  const settings = await idb.settings.limit(1).first();
+  const keyBindings = await idb.keyBindings.toArray();
+  saveAs(new Blob([JSON.stringify({ settings, keyBindings }, null, 2)]), 'lagrange_data.json');
 }
 
 async function clearAllData() {
-  await DexieService.clearData()
-  await loadData()
-  EventBus.sendDataClearEvent()
+  await DexieService.clearData();
+  await loadData();
+  EventBus.sendDataClearEvent();
 }
 
 function toggleAction(action: string): void {
   if (selectedAction.value === action) {
-    window.removeEventListener('keydown', setSelectedActionKey)
-    dialogRef.value?.ignoreNativeEvents(false)
-    selectedAction.value = null
+    window.removeEventListener('keydown', setSelectedActionKey);
+    dialogRef.value?.ignoreNativeEvents(false);
+    selectedAction.value = null;
   } else {
-    selectedAction.value = action
-    dialogRef.value?.ignoreNativeEvents(true)
-    window.addEventListener('keydown', setSelectedActionKey)
+    selectedAction.value = action;
+    dialogRef.value?.ignoreNativeEvents(true);
+    window.addEventListener('keydown', setSelectedActionKey);
   }
 }
 
 async function updateSettings() {
   if (!EXTRAS_CAT_MODE.value) {
-    i18n.locale.value = appSettings.value!.locale
+    i18n.locale.value = appSettings.value!.locale;
   }
-  document.documentElement.setAttribute('data-theme', appSettings.value!.theme)
-  document.documentElement.setAttribute('data-font', appSettings.value!.font)
-  document.documentElement.setAttribute('data-effects', appSettings.value!.enableEffects ? 'on' : 'off')
-  document.documentElement.setAttribute('data-animations', appSettings.value!.enableAnimations ? 'on' : 'off')
-  EXTRAS_CRT_EFFECT.value = appSettings.value!.extrasCRTEffect!
-  EXTRAS_HOLOGRAM_EFFECT.value = appSettings.value!.extrasHologramEffect!
-  EXTRAS_METAL_SLUG_MODE.value = appSettings.value!.extrasMetalSlugMode!
-  EXTRAS_SPECIAL_DAYS.value = appSettings.value!.extrasShowSpecialDays!
+  document.documentElement.setAttribute('data-theme', appSettings.value!.theme);
+  document.documentElement.setAttribute('data-font', appSettings.value!.font);
+  document.documentElement.setAttribute('data-effects', appSettings.value!.enableEffects ? 'on' : 'off');
+  document.documentElement.setAttribute('data-animations', appSettings.value!.enableAnimations ? 'on' : 'off');
+  EXTRAS_CRT_EFFECT.value = appSettings.value!.extrasCRTEffect!;
+  EXTRAS_HOLOGRAM_EFFECT.value = appSettings.value!.extrasHologramEffect!;
+  EXTRAS_METAL_SLUG_MODE.value = appSettings.value!.extrasMetalSlugMode!;
+  EXTRAS_SPECIAL_DAYS.value = appSettings.value!.extrasShowSpecialDays!;
 
   await idb.settings.update(appSettings.value!.id, {
     locale: mapLocale(appSettings.value!.locale),
@@ -541,27 +544,27 @@ async function updateSettings() {
     extrasHologramEffect: appSettings.value!.extrasHologramEffect,
     extrasMetalSlugMode: appSettings.value!.extrasMetalSlugMode,
     extrasShowSpecialDays: appSettings.value!.extrasShowSpecialDays,
-  })
+  });
 }
 
 async function tryPersistStorage() {
-  const persisted = await navigator.storage.persist()
-  failedToPersist.value = !persisted
-  persistStorage.value = persisted
+  const persisted = await navigator.storage.persist();
+  failedToPersist.value = !persisted;
+  persistStorage.value = persisted;
 }
 
 // ------------------------------------------------------------------------------------------------
 
 async function setSelectedActionKey(event: KeyboardEvent) {
-  const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value)
+  const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value);
   if (['Escape', 'Enter'].includes(event.key)) {
-    toggleAction(keyBinds.value[kbidx].action)
-    return
+    toggleAction(keyBinds.value[kbidx].action);
+    return;
   }
 
-  const alreadyAssignedActions = keyBinds.value.filter((k) => k.key === event.key.toUpperCase())
+  const alreadyAssignedActions = keyBinds.value.filter((k) => k.key === event.key.toUpperCase());
   if (alreadyAssignedActions.length > 0) {
-    alreadyAssignedActions.forEach((k) => (k.key = '[unset]'))
+    alreadyAssignedActions.forEach((k) => (k.key = '[unset]'));
   }
 
   await idb.keyBindings
@@ -570,12 +573,12 @@ async function setSelectedActionKey(event: KeyboardEvent) {
       ...alreadyAssignedActions.map((k) => ({ key: k.id, changes: { key: k.key } })),
     ])
     .then(() => (keyBinds.value[kbidx].key = event.key.toUpperCase()))
-    .catch((e) => console.error('<Lagrange> (Dexie) Keybinds failed to update', e))
-  toggleAction(keyBinds.value[kbidx].action)
+    .catch((e) => console.error('<Lagrange> (Dexie) Keybinds failed to update', e));
+  toggleAction(keyBinds.value[kbidx].action);
 }
 
 function getKeyBind(action: string) {
-  return keyBinds.value.find((kb) => kb.action === action)
+  return keyBinds.value.find((kb) => kb.action === action);
 }
 </script>
 

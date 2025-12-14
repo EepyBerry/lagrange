@@ -16,11 +16,11 @@
 </template>
 
 <script setup lang="ts">
-import InputSliderElement from '@components/global/elements/InputSliderElement.vue'
-const lgParam = defineModel<string | number | boolean>()
+import InputSliderElement from '@components/global/elements/InputSliderElement.vue';
+const lgParam = defineModel<string | number | boolean>();
 
-type SliderExtras = 'rgb' | undefined
-defineProps<{ id: string; step?: number; min?: number; max?: number; extras?: SliderExtras; disabled?: boolean }>()
+type SliderExtras = 'rgb' | undefined;
+defineProps<{ id: string; step?: number; min?: number; max?: number; extras?: SliderExtras; disabled?: boolean }>();
 </script>
 
 <style scoped lang="scss">

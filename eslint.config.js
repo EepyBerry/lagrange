@@ -1,8 +1,8 @@
-import eslint from '@eslint/js'
-import eslintConfigPrettier from 'eslint-config-prettier'
-import eslintPluginVue from 'eslint-plugin-vue'
-import typescriptEslint from 'typescript-eslint'
-import globals from 'globals'
+import eslint from '@eslint/js';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import eslintPluginVue from 'eslint-plugin-vue';
+import typescriptEslint from 'typescript-eslint';
+import globals from 'globals';
 
 export default typescriptEslint.config(
   {
@@ -41,4 +41,4 @@ export default typescriptEslint.config(
     },
   },
   eslintConfigPrettier,
-)
+);

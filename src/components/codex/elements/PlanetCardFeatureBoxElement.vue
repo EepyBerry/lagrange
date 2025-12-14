@@ -1,16 +1,11 @@
 <template>
   <div class="planet-feature-box" :class="{ active }">
-    <iconify-icon
-      inline
-      :icon="icon"
-      width="1.25rem"
-      aria-hidden="true"
-    />
+    <iconify-icon inline :icon="icon" width="1.25rem" aria-hidden="true" />
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{ icon: string, active?: boolean }>()
+defineProps<{ icon: string; active?: boolean }>();
 </script>
 
 <style scoped lang="scss">

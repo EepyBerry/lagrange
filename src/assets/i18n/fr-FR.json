@@ -149,6 +149,8 @@
       "extras": "Extras",
       "extras_crt_effect": "Effet écran cathodique",
       "extras_hologram_effect": "Effet hologramme",
+      "extras_metal_slug_mode": "Mode METAL SLUG™",
+      "extras_metal_slug_mode_warning": "Attention: ajoute des lumières vives et animations!",
       "extras_special_days": "Afficher les jours spéciaux",
       "advanced": "Paramètres avancés",
       "advanced_io": "Sauvegarde/import des paramètres",
@@ -188,7 +190,10 @@
         "043_settings": "(0.4.3) Les paramètres de l'application sont maintenant exportables et importables ! Cette fonction utilise un fichier JSON pour le stockage",
         "05_title": "Mise à jour 0.5 - Core Overhaul",
         "05_webgpu": "Ajoute la prise en charge de WebGPU ! Le moteur de rendu 3D peut être sélectionné dans les paramètres de l'application",
-        "05_rewrite": "Refonte de la structure interne de l'application pour simplifier les futurs développements"
+        "05_rewrite": "Refonte de la structure interne de l'application pour simplifier les futurs développements",
+        "051_emissivity": "(0.5.1) Les surfaces et biomes peuvent maintenant être émissives ! L'effet est conservé après export",
+        "051_atmosphere": "(0.5.1) Le shader atmosphérique a été retravaillé, et inclut des nouveaux paramètres avancés !",
+        "051_ui": "(0.5.1) Mise à jour de l'interface du Codex, des modales, etc. Inclut une gestion d'erreur de l'éditeur plus robuste au lancement."
       },
       "credits": {
         "$title": "Mentions et remerciements",
@@ -367,7 +372,12 @@
         "rgba_mode_direct": "Direct",
         "rgba_mode_mixed": "Mixe",
         "rgba_hue": "Teinte",
-        "rgba_tint": "Couleur"
+        "rgba_tint": "Couleur",
+        "advanced": "Avancé",
+        "advanced_scattering_constant": "Diffusion (g)",
+        "advanced_rayleigh_density_ratio": "Facteur de densité Rayleigh",
+        "advanced_mie_density_ratio": "Facteur de densité Mie",
+        "advanced_optical_density_ratio": "Facteur de densité optique"
       },
       "ring": {
         "$title": "Anneaux",
@@ -401,9 +411,11 @@
     "import_partial": "Attention: certaines planètes n'ont pas pu être importées",
     "import_failure": "Impossible d'importer les planètes. Vérifiez que les bons fichiers ont été sélectionnés, puis essayez à nouveau",
     "save_success": "Planète enregistrée !",
-    "settings_import_success": "Paramètres chargés !",
     "save_partial_no_preview": "Planète enregistrée (l'aperçu n'a pas pu être généré !)",
-    "screenshot_failure": "Erreur lors de la capture d'écran !"
+    "settings_import_success": "Paramètres chargés !",
+    "screenshot_failure": "Erreur lors de la capture d'écran !",
+    "extras_obliterate_success": "Planète oblitérée !",
+    "extras_obliterate_failure": "Impossible de détruire la planète"
   },
   "tooltip": {
     "topbar_rename": "Renommer la planète",

@@ -22,26 +22,26 @@
 </template>
 <script setup lang="ts">
 import LgvButton from '@/_lib/components/LgvButton.vue';
-import type { IDBKeyBinding } from '@/dexie.config'
+import type { IDBKeyBinding } from '@/dexie.config';
 
-const $emit = defineEmits(['toggle'])
-defineProps<{ keyBind?: IDBKeyBinding; selected: boolean; icon: string }>()
+const $emit = defineEmits(['toggle']);
+defineProps<{ keyBind?: IDBKeyBinding; selected: boolean; icon: string }>();
 
 function tryGetKeyRepresentation(key?: string) {
   if (!key) {
-    return undefined
+    return undefined;
   }
   switch (key) {
     case 'ARROWUP':
-      return 'mingcute:arrow-up-line'
+      return 'mingcute:arrow-up-line';
     case 'ARROWRIGHT':
-      return 'mingcute:arrow-right-line'
+      return 'mingcute:arrow-right-line';
     case 'ARROWDOWN':
-      return 'mingcute:arrow-down-line'
+      return 'mingcute:arrow-down-line';
     case 'ARROWLEFT':
-      return 'mingcute:arrow-left-line'
+      return 'mingcute:arrow-left-line';
     default:
-      return undefined
+      return undefined;
   }
 }
 </script>

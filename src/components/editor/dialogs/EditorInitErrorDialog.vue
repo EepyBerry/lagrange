@@ -34,45 +34,45 @@
       </CollapsibleSection>
     </template>
     <template #actions>
-      <LgvButton
-        v-if="!!allowRendererFallback"
-        class="warn"
-        icon="tabler:reload"
-        @click="closeWithFallback"
-      >
+      <LgvButton v-if="!!allowRendererFallback" class="warn" icon="tabler:reload" @click="closeWithFallback">
         {{ $t('dialog.editorerror.$action_reload_fallback_renderer') }}
       </LgvButton>
     </template>
   </DialogElement>
 </template>
 <script setup lang="ts">
-import { ref, type Ref } from 'vue'
-import DialogElement from '@components/global/elements/DialogElement.vue'
-import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue'
+import { ref, type Ref } from 'vue';
+import DialogElement from '@components/global/elements/DialogElement.vue';
+import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
-const allowRendererFallback: Ref<boolean> = ref(false)
+const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
+const allowRendererFallback: Ref<boolean> = ref(false);
 
-const _error: Ref<string> = ref('')
-const _stack: Ref<string[]> = ref([])
-const _wantsFallback: Ref<boolean> = ref(false)
+const _error: Ref<string> = ref('');
+const _stack: Ref<string[]> = ref([]);
+const _wantsFallback: Ref<boolean> = ref(false);
 
 function openWithError(error: string, stack?: string, isWebGPUError: boolean = false) {
-  _error.value = error
-  allowRendererFallback.value = isWebGPUError
+  _error.value = error;
+  allowRendererFallback.value = isWebGPUError;
   if (stack) {
-    _stack.value.push(...stack.replaceAll('\n', '¤').split('¤').filter(d => d.length > 0))
+    _stack.value.push(
+      ...stack
+        .replaceAll('\n', '¤')
+        .split('¤')
+        .filter((d) => d.length > 0),
+    );
   }
-  dialogRef.value?.open()
+  dialogRef.value?.open();
 }
 
 async function closeWithFallback() {
-  _wantsFallback.value = true
-  dialogRef.value!.close()
+  _wantsFallback.value = true;
+  dialogRef.value!.close();
 }
 
-defineEmits(['close'])
-defineExpose({ openWithError })
+defineEmits(['close']);
+defineExpose({ openWithError });
 </script>
 <style scoped lang="scss">
 #dialog-editorerror {

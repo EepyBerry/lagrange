@@ -72,7 +72,7 @@
             <LgvButton
               class="sm"
               :class="{ success: pickerIdOpen === step.id }"
-              :icon="(pickerIdOpen === step.id) ? 'mingcute:check-line' : 'mingcute:edit-2-line'"
+              :icon="pickerIdOpen === step.id ? 'mingcute:check-line' : 'mingcute:edit-2-line'"
               :a11y-label="$t('a11y.action_open_colorpanel')"
               @click="togglePicker(step.id)"
             />
@@ -124,93 +124,93 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, type Ref } from 'vue'
-import { ColorPicker } from 'vue-accessible-color-picker'
-import InputSliderElement from '@components/global/elements/InputSliderElement.vue'
-import { ColorRamp, type ColorRampStep } from '@core/models/color-ramp.model'
-import { alphaToGrayscale, colorRampToStyle } from '@core/utils/render-utils'
-import LgvButton from '@/_lib/components/LgvButton.vue'
+import { onMounted, ref, watch, type Ref } from 'vue';
+import { ColorPicker } from 'vue-accessible-color-picker';
+import InputSliderElement from '@components/global/elements/InputSliderElement.vue';
+import { ColorRamp, type ColorRampStep } from '@core/models/color-ramp.model';
+import { alphaToGrayscale, colorRampToStyle } from '@core/utils/render-utils';
+import LgvButton from '@/_lib/components/LgvButton.vue';
 
-const lgColorRamp = defineModel<ColorRamp>()
+const lgColorRamp = defineModel<ColorRamp>();
 
-const htmlAlphaRamp: Ref<HTMLElement | null> = ref(null)
-const htmlColorRamp: Ref<HTMLElement | null> = ref(null)
-const htmlColorSteps: Ref<HTMLElement[]> = ref([])
-const htmlFactorInputs: Ref<HTMLInputElement[]> = ref([])
+const htmlAlphaRamp: Ref<HTMLElement | null> = ref(null);
+const htmlColorRamp: Ref<HTMLElement | null> = ref(null);
+const htmlColorSteps: Ref<HTMLElement[]> = ref([]);
+const htmlFactorInputs: Ref<HTMLInputElement[]> = ref([]);
 
-const panelOpen = ref(false)
-const pickerIdOpen: Ref<string | null> = ref(null)
-const pickerIdInitColor = ref('')
+const panelOpen = ref(false);
+const pickerIdOpen: Ref<string | null> = ref(null);
+const pickerIdInitColor = ref('');
 
-const $props = defineProps<{ mode?: 'rgb' | 'rgba' | 'opacity' }>()
+const $props = defineProps<{ mode?: 'rgb' | 'rgba' | 'opacity' }>();
 watch(
   () => lgColorRamp.value?.hash,
   () => updateRamp(),
-)
-onMounted(() => updateRamp())
+);
+onMounted(() => updateRamp());
 
 function updateRamp() {
   if (!lgColorRamp.value) {
-    return
+    return;
   }
-  const rampStyle = colorRampToStyle(lgColorRamp.value!)
-  htmlColorRamp.value!.style.background = rampStyle.color
-  htmlAlphaRamp.value!.style.background = rampStyle.alpha
+  const rampStyle = colorRampToStyle(lgColorRamp.value!);
+  htmlColorRamp.value!.style.background = rampStyle.color;
+  htmlAlphaRamp.value!.style.background = rampStyle.alpha;
 }
 
 function togglePanel(): void {
-  panelOpen.value = !panelOpen.value
+  panelOpen.value = !panelOpen.value;
 }
 
 function togglePicker(id: string): void {
   // Update picker
   if (pickerIdOpen.value === id) {
-    pickerIdOpen.value = null
+    pickerIdOpen.value = null;
   } else {
-    const step = lgColorRamp.value!.getStep(id)
-    const rgb = step.color.getHexString()
-    const a = alphaToGrayscale(step.alpha)
-    pickerIdInitColor.value = `#${rgb}${a}`
-    pickerIdOpen.value = id
+    const step = lgColorRamp.value!.getStep(id);
+    const rgb = step.color.getHexString();
+    const a = alphaToGrayscale(step.alpha);
+    pickerIdInitColor.value = `#${rgb}${a}`;
+    pickerIdOpen.value = id;
   }
 }
 
 // Step operations
 
 function sortSteps() {
-  lgColorRamp.value?.sortSteps()
-  pickerIdOpen.value = null
-  setTimeout(updateRamp, 20)
+  lgColorRamp.value?.sortSteps();
+  pickerIdOpen.value = null;
+  setTimeout(updateRamp, 20);
 }
 
 function addStep() {
-  lgColorRamp.value?.addStep()
-  setTimeout(updateRamp, 20)
+  lgColorRamp.value?.addStep();
+  setTimeout(updateRamp, 20);
 }
 
 function updateStepFactor(id: string, e: Event) {
-  const htmlInput = e.target as HTMLInputElement
+  const htmlInput = e.target as HTMLInputElement;
   if (!htmlInput.valueAsNumber || isNaN(htmlInput.valueAsNumber)) {
-    return
+    return;
   }
-  lgColorRamp.value?.updateStep(id, { factor: htmlInput.valueAsNumber })
-  updateRamp()
+  lgColorRamp.value?.updateStep(id, { factor: htmlInput.valueAsNumber });
+  updateRamp();
 }
 function updateStepColor(step: ColorRampStep, c: string) {
-  const intAlpha = parseInt(c.substring(7), 16)
-  const floatAlpha = parseFloat((intAlpha / 255.0).toFixed(2))
-  const alpha = $props.mode === 'rgba' ? floatAlpha : 1.0
-  lgColorRamp.value?.updateStep(step.id, { color: c.substring(0, 7), alpha })
-  updateRamp()
+  const intAlpha = parseInt(c.substring(7), 16);
+  const floatAlpha = parseFloat((intAlpha / 255.0).toFixed(2));
+  const alpha = $props.mode === 'rgba' ? floatAlpha : 1.0;
+  lgColorRamp.value?.updateStep(step.id, { color: c.substring(0, 7), alpha });
+  updateRamp();
 }
 
 function removeStep(id: string) {
   if (lgColorRamp.value?.isBoundStep(id)) {
-    return
+    return;
   }
-  pickerIdOpen.value = null
-  lgColorRamp.value?.removeStep(id)
-  updateRamp()
+  pickerIdOpen.value = null;
+  lgColorRamp.value?.removeStep(id);
+  updateRamp();
 }
 </script>
 

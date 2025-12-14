@@ -29,10 +29,10 @@
 </template>
 
 <script setup lang="ts">
-const vModel = defineModel<number>()
-defineProps<{ iid?: string; step?: number; min?: number; max?: number, disabled?: boolean }>()
+const vModel = defineModel<number>();
+defineProps<{ iid?: string; step?: number; min?: number; max?: number; disabled?: boolean }>();
 function set(ev: Event) {
-  vModel.value = (ev.target as HTMLInputElement).valueAsNumber
+  vModel.value = (ev.target as HTMLInputElement).valueAsNumber;
 }
 </script>
 
@@ -105,7 +105,7 @@ function set(ev: Event) {
 input[type='number'] {
   width: 3rem;
   text-align: end;
-  
+
   &:disabled {
     background: var(--lg-input-disabled);
     border-color: var(--lg-border-disabled);

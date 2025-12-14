@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ load: boolean }>()
+defineProps<{ load: boolean }>();
 </script>
 
 <style scoped lang="scss">

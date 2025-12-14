@@ -13,12 +13,7 @@
         <span class="biome-index">{{ getPartialId() }}</span>
       </div>
       <span class="biome-actions">
-        <LgvButton
-          class="sm"
-          icon="mingcute:up-fill"
-          :disabled="index === 0"
-          @click="$emit('moveup', lgParam!.id)"
-        />
+        <LgvButton class="sm" icon="mingcute:up-fill" :disabled="index === 0" @click="$emit('moveup', lgParam!.id)" />
         <LgvButton
           class="sm"
           icon="mingcute:down-fill"
@@ -26,11 +21,7 @@
           @click="$emit('movedown', lgParam!.id)"
         />
         <hr class="action-divider" />
-        <LgvButton
-          class="sm warn"
-          icon="mingcute:delete-2-line"
-          @click="$emit('delete', lgParam!.id)"
-        />
+        <LgvButton class="sm warn" icon="mingcute:delete-2-line" @click="$emit('delete', lgParam!.id)" />
       </span>
     </div>
     <div v-show="_expanded" class="biome-content">
@@ -61,14 +52,32 @@
         {{ $t('editor.controls.biomes.humidity_max') }}
       </ParameterSlider>
       <ParameterDivider />
-      <ParameterSlider :id="lgParam!.id + '-b-smoothness'" v-model="lgParam!.smoothness" :step="0.005" :min="0" :max="0.5">
+      <ParameterSlider
+        :id="lgParam!.id + '-b-smoothness'"
+        v-model="lgParam!.smoothness"
+        :step="0.005"
+        :min="0"
+        :max="0.5"
+      >
         {{ $t('editor.controls.biomes.smoothness') }}
       </ParameterSlider>
-      <ParameterCheckbox :id="lgParam!.id + '-b-emioverride'" v-model="lgParam!.emissiveOverride" :true-value="true" :false-value="false">
+      <ParameterCheckbox
+        :id="lgParam!.id + '-b-emioverride'"
+        v-model="lgParam!.emissiveOverride"
+        :true-value="true"
+        :false-value="false"
+      >
         {{ $t('editor.controls.biomes.emissive_override') }}
       </ParameterCheckbox>
       <template v-if="lgParam!.emissiveOverride">
-        <ParameterSlider :id="lgParam!.id + '-b-emiintensity'" v-model="lgParam!.emissiveIntensity" :disabled="!lgParam!.emissiveOverride" :step="0.005" :min="0" :max="10">
+        <ParameterSlider
+          :id="lgParam!.id + '-b-emiintensity'"
+          v-model="lgParam!.emissiveIntensity"
+          :disabled="!lgParam!.emissiveOverride"
+          :step="0.005"
+          :min="0"
+          :max="10"
+        >
           {{ $t('editor.controls.biomes.emissive_intensity') }}
         </ParameterSlider>
       </template>
@@ -80,20 +89,20 @@
   </div>
 </template>
 <script setup lang="ts">
-import ParameterSlider from '@components/global/parameters/ParameterSlider.vue'
-import type { BiomeParameters } from '@core/models/biome-parameters.model'
-import ParameterDivider from './ParameterDivider.vue'
-import { useI18n } from 'vue-i18n'
-import ParameterColor from './ParameterColor.vue'
-import { onMounted, ref, type Ref } from 'vue'
-import LgvButton from '@/_lib/components/LgvButton.vue'
+import ParameterSlider from '@components/global/parameters/ParameterSlider.vue';
+import type { BiomeParameters } from '@core/models/biome-parameters.model';
+import ParameterDivider from './ParameterDivider.vue';
+import { useI18n } from 'vue-i18n';
+import ParameterColor from './ParameterColor.vue';
+import { onMounted, ref, type Ref } from 'vue';
+import LgvButton from '@/_lib/components/LgvButton.vue';
 
-const lgParam = defineModel<BiomeParameters>()
-const i18n = useI18n()
+const lgParam = defineModel<BiomeParameters>();
+const i18n = useI18n();
 
-const _expanded: Ref<boolean> = ref(true)
+const _expanded: Ref<boolean> = ref(true);
 
-type BiomeType = { min: number; max: number; label: string }
+type BiomeType = { min: number; max: number; label: string };
 const temperatureTypeTable: BiomeType[] = [
   { min: 0, max: 0.15, label: i18n.t('main.planet_data.biome_type_arctic') },
   { min: 0.15, max: 0.3, label: i18n.t('main.planet_data.biome_type_tundra') },
@@ -101,44 +110,44 @@ const temperatureTypeTable: BiomeType[] = [
   { min: 0.5, max: 0.6, label: i18n.t('main.planet_data.biome_type_subtropical') },
   { min: 0.6, max: 0.8, label: i18n.t('main.planet_data.biome_type_tropical') },
   { min: 0.8, max: 1.0, label: i18n.t('main.planet_data.biome_type_volcanic') },
-]
+];
 const humidityTypeTable: BiomeType[] = [
   { min: 0, max: 0.25, label: i18n.t('main.planet_data.biome_type_arid') },
   { min: 0.25, max: 0.5, label: i18n.t('main.planet_data.biome_type_dry') },
   { min: 0.5, max: 0.75, label: i18n.t('main.planet_data.biome_type_semihumid') },
   { min: 0.75, max: 1.0, label: i18n.t('main.planet_data.biome_type_humid') },
-]
+];
 
-defineEmits(['moveup', 'movedown', 'delete'])
-const _props = defineProps<{ index: number; maxIndex: number; expand?: boolean }>()
-onMounted(() => (_expanded.value = _props.expand ?? true))
+defineEmits(['moveup', 'movedown', 'delete']);
+const _props = defineProps<{ index: number; maxIndex: number; expand?: boolean }>();
+onMounted(() => (_expanded.value = _props.expand ?? true));
 
 function toggleExpand() {
-  _expanded.value = !_expanded.value
+  _expanded.value = !_expanded.value;
 }
 
 function getBiomeTemperatureType(): string {
-  const minTypeIdx = temperatureTypeTable?.findLastIndex((b) => b.min <= lgParam.value!.tempMin)
-  const maxTypeIdx = temperatureTypeTable?.findIndex((b) => b.max >= lgParam.value!.tempMax)
+  const minTypeIdx = temperatureTypeTable?.findLastIndex((b) => b.min <= lgParam.value!.tempMin);
+  const maxTypeIdx = temperatureTypeTable?.findIndex((b) => b.max >= lgParam.value!.tempMax);
   if (minTypeIdx >= 0 && minTypeIdx === maxTypeIdx) {
-    return temperatureTypeTable[minTypeIdx].label
+    return temperatureTypeTable[minTypeIdx].label;
   } else {
-    return i18n.t('main.planet_data.biome_type_various')
+    return i18n.t('main.planet_data.biome_type_various');
   }
 }
 
 function getBiomeHumidityType(): string {
-  const minTypeIdx = humidityTypeTable.findLastIndex((b) => b.min <= lgParam.value!.humiMin)
-  const maxTypeIdx = humidityTypeTable.findIndex((b) => b.max >= lgParam.value!.humiMax)
+  const minTypeIdx = humidityTypeTable.findLastIndex((b) => b.min <= lgParam.value!.humiMin);
+  const maxTypeIdx = humidityTypeTable.findIndex((b) => b.max >= lgParam.value!.humiMax);
   if (minTypeIdx === maxTypeIdx) {
-    return humidityTypeTable[minTypeIdx].label
+    return humidityTypeTable[minTypeIdx].label;
   } else {
-    return i18n.t('main.planet_data.biome_type_various')
+    return i18n.t('main.planet_data.biome_type_various');
   }
 }
 
 function getPartialId() {
-  return lgParam.value?.id.substring(0, 6)
+  return lgParam.value?.id.substring(0, 6);
 }
 </script>
 <style scoped lang="scss">

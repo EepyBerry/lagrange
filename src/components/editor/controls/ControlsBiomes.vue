@@ -172,13 +172,13 @@
   </ParameterGrid>
 </template>
 <script setup lang="ts">
-import { LG_PLANET_DATA } from '@/core/services/editor.service'
-import ParameterBiome from '@components/global/parameters/ParameterBiome.vue'
-import { GradientMode } from '@core/types'
-import { BiomeParameters } from '@core/models/biome-parameters.model'
-import { Color } from 'three'
-import { ChangeAction } from '@core/models/change-tracker.model'
-import LgvButton from '@/_lib/components/LgvButton.vue'
+import { LG_PLANET_DATA } from '@/core/services/editor.service';
+import ParameterBiome from '@components/global/parameters/ParameterBiome.vue';
+import { GradientMode } from '@core/types';
+import { BiomeParameters } from '@core/models/biome-parameters.model';
+import { Color } from 'three';
+import { ChangeAction } from '@core/models/change-tracker.model';
+import LgvButton from '@/_lib/components/LgvButton.vue';
 
 /**
  * Moves a biome up or down the list
@@ -186,10 +186,14 @@ import LgvButton from '@/_lib/components/LgvButton.vue'
  * @param diff index difference: -1 means towards the start of the list (up), 1 means towards the end of the list (down)
  */
 function moveBiome(idx: number, diff: -1 | 1) {
-  const element = LG_PLANET_DATA.value.biomesParams[idx]
-  LG_PLANET_DATA.value.biomesParams.splice(idx, 1)
-  LG_PLANET_DATA.value.biomesParams.splice(idx + diff, 0, element)
-  LG_PLANET_DATA.value.markForChange('_biomesParams[element]', {arrayIndex:idx, data: element}, diff === -1 ? ChangeAction.SORT_UP : ChangeAction.SORT_DOWN)
+  const element = LG_PLANET_DATA.value.biomesParams[idx];
+  LG_PLANET_DATA.value.biomesParams.splice(idx, 1);
+  LG_PLANET_DATA.value.biomesParams.splice(idx + diff, 0, element);
+  LG_PLANET_DATA.value.markForChange(
+    '_biomesParams[element]',
+    { arrayIndex: idx, data: element },
+    diff === -1 ? ChangeAction.SORT_UP : ChangeAction.SORT_DOWN,
+  );
 }
 
 /**
@@ -207,9 +211,13 @@ function addBiome() {
     },
     new Color(0xffffff),
     0.2,
-  )
-  LG_PLANET_DATA.value.biomesParams.push(newBiome)
-  LG_PLANET_DATA.value.markForChange('_biomesParams[element]', {arrayIndex:LG_PLANET_DATA.value.biomesParams.length-1, data: newBiome}, ChangeAction.ADD)
+  );
+  LG_PLANET_DATA.value.biomesParams.push(newBiome);
+  LG_PLANET_DATA.value.markForChange(
+    '_biomesParams[element]',
+    { arrayIndex: LG_PLANET_DATA.value.biomesParams.length - 1, data: newBiome },
+    ChangeAction.ADD,
+  );
 }
 
 /**
@@ -217,12 +225,12 @@ function addBiome() {
  * @param id biome ID (nanoid)
  */
 function deleteBiome(id: string) {
-  const biomeIdx = LG_PLANET_DATA.value.biomesParams.findIndex((b) => b.id === id)
+  const biomeIdx = LG_PLANET_DATA.value.biomesParams.findIndex((b) => b.id === id);
   if (biomeIdx < 0) {
-    throw new Error('Cannot delete non-existent biome!')
+    throw new Error('Cannot delete non-existent biome!');
   }
-  LG_PLANET_DATA.value.biomesParams.splice(biomeIdx, 1)
-  LG_PLANET_DATA.value.markForChange('_biomesParams[element]', {arrayIndex: biomeIdx}, ChangeAction.DELETE)
+  LG_PLANET_DATA.value.biomesParams.splice(biomeIdx, 1);
+  LG_PLANET_DATA.value.markForChange('_biomesParams[element]', { arrayIndex: biomeIdx }, ChangeAction.DELETE);
 }
 </script>
 <style scoped lang="scss">

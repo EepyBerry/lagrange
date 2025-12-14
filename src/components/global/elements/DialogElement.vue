@@ -1,7 +1,7 @@
 <template>
   <dialog ref="dialog" class="lg" @abort="close">
-    <CornerDeco class="tl" :class="{ 'warn': isWarn }" />
-    <CornerDeco class="br" :class="{ 'warn': isWarn }" />
+    <CornerDeco class="tl" :class="{ warn: isWarn }" />
+    <CornerDeco class="br" :class="{ warn: isWarn }" />
     <header class="dialog-header">
       <h2 v-if="showTitle" class="dialog-title">
         <slot name="title"></slot>
@@ -30,64 +30,66 @@
 </template>
 
 <script setup lang="ts">
-import { EventBus } from '@core/event-bus'
-import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue'
-import CornerDeco from '../decoration/CornerDeco.vue'
-import LgvButton from '@/_lib/components/LgvButton.vue'
+import { EventBus } from '@core/event-bus';
+import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
+import CornerDeco from '../decoration/CornerDeco.vue';
+import LgvButton from '@/_lib/components/LgvButton.vue';
 
-const dialog: Ref<HTMLDialogElement | null> = ref(null)
-const dialogInner: Ref<HTMLDivElement | null> = ref(null)
+const dialog: Ref<HTMLDialogElement | null> = ref(null);
+const dialogInner: Ref<HTMLDivElement | null> = ref(null);
 
-const ignoresNativeEvents = ref(false)
+const ignoresNativeEvents = ref(false);
 const handleCancel = (evt: Event) => {
-  evt.preventDefault()
+  evt.preventDefault();
   if (ignoresNativeEvents.value) {
-    return
+    return;
   }
-  close()
-}
+  close();
+};
 const handleClick = (evt: Event) => {
   if (!$props.preventClickClose && evt.target === dialog.value) {
-    close()
+    close();
   }
-}
+};
 
 const $props = defineProps<{
-  showTitle?: boolean
-  showActions?: boolean
-  closeable?: boolean
-  preventClickClose?: boolean,
-  isWarn?: boolean
-}>()
+  showTitle?: boolean;
+  showActions?: boolean;
+  closeable?: boolean;
+  preventClickClose?: boolean;
+  isWarn?: boolean;
+}>();
 onMounted(() => {
-  dialog.value?.addEventListener('click', handleClick)
-  dialog.value?.addEventListener('cancel', handleCancel)
-})
+  dialog.value?.addEventListener('click', handleClick);
+  dialog.value?.addEventListener('cancel', handleCancel);
+});
 onBeforeUnmount(() => {
-  dialog.value?.removeEventListener('click', handleClick)
-  dialog.value?.removeEventListener('cancel', handleCancel)
-})
+  dialog.value?.removeEventListener('click', handleClick);
+  dialog.value?.removeEventListener('cancel', handleCancel);
+});
 
 function open() {
-  EventBus.disableWindowEventListener('keydown')
-  dialog.value?.showModal()
-  dialogInner.value?.focus()
+  EventBus.disableWindowEventListener('keydown');
+  dialog.value?.showModal();
+  dialogInner.value?.focus();
 }
 function close() {
-  EventBus.enableWindowEventListener('keydown')
-  dialog.value?.close()
+  EventBus.enableWindowEventListener('keydown');
+  dialog.value?.close();
 }
 
 function ignoreNativeEvents(enabled: boolean) {
-  ignoresNativeEvents.value = enabled
+  ignoresNativeEvents.value = enabled;
 }
 
-defineExpose({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open })
+defineExpose({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open });
 </script>
 
 <style scoped lang="scss">
 dialog[open] {
-  &:host { scroll-behavior: none; }
+  &:host {
+    scroll-behavior: none;
+  }
   position: fixed;
   padding: 0;
   overflow: hidden;
@@ -120,8 +122,11 @@ dialog[open] {
       min-width: 1.75rem;
       min-height: 1.75rem;
     }
-    button.dialog-close:hover, button.dialog-close:focus {
-      iconify-icon { transform: scale(1.125); }
+    button.dialog-close:hover,
+    button.dialog-close:focus {
+      iconify-icon {
+        transform: scale(1.125);
+      }
     }
   }
 

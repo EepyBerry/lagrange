@@ -1,38 +1,38 @@
-import type { Color, Vector3 } from 'three'
-import { AdditiveBlending, NodeMaterial, Vector2 } from 'three/webgpu'
-import type { TSLMaterial } from './tsl-material'
-import type { UniformColorNode, UniformNumberNode, UniformVector2Node, UniformVector3Node } from '../tsl-types'
-import { float, Fn, If, Loop, positionGeometry, pow, uniform, uv, vec2, vec3, vec4 } from 'three/tsl'
-import { circle, lensFlare, rndf } from '../features/lens-flare'
+import type { Color, Vector3 } from 'three';
+import { AdditiveBlending, NodeMaterial, Vector2 } from 'three/webgpu';
+import type { TSLMaterial } from './tsl-material';
+import type { UniformColorNode, UniformNumberNode, UniformVector2Node, UniformVector3Node } from '../tsl-types';
+import { float, Fn, If, Loop, positionGeometry, pow, uniform, uv, vec2, vec3, vec4 } from 'three/tsl';
+import { circle, lensFlare, rndf } from '../features/lens-flare';
 
 export type LensFlareData = {
-  lensPosition: Vector3
-  colorGain: Color
-  starPoints: number
-  starPointsIntensity: number
-  glareSize: number
-  glareIntensity: number
-  flareShape: number
-  flareSize: number
-  additionalStreaks: boolean
-  streaksScale: number
-}
+  lensPosition: Vector3;
+  colorGain: Color;
+  starPoints: number;
+  starPointsIntensity: number;
+  glareSize: number;
+  glareIntensity: number;
+  flareShape: number;
+  flareSize: number;
+  additionalStreaks: boolean;
+  streaksScale: number;
+};
 export type LensFlareUniforms = {
-  resolution: UniformVector2Node
-  opacity: UniformNumberNode
-  lensPosition: UniformVector3Node
-  colorGain: UniformColorNode
-  starPoints: UniformNumberNode
-  starPointsIntensity: UniformNumberNode
-  glareSize: UniformNumberNode
-  glareIntensity: UniformNumberNode
-  flareShape: UniformNumberNode
-  flareSize: UniformNumberNode
-  additionalStreaks: UniformNumberNode
-  streaksScale: UniformNumberNode
-}
+  resolution: UniformVector2Node;
+  opacity: UniformNumberNode;
+  lensPosition: UniformVector3Node;
+  colorGain: UniformColorNode;
+  starPoints: UniformNumberNode;
+  starPointsIntensity: UniformNumberNode;
+  glareSize: UniformNumberNode;
+  glareIntensity: UniformNumberNode;
+  flareShape: UniformNumberNode;
+  flareSize: UniformNumberNode;
+  additionalStreaks: UniformNumberNode;
+  streaksScale: UniformNumberNode;
+};
 export class LensFlareTSLMaterial implements TSLMaterial<NodeMaterial, LensFlareData, LensFlareUniforms> {
-  public readonly uniforms: LensFlareUniforms
+  public readonly uniforms: LensFlareUniforms;
 
   constructor(data: LensFlareData) {
     this.uniforms = {
@@ -48,33 +48,33 @@ export class LensFlareTSLMaterial implements TSLMaterial<NodeMaterial, LensFlare
       flareSize: uniform(data.flareSize, 'float').setName('uFlareSize'),
       additionalStreaks: uniform(+data.additionalStreaks, 'int').setName('uAdditionalStreaks'),
       streaksScale: uniform(data.streaksScale, 'float').setName('uStreakScale'),
-    }
+    };
   }
 
   buildMaterial(): NodeMaterial {
     // Precompute UV
     const mainNode = Fn(([vUv]: [UniformVector2Node]) => {
-      const localUv = vUv.sub(0.5).toVar('lfUV')
-      localUv.y.mulAssign(this.uniforms.resolution.y.div(this.uniforms.resolution.x))
+      const localUv = vUv.sub(0.5).toVar('lfUV');
+      localUv.y.mulAssign(this.uniforms.resolution.y.div(this.uniforms.resolution.x));
 
       // Get mouse coords from lens position
-      const mouse = this.uniforms.lensPosition.mul(0.5).toVar('mouse')
-      mouse.y.mulAssign(float(this.uniforms.resolution.y).div(this.uniforms.resolution.x))
+      const mouse = this.uniforms.lensPosition.mul(0.5).toVar('mouse');
+      mouse.y.mulAssign(float(this.uniforms.resolution.y).div(this.uniforms.resolution.x));
 
-      const flareParams = vec2(this.uniforms.flareShape, this.uniforms.flareSize).toVar('flareParams')
-      const glareParams = vec2(this.uniforms.glareSize, this.uniforms.glareIntensity).toVar('glareParams')
+      const flareParams = vec2(this.uniforms.flareShape, this.uniforms.flareSize).toVar('flareParams');
+      const glareParams = vec2(this.uniforms.glareSize, this.uniforms.glareIntensity).toVar('glareParams');
       const starPointsParams = vec2(this.uniforms.starPoints, this.uniforms.starPointsIntensity).toVar(
         'starPointsParams',
-      )
+      );
       const finalColor = vec3(
         lensFlare(localUv, mouse, flareParams, glareParams, starPointsParams)
           .mul(20.0)
           .mul(this.uniforms.colorGain)
           .div(2),
-      ).toVar('finalColor')
+      ).toVar('finalColor');
 
       If(this.uniforms.additionalStreaks.greaterThan(0), () => {
-        const circColor = vec3(0.9, 0.2, 0.1).toVar('circColor')
+        const circColor = vec3(0.9, 0.2, 0.1).toVar('circColor');
         Loop({ start: 0, end: 10, condition: '<' }, ({ i }) => {
           finalColor.addAssign(
             circle(
@@ -89,22 +89,22 @@ export class LensFlareTSLMaterial implements TSLMaterial<NodeMaterial, LensFlare
               this.uniforms.streaksScale,
               this.uniforms.colorGain,
             ),
-          )
-        })
-      })
+          );
+        });
+      });
 
-      return vec4(finalColor, this.uniforms.opacity)
-    })
+      return vec4(finalColor, this.uniforms.opacity);
+    });
 
     // init material & set outputs
-    const material = new NodeMaterial()
-    material.vertexNode = Fn(() => vec4(positionGeometry, 1.0))()
-    material.fragmentNode = mainNode(uv())
-    material.transparent = true
-    material.depthWrite = false
-    material.depthTest = false
-    material.blending = AdditiveBlending
-    material.name = 'LensFlareShader'
-    return material
+    const material = new NodeMaterial();
+    material.vertexNode = Fn(() => vec4(positionGeometry, 1.0))();
+    material.fragmentNode = mainNode(uv());
+    material.transparent = true;
+    material.depthWrite = false;
+    material.depthTest = false;
+    material.blending = AdditiveBlending;
+    material.name = 'LensFlareShader';
+    return material;
   }
 }

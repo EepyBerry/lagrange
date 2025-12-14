@@ -20,17 +20,10 @@
       </div>
     </template>
     <template #actions>
-      <LgvButton
-        icon="mingcute:close-line"
-        @click="cancelAndClose"
-      >
+      <LgvButton icon="mingcute:close-line" @click="cancelAndClose">
         {{ $t('dialog.clear_data.$action_cancel') }}
       </LgvButton>
-      <LgvButton
-        class="warn"
-        icon="mingcute:delete-2-line"
-        @click="confirmAndClose"
-      >
+      <LgvButton class="warn" icon="mingcute:delete-2-line" @click="confirmAndClose">
         {{ $t('dialog.clear_data.$action_confirm') }}
       </LgvButton>
     </template>
@@ -38,25 +31,25 @@
 </template>
 <script setup lang="ts">
 import LgvButton from '@/_lib/components/LgvButton.vue';
-import DialogElement from '@components/global/elements/DialogElement.vue'
-import { ref, type Ref } from 'vue'
+import DialogElement from '@components/global/elements/DialogElement.vue';
+import { ref, type Ref } from 'vue';
 
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
+const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
 
-const $emit = defineEmits(['confirm'])
+const $emit = defineEmits(['confirm']);
 defineExpose({
   open: () => {
-    dialogRef.value?.open()
+    dialogRef.value?.open();
   },
-})
+});
 
 function cancelAndClose() {
-  dialogRef.value?.close()
+  dialogRef.value?.close();
 }
 
 function confirmAndClose() {
-  $emit('confirm')
-  dialogRef.value?.close()
+  $emit('confirm');
+  dialogRef.value?.close();
 }
 </script>
 

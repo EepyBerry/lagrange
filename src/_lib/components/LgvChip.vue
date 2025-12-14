@@ -11,6 +11,8 @@
   height: min-content;
   text-wrap: nowrap;
   word-break: keep-all;
-  &.contrast { background: var(--lg-contrast); }
+  &.contrast {
+    background: var(--lg-contrast);
+  }
 }
 </style>

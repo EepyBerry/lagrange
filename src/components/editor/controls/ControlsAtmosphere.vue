@@ -7,7 +7,13 @@
       <ParameterGroup :toggleable="true">
         <template #title>{{ $t('editor.controls.atmosphere.transform') }}</template>
         <template #content>
-          <ParameterSlider id="a-height" v-model="LG_PLANET_DATA.atmosphereHeight" :step="0.0001" :min="0.0075" :max="0.025">
+          <ParameterSlider
+            id="a-height"
+            v-model="LG_PLANET_DATA.atmosphereHeight"
+            :step="0.0001"
+            :min="0.0075"
+            :max="0.025"
+          >
             {{ $t('editor.controls.atmosphere.transform_height') }}
           </ParameterSlider>
           <ParameterSlider
@@ -94,7 +100,7 @@
             :min="-0.999"
             :max="0"
           >
-            {{ $t('editor.controls.atmosphere.advanced_mie_constant') }}
+            {{ $t('editor.controls.atmosphere.advanced_scattering_constant') }}
           </ParameterSlider>
           <ParameterSlider
             id="a-advrayph"
@@ -129,6 +135,6 @@
   </ParameterGrid>
 </template>
 <script setup lang="ts">
-import { LG_PLANET_DATA } from '@/core/services/editor.service'
-import { ColorMode } from '@core/types'
+import { LG_PLANET_DATA } from '@/core/services/editor.service';
+import { ColorMode } from '@core/types';
 </script>

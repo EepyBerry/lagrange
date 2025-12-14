@@ -25,19 +25,18 @@
   </ParameterGrid>
 </template>
 <script setup lang="ts">
-import { LG_PLANET_DATA } from '@/core/services/editor.service'
-import ParameterRing from '@components/global/parameters/ParameterRing.vue'
-import LgvButton from '@/_lib/components/LgvButton.vue'
-import { ChangeAction } from '@/core/models/change-tracker.model'
-import type { RingParameters } from '@/core/models/ring-parameters.model'
+import { LG_PLANET_DATA } from '@/core/services/editor.service';
+import ParameterRing from '@components/global/parameters/ParameterRing.vue';
+import LgvButton from '@/_lib/components/LgvButton.vue';
+import { ChangeAction } from '@/core/models/change-tracker.model';
+import type { RingParameters } from '@/core/models/ring-parameters.model';
 
 function addRing() {
-  LG_PLANET_DATA.value.markForChange('_ringsParams', undefined, ChangeAction.ADD)
+  LG_PLANET_DATA.value.markForChange('_ringsParams', undefined, ChangeAction.ADD);
 }
 
 function deleteRing(ringParams: RingParameters) {
-  console.log(ringParams)
-  LG_PLANET_DATA.value.markForChange('_ringsParams', { data: ringParams }, ChangeAction.DELETE)
+  LG_PLANET_DATA.value.markForChange('_ringsParams', { data: ringParams }, ChangeAction.DELETE);
 }
 </script>
 <style scoped lang="scss">

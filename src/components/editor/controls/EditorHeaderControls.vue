@@ -15,19 +15,14 @@
 
       <LgvButton
         variant="icon"
-        :icon="editMode ? 'mingcute:check-line' :'mingcute:edit-2-line'"
+        :icon="editMode ? 'mingcute:check-line' : 'mingcute:edit-2-line'"
         :a11y-label="$t(editMode ? 'a11y.topbar_rename_confirm' : 'a11y.topbar_rename')"
         icon-width="1.25rem"
         @click="toggleEditMode"
       />
     </div>
     <hr />
-    <LgvButton
-      variant="dark"
-      icon="tabler:reload"
-      :a11y-label="$t('a11y.topbar_reset')"
-      @click="resetDialog?.open()"
-    />
+    <LgvButton variant="dark" icon="tabler:reload" :a11y-label="$t('a11y.topbar_reset')" @click="resetDialog?.open()" />
 
     <!------ BEGIN floating menus ------>
     <!-- Randomization menu -->
@@ -45,25 +40,17 @@
         <input id="random-seed" v-model="MathUtils.PRNG_SEED.value" class="lg" type="text" />
       </div>
       <div class="floating-actions">
-        <LgvButton
-          class="sm"
-          icon="tabler:seeding"
-          @click="MathUtils.regenerateSeed()"
-        >
+        <LgvButton class="sm" icon="tabler:seeding" @click="MathUtils.regenerateSeed()">
           {{ $t('editor.$action_reseed') }}
         </LgvButton>
-        <LgvButton
-          class="sm success"
-          icon="mingcute:shuffle-2-fill"
-          @click="$emit('random')"
-        >
+        <LgvButton class="sm success" icon="mingcute:shuffle-2-fill" @click="$emit('random')">
           {{ $t('editor.$action_random') }}
         </LgvButton>
       </div>
     </div>
 
     <!-- Save menu -->
-     <LgvButton
+    <LgvButton
       id="planet-info__save-menu-trigger"
       ref="saveMenuTrigger"
       variant="dark"
@@ -78,7 +65,7 @@
         icon="mingcute:save-2-line"
         @click="closeSaveMenuAndEmit('save')"
       >
-      {{ $t('tooltip.topbar_save') }}
+        {{ $t('tooltip.topbar_save') }}
       </LgvButton>
       <LgvButton
         v-if="!$route.path.endsWith('/new')"
@@ -87,7 +74,7 @@
         icon="mingcute:copy-2-line"
         @click="closeSaveMenuAndEmit('copy')"
       >
-      {{ $t('tooltip.topbar_copy') }}
+        {{ $t('tooltip.topbar_copy') }}
       </LgvButton>
       <LgvButton
         variant="dark"
@@ -95,7 +82,7 @@
         icon="simple-icons:gltf"
         @click="closeSaveMenuAndEmit('gltf')"
       >
-      {{ $t('tooltip.topbar_gltf') }}
+        {{ $t('tooltip.topbar_gltf') }}
       </LgvButton>
     </div>
     <!------ END floating menus ------>
@@ -104,92 +91,92 @@
 </template>
 
 <script setup lang="ts">
-import AppResetConfirmDialog from '../dialogs/ResetConfirmDialog.vue'
-import { LG_PLANET_DATA } from '@/core/services/editor.service'
-import { ref, useTemplateRef, watch, type Ref } from 'vue'
-import { EventBus } from '@core/event-bus'
-import { autoUpdate, offset, useFloating } from '@floating-ui/vue'
-import * as MathUtils from '@core/utils/math-utils'
-import LgvButton from '@/_lib/components/LgvButton.vue'
+import AppResetConfirmDialog from '../dialogs/ResetConfirmDialog.vue';
+import { LG_PLANET_DATA } from '@/core/services/editor.service';
+import { ref, useTemplateRef, watch, type Ref } from 'vue';
+import { EventBus } from '@core/event-bus';
+import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
+import * as MathUtils from '@core/utils/math-utils';
+import LgvButton from '@/_lib/components/LgvButton.vue';
 
-const editMode: Ref<boolean> = ref(false)
+const editMode: Ref<boolean> = ref(false);
 
-const planetNameInput: Ref<HTMLInputElement | null> = ref(null)
-const resetDialog: Ref<{ open: () => void } | null> = ref(null)
+const planetNameInput: Ref<HTMLInputElement | null> = ref(null);
+const resetDialog: Ref<{ open: () => void } | null> = ref(null);
 
 // floating-ui start
-const isRandomMenuOpen: Ref<boolean> = ref(false)
-const randomMenuTrigger = useTemplateRef('randomMenuTrigger')
-const randomMenu = useTemplateRef('randomMenu')
+const isRandomMenuOpen: Ref<boolean> = ref(false);
+const randomMenuTrigger = useTemplateRef('randomMenuTrigger');
+const randomMenu = useTemplateRef('randomMenu');
 const randomFloating = useFloating(randomMenuTrigger, randomMenu, {
   whileElementsMounted: autoUpdate,
   placement: 'bottom-end',
   middleware: [offset(8)],
-})
+});
 
-const isSaveMenuOpen: Ref<boolean> = ref(false)
-const saveMenuTrigger = useTemplateRef('saveMenuTrigger')
-const saveMenu = useTemplateRef('saveMenu')
+const isSaveMenuOpen: Ref<boolean> = ref(false);
+const saveMenuTrigger = useTemplateRef('saveMenuTrigger');
+const saveMenu = useTemplateRef('saveMenu');
 const saveFloating = useFloating(saveMenuTrigger, saveMenu, {
   whileElementsMounted: autoUpdate,
   placement: 'bottom-end',
   middleware: [offset(8)],
-})
+});
 // floating-ui end
 
 watch(
   () => EventBus.clickEvent.value,
   (evt) => onWindowClick(evt!),
-)
-const $emit = defineEmits(['rename', 'reset', 'save', 'copy', 'gltf', 'random'])
+);
+const $emit = defineEmits(['rename', 'reset', 'save', 'copy', 'gltf', 'random']);
 
 function onWindowClick(evt: MouseEvent) {
   if ((evt.target as HTMLElement).id === randomMenuTrigger.value!.$el.id) {
-    toggleRandomMenu()
+    toggleRandomMenu();
   } else if (!randomMenu.value?.contains(evt.target as Node)) {
-    toggleRandomMenu(false)
+    toggleRandomMenu(false);
   }
 
   if ((evt.target as HTMLElement).id === saveMenuTrigger.value!.$el.id) {
-    toggleSaveMenu()
+    toggleSaveMenu();
   } else if (!saveMenu.value?.contains(evt.target as Node)) {
-    toggleSaveMenu(false)
+    toggleSaveMenu(false);
   }
 }
 
 function closeSaveMenuAndEmit(evt: 'rename' | 'reset' | 'save' | 'copy' | 'gltf' | 'random') {
-  toggleSaveMenu(false)
-  $emit(evt)
+  toggleSaveMenu(false);
+  $emit(evt);
 }
 
 function toggleEditMode() {
-  editMode.value = !editMode.value
+  editMode.value = !editMode.value;
   if (editMode.value) {
-    EventBus.disableWindowEventListener('keydown')
-    setTimeout(() => planetNameInput.value?.focus())
+    EventBus.disableWindowEventListener('keydown');
+    setTimeout(() => planetNameInput.value?.focus());
   } else {
-    EventBus.enableWindowEventListener('keydown')
-    $emit('rename')
+    EventBus.enableWindowEventListener('keydown');
+    $emit('rename');
   }
 }
 
 function toggleRandomMenu(override?: boolean) {
   if (override !== undefined) {
-    randomMenu.value!.style.visibility = override ? 'visible' : 'hidden'
-    isRandomMenuOpen.value = override
+    randomMenu.value!.style.visibility = override ? 'visible' : 'hidden';
+    isRandomMenuOpen.value = override;
   } else {
-    randomMenu.value!.style.visibility = randomMenu.value!.style.visibility === 'visible' ? 'hidden' : 'visible'
-    isRandomMenuOpen.value = randomMenu.value!.style.visibility === 'visible'
+    randomMenu.value!.style.visibility = randomMenu.value!.style.visibility === 'visible' ? 'hidden' : 'visible';
+    isRandomMenuOpen.value = randomMenu.value!.style.visibility === 'visible';
   }
 }
 
 function toggleSaveMenu(override?: boolean) {
   if (override !== undefined) {
-    saveMenu.value!.style.visibility = override ? 'visible' : 'hidden'
-    isSaveMenuOpen.value = override
+    saveMenu.value!.style.visibility = override ? 'visible' : 'hidden';
+    isSaveMenuOpen.value = override;
   } else {
-    saveMenu.value!.style.visibility = saveMenu.value!.style.visibility === 'visible' ? 'hidden' : 'visible'
-    isSaveMenuOpen.value = saveMenu.value!.style.visibility === 'visible'
+    saveMenu.value!.style.visibility = saveMenu.value!.style.visibility === 'visible' ? 'hidden' : 'visible';
+    isSaveMenuOpen.value = saveMenu.value!.style.visibility === 'visible';
   }
 }
 </script>

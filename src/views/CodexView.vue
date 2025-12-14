@@ -34,7 +34,8 @@
   <div v-if="planets.length > 0" id="codex-grid">
     <!-- prettier-ignore-attribute -->
     <PlanetCardElement
-      v-for="planet of planets" :key="planet.id"
+      v-for="planet of planets"
+      :key="planet.id"
       ref="planetCardRef"
       :planet="(planet as IDBPlanet)"
       @info="openPlanetInfoDialog(planet as IDBPlanet)"
@@ -55,112 +56,112 @@
 </template>
 
 <script setup lang="ts">
-import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue'
-import InlineFooter from '@components/global/InlineFooter.vue'
-import AppPlanetInfoDialog from '@components/codex/dialogs/PlanetInfoDialog.vue'
-import AppDeleteConfirmDialog from '@components/codex/dialogs/DeleteConfirmDialog.vue'
-import { idb, type IDBPlanet } from '@/dexie.config'
-import { useHead } from '@unhead/vue'
-import { onMounted, onUnmounted, ref, useTemplateRef, watch, type Ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { EventBus } from '@core/event-bus'
-import { SM_WIDTH_THRESHOLD } from '@core/globals'
-import pako from 'pako'
-import { saveAs } from 'file-saver'
-import PlanetData from '@core/models/planet-data.model'
-import JSZip from 'jszip'
-import NewCardElement from '@/components/codex/elements/NewCardElement.vue'
-import { readFileData } from '@core/helpers/import.helper'
-import { nanoid } from 'nanoid'
-import { EXTRAS_METAL_SLUG_MODE, uwuifyPath } from '@core/extras'
-import ViewHeader from '@/components/global/ViewHeader.vue'
-import LgvButton from '@/_lib/components/LgvButton.vue'
-import LgvLink from '@/_lib/components/LgvLink.vue'
+import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue';
+import InlineFooter from '@components/global/InlineFooter.vue';
+import AppPlanetInfoDialog from '@components/codex/dialogs/PlanetInfoDialog.vue';
+import AppDeleteConfirmDialog from '@components/codex/dialogs/DeleteConfirmDialog.vue';
+import { idb, type IDBPlanet } from '@/dexie.config';
+import { useHead } from '@unhead/vue';
+import { onMounted, onUnmounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { EventBus } from '@core/event-bus';
+import { SM_WIDTH_THRESHOLD } from '@core/globals';
+import pako from 'pako';
+import { saveAs } from 'file-saver';
+import PlanetData from '@core/models/planet-data.model';
+import JSZip from 'jszip';
+import NewCardElement from '@/components/codex/elements/NewCardElement.vue';
+import { readFileData } from '@core/helpers/import.helper';
+import { nanoid } from 'nanoid';
+import { EXTRAS_METAL_SLUG_MODE, uwuifyPath } from '@core/extras';
+import ViewHeader from '@/components/global/ViewHeader.vue';
+import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvLink from '@/_lib/components/LgvLink.vue';
 
-const planets: Ref<IDBPlanet[]> = ref([])
+const planets: Ref<IDBPlanet[]> = ref([]);
 
-const i18n = useI18n()
-const fileInput = useTemplateRef('fileInput')
-const planetCardRefs = useTemplateRef('planetCardRef')
-const planetInfoDialogRef = useTemplateRef('planetInfoDialogRef')
+const i18n = useI18n();
+const fileInput = useTemplateRef('fileInput');
+const planetCardRefs = useTemplateRef('planetCardRef');
+const planetInfoDialogRef = useTemplateRef('planetInfoDialogRef');
 
-const deleteDialogRef = useTemplateRef('deleteDialogRef')
-const showInlineFooter: Ref<boolean> = ref(false)
+const deleteDialogRef = useTemplateRef('deleteDialogRef');
+const showInlineFooter: Ref<boolean> = ref(false);
 
 useHead({
   title: i18n.t('codex.$title') + ' · ' + i18n.t('main.$title'),
   meta: [{ name: 'description', content: 'Planet editor' }],
-})
+});
 
 onMounted(async () => {
-  computeResponsiveness()
-  await loadPlanets()
-  EventBus.registerWindowEventListener('click', onWindowClick)
-  EventBus.registerWindowEventListener('resize', onWindowResize)
-})
+  computeResponsiveness();
+  await loadPlanets();
+  EventBus.registerWindowEventListener('click', onWindowClick);
+  EventBus.registerWindowEventListener('resize', onWindowResize);
+});
 onUnmounted(() => {
-  EventBus.deregisterWindowEventListener('click', onWindowClick)
-  EventBus.deregisterWindowEventListener('resize', onWindowResize)
-})
+  EventBus.deregisterWindowEventListener('click', onWindowClick);
+  EventBus.deregisterWindowEventListener('resize', onWindowResize);
+});
 
 watch(
   () => EventBus.clearEvent.value,
   async () => await loadPlanets(),
-)
+);
 
 async function loadPlanets() {
-  const idbPlanets = await idb.planets.orderBy('data._planetName').toArray()
-  planets.value.splice(0)
-  planets.value.push(...idbPlanets.map((pl) => ({ ...pl, data: PlanetData.createFrom(pl.data) })))
+  const idbPlanets = await idb.planets.orderBy('data._planetName').toArray();
+  planets.value.splice(0);
+  planets.value.push(...idbPlanets.map((pl) => ({ ...pl, data: PlanetData.createFrom(pl.data) })));
 }
 
 // ------------------------------------------------------------------------------------------------
 
 async function onWindowClick(event: MouseEvent) {
-  EventBus.sendClickEvent(event)
+  EventBus.sendClickEvent(event);
 }
 function onWindowResize() {
-  computeResponsiveness()
+  computeResponsiveness();
 }
 
 function computeResponsiveness() {
-  showInlineFooter.value = window.innerWidth < SM_WIDTH_THRESHOLD
+  showInlineFooter.value = window.innerWidth < SM_WIDTH_THRESHOLD;
 }
 
 // ------------------------------------------------------------------------------------------------
 
 function openFileDialog() {
-  fileInput.value?.click()
+  fileInput.value?.click();
 }
 
 async function importPlanetFile(event: Event) {
-  const files = (event.target as HTMLInputElement).files
+  const files = (event.target as HTMLInputElement).files;
   if (!files || files?.length === 0) {
-    console.warn('<Lagrange> At least one file should be specified!')
-    return
+    console.warn('<Lagrange> At least one file should be specified!');
+    return;
   }
 
   const readPromises = Array.from(files).map((f) => {
-    const reader = new FileReader()
+    const reader = new FileReader();
     return new Promise<IDBPlanet>((resolve, reject) => {
       reader.onload = async (e) => {
-        const data = readFileData(e.target?.result as ArrayBuffer)
+        const data = readFileData(e.target?.result as ArrayBuffer);
         if (data) {
-          resolve(data)
+          resolve(data);
         } else {
-          reject()
+          reject();
         }
-      }
-      reader.readAsArrayBuffer(f)
-    })
-  })
+      };
+      reader.readAsArrayBuffer(f);
+    });
+  });
 
   try {
-    const newPlanets: PromiseSettledResult<IDBPlanet>[] = await Promise.allSettled(readPromises)
-    const rejectedFiles = newPlanets.filter((p) => p.status === 'rejected')
+    const newPlanets: PromiseSettledResult<IDBPlanet>[] = await Promise.allSettled(readPromises);
+    const rejectedFiles = newPlanets.filter((p) => p.status === 'rejected');
     if (rejectedFiles.length === newPlanets.length) {
-      EventBus.sendToastEvent('warn', 'toast.import_failure', 3000)
-      return
+      EventBus.sendToastEvent('warn', 'toast.import_failure', 3000);
+      return;
     }
 
     const allAdded = await idb.planets.bulkAdd(
@@ -168,68 +169,68 @@ async function importPlanetFile(event: Event) {
         .filter((np) => np.status === 'fulfilled')
         .map((np: PromiseSettledResult<IDBPlanet>) => (np as PromiseFulfilledResult<IDBPlanet>).value)
         .map((np) => ({ ...np, id: nanoid(), timestamp: Date.now(), version: np.version ?? '1' })),
-    )
+    );
     if (allAdded && rejectedFiles.length === 0) {
-      EventBus.sendToastEvent('success', 'toast.import_success', 3000)
+      EventBus.sendToastEvent('success', 'toast.import_success', 3000);
     } else {
-      EventBus.sendToastEvent('warn', 'toast.import_partial', 3000)
+      EventBus.sendToastEvent('warn', 'toast.import_partial', 3000);
     }
   } catch (_) {
-    EventBus.sendToastEvent('warn', 'toast.import_partial', 3000)
+    EventBus.sendToastEvent('warn', 'toast.import_partial', 3000);
   } finally {
-    await loadPlanets()
-    fileInput.value!.value = ''
+    await loadPlanets();
+    fileInput.value!.value = '';
   }
 }
 
 async function exportPlanets() {
-  const idbZip = new JSZip()
+  const idbZip = new JSZip();
   for (const planet of planets.value) {
-    const json = JSON.stringify(planet)
-    const deflated = pako.deflate(json)
-    const planetFilename = planet.data.planetName.replaceAll(' ', '_') + '.lagrange'
-    idbZip.file(planetFilename, deflated)
+    const json = JSON.stringify(planet);
+    const deflated = pako.deflate(json);
+    const planetFilename = planet.data.planetName.replaceAll(' ', '_') + '.lagrange';
+    idbZip.file(planetFilename, deflated);
   }
-  const generatedZip = await idbZip.generateAsync({ type: 'blob' })
-  saveAs(generatedZip, `lagrange-${import.meta.env.APP_VERSION}-planets-${new Date().toISOString()}.zip`)
+  const generatedZip = await idbZip.generateAsync({ type: 'blob' });
+  saveAs(generatedZip, `lagrange-${import.meta.env.APP_VERSION}-planets-${new Date().toISOString()}.zip`);
 }
 
 function exportPlanet(planet: IDBPlanet) {
-  planet.data.changedProps.splice(0)
-  const jsonParams = JSON.stringify(planet)
-  const gzipParams = pako.deflate(jsonParams)
-  const planetFilename = planet.data.planetName.replaceAll(' ', '_')
-  saveAs(new Blob([gzipParams as BufferSource]), `${planetFilename}.lagrange`)
+  planet.data.changedProps.splice(0);
+  const jsonParams = JSON.stringify(planet);
+  const gzipParams = pako.deflate(jsonParams);
+  const planetFilename = planet.data.planetName.replaceAll(' ', '_');
+  saveAs(new Blob([gzipParams as BufferSource]), `${planetFilename}.lagrange`);
 }
 
 async function openPlanetInfoDialog(planet: IDBPlanet) {
-  planetInfoDialogRef.value?.open(planet)
+  planetInfoDialogRef.value?.open(planet);
 }
 
 async function openDeleteConfirmDialog(planet: IDBPlanet) {
-  deleteDialogRef.value?.open(planet)
+  deleteDialogRef.value?.open(planet);
 }
 
 async function deleteTargetedPlanet(id: string) {
-  const settings = await idb.settings.limit(1).first()
-  if (EXTRAS_METAL_SLUG_MODE.value && (settings!.enableAnimations && settings?.enableEffects)) {
-    await planetCardRefs.value!.find(c => c!.planet.id === id)?.obliteratePlanet()
+  const settings = await idb.settings.limit(1).first();
+  if (EXTRAS_METAL_SLUG_MODE.value && settings!.enableAnimations && settings?.enableEffects) {
+    await planetCardRefs.value!.find((c) => c!.planet.id === id)?.obliteratePlanet();
     try {
-      await idb.planets.delete(id)
-      EventBus.sendToastEvent('success', 'toast.extras_obliterate_success', 3000)
+      await idb.planets.delete(id);
+      EventBus.sendToastEvent('success', 'toast.extras_obliterate_success', 3000);
     } catch (_) {
-      EventBus.sendToastEvent('warn', 'toast.extras_obliterate_failure', 3000)
+      EventBus.sendToastEvent('warn', 'toast.extras_obliterate_failure', 3000);
     } finally {
-      await loadPlanets()
+      await loadPlanets();
     }
   } else {
     try {
-      await idb.planets.delete(id)
-      EventBus.sendToastEvent('success', 'toast.delete_success', 3000)
+      await idb.planets.delete(id);
+      EventBus.sendToastEvent('success', 'toast.delete_success', 3000);
     } catch (_) {
-      EventBus.sendToastEvent('warn', 'toast.delete_failure', 3000)
+      EventBus.sendToastEvent('warn', 'toast.delete_failure', 3000);
     } finally {
-      await loadPlanets()
+      await loadPlanets();
     }
   }
 }

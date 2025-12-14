@@ -21,14 +21,14 @@ import AppNavigation from './AppNavigation.vue';
   z-index: 15;
   position: absolute;
   inset: 0 0 auto 0;
-  
+
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   grid-template-rows: 1fr;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  
+
   #nav-toggle {
     margin-top: 0.5rem;
     margin-left: 0.5rem;
@@ -78,7 +78,7 @@ import AppNavigation from './AppNavigation.vue';
   &.r {
     right: -$corner-width;
     bottom: 0;
-    border-width: $corner-height $corner-width 0 0 ;
+    border-width: $corner-height $corner-width 0 0;
     border-color: var(--lg-panel) transparent transparent transparent;
   }
 }
@@ -86,9 +86,12 @@ import AppNavigation from './AppNavigation.vue';
 @media screen and (max-width: 1199px) {
   .view-header {
     grid-template-columns: 1fr auto;
-    .filler { display: none; }
+    .filler {
+      display: none;
+    }
   }
-  .view-header-corner.rb, .view-header-corner.r {
+  .view-header-corner.rb,
+  .view-header-corner.r {
     display: none;
   }
 }

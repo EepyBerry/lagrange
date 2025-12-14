@@ -27,15 +27,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref } from 'vue'
-import AppAboutDialog from '@components/global/dialogs/AboutDialog.vue'
-import AppSettingsDialog from '@components/global/dialogs/SettingsDialog.vue'
-import ExtraSpecialDayElement from '@components/global/extras/ExtraSpecialDayElement.vue'
-import LgvButton from '@/_lib/components/LgvButton.vue'
-import LgvLink from '@/_lib/components/LgvLink.vue'
+import { ref, type Ref } from 'vue';
+import AppAboutDialog from '@components/global/dialogs/AboutDialog.vue';
+import AppSettingsDialog from '@components/global/dialogs/SettingsDialog.vue';
+import ExtraSpecialDayElement from '@components/global/extras/ExtraSpecialDayElement.vue';
+import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvLink from '@/_lib/components/LgvLink.vue';
 
-const infoDialog: Ref<{ open: () => void } | null> = ref(null)
-const settingsDialog: Ref<{ open: () => void } | null> = ref(null)
+const infoDialog: Ref<{ open: () => void } | null> = ref(null);
+const settingsDialog: Ref<{ open: () => void } | null> = ref(null);
 </script>
 
 <style scoped lang="scss">

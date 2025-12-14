@@ -149,6 +149,8 @@
       "extras": "Extwas",
       "extras_crt_effect": "CRT effect",
       "extras_hologram_effect": "Howogwam effect",
+      "extras_metal_slug_mode": "METAL SLUG™ mode",
+      "extras_metal_slug_mode_warning": "WAWNING: adds fwashing wights & animations!!!",
       "extras_special_days": "Sh-show speciaw days",
       "advanced": "Advanced Settings",
       "advanced_io": "Backup/westowe IndexedDB d-data",
@@ -188,7 +190,10 @@
         "043_settings": "(0.4.3) App s-settings can nyow be backed up AND westowed!!! U-uses a JSON fiwe to stowe settings d-data",
         "05_title": "Update 0.5 - Cowe Ovewhauw",
         "05_webgpu": "I-intwoduces WebGPU suppowt!!! Wendewew sewection is now avaiwabwe in the app settings!!!",
-        "05_rewrite": "Fuww wewwite of the intewnyaw app s-stwuctuwe to hewp futuwe devewopment effowts!!!"
+        "05_rewrite": "Fuww wewwite of the intewnyaw app s-stwuctuwe to hewp futuwe devewopment effowts!!!",
+        "051_emissivity": "(0.5.1) Suwfaces and biomes can now be independentwy emissive!!! This effect is p-pwesewved on expowts",
+        "051_atmosphere": "(0.5.1) FUWW w-wefactowing of the atmosphewe shadew, awso incwudes new advanced pawameters!!!",
+        "051_ui": "(0.5.1) UI wefwesh on the Codex, diawogs, and others!!! Incwudes bettew ewwow handwing on editow initiawization"
       },
       "credits": {
         "$title": "Cwedits & attwibushon",
@@ -368,7 +373,12 @@
         "rgba_mode_direct": "Diwect",
         "rgba_mode_mixed": "Mixed",
         "rgba_hue": "Hue",
-        "rgba_tint": "Tint"
+        "rgba_tint": "Tint",
+        "advanced": "Advanced",
+        "advanced_scattering_constant": "Scattewing constant (g)",
+        "advanced_rayleigh_density_ratio": "Wayweigh density watio",
+        "advanced_mie_density_ratio": "Mie density watio",
+        "advanced_optical_density_ratio": "Opticaw density watio"
       },
       "ring": {
         "$title": "Wing Systyem",
@@ -402,9 +412,11 @@
     "import_partial": "Wawning: faiwed to impowt some pwanyet(s)...",
     "import_failure": "Couwd nyot impowt pwanyets... :c Pp-wease check if the cowwect fiwes a-awe sewected and twy again!!!",
     "save_success": "Saved pwanyet successfuwwy!",
-    "settings_import_success": "Impowted settings s-successfuwwy!!!",
     "save_partial_no_preview": "Saved pwanyet (c-couwd not genyewate pwanyet pweview ;w;)",
-    "screenshot_failure": "F-faiwed to expowt scweenshot!!! ＞﹏＜"
+    "settings_import_success": "Impowted settings s-successfuwwy!!!",
+    "screenshot_failure": "F-faiwed to expowt scweenshot!!! ＞﹏＜",
+    "extras_obliterate_success": "Obwitewated pwanyet successfuwwy!!! >:3",
+    "extras_obliterate_failure": "Couwd not destwoy pwanyet (；′⌒`)"
   },
   "tooltip": {
     "topbar_rename": "Wenyame pwanyet",

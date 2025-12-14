@@ -1,18 +1,37 @@
 <template>
-  <svg 
+  <svg
     id="svggraph-biomes"
-    :viewBox="`${svgRect.x} ${svgRect.y} ${svgRect.w} ${svgRect.h}`" 
+    :viewBox="`${svgRect.x} ${svgRect.y} ${svgRect.w} ${svgRect.h}`"
     role="figure"
     :title="$t('dialog.planetinfo.biomes')"
   >
     <defs>
-      <pattern id="grid" :width="graphRect.w/10" :height="graphRect.h/10" patternUnits="userSpaceOnUse">
-        <path d="M 0 0 L 45 0 45 45" fill="none" stroke="var(--lg-accent)" stroke-width="2"/>
+      <pattern id="grid" :width="graphRect.w / 10" :height="graphRect.h / 10" patternUnits="userSpaceOnUse">
+        <path d="M 0 0 L 45 0 45 45" fill="none" stroke="var(--lg-accent)" stroke-width="2" />
       </pattern>
-      <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="3" markerHeight="3" orient="auto-start-reverse" fill="white">
+      <marker
+        id="arrow"
+        viewBox="0 0 10 10"
+        refX="5"
+        refY="5"
+        markerWidth="3"
+        markerHeight="3"
+        orient="auto-start-reverse"
+        fill="white"
+      >
         <path d="M 0 0 L 10 5 L 0 10 z" />
       </marker>
-      <marker id="grad" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="3" markerHeight="3" orient="auto-start-reverse" stroke="white" stroke-width="3">
+      <marker
+        id="grad"
+        viewBox="0 0 10 10"
+        refX="5"
+        refY="5"
+        markerWidth="3"
+        markerHeight="3"
+        orient="auto-start-reverse"
+        stroke="white"
+        stroke-width="3"
+      >
         <path d="M5,0 5,10" />
       </marker>
     </defs>
@@ -22,37 +41,55 @@
       </g>
       <g id="svggraph-biomes-data">
         <!-- note: Y coordinates are inverted to match Y axis direction -->
-        <rect 
+        <rect
           v-for="bd of biomeData.toReversed()"
           ref="graphAreas"
           :key="bd.id"
-          :x="`${bd.rect.x*100.0}%`"
-          :y="`${(1-bd.rect.y-bd.rect.h)*100.0}%`"
-          :width="graphRect.w*bd.rect.w"
-          :height="graphRect.h*bd.rect.h"
+          :x="`${bd.rect.x * 100.0}%`"
+          :y="`${(1 - bd.rect.y - bd.rect.h) * 100.0}%`"
+          :width="graphRect.w * bd.rect.w"
+          :height="graphRect.h * bd.rect.h"
           :fill="bd.color"
         />
       </g>
       <g id="svggraph-biomes-axes">
-        <path :d="makeSVGLinearPath([-1,graphRect.h],[graphRect.w,graphRect.h], 3)" fill="none" stroke="white" stroke-width="2" marker-mid="url(#grad)" marker-end="url(#arrow)" />
-        <text x="100%" :y="graphRect.h+20" text-anchor="end" font-size="12" fill="white" >{{ $t('dialog.planetinfo.biomes_humi') }} (%)</text>
-        <path :d="makeSVGLinearPath([0,graphRect.h],[0,0], 3)" fill="none" stroke="white" stroke-width="2" marker-mid="url(#grad)" marker-end="url(#arrow)" />
-        <text x="0" :y="-10" transform="rotate(-90)" text-anchor="end" font-size="12" fill="white">{{ $t('dialog.planetinfo.biomes_temp') }} (%)</text>
-        <text x="-5" :y="graphRect.h+5" text-anchor="end" font-size="10" fill="white">0</text>
+        <path
+          :d="makeSVGLinearPath([-1, graphRect.h], [graphRect.w, graphRect.h], 3)"
+          fill="none"
+          stroke="white"
+          stroke-width="2"
+          marker-mid="url(#grad)"
+          marker-end="url(#arrow)"
+        />
+        <text x="100%" :y="graphRect.h + 20" text-anchor="end" font-size="12" fill="white">
+          {{ $t('dialog.planetinfo.biomes_humi') }} (%)
+        </text>
+        <path
+          :d="makeSVGLinearPath([0, graphRect.h], [0, 0], 3)"
+          fill="none"
+          stroke="white"
+          stroke-width="2"
+          marker-mid="url(#grad)"
+          marker-end="url(#arrow)"
+        />
+        <text x="0" :y="-10" transform="rotate(-90)" text-anchor="end" font-size="12" fill="white">
+          {{ $t('dialog.planetinfo.biomes_temp') }} (%)
+        </text>
+        <text x="-5" :y="graphRect.h + 5" text-anchor="end" font-size="10" fill="white">0</text>
       </g>
       <g id="svggraph-biomes-order">
         <rect
           v-for="(bd, i) of biomeData"
           ref="graphToggles"
           :key="bd.id"
-          :x="20*i"
-          :y="graphRect.h+6"
+          :x="20 * i"
+          :y="graphRect.h + 6"
           width="16"
           height="16"
           :fill="bd.color"
           :stroke="bd.color"
           role="button"
-          @click="toggleGraphBiome(biomeData.length-1-i)"
+          @click="toggleGraphBiome(biomeData.length - 1 - i)"
         />
       </g>
     </svg>
@@ -64,39 +101,41 @@ import Rect from '@/core/utils/math/rect';
 import { makeSVGLinearPath } from '@/core/utils/svg-utils';
 import { onMounted, ref, type Ref } from 'vue';
 
-const width = 480, height = 270
-const svgRect = new Rect(0, 0, width, height)
-const graphRect = new Rect(20, 10, width-30, height-36)
+const width = 480,
+  height = 270;
+const svgRect = new Rect(0, 0, width, height);
+const graphRect = new Rect(20, 10, width - 30, height - 36);
 
-const props = defineProps<{ biomes: BiomeParameters[] }>()
-const biomeData: Ref<{id: string, color: string, rect: Rect, show: boolean}[]> = ref([])
+const props = defineProps<{ biomes: BiomeParameters[] }>();
+const biomeData: Ref<{ id: string; color: string; rect: Rect; show: boolean }[]> = ref([]);
 
-const graphAreas: Ref<(SVGRectElement|null)[]> = ref([])
-const graphToggles: Ref<(SVGRectElement|null)[]> = ref([])
+const graphAreas: Ref<(SVGRectElement | null)[]> = ref([]);
+const graphToggles: Ref<(SVGRectElement | null)[]> = ref([]);
 
 onMounted(() => {
-  props.biomes.forEach(b => biomeData.value.push({
-    id: b.id,
-    color: '#'+b.color.getHexString(),
-    rect: new Rect(b.humiMin, b.tempMin, b.humiMax-b.humiMin, b.tempMax-b.tempMin),
-    show: true
-  }))
-})
+  props.biomes.forEach((b) =>
+    biomeData.value.push({
+      id: b.id,
+      color: '#' + b.color.getHexString(),
+      rect: new Rect(b.humiMin, b.tempMin, b.humiMax - b.humiMin, b.tempMax - b.tempMin),
+      show: true,
+    }),
+  );
+});
 
 function toggleGraphBiome(index: number) {
-  biomeData.value[index].show = !biomeData.value[index].show
-  const rectElem = graphAreas.value![index]!
-  const rectToggle = graphToggles.value![biomeData.value.length-1-index]!
+  biomeData.value[index].show = !biomeData.value[index].show;
+  const rectElem = graphAreas.value![index]!;
+  const rectToggle = graphToggles.value![biomeData.value.length - 1 - index]!;
 
   if (biomeData.value[index].show) {
-    rectElem.style.display = 'initial'
-    rectToggle.classList.remove('active')
+    rectElem.style.display = 'initial';
+    rectToggle.classList.remove('active');
   } else {
-    rectElem.style.display = 'none'
-    rectToggle.classList.add('active')
+    rectElem.style.display = 'none';
+    rectToggle.classList.add('active');
   }
 }
-
 </script>
 <style scoped lang="scss">
 #svggraph-biomes {
@@ -104,7 +143,7 @@ function toggleGraphBiome(index: number) {
   max-width: 600px;
 }
 #svggraph-biomes-order {
-  rect:hover { 
+  rect:hover {
     cursor: pointer;
     filter: brightness(75%);
   }
@@ -120,7 +159,9 @@ function toggleGraphBiome(index: number) {
   }
 }
 #svggraph-biomes-axes {
-  text { user-select: none; }
+  text {
+    user-select: none;
+  }
 }
 @media screen and (max-width: 767px) {
   #svggraph-biomes-order {

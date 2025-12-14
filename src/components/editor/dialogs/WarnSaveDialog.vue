@@ -21,24 +21,13 @@
       </div>
     </template>
     <template #actions>
-      <LgvButton
-        icon="mingcute:close-line"
-        @click="dialogRef?.close()"
-      >
+      <LgvButton icon="mingcute:close-line" @click="dialogRef?.close()">
         {{ $t('dialog.warnsave.$action_cancel') }}
       </LgvButton>
-      <LgvButton
-        class="success"
-        icon="mingcute:save-2-line"
-        @click="saveConfirmClose"
-      >
+      <LgvButton class="success" icon="mingcute:save-2-line" @click="saveConfirmClose">
         {{ $t('dialog.warnsave.$action_saveconfirm') }}
       </LgvButton>
-      <LgvButton
-        class="warn"
-        icon="mingcute:exit-line"
-        @click="confirmAndClose"
-      >
+      <LgvButton class="warn" icon="mingcute:exit-line" @click="confirmAndClose">
         {{ $t('dialog.warnsave.$action_confirm') }}
       </LgvButton>
     </template>
@@ -46,21 +35,21 @@
 </template>
 <script setup lang="ts">
 import LgvButton from '@/_lib/components/LgvButton.vue';
-import DialogElement from '@components/global/elements/DialogElement.vue'
-import { ref, type Ref } from 'vue'
+import DialogElement from '@components/global/elements/DialogElement.vue';
+import { ref, type Ref } from 'vue';
 
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null)
-const $emit = defineEmits(['save-confirm', 'confirm'])
-defineExpose({ open: () => dialogRef.value?.open() })
+const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
+const $emit = defineEmits(['save-confirm', 'confirm']);
+defineExpose({ open: () => dialogRef.value?.open() });
 
 function saveConfirmClose() {
-  $emit('save-confirm')
-  dialogRef.value?.close()
+  $emit('save-confirm');
+  dialogRef.value?.close();
 }
 
 function confirmAndClose() {
-  $emit('confirm')
-  dialogRef.value?.close()
+  $emit('confirm');
+  dialogRef.value?.close();
 }
 </script>
 
