@@ -21,7 +21,7 @@
 import { ref, type Ref } from 'vue';
 
 type LinkType = 'internal' | 'external';
-withDefaults(defineProps<{ linkType: LinkType; href?: string; icon?: string; iconWidth?: string }>(), {
+withDefaults(defineProps<{ linkType?: LinkType; href?: string; icon?: string; iconWidth?: string }>(), {
   icon: 'mingcute:question-line',
   iconWidth: '1.5rem',
   linkType: 'internal',

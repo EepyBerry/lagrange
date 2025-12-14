@@ -1,46 +1,46 @@
 <template>
-  <div id="container">
+  <div id="pagenotfound-container">
     <AppLogo />
     <div class="text">
-      <h1 v-if="msgVariant === 1" class="title">{{ $t('404.text_01') }}</h1>
-      <h1 v-if="msgVariant === 2" class="title">
-        <i>{{ $t('404.text_02') }}</i>
-      </h1>
-      <h1 v-if="msgVariant === 3" class="title">{{ $t('404.text_03') }}</h1>
-      <h1 v-if="msgVariant === 4" class="title ultra">{{ $t('404.text_04') }}</h1>
-      <p class="subtitle">{{ $t('404.subtext') }}</p>
-      <a class="home-link" href="/">
-        <iconify-icon icon="mingcute:book-2-line" height="1.5rem" />
+      <h1 class="title" :class="{ ultra: msgVariant === 4 }">{{ loadMessage() }}</h1>
+      <h2 class="subtitle">{{ $t('404.subtext') }}</h2>
+      <LgvLink
+        variant="button"
+        icon="mingcute:book-2-line"
+        href="/"
+      >
         {{ $t('404.link') }}
-      </a>
+      </LgvLink>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import AppLogo from '@components/global/elements/AppLogo.vue';
-import { useHead } from '@unhead/vue';
-import { onMounted, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
+import LgvLink from '@/_lib/components/LgvLink.vue'
+import AppLogo from '@components/global/elements/AppLogo.vue'
+import { useHead } from '@unhead/vue'
+import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-const i18n = useI18n();
+const i18n = useI18n()
 useHead({
   title: i18n.t('404.$title') + ' · ' + i18n.t('main.$title'),
   meta: [
     { name: 'robots', content: 'noindex' },
     { name: 'description', content: 'Page not found' },
   ],
-});
+})
 
-const msgVariant = ref(0);
+const msgVariant = ref(0)
+function loadMessage(): string {
+  msgVariant.value = Math.floor(Math.random() * 4) + 1
+  return i18n.t(`404.text_${msgVariant.value.toString().padStart(2, '0')}`)
+}
 
-onMounted(() => {
-  msgVariant.value = Math.floor(Math.random() * 4) + 1;
-});
 </script>
 
-<style scoped lang="scss">
-#container {
+<style lang="scss">
+#pagenotfound-container {
   flex: 1;
   background: var(--lg-panel);
   background-size: cover;
@@ -54,6 +54,7 @@ onMounted(() => {
 
   #app-logo,
   #app-logo-uwu {
+    max-width: unset;
     width: clamp(200px, 37.5vw, 300px);
     align-self: center;
     justify-self: center;
@@ -74,14 +75,11 @@ onMounted(() => {
     font-size: clamp(2rem, 5vw, 2.5rem);
   }
   .subtitle {
-    text-align: center;
-    font-size: 1rem;
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    font-weight: 400;
   }
   .ultra {
     font-family: VCR OSD Mono;
-  }
-  .home-link {
-    padding: 0.5rem;
   }
 }
 </style>
