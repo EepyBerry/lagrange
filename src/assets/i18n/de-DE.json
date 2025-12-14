@@ -149,6 +149,8 @@
       "extras": "Extras",
       "extras_crt_effect": "CRT-Effekt",
       "extras_hologram_effect": "Hologram-Effekt",
+      "extras_metal_slug_mode": "METAL SLUG™ Modus",
+      "extras_metal_slug_mode_warning": "Achtung: fügt blinkende Lichter und Animationen hinzu!",
       "extras_special_days": "Spezielle Tage anzeigen",
       "advanced": "Erweiterte Einstellungen",
       "advanced_io": "IndexedDB-Daten sichern/wiederherstellen",
@@ -367,7 +369,12 @@
         "rgba_mode_direct": "Direkt",
         "rgba_mode_mixed": "Mischen",
         "rgba_hue": "Farbton",
-        "rgba_tint": "Farbe"
+        "rgba_tint": "Farbe",
+        "advanced": "Advanced",
+        "advanced_scattering_constant": "Streuungskonstante (g)",
+        "advanced_rayleigh_density_ratio": "Rayleigh-Dichteverhältnis",
+        "advanced_mie_density_ratio": "Mie-Dichteverhältnis",
+        "advanced_optical_density_ratio": "Optisches Dichteverhältnis"
       },
       "ring": {
         "$title": "Ringe",
@@ -395,15 +402,17 @@
     "storage_success": "Persistenter Speicher aktiviert!",
     "storage_failure_none": "Datenpersistenz wird in diesem Browser nicht unterstützt!",
     "storage_failure_rules": "Datenpersistenz durch Browserregeln blockiert!",
-    "delete_success": "Planet gelöscht !",
+    "delete_success": "Planet gelöscht!",
     "delete_failure": "Der Planet konnte nicht gelöscht werden",
     "import_success": "Planeten Importiert!",
     "import_partial": "Achtung: Einige Planeten konnten nicht importiert werden",
     "import_failure": "Planeten können nicht importiert werden. Stellen Sie sicher, dass die richtigen Dateien ausgewählt wurden, und versuchen Sie es dann erneut",
-    "save_success": "Planet gespeichert !",
-    "settings_import_success": "Daten Importiert!",
+    "save_success": "Planet gespeichert!",
     "save_partial_no_preview": "Planet gespeichert (Planetvorschau konnte nicht generiert werden!)",
-    "screenshot_failure": "Fehler beim Screenshot!"
+    "settings_import_success": "Daten Importiert!",
+    "screenshot_failure": "Fehler beim Screenshot!",
+    "extras_obliterate_success": "Planet erfolgreich ausgelöscht!",
+    "extras_obliterate_failure": "Der Planet konnte nicht vernicht werden"
   },
   "tooltip": {
     "topbar_rename": "Planeten umbenennen",

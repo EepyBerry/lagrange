@@ -94,7 +94,7 @@
             :min="-0.999"
             :max="0"
           >
-            {{ $t('editor.controls.atmosphere.advanced_mie_constant') }}
+            {{ $t('editor.controls.atmosphere.advanced_scattering_constant') }}
           </ParameterSlider>
           <ParameterSlider
             id="a-advrayph"

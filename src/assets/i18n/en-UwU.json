@@ -149,6 +149,8 @@
       "extras": "Extwas",
       "extras_crt_effect": "CRT effect",
       "extras_hologram_effect": "Howogwam effect",
+      "extras_metal_slug_mode": "METAL SLUG™ mode",
+      "extras_metal_slug_mode_warning": "WAWNING: adds fwashing wights & animations!!!",
       "extras_special_days": "Sh-show speciaw days",
       "advanced": "Advanced Settings",
       "advanced_io": "Backup/westowe IndexedDB d-data",
@@ -368,7 +370,12 @@
         "rgba_mode_direct": "Diwect",
         "rgba_mode_mixed": "Mixed",
         "rgba_hue": "Hue",
-        "rgba_tint": "Tint"
+        "rgba_tint": "Tint",
+        "advanced": "Advanced",
+        "advanced_scattering_constant": "Scattewing constant (g)",
+        "advanced_rayleigh_density_ratio": "Wayweigh density watio",
+        "advanced_mie_density_ratio": "Mie density watio",
+        "advanced_optical_density_ratio": "Opticaw density watio"
       },
       "ring": {
         "$title": "Wing Systyem",
@@ -402,9 +409,11 @@
     "import_partial": "Wawning: faiwed to impowt some pwanyet(s)...",
     "import_failure": "Couwd nyot impowt pwanyets... :c Pp-wease check if the cowwect fiwes a-awe sewected and twy again!!!",
     "save_success": "Saved pwanyet successfuwwy!",
-    "settings_import_success": "Impowted settings s-successfuwwy!!!",
     "save_partial_no_preview": "Saved pwanyet (c-couwd not genyewate pwanyet pweview ;w;)",
-    "screenshot_failure": "F-faiwed to expowt scweenshot!!! ＞﹏＜"
+    "settings_import_success": "Impowted settings s-successfuwwy!!!",
+    "screenshot_failure": "F-faiwed to expowt scweenshot!!! ＞﹏＜",
+    "extras_obliterate_success": "Obwitewated pwanyet successfuwwy!!! >:3",
+    "extras_obliterate_failure": "Couwd not destwoy pwanyet (；′⌒`)"
   },
   "tooltip": {
     "topbar_rename": "Wenyame pwanyet",

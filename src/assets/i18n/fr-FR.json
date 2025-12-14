@@ -149,6 +149,8 @@
       "extras": "Extras",
       "extras_crt_effect": "Effet écran cathodique",
       "extras_hologram_effect": "Effet hologramme",
+      "extras_metal_slug_mode": "Mode METAL SLUG™",
+      "extras_metal_slug_mode_warning": "Attention: ajoute des lumières vives et animations!",
       "extras_special_days": "Afficher les jours spéciaux",
       "advanced": "Paramètres avancés",
       "advanced_io": "Sauvegarde/import des paramètres",
@@ -367,7 +369,12 @@
         "rgba_mode_direct": "Direct",
         "rgba_mode_mixed": "Mixe",
         "rgba_hue": "Teinte",
-        "rgba_tint": "Couleur"
+        "rgba_tint": "Couleur",
+        "advanced": "Avancé",
+        "advanced_scattering_constant": "Diffusion (g)",
+        "advanced_rayleigh_density_ratio": "Facteur de densité Rayleigh",
+        "advanced_mie_density_ratio": "Facteur de densité Mie",
+        "advanced_optical_density_ratio": "Facteur de densité optique"
       },
       "ring": {
         "$title": "Anneaux",
@@ -401,9 +408,11 @@
     "import_partial": "Attention: certaines planètes n'ont pas pu être importées",
     "import_failure": "Impossible d'importer les planètes. Vérifiez que les bons fichiers ont été sélectionnés, puis essayez à nouveau",
     "save_success": "Planète enregistrée !",
-    "settings_import_success": "Paramètres chargés !",
     "save_partial_no_preview": "Planète enregistrée (l'aperçu n'a pas pu être généré !)",
-    "screenshot_failure": "Erreur lors de la capture d'écran !"
+    "settings_import_success": "Paramètres chargés !",
+    "screenshot_failure": "Erreur lors de la capture d'écran !",
+    "extras_obliterate_success": "Planète oblitérée !",
+    "extras_obliterate_failure": "Impossible de détruire la planète"
   },
   "tooltip": {
     "topbar_rename": "Renommer la planète",
