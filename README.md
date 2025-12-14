@@ -6,8 +6,8 @@
 
 <p>
   <img src="https://img.shields.io/badge/VueJS-3.5-%2342B883?logo=vuedotjs&labelColor=%2335495E&logoColor=white">
-  <img src="https://img.shields.io/badge/Vite-6.1-%23BD34FE?logo=vite&labelColor=%2335495E&logoColor=white">
-  <img src="https://img.shields.io/badge/ThreeJS-r173-%23049EF4?logo=threedotjs&labelColor=%2335495E&logoColor=white">
+  <img src="https://img.shields.io/badge/Vite-7.1-%23BD34FE?logo=vite&labelColor=%2335495E&logoColor=white">
+  <img src="https://img.shields.io/badge/ThreeJS-r180-%23049EF4?logo=threedotjs&labelColor=%2335495E&logoColor=white">
 </p>
 
 A WebGL2 & WebGPU project using VueJS and ThreeJS! <br>
@@ -89,7 +89,6 @@ Vite copies the output to the `dist` folder, creating it first if need be.
 
 - Dark side "night lights"!
 - Cracks & Craters!
-- Asteroid belts!
 - Planet animations!
 - _Galactic Map_, to organize them around stars!
 
