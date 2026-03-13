@@ -1,8 +1,8 @@
 import { Color } from 'three';
-import { ChangeTracker, type ChangedProp } from './change-tracker.model';
 import { nanoid } from 'nanoid';
 import { clamp } from 'three/src/math/MathUtils.js';
 import { clampedPRNG } from '@core/utils/math-utils';
+import { ObservableRelay, type ObservableNotifyFunction } from '../utils/observable-utils';
 
 export class BiomeDimensions {
   temperatureMin: number = 0.0;
@@ -10,7 +10,7 @@ export class BiomeDimensions {
   humidityMin: number = 0.0;
   humidityMax: number = 1.0;
 }
-export class BiomeParameters extends ChangeTracker {
+export class BiomeParameters extends ObservableRelay {
   private _id: string;
 
   private _tempMin: number = 0.0;
@@ -28,8 +28,8 @@ export class BiomeParameters extends ChangeTracker {
   private _parentEmissiveIntensity: number = 0.0;
 
   constructor(
-    changedPropsRef: ChangedProp[],
-    changePrefix: string,
+    keyPrefix: string,
+    notifyFunc: ObservableNotifyFunction,
     dims: BiomeDimensions,
     color: Color,
     smoothness: number,
@@ -37,7 +37,7 @@ export class BiomeParameters extends ChangeTracker {
     emissiveIntensity?: number,
     oldId?: string,
   ) {
-    super(changedPropsRef, changePrefix);
+    super(keyPrefix, notifyFunc);
     this._id = oldId ?? nanoid();
     this._tempMin = dims.temperatureMin;
     this._tempMax = dims.temperatureMax;
@@ -47,23 +47,6 @@ export class BiomeParameters extends ChangeTracker {
     this._smoothness = smoothness;
     this._emissiveOverride = emissiveOverride ?? false;
     this._emissiveIntensity = emissiveIntensity ?? 0.0;
-  }
-
-  clone(): BiomeParameters {
-    return new BiomeParameters(
-      this._changedProps,
-      this._changePrefix,
-      {
-        temperatureMin: this._tempMin,
-        temperatureMax: this._tempMax,
-        humidityMin: this._humiMin,
-        humidityMax: this._humiMax,
-      },
-      this._color.clone(),
-      this._smoothness,
-      this._emissiveOverride,
-      this._emissiveIntensity,
-    );
   }
 
   public get id(): string {
@@ -79,7 +62,7 @@ export class BiomeParameters extends ChangeTracker {
   public set tempMin(value: number) {
     this._tempMin = clamp(value, 0.0, 1.0);
     this._tempMax = clamp(this._tempMax, this._tempMin, 1);
-    this.markForChange(this._changePrefix, { data: this });
+    this.relayNotify({ key: this.keyPrefix, data: { biomeId: this.id } });
   }
   public get tempMax(): number {
     return this._tempMax;
@@ -87,7 +70,7 @@ export class BiomeParameters extends ChangeTracker {
   public set tempMax(value: number) {
     this._tempMax = clamp(value, 0.0, 1.0);
     this._tempMin = clamp(this._tempMin, 0, this._tempMax);
-    this.markForChange(this._changePrefix, { data: this });
+    this.relayNotify({ key: this.keyPrefix, data: { biomeId: this.id } });
   }
 
   public get humiMin(): number {
@@ -96,7 +79,7 @@ export class BiomeParameters extends ChangeTracker {
   public set humiMin(value: number) {
     this._humiMin = clamp(value, 0.0, 1.0);
     this._humiMax = clamp(this._humiMax, this._humiMin, 1);
-    this.markForChange(this._changePrefix, { data: this });
+    this.relayNotify({ key: this.keyPrefix, data: { biomeId: this.id } });
   }
   public get humiMax(): number {
     return this._humiMax;
@@ -104,7 +87,7 @@ export class BiomeParameters extends ChangeTracker {
   public set humiMax(value: number) {
     this._humiMax = clamp(value, 0.0, 1.0);
     this._humiMin = clamp(this._humiMin, 0, this._humiMax);
-    this.markForChange(this._changePrefix, { data: this });
+    this.relayNotify({ key: this.keyPrefix, data: { biomeId: this.id } });
   }
 
   public get color(): Color {
@@ -112,14 +95,14 @@ export class BiomeParameters extends ChangeTracker {
   }
   public set color(value: Color) {
     this._color.set(value);
-    this.markForChange(this._changePrefix, { data: this });
+    this.relayNotify({ key: this.keyPrefix, data: { biomeId: this.id } });
   }
   public get smoothness(): number {
     return this._smoothness;
   }
   public set smoothness(value: number) {
     this._smoothness = clamp(value, 0.0, 1.0);
-    this.markForChange(this._changePrefix, { data: this });
+    this.relayNotify({ key: this.keyPrefix, data: { biomeId: this.id } });
   }
 
   public get emissiveOverride(): boolean {
@@ -127,14 +110,14 @@ export class BiomeParameters extends ChangeTracker {
   }
   public set emissiveOverride(value: boolean) {
     this._emissiveOverride = value;
-    this.markForChange(this._changePrefix, { data: this });
+    this.relayNotify({ key: this.keyPrefix, data: { biomeId: this.id } });
   }
   public get emissiveIntensity(): number {
     return this._emissiveIntensity;
   }
   public set emissiveIntensity(value: number) {
     this._emissiveIntensity = clamp(value, 0, 10);
-    this.markForChange(this._changePrefix, { data: this });
+    this.relayNotify({ key: this.keyPrefix, data: { biomeId: this.id } });
   }
 
   public get parentEmissiveIntensity(): number {
@@ -144,12 +127,12 @@ export class BiomeParameters extends ChangeTracker {
     this._parentEmissiveIntensity = value;
   }
 
-  public static createRandom(changedProps: ChangedProp[], changePrefix: string) {
+  public static createRandom(keyPrefix: string, notifyFunc: ObservableNotifyFunction) {
     const minTemp = clampedPRNG(0, 1),
       minHumi = clampedPRNG(0, 1);
     return new BiomeParameters(
-      changedProps,
-      changePrefix,
+      keyPrefix,
+      notifyFunc,
       {
         temperatureMin: minTemp,
         temperatureMax: clampedPRNG(minTemp, 1),
@@ -161,12 +144,5 @@ export class BiomeParameters extends ChangeTracker {
       clampedPRNG(0, 1) >= 0.5,
       clampedPRNG(0, 10),
     );
-  }
-
-  /**
-   * Marks this biome for change, using `this._changePrefix` only
-   */
-  public override markAllForChange(): void {
-    this.markForChange(this._changePrefix, { data: this });
   }
 }

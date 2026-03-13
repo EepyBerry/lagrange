@@ -1,27 +1,27 @@
 import { nanoid } from 'nanoid';
-import { ChangeTracker, type ChangedProp } from './change-tracker.model';
 import { ColorRamp, ColorRampStep } from './color-ramp.model';
 import { clampedPRNG } from '@core/utils/math-utils';
+import { ObservableRelay, type ObservableNotifyFunction } from '../utils/observable-utils';
 
-export class RingParameters extends ChangeTracker {
+export class RingParameters extends ObservableRelay {
   private _id: string;
   private _innerRadius: number;
   private _outerRadius: number;
   private _colorRamp: ColorRamp;
 
   constructor(
-    changedPropsRef: ChangedProp[],
-    changePrefix: string,
+    keyPrefix: string,
+    notifyFunc: ObservableNotifyFunction,
     innerRadius: number,
     outerRadius: number,
     colorRampSteps?: ColorRampStep[],
     oldId?: string,
   ) {
-    super(changedPropsRef, changePrefix);
+    super(keyPrefix, notifyFunc);
     this._id = oldId ?? nanoid();
     this._innerRadius = innerRadius;
     this._outerRadius = outerRadius;
-    this._colorRamp = new ColorRamp(this._changedProps, `${this._changePrefix}[element]._colorRamp`, [
+    this._colorRamp = new ColorRamp(`${keyPrefix}[element]._colorRamp`, notifyFunc, [
       new ColorRampStep(0x856f4e, 0.0, true),
       new ColorRampStep(0x000000, 0.5),
       new ColorRampStep(0xbf9a5e, 1.0, true),
@@ -46,7 +46,7 @@ export class RingParameters extends ChangeTracker {
     if (this.outerRadius < this._innerRadius) {
       this.outerRadius = value; // Call setter to trigger change
     }
-    this.markForChange(`${this._changePrefix}._innerRadius`, { data: this });
+    this.relayNotify({ key: `${this.keyPrefix}._innerRadius` });
   }
 
   public get outerRadius(): number {
@@ -57,7 +57,7 @@ export class RingParameters extends ChangeTracker {
     if (this.innerRadius > this._outerRadius) {
       this.innerRadius = value; // Call setter to trigger change
     }
-    this.markForChange(`${this._changePrefix}._outerRadius`, { data: this });
+    this.relayNotify({ key: `${this.keyPrefix}._outerRadius` });
   }
 
   public get colorRamp(): ColorRamp {
@@ -68,19 +68,10 @@ export class RingParameters extends ChangeTracker {
     this._colorRamp.loadFromSteps(steps);
   }
 
-  public static createRandom(changedProps: ChangedProp[], changePrefix: string) {
+  public static createRandom(keyPrefix: string, notifyFunc: ObservableNotifyFunction) {
     const innerRadius = clampedPRNG(1.25, 4.75);
-    const params = new RingParameters(changedProps, changePrefix, innerRadius, clampedPRNG(innerRadius, 5));
+    const params = new RingParameters(keyPrefix, notifyFunc, innerRadius, clampedPRNG(innerRadius, 5));
     params._colorRamp.randomize(3);
     return params;
-  }
-
-  /**
-   * Marks all properties of this class for change, using `this._changePrefix`
-   */
-  public override markAllForChange(): void {
-    this.markForChange(`${this._changePrefix}._colorRamp`, { data: this });
-    this.markForChange(`${this._changePrefix}._innerRadius`, { data: this });
-    this.markForChange(`${this._changePrefix}._outerRadius`, { data: this });
   }
 }

@@ -1,15 +1,20 @@
 <template>
   <ParameterGrid>
-    <ParameterCheckbox id="a-toggle" v-model="LG_PLANET_DATA.atmosphereEnabled" :true-value="true" :false-value="false">
+    <ParameterCheckbox
+      id="a-toggle"
+      v-model="EDITOR_STATE.planetData.atmosphereEnabled"
+      :true-value="true"
+      :false-value="false"
+    >
       {{ $t('editor.controls.atmosphere.atmosphere_show') }}
     </ParameterCheckbox>
-    <template v-if="LG_PLANET_DATA.atmosphereEnabled">
+    <template v-if="EDITOR_STATE.planetData.atmosphereEnabled">
       <ParameterGroup :toggleable="true">
         <template #title>{{ $t('editor.controls.atmosphere.transform') }}</template>
         <template #content>
           <ParameterSlider
             id="a-height"
-            v-model="LG_PLANET_DATA.atmosphereHeight"
+            v-model="EDITOR_STATE.planetData.atmosphereHeight"
             :step="0.0001"
             :min="0.0075"
             :max="0.025"
@@ -18,7 +23,7 @@
           </ParameterSlider>
           <ParameterSlider
             id="a-density"
-            v-model="LG_PLANET_DATA.atmosphereDensityScale"
+            v-model="EDITOR_STATE.planetData.atmosphereDensityScale"
             :step="0.05"
             :min="0.25"
             :max="20"
@@ -30,7 +35,13 @@
       <ParameterGroup :toggleable="true">
         <template #title>{{ $t('editor.controls.atmosphere.rgba') }}</template>
         <template #content>
-          <ParameterSlider id="a-int" v-model="LG_PLANET_DATA.atmosphereIntensity" :step="0.01" :min="0" :max="5">
+          <ParameterSlider
+            id="a-int"
+            v-model="EDITOR_STATE.planetData.atmosphereIntensity"
+            :step="0.01"
+            :min="0"
+            :max="5"
+          >
             {{ $t('editor.controls.atmosphere.rgba_intensity') }}
           </ParameterSlider>
           <ParameterRadio>
@@ -38,7 +49,7 @@
             <template #options>
               <ParameterRadioOption
                 :id="'0'"
-                v-model="LG_PLANET_DATA.atmosphereColorMode"
+                v-model="EDITOR_STATE.planetData.atmosphereColorMode"
                 icon="mingcute:photo-album-line"
                 name="atmos-mode"
                 :value="ColorMode.REALISTIC"
@@ -49,7 +60,7 @@
               </ParameterRadioOption>
               <ParameterRadioOption
                 :id="'1'"
-                v-model="LG_PLANET_DATA.atmosphereColorMode"
+                v-model="EDITOR_STATE.planetData.atmosphereColorMode"
                 icon="mingcute:color-picker-line"
                 name="atmos-mode"
                 :value="ColorMode.DIRECT"
@@ -60,7 +71,7 @@
               </ParameterRadioOption>
               <ParameterRadioOption
                 :id="'1'"
-                v-model="LG_PLANET_DATA.atmosphereColorMode"
+                v-model="EDITOR_STATE.planetData.atmosphereColorMode"
                 icon="mingcute:color-filter-line"
                 name="atmos-mode"
                 :value="ColorMode.MIXED"
@@ -71,10 +82,10 @@
               </ParameterRadioOption>
             </template>
           </ParameterRadio>
-          <template v-if="[ColorMode.REALISTIC, ColorMode.MIXED].includes(LG_PLANET_DATA.atmosphereColorMode)">
+          <template v-if="[ColorMode.REALISTIC, ColorMode.MIXED].includes(EDITOR_STATE.planetData.atmosphereColorMode)">
             <ParameterSlider
               id="a-hue"
-              v-model="LG_PLANET_DATA.atmosphereHue"
+              v-model="EDITOR_STATE.planetData.atmosphereHue"
               :step="0.01"
               :min="0"
               :max="2"
@@ -83,8 +94,8 @@
               {{ $t('editor.controls.atmosphere.rgba_hue') }}
             </ParameterSlider>
           </template>
-          <template v-if="[ColorMode.DIRECT, ColorMode.MIXED].includes(LG_PLANET_DATA.atmosphereColorMode)">
-            <ParameterColor v-model="LG_PLANET_DATA.atmosphereTint">
+          <template v-if="[ColorMode.DIRECT, ColorMode.MIXED].includes(EDITOR_STATE.planetData.atmosphereColorMode)">
+            <ParameterColor v-model="EDITOR_STATE.planetData.atmosphereTint">
               {{ $t('editor.controls.atmosphere.rgba_tint') }}
             </ParameterColor>
           </template>
@@ -95,7 +106,7 @@
         <template #content>
           <ParameterSlider
             id="a-advmieconst"
-            v-model="LG_PLANET_DATA.atmosphereMieScatteringConstant"
+            v-model="EDITOR_STATE.planetData.atmosphereMieScatteringConstant"
             :step="0.001"
             :min="-0.999"
             :max="0"
@@ -104,7 +115,7 @@
           </ParameterSlider>
           <ParameterSlider
             id="a-advrayph"
-            v-model="LG_PLANET_DATA.atmosphereRayleighDensityRatio"
+            v-model="EDITOR_STATE.planetData.atmosphereRayleighDensityRatio"
             :step="0.01"
             :min="0"
             :max="1"
@@ -113,7 +124,7 @@
           </ParameterSlider>
           <ParameterSlider
             id="a-advmieph"
-            v-model="LG_PLANET_DATA.atmosphereMieDensityRatio"
+            v-model="EDITOR_STATE.planetData.atmosphereMieDensityRatio"
             :step="0.01"
             :min="0"
             :max="1"
@@ -122,7 +133,7 @@
           </ParameterSlider>
           <ParameterSlider
             id="a-advopticalph"
-            v-model="LG_PLANET_DATA.atmosphereOpticalDensityRatio"
+            v-model="EDITOR_STATE.planetData.atmosphereOpticalDensityRatio"
             :step="0.01"
             :min="0"
             :max="1"
@@ -135,6 +146,6 @@
   </ParameterGrid>
 </template>
 <script setup lang="ts">
-import { LG_PLANET_DATA } from '@/core/services/editor.service';
+import { EDITOR_STATE } from '@/core/state/editor.state';
 import { ColorMode } from '@core/types';
 </script>

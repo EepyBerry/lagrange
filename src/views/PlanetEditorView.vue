@@ -31,18 +31,15 @@ import { EventBus } from '@core/event-bus';
 import { useI18n } from 'vue-i18n';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import {
-  LG_PLANET_DATA,
   bootstrapEditor,
   disposeScene,
   exportPlanetPreview,
   takePlanetScreenshot,
   exportPlanetToGLTF,
-  isPlanetEdited,
   setPlanetEditFlag,
   updateCameraRendering,
   resetPlanet,
   randomizePlanet,
-  LG_EDITOR_STATE,
 } from '@/core/services/editor.service';
 import { sleep } from '@core/utils/utils';
 import { nanoid } from 'nanoid';
@@ -54,7 +51,7 @@ import WebGPU from '@/core/capabilities/WebGPU';
 import * as DexieService from '@core/services/dexie.service';
 import WebGL from '@/core/capabilities/WebGL';
 import ViewHeader from '@/components/global/ViewHeader.vue';
-import { EditorState } from '@/core/types';
+import { EDITOR_STATE, EditorStatusCode } from '@/core/state/editor.state';
 
 const route = useRoute();
 const router = useRouter();
@@ -100,7 +97,7 @@ onUnmounted(() => {
   EventBus.deregisterWindowEventListener('keydown', onWindowKeydown);
 });
 onBeforeRouteLeave((_to, _from, next) => {
-  if (isPlanetEdited()) {
+  if (EDITOR_STATE.value.planetEditedFlag) {
     next(false);
     warnSaveDialogRef.value?.open();
   } else {
@@ -125,7 +122,7 @@ async function initThree() {
       loadedCorrectly = true;
       showSpinner.value = false;
     } catch (error) {
-      LG_EDITOR_STATE.value = EditorState.ERROR;
+      EDITOR_STATE.value.status = EditorStatusCode.ERROR;
       if (error instanceof Error) {
         editorErrorDialogRef.value!.openWithError(error.message, error.stack);
       } else if (typeof error === 'string') {
@@ -148,7 +145,7 @@ async function initThree() {
       loadedCorrectly = true;
       showSpinner.value = false;
     } catch (error) {
-      LG_EDITOR_STATE.value = EditorState.ERROR;
+      EDITOR_STATE.value.status = EditorStatusCode.ERROR;
       if (error instanceof Error || error instanceof DOMException) {
         editorErrorDialogRef.value!.openWithError(error.message, error.stack);
       } else if (typeof error === 'string') {
@@ -181,17 +178,19 @@ async function initData() {
     const idbPlanetData = await idb.planets.filter((p) => p.id === route.params.id).first();
     if (!idbPlanetData) {
       console.warn(`<Lagrange> Cannot find planet with ID: ${route.params.id}`);
-      LG_PLANET_DATA.value.reset();
+      EDITOR_STATE.value.planetData.reset();
       throw new Error(`Planet with ID [${route.params.id}] doesn't exist.`);
     }
     $planetEntityId.value = idbPlanetData.id;
     $planetEntityPreviewDataURL.value = idbPlanetData.preview;
-    LG_PLANET_DATA.value.loadData(idbPlanetData.data);
-    console.info(`<Lagrange> Loaded planet [${LG_PLANET_DATA.value.planetName}] with ID: ${$planetEntityId.value}`);
-    console.debug(toRaw(LG_PLANET_DATA.value));
+    EDITOR_STATE.value.planetData.loadData(idbPlanetData.data);
+    console.info(
+      `<Lagrange> Loaded planet [${EDITOR_STATE.value.planetData.planetName}] with ID: ${$planetEntityId.value}`,
+    );
+    console.debug(toRaw(EDITOR_STATE.value.planetData));
   } else {
     console.warn('No planet ID found in the URL, assuming new planet');
-    LG_PLANET_DATA.value.reset();
+    EDITOR_STATE.value.planetData.reset();
   }
   regeneratePRNGIfNecessary(true);
   patchMetaHead();
@@ -242,16 +241,16 @@ async function onWindowKeydown(event: KeyboardEvent) {
 
   switch (kb.action) {
     case KeyBindingAction.ToggleLensFlare:
-      LG_PLANET_DATA.value.lensFlareEnabled = !LG_PLANET_DATA.value.lensFlareEnabled;
+      EDITOR_STATE.value.planetData.lensFlareEnabled = !EDITOR_STATE.value.planetData.lensFlareEnabled;
       break;
     case KeyBindingAction.ToggleClouds:
-      LG_PLANET_DATA.value.cloudsEnabled = !LG_PLANET_DATA.value.cloudsEnabled;
+      EDITOR_STATE.value.planetData.cloudsEnabled = !EDITOR_STATE.value.planetData.cloudsEnabled;
       break;
     case KeyBindingAction.ToggleAtmosphere:
-      LG_PLANET_DATA.value.atmosphereEnabled = !LG_PLANET_DATA.value.atmosphereEnabled;
+      EDITOR_STATE.value.planetData.atmosphereEnabled = !EDITOR_STATE.value.planetData.atmosphereEnabled;
       break;
     case KeyBindingAction.ToggleBiomes:
-      LG_PLANET_DATA.value.biomesEnabled = !LG_PLANET_DATA.value.biomesEnabled;
+      EDITOR_STATE.value.planetData.biomesEnabled = !EDITOR_STATE.value.planetData.biomesEnabled;
       break;
     case KeyBindingAction.TakeScreenshot: {
       takePlanetScreenshot();
@@ -261,7 +260,7 @@ async function onWindowKeydown(event: KeyboardEvent) {
 }
 
 function patchMetaHead() {
-  head!.patch({ title: `[${LG_PLANET_DATA.value.planetName}]` + ' · ' + i18n.t('main.$title') });
+  head!.patch({ title: `[${EDITOR_STATE.value.planetData.planetName}]` + ' · ' + i18n.t('main.$title') });
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -297,8 +296,8 @@ async function savePlanet(asCopy: boolean = false) {
   const previewDataString = await exportPlanetPreview();
 
   // ----------- Save planet data ------------ //
-  console.debug(toRaw(LG_PLANET_DATA.value));
-  const localData = toRaw(JSON.stringify(LG_PLANET_DATA.value));
+  console.debug(toRaw(EDITOR_STATE.value.planetData));
+  const localData = toRaw(JSON.stringify(EDITOR_STATE.value.planetData));
   const planetId = asCopy ? nanoid() : $planetEntityId.value.length > 0 ? $planetEntityId.value : nanoid();
   const idbData: IDBPlanet = {
     id: planetId,

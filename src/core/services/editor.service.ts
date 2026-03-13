@@ -4,23 +4,18 @@ import { degToRad } from 'three/src/math/MathUtils.js';
 import * as Globals from '@core/globals';
 import * as ComponentHelper from '@core/helpers/component.helper';
 import * as BakingHelper from '@core/helpers/baking.helper';
-import { EditorSceneCreationMode, EditorState, type BakingTarget, type EditorSceneData } from '@core/types';
-import PlanetData from '@core/models/planet-data.model';
+import { EditorSceneCreationMode, type BakingTarget, type EditorSceneData } from '@core/types';
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
 import * as ExportHelper from '../helpers/export.helper';
 import { idb } from '@/dexie.config';
 import { sleep } from '@core/utils/utils';
-import * as UniformHelper from '../helpers/uniform.helper';
 import * as SceneHelper from '../helpers/scene.helper';
 import * as PreviewHelper from '../helpers/preview.helper';
 import { MeshStandardNodeMaterial, type NodeMaterial } from 'three/webgpu';
 import { saveAs } from 'file-saver';
 import { EventBus } from '../event-bus';
-
-// Exposed data
-export const LG_PLANET_DATA: Ref<PlanetData> = ref(new PlanetData());
-export const LG_EDITOR_STATE: Ref<EditorState> = ref(EditorState.INITIALIZATION);
-watch(LG_EDITOR_STATE, (v) => console.debug('<Lagrange> EditorState => ' + v));
+import { EDITOR_STATE, EditorStatusCode } from '../state/editor.state';
+import { PlanetDataUniformifierObserver } from '../observers/planet-data-uniformifier.observer';
 
 // Internal attributes
 let editorSceneData!: EditorSceneData;
@@ -29,21 +24,26 @@ let watchForPlanetUpdates = false;
 const hasPlanetBeenEdited: Ref<boolean> = ref(false);
 
 // ------------------------------------------------------------------------------------------------ //
+//                                           EVENT HANDLING                                         //
+// ------------------------------------------------------------------------------------------------ //
+
+watch(EDITOR_STATE, (v) => console.debug('<Lagrange> EditorState => ' + v.status));
+
+// ------------------------------------------------------------------------------------------------ //
 //                                           BOOTSTRAPPING                                          //
 // ------------------------------------------------------------------------------------------------ //
 
 export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
-  LG_EDITOR_STATE.value = EditorState.INITIALIZATION;
+  EDITOR_STATE.value.status = EditorStatusCode.INITIALIZATION;
   await sleep(50);
   enableEditorRendering = true;
   editorSceneData = await SceneHelper.buildEditorScene(
-    LG_PLANET_DATA.value,
+    EDITOR_STATE.value.planetData,
     w,
     h,
     pixelRatio,
     EditorSceneCreationMode.EDITOR,
   );
-  UniformHelper.initUniformUpdateMap(editorSceneData, LG_PLANET_DATA.value);
   ComponentHelper.createOrbitControls(editorSceneData.camera, editorSceneData.renderer.domElement);
 
   // Configure renderer
@@ -51,7 +51,10 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   editorSceneData.renderer!.setAnimationLoop(() => renderFrame());
   editorSceneData.renderer!.domElement.ariaLabel = '3D planet viewer';
   canvas.appendChild(editorSceneData.renderer!.domElement);
-  LG_EDITOR_STATE.value = EditorState.EDITION;
+  EDITOR_STATE.value.status = EditorStatusCode.EDITION;
+
+  // Observe changes in model
+  EDITOR_STATE.value.planetData.connect(new PlanetDataUniformifierObserver(editorSceneData));
 
   /* LG_SCENE_DATA.renderer!.debug.getShaderAsync(
     LG_SCENE_DATA.scene,
@@ -90,26 +93,22 @@ export function updateCameraRendering(w: number, h: number) {
 // ------------------------------------------------------------------------------------------------ //
 
 function updateScene() {
-  if (watchForPlanetUpdates && LG_PLANET_DATA.value.changedProps.length > 0 && !hasPlanetBeenEdited.value) {
+  if (watchForPlanetUpdates && !hasPlanetBeenEdited.value) {
     console.debug('<Lagrange> Planet has been edited, warning user in case of unsaved data');
     hasPlanetBeenEdited.value = true;
   }
-  for (const changedProp of LG_PLANET_DATA.value.changedProps.filter((ch) => !!ch.prop)) {
-    UniformHelper.execUniformUpdate(changedProp);
-  }
-  LG_PLANET_DATA.value.clearChangedProps();
 }
 
 /**
  * Removes every object from the scene, then removes the scene itself
  */
 export function disposeScene() {
-  LG_EDITOR_STATE.value = EditorState.SCENE_DISPOSAL;
+  EDITOR_STATE.value.status = EditorStatusCode.SCENE_DISPOSAL;
   watchForPlanetUpdates = false;
   console.debug('<Lagrange> Clearing scene... ');
   SceneHelper.disposeScene(editorSceneData);
-  UniformHelper.clearUniformUpdateMap();
   console.debug('<Lagrange> ...done!');
+  EDITOR_STATE.value.status = EditorStatusCode.UNLOADED;
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -117,29 +116,32 @@ export function disposeScene() {
 // ------------------------------------------------------------------------------------------------ //
 
 export async function randomizePlanet() {
-  LG_EDITOR_STATE.value = EditorState.RANDOMIZATION;
+  EDITOR_STATE.value.status = EditorStatusCode.RANDOMIZATION;
   await sleep(50);
   regeneratePRNGIfNecessary();
-  LG_PLANET_DATA.value.randomize();
-  editorSceneData.planet.biomeLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams);
-  editorSceneData.planet.biomeEmissiveLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams);
-  LG_PLANET_DATA.value.markAllForChange();
-  LG_EDITOR_STATE.value = EditorState.EDITION;
+  EDITOR_STATE.value.planetData.randomize();
+  editorSceneData.planet.biomeLayersTexture?.reset(EDITOR_STATE.value.planetData.biomesParams);
+  editorSceneData.planet.biomeEmissiveLayersTexture?.reset(EDITOR_STATE.value.planetData.biomesParams);
+  EDITOR_STATE.value.planetData.notify();
+  EDITOR_STATE.value.status = EditorStatusCode.EDITION;
 }
 
 export async function resetPlanet() {
-  LG_EDITOR_STATE.value = EditorState.RESET;
-  LG_PLANET_DATA.value.reset();
-  editorSceneData.planet.biomeLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams);
-  editorSceneData.planet.biomeEmissiveLayersTexture?.reset(LG_PLANET_DATA.value.biomesParams);
-  LG_EDITOR_STATE.value = EditorState.EDITION;
+  EDITOR_STATE.value.status = EditorStatusCode.RESET;
+  EDITOR_STATE.value.planetData.reset();
+  editorSceneData.planet.biomeLayersTexture?.reset(EDITOR_STATE.value.planetData.biomesParams);
+  editorSceneData.planet.biomeEmissiveLayersTexture?.reset(EDITOR_STATE.value.planetData.biomesParams);
+  EDITOR_STATE.value.status = EditorStatusCode.EDITION;
 }
 
 export async function takePlanetScreenshot() {
   try {
     await editorSceneData.renderer.render(editorSceneData.scene, editorSceneData.camera);
     editorSceneData.renderer.domElement.toBlob((blob) =>
-      saveAs(blob as Blob, `${LG_PLANET_DATA.value.planetName.replaceAll(' ', '_')}-${new Date().toISOString()}.png`),
+      saveAs(
+        blob as Blob,
+        `${EDITOR_STATE.value.planetData.planetName.replaceAll(' ', '_')}-${new Date().toISOString()}.png`,
+      ),
     );
   } catch (err) {
     console.error('<Lagrange> Could not export screenshot!', err);
@@ -148,12 +150,12 @@ export async function takePlanetScreenshot() {
 }
 
 export async function exportPlanetPreview(): Promise<string> {
-  LG_EDITOR_STATE.value = EditorState.PREVIEW_GENERATION;
+  EDITOR_STATE.value.status = EditorStatusCode.PREVIEW_GENERATION;
   await sleep(50);
   editorSceneData.lensFlare!.mesh.visible = false;
-  const dataURL = await PreviewHelper.generatePlanetPreview(LG_PLANET_DATA.value);
-  editorSceneData.lensFlare!.mesh.visible = LG_PLANET_DATA.value.lensFlareEnabled;
-  LG_EDITOR_STATE.value = EditorState.EDITION;
+  const dataURL = await PreviewHelper.generatePlanetPreview(EDITOR_STATE.value.planetData);
+  editorSceneData.lensFlare!.mesh.visible = EDITOR_STATE.value.planetData.lensFlareEnabled;
+  EDITOR_STATE.value.status = EditorStatusCode.EDITION;
   return dataURL;
 }
 
@@ -162,7 +164,7 @@ export async function exportPlanetToGLTF(progressDialog: {
   setProgress: (value: number) => void;
   setError: (error: unknown) => void;
 }) {
-  LG_EDITOR_STATE.value = EditorState.EXPORT;
+  EDITOR_STATE.value.status = EditorStatusCode.EXPORT;
   progressDialog.setProgress(1);
   await sleep(50);
   const bakingTargets: BakingTarget[] = [];
@@ -177,7 +179,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     progressDialog.setProgress(2);
     await sleep(50);
     const bakePlanet = BakingHelper.createBakingPlanet(
-      LG_PLANET_DATA.value,
+      EDITOR_STATE.value.planetData,
       editorSceneData.planet.surfaceTexture!,
       editorSceneData.planet.biomeLayersTexture!.texture,
     );
@@ -189,7 +191,7 @@ export async function exportPlanetToGLTF(progressDialog: {
 
     progressDialog.setProgress(3);
     await sleep(50);
-    const bakeMetallicRoughness = BakingHelper.createBakingMetallicRoughnessMap(LG_PLANET_DATA.value);
+    const bakeMetallicRoughness = BakingHelper.createBakingMetallicRoughnessMap(EDITOR_STATE.value.planetData);
     const bakePlanetMetallicRoughnessTex = await BakingHelper.bakeMesh(
       renderer,
       camera,
@@ -202,7 +204,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     }
     //LG_SCENE_DATA.planet.biomeEmissiveLayersTexture!.debugSaveTexture()
     const bakeEmissivity = BakingHelper.createBakingEmissivityMap(
-      LG_PLANET_DATA.value,
+      EDITOR_STATE.value.planetData,
       editorSceneData.planet.surfaceTexture!,
       editorSceneData.planet.biomeLayersTexture!.texture,
       editorSceneData.planet.biomeEmissiveLayersTexture!.texture,
@@ -215,10 +217,10 @@ export async function exportPlanetToGLTF(progressDialog: {
 
     progressDialog.setProgress(4);
     await sleep(50);
-    const bakeHeight = BakingHelper.createBakingHeightMap(LG_PLANET_DATA.value);
+    const bakeHeight = BakingHelper.createBakingHeightMap(EDITOR_STATE.value.planetData);
     const bakePlanetHeightTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeHeight);
 
-    const bakeNormal = BakingHelper.createBakingNormalMap(LG_PLANET_DATA.value, bakePlanetHeightTex);
+    const bakeNormal = BakingHelper.createBakingNormalMap(EDITOR_STATE.value.planetData, bakePlanetHeightTex);
     const bakePlanetNormalTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeNormal);
     if (appSettings?.bakingPixelize) {
       bakePlanetNormalTex.minFilter = THREE.NearestFilter;
@@ -231,7 +233,7 @@ export async function exportPlanetToGLTF(progressDialog: {
       metalnessMap: bakePlanetMetallicRoughnessTex,
       emissiveMap: bakePlanetEmissivityTex,
       normalMap: bakePlanetNormalTex,
-      normalScale: new THREE.Vector2(LG_PLANET_DATA.value.planetSurfaceBumpStrength).multiplyScalar(2.0),
+      normalScale: new THREE.Vector2(EDITOR_STATE.value.planetData.planetSurfaceBumpStrength).multiplyScalar(2.0),
     });
     bakingTargets.push({
       mesh: bakePlanet,
@@ -239,10 +241,13 @@ export async function exportPlanetToGLTF(progressDialog: {
     });
 
     // ----------------------------------- Bake clouds ----------------------------------
-    if (LG_PLANET_DATA.value.cloudsEnabled) {
+    if (EDITOR_STATE.value.planetData.cloudsEnabled) {
       progressDialog.setProgress(5);
       await sleep(50);
-      const bakeClouds = BakingHelper.createBakingClouds(LG_PLANET_DATA.value, editorSceneData.clouds.texture!);
+      const bakeClouds = BakingHelper.createBakingClouds(
+        EDITOR_STATE.value.planetData,
+        editorSceneData.clouds.texture!,
+      );
       const bakeCloudsTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeClouds);
       if (appSettings?.bakingPixelize) {
         bakeCloudsTex.minFilter = THREE.NearestFilter;
@@ -256,21 +261,21 @@ export async function exportPlanetToGLTF(progressDialog: {
       });
       bakingTargets.push({ mesh: bakeClouds, textures: [bakeCloudsTex] });
       bakePlanet.add(bakeClouds);
-      bakeClouds.setRotationFromAxisAngle(bakeClouds.up, degToRad(LG_PLANET_DATA.value.cloudsRotation));
+      bakeClouds.setRotationFromAxisAngle(bakeClouds.up, degToRad(EDITOR_STATE.value.planetData.cloudsRotation));
     }
 
     // --------------------------------- Bake ring system -------------------------------
-    if (LG_PLANET_DATA.value.ringsEnabled) {
+    if (EDITOR_STATE.value.planetData.ringsEnabled) {
       progressDialog.setProgress(6);
       await sleep(50);
       const ringGroup = new THREE.Group();
       ringGroup.name = Globals.LG_MESH_NAME_RING_ANCHOR;
-      for (let idx = 0; idx < LG_PLANET_DATA.value.ringsParams.length; idx++) {
-        const params = LG_PLANET_DATA.value.ringsParams[idx];
+      for (let idx = 0; idx < EDITOR_STATE.value.planetData.ringsParams.length; idx++) {
+        const params = EDITOR_STATE.value.planetData.ringsParams[idx];
         const ringMeshData = editorSceneData.rings?.find((r) => r.mesh!.name === params.id);
         if (!ringMeshData) continue;
 
-        const bakeRing = BakingHelper.createBakingRing(LG_PLANET_DATA.value, ringMeshData.texture!, idx);
+        const bakeRing = BakingHelper.createBakingRing(EDITOR_STATE.value.planetData, ringMeshData.texture!, idx);
         const bakeRingTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeRing);
         if (appSettings?.bakingPixelize) {
           bakeRingTex.minFilter = THREE.NearestFilter;
@@ -293,12 +298,15 @@ export async function exportPlanetToGLTF(progressDialog: {
     progressDialog.setProgress(7);
     await sleep(50);
 
-    bakePlanet.scale.setScalar(LG_PLANET_DATA.value.planetRadius);
-    bakePlanet.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(LG_PLANET_DATA.value.planetAxialTilt));
-    bakePlanet.rotateOnAxis(bakePlanet.up, degToRad(LG_PLANET_DATA.value.planetRotation));
+    bakePlanet.scale.setScalar(EDITOR_STATE.value.planetData.planetRadius);
+    bakePlanet.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(EDITOR_STATE.value.planetData.planetAxialTilt));
+    bakePlanet.rotateOnAxis(bakePlanet.up, degToRad(EDITOR_STATE.value.planetData.planetRotation));
 
-    bakePlanet.name = LG_PLANET_DATA.value.planetName;
-    ExportHelper.exportMeshesToGLTF([bakePlanet], LG_PLANET_DATA.value.planetName.replaceAll(' ', '_') + `_${w}`);
+    bakePlanet.name = EDITOR_STATE.value.planetData.planetName;
+    ExportHelper.exportMeshesToGLTF(
+      [bakePlanet],
+      EDITOR_STATE.value.planetData.planetName.replaceAll(' ', '_') + `_${w}`,
+    );
   } catch (error) {
     console.error(error);
     progressDialog.setError(error);
@@ -312,7 +320,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     renderer.dispose();
     progressDialog.setProgress(8);
     await sleep(50);
-    LG_EDITOR_STATE.value = EditorState.EDITION;
+    EDITOR_STATE.value.status = EditorStatusCode.EDITION;
   }
 }
 
@@ -320,9 +328,6 @@ export async function exportPlanetToGLTF(progressDialog: {
 //                                            ACCESSORS                                             //
 // ------------------------------------------------------------------------------------------------ //
 
-export function isPlanetEdited() {
-  return hasPlanetBeenEdited.value;
-}
 export function setPlanetEditFlag(value: boolean) {
   hasPlanetBeenEdited.value = value;
 }

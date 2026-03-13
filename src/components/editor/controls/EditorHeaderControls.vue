@@ -4,14 +4,14 @@
       <input
         v-if="editMode"
         ref="planetNameInput"
-        v-model="LG_PLANET_DATA.planetName"
+        v-model="EDITOR_STATE.planetData.planetName"
         class="lg"
         type="text"
         minlength="0"
         maxlength="32"
         @keyup.enter="toggleEditMode"
       />
-      <p v-else @click="toggleEditMode">{{ LG_PLANET_DATA.planetName }}</p>
+      <p v-else @click="toggleEditMode">{{ EDITOR_STATE.planetData.planetName }}</p>
 
       <LgvButton
         variant="icon"
@@ -92,12 +92,12 @@
 
 <script setup lang="ts">
 import AppResetConfirmDialog from '../dialogs/ResetConfirmDialog.vue';
-import { LG_PLANET_DATA } from '@/core/services/editor.service';
 import { ref, useTemplateRef, watch, type Ref } from 'vue';
 import { EventBus } from '@core/event-bus';
 import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
 import * as MathUtils from '@core/utils/math-utils';
 import LgvButton from '@/_lib/components/LgvButton.vue';
+import { EDITOR_STATE } from '@/core/state/editor.state';
 
 const editMode: Ref<boolean> = ref(false);
 

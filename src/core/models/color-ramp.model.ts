@@ -1,10 +1,9 @@
 import * as THREE from 'three';
-import { ChangeTracker, type ChangedProp } from './change-tracker.model';
 import { nanoid } from 'nanoid';
 import { clampedPRNG } from '@core/utils/math-utils';
 import { sha1 } from 'crypto-hash';
+import { ObservableRelay, type ObservableNotifyFunction } from '../utils/observable-utils';
 
-export type StepLuminance = { factor: number; lumi: number };
 export class ColorRampStep {
   static EMPTY = new ColorRampStep(0x0, 1);
 
@@ -65,31 +64,23 @@ export class ColorRampStep {
   }
 }
 
-export class ColorRamp extends ChangeTracker {
-  static EMPTY = new ColorRamp([], '', []);
-
+export class ColorRamp extends ObservableRelay {
   private _hash: string = ''; // internal hash for tracking changes
   private _maxSize: number = 16;
   private _lockedSize: boolean = true;
   readonly _steps: ColorRampStep[] = [];
 
   constructor(
-    changedPropsRef: ChangedProp[],
-    changePrefix: string,
+    keyPrefix: string,
+    notifyFunc: ObservableNotifyFunction,
     steps: ColorRampStep[],
     maxSize: number = 16,
     lockedSize = false,
   ) {
-    super(changedPropsRef, changePrefix);
+    super(keyPrefix, notifyFunc);
     this._maxSize = maxSize;
     this._steps = steps;
     this._lockedSize = lockedSize;
-  }
-
-  clone(): ColorRamp {
-    const clonedSteps: ColorRampStep[] = [];
-    this.steps.forEach((s) => clonedSteps.push(s.clone()));
-    return new ColorRamp([], this._changePrefix, clonedSteps, this._maxSize, this._lockedSize);
   }
 
   public get hash(): string {
@@ -118,7 +109,7 @@ export class ColorRamp extends ChangeTracker {
 
   public sortSteps(markChange: boolean = true) {
     this._steps.sort((a, b) => a.factor - b.factor);
-    if (markChange) this.markForChange(this._changePrefix, { data: this });
+    if (markChange) this.relayNotify({ key: this.keyPrefix });
     this.generateHash();
   }
 
@@ -128,7 +119,7 @@ export class ColorRamp extends ChangeTracker {
     }
     this._steps.push(new ColorRampStep('black', this._steps[this._steps.length - 2].factor));
     this.sortSteps();
-    this.markForChange(this._changePrefix, { data: this });
+    this.relayNotify({ key: this.keyPrefix });
     this.generateHash();
   }
 
@@ -149,7 +140,7 @@ export class ColorRamp extends ChangeTracker {
     this._steps[index].color.set(options.color ? options.color : this._steps[index].color);
     this._steps[index].alpha = options.alpha ?? this._steps[index].alpha;
     this._steps[index].factor = options.factor ?? this._steps[index].factor;
-    this.markForChange(this._changePrefix, { data: this });
+    this.relayNotify({ key: this.keyPrefix });
     this.generateHash();
   }
 
@@ -163,7 +154,7 @@ export class ColorRamp extends ChangeTracker {
       throw new Error('Cannot find step with ID ' + stepId);
     }
     this._steps.splice(index, 1);
-    this.markForChange(this._changePrefix, { data: this });
+    this.relayNotify({ key: this.keyPrefix });
     this.generateHash();
   }
 
@@ -193,12 +184,5 @@ export class ColorRamp extends ChangeTracker {
     }
     this.sortSteps(false);
     this.generateHash();
-  }
-
-  /**
-   * Marks this color ramp for change, using `this._changePrefix` only
-   */
-  public override markAllForChange(): void {
-    this.markForChange(this._changePrefix, { data: this });
   }
 }
