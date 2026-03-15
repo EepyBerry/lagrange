@@ -949,17 +949,20 @@ export default class PlanetData extends Observable {
       newRing.outerRadius = ringIntervals[i][1];
       this._ringsParams.push(newRing);
     }
+    this.notify({ type: 'global' });
   }
 
   public reset() {
+    const observers = this.observers;
     Object.assign(this, new PlanetData());
+    this.observers = observers;
     this._planetSurfaceDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05);
     this._planetSurfaceNoise.reset(3.75, 0.48, 2.45, 6, 1, 1.0);
     this._biomesTemperatureNoise.reset(2.5, 1.25, 2.4, 6);
     this._biomesHumidityNoise.reset(35, 0.63, 2.53, 6);
     this._cloudsDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05);
     this._cloudsNoise.reset(4.0, 0.6, 1.75, 6, 1, 1.0);
-    this.notify();
+    this.notify({ type: 'global' });
   }
 
   // --------------------------------------------------
@@ -979,8 +982,8 @@ export default class PlanetData extends Observable {
       new Color(0xffffff),
       0.2,
     );
-    this.biomesParams.push(newBiome);
-    this.notify({ key: '_biomesParams[element]', action: ObservableEventAction.ADD });
+    this._biomesParams.push(newBiome);
+    this.notify({ key: '_biomesParams[element]', action: ObservableEventAction.ADD, data: { biome: newBiome } });
     return newBiome;
   }
 
@@ -990,33 +993,40 @@ export default class PlanetData extends Observable {
     if (!biome || biomeIdx < 0) {
       throw new Error(`Cannot move non-existent biome of ID: ${id}`);
     }
-    this.biomesParams.splice(biomeIdx, 1);
-    this.biomesParams.splice(biomeIdx + increment, 0, biome);
+    this._biomesParams.splice(biomeIdx, 1);
+    this._biomesParams.splice(biomeIdx + increment, 0, biome);
+    this.notify({
+      key: '_biomesParams[element]',
+      action: increment === -1 ? ObservableEventAction.SORT_UP : ObservableEventAction.SORT_DOWN,
+      data: { biome },
+    });
   }
 
   public removeBiome(id: string) {
+    const biome = this.findBiomeById(id);
     const biomeIdx = this.findBiomeIndexById(id);
     if (biomeIdx < 0) {
       throw new Error(`Cannot delete non-existent biome of ID: ${id}`);
     }
-    this.biomesParams.splice(biomeIdx, 1);
-    this.notify({ key: '_biomesParams[element]', action: ObservableEventAction.DELETE, data: { index: biomeIdx } });
+    this._biomesParams.splice(biomeIdx, 1);
+    this.notify({ key: '_biomesParams[element]', action: ObservableEventAction.DELETE, data: { biome } });
   }
 
   public addRing(): RingParameters {
     const newRing = new RingParameters('_ringsParams[element]', this.notifyRelayCallback, 1.5, 1.75);
-    this.ringsParams.push(newRing);
-    this.notify({ key: '_ringsParams[element]', action: ObservableEventAction.ADD });
+    this._ringsParams.push(newRing);
+    this.notify({ key: '_ringsParams[element]', action: ObservableEventAction.ADD, data: { ring: newRing } });
     return newRing;
   }
 
   public removeRing(id: string): string {
+    const ring = this.findRingById(id);
     const ringParamsIdx = this.findRingIndexById(id);
-    if (ringParamsIdx < 0) {
+    if (!ring || ringParamsIdx < 0) {
       throw new Error(`Cannot delete non-existent ring of ID: ${id}`);
     }
-    this.ringsParams.splice(ringParamsIdx, 1);
-    this.notify({ key: '_ringsParams[element]', action: ObservableEventAction.DELETE, data: { index: ringParamsIdx } });
+    this._ringsParams.splice(ringParamsIdx, 1);
+    this.notify({ key: '_ringsParams[element]', action: ObservableEventAction.DELETE, data: { ring } });
     return id;
   }
 
@@ -1031,6 +1041,9 @@ export default class PlanetData extends Observable {
     return this._biomesParams.findIndex((b) => b.id === id);
   }
 
+  public findRingById(id: string) {
+    return this._ringsParams.find((b) => b.id === id);
+  }
   public findRingIndexById(id: string) {
     return this._ringsParams.findIndex((b) => b.id === id);
   }

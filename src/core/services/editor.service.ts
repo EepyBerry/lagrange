@@ -1,4 +1,4 @@
-import { ref, watch, type Ref } from 'vue';
+import { watch } from 'vue';
 import * as THREE from 'three';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import * as Globals from '@core/globals';
@@ -15,13 +15,11 @@ import { MeshStandardNodeMaterial, type NodeMaterial } from 'three/webgpu';
 import { saveAs } from 'file-saver';
 import { EventBus } from '../event-bus';
 import { EDITOR_STATE, EditorStatusCode } from '../state/editor.state';
-import { PlanetDataUniformifierObserver } from '../observers/planet-data-uniformifier.observer';
+import { PlanetDataToUniformsObserver } from '../observers/planet-data-to-uniforms.observer';
 
 // Internal attributes
 let editorSceneData!: EditorSceneData;
-let enableEditorRendering = true;
-let watchForPlanetUpdates = false;
-const hasPlanetBeenEdited: Ref<boolean> = ref(false);
+let planetDataToUniformsObserver: PlanetDataToUniformsObserver | undefined;
 
 // ------------------------------------------------------------------------------------------------ //
 //                                           EVENT HANDLING                                         //
@@ -36,7 +34,6 @@ watch(EDITOR_STATE, (v) => console.debug('<Lagrange> EditorState => ' + v.status
 export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
   EDITOR_STATE.value.status = EditorStatusCode.INITIALIZATION;
   await sleep(50);
-  enableEditorRendering = true;
   editorSceneData = await SceneHelper.buildEditorScene(
     EDITOR_STATE.value.planetData,
     w,
@@ -54,7 +51,8 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   EDITOR_STATE.value.status = EditorStatusCode.EDITION;
 
   // Observe changes in model
-  EDITOR_STATE.value.planetData.connect(new PlanetDataUniformifierObserver(editorSceneData));
+  planetDataToUniformsObserver = new PlanetDataToUniformsObserver(editorSceneData);
+  EDITOR_STATE.value.planetData.connect(planetDataToUniformsObserver);
 
   /* LG_SCENE_DATA.renderer!.debug.getShaderAsync(
     LG_SCENE_DATA.scene,
@@ -68,11 +66,6 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
 // ------------------------------------------------------------------------------------------------ //
 
 function renderFrame() {
-  if (!enableEditorRendering) {
-    return;
-  }
-  updateScene();
-  watchForPlanetUpdates = true;
   editorSceneData.lensFlare!.update(
     editorSceneData.renderer!,
     editorSceneData.scene!,
@@ -92,20 +85,14 @@ export function updateCameraRendering(w: number, h: number) {
 //                                         SCENE MANAGEMENT                                         //
 // ------------------------------------------------------------------------------------------------ //
 
-function updateScene() {
-  if (watchForPlanetUpdates && !hasPlanetBeenEdited.value) {
-    console.debug('<Lagrange> Planet has been edited, warning user in case of unsaved data');
-    hasPlanetBeenEdited.value = true;
-  }
-}
-
 /**
  * Removes every object from the scene, then removes the scene itself
  */
 export function disposeScene() {
   EDITOR_STATE.value.status = EditorStatusCode.SCENE_DISPOSAL;
-  watchForPlanetUpdates = false;
   console.debug('<Lagrange> Clearing scene... ');
+  EDITOR_STATE.value.planetData.disconnect(planetDataToUniformsObserver!);
+  planetDataToUniformsObserver = undefined;
   SceneHelper.disposeScene(editorSceneData);
   console.debug('<Lagrange> ...done!');
   EDITOR_STATE.value.status = EditorStatusCode.UNLOADED;
@@ -122,7 +109,6 @@ export async function randomizePlanet() {
   EDITOR_STATE.value.planetData.randomize();
   editorSceneData.planet.biomeLayersTexture?.reset(EDITOR_STATE.value.planetData.biomesParams);
   editorSceneData.planet.biomeEmissiveLayersTexture?.reset(EDITOR_STATE.value.planetData.biomesParams);
-  EDITOR_STATE.value.planetData.notify();
   EDITOR_STATE.value.status = EditorStatusCode.EDITION;
 }
 
@@ -322,15 +308,4 @@ export async function exportPlanetToGLTF(progressDialog: {
     await sleep(50);
     EDITOR_STATE.value.status = EditorStatusCode.EDITION;
   }
-}
-
-// ------------------------------------------------------------------------------------------------ //
-//                                            ACCESSORS                                             //
-// ------------------------------------------------------------------------------------------------ //
-
-export function setPlanetEditFlag(value: boolean) {
-  hasPlanetBeenEdited.value = value;
-}
-export function setEditorRendering(value: boolean) {
-  enableEditorRendering = value;
 }

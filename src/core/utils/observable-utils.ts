@@ -1,8 +1,8 @@
 /**
  * Utility type for events
  */
-export type ObservableType = Observable | ObservableRelay;
-export type ObservableNotifyFunction = (eventOpts?: ObservableKeyedEventOptions) => void;
+export type ObservableSource = Observable | ObservableRelay;
+export type ObservableNotifyFunction = (eventOpts?: ObservableEventOptions) => void;
 
 /**
  * Simple implementation of the `Observable` pattern.
@@ -13,10 +13,7 @@ export abstract class Observable {
   /**
    * Utility callback for ObservableRelay children to call their parent's `notify` function.
    */
-  protected readonly notifyRelayCallback = (eventOpts?: ObservableKeyedEventOptions) => {
-    console.log(this);
-    this.notify(eventOpts);
-  };
+  public readonly notifyRelayCallback = (eventOpts?: ObservableEventOptions) => this.notify(eventOpts);
 
   public connect(observer: Observer): void {
     this.observers.push(observer);
@@ -27,14 +24,8 @@ export abstract class Observable {
     this.observers.splice(idx, 1);
   }
 
-  public notify(eventOpts?: ObservableKeyedEventOptions): void {
-    if (eventOpts?.key) {
-      const event = new ObservableKeyedEvent({ ...eventOpts, source: this });
-      this.observers.forEach((observer) => observer.onKeyedEvent(event));
-      return;
-    } else {
-      this.observers.forEach((observer) => observer.onGlobalEvent(new ObservableGlobalEvent(this)));
-    }
+  public notify(eventOpts?: Omit<ObservableEventOptions, 'source'>): void {
+    this.observers.forEach((observer) => observer.onEvent(new ObservableEvent({ ...eventOpts, source: this })));
   }
 }
 
@@ -57,8 +48,7 @@ export abstract class ObservableRelay {
  * These have a special handler function `onEvent` called when an event is sent by the `Observable`.
  */
 export abstract class Observer {
-  public abstract onKeyedEvent(event: ObservableKeyedEvent<ObservableType>): void;
-  public abstract onGlobalEvent(event: ObservableGlobalEvent<ObservableType>): void;
+  public abstract onEvent(event: ObservableEvent): void;
 }
 
 // ----------------------------------------------------------------------------
@@ -70,26 +60,26 @@ export enum ObservableEventAction {
   SORT_UP,
   SORT_DOWN,
 }
-export type ObservableKeyedEventOptions = {
-  key: string;
+export type ObservableEventType = 'keyed' | 'global';
+
+export type ObservableEventOptions = {
+  type?: ObservableEventType;
+  source?: ObservableSource;
+  key?: string;
   data?: Record<string, unknown>;
   action?: ObservableEventAction;
 };
-export abstract class ObservableEvent<O extends ObservableType> {
-  public readonly source: O;
 
-  constructor(source: O) {
-    this.source = source;
-  }
-}
-export class ObservableGlobalEvent<O extends ObservableType> extends ObservableEvent<O> {}
-export class ObservableKeyedEvent<O extends ObservableType> extends ObservableEvent<O> {
-  public readonly key: string;
-  public readonly data: Record<string, unknown>;
-  public readonly action: ObservableEventAction;
+export class ObservableEvent {
+  public readonly type?: ObservableEventType;
+  public readonly source?: ObservableSource;
+  public readonly key?: string = '';
+  public readonly data?: Record<string, unknown> = {};
+  public readonly action?: ObservableEventAction = ObservableEventAction.EDIT;
 
-  constructor(opts: ObservableKeyedEventOptions & { source: O }) {
-    super(opts.source);
+  constructor(opts: ObservableEventOptions) {
+    this.type = opts.type ?? 'keyed';
+    this.source = opts.source ?? undefined;
     this.key = opts.key;
     this.action = opts.action ?? ObservableEventAction.EDIT;
     this.data = opts.data ?? {};

@@ -25,17 +25,6 @@ export enum EditorSceneCreationMode {
   EDITOR,
   PREVIEW,
 }
-export enum EditorBackendType {
-  WEBGL,
-  WEBGPU,
-}
-
-// ---------------------------------- Shader loader ---------------------------------
-export enum ShaderFileType {
-  CORE,
-  BAKING,
-  FUNCTION,
-}
 
 // ----------------------------------- Editor types ---------------------------------
 export enum PlanetType {

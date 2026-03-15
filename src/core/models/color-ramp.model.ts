@@ -109,7 +109,7 @@ export class ColorRamp extends ObservableRelay {
 
   public sortSteps(markChange: boolean = true) {
     this._steps.sort((a, b) => a.factor - b.factor);
-    if (markChange) this.relayNotify({ key: this.keyPrefix });
+    if (markChange) this.relayNotify({ key: this.keyPrefix, data: { ramp: this }});
     this.generateHash();
   }
 
@@ -119,7 +119,7 @@ export class ColorRamp extends ObservableRelay {
     }
     this._steps.push(new ColorRampStep('black', this._steps[this._steps.length - 2].factor));
     this.sortSteps();
-    this.relayNotify({ key: this.keyPrefix });
+    this.relayNotify({ key: this.keyPrefix, data: { ramp: this }});
     this.generateHash();
   }
 
@@ -140,7 +140,7 @@ export class ColorRamp extends ObservableRelay {
     this._steps[index].color.set(options.color ? options.color : this._steps[index].color);
     this._steps[index].alpha = options.alpha ?? this._steps[index].alpha;
     this._steps[index].factor = options.factor ?? this._steps[index].factor;
-    this.relayNotify({ key: this.keyPrefix });
+    this.relayNotify({ key: this.keyPrefix, data: { ramp: this }});
     this.generateHash();
   }
 

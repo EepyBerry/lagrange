@@ -21,7 +21,7 @@ export class RingParameters extends ObservableRelay {
     this._id = oldId ?? nanoid();
     this._innerRadius = innerRadius;
     this._outerRadius = outerRadius;
-    this._colorRamp = new ColorRamp(`${keyPrefix}[element]._colorRamp`, notifyFunc, [
+    this._colorRamp = new ColorRamp(`${keyPrefix}._colorRamp`, notifyFunc, [
       new ColorRampStep(0x856f4e, 0.0, true),
       new ColorRampStep(0x000000, 0.5),
       new ColorRampStep(0xbf9a5e, 1.0, true),
@@ -46,7 +46,7 @@ export class RingParameters extends ObservableRelay {
     if (this.outerRadius < this._innerRadius) {
       this.outerRadius = value; // Call setter to trigger change
     }
-    this.relayNotify({ key: `${this.keyPrefix}._innerRadius` });
+    this.relayNotify({ key: `${this.keyPrefix}._innerRadius`, data: { ring: this }});
   }
 
   public get outerRadius(): number {
@@ -57,7 +57,7 @@ export class RingParameters extends ObservableRelay {
     if (this.innerRadius > this._outerRadius) {
       this.innerRadius = value; // Call setter to trigger change
     }
-    this.relayNotify({ key: `${this.keyPrefix}._outerRadius` });
+    this.relayNotify({ key: `${this.keyPrefix}._outerRadius`, data: { ring: this }});
   }
 
   public get colorRamp(): ColorRamp {

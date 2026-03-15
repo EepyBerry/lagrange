@@ -178,20 +178,28 @@ export function createRing(
     texture: ringTex,
   }
 }
-export function disposeRing(data: PlanetData, ringAnchor: THREE.Group, ringsData: RingMeshData[], ringParams: RingParameters) {
+export function disposeRing(ringAnchor: THREE.Group, ringsMeshData: RingMeshData[], ringParams: RingParameters) {
   // get ring data + mesh
-  const ringParamsIdx = data.ringsParams.findIndex((b) => b.id === ringParams.id);
-  const ringMeshData = ringsData.find(r => r.mesh!.name === ringParams.id);
-  if (ringParamsIdx < 0 || !ringMeshData) {
+  const ringMeshData = ringsMeshData.find(r => r.mesh!.name === ringParams.id);
+  if (!ringMeshData) {
     throw new Error("Cannot delete non-existent ring of ID: " + ringParams.id)
   }
   // delete ring
-  data.ringsParams.splice(ringParamsIdx, 1);
   ringAnchor.remove(ringMeshData.mesh!);
   (ringMeshData.mesh!.material as NodeMaterial).dispose();
   ringMeshData.mesh!.geometry.dispose();
   ringMeshData.texture!.dispose();
   ringMeshData.buffer = null;
+}
+
+export function disposeAllRings(ringAnchor: THREE.Group, ringsMeshData: RingMeshData[]) {
+  ringAnchor.clear();
+  ringsMeshData.forEach(rmd => {
+    ;(rmd.mesh!.material as NodeMaterial).dispose()
+    rmd.mesh!.geometry.dispose()
+    rmd.texture!.dispose()
+    rmd.buffer = null
+  })
 }
 
 // ----------------------------------------------------------------------------------------------------------------------

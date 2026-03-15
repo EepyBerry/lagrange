@@ -36,7 +36,6 @@ import {
   exportPlanetPreview,
   takePlanetScreenshot,
   exportPlanetToGLTF,
-  setPlanetEditFlag,
   updateCameraRendering,
   resetPlanet,
   randomizePlanet,
@@ -163,7 +162,7 @@ async function saveAndRedirectToCodex() {
 }
 
 async function redirectToCodex(allowRendererFallback: boolean = false) {
-  setPlanetEditFlag(false); // set edit flag to false to force exit
+  EDITOR_STATE.value.planetEditedFlag = false; // set edit flag to false to force exit
   if (allowRendererFallback) {
     await DexieService.setRenderingBackendFallback();
     router.go(0);
@@ -290,7 +289,7 @@ async function randPlanet() {
 
 async function savePlanet(asCopy: boolean = false) {
   showSpinner.value = true;
-  setPlanetEditFlag(false);
+  EDITOR_STATE.value.planetEditedFlag = false;
 
   // -------- Generate planet preview -------- //
   const previewDataString = await exportPlanetPreview();

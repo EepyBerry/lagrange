@@ -20,8 +20,8 @@ export function convertLegacyRingStorage(self: PlanetData, legacyData: LegacyRin
   if (legacyData._ringInnerRadius) {
     self.ringsEnabled = legacyData._ringEnabled ?? false
     const convertedParams = new RingParameters(
-      self.changedProps,
       '_ringsParams',
+      self.notifyRelayCallback,
       legacyData._ringInnerRadius ?? 1.25,
       legacyData._ringOuterRadius ?? 1.5,
       legacyData._ringColorRamp?._steps,
