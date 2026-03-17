@@ -19,7 +19,7 @@ import { PlanetDataToUniformsObserver } from '../observers/planet-data-to-unifor
 
 // Internal attributes
 let editorSceneData!: EditorSceneData;
-let planetDataToUniformsObserver: PlanetDataToUniformsObserver | undefined;
+const planetDataToUniformsObserver: PlanetDataToUniformsObserver = new PlanetDataToUniformsObserver();
 
 // ------------------------------------------------------------------------------------------------ //
 //                                           EVENT HANDLING                                         //
@@ -51,7 +51,7 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   EDITOR_STATE.value.status = EditorStatusCode.EDITION;
 
   // Observe changes in model
-  planetDataToUniformsObserver = new PlanetDataToUniformsObserver(editorSceneData);
+  planetDataToUniformsObserver.hookEditorSceneData(editorSceneData);
   EDITOR_STATE.value.planetData.connect(planetDataToUniformsObserver);
 
   /* LG_SCENE_DATA.renderer!.debug.getShaderAsync(
@@ -59,6 +59,19 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
     LG_SCENE_DATA.camera,
     LG_SCENE_DATA.planet.mesh!,
   ).then((data) => console.log(data.fragmentShader)) */
+}
+
+/**
+ * Removes every object from the scene, then removes the scene itself
+ */
+export function unloadEditor() {
+  EDITOR_STATE.value.status = EditorStatusCode.SCENE_DISPOSAL;
+  console.debug('<Lagrange> Clearing scene... ');
+  EDITOR_STATE.value.planetData.disconnect(planetDataToUniformsObserver!);
+  planetDataToUniformsObserver.unhookEditorSceneData();
+  SceneHelper.disposeScene(editorSceneData);
+  console.debug('<Lagrange> ...done!');
+  EDITOR_STATE.value.status = EditorStatusCode.UNLOADED;
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -79,23 +92,6 @@ export function updateCameraRendering(w: number, h: number) {
   editorSceneData.camera!.aspect = w / h;
   editorSceneData.camera!.updateProjectionMatrix();
   editorSceneData.renderer!.setSize(w, h);
-}
-
-// ------------------------------------------------------------------------------------------------ //
-//                                         SCENE MANAGEMENT                                         //
-// ------------------------------------------------------------------------------------------------ //
-
-/**
- * Removes every object from the scene, then removes the scene itself
- */
-export function disposeScene() {
-  EDITOR_STATE.value.status = EditorStatusCode.SCENE_DISPOSAL;
-  console.debug('<Lagrange> Clearing scene... ');
-  EDITOR_STATE.value.planetData.disconnect(planetDataToUniformsObserver!);
-  planetDataToUniformsObserver = undefined;
-  SceneHelper.disposeScene(editorSceneData);
-  console.debug('<Lagrange> ...done!');
-  EDITOR_STATE.value.status = EditorStatusCode.UNLOADED;
 }
 
 // ------------------------------------------------------------------------------------------------ //

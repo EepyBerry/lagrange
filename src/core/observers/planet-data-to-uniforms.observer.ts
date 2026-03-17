@@ -32,11 +32,8 @@ const keyedHandler: ObservableEventHandlerCtor = (operation: ObservableEventOper
 export class PlanetDataToUniformsObserver extends Observer {
   private readonly eventHandlerMap: Map<string, ObservableEventHandler> = new Map<string, ObservableEventHandler>();
 
-  constructor(sceneData: EditorSceneData) {
-    super();
+  public hookEditorSceneData(sceneData: EditorSceneData) {
     const planetData = EDITOR_STATE.value.planetData;
-
-    // register uniform functions
     this.registerLightingDataUpdates(planetData, sceneData.sunLight!, sceneData.ambLight!, sceneData.lensFlare!);
     this.registerPlanetRenderingDataUpdates(
       planetData,
@@ -50,6 +47,10 @@ export class PlanetDataToUniformsObserver extends Observer {
     this.registerAtmosphereDataUpdates(planetData, sceneData.atmosphere!);
     this.registerCloudDataUpdates(planetData, sceneData.clouds!);
     this.registerRingsDataUpdates(planetData, sceneData.ringAnchor, sceneData.rings!);
+  }
+
+  public unhookEditorSceneData() {
+    this.eventHandlerMap.clear();
   }
 
   // ----------------------------------------------------------------------------

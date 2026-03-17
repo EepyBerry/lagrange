@@ -32,7 +32,7 @@ import { useI18n } from 'vue-i18n';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import {
   bootstrapEditor,
-  disposeScene,
+  unloadEditor,
   exportPlanetPreview,
   takePlanetScreenshot,
   exportPlanetToGLTF,
@@ -89,7 +89,7 @@ onMounted(async () => {
 });
 onUnmounted(() => {
   if (loadedCorrectly) {
-    disposeScene();
+    unloadEditor();
   }
   EventBus.deregisterWindowEventListener('click', onWindowClick);
   EventBus.deregisterWindowEventListener('resize', onWindowResize);
