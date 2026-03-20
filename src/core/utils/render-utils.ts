@@ -1,7 +1,8 @@
 import type { ColorRamp } from '@core/models/color-ramp.model';
-import { EditorBackendType } from '@core/types';
 import { type TypedArray } from 'three';
 import type { WebGPURenderer } from 'three/webgpu';
+
+type EditorBackendType = 'webgl' | 'webgpu';
 
 /**
  * Renders a buffer onto an OffscreenCanvas
@@ -11,12 +12,12 @@ import type { WebGPURenderer } from 'three/webgpu';
  * @returns an `OffscreenCanvas` instance containing data from the buffer
  */
 export function renderToCanvas(renderer: WebGPURenderer, buf: TypedArray, w: number, h: number): OffscreenCanvas {
-  const backendType = Object.hasOwn(renderer.backend, 'gl') ? EditorBackendType.WEBGL : EditorBackendType.WEBGPU;
+  const backendType: EditorBackendType = Object.hasOwn(renderer.backend, 'gl') ? 'webgl' : 'webgpu';
 
   const canvas = new OffscreenCanvas(w, h);
   const ctx = canvas.getContext('2d')!;
   const imageData = ctx.createImageData(w, h);
-  imageData.data.set(backendType === EditorBackendType.WEBGL ? flipBufferY(buf as Uint8Array, w, h) : buf);
+  imageData.data.set(backendType === 'webgl' ? flipBufferY(buf as Uint8Array, w, h) : buf);
   ctx.putImageData(imageData, 0, 0);
   return canvas;
 }

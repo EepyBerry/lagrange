@@ -3,14 +3,14 @@ import { ColorMode, GradientMode, PlanetClass, PlanetType } from '@core/types';
 import { clampedPRNG, isNumeric, randomBoolean, randomColor, randomIntervals } from '@core/utils/math-utils';
 import { Color } from 'three';
 import { NoiseParameters } from './noise-parameters.model';
-import { ChangeAction, ChangeTracker } from './change-tracker.model';
 import { BiomeParameters } from './biome-parameters.model';
 import { clamp } from 'three/src/math/MathUtils.js';
 import { DisplacementParameters } from './displacement-parameters.model';
 import { RingParameters } from './ring-parameters.model';
 import { convertLegacyRingStorage } from '../helpers/compatibility.helper';
+import { Observable, ObservableEventAction } from '../utils/observable-utils';
 
-export default class PlanetData extends ChangeTracker {
+export default class PlanetData extends Observable {
   // --------------------------------------------------
   // |                      Init                      |
   // --------------------------------------------------
@@ -28,7 +28,7 @@ export default class PlanetData extends ChangeTracker {
   }
   public set planetName(value: string) {
     this._planetName = value;
-    this.markForChange('_planetName');
+    this.notify({ key: '_planetName' });
   }
 
   public get initCamDistance() {
@@ -58,21 +58,21 @@ export default class PlanetData extends ChangeTracker {
   }
   public set lensFlareEnabled(value: boolean) {
     this._lensFlareEnabled = value;
-    this.markForChange('_lensFlareEnabled');
+    this.notify({ key: '_lensFlareEnabled' });
   }
   public get lensFlarePointsIntensity(): number {
     return this._lensFlarePointsIntensity;
   }
   public set lensFlarePointsIntensity(value: number) {
     this._lensFlarePointsIntensity = clamp(value, 0, 1);
-    this.markForChange('_lensFlarePointsIntensity');
+    this.notify({ key: '_lensFlarePointsIntensity' });
   }
   public get lensFlareGlareIntensity(): number {
     return this._lensFlareGlareIntensity;
   }
   public set lensFlareGlareIntensity(value: number) {
     this._lensFlareGlareIntensity = clamp(value, 0, 1);
-    this.markForChange('_lensFlareGlareIntensity');
+    this.notify({ key: '_lensFlareGlareIntensity' });
   }
 
   public get sunLightAngle(): number {
@@ -80,21 +80,21 @@ export default class PlanetData extends ChangeTracker {
   }
   public set sunLightAngle(value: number) {
     this._sunLightAngle = clamp(value, -180, 180);
-    this.markForChange('_sunLightAngle');
+    this.notify({ key: '_sunLightAngle' });
   }
   public get sunLightColor(): Color {
     return this._sunLightColor;
   }
   public set sunLightColor(value: Color) {
     this._sunLightColor.set(value);
-    this.markForChange('_sunLightColor');
+    this.notify({ key: '_sunLightColor' });
   }
   public get sunLightIntensity(): number {
     return this._sunLightIntensity;
   }
   public set sunLightIntensity(value: number) {
     this._sunLightIntensity = value;
-    this.markForChange('_sunLightIntensity');
+    this.notify({ key: '_sunLightIntensity' });
   }
 
   public get ambLightColor(): Color {
@@ -102,14 +102,14 @@ export default class PlanetData extends ChangeTracker {
   }
   public set ambLightColor(value: Color) {
     this._ambLightColor.set(value);
-    this.markForChange('_ambLightColor');
+    this.notify({ key: '_ambLightColor' });
   }
   public get ambLightIntensity(): number {
     return this._ambLightIntensity;
   }
   public set ambLightIntensity(value: number) {
     this._ambLightIntensity = value;
-    this.markForChange('_ambLightIntensity');
+    this.notify({ key: '_ambLightIntensity' });
   }
 
   // --------------------------------------------------
@@ -141,21 +141,21 @@ export default class PlanetData extends ChangeTracker {
   }
   public set planetType(ptype: PlanetType) {
     this._planetType = ptype;
-    this.markForChange('_planetType');
+    this.notify({ key: '_planetType' });
   }
   public get planetClass(): PlanetClass {
     return this._planetClass;
   }
   public set planetClass(value: PlanetClass) {
     this._planetClass = value;
-    this.markForChange('_planetClass');
+    this.notify({ key: '_planetClass' });
   }
   public get planetMeshQuality() {
     return this._planetMeshQuality;
   }
   public set planetMeshQuality(quality: number) {
     this._planetMeshQuality = isNumeric(quality) ? clamp(quality, 0, 48) : 48;
-    this.markForChange('_planetMeshQuality');
+    this.notify({ key: '_planetMeshQuality' });
   }
 
   public get planetRadius() {
@@ -163,14 +163,14 @@ export default class PlanetData extends ChangeTracker {
   }
   public set planetRadius(radius: number) {
     this._planetRadius = radius;
-    this.markForChange('_planetRadius');
+    this.notify({ key: '_planetRadius' });
   }
   public get planetAxialTilt() {
     return this._planetAxialTilt;
   }
   public set planetAxialTilt(tilt: number) {
     this._planetAxialTilt = isNumeric(tilt) ? clamp(tilt, -180, 180) : 0;
-    this.markForChange('_planetAxialTilt');
+    this.notify({ key: '_planetAxialTilt' });
   }
 
   public get planetRotation() {
@@ -178,7 +178,7 @@ export default class PlanetData extends ChangeTracker {
   }
   public set planetRotation(rot: number) {
     this._planetRotation = isNumeric(rot) ? clamp(rot, 0, 360) : 0;
-    this.markForChange('_planetRotation');
+    this.notify({ key: '_planetRotation' });
   }
 
   public get planetWaterMetalness(): number {
@@ -186,14 +186,14 @@ export default class PlanetData extends ChangeTracker {
   }
   public set planetWaterMetalness(value: number) {
     this._planetWaterMetalness = clamp(value, 0, 1);
-    this.markForChange('_planetWaterMetalness');
+    this.notify({ key: '_planetWaterMetalness' });
   }
   public get planetWaterRoughness(): number {
     return this._planetWaterRoughness;
   }
   public set planetWaterRoughness(value: number) {
     this._planetWaterRoughness = clamp(value, 0, 1);
-    this.markForChange('_planetWaterRoughness');
+    this.notify({ key: '_planetWaterRoughness' });
   }
 
   public get planetGroundMetalness(): number {
@@ -201,14 +201,14 @@ export default class PlanetData extends ChangeTracker {
   }
   public set planetGroundMetalness(value: number) {
     this._planetGroundMetalness = clamp(value, 0, 1);
-    this.markForChange('_planetGroundMetalness');
+    this.notify({ key: '_planetGroundMetalness' });
   }
   public get planetGroundRoughness(): number {
     return this._planetGroundRoughness;
   }
   public set planetGroundRoughness(value: number) {
     this._planetGroundRoughness = clamp(value, 0, 1);
-    this.markForChange('_planetGroundRoughness');
+    this.notify({ key: '_planetGroundRoughness' });
   }
 
   public get planetWaterLevel(): number {
@@ -216,7 +216,7 @@ export default class PlanetData extends ChangeTracker {
   }
   public set planetWaterLevel(value: number) {
     this._planetWaterLevel = clamp(value, 0, 1);
-    this.markForChange('_planetWaterLevel');
+    this.notify({ key: '_planetWaterLevel' });
   }
 
   public get planetShowEmissive(): boolean {
@@ -224,14 +224,14 @@ export default class PlanetData extends ChangeTracker {
   }
   public set planetShowEmissive(value: boolean) {
     this._planetShowEmissive = value;
-    this.markForChange('_planetShowEmissive');
+    this.notify({ key: '_planetShowEmissive' });
   }
   public get planetWaterEmissiveIntensity(): number {
     return this._planetWaterEmissiveIntensity;
   }
   public set planetWaterEmissiveIntensity(value: number) {
     this._planetWaterEmissiveIntensity = clamp(value, 0, 10);
-    this.markForChange('_planetWaterEmissiveIntensity');
+    this.notify({ key: '_planetWaterEmissiveIntensity' });
   }
   public get planetGroundEmissiveIntensity(): number {
     return this._planetGroundEmissiveIntensity;
@@ -240,7 +240,7 @@ export default class PlanetData extends ChangeTracker {
     const v = clamp(value, 0, 10);
     this._planetGroundEmissiveIntensity = v;
     this._biomesParams.forEach((b) => (b.parentEmissiveIntensity = v));
-    this.markForChange('_planetGroundEmissiveIntensity');
+    this.notify({ key: '_planetGroundEmissiveIntensity' });
   }
 
   // --------------------------------------------------
@@ -262,14 +262,14 @@ export default class PlanetData extends ChangeTracker {
   }
   public set planetSurfaceShowBumps(value: boolean) {
     this._planetSurfaceShowBumps = value;
-    this.markForChange('_planetSurfaceShowBumps');
+    this.notify({ key: '_planetSurfaceShowBumps' });
   }
   public get planetSurfaceBumpStrength(): number {
     return this._planetSurfaceBumpStrength;
   }
   public set planetSurfaceBumpStrength(value: number) {
     this._planetSurfaceBumpStrength = value;
-    this.markForChange('_planetSurfaceBumpStrength');
+    this.notify({ key: '_planetSurfaceBumpStrength' });
   }
 
   public get planetSurfaceShowWarping(): boolean {
@@ -277,14 +277,14 @@ export default class PlanetData extends ChangeTracker {
   }
   public set planetSurfaceShowWarping(value: boolean) {
     this._planetSurfaceShowWarping = value;
-    this.markForChange('_planetSurfaceShowWarping');
+    this.notify({ key: '_planetSurfaceShowWarping' });
   }
   public get planetSurfaceShowDisplacement(): boolean {
     return this._planetSurfaceShowDisplacement;
   }
   public set planetSurfaceShowDisplacement(value: boolean) {
     this._planetSurfaceShowDisplacement = value;
-    this.markForChange('_planetSurfaceShowDisplacement');
+    this.notify({ key: '_planetSurfaceShowDisplacement' });
   }
 
   public get planetSurfaceDisplacement(): DisplacementParameters {
@@ -320,7 +320,7 @@ export default class PlanetData extends ChangeTracker {
   }
   public set biomesEnabled(value: boolean) {
     this._biomesEnabled = value;
-    this.markForChange('_biomesEnabled');
+    this.notify({ key: '_biomesEnabled' });
   }
 
   public get biomesTemperatureMode(): GradientMode {
@@ -328,7 +328,7 @@ export default class PlanetData extends ChangeTracker {
   }
   public set biomesTemperatureMode(value: GradientMode) {
     this._biomesTemperatureMode = value;
-    this.markForChange('_biomesTemperatureMode');
+    this.notify({ key: '_biomesTemperatureMode' });
   }
   public get biomesTemperatureNoise(): NoiseParameters {
     return this._biomesTemperatureNoise;
@@ -339,7 +339,7 @@ export default class PlanetData extends ChangeTracker {
   }
   public set biomesHumidityMode(value: GradientMode) {
     this._biomesHumidityMode = value;
-    this.markForChange('_biomesHumidityMode');
+    this.notify({ key: '_biomesHumidityMode' });
   }
   public get biomesHumidityNoise(): NoiseParameters {
     return this._biomesHumidityNoise;
@@ -370,7 +370,7 @@ export default class PlanetData extends ChangeTracker {
   }
   public set cloudsEnabled(value: boolean) {
     this._cloudsEnabled = value;
-    this.markForChange('_cloudsEnabled');
+    this.notify({ key: '_cloudsEnabled' });
   }
 
   public get cloudsRotation() {
@@ -378,7 +378,7 @@ export default class PlanetData extends ChangeTracker {
   }
   public set cloudsRotation(rot: number) {
     this._cloudsRotation = isNumeric(rot) ? clamp(rot, 0, 360) : 0;
-    this.markForChange('_cloudsRotation');
+    this.notify({ key: '_cloudsRotation' });
   }
 
   public get cloudsHeight() {
@@ -386,7 +386,7 @@ export default class PlanetData extends ChangeTracker {
   }
   public set cloudsHeight(height: number) {
     this._cloudsHeight = clamp(height, 0, 10);
-    this.markForChange('_cloudsHeight');
+    this.notify({ key: '_cloudsHeight' });
   }
 
   public get cloudsShowWarping(): boolean {
@@ -394,7 +394,7 @@ export default class PlanetData extends ChangeTracker {
   }
   public set cloudsShowWarping(value: boolean) {
     this._cloudsShowWarping = value;
-    this.markForChange('_cloudsShowWarping');
+    this.notify({ key: '_cloudsShowWarping' });
   }
 
   public get cloudsShowDisplacement(): boolean {
@@ -402,14 +402,10 @@ export default class PlanetData extends ChangeTracker {
   }
   public set cloudsShowDisplacement(value: boolean) {
     this._cloudsShowDisplacement = value;
-    this.markForChange('_cloudsShowDisplacement');
+    this.notify({ key: '_cloudsShowDisplacement' });
   }
   public get cloudsDisplacement(): DisplacementParameters {
     return this._cloudsDisplacement;
-  }
-  public set cloudsDisplacement(value: DisplacementParameters) {
-    this._cloudsDisplacement = value;
-    this.markForChange('_cloudsDisplacement');
   }
 
   public get cloudsNoise(): NoiseParameters {
@@ -421,13 +417,9 @@ export default class PlanetData extends ChangeTracker {
   }
   public set cloudsColor(value: Color) {
     this._cloudsColor.set(value);
-    this.markForChange('_cloudsColor');
+    this.notify({ key: '_cloudsColor' });
   }
 
-  public set cloudsColorRamp(ramp: ColorRamp) {
-    Object.assign(this._cloudsColorRamp, ramp);
-    this.markForChange('_cloudsColorRamp');
-  }
   public get cloudsColorRamp(): ColorRamp {
     return this._cloudsColorRamp;
   }
@@ -459,7 +451,7 @@ export default class PlanetData extends ChangeTracker {
   }
   public set atmosphereEnabled(value: boolean) {
     this._atmosphereEnabled = value;
-    this.markForChange('_atmosphereEnabled');
+    this.notify({ key: '_atmosphereEnabled' });
   }
 
   public get atmosphereHeight(): number {
@@ -467,14 +459,14 @@ export default class PlanetData extends ChangeTracker {
   }
   public set atmosphereHeight(value: number) {
     this._atmosphereHeight = clamp(value, 0.0075, 0.025);
-    this.markForChange('_atmosphereHeight');
+    this.notify({ key: '_atmosphereHeight' });
   }
   public get atmosphereDensityScale(): number {
     return this._atmosphereDensityScale;
   }
   public set atmosphereDensityScale(value: number) {
     this._atmosphereDensityScale = clamp(value, 0.25, 20.0);
-    this.markForChange('_atmosphereDensityScale');
+    this.notify({ key: '_atmosphereDensityScale' });
   }
 
   public get atmosphereIntensity(): number {
@@ -482,28 +474,28 @@ export default class PlanetData extends ChangeTracker {
   }
   public set atmosphereIntensity(value: number) {
     this._atmosphereIntensity = clamp(value, 0, 5.0);
-    this.markForChange('_atmosphereIntensity');
+    this.notify({ key: '_atmosphereIntensity' });
   }
   public get atmosphereColorMode(): number {
     return this._atmosphereColorMode;
   }
   public set atmosphereColorMode(value: number) {
     this._atmosphereColorMode = value;
-    this.markForChange('_atmosphereColorMode');
+    this.notify({ key: '_atmosphereColorMode' });
   }
   public get atmosphereHue(): number {
     return this._atmosphereHue;
   }
   public set atmosphereHue(value: number) {
     this._atmosphereHue = clamp(value, 0.0, 2.0);
-    this.markForChange('_atmosphereHue');
+    this.notify({ key: '_atmosphereHue' });
   }
   public get atmosphereTint(): Color {
     return this._atmosphereTint;
   }
   public set atmosphereTint(value: Color) {
     this._atmosphereTint.set(value);
-    this.markForChange('_atmosphereTint');
+    this.notify({ key: '_atmosphereTint' });
   }
 
   public get atmosphereMieScatteringConstant(): number {
@@ -511,28 +503,28 @@ export default class PlanetData extends ChangeTracker {
   }
   public set atmosphereMieScatteringConstant(value: number) {
     this._atmosphereMieScatteringConstant = clamp(value, -0.999, 0);
-    this.markForChange('_atmosphereMieScatteringConstant');
+    this.notify({ key: '_atmosphereMieScatteringConstant' });
   }
   public get atmosphereRayleighDensityRatio(): number {
     return this._atmosphereRayleighDensityRatio;
   }
   public set atmosphereRayleighDensityRatio(value: number) {
     this._atmosphereRayleighDensityRatio = clamp(value, 0.0, 1.0);
-    this.markForChange('_atmosphereRayleighDensityRatio');
+    this.notify({ key: '_atmosphereRayleighDensityRatio' });
   }
   public get atmosphereMieDensityRatio(): number {
     return this._atmosphereMieDensityRatio;
   }
   public set atmosphereMieDensityRatio(value: number) {
     this._atmosphereMieDensityRatio = clamp(value, 0.0, 1.0);
-    this.markForChange('_atmosphereMieDensityRatio');
+    this.notify({ key: '_atmosphereMieDensityRatio' });
   }
   public get atmosphereOpticalDensityRatio(): number {
     return this._atmosphereOpticalDensityRatio;
   }
   public set atmosphereOpticalDensityRatio(value: number) {
     this._atmosphereOpticalDensityRatio = clamp(value, 0.0, 1.0);
-    this.markForChange('_atmosphereOpticalDensityRatio');
+    this.notify({ key: '_atmosphereOpticalDensityRatio' });
   }
 
   // --------------------------------------------------
@@ -549,19 +541,11 @@ export default class PlanetData extends ChangeTracker {
   }
   public set ringsEnabled(value: boolean) {
     this._ringsEnabled = value;
-    this.markForChange('_ringsEnabled');
+    this.notify({ key: '_ringsEnabled' });
   }
 
   public get ringsParams() {
     return this._ringsParams;
-  }
-
-  // --------------------------------------------------
-  // |                  Utils & misc                  |
-  // --------------------------------------------------
-
-  public get changedProps() {
-    return this._changedProps;
   }
 
   // --------------------------------------------------
@@ -605,15 +589,22 @@ export default class PlanetData extends ChangeTracker {
     this._planetSurfaceShowWarping = false;
     this._planetSurfaceShowDisplacement = false;
     this._planetSurfaceDisplacement = new DisplacementParameters(
-      this._changedProps,
       '_planetSurfaceDisplacement',
+      this.notifyRelayCallback,
       2.0,
       0.2,
       2.0,
       6,
     );
-    this._planetSurfaceNoise = new NoiseParameters(this._changedProps, '_planetSurfaceNoise', 3.75, 0.48, 2.45, 6);
-    this._planetSurfaceColorRamp = new ColorRamp(this._changedProps, '_planetSurfaceColorRamp', [
+    this._planetSurfaceNoise = new NoiseParameters(
+      '_planetSurfaceNoise',
+      this.notifyRelayCallback,
+      3.75,
+      0.48,
+      2.45,
+      6,
+    );
+    this._planetSurfaceColorRamp = new ColorRamp('_planetSurfaceColorRamp', this.notifyRelayCallback, [
       new ColorRampStep(0x000000, 0, true),
       new ColorRampStep(0x0b1931, 0.4),
       new ColorRampStep(0x2d4265, 0.495),
@@ -627,19 +618,26 @@ export default class PlanetData extends ChangeTracker {
     this._biomesEnabled = true;
     this._biomesTemperatureMode = GradientMode.REALISTIC;
     this._biomesTemperatureNoise = new NoiseParameters(
-      this._changedProps,
       '_biomesTemperatureNoise',
+      this.notifyRelayCallback,
       2.5,
       1.25,
       2.4,
       6,
     );
     this._biomesHumidityMode = GradientMode.FULLNOISE;
-    this._biomesHumidityNoise = new NoiseParameters(this._changedProps, '_biomesHumidityNoise', 3.0, 0.63, 2.53, 6);
+    this._biomesHumidityNoise = new NoiseParameters(
+      '_biomesHumidityNoise',
+      this.notifyRelayCallback,
+      3.0,
+      0.63,
+      2.53,
+      6,
+    );
     this._biomesParams = [
       new BiomeParameters(
-        this._changedProps,
         '_biomesParams[element]',
+        this.notifyRelayCallback,
         {
           temperatureMin: 0.0,
           temperatureMax: 0.1,
@@ -650,8 +648,8 @@ export default class PlanetData extends ChangeTracker {
         0.25,
       ),
       new BiomeParameters(
-        this._changedProps,
         '_biomesParams[element]',
+        this.notifyRelayCallback,
         {
           temperatureMin: 0.8,
           temperatureMax: 1.0,
@@ -662,8 +660,8 @@ export default class PlanetData extends ChangeTracker {
         0.25,
       ),
       new BiomeParameters(
-        this._changedProps,
         '_biomesParams[element]',
+        this.notifyRelayCallback,
         {
           temperatureMin: 0.0,
           temperatureMax: 1.0,
@@ -682,10 +680,17 @@ export default class PlanetData extends ChangeTracker {
     this._cloudsHeight = 1.005;
     this._cloudsShowWarping = false;
     this._cloudsShowDisplacement = false;
-    this._cloudsDisplacement = new DisplacementParameters(this._changedProps, '_cloudsDisplacement', 2.0, 0.2, 2.0, 6);
-    this._cloudsNoise = new NoiseParameters(this._changedProps, '_cloudsNoise', 4.0, 0.6, 1.75, 6);
+    this._cloudsDisplacement = new DisplacementParameters(
+      '_cloudsDisplacement',
+      this.notifyRelayCallback,
+      2.0,
+      0.2,
+      2.0,
+      6,
+    );
+    this._cloudsNoise = new NoiseParameters('_cloudsNoise', this.notifyRelayCallback, 4.0, 0.6, 1.75, 6);
     this._cloudsColor = new Color(0xffffff);
-    this._cloudsColorRamp = new ColorRamp(this._changedProps, '_cloudsColorRamp', [
+    this._cloudsColorRamp = new ColorRamp('_cloudsColorRamp', this.notifyRelayCallback, [
       new ColorRampStep(0x000000, 0.0, true),
       new ColorRampStep(0x000000, 0.6),
       new ColorRampStep(0xffffff, 1.0, true),
@@ -699,7 +704,7 @@ export default class PlanetData extends ChangeTracker {
     this._atmosphereColorMode = ColorMode.REALISTIC;
     this._atmosphereHue = 0.0;
     this._atmosphereTint = new Color(0xffffff);
-    this._atmosphereMieScatteringConstant = -0.78;
+    this._atmosphereMieScatteringConstant = -0.999;
     this._atmosphereRayleighDensityRatio = 0.05;
     this._atmosphereMieDensityRatio = 0.02;
     this._atmosphereOpticalDensityRatio = 0.25;
@@ -715,7 +720,6 @@ export default class PlanetData extends ChangeTracker {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public loadData(data: any) {
-    this.changedProps.splice(0);
     this.planetName = data._planetName?.replaceAll('_', ' ') ?? this._defaultPlanetName;
 
     // Lighting
@@ -774,10 +778,10 @@ export default class PlanetData extends ChangeTracker {
     this.biomesParams.push(
       // prettier-ignore
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(data._biomesParams ?? []).map( (params: any) => {
+      ...(data._biomesParams ?? []).map((params: any) => {
         const b = new BiomeParameters(
-          this.changedProps,
           '_biomesParams[element]',
+          this.notifyRelayCallback,
           {
             temperatureMin: params._tempMin ?? 0.0,
             temperatureMax: params._tempMax ?? 0.5,
@@ -789,7 +793,7 @@ export default class PlanetData extends ChangeTracker {
           params._emissiveOverride ?? false,
           params._emissiveIntensity ?? 0.0,
           params._id,
-        )
+        );
         b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity
         return b
       }),
@@ -821,10 +825,10 @@ export default class PlanetData extends ChangeTracker {
     this.atmosphereColorMode = data._atmosphereColorMode ?? ColorMode.REALISTIC;
     this.atmosphereHue = data._atmosphereHue ?? 0.0;
     this.atmosphereTint.set(data._atmosphereTint ?? 0xffffff);
-    this._atmosphereMieScatteringConstant = data._atmosphereMieScatteringConstant ?? -0.78;
-    this._atmosphereRayleighDensityRatio = data._atmosphereRayleighDensityRatio ?? 0.05;
-    this._atmosphereMieDensityRatio = data._atmosphereMieDensityRatio ?? 0.02;
-    this._atmosphereOpticalDensityRatio = data._atmosphereOpticalDensityRatio ?? 0.25;
+    this.atmosphereMieScatteringConstant = data._atmosphereMieScatteringConstant ?? -0.78;
+    this.atmosphereRayleighDensityRatio = data._atmosphereRayleighDensityRatio ?? 0.05;
+    this.atmosphereMieDensityRatio = data._atmosphereMieDensityRatio ?? 0.02;
+    this.atmosphereOpticalDensityRatio = data._atmosphereOpticalDensityRatio ?? 0.25;
 
     // Ring
     this.ringsEnabled = data._ringsEnabled ?? false;
@@ -834,8 +838,8 @@ export default class PlanetData extends ChangeTracker {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...(data._ringsParams ?? []).map((params: any) =>
           new RingParameters(
-            this.changedProps,
             '_ringsParams[element]',
+            this.notifyRelayCallback,
             params._innerRadius ?? 1.25,
             params._outerRadius ?? 1.5,
             params._colorRamp?._steps,
@@ -895,7 +899,7 @@ export default class PlanetData extends ChangeTracker {
     this._biomesHumidityNoise.randomize();
     this._biomesParams.splice(0);
     for (let i = 0; i < Math.round(clampedPRNG(0, 8)); i++) {
-      const b = BiomeParameters.createRandom(this.changedProps, '_biomesParams[element]');
+      const b = BiomeParameters.createRandom('_biomesParams[element]', this.notifyRelayCallback);
       b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity;
       this._biomesParams.push(b);
     }
@@ -932,33 +936,90 @@ export default class PlanetData extends ChangeTracker {
     this._ringsParams.splice(0);
     const ringIntervals = randomIntervals(1.25, 4.75, 2 * Math.round(clampedPRNG(2, 16) / 2));
     for (let i = 0; i < ringIntervals.length; i++) {
-      const newRing = RingParameters.createRandom(this._changedProps, '_ringsParams[element]');
+      const newRing = RingParameters.createRandom('_ringsParams[element]', this.notifyRelayCallback);
       newRing.innerRadius = ringIntervals[i][0];
       newRing.outerRadius = ringIntervals[i][1];
       this._ringsParams.push(newRing);
     }
+    this.notify({ type: 'global' });
   }
 
   public reset() {
+    const observers = this.observers;
     Object.assign(this, new PlanetData());
+    this.observers = observers;
     this._planetSurfaceDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05);
     this._planetSurfaceNoise.reset(3.75, 0.48, 2.45, 6, 1, 1.0);
     this._biomesTemperatureNoise.reset(2.5, 1.25, 2.4, 6);
     this._biomesHumidityNoise.reset(35, 0.63, 2.53, 6);
     this._cloudsDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05);
     this._cloudsNoise.reset(4.0, 0.6, 1.75, 6, 1, 1.0);
-    this.markAllForChange();
+    this.notify({ type: 'global' });
   }
 
-  public markAllForChange() {
-    this._changedProps.push(...Object.keys(this).map((o) => ({ prop: o, action: ChangeAction.EDIT })));
-    this._planetSurfaceNoise.markAllForChange();
-    this._planetSurfaceDisplacement.markAllForChange();
-    this._cloudsNoise.markAllForChange();
-    this._cloudsDisplacement.markAllForChange();
-    this._biomesHumidityNoise.markAllForChange();
-    this._biomesTemperatureNoise.markAllForChange();
-    this._biomesParams.forEach((b) => b.markAllForChange());
+  // --------------------------------------------------
+  // |            Data handling functions             |
+  // --------------------------------------------------
+
+  public addBiome(): BiomeParameters {
+    const newBiome = new BiomeParameters(
+      '_biomesParams[element]',
+      this.notifyRelayCallback,
+      {
+        temperatureMin: 0.0,
+        temperatureMax: 1.0,
+        humidityMin: 0.0,
+        humidityMax: 1.0,
+      },
+      new Color(0xffffff),
+      0.2,
+    );
+    this._biomesParams.push(newBiome);
+    this.notify({ key: '_biomesParams[element]', action: ObservableEventAction.ADD, data: { biome: newBiome } });
+    return newBiome;
+  }
+
+  public moveBiome(id: string, increment: -1 | 1) {
+    const biome = this.findBiomeById(id);
+    const biomeIdx = this.findBiomeIndexById(id);
+    if (!biome || biomeIdx < 0) {
+      throw new Error(`Cannot move non-existent biome of ID: ${id}`);
+    }
+    this._biomesParams.splice(biomeIdx, 1);
+    this._biomesParams.splice(biomeIdx + increment, 0, biome);
+    this.notify({
+      key: '_biomesParams[element]',
+      action: increment === -1 ? ObservableEventAction.SORT_UP : ObservableEventAction.SORT_DOWN,
+      data: { biome },
+    });
+  }
+
+  public removeBiome(id: string) {
+    const biome = this.findBiomeById(id);
+    const biomeIdx = this.findBiomeIndexById(id);
+    if (biomeIdx < 0) {
+      throw new Error(`Cannot delete non-existent biome of ID: ${id}`);
+    }
+    this._biomesParams.splice(biomeIdx, 1);
+    this.notify({ key: '_biomesParams[element]', action: ObservableEventAction.DELETE, data: { biome } });
+  }
+
+  public addRing(): RingParameters {
+    const newRing = new RingParameters('_ringsParams[element]', this.notifyRelayCallback, 1.5, 1.75);
+    this._ringsParams.push(newRing);
+    this.notify({ key: '_ringsParams[element]', action: ObservableEventAction.ADD, data: { ring: newRing } });
+    return newRing;
+  }
+
+  public removeRing(id: string): string {
+    const ring = this.findRingById(id);
+    const ringParamsIdx = this.findRingIndexById(id);
+    if (!ring || ringParamsIdx < 0) {
+      throw new Error(`Cannot delete non-existent ring of ID: ${id}`);
+    }
+    this._ringsParams.splice(ringParamsIdx, 1);
+    this.notify({ key: '_ringsParams[element]', action: ObservableEventAction.DELETE, data: { ring } });
+    return id;
   }
 
   // --------------------------------------------------
@@ -970,6 +1031,13 @@ export default class PlanetData extends ChangeTracker {
   }
   public findBiomeIndexById(id: string) {
     return this._biomesParams.findIndex((b) => b.id === id);
+  }
+
+  public findRingById(id: string) {
+    return this._ringsParams.find((b) => b.id === id);
+  }
+  public findRingIndexById(id: string) {
+    return this._ringsParams.findIndex((b) => b.id === id);
   }
 
   public findOutermostRingRadius() {

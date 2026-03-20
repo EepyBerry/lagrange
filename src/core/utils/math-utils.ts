@@ -5,22 +5,33 @@ import { ref, type Ref } from 'vue';
 /**
  * Okay, explanation required for this value:
  *
- * We know that `0x010101` is the darkest possible RGB 8-bit color. Thus, we use it
+ * We know that `0x010101 (65793)` is the darkest possible RGB 8-bit color. Thus, we use it
  * as a multiplier with a value from `0` to `255` to get a grayscale color
  * from `(0x)000000` to `(0x)ffffff`
  * @example 0x5c5c5c = (0x5c * 0x010101) = (92 * 0x010101)
  */
 const GRAYSCALE_MULTIPLIER = 0x010101;
 
+/**
+ * Current PRNG seed value
+ */
 let currentPRNGSeed = Math.random().toString().substring(2);
 
 // @ts-expect-error Type definitions missing in 'seedrandom' package
 export const PRNG: Ref<seedrandom.PRNG> = ref(new seedrandom.alea(currentPRNGSeed));
 export const PRNG_SEED: Ref<string> = ref(currentPRNGSeed);
 
+/**
+ * Recalculates a PRNG seed for the randomizer
+ */
 export function regenerateSeed() {
   PRNG_SEED.value = Math.random().toString().substring(2);
 }
+
+/**
+ * Rebuilds a PRNG instance when necessary (i.e. either forced or when seeds are different)
+ * @param force force PRNG recreation using this flag
+ */
 export function regeneratePRNGIfNecessary(force?: boolean): void {
   if (!force && PRNG_SEED.value === currentPRNGSeed) {
     return;
@@ -30,10 +41,34 @@ export function regeneratePRNGIfNecessary(force?: boolean): void {
   PRNG_SEED.value = s;
   currentPRNGSeed = s;
 }
+
+/**
+ * Generates a clamped PRNG value between the given min/max values, with the given number of decimal digits
+ * @param min minimum allowed value
+ * @param max maximum allowed value
+ * @param digits number of digits after the decimal point (0-20)
+ * @returns a new number within the given parameters, based on the current PRNG seed
+ */
 export function clampedPRNG(min: number, max: number, digits: number = 3): number {
   return Number(((max - min) * PRNG.value() + min).toFixed(digits));
 }
-export function clampedPRNGSpaced(prev: number, min: number, max: number, precision: number = 3, spacing: number = 1) {
+
+/**
+ * Brute-force {@link clampedPRNG} alternative where a minimum spacing value is required
+ * @param prev previous generated or fixed value, as a reference
+ * @param min minimum allowed value
+ * @param max maximum allowed value
+ * @param precision number of digits after the decimal point (0-20)
+ * @param spacing minimum absolute difference required between `prev` and this function's result
+ * @returns
+ */
+export function clampedPRNGSpaced(
+  prev: number,
+  min: number,
+  max: number,
+  precision: number = 3,
+  spacing: number = 1,
+): number {
   let result = clampedPRNG(min, max, precision);
   let loop = 0;
   while (diff(result, prev) <= spacing && loop < 100) {
@@ -41,10 +76,6 @@ export function clampedPRNGSpaced(prev: number, min: number, max: number, precis
     loop++;
   }
   return result;
-}
-
-export function clampedPRNGHex(min: number, max: number, hexMask: number): number {
-  return clampedPRNG(min, max) * hexMask;
 }
 
 /**
@@ -84,8 +115,8 @@ export function randomIntervals(min: number, max: number, intervals: number) {
 }
 
 /**
- * Simple numeric checking function.
- * @param n the object to check
+ * Simple numeric checking function
+ * @param n the primitive to check
  * @returns `true` if `n` is a number or can be interpreted as a number (excluding empty values), `false` otherwise
  */
 export function isNumeric(n: string | number | boolean): boolean {
@@ -102,14 +133,20 @@ export function isNumeric(n: string | number | boolean): boolean {
  * @param values the values to average
  * @returns the average of the given values
  */
-export function avg(...values: number[]) {
+export function avg(...values: number[]): number {
   if (values.length === 0) {
     return 0;
   }
   return values.reduce((prev, cur) => prev + cur) / values.length;
 }
 
-export function diff(a: number, b: number) {
+/**
+ * Simple difference function
+ * @param a first value
+ * @param b second value
+ * @returns the (absolute) difference between these numbers
+ */
+export function diff(a: number, b: number): number {
   return Math.abs(Math.max(a, b) - Math.min(a, b));
 }
 

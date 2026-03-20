@@ -46,6 +46,7 @@ export function disposeScene(sceneData: EditorSceneData) {
   sceneData.planet.surfaceBuffer?.fill(0)
   sceneData.planet.surfaceTexture!.dispose()
   sceneData.planet.biomeLayersTexture!.dispose()
+  sceneData.planet.biomeEmissiveLayersTexture!.dispose();
   sceneData.clouds.texture!.dispose()
   sceneData.ringAnchor.clear()
   sceneData.planetGroup.clear()

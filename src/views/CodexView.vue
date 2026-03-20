@@ -196,7 +196,6 @@ async function exportPlanets() {
 }
 
 function exportPlanet(planet: IDBPlanet) {
-  planet.data.changedProps.splice(0);
   const jsonParams = JSON.stringify(planet);
   const gzipParams = pako.deflate(jsonParams);
   const planetFilename = planet.data.planetName.replaceAll(' ', '_');

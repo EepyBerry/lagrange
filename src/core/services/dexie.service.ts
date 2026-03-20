@@ -65,7 +65,7 @@ export async function setRenderingBackendFallback() {
 
 export async function clearData(): Promise<void> {
   const settings = await idb.settings.limit(1).toArray();
-  await idb.settings.update(settings[0].id, {
+  await idb.settings.update(settings[0]!.id, {
     // general
     theme: 'default',
     locale: navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US',
@@ -102,8 +102,11 @@ export async function initStoragePersistence() {
         console.warn('<Lagrange> Storage not persisted, user should be prompted first');
         break;
     }
-  } catch (_error) {
-    console.error('<Lagrange> Failed to persist storage despite granted permission, continuing in best-effort mode.');
+  } catch (error) {
+    console.error(
+      '<Lagrange> Failed to persist storage despite granted permission, continuing in best-effort mode.',
+      error,
+    );
   }
 }
 

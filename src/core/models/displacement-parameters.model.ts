@@ -1,8 +1,8 @@
 import { clamp } from 'three/src/math/MathUtils.js';
-import { ChangeTracker, type ChangedProp } from './change-tracker.model';
 import { clampedPRNG } from '@core/utils/math-utils';
+import { ObservableRelay, type ObservableNotifyFunction } from '../utils/observable-utils';
 
-export class DisplacementParameters extends ChangeTracker {
+export class DisplacementParameters extends ObservableRelay {
   private _epsilon: number = 0.001;
   private _multiplier: number = 2.0;
   private _factor: number = 0.05;
@@ -12,8 +12,8 @@ export class DisplacementParameters extends ChangeTracker {
   private _octaves: number = 8;
 
   constructor(
-    changedPropsRef: ChangedProp[],
-    changePrefix: string,
+    keyPrefix: string,
+    notifyFunc: ObservableNotifyFunction,
     freq?: number,
     amp?: number,
     lac?: number,
@@ -22,7 +22,7 @@ export class DisplacementParameters extends ChangeTracker {
     multiplier?: number,
     factor?: number,
   ) {
-    super(changedPropsRef, changePrefix);
+    super(keyPrefix, notifyFunc);
     this._frequency = clamp(freq ?? this._frequency, 0, 10.0);
     this._amplitude = clamp(amp ?? this._amplitude, 0, 1.25);
     this._lacunarity = clamp(lac ?? this._lacunarity, 0, 3.0);
@@ -37,21 +37,21 @@ export class DisplacementParameters extends ChangeTracker {
   }
   public set epsilon(value: number) {
     this._epsilon = clamp(value, 0.0, 0.25);
-    this.markForChange(`${this._changePrefix}._epsilon`);
+    this.relayNotify({ key: `${this.keyPrefix}._epsilon` });
   }
   public get multiplier(): number {
     return this._multiplier;
   }
   public set multiplier(value: number) {
     this._multiplier = clamp(value, 0.25, 3.0);
-    this.markForChange(`${this._changePrefix}._multiplier`);
+    this.relayNotify({ key: `${this.keyPrefix}._multiplier` });
   }
   public get factor(): number {
     return this._factor;
   }
   public set factor(value: number) {
     this._factor = clamp(value, 0.0, 1.0);
-    this.markForChange(`${this._changePrefix}._factor`);
+    this.relayNotify({ key: `${this.keyPrefix}._factor` });
   }
 
   public get frequency(): number {
@@ -59,7 +59,7 @@ export class DisplacementParameters extends ChangeTracker {
   }
   public set frequency(value: number) {
     this._frequency = clamp(value, 0.0, 10);
-    this.markForChange(`${this._changePrefix}._frequency`);
+    this.relayNotify({ key: `${this.keyPrefix}._frequency` });
   }
 
   public get amplitude(): number {
@@ -67,7 +67,7 @@ export class DisplacementParameters extends ChangeTracker {
   }
   public set amplitude(value: number) {
     this._amplitude = clamp(value, 0.0, 1.25);
-    this.markForChange(`${this._changePrefix}._amplitude`);
+    this.relayNotify({ key: `${this.keyPrefix}._amplitude` });
   }
 
   public get lacunarity(): number {
@@ -75,7 +75,7 @@ export class DisplacementParameters extends ChangeTracker {
   }
   public set lacunarity(value: number) {
     this._lacunarity = clamp(value, 0.0, 3.0);
-    this.markForChange(`${this._changePrefix}._lacunarity`);
+    this.relayNotify({ key: `${this.keyPrefix}._lacunarity` });
   }
 
   public get octaves(): number {
@@ -83,7 +83,7 @@ export class DisplacementParameters extends ChangeTracker {
   }
   public set octaves(value: number) {
     this._octaves = clamp(value, 1, 8);
-    this.markForChange(`${this._changePrefix}._octaves`);
+    this.relayNotify({ key: `${this.keyPrefix}._octaves` });
   }
 
   public loadData(data?: DisplacementParameters) {
@@ -115,18 +115,5 @@ export class DisplacementParameters extends ChangeTracker {
     this._amplitude = clampedPRNG(0.25, 1.25);
     this._lacunarity = clampedPRNG(1.5, 2.5);
     this._octaves = Math.round(clampedPRNG(4, 8));
-  }
-
-  /**
-   * Marks all properties of this class for change, using `this._changePrefix`
-   */
-  public override markAllForChange(): void {
-    this.markForChange(`${this._changePrefix}._epsilon`);
-    this.markForChange(`${this._changePrefix}._multiplier`);
-    this.markForChange(`${this._changePrefix}._factor`);
-    this.markForChange(`${this._changePrefix}._frequency`);
-    this.markForChange(`${this._changePrefix}._amplitude`);
-    this.markForChange(`${this._changePrefix}._lacunarity`);
-    this.markForChange(`${this._changePrefix}._octaves`);
   }
 }

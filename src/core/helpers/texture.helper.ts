@@ -83,7 +83,7 @@ export function fillBiomeLayer(biome: BiomeParameters, canvas: OffscreenCanvas):
     return 
   }
   // Calculate smoothing distance and fill
-  const rectAvgSmoothingDistance = Math.floor(avg(...[biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness]))
+  const rectAvgSmoothingDistance = Math.floor(avg(biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness))
   shrinkFillRect(canvas, biomeRect, biome.color, rectAvgSmoothingDistance)
 }
 
@@ -106,7 +106,7 @@ export function fillBiomeEmissivityLayer(biome: BiomeParameters, canvas: Offscre
     return
   }
   // Calculate smoothing distance and fill
-  const rectAvgSmoothingDistance = Math.floor(avg(...[biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness]))
+  const rectAvgSmoothingDistance = Math.floor(avg(biomeRect.w * biome.smoothness, biomeRect.h * biome.smoothness))
   shrinkFillRect(canvas, biomeRect, texColor, rectAvgSmoothingDistance)
 }
 

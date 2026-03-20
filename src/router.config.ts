@@ -1,17 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import CodexView from './views/CodexView.vue';
-import PlanetEditorView from './views/PlanetEditorView.vue';
+import PlanetEditorView from './views/EditorView.vue';
 import PageNotFoundView from './views/PageNotFoundView.vue';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    {
-      path: '/',
-      redirect: '/codex',
-    },
+    /**
+     * Legacy route redirection to avoid breaking existing behaviour
+     * @since v0.5.2
+     */
     {
       path: '/codex',
+      redirect: '/',
+    },
+    {
+      path: '/',
       name: 'codex',
       component: CodexView,
       meta: { title: 'Codex' },
