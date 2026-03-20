@@ -60,9 +60,15 @@ export function clampedPRNG(min: number, max: number, digits: number = 3): numbe
  * @param max maximum allowed value
  * @param precision number of digits after the decimal point (0-20)
  * @param spacing minimum absolute difference required between `prev` and this function's result
- * @returns 
+ * @returns
  */
-export function clampedPRNGSpaced(prev: number, min: number, max: number, precision: number = 3, spacing: number = 1): number {
+export function clampedPRNGSpaced(
+  prev: number,
+  min: number,
+  max: number,
+  precision: number = 3,
+  spacing: number = 1,
+): number {
   let result = clampedPRNG(min, max, precision);
   let loop = 0;
   while (diff(result, prev) <= spacing && loop < 100) {

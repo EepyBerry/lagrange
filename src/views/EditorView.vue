@@ -168,7 +168,7 @@ function redirectToCodex() {
 
 async function handleInitError(reloadWithFallback: boolean = false) {
   if (reloadWithFallback) {
-    await DexieService.setRenderingBackendFallback()
+    await DexieService.setRenderingBackendFallback();
     router.go(0);
   } else {
     redirectToCodex();

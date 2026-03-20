@@ -12,7 +12,7 @@ const router = createRouter({
      */
     {
       path: '/codex',
-      redirect: '/'
+      redirect: '/',
     },
     {
       path: '/',

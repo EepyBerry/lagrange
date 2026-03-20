@@ -11,8 +11,6 @@ import {
 } from 'three/webgpu';
 import {
   bitangentLocal,
-  bool,
-  div,
   EPSILON,
   float,
   Fn,

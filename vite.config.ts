@@ -27,29 +27,4 @@ export default defineConfig({
       '@components': fileURLToPath(new URL('./src/components', import.meta.url)),
     },
   },
-  optimizeDeps: {
-    esbuildOptions: {
-      target: 'es2022',
-    },
-  },
-  build: {
-    target: 'es2022',
-    sourcemap: true,
-    chunkSizeWarningLimit: 600,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vue: ['vue'],
-          vueplugins: ['vue-router', 'vue-accessible-color-picker', 'vue-i18n', '@unhead/vue'],
-          three: ['three'],
-          export: ['pako', 'jszip', 'file-saver'],
-        },
-      },
-    },
-  },
-  esbuild: {
-    supported: {
-      'top-level-await': true,
-    },
-  },
 });

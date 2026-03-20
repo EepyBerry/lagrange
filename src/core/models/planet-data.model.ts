@@ -419,7 +419,7 @@ export default class PlanetData extends Observable {
     this._cloudsColor.set(value);
     this.notify({ key: '_cloudsColor' });
   }
-  
+
   public get cloudsColorRamp(): ColorRamp {
     return this._cloudsColorRamp;
   }

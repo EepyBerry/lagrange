@@ -1,7 +1,7 @@
 import { ref, type Ref } from 'vue';
 import PlanetData from '../models/planet-data.model';
 
-type TEditorStatusCode = typeof EditorStatusCode[keyof typeof EditorStatusCode];
+type TEditorStatusCode = (typeof EditorStatusCode)[keyof typeof EditorStatusCode];
 export const EditorStatusCode = {
   Initialization: 'INITIALIZATION',
   Edition: 'EDITION',

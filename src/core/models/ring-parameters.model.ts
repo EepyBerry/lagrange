@@ -46,7 +46,7 @@ export class RingParameters extends ObservableRelay {
     if (this.outerRadius < this._innerRadius) {
       this.outerRadius = value; // Call setter to trigger change
     }
-    this.relayNotify({ key: `${this.keyPrefix}._innerRadius`, data: { ring: this }});
+    this.relayNotify({ key: `${this.keyPrefix}._innerRadius`, data: { ring: this } });
   }
 
   public get outerRadius(): number {
@@ -57,7 +57,7 @@ export class RingParameters extends ObservableRelay {
     if (this.innerRadius > this._outerRadius) {
       this.innerRadius = value; // Call setter to trigger change
     }
-    this.relayNotify({ key: `${this.keyPrefix}._outerRadius`, data: { ring: this }});
+    this.relayNotify({ key: `${this.keyPrefix}._outerRadius`, data: { ring: this } });
   }
 
   public get colorRamp(): ColorRamp {

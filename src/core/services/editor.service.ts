@@ -227,10 +227,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     if (planetData.cloudsEnabled) {
       progressDialog.setProgress(5);
       await sleep(50);
-      const bakeClouds = BakingHelper.createBakingClouds(
-        planetData,
-        editorSceneData.clouds.texture!,
-      );
+      const bakeClouds = BakingHelper.createBakingClouds(planetData, editorSceneData.clouds.texture!);
       const bakeCloudsTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeClouds);
       if (appSettings?.bakingPixelize) {
         bakeCloudsTex.minFilter = THREE.NearestFilter;
@@ -286,10 +283,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     bakePlanet.rotateOnAxis(bakePlanet.up, degToRad(planetData.planetRotation));
 
     bakePlanet.name = planetData.planetName;
-    ExportHelper.exportMeshesToGLTF(
-      [bakePlanet],
-      planetData.planetName.replaceAll(' ', '_') + `_${w}`,
-    );
+    ExportHelper.exportMeshesToGLTF([bakePlanet], planetData.planetName.replaceAll(' ', '_') + `_${w}`);
   } catch (error) {
     console.error(error);
     progressDialog.setError(error);

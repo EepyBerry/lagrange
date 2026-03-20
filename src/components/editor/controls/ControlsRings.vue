@@ -14,7 +14,11 @@
         <template #content>
           <template v-for="(r, index) in EDITOR_STATE.planetData.ringsParams" :key="r.id">
             <!-- prettier-ignore-attribute -->
-            <ParameterRing v-model="EDITOR_STATE.planetData.ringsParams[index]" :index="index" @delete="EDITOR_STATE.planetData.removeRing(r.id)" />
+            <ParameterRing
+              v-model="EDITOR_STATE.planetData.ringsParams[index]"
+              :index="index"
+              @delete="EDITOR_STATE.planetData.removeRing(r.id)"
+            />
           </template>
           <LgvButton
             v-show="EDITOR_STATE.planetData.ringsParams.length < 8"
