@@ -1,20 +1,22 @@
 import { ref, type Ref } from 'vue';
 import PlanetData from '../models/planet-data.model';
 
-export enum EditorStatusCode {
-  INITIALIZATION = 'INITIALIZATION',
-  EDITION = 'EDITION',
-  RANDOMIZATION = 'RANDOMIZATION',
-  RESET = 'RESET',
-  PREVIEW_GENERATION = 'PREVIEW_GENERATION',
-  SCENE_DISPOSAL = 'SCENE_DISPOSAL',
-  EXPORT = 'EXPORT',
-  ERROR = 'ERROR',
-  UNLOADED = 'UNLOADED',
-}
+type TEditorStatusCode = typeof EditorStatusCode[keyof typeof EditorStatusCode];
+export const EditorStatusCode = {
+  Initialization: 'INITIALIZATION',
+  Edition: 'EDITION',
+  Randomization: 'RANDOMIZATION',
+  Reset: 'RESET',
+  PreviewGeneration: 'PREVIEW_GENERATION',
+  SceneDisposal: 'SCENE_DISPOSAL',
+  Export: 'EXPORT',
+  Error: 'ERROR',
+  Unloaded: 'UNLOADED',
+} as const;
+
 export type EditorState = {
   planetData: PlanetData;
-  status: EditorStatusCode;
+  status: TEditorStatusCode;
   planetEditedFlag: boolean;
 };
 
@@ -22,6 +24,6 @@ export type EditorState = {
 
 export const EDITOR_STATE: Ref<EditorState> = ref({
   planetData: new PlanetData(),
-  status: EditorStatusCode.UNLOADED,
+  status: EditorStatusCode.Unloaded,
   planetEditedFlag: false,
 });

@@ -19,8 +19,7 @@ export default class WebGPU {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static getErrorMessage(i18n: Composer<any>): string {
+  static getErrorMessage(i18n: Composer<Record>): string {
     return this._error ? this._error.message : i18n.t('main.error.default_webgpu_support');
   }
 }

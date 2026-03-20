@@ -32,7 +32,7 @@ watch(EDITOR_STATE, (v) => console.debug('<Lagrange> EditorState => ' + v.status
 // ------------------------------------------------------------------------------------------------ //
 
 export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
-  EDITOR_STATE.value.status = EditorStatusCode.INITIALIZATION;
+  EDITOR_STATE.value.status = EditorStatusCode.Initialization;
   await sleep(50);
   editorSceneData = await SceneHelper.buildEditorScene(
     EDITOR_STATE.value.planetData,
@@ -48,7 +48,7 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   editorSceneData.renderer!.setAnimationLoop(() => renderFrame());
   editorSceneData.renderer!.domElement.ariaLabel = '3D planet viewer';
   canvas.appendChild(editorSceneData.renderer!.domElement);
-  EDITOR_STATE.value.status = EditorStatusCode.EDITION;
+  EDITOR_STATE.value.status = EditorStatusCode.Edition;
 
   // Observe changes in model
   planetDataToUniformsObserver.hookEditorSceneData(editorSceneData);
@@ -65,13 +65,13 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
  * Removes every object from the scene, then removes the scene itself
  */
 export function unloadEditor() {
-  EDITOR_STATE.value.status = EditorStatusCode.SCENE_DISPOSAL;
+  EDITOR_STATE.value.status = EditorStatusCode.SceneDisposal;
   console.debug('<Lagrange> Clearing scene... ');
   planetDataToUniformsObserver.unhookEditorSceneData();
   EDITOR_STATE.value.planetData.disconnectAll();
   SceneHelper.disposeScene(editorSceneData);
   console.debug('<Lagrange> ...done!');
-  EDITOR_STATE.value.status = EditorStatusCode.UNLOADED;
+  EDITOR_STATE.value.status = EditorStatusCode.Unloaded;
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -99,21 +99,21 @@ export function updateCameraRendering(w: number, h: number) {
 // ------------------------------------------------------------------------------------------------ //
 
 export async function randomizePlanet() {
-  EDITOR_STATE.value.status = EditorStatusCode.RANDOMIZATION;
+  EDITOR_STATE.value.status = EditorStatusCode.Randomization;
   await sleep(50);
   regeneratePRNGIfNecessary();
   EDITOR_STATE.value.planetData.randomize();
   editorSceneData.planet.biomeLayersTexture?.reset(EDITOR_STATE.value.planetData.biomesParams);
   editorSceneData.planet.biomeEmissiveLayersTexture?.reset(EDITOR_STATE.value.planetData.biomesParams);
-  EDITOR_STATE.value.status = EditorStatusCode.EDITION;
+  EDITOR_STATE.value.status = EditorStatusCode.Edition;
 }
 
 export async function resetPlanet() {
-  EDITOR_STATE.value.status = EditorStatusCode.RESET;
+  EDITOR_STATE.value.status = EditorStatusCode.Reset;
   EDITOR_STATE.value.planetData.reset();
   editorSceneData.planet.biomeLayersTexture?.reset(EDITOR_STATE.value.planetData.biomesParams);
   editorSceneData.planet.biomeEmissiveLayersTexture?.reset(EDITOR_STATE.value.planetData.biomesParams);
-  EDITOR_STATE.value.status = EditorStatusCode.EDITION;
+  EDITOR_STATE.value.status = EditorStatusCode.Edition;
 }
 
 export async function takePlanetScreenshot() {
@@ -132,12 +132,12 @@ export async function takePlanetScreenshot() {
 }
 
 export async function exportPlanetPreview(): Promise<string> {
-  EDITOR_STATE.value.status = EditorStatusCode.PREVIEW_GENERATION;
+  EDITOR_STATE.value.status = EditorStatusCode.PreviewGeneration;
   await sleep(50);
   editorSceneData.lensFlare!.mesh.visible = false;
   const dataURL = await PreviewHelper.generatePlanetPreview(EDITOR_STATE.value.planetData);
   editorSceneData.lensFlare!.mesh.visible = EDITOR_STATE.value.planetData.lensFlareEnabled;
-  EDITOR_STATE.value.status = EditorStatusCode.EDITION;
+  EDITOR_STATE.value.status = EditorStatusCode.Edition;
   return dataURL;
 }
 
@@ -146,7 +146,7 @@ export async function exportPlanetToGLTF(progressDialog: {
   setProgress: (value: number) => void;
   setError: (error: unknown) => void;
 }) {
-  EDITOR_STATE.value.status = EditorStatusCode.EXPORT;
+  EDITOR_STATE.value.status = EditorStatusCode.Export;
   progressDialog.setProgress(1);
   await sleep(50);
   const bakingTargets: BakingTarget[] = [];
@@ -303,6 +303,6 @@ export async function exportPlanetToGLTF(progressDialog: {
     renderer.dispose();
     progressDialog.setProgress(8);
     await sleep(50);
-    EDITOR_STATE.value.status = EditorStatusCode.EDITION;
+    EDITOR_STATE.value.status = EditorStatusCode.Edition;
   }
 }

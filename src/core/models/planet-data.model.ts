@@ -407,10 +407,6 @@ export default class PlanetData extends Observable {
   public get cloudsDisplacement(): DisplacementParameters {
     return this._cloudsDisplacement;
   }
-  public set cloudsDisplacement(value: DisplacementParameters) {
-    this._cloudsDisplacement = value;
-    this.notify({ key: '_cloudsDisplacement' });
-  }
 
   public get cloudsNoise(): NoiseParameters {
     return this._cloudsNoise;
@@ -423,11 +419,7 @@ export default class PlanetData extends Observable {
     this._cloudsColor.set(value);
     this.notify({ key: '_cloudsColor' });
   }
-
-  public set cloudsColorRamp(ramp: ColorRamp) {
-    Object.assign(this._cloudsColorRamp, ramp);
-    this.notify({ key: '_cloudsColorRamp' });
-  }
+  
   public get cloudsColorRamp(): ColorRamp {
     return this._cloudsColorRamp;
   }

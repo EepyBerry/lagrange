@@ -122,7 +122,7 @@ async function initThree() {
       loadedCorrectly = true;
       showSpinner.value = false;
     } catch (error) {
-      EDITOR_STATE.value.status = EditorStatusCode.ERROR;
+      EDITOR_STATE.value.status = EditorStatusCode.Error;
       if (error instanceof Error) {
         editorErrorDialogRef.value!.openWithError(error.message, error.stack);
       } else if (typeof error === 'string') {
@@ -145,7 +145,7 @@ async function initThree() {
       loadedCorrectly = true;
       showSpinner.value = false;
     } catch (error) {
-      EDITOR_STATE.value.status = EditorStatusCode.ERROR;
+      EDITOR_STATE.value.status = EditorStatusCode.Error;
       if (error instanceof Error || error instanceof DOMException) {
         editorErrorDialogRef.value!.openWithError(error.message, error.stack);
       } else if (typeof error === 'string') {
