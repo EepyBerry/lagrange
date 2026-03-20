@@ -15,7 +15,7 @@
   <div id="scene-root" ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
 
-  <EditorErrorDialog ref="editorErrorDialogRef" @close="redirectToCodex" />
+  <EditorErrorDialog ref="editorErrorDialogRef" @close="handleInitError" />
   <WarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
   <ExportProgressDialog ref="exportProgressDialogRef" />
 </template>
@@ -51,6 +51,7 @@ import * as DexieService from '@core/services/dexie.service';
 import WebGL from '@/core/capabilities/WebGL';
 import ViewHeader from '@/components/global/ViewHeader.vue';
 import { EDITOR_STATE, EditorStatusCode } from '@/core/state/editor.state';
+import PlanetData from '@/core/models/planet-data.model';
 
 const route = useRoute();
 const router = useRouter();
@@ -160,20 +161,23 @@ async function saveAndRedirectToCodex() {
   await savePlanet();
   redirectToCodex();
 }
-
-async function redirectToCodex(allowRendererFallback: boolean = false) {
+function redirectToCodex() {
   EDITOR_STATE.value.planetEditedFlag = false; // set edit flag to false to force exit
-  if (allowRendererFallback) {
-    await DexieService.setRenderingBackendFallback();
+  router.push('/');
+}
+
+async function handleInitError(reloadWithFallback: boolean = false) {
+  if (reloadWithFallback) {
+    await DexieService.setRenderingBackendFallback()
     router.go(0);
   } else {
-    router.push('/codex');
+    redirectToCodex();
   }
 }
 
 async function initData() {
   // https://stackoverflow.com/questions/3891641/regex-test-only-works-every-other-time
-  if ((route.params.id as string).length > 3) {
+  if ((route.params.id as string) !== 'new') {
     const idbPlanetData = await idb.planets.filter((p) => p.id === route.params.id).first();
     if (!idbPlanetData) {
       console.warn(`<Lagrange> Cannot find planet with ID: ${route.params.id}`);
@@ -182,14 +186,14 @@ async function initData() {
     }
     $planetEntityId.value = idbPlanetData.id;
     $planetEntityPreviewDataURL.value = idbPlanetData.preview;
-    EDITOR_STATE.value.planetData.loadData(idbPlanetData.data);
+    EDITOR_STATE.value.planetData = PlanetData.createFrom(idbPlanetData.data);
     console.info(
       `<Lagrange> Loaded planet [${EDITOR_STATE.value.planetData.planetName}] with ID: ${$planetEntityId.value}`,
     );
     console.debug(toRaw(EDITOR_STATE.value.planetData));
   } else {
-    console.warn('No planet ID found in the URL, assuming new planet');
-    EDITOR_STATE.value.planetData.reset();
+    console.info('No planet ID found in the URL, assuming new planet');
+    EDITOR_STATE.value.planetData = new PlanetData();
   }
   regeneratePRNGIfNecessary(true);
   patchMetaHead();

@@ -14,19 +14,19 @@ import type { NodeMaterial } from 'three/webgpu';
 import { EDITOR_STATE } from '../state/editor.state';
 
 type ObservableEventOperation = (event: ObservableEvent) => void;
-type ObservableEventHandler = { type?: ObservableEventType; doOperation: ObservableEventOperation };
+type ObservableEventHandler = { type?: ObservableEventType; handle: ObservableEventOperation };
 type ObservableEventHandlerCtor = (operation: ObservableEventOperation) => ObservableEventHandler;
 
 const universalHandler: ObservableEventHandlerCtor = (operation: ObservableEventOperation) => ({
-  doOperation: operation,
+  handle: operation,
 });
 const globalHandler: ObservableEventHandlerCtor = (operation: ObservableEventOperation) => ({
   type: 'global',
-  doOperation: operation,
+  handle: operation,
 });
 const keyedHandler: ObservableEventHandlerCtor = (operation: ObservableEventOperation) => ({
   type: 'keyed',
-  doOperation: operation,
+  handle: operation,
 });
 
 export class PlanetDataToUniformsObserver extends Observer {
@@ -60,14 +60,14 @@ export class PlanetDataToUniformsObserver extends Observer {
   }
 
   public onEvent(event: ObservableEvent): void {
-    console.log(event);
+    EDITOR_STATE.value.planetEditedFlag = true;
     if (event.type === 'global') {
       this.eventHandlerMap.forEach((handler) => {
         if (handler.type === 'keyed') return;
-        handler.doOperation(event);
+        handler.handle(event);
       });
     } else {
-      this.eventHandlerMap.get(event.key!)?.doOperation(event);
+      this.eventHandlerMap.get(event.key!)?.handle(event);
     }
   }
 
@@ -79,7 +79,7 @@ export class PlanetDataToUniformsObserver extends Observer {
     this.registerEvent('_lensFlareEnabled',         universalHandler(() => lensFlare.mesh.visible = data.lensFlareEnabled));
     this.registerEvent('_lensFlarePointsIntensity', universalHandler(() => lensFlare.uniforms.starPointsIntensity.value = data.lensFlarePointsIntensity));
     this.registerEvent('_lensFlareGlareIntensity',  universalHandler(() => lensFlare.uniforms.glareIntensity.value = data.lensFlareGlareIntensity));
-    this.registerEvent('_sunLightAngle', universalHandler(() => {
+    this.registerEvent('_sunLightAngle',            universalHandler(() => {
       const v = degToRad(isNaN(data.sunLightAngle) ? 0 : data.sunLightAngle);
       const newPos = Globals.SUN_INIT_POS.clone().applyAxisAngle(Globals.AXIS_X, v);
       sunLight.position.set(newPos.x, newPos.y, newPos.z);
@@ -127,7 +127,7 @@ export class PlanetDataToUniformsObserver extends Observer {
     this.registerEvent('_planetWaterEmissiveIntensity',  universalHandler(() => (planet.uniforms!.pbr.emissive.value.x = data.planetWaterEmissiveIntensity)));
     this.registerEvent('_planetGroundEmissiveIntensity', universalHandler(() => {
       planet.uniforms!.pbr.emissive.value.y = data.planetGroundEmissiveIntensity;
-      planet.biomeEmissiveLayersTexture?.updateAllLayers(data.biomesParams);
+      planet.biomeEmissiveLayersTexture!.updateAllLayers(data.biomesParams);
     }));
   }
 

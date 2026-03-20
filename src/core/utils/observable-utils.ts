@@ -23,6 +23,9 @@ export abstract class Observable {
     if (idx < 0) return;
     this.observers.splice(idx, 1);
   }
+  public disconnectAll(): void {
+    this.observers.splice(0);
+  }
 
   public notify(eventOpts?: Omit<ObservableEventOptions, 'source'>): void {
     this.observers.forEach((observer) => observer.onEvent(new ObservableEvent({ ...eventOpts, source: this })));

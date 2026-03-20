@@ -46,7 +46,7 @@ export class LayeredDataTexture<DataObject> {
   }
 
   public debugSaveTexture() {
-    saveAs(new Blob([this._texture.image.data as BlobPart]), 'layeredtex.raw');
+    this._workCanvas.convertToBlob({ type: 'image/png' }).then(data => saveAs(data, 'layeredtex.png'))
   }
 
   public updateTexture() {

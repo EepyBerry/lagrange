@@ -67,8 +67,8 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
 export function unloadEditor() {
   EDITOR_STATE.value.status = EditorStatusCode.SCENE_DISPOSAL;
   console.debug('<Lagrange> Clearing scene... ');
-  EDITOR_STATE.value.planetData.disconnect(planetDataToUniformsObserver!);
   planetDataToUniformsObserver.unhookEditorSceneData();
+  EDITOR_STATE.value.planetData.disconnectAll();
   SceneHelper.disposeScene(editorSceneData);
   console.debug('<Lagrange> ...done!');
   EDITOR_STATE.value.status = EditorStatusCode.UNLOADED;
@@ -156,12 +156,13 @@ export async function exportPlanetToGLTF(progressDialog: {
     h = appSettings?.bakingResolution ?? 2048;
   const { renderer, camera, renderTarget } = await BakingHelper.createBakingObjects(w, h, w / h);
 
+  const planetData = EDITOR_STATE.value.planetData;
   try {
     // ----------------------------------- Bake planet ----------------------------------
     progressDialog.setProgress(2);
     await sleep(50);
     const bakePlanet = BakingHelper.createBakingPlanet(
-      EDITOR_STATE.value.planetData,
+      planetData,
       editorSceneData.planet.surfaceTexture!,
       editorSceneData.planet.biomeLayersTexture!.texture,
     );
@@ -173,7 +174,7 @@ export async function exportPlanetToGLTF(progressDialog: {
 
     progressDialog.setProgress(3);
     await sleep(50);
-    const bakeMetallicRoughness = BakingHelper.createBakingMetallicRoughnessMap(EDITOR_STATE.value.planetData);
+    const bakeMetallicRoughness = BakingHelper.createBakingMetallicRoughnessMap(planetData);
     const bakePlanetMetallicRoughnessTex = await BakingHelper.bakeMesh(
       renderer,
       camera,
@@ -186,7 +187,7 @@ export async function exportPlanetToGLTF(progressDialog: {
     }
     //LG_SCENE_DATA.planet.biomeEmissiveLayersTexture!.debugSaveTexture()
     const bakeEmissivity = BakingHelper.createBakingEmissivityMap(
-      EDITOR_STATE.value.planetData,
+      planetData,
       editorSceneData.planet.surfaceTexture!,
       editorSceneData.planet.biomeLayersTexture!.texture,
       editorSceneData.planet.biomeEmissiveLayersTexture!.texture,
@@ -199,10 +200,10 @@ export async function exportPlanetToGLTF(progressDialog: {
 
     progressDialog.setProgress(4);
     await sleep(50);
-    const bakeHeight = BakingHelper.createBakingHeightMap(EDITOR_STATE.value.planetData);
+    const bakeHeight = BakingHelper.createBakingHeightMap(planetData);
     const bakePlanetHeightTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeHeight);
 
-    const bakeNormal = BakingHelper.createBakingNormalMap(EDITOR_STATE.value.planetData, bakePlanetHeightTex);
+    const bakeNormal = BakingHelper.createBakingNormalMap(planetData, bakePlanetHeightTex);
     const bakePlanetNormalTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeNormal);
     if (appSettings?.bakingPixelize) {
       bakePlanetNormalTex.minFilter = THREE.NearestFilter;
@@ -215,7 +216,7 @@ export async function exportPlanetToGLTF(progressDialog: {
       metalnessMap: bakePlanetMetallicRoughnessTex,
       emissiveMap: bakePlanetEmissivityTex,
       normalMap: bakePlanetNormalTex,
-      normalScale: new THREE.Vector2(EDITOR_STATE.value.planetData.planetSurfaceBumpStrength).multiplyScalar(2.0),
+      normalScale: new THREE.Vector2(planetData.planetSurfaceBumpStrength).multiplyScalar(2.0),
     });
     bakingTargets.push({
       mesh: bakePlanet,
@@ -223,11 +224,11 @@ export async function exportPlanetToGLTF(progressDialog: {
     });
 
     // ----------------------------------- Bake clouds ----------------------------------
-    if (EDITOR_STATE.value.planetData.cloudsEnabled) {
+    if (planetData.cloudsEnabled) {
       progressDialog.setProgress(5);
       await sleep(50);
       const bakeClouds = BakingHelper.createBakingClouds(
-        EDITOR_STATE.value.planetData,
+        planetData,
         editorSceneData.clouds.texture!,
       );
       const bakeCloudsTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeClouds);
@@ -243,21 +244,21 @@ export async function exportPlanetToGLTF(progressDialog: {
       });
       bakingTargets.push({ mesh: bakeClouds, textures: [bakeCloudsTex] });
       bakePlanet.add(bakeClouds);
-      bakeClouds.setRotationFromAxisAngle(bakeClouds.up, degToRad(EDITOR_STATE.value.planetData.cloudsRotation));
+      bakeClouds.setRotationFromAxisAngle(bakeClouds.up, degToRad(planetData.cloudsRotation));
     }
 
     // --------------------------------- Bake ring system -------------------------------
-    if (EDITOR_STATE.value.planetData.ringsEnabled) {
+    if (planetData.ringsEnabled) {
       progressDialog.setProgress(6);
       await sleep(50);
       const ringGroup = new THREE.Group();
       ringGroup.name = Globals.LG_MESH_NAME_RING_ANCHOR;
-      for (let idx = 0; idx < EDITOR_STATE.value.planetData.ringsParams.length; idx++) {
-        const params = EDITOR_STATE.value.planetData.ringsParams[idx];
+      for (let idx = 0; idx < planetData.ringsParams.length; idx++) {
+        const params = planetData.ringsParams[idx];
         const ringMeshData = editorSceneData.rings?.find((r) => r.mesh!.name === params.id);
         if (!ringMeshData) continue;
 
-        const bakeRing = BakingHelper.createBakingRing(EDITOR_STATE.value.planetData, ringMeshData.texture!, idx);
+        const bakeRing = BakingHelper.createBakingRing(planetData, ringMeshData.texture!, idx);
         const bakeRingTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeRing);
         if (appSettings?.bakingPixelize) {
           bakeRingTex.minFilter = THREE.NearestFilter;
@@ -280,14 +281,14 @@ export async function exportPlanetToGLTF(progressDialog: {
     progressDialog.setProgress(7);
     await sleep(50);
 
-    bakePlanet.scale.setScalar(EDITOR_STATE.value.planetData.planetRadius);
-    bakePlanet.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(EDITOR_STATE.value.planetData.planetAxialTilt));
-    bakePlanet.rotateOnAxis(bakePlanet.up, degToRad(EDITOR_STATE.value.planetData.planetRotation));
+    bakePlanet.scale.setScalar(planetData.planetRadius);
+    bakePlanet.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(planetData.planetAxialTilt));
+    bakePlanet.rotateOnAxis(bakePlanet.up, degToRad(planetData.planetRotation));
 
-    bakePlanet.name = EDITOR_STATE.value.planetData.planetName;
+    bakePlanet.name = planetData.planetName;
     ExportHelper.exportMeshesToGLTF(
       [bakePlanet],
-      EDITOR_STATE.value.planetData.planetName.replaceAll(' ', '_') + `_${w}`,
+      planetData.planetName.replaceAll(' ', '_') + `_${w}`,
     );
   } catch (error) {
     console.error(error);

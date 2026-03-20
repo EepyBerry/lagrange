@@ -712,7 +712,7 @@ export default class PlanetData extends Observable {
     this._atmosphereColorMode = ColorMode.REALISTIC;
     this._atmosphereHue = 0.0;
     this._atmosphereTint = new Color(0xffffff);
-    this._atmosphereMieScatteringConstant = -0.78;
+    this._atmosphereMieScatteringConstant = -0.999;
     this._atmosphereRayleighDensityRatio = 0.05;
     this._atmosphereMieDensityRatio = 0.02;
     this._atmosphereOpticalDensityRatio = 0.25;
@@ -833,10 +833,10 @@ export default class PlanetData extends Observable {
     this.atmosphereColorMode = data._atmosphereColorMode ?? ColorMode.REALISTIC;
     this.atmosphereHue = data._atmosphereHue ?? 0.0;
     this.atmosphereTint.set(data._atmosphereTint ?? 0xffffff);
-    this._atmosphereMieScatteringConstant = data._atmosphereMieScatteringConstant ?? -0.78;
-    this._atmosphereRayleighDensityRatio = data._atmosphereRayleighDensityRatio ?? 0.05;
-    this._atmosphereMieDensityRatio = data._atmosphereMieDensityRatio ?? 0.02;
-    this._atmosphereOpticalDensityRatio = data._atmosphereOpticalDensityRatio ?? 0.25;
+    this.atmosphereMieScatteringConstant = data._atmosphereMieScatteringConstant ?? -0.78;
+    this.atmosphereRayleighDensityRatio = data._atmosphereRayleighDensityRatio ?? 0.05;
+    this.atmosphereMieDensityRatio = data._atmosphereMieDensityRatio ?? 0.02;
+    this.atmosphereOpticalDensityRatio = data._atmosphereOpticalDensityRatio ?? 0.25;
 
     // Ring
     this.ringsEnabled = data._ringsEnabled ?? false;
