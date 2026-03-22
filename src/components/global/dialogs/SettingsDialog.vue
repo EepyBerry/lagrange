@@ -384,7 +384,6 @@
                 >
                   {{ $t('dialog.settings.advanced_clear_data') }}
                 </LgvButton>
-                <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
               </ParameterGrid>
             </div>
           </template>
@@ -392,6 +391,7 @@
       </div>
     </template>
   </DialogElement>
+  <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
 </template>
 
 <script setup lang="ts">
