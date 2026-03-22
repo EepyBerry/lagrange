@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import EditorSidebarControls from '@/components/editor/controls/EditorSidebarControls.vue';
 import EditorHeaderControls from '@/components/editor/controls/EditorHeaderControls.vue';
-import { onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue';
+import { defineAsyncComponent, onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue';
 import * as Globals from '@core/globals';
 import { useHead } from '@unhead/vue';
 import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config';
@@ -43,8 +43,6 @@ import {
 import { sleep } from '@core/utils/utils';
 import { nanoid } from 'nanoid';
 import EditorErrorDialog from '@/components/editor/dialogs/EditorInitErrorDialog.vue';
-import WarnSaveDialog from '@components/editor/dialogs/WarnSaveDialog.vue';
-import ExportProgressDialog from '@components/editor/dialogs/ExportProgressDialog.vue';
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
 import WebGPU from '@/core/capabilities/WebGPU';
 import * as DexieService from '@core/services/dexie.service';
@@ -52,6 +50,9 @@ import WebGL from '@/core/capabilities/WebGL';
 import ViewHeader from '@/components/global/ViewHeader.vue';
 import { EDITOR_STATE, EditorStatusCode } from '@/core/state/editor.state';
 import PlanetData from '@/core/models/planet-data.model';
+
+const WarnSaveDialog = defineAsyncComponent(() => import('@components/editor/dialogs/WarnSaveDialog.vue'));
+const ExportProgressDialog = defineAsyncComponent(() => import('@components/editor/dialogs/ExportProgressDialog.vue'));
 
 const route = useRoute();
 const router = useRouter();

@@ -21,7 +21,7 @@ export function checkSpecialDay(): SpecialDayInfo | undefined {
   if (now.month === 2  && now.day === 14)                  return { emoji: ['noto:heart-with-arrow'],                       translationKey: 'extras.day_valentines' }
   if (now.month === 2  && now.day === 27)                  return { emoji: ['noto:strawberry'],                             translationKey: 'extras.day_strawberry' }
   if (now.month === 3  && now.day === 14)                  return { emoji: ['noto:pie'],                                    translationKey: 'extras.day_pi' }
-  if (now.month === 3  && now.day === 31)                  return { emoji: ['noto:transgender-flag'],                       translationKey: 'extras.day_transvisibility' }
+  if (now.month === 3  && now.day === 22)                  return { emoji: ['noto:transgender-flag'],                       translationKey: 'extras.day_transvisibility' }
   if (now.month === 4  && now.day === 1)                   return { emoji: ['noto:eye'],                                    translationKey: 'extras.overlay1', overlayMode: 1 }
   if (now.month === 4  && now.day === 6)                   return { emoji: ['noto:purple-heart', 'noto:white-heart'],       translationKey: 'extras.day_acevisibility' }
   if (now.month === 4  && now.day === 26)                  return { emoji: ['noto:orange-heart', 'noto:red-heart'],         translationKey: 'extras.day_lesbianvisibility' }
