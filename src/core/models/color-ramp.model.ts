@@ -1,28 +1,28 @@
-import * as THREE from 'three';
 import { nanoid } from 'nanoid';
 import { clampedPRNG } from '@core/utils/math-utils';
 import { sha1 } from 'crypto-hash';
 import { ObservableRelay, type ObservableNotifyFunction } from '../utils/observable-utils';
+import { Color, type ColorRepresentation } from 'three';
 
 export class ColorRampStep {
   static EMPTY = new ColorRampStep(0x0, 1);
 
   private _id: string; // internal ID for tracking changes
-  private _color: THREE.Color;
+  private _color: Color;
   private _alpha: number;
   private _factor: number;
   private _isBound: boolean;
 
-  constructor(color: THREE.ColorRepresentation, factor: number, isBound: boolean = false) {
+  constructor(color: ColorRepresentation, factor: number, isBound: boolean = false) {
     this._id = nanoid();
-    this._color = new THREE.Color(color);
+    this._color = new Color(color);
     this._alpha = 1.0;
     this._factor = factor;
     this._isBound = isBound;
   }
 
   static newWithAlpha(
-    color: THREE.ColorRepresentation,
+    color: ColorRepresentation,
     alpha: number,
     factor: number,
     isBound: boolean = false,
@@ -43,7 +43,7 @@ export class ColorRampStep {
   public get color() {
     return this._color;
   }
-  public set color(color: THREE.Color) {
+  public set color(color: Color) {
     this._color.setRGB(color.r, color.g, color.b);
   }
 

@@ -1,13 +1,13 @@
 // db.ts
-import Dexie, { type EntityTable } from 'dexie';
-import type PlanetData from './core/models/planet-data.model';
+import Dexie, { type EntityTable } from "dexie";
+import type PlanetData from "./core/models/planet-data.model";
 
 enum KeyBindingAction {
-  ToggleLensFlare = 'toggle-lens-flare',
-  ToggleClouds = 'toggle-clouds',
-  ToggleAtmosphere = 'toggle-atmosphere',
-  ToggleBiomes = 'toggle-biomes',
-  TakeScreenshot = 'take-screenshot',
+  ToggleLensFlare = "toggle-lens-flare",
+  ToggleClouds = "toggle-clouds",
+  ToggleAtmosphere = "toggle-atmosphere",
+  ToggleBiomes = "toggle-biomes",
+  TakeScreenshot = "take-screenshot",
 }
 
 interface IDBKeyBinding {
@@ -22,7 +22,8 @@ interface IDBSettings {
   theme: string;
   font: string;
   showInitDialog?: boolean;
-  renderingBackend: 'webgl' | 'webgpu';
+  renderingBackend: "webgl" | "webgpu";
+  skybox: "deepspace" | "crimsonquadrant" | "embergreenexpanse" | "shiningstars" | "jadenebula" | "edgeoftheuniverse" | "chromakey";
   bakingResolution?: number;
   bakingPixelize?: boolean;
   enableEffects?: boolean;
@@ -41,17 +42,17 @@ interface IDBPlanet {
   data: PlanetData;
 }
 
-const idb = new Dexie('LagrangeIDB', { autoOpen: true }) as Dexie & {
-  keyBindings: EntityTable<IDBKeyBinding, 'id'>;
-  settings: EntityTable<IDBSettings, 'id'>;
-  planets: EntityTable<IDBPlanet, 'id'>;
+const idb = new Dexie("LagrangeIDB", { autoOpen: true }) as Dexie & {
+  keyBindings: EntityTable<IDBKeyBinding, "id">;
+  settings: EntityTable<IDBSettings, "id">;
+  planets: EntityTable<IDBPlanet, "id">;
 };
 
 // Schema declaration:
 idb.version(1).stores({
-  keyBindings: '++id, action',
-  settings: '++id',
-  planets: '++id, data._planetName',
+  keyBindings: "++id, action",
+  settings: "++id",
+  planets: "++id, data._planetName",
 });
 
 export type { IDBKeyBinding, IDBSettings, IDBPlanet };

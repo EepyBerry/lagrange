@@ -11,6 +11,8 @@ export async function initDefaultSettings(): Promise<void> {
     showInitDialog: true,
     // rendering
     renderingBackend: 'webgl',
+    skybox: 'deepspace',
+    // baking
     bakingResolution: 2048,
     bakingPixelize: false,
     // accessibility
@@ -43,6 +45,8 @@ export async function injectMissingSettings(settings: IDBSettings): Promise<void
     showInitDialog: settings.showInitDialog ?? true,
     // rendering
     renderingBackend: settings.renderingBackend ?? 'webgl',
+    skybox: settings.skybox ?? 'deepspace',
+    // baking
     bakingResolution: settings.bakingResolution ?? 2048,
     bakingPixelize: settings.bakingPixelize ?? false,
     // accessibility
@@ -71,8 +75,10 @@ export async function clearData(): Promise<void> {
     locale: navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US',
     font: 'default',
     showInitDialog: true,
-    // baking
+    // rendering
     renderingBackend: 'webgl',
+    skybox: 'deepspace',
+    // baking
     bakingResolution: 2048,
     bakingPixelize: false,
     // accessibility

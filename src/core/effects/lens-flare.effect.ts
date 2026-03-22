@@ -1,7 +1,19 @@
-import * as THREE from 'three';
 import { LG_MESH_NAME_PLANET, LG_MESH_NAME_RING_ANCHOR } from '../globals';
 import { damp } from 'three/src/math/MathUtils.js';
-import { type NodeMaterial, type WebGPURenderer } from 'three/webgpu';
+import {
+  Camera,
+  Clock,
+  Mesh,
+  PlaneGeometry,
+  Raycaster,
+  Scene,
+  Vector2,
+  Vector3,
+  Vector4,
+  type Intersection,
+  type NodeMaterial,
+  type WebGPURenderer,
+} from 'three/webgpu';
 import {
   LensFlareTSLMaterial,
   type LensFlareData,
@@ -16,34 +28,34 @@ import {
 export class LensFlareEffect {
   private _parameters: LensFlareData;
   private _tslMaterial: LensFlareTSLMaterial;
-  private _mesh: THREE.Mesh;
+  private _mesh: Mesh;
   private _uniforms: LensFlareUniforms;
 
   private _internalOpacity: number;
-  private _viewport: THREE.Vector4;
-  private _flarePosition: THREE.Vector3;
-  private _raycaster: THREE.Raycaster;
+  private _viewport: Vector4;
+  private _flarePosition: Vector3;
+  private _raycaster: Raycaster;
 
   constructor(data: LensFlareData) {
     this._internalOpacity = 1;
-    this._viewport = new THREE.Vector4();
-    this._flarePosition = new THREE.Vector3();
-    this._raycaster = new THREE.Raycaster();
+    this._viewport = new Vector4();
+    this._flarePosition = new Vector3();
+    this._raycaster = new Raycaster();
 
     this._parameters = data;
     this._tslMaterial = new LensFlareTSLMaterial(data);
     this._uniforms = this._tslMaterial.uniforms;
-    this._mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2, 1, 1), this._tslMaterial.buildMaterial());
+    this._mesh = new Mesh(new PlaneGeometry(2, 2, 1, 1), this._tslMaterial.buildMaterial());
     this._mesh.frustumCulled = false;
   }
 
-  private checkTransparency(intersects: THREE.Intersection[]) {
+  private checkTransparency(intersects: Intersection[]) {
     if (intersects?.length === 0) {
       this._internalOpacity = 1;
       return;
     }
 
-    const iObject = intersects[0].object as THREE.Mesh;
+    const iObject = intersects[0].object as Mesh;
     const iMaterial = iObject.material as NodeMaterial;
     if (!iObject.visible) {
       this._internalOpacity = 1;
@@ -56,7 +68,7 @@ export class LensFlareEffect {
     }
   }
 
-  public update(renderer: WebGPURenderer, scene: THREE.Scene, camera: THREE.Camera, clock: THREE.Clock) {
+  public update(renderer: WebGPURenderer, scene: Scene, camera: Camera, clock: Clock) {
     const dt = clock.getDelta();
 
     renderer.getViewport(this._viewport);
@@ -73,7 +85,7 @@ export class LensFlareEffect {
       this._tslMaterial.uniforms.lensPosition.value.y = this._flarePosition.y;
     }
 
-    this._raycaster.setFromCamera(new THREE.Vector2(projectedPosition.x, projectedPosition.y), camera);
+    this._raycaster.setFromCamera(new Vector2(projectedPosition.x, projectedPosition.y), camera);
 
     const planet = scene.getObjectByName(LG_MESH_NAME_PLANET);
     const rings = scene.getObjectByName(LG_MESH_NAME_RING_ANCHOR)?.children;
@@ -89,13 +101,13 @@ export class LensFlareEffect {
     );
   }
 
-  public updatePosition(lensPosition: THREE.Vector3) {
+  public updatePosition(lensPosition: Vector3) {
     this._tslMaterial.uniforms.lensPosition.value.x = lensPosition.x;
     this._tslMaterial.uniforms.lensPosition.value.y = lensPosition.y;
     this._tslMaterial.uniforms.lensPosition.value.z = lensPosition.z;
   }
 
-  public get mesh(): THREE.Mesh {
+  public get mesh(): Mesh {
     return this._mesh;
   }
 

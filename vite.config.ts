@@ -27,4 +27,17 @@ export default defineConfig({
       '@components': fileURLToPath(new URL('./src/components', import.meta.url)),
     },
   },
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            { name: 'vue', test: /node_modules\/[@?]vue/ },
+            { name: 'three', test: /node_modules\/three/ },
+            { name: 'export', test: /node_modules\/(pako|file-saver|jszip)/ }
+          ]
+        }
+      }
+    }
+  }
 });

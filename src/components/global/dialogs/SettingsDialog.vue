@@ -9,42 +9,42 @@
   >
     <template #title>
       <iconify-icon icon="mingcute:settings-3-line" width="1.5rem" aria-hidden="true" />
-      {{ $t('dialog.settings.$title') }}
+      {{ $t("dialog.settings.$title") }}
     </template>
     <template #content>
       <div class="settings-grid">
         <CollapsibleSection icon="mingcute:tool-line" class="section-general" expand>
-          <template #title>{{ $t('dialog.settings.general') }}</template>
+          <template #title>{{ $t("dialog.settings.general") }}</template>
           <template #content>
             <ParameterGrid>
               <ParameterDivider />
               <!-- cat mode toggle -->
               <ParameterSelect v-if="EXTRAS_CAT_MODE" id="language-cat" v-model="catModeOverride" disabled>
-                {{ $t('dialog.settings.general_language') }}
+                {{ $t("dialog.settings.general_language") }}
                 <template #options>
                   <option value="en-UwU" selected>Uwuish [en-UwU]</option>
                 </template>
               </ParameterSelect>
               <ParameterSelect v-else id="language" v-model="appSettings.locale">
-                {{ $t('dialog.settings.general_language') }}:
+                {{ $t("dialog.settings.general_language") }}:
                 <template #options>
                   <option value="en-US">English [en-US]</option>
                   <option value="fr-FR">Français [fr-FR]</option>
                   <option value="de-DE">Deutsch [de-DE]</option>
-                  <option value="_" disabled>{{ $t('main.more_coming_soon') }}</option>
+                  <option value="_" disabled>{{ $t("main.more_coming_soon") }}</option>
                 </template>
               </ParameterSelect>
               <ParameterSelect id="settings-font" v-model="appSettings.font">
-                {{ $t('dialog.settings.general_font') }}:
+                {{ $t("dialog.settings.general_font") }}:
                 <template #options>
-                  <option value="default">{{ $t('dialog.settings.general_font_default') }}</option>
-                  <option value="monospace">{{ $t('dialog.settings.general_font_monospace') }}</option>
-                  <option value="lowvision">{{ $t('dialog.settings.general_font_lowvision') }}</option>
-                  <option value="dyslexia">{{ $t('dialog.settings.general_font_dyslexia') }}</option>
+                  <option value="default">{{ $t("dialog.settings.general_font_default") }}</option>
+                  <option value="monospace">{{ $t("dialog.settings.general_font_monospace") }}</option>
+                  <option value="lowvision">{{ $t("dialog.settings.general_font_lowvision") }}</option>
+                  <option value="dyslexia">{{ $t("dialog.settings.general_font_dyslexia") }}</option>
                 </template>
               </ParameterSelect>
               <ParameterRadio>
-                <template #title> {{ $t('dialog.settings.general_theme') }}: </template>
+                <template #title> {{ $t("dialog.settings.general_theme") }}: </template>
                 <template #options>
                   <ParameterRadioOption
                     :id="'0'"
@@ -54,7 +54,7 @@
                     icon="majesticons:comet"
                     :button-aria-label="$t('a11y.general_theme_default')"
                   >
-                    {{ $t('dialog.settings.general_theme_default') }}
+                    {{ $t("dialog.settings.general_theme_default") }}
                   </ParameterRadioOption>
                   <ParameterRadioOption
                     :id="'1'"
@@ -64,7 +64,7 @@
                     icon="ph:star-four"
                     :button-aria-label="$t('a11y.general_theme_supernova')"
                   >
-                    {{ $t('dialog.settings.general_theme_supernova') }}
+                    {{ $t("dialog.settings.general_theme_supernova") }}
                   </ParameterRadioOption>
                   <ParameterRadioOption
                     :id="'1'"
@@ -74,7 +74,7 @@
                     icon="hugeicons:satellite-02"
                     :button-aria-label="$t('a11y.general_theme_voyager')"
                   >
-                    {{ $t('dialog.settings.general_theme_voyager') }}
+                    {{ $t("dialog.settings.general_theme_voyager") }}
                   </ParameterRadioOption>
                 </template>
               </ParameterRadio>
@@ -85,7 +85,7 @@
                 :true-value="true"
                 :false-value="false"
               >
-                {{ $t('dialog.settings.general_init_dialog') }}:
+                {{ $t("dialog.settings.general_init_dialog") }}:
               </ParameterCheckbox>
             </ParameterGrid>
           </template>
@@ -93,7 +93,7 @@
 
         <CollapsibleSection icon="mingcute:planet-line" class="section-editor">
           <template #title>
-            {{ $t('dialog.settings.editor') }}
+            {{ $t("dialog.settings.editor") }}
           </template>
           <template #content>
             <div class="settings-editor">
@@ -110,7 +110,7 @@
                       :button-aria-label="$t('a11y.editor_rendering_backend_webgl')"
                     >
                       <iconify-icon class="icon" icon="simple-icons:webgl" width="2rem" aria-hidden="true" />
-                      {{ $t('dialog.settings.editor_rendering_backend_webgl') }}
+                      {{ $t("dialog.settings.editor_rendering_backend_webgl") }}
                     </ParameterRadioOption>
                     <ParameterRadioOption
                       :id="'webgpu'"
@@ -121,23 +121,44 @@
                       :disabled="!WebGPU.isAvailable()"
                     >
                       <iconify-icon class="icon" icon="simple-icons:webgpu" width="1.5rem" aria-hidden="true" />
-                      {{ $t('dialog.settings.editor_rendering_backend_webgpu') }}
+                      {{ $t("dialog.settings.editor_rendering_backend_webgpu") }}
                     </ParameterRadioOption>
                   </template>
                 </ParameterRadio>
                 <LgvNotification :type="appSettings.renderingBackend === 'webgl' ? 'info' : 'wip'">
                   {{
-                    appSettings.renderingBackend === 'webgl'
-                      ? $t('dialog.settings.editor_rendering_backend_webgl_notification')
-                      : $t('dialog.settings.editor_rendering_backend_webgpu_notification')
+                    appSettings.renderingBackend === "webgl"
+                      ? $t("dialog.settings.editor_rendering_backend_webgl_notification")
+                      : $t("dialog.settings.editor_rendering_backend_webgpu_notification")
                   }}
                 </LgvNotification>
                 <LgvNotification v-if="!WebGPU.isAvailable()" type="warn">
-                  {{ $t('dialog.settings.editor_rendering_backend_webgpu_unavailable') }}
+                  {{ $t("dialog.settings.editor_rendering_backend_webgpu_unavailable") }}
                 </LgvNotification>
                 <ParameterDivider />
+                <ParameterSelect id="skybox" v-model="appSettings.skybox">
+                  {{ $t("dialog.settings.editor_skybox") }}:
+                  <template #options>
+                    <option value="deepspace">{{ $t("dialog.settings.editor_skybox_deepspace") }}</option>
+                    <option value="crimsonquadrant">{{ $t("dialog.settings.editor_skybox_crimsonquadrant") }}</option>
+                    <option value="embergreenexpanse">
+                      {{ $t("dialog.settings.editor_skybox_embergreenexpanse") }}
+                    </option>
+                    <option value="shiningstars">{{ $t("dialog.settings.editor_skybox_shiningstars") }}</option>
+                    <option value="jadenebula">
+                      {{ $t("dialog.settings.editor_skybox_jadenebula") }}
+                    </option>
+                    <option value="edgeoftheuniverse">
+                      {{ $t("dialog.settings.editor_skybox_edgeoftheuniverse") }}
+                    </option>
+                    <option value="chromakey">
+                      {{ $t("dialog.settings.editor_skybox_chromakey") }}
+                    </option>
+                  </template>
+                </ParameterSelect>
+                <ParameterDivider />
                 <ParameterRadio>
-                  <template #title> {{ $t('dialog.settings.editor_baking_resolution') }}: </template>
+                  <template #title> {{ $t("dialog.settings.editor_baking_resolution") }}: </template>
                   <template #options>
                     <ParameterRadioOption
                       :id="'256'"
@@ -187,7 +208,7 @@
                   :true-value="true"
                   :false-value="false"
                 >
-                  {{ $t('dialog.settings.editor_baking_pixelize') }}:
+                  {{ $t("dialog.settings.editor_baking_pixelize") }}:
                 </ParameterCheckbox>
                 <ParameterDivider />
                 <ParameterKeyBinding
@@ -196,7 +217,7 @@
                   :selected="selectedAction === 'toggle-lens-flare'"
                   @toggle="toggleAction('toggle-lens-flare')"
                 >
-                  {{ $t('dialog.settings.editor_lensflare') }}
+                  {{ $t("dialog.settings.editor_lensflare") }}
                 </ParameterKeyBinding>
                 <ParameterKeyBinding
                   icon="mingcute:mountain-2-line"
@@ -204,7 +225,7 @@
                   :selected="selectedAction === 'toggle-biomes'"
                   @toggle="toggleAction('toggle-biomes')"
                 >
-                  {{ $t('dialog.settings.editor_biomes') }}
+                  {{ $t("dialog.settings.editor_biomes") }}
                 </ParameterKeyBinding>
                 <ParameterKeyBinding
                   icon="mingcute:clouds-line"
@@ -212,7 +233,7 @@
                   :selected="selectedAction === 'toggle-clouds'"
                   @toggle="toggleAction('toggle-clouds')"
                 >
-                  {{ $t('dialog.settings.editor_clouds') }}
+                  {{ $t("dialog.settings.editor_clouds") }}
                 </ParameterKeyBinding>
                 <ParameterKeyBinding
                   icon="material-symbols:line-curve-rounded"
@@ -220,7 +241,7 @@
                   :selected="selectedAction === 'toggle-atmosphere'"
                   @toggle="toggleAction('toggle-atmosphere')"
                 >
-                  {{ $t('dialog.settings.editor_atmosphere') }}
+                  {{ $t("dialog.settings.editor_atmosphere") }}
                 </ParameterKeyBinding>
                 <ParameterKeyBinding
                   icon="mingcute:screenshot-line"
@@ -228,7 +249,7 @@
                   :selected="selectedAction === 'take-screenshot'"
                   @toggle="toggleAction('take-screenshot')"
                 >
-                  {{ $t('dialog.settings.editor_screenshot') }}
+                  {{ $t("dialog.settings.editor_screenshot") }}
                 </ParameterKeyBinding>
               </ParameterGrid>
             </div>
@@ -237,7 +258,7 @@
 
         <CollapsibleSection icon="material-symbols:accessibility-new-rounded" class="section-a11y">
           <template #title>
-            {{ $t('dialog.settings.a11y') }}
+            {{ $t("dialog.settings.a11y") }}
           </template>
           <template #content>
             <div class="settings-a11y">
@@ -248,7 +269,7 @@
                   :true-value="true"
                   :false-value="false"
                 >
-                  {{ $t('dialog.settings.a11y_effects') }}:
+                  {{ $t("dialog.settings.a11y_effects") }}:
                 </ParameterCheckbox>
                 <ParameterCheckbox
                   id="settings-anim"
@@ -256,7 +277,7 @@
                   :true-value="true"
                   :false-value="false"
                 >
-                  {{ $t('dialog.settings.a11y_animations') }}:
+                  {{ $t("dialog.settings.a11y_animations") }}:
                 </ParameterCheckbox>
               </ParameterGrid>
             </div>
@@ -265,7 +286,7 @@
 
         <CollapsibleSection icon="mingcute:star-2-line" class="section-a11y">
           <template #title>
-            {{ $t('dialog.settings.extras') }}
+            {{ $t("dialog.settings.extras") }}
           </template>
           <template #content>
             <div class="settings-extras">
@@ -276,7 +297,7 @@
                   :true-value="true"
                   :false-value="false"
                 >
-                  {{ $t('dialog.settings.extras_crt_effect') }}:
+                  {{ $t("dialog.settings.extras_crt_effect") }}:
                 </ParameterCheckbox>
                 <ParameterCheckbox
                   id="settings-hologram-effect"
@@ -284,7 +305,7 @@
                   :true-value="true"
                   :false-value="false"
                 >
-                  {{ $t('dialog.settings.extras_hologram_effect') }}:
+                  {{ $t("dialog.settings.extras_hologram_effect") }}:
                 </ParameterCheckbox>
                 <ParameterCheckbox
                   id="settings-metal-slug-mode"
@@ -292,10 +313,10 @@
                   :true-value="true"
                   :false-value="false"
                 >
-                  {{ $t('dialog.settings.extras_metal_slug_mode') }}:
+                  {{ $t("dialog.settings.extras_metal_slug_mode") }}:
                 </ParameterCheckbox>
                 <LgvNotification type="warn">
-                  {{ $t('dialog.settings.extras_metal_slug_mode_warning') }}
+                  {{ $t("dialog.settings.extras_metal_slug_mode_warning") }}
                 </LgvNotification>
                 <ParameterCheckbox
                   id="settings-special-days"
@@ -303,7 +324,7 @@
                   :true-value="true"
                   :false-value="false"
                 >
-                  {{ $t('dialog.settings.extras_special_days') }}:
+                  {{ $t("dialog.settings.extras_special_days") }}:
                 </ParameterCheckbox>
               </ParameterGrid>
             </div>
@@ -312,15 +333,15 @@
 
         <CollapsibleSection icon="mingcute:alert-diamond-line" class="section-advanced">
           <template #title>
-            {{ $t('dialog.settings.advanced') }}
+            {{ $t("dialog.settings.advanced") }}
           </template>
           <template #content>
             <div class="settings-advanced">
               <ParameterGrid>
-                <p>{{ $t('dialog.settings.advanced_io') }}:</p>
+                <p>{{ $t("dialog.settings.advanced_io") }}:</p>
                 <div id="actions-io">
                   <LgvButton class="sm" icon="mingcute:upload-line" @click="fileInput?.click()">
-                    {{ $t('dialog.settings.advanced_import') }}
+                    {{ $t("dialog.settings.advanced_import") }}
                   </LgvButton>
                   <input
                     ref="fileInput"
@@ -331,10 +352,10 @@
                     @change="importData"
                   />
                   <LgvButton class="sm" icon="mingcute:download-line" @click="exportData">
-                    {{ $t('dialog.settings.advanced_export') }}
+                    {{ $t("dialog.settings.advanced_export") }}
                   </LgvButton>
                 </div>
-                <p>{{ $t('dialog.settings.advanced_persist') }}:</p>
+                <p>{{ $t("dialog.settings.advanced_persist") }}:</p>
                 <LgvButton
                   class="sm"
                   icon="mingcute:download-line"
@@ -343,16 +364,16 @@
                 >
                   {{
                     $t(
-                      'dialog.settings.advanced_persist_' +
-                        (persistStorage ? 'success' : failedToPersist ? 'failure' : 'prompt'),
+                      "dialog.settings.advanced_persist_" +
+                        (persistStorage ? "success" : failedToPersist ? "failure" : "prompt"),
                     )
                   }}
                 </LgvButton>
                 <LgvNotification type="info">
-                  {{ $t('dialog.settings.advanced_persist_info') }}
+                  {{ $t("dialog.settings.advanced_persist_info") }}
                 </LgvNotification>
                 <ParameterCategory>
-                  {{ $t('dialog.settings.advanced_danger_zone') }}
+                  {{ $t("dialog.settings.advanced_danger_zone") }}
                 </ParameterCategory>
                 <ParameterDivider />
                 <LgvButton
@@ -361,7 +382,7 @@
                   icon-width="1.25rem"
                   @click="confirmDialogRef?.open()"
                 >
-                  {{ $t('dialog.settings.advanced_clear_data') }}
+                  {{ $t("dialog.settings.advanced_clear_data") }}
                 </LgvButton>
                 <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
               </ParameterGrid>
@@ -374,54 +395,56 @@
 </template>
 
 <script setup lang="ts">
-import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config';
-import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
-import DialogElement from '@components/global/elements/DialogElement.vue';
-import ParameterGrid from '@components/global/parameters/ParameterGrid.vue';
-import ParameterCheckbox from '@components/global/parameters/ParameterCheckbox.vue';
-import ParameterRadio from '@components/global/parameters/ParameterRadio.vue';
-import ParameterDivider from '@components/global/parameters/ParameterDivider.vue';
-import ParameterRadioOption from '@components/global/parameters/ParameterRadioOption.vue';
-import ParameterSelect from '@components/global/parameters/ParameterSelect.vue';
-import { useI18n } from 'vue-i18n';
-import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
-import { mapLocale } from '@core/utils/utils';
-import ParameterKeyBinding from '@components/global/parameters/ParameterKeyBinding.vue';
-import LgvNotification from '@/_lib/components/LgvNotification.vue';
-import ParameterCategory from '@components/global/parameters/ParameterCategory.vue';
-import AppClearDataConfirmDialog from '@components/codex/dialogs/ClearDataConfirmDialog.vue';
-import * as DexieService from '@/core/services/dexie.service';
-import { EventBus } from '@core/event-bus';
+import { idb, type IDBKeyBinding, type IDBSettings } from "@/dexie.config";
+import { onMounted, ref, useTemplateRef, watch, type Ref } from "vue";
+import DialogElement from "@components/global/elements/DialogElement.vue";
+import ParameterGrid from "@components/global/parameters/ParameterGrid.vue";
+import ParameterCheckbox from "@components/global/parameters/ParameterCheckbox.vue";
+import ParameterRadio from "@components/global/parameters/ParameterRadio.vue";
+import ParameterDivider from "@components/global/parameters/ParameterDivider.vue";
+import ParameterRadioOption from "@components/global/parameters/ParameterRadioOption.vue";
+import ParameterSelect from "@components/global/parameters/ParameterSelect.vue";
+import { useI18n } from "vue-i18n";
+import CollapsibleSection from "@components/global/elements/CollapsibleSection.vue";
+import { mapLocale } from "@core/utils/utils";
+import ParameterKeyBinding from "@components/global/parameters/ParameterKeyBinding.vue";
+import LgvNotification from "@/_lib/components/LgvNotification.vue";
+import ParameterCategory from "@components/global/parameters/ParameterCategory.vue";
+import AppClearDataConfirmDialog from "@components/codex/dialogs/ClearDataConfirmDialog.vue";
+import * as DexieService from "@/core/services/dexie.service";
+import { swapSceneSkybox } from "@/core/services/editor.service";
+import { EventBus } from "@core/event-bus";
 import {
   EXTRAS_CAT_MODE,
   EXTRAS_CRT_EFFECT,
   EXTRAS_HOLOGRAM_EFFECT,
   EXTRAS_METAL_SLUG_MODE,
   EXTRAS_SPECIAL_DAYS,
-} from '@core/extras';
-import { saveAs } from 'file-saver';
-import { readFileSettings } from '@core/helpers/import.helper';
-import WebGPU from '@/core/capabilities/WebGPU';
-import LgvButton from '@/_lib/components/LgvButton.vue';
+} from "@core/extras";
+import { saveAs } from "file-saver";
+import { readFileSettings } from "@core/helpers/import.helper";
+import WebGPU from "@/core/capabilities/WebGPU";
+import LgvButton from "@/_lib/components/LgvButton.vue";
 
 const i18n = useI18n();
-const catModeOverride = ref('en-UwU');
+const catModeOverride = ref("en-UwU");
 
 const dialogRef = useTemplateRef<{
   open: () => void;
   close: () => void;
   ignoreNativeEvents: (v: boolean) => void;
   isOpen: boolean;
-} | null>('dialogRef');
-const fileInput = useTemplateRef('fileInput');
-const confirmDialogRef = useTemplateRef<{ open: () => void; close: () => void } | null>('confirmDialogRef');
+} | null>("dialogRef");
+const fileInput = useTemplateRef("fileInput");
+const confirmDialogRef = useTemplateRef<{ open: () => void; close: () => void } | null>("confirmDialogRef");
 const appSettings: Ref<IDBSettings> = ref({
   id: 0,
-  locale: 'en-US',
-  theme: '',
-  font: '',
+  locale: "en-US",
+  theme: "",
+  font: "",
   showInitDialog: true,
-  renderingBackend: 'webgl',
+  renderingBackend: "webgl",
+  skybox: "deepspace",
   bakingResolution: 2048,
   bakingPixelize: false,
   enableAnimations: true,
@@ -460,10 +483,11 @@ watch(
     if (!dataLoaded) {
       return;
     }
+    swapEditorSkybox();
     updateSettings();
     if (!isDialogOpen && selectedAction.value) {
       const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value);
-      keyBinds.value[kbidx].key = '[unset]';
+      keyBinds.value[kbidx].key = "[unset]";
       toggleAction(selectedAction.value);
     }
   },
@@ -482,7 +506,7 @@ async function loadData() {
 async function importData(event: Event) {
   const files = (event.target as HTMLInputElement).files;
   if (!files || files?.length === 0) {
-    console.warn('<Lagrange> At least one file should be specified!');
+    console.warn("<Lagrange> At least one file should be specified!");
     return;
   }
   const data = await readFileSettings(files[0]);
@@ -490,13 +514,13 @@ async function importData(event: Event) {
   keyBinds.value.splice(0);
   keyBinds.value.push(...data.keyBindings);
   updateSettings();
-  EventBus.sendToastEvent('success', 'toast.settings_import_success', 5000);
+  EventBus.sendToastEvent("success", "toast.settings_import_success", 5000);
 }
 
 async function exportData() {
   const settings = await idb.settings.limit(1).first();
   const keyBindings = await idb.keyBindings.toArray();
-  saveAs(new Blob([JSON.stringify({ settings, keyBindings }, null, 2)]), 'lagrange_data.json');
+  saveAs(new Blob([JSON.stringify({ settings, keyBindings }, null, 2)]), "lagrange_data.json");
 }
 
 async function clearAllData() {
@@ -507,13 +531,13 @@ async function clearAllData() {
 
 function toggleAction(action: string): void {
   if (selectedAction.value === action) {
-    window.removeEventListener('keydown', setSelectedActionKey);
+    window.removeEventListener("keydown", setSelectedActionKey);
     dialogRef.value?.ignoreNativeEvents(false);
     selectedAction.value = null;
   } else {
     selectedAction.value = action;
     dialogRef.value?.ignoreNativeEvents(true);
-    window.addEventListener('keydown', setSelectedActionKey);
+    window.addEventListener("keydown", setSelectedActionKey);
   }
 }
 
@@ -521,10 +545,10 @@ async function updateSettings() {
   if (!EXTRAS_CAT_MODE.value) {
     i18n.locale.value = appSettings.value!.locale;
   }
-  document.documentElement.setAttribute('data-theme', appSettings.value!.theme);
-  document.documentElement.setAttribute('data-font', appSettings.value!.font);
-  document.documentElement.setAttribute('data-effects', appSettings.value!.enableEffects ? 'on' : 'off');
-  document.documentElement.setAttribute('data-animations', appSettings.value!.enableAnimations ? 'on' : 'off');
+  document.documentElement.setAttribute("data-theme", appSettings.value!.theme);
+  document.documentElement.setAttribute("data-font", appSettings.value!.font);
+  document.documentElement.setAttribute("data-effects", appSettings.value!.enableEffects ? "on" : "off");
+  document.documentElement.setAttribute("data-animations", appSettings.value!.enableAnimations ? "on" : "off");
   EXTRAS_CRT_EFFECT.value = appSettings.value!.extrasCRTEffect!;
   EXTRAS_HOLOGRAM_EFFECT.value = appSettings.value!.extrasHologramEffect!;
   EXTRAS_METAL_SLUG_MODE.value = appSettings.value!.extrasMetalSlugMode!;
@@ -536,6 +560,7 @@ async function updateSettings() {
     font: appSettings.value!.font,
     showInitDialog: appSettings.value!.showInitDialog,
     renderingBackend: appSettings.value!.renderingBackend,
+    skybox: appSettings.value!.skybox,
     bakingResolution: appSettings.value!.bakingResolution,
     bakingPixelize: appSettings.value!.bakingPixelize,
     enableEffects: appSettings.value!.enableEffects,
@@ -555,16 +580,20 @@ async function tryPersistStorage() {
 
 // ------------------------------------------------------------------------------------------------
 
+function swapEditorSkybox() {
+  swapSceneSkybox(appSettings.value!.skybox);
+}
+
 async function setSelectedActionKey(event: KeyboardEvent) {
   const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value);
-  if (['Escape', 'Enter'].includes(event.key)) {
+  if (["Escape", "Enter"].includes(event.key)) {
     toggleAction(keyBinds.value[kbidx].action);
     return;
   }
 
   const alreadyAssignedActions = keyBinds.value.filter((k) => k.key === event.key.toUpperCase());
   if (alreadyAssignedActions.length > 0) {
-    alreadyAssignedActions.forEach((k) => (k.key = '[unset]'));
+    alreadyAssignedActions.forEach((k) => (k.key = "[unset]"));
   }
 
   await idb.keyBindings
@@ -573,7 +602,7 @@ async function setSelectedActionKey(event: KeyboardEvent) {
       ...alreadyAssignedActions.map((k) => ({ key: k.id, changes: { key: k.key } })),
     ])
     .then(() => (keyBinds.value[kbidx].key = event.key.toUpperCase()))
-    .catch((e) => console.error('<Lagrange> (Dexie) Keybinds failed to update', e));
+    .catch((e) => console.error("<Lagrange> (Dexie) Keybinds failed to update", e));
   toggleAction(keyBinds.value[kbidx].action);
 }
 

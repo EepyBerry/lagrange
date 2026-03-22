@@ -1,75 +1,101 @@
-import * as THREE from 'three'
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { degToRad } from 'three/src/math/MathUtils.js'
-import * as TextureHelper from './texture.helper'
-import type PlanetData from '../models/planet-data.model'
-import { type PlanetMeshData, type AtmosphereMeshData, type CloudsMeshData, type RingMeshData, EditorSceneCreationMode } from '../types'
-import { LensFlareEffect } from '../effects/lens-flare.effect'
-import * as Globals from '@core/globals'
-import { NodeMaterial, WebGPURenderer } from 'three/webgpu'
-import { PlanetTSLMaterial } from '@core/tsl/materials/planet.tslmat'
-import { AtmosphereTSLMaterial } from '@core/tsl/materials/atmosphere.tslmat'
-import { CloudsTSLMaterial } from '@core/tsl/materials/clouds.tslmat'
-import { RingTSLMaterial } from '@core/tsl/materials/ring.tslmat'
-import { idb } from '@/dexie.config'
-import { LayeredDataTexture } from '../utils/texture/layered-data-texture'
-import type { BiomeParameters } from '../models/biome-parameters.model'
-import { PlanetDataConverter } from '../models/converters/planet-data.converter'
-import { CloudsDataConverter } from '../models/converters/clouds-data.converter'
-import { RingDataConverter } from '../models/converters/ring-data.converter'
-import { AtmosphereDataConverter } from '../models/converters/atmosphere-data.converter'
-import type { RingParameters } from '../models/ring-parameters.model'
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { degToRad } from "three/src/math/MathUtils.js";
+import * as TextureHelper from "./texture.helper";
+import type PlanetData from "../models/planet-data.model";
+import {
+  type PlanetMeshData,
+  type AtmosphereMeshData,
+  type CloudsMeshData,
+  type RingMeshData,
+  EditorSceneCreationMode,
+} from "../types";
+import { LensFlareEffect } from "../effects/lens-flare.effect";
+import * as Globals from "@core/globals";
+import {
+  AmbientLight,
+  Camera,
+  Color,
+  DirectionalLight,
+  Group,
+  Mesh,
+  MOUSE,
+  NodeMaterial,
+  OrthographicCamera,
+  PCFSoftShadowMap,
+  PerspectiveCamera,
+  RingGeometry,
+  Scene,
+  SphereGeometry,
+  Spherical,
+  SRGBColorSpace,
+  Vector3,
+  WebGPURenderer,
+  type ColorRepresentation,
+} from "three/webgpu";
+import { PlanetTSLMaterial } from "@core/tsl/materials/planet.tslmat";
+import { AtmosphereTSLMaterial } from "@core/tsl/materials/atmosphere.tslmat";
+import { CloudsTSLMaterial } from "@core/tsl/materials/clouds.tslmat";
+import { RingTSLMaterial } from "@core/tsl/materials/ring.tslmat";
+import { idb } from "@/dexie.config";
+import { LayeredDataTexture } from "../utils/texture/layered-data-texture";
+import type { BiomeParameters } from "../models/biome-parameters.model";
+import { PlanetDataConverter } from "../models/converters/planet-data.converter";
+import { CloudsDataConverter } from "../models/converters/clouds-data.converter";
+import { RingDataConverter } from "../models/converters/ring-data.converter";
+import { AtmosphereDataConverter } from "../models/converters/atmosphere-data.converter";
+import type { RingParameters } from "../models/ring-parameters.model";
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
 type EditorSceneObjects = {
-  scene: THREE.Scene
-  renderer: WebGPURenderer
-  camera: THREE.PerspectiveCamera
-}
-export async function createScene(data: PlanetData, width: number, height: number, pixelRatio: number, creationMode: EditorSceneCreationMode): Promise<EditorSceneObjects> {
+  scene: Scene;
+  renderer: WebGPURenderer;
+  camera: PerspectiveCamera;
+};
+export async function createScene(
+  data: PlanetData,
+  width: number,
+  height: number,
+  pixelRatio: number,
+  creationMode: EditorSceneCreationMode,
+): Promise<EditorSceneObjects> {
   // setup cubemap
-  const scene = new THREE.Scene()
+  const scene = new Scene();
   if (creationMode === EditorSceneCreationMode.EDITOR) {
-    scene.background = TextureHelper.loadCubeTexture('/skybox/', [
-      'space_ft.png',
-      'space_bk.png',
-      'space_up.png',
-      'space_dn.png',
-      'space_rt.png',
-      'space_lf.png',
-    ])
+    const idbSettings = await idb.settings.limit(1).first();
+    TextureHelper.loadCubeTextureSkybox(scene, `/skyboxes/${idbSettings?.skybox ?? "deepspace"}/`);
   }
-  scene.userData.lens = 'no-occlusion'
+  scene.userData.lens = "no-occlusion";
 
   // Make spherical before creating camera
-  const spherical = creationMode === EditorSceneCreationMode.PREVIEW
-    ? new THREE.Spherical(data.initCamDistance - 1.5,Math.PI / 2.0, degToRad(data.initCamAngle))
-    : new THREE.Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle))
+  const spherical =
+    creationMode === EditorSceneCreationMode.PREVIEW
+      ? new Spherical(data.initCamDistance - 1.5, Math.PI / 2.0, degToRad(data.initCamAngle))
+      : new Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle));
 
   // setup scene (renderer, cam, lighting)
-  const renderer = await createRenderer(width, height, pixelRatio)
-  const camera = createPerspectiveCamera(50, width / height, 0.1, 1e6, spherical)
-  return { scene, renderer, camera }
+  const renderer = await createRenderer(width, height, pixelRatio);
+  const camera = createPerspectiveCamera(50, width / height, 0.1, 1e6, spherical);
+  return { scene, renderer, camera };
 }
 
 export function createSun(data: PlanetData) {
-  const sun = new THREE.DirectionalLight(data.sunLightColor, data.sunLightIntensity)
-  sun.frustumCulled = false
-  sun.userData.lens = 'no-occlusion'
-  sun.name = Globals.LG_MESH_NAME_SUN
-  sun.castShadow = true
-  sun.shadow.camera.far = 1e4
-  sun.shadow.mapSize.width = 4096
-  sun.shadow.mapSize.height = 4096
-  sun.shadow.bias = -0.00003
-  return sun
+  const sun = new DirectionalLight(data.sunLightColor, data.sunLightIntensity);
+  sun.frustumCulled = false;
+  sun.userData.lens = "no-occlusion";
+  sun.name = Globals.LG_MESH_NAME_SUN;
+  sun.castShadow = true;
+  sun.shadow.camera.far = 1e4;
+  sun.shadow.mapSize.width = 4096;
+  sun.shadow.mapSize.height = 4096;
+  sun.shadow.bias = -0.00003;
+  return sun;
 }
 
-export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THREE.Color) {
+export function createLensFlare(data: PlanetData, pos: Vector3, color: Color) {
   return new LensFlareEffect({
-    lensPosition: pos ?? new THREE.Vector3(0.0),
-    colorGain: color ?? new THREE.Color(95, 12, 10),
+    lensPosition: pos ?? new Vector3(0.0),
+    colorGain: color ?? new Color(95, 12, 10),
     starPoints: 2,
     starPointsIntensity: data.lensFlarePointsIntensity ?? 0.25,
     glareSize: 0.025,
@@ -78,35 +104,39 @@ export function createLensFlare(data: PlanetData, pos: THREE.Vector3, color: THR
     flareShape: 0.375,
     additionalStreaks: false,
     streaksScale: 0.15,
-  })
+  });
 }
 
 export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): PlanetMeshData {
-  const geometry = createSphereGeometryComponent(data.planetMeshQuality)
-  const surfaceTex = TextureHelper.createRampTexture(surfaceTexBuf, Globals.TEXTURE_SIZES.SURFACE, data.planetSurfaceColorRamp.steps)
+  const geometry = createSphereGeometryComponent(data.planetMeshQuality);
+  const surfaceTex = TextureHelper.createRampTexture(
+    surfaceTexBuf,
+    Globals.TEXTURE_SIZES.SURFACE,
+    data.planetSurfaceColorRamp.steps,
+  );
   const biomeLayersTex = new LayeredDataTexture<BiomeParameters>(
     Globals.TEXTURE_SIZES.BIOME,
     Globals.TEXTURE_SIZES.BIOME,
     data.biomesParams,
-    TextureHelper.fillBiomeLayer
-  )
+    TextureHelper.fillBiomeLayer,
+  );
   const biomeEmissivityLayersTex = new LayeredDataTexture<BiomeParameters>(
     Globals.TEXTURE_SIZES.BIOME,
     Globals.TEXTURE_SIZES.BIOME,
     data.biomesParams,
-    TextureHelper.fillBiomeEmissivityLayer
-  )
+    TextureHelper.fillBiomeEmissivityLayer,
+  );
   //setTimeout(() => biomeEmissivityLayersTex.debugSaveTexture(), 10000)
 
   const dataConverter = new PlanetDataConverter(data)
     .withSurfaceTexture(surfaceTex)
     .withBiomesTexture(biomeLayersTex.texture)
-    .withBiomesEmissiveTexture(biomeEmissivityLayersTex.texture)
-  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert())
-  const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
-  mesh.castShadow = true
-  mesh.receiveShadow = true
-  mesh.name = Globals.LG_MESH_NAME_PLANET
+    .withBiomesEmissiveTexture(biomeEmissivityLayersTex.texture);
+  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert());
+  const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  mesh.name = Globals.LG_MESH_NAME_PLANET;
 
   return {
     mesh,
@@ -114,75 +144,77 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): Plane
     surfaceBuffer: surfaceTexBuf,
     surfaceTexture: surfaceTex,
     biomeLayersTexture: biomeLayersTex,
-    biomeEmissiveLayersTexture: biomeEmissivityLayersTex
-  }
+    biomeEmissiveLayersTexture: biomeEmissivityLayersTex,
+  };
 }
 
 export function createClouds(data: PlanetData, textureBuffer: Uint8Array): CloudsMeshData {
-  const geometry = createSphereGeometryComponent(data.planetMeshQuality, data.cloudsHeight)
-  const texture = TextureHelper.createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.CLOUDS, data.cloudsColorRamp.steps)
+  const geometry = createSphereGeometryComponent(data.planetMeshQuality, data.cloudsHeight);
+  const texture = TextureHelper.createRampTexture(
+    textureBuffer,
+    Globals.TEXTURE_SIZES.CLOUDS,
+    data.cloudsColorRamp.steps,
+  );
 
-  const dataConverter = new CloudsDataConverter(data, texture)
-  const tslMaterial = new CloudsTSLMaterial(dataConverter.convert())
-  const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
-  mesh.castShadow = true
-  mesh.receiveShadow = true
-  mesh.name = Globals.LG_MESH_NAME_CLOUDS
+  const dataConverter = new CloudsDataConverter(data, texture);
+  const tslMaterial = new CloudsTSLMaterial(dataConverter.convert());
+  const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  mesh.name = Globals.LG_MESH_NAME_CLOUDS;
 
   return {
     mesh,
     uniforms: tslMaterial.uniforms,
     buffer: textureBuffer,
     texture,
-  }
+  };
 }
 
-export function createAtmosphere(data: PlanetData, sunPos: THREE.Vector3): AtmosphereMeshData {
+export function createAtmosphere(data: PlanetData, sunPos: Vector3): AtmosphereMeshData {
   // note: geometry is scaled via the planetGroup: always set to [1.0 + height]
-  const geometry = createSphereGeometryComponent(
-    data.planetMeshQuality,
-    1.0 + data.atmosphereHeight
-  )
-  const dataConverter = new AtmosphereDataConverter(data, sunPos)
-  const tslMaterial = new AtmosphereTSLMaterial(dataConverter.convert())
-  const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
-  mesh.userData.lens = 'no-occlusion'
-  mesh.name = Globals.LG_MESH_NAME_ATMOSPHERE
-  mesh.castShadow = true
+  const geometry = createSphereGeometryComponent(data.planetMeshQuality, 1.0 + data.atmosphereHeight);
+  const dataConverter = new AtmosphereDataConverter(data, sunPos);
+  const tslMaterial = new AtmosphereTSLMaterial(dataConverter.convert());
+  const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
+  mesh.userData.lens = "no-occlusion";
+  mesh.name = Globals.LG_MESH_NAME_ATMOSPHERE;
+  mesh.castShadow = true;
 
   return {
     mesh,
     uniforms: tslMaterial.uniforms,
-  }
+  };
 }
 
-export function createRing(
-  data: PlanetData,
-  ringParams: RingParameters,
-): RingMeshData {
-  const textureBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4)
-  const geometry = createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius)
-  const ringTex = TextureHelper.createRampTexture(textureBuffer, Globals.TEXTURE_SIZES.RING, ringParams.colorRamp.steps)
+export function createRing(data: PlanetData, ringParams: RingParameters): RingMeshData {
+  const textureBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4);
+  const geometry = createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius);
+  const ringTex = TextureHelper.createRampTexture(
+    textureBuffer,
+    Globals.TEXTURE_SIZES.RING,
+    ringParams.colorRamp.steps,
+  );
 
-  const dataConverter = new RingDataConverter(ringParams, ringTex)
-  const tslMaterial = new RingTSLMaterial(dataConverter.convert())
+  const dataConverter = new RingDataConverter(ringParams, ringTex);
+  const tslMaterial = new RingTSLMaterial(dataConverter.convert());
 
-  const mesh = new THREE.Mesh(geometry, tslMaterial.buildMaterial())
-  mesh.name = ringParams.id
-  mesh.receiveShadow = true
-  mesh.castShadow = true
+  const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
+  mesh.name = ringParams.id;
+  mesh.receiveShadow = true;
+  mesh.castShadow = true;
   return {
-    mesh, 
+    mesh,
     uniforms: tslMaterial.uniforms,
     buffer: textureBuffer,
     texture: ringTex,
-  }
+  };
 }
-export function disposeRing(ringAnchor: THREE.Group, ringsMeshData: RingMeshData[], ringParams: RingParameters) {
+export function disposeRing(ringAnchor: Group, ringsMeshData: RingMeshData[], ringParams: RingParameters): void {
   // get ring data + mesh
-  const ringMeshData = ringsMeshData.find(r => r.mesh!.name === ringParams.id);
+  const ringMeshData = ringsMeshData.find((r) => r.mesh!.name === ringParams.id);
   if (!ringMeshData) {
-    throw new Error("Cannot delete non-existent ring of ID: " + ringParams.id)
+    throw new Error("Cannot delete non-existent ring of ID: " + ringParams.id);
   }
   // delete ring
   ringAnchor.remove(ringMeshData.mesh!);
@@ -192,39 +224,45 @@ export function disposeRing(ringAnchor: THREE.Group, ringsMeshData: RingMeshData
   ringMeshData.buffer = null;
 }
 
-export function disposeAllRings(ringAnchor: THREE.Group, ringsMeshData: RingMeshData[]) {
+export function disposeAllRings(ringAnchor: Group, ringsMeshData: RingMeshData[]): void {
   ringAnchor.clear();
-  ringsMeshData.forEach(rmd => {
-    ;(rmd.mesh!.material as NodeMaterial).dispose()
-    rmd.mesh!.geometry.dispose()
-    rmd.texture!.dispose()
-    rmd.buffer = null
-  })
+  ringsMeshData.forEach((rmd) => {
+    (rmd.mesh!.material as NodeMaterial).dispose();
+    rmd.mesh!.geometry.dispose();
+    rmd.texture!.dispose();
+    rmd.buffer = null;
+  });
 }
 
 // ----------------------------------------------------------------------------------------------------------------------
 // NATIVE COMPONENTS
 
 /**
- * Creates a WebGL-based renderer
+ * Creates a WebGPURenderer isntance
  * @param width canvas width
  * @param height canvas height
  * @returns the renderer
  */
-export async function createRenderer(width: number, height: number, pixelRatio?: number) {
-  const idbSettings = await idb.settings.limit(1).first()
-  const renderer = new WebGPURenderer({ antialias: true, alpha: true, forceWebGL: idbSettings!.renderingBackend == 'webgl' })
+export async function createRenderer(width: number, height: number, pixelRatio?: number): Promise<WebGPURenderer> {
+  const idbSettings = await idb.settings.limit(1).first();
+  const renderer = new WebGPURenderer({
+    antialias: true,
+    alpha: true,
+    forceWebGL: idbSettings!.renderingBackend == "webgl",
+  });
   if (pixelRatio) {
-    renderer.setPixelRatio(pixelRatio)
+    renderer.setPixelRatio(pixelRatio);
   }
-  renderer.setSize(width, height)
-  renderer.setClearColor(0x000000, 0)
-  renderer.setTransparentSort((a, b) => a.z! - b.z!) // Invert transparent sorting to have a "filter" effect for transparent objects (atmos/ring)
-  renderer.shadowMap.enabled = true
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap
-  renderer.outputColorSpace = THREE.SRGBColorSpace
-  console.debug(`<Lagrange> Initialised renderer using ${idbSettings!.renderingBackend == 'webgl' ? 'WebGL' : 'WebGPU'} backend.`)
-  return renderer
+  renderer.setSize(width, height);
+  renderer.setClearColor(0x000000, 0);
+  renderer.setTransparentSort((a, b) => a.z! - b.z!); // Invert transparent sorting to have a "filter" effect for transparent objects (atmos/ring)
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = PCFSoftShadowMap;
+  renderer.outputColorSpace = SRGBColorSpace;
+  console.debug(
+    `<Lagrange> Initialised renderer using ${idbSettings!.renderingBackend == "webgl" ? "WebGL" : "WebGPU"} backend.`,
+  );
+  return renderer;
 }
 
 /**
@@ -241,14 +279,14 @@ export function createPerspectiveCamera(
   ratio: number,
   near: number,
   far: number,
-  initialOrbit?: THREE.Spherical,
-): THREE.PerspectiveCamera {
-  const camera = new THREE.PerspectiveCamera(fov, ratio, near, far)
+  initialOrbit?: Spherical,
+): PerspectiveCamera {
+  const camera = new PerspectiveCamera(fov, ratio, near, far);
   if (initialOrbit) {
-    initialOrbit.makeSafe()
-    camera.position.setFromSpherical(initialOrbit)
+    initialOrbit.makeSafe();
+    camera.position.setFromSpherical(initialOrbit);
   }
-  return camera
+  return camera;
 }
 
 /**
@@ -259,13 +297,8 @@ export function createPerspectiveCamera(
  * @param far furthest rendering distance
  * @returns the configured camera
  */
-export function createOrthographicCamera(
-  width: number,
-  height: number,
-  near: number,
-  far: number,
-): THREE.OrthographicCamera {
-  return new THREE.OrthographicCamera(-width / 2, width / 2, height / 2, -height / 2, near, far)
+export function createOrthographicCamera(width: number, height: number, near: number, far: number): OrthographicCamera {
+  return new OrthographicCamera(-width / 2, width / 2, height / 2, -height / 2, near, far);
 }
 
 /**
@@ -274,22 +307,22 @@ export function createOrthographicCamera(
  * @param intensity light intensity
  * @returns the AmbientLight instance
  */
-export function createAmbientLight(color: THREE.ColorRepresentation, intensity: number) {
-  const light = new THREE.AmbientLight(color)
-  light.intensity = intensity
-  return light
+export function createAmbientLight(color: ColorRepresentation, intensity: number): AmbientLight {
+  const light = new AmbientLight(color);
+  light.intensity = intensity;
+  return light;
 }
 
-export function createSphereGeometryComponent(quality: number, radius: number = 1.0): THREE.SphereGeometry {
-  return new THREE.SphereGeometry(radius, quality, quality / 2.0)
+export function createSphereGeometryComponent(quality: number, radius: number = 1.0): SphereGeometry {
+  return new SphereGeometry(radius, quality, quality / 2.0);
 }
 
 export function createRingGeometryComponent(
   quality: number,
   innerRadius: number = 1.25,
   outerRadius: number = 1.75,
-): THREE.RingGeometry {
-  return new THREE.RingGeometry(innerRadius, outerRadius, quality)
+): RingGeometry {
+  return new RingGeometry(innerRadius, outerRadius, quality);
 }
 
 /**
@@ -298,21 +331,21 @@ export function createRingGeometryComponent(
  * @param canvas the render canvas
  * @returns an instance of OrbitControls
  */
-export function createOrbitControls(camera: THREE.Camera, canvas: HTMLCanvasElement): OrbitControls {
-  const controls = new OrbitControls(camera, canvas)
-  controls.enablePan = false
-  controls.enableDamping = false
-  controls.dampingFactor = 0.05
-  controls.screenSpacePanning = false
-  controls.minDistance = 1.5
-  controls.maxDistance = 10
-  controls.maxPolarAngle = Math.PI
-  controls.rotateSpeed = 0.5
-  controls.zoomSpeed = 2
+export function createOrbitControls(camera: Camera, canvas: HTMLCanvasElement): OrbitControls {
+  const controls = new OrbitControls(camera, canvas);
+  controls.enablePan = false;
+  controls.enableDamping = false;
+  controls.dampingFactor = 0.05;
+  controls.screenSpacePanning = false;
+  controls.minDistance = 1.5;
+  controls.maxDistance = 10;
+  controls.maxPolarAngle = Math.PI;
+  controls.rotateSpeed = 0.5;
+  controls.zoomSpeed = 2;
   controls.mouseButtons = {
-    LEFT: THREE.MOUSE.ROTATE,
-    MIDDLE: THREE.MOUSE.DOLLY,
-    RIGHT: THREE.MOUSE.DOLLY,
-  }
-  return controls
+    LEFT: MOUSE.ROTATE,
+    MIDDLE: MOUSE.DOLLY,
+    RIGHT: MOUSE.DOLLY,
+  };
+  return controls;
 }
