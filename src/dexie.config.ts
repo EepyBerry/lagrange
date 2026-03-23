@@ -23,6 +23,14 @@ interface IDBSettings {
   font: string;
   showInitDialog?: boolean;
   renderingBackend: 'webgl' | 'webgpu';
+  skybox:
+    | 'deepspace'
+    | 'crimsonquadrant'
+    | 'embergreenexpanse'
+    | 'shiningstars'
+    | 'jadenebula'
+    | 'edgeoftheuniverse'
+    | 'chromakey';
   bakingResolution?: number;
   bakingPixelize?: boolean;
   enableEffects?: boolean;

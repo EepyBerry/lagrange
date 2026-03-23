@@ -1,5 +1,4 @@
 import { watch } from 'vue';
-import * as THREE from 'three';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import * as Globals from '@core/globals';
 import * as ComponentHelper from '@core/helpers/component.helper';
@@ -11,7 +10,8 @@ import { idb } from '@/dexie.config';
 import { sleep } from '@core/utils/utils';
 import * as SceneHelper from '../helpers/scene.helper';
 import * as PreviewHelper from '../helpers/preview.helper';
-import { MeshStandardNodeMaterial, type NodeMaterial } from 'three/webgpu';
+import * as TextureHelper from '../helpers/texture.helper';
+import { DoubleSide, Group, MeshStandardNodeMaterial, NearestFilter, Vector2, type NodeMaterial } from 'three/webgpu';
 import { saveAs } from 'file-saver';
 import { EventBus } from '../event-bus';
 import { EDITOR_STATE, EditorStatusCode } from '../state/editor.state';
@@ -25,7 +25,10 @@ const planetDataToUniformsObserver: PlanetDataToUniformsObserver = new PlanetDat
 //                                           EVENT HANDLING                                         //
 // ------------------------------------------------------------------------------------------------ //
 
-watch(EDITOR_STATE, (v) => console.debug('<Lagrange> EditorState => ' + v.status));
+watch(
+  () => EDITOR_STATE.value.status,
+  (status) => console.debug('<Lagrange> EditorState => ' + status),
+);
 
 // ------------------------------------------------------------------------------------------------ //
 //                                           BOOTSTRAPPING                                          //
@@ -116,6 +119,10 @@ export async function resetPlanet() {
   EDITOR_STATE.value.status = EditorStatusCode.Edition;
 }
 
+export function swapSceneSkybox(skybox: string) {
+  TextureHelper.loadCubeTextureSkybox(editorSceneData.scene, `/skyboxes/${skybox}/`);
+}
+
 export async function takePlanetScreenshot() {
   try {
     await editorSceneData.renderer.render(editorSceneData.scene, editorSceneData.camera);
@@ -168,8 +175,8 @@ export async function exportPlanetToGLTF(progressDialog: {
     );
     const bakePlanetSurfaceTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakePlanet);
     if (appSettings?.bakingPixelize) {
-      bakePlanetSurfaceTex.minFilter = THREE.NearestFilter;
-      bakePlanetSurfaceTex.magFilter = THREE.NearestFilter;
+      bakePlanetSurfaceTex.minFilter = NearestFilter;
+      bakePlanetSurfaceTex.magFilter = NearestFilter;
     }
 
     progressDialog.setProgress(3);
@@ -182,8 +189,8 @@ export async function exportPlanetToGLTF(progressDialog: {
       bakeMetallicRoughness,
     );
     if (appSettings?.bakingPixelize) {
-      bakePlanetMetallicRoughnessTex.minFilter = THREE.NearestFilter;
-      bakePlanetMetallicRoughnessTex.magFilter = THREE.NearestFilter;
+      bakePlanetMetallicRoughnessTex.minFilter = NearestFilter;
+      bakePlanetMetallicRoughnessTex.magFilter = NearestFilter;
     }
     //LG_SCENE_DATA.planet.biomeEmissiveLayersTexture!.debugSaveTexture()
     const bakeEmissivity = BakingHelper.createBakingEmissivityMap(
@@ -194,8 +201,8 @@ export async function exportPlanetToGLTF(progressDialog: {
     );
     const bakePlanetEmissivityTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeEmissivity);
     if (appSettings?.bakingPixelize) {
-      bakePlanetEmissivityTex.minFilter = THREE.NearestFilter;
-      bakePlanetEmissivityTex.magFilter = THREE.NearestFilter;
+      bakePlanetEmissivityTex.minFilter = NearestFilter;
+      bakePlanetEmissivityTex.magFilter = NearestFilter;
     }
 
     progressDialog.setProgress(4);
@@ -206,8 +213,8 @@ export async function exportPlanetToGLTF(progressDialog: {
     const bakeNormal = BakingHelper.createBakingNormalMap(planetData, bakePlanetHeightTex);
     const bakePlanetNormalTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeNormal);
     if (appSettings?.bakingPixelize) {
-      bakePlanetNormalTex.minFilter = THREE.NearestFilter;
-      bakePlanetNormalTex.magFilter = THREE.NearestFilter;
+      bakePlanetNormalTex.minFilter = NearestFilter;
+      bakePlanetNormalTex.magFilter = NearestFilter;
     }
 
     bakePlanet.material = new MeshStandardNodeMaterial({
@@ -216,7 +223,7 @@ export async function exportPlanetToGLTF(progressDialog: {
       metalnessMap: bakePlanetMetallicRoughnessTex,
       emissiveMap: bakePlanetEmissivityTex,
       normalMap: bakePlanetNormalTex,
-      normalScale: new THREE.Vector2(planetData.planetSurfaceBumpStrength).multiplyScalar(2.0),
+      normalScale: new Vector2(planetData.planetSurfaceBumpStrength).multiplyScalar(2.0),
     });
     bakingTargets.push({
       mesh: bakePlanet,
@@ -230,8 +237,8 @@ export async function exportPlanetToGLTF(progressDialog: {
       const bakeClouds = BakingHelper.createBakingClouds(planetData, editorSceneData.clouds.texture!);
       const bakeCloudsTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeClouds);
       if (appSettings?.bakingPixelize) {
-        bakeCloudsTex.minFilter = THREE.NearestFilter;
-        bakeCloudsTex.magFilter = THREE.NearestFilter;
+        bakeCloudsTex.minFilter = NearestFilter;
+        bakeCloudsTex.magFilter = NearestFilter;
       }
 
       bakeClouds.material = new MeshStandardNodeMaterial({
@@ -248,8 +255,8 @@ export async function exportPlanetToGLTF(progressDialog: {
     if (planetData.ringsEnabled) {
       progressDialog.setProgress(6);
       await sleep(50);
-      const ringGroup = new THREE.Group();
-      ringGroup.name = Globals.LG_MESH_NAME_RING_ANCHOR;
+      const ringGroup = new Group();
+      ringGroup.name = Globals.MESH_NAME_RING_ANCHOR;
       for (let idx = 0; idx < planetData.ringsParams.length; idx++) {
         const params = planetData.ringsParams[idx];
         const ringMeshData = editorSceneData.rings?.find((r) => r.mesh!.name === params.id);
@@ -258,13 +265,13 @@ export async function exportPlanetToGLTF(progressDialog: {
         const bakeRing = BakingHelper.createBakingRing(planetData, ringMeshData.texture!, idx);
         const bakeRingTex = await BakingHelper.bakeMesh(renderer, camera, renderTarget, bakeRing);
         if (appSettings?.bakingPixelize) {
-          bakeRingTex.minFilter = THREE.NearestFilter;
-          bakeRingTex.magFilter = THREE.NearestFilter;
+          bakeRingTex.minFilter = NearestFilter;
+          bakeRingTex.magFilter = NearestFilter;
         }
 
         bakeRing.material = new MeshStandardNodeMaterial({
           map: bakeRingTex,
-          side: THREE.DoubleSide,
+          side: DoubleSide,
           transparent: true,
         });
         bakingTargets.push({ mesh: bakeRing, textures: [bakeRingTex] });

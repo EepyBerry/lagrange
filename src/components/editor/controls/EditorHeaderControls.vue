@@ -37,7 +37,7 @@
     <div id="randomizer-menu" ref="randomMenu" class="floating" :style="randomFloating.floatingStyles.value">
       <div class="floating-content">
         <label for="random-seed">Seed</label>
-        <input id="random-seed" v-model="MathUtils.PRNG_SEED.value" class="lg" type="text" />
+        <input id="random-seed" v-model="MathUtils.PRNG_SEED.value" type="text" />
       </div>
       <div class="floating-actions">
         <LgvButton class="sm" icon="tabler:seeding" @click="MathUtils.regenerateSeed()">

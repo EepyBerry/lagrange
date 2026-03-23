@@ -19,7 +19,7 @@ export default class WebGPU {
     }
   }
 
-  static getErrorMessage(i18n: Composer<Record>): string {
+  static getErrorMessage(i18n: Composer<Record<string, unknown>>): string {
     return this._error ? this._error.message : i18n.t('main.error.default_webgpu_support');
   }
 }

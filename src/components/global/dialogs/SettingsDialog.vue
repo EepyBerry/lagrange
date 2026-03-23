@@ -67,7 +67,7 @@
                     {{ $t('dialog.settings.general_theme_supernova') }}
                   </ParameterRadioOption>
                   <ParameterRadioOption
-                    :id="'1'"
+                    :id="'2'"
                     v-model="appSettings.theme"
                     name="theme-select"
                     value="voyager"
@@ -135,6 +135,27 @@
                 <LgvNotification v-if="!WebGPU.isAvailable()" type="warn">
                   {{ $t('dialog.settings.editor_rendering_backend_webgpu_unavailable') }}
                 </LgvNotification>
+                <ParameterDivider />
+                <ParameterSelect id="skybox" v-model="appSettings.skybox">
+                  {{ $t('dialog.settings.editor_skybox') }}:
+                  <template #options>
+                    <option value="deepspace">{{ $t('dialog.settings.editor_skybox_deepspace') }}</option>
+                    <option value="crimsonquadrant">{{ $t('dialog.settings.editor_skybox_crimsonquadrant') }}</option>
+                    <option value="embergreenexpanse">
+                      {{ $t('dialog.settings.editor_skybox_embergreenexpanse') }}
+                    </option>
+                    <option value="shiningstars">{{ $t('dialog.settings.editor_skybox_shiningstars') }}</option>
+                    <option value="jadenebula">
+                      {{ $t('dialog.settings.editor_skybox_jadenebula') }}
+                    </option>
+                    <option value="edgeoftheuniverse">
+                      {{ $t('dialog.settings.editor_skybox_edgeoftheuniverse') }}
+                    </option>
+                    <option value="chromakey">
+                      {{ $t('dialog.settings.editor_skybox_chromakey') }}
+                    </option>
+                  </template>
+                </ParameterSelect>
                 <ParameterDivider />
                 <ParameterRadio>
                   <template #title> {{ $t('dialog.settings.editor_baking_resolution') }}: </template>
@@ -363,7 +384,6 @@
                 >
                   {{ $t('dialog.settings.advanced_clear_data') }}
                 </LgvButton>
-                <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
               </ParameterGrid>
             </div>
           </template>
@@ -371,11 +391,12 @@
       </div>
     </template>
   </DialogElement>
+  <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
 </template>
 
 <script setup lang="ts">
 import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config';
-import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
 import ParameterGrid from '@components/global/parameters/ParameterGrid.vue';
 import ParameterCheckbox from '@components/global/parameters/ParameterCheckbox.vue';
@@ -389,8 +410,8 @@ import { mapLocale } from '@core/utils/utils';
 import ParameterKeyBinding from '@components/global/parameters/ParameterKeyBinding.vue';
 import LgvNotification from '@/_lib/components/LgvNotification.vue';
 import ParameterCategory from '@components/global/parameters/ParameterCategory.vue';
-import AppClearDataConfirmDialog from '@components/codex/dialogs/ClearDataConfirmDialog.vue';
 import * as DexieService from '@/core/services/dexie.service';
+import { swapSceneSkybox } from '@/core/services/editor.service';
 import { EventBus } from '@core/event-bus';
 import {
   EXTRAS_CAT_MODE,
@@ -403,6 +424,9 @@ import { saveAs } from 'file-saver';
 import { readFileSettings } from '@core/helpers/import.helper';
 import WebGPU from '@/core/capabilities/WebGPU';
 import LgvButton from '@/_lib/components/LgvButton.vue';
+const AppClearDataConfirmDialog = defineAsyncComponent(
+  () => import('@components/codex/dialogs/ClearDataConfirmDialog.vue'),
+);
 
 const i18n = useI18n();
 const catModeOverride = ref('en-UwU');
@@ -422,6 +446,7 @@ const appSettings: Ref<IDBSettings> = ref({
   font: '',
   showInitDialog: true,
   renderingBackend: 'webgl',
+  skybox: 'deepspace',
   bakingResolution: 2048,
   bakingPixelize: false,
   enableAnimations: true,
@@ -460,6 +485,7 @@ watch(
     if (!dataLoaded) {
       return;
     }
+    swapEditorSkybox();
     updateSettings();
     if (!isDialogOpen && selectedAction.value) {
       const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value);
@@ -536,6 +562,7 @@ async function updateSettings() {
     font: appSettings.value!.font,
     showInitDialog: appSettings.value!.showInitDialog,
     renderingBackend: appSettings.value!.renderingBackend,
+    skybox: appSettings.value!.skybox,
     bakingResolution: appSettings.value!.bakingResolution,
     bakingPixelize: appSettings.value!.bakingPixelize,
     enableEffects: appSettings.value!.enableEffects,
@@ -554,6 +581,10 @@ async function tryPersistStorage() {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+function swapEditorSkybox() {
+  swapSceneSkybox(appSettings.value!.skybox);
+}
 
 async function setSelectedActionKey(event: KeyboardEvent) {
   const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value);

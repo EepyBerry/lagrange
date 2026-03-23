@@ -1,7 +1,7 @@
 <template>
   <div class="explosion-container" role="presentation">
     <img v-for="i in explosions" :key="i" ref="smallExplosionRef" src="/extras/placeholder.png" class="explosion sm" />
-    <img ref="largeExplosionRef" src="/extras/placeholder.png" class="explosion lg" />
+    <img ref="largeExplosionRef" src="/extras/placeholder.png" class="explosion large" />
   </div>
 </template>
 
@@ -16,9 +16,9 @@ const largeExplosionSrc = '/extras/explosion-large.gif';
 const smallExplosionRefs = useTemplateRef('smallExplosionRef');
 const largeExplosionRef = useTemplateRef('largeExplosionRef');
 
-const $props = withDefaults(defineProps<{ smDelay?: number; lgDelay?: number; explosions?: number }>(), {
+const $props = withDefaults(defineProps<{ smDelay?: number; largeDelay?: number; explosions?: number }>(), {
   smDelay: 100,
-  lgDelay: 200,
+  largeDelay: 200,
   explosions: 5,
 });
 const $emit = defineEmits(['obliteration']);
@@ -38,7 +38,7 @@ defineExpose({
       explosionElem.style.left = explosionTopLeft[1] + 'rem';
       explosionElem.src = smallExplosionSrc + '?t=' + Date.now();
     }
-    await sleep($props.lgDelay);
+    await sleep($props.largeDelay);
     largeExplosionRef.value!.src = largeExplosionSrc;
     $emit('obliteration');
     await sleep(1500);
@@ -60,7 +60,7 @@ defineExpose({
     width: 10rem;
     transform-origin: 50% 50%;
   }
-  .explosion.lg {
+  .explosion.large {
     width: 16rem;
     height: 16rem;
     transform: scale(1.375);

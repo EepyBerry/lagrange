@@ -11,7 +11,7 @@
             </option>
           </template>
         </ParameterSelect>
-        <ParameterSelect id="b-type" v-model="EDITOR_STATE.planetData.planetClass">
+        <ParameterSelect id="b-class" v-model="EDITOR_STATE.planetData.planetClass">
           {{ $t('editor.controls.basic_data.classification_class') }}:
           <template #options>
             <option v-for="opt in listPlanetClassValues()" :key="opt" :value="opt">

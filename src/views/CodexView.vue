@@ -58,11 +58,9 @@
 <script setup lang="ts">
 import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue';
 import InlineFooter from '@components/global/InlineFooter.vue';
-import AppPlanetInfoDialog from '@components/codex/dialogs/PlanetInfoDialog.vue';
-import AppDeleteConfirmDialog from '@components/codex/dialogs/DeleteConfirmDialog.vue';
 import { idb, type IDBPlanet } from '@/dexie.config';
 import { useHead } from '@unhead/vue';
-import { onMounted, onUnmounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import { defineAsyncComponent, onMounted, onUnmounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { EventBus } from '@core/event-bus';
 import { SM_WIDTH_THRESHOLD } from '@core/globals';
@@ -77,6 +75,9 @@ import { EXTRAS_METAL_SLUG_MODE, uwuifyPath } from '@core/extras';
 import ViewHeader from '@/components/global/ViewHeader.vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 import LgvLink from '@/_lib/components/LgvLink.vue';
+
+const AppPlanetInfoDialog = defineAsyncComponent(() => import('@components/codex/dialogs/PlanetInfoDialog.vue'));
+const AppDeleteConfirmDialog = defineAsyncComponent(() => import('@components/codex/dialogs/DeleteConfirmDialog.vue'));
 
 const planets: Ref<IDBPlanet[]> = ref([]);
 
