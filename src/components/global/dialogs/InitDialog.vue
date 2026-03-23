@@ -149,11 +149,11 @@
         <div class="init-actions">
           <div class="init-checkbox important">
             <label for="enable-persistence">{{ $t('dialog.init.enable_persistence') }}</label>
-            <input id="enable-persistence" v-model="shouldEnableStoragePersistence" class="lg" type="checkbox" />
+            <input id="enable-persistence" v-model="shouldEnableStoragePersistence" type="checkbox" />
           </div>
           <div class="init-checkbox important">
             <label for="show-on-next-visits">{{ $t('dialog.init.show_next_time') }}</label>
-            <input id="show-on-next-visits" v-model="shouldShowOnNextVisits" class="lg" type="checkbox" />
+            <input id="show-on-next-visits" v-model="shouldShowOnNextVisits" type="checkbox" />
           </div>
         </div>
       </div>

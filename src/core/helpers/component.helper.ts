@@ -83,7 +83,7 @@ export function createSun(data: PlanetData) {
   const sun = new DirectionalLight(data.sunLightColor, data.sunLightIntensity);
   sun.frustumCulled = false;
   sun.userData.lens = "no-occlusion";
-  sun.name = Globals.LG_MESH_NAME_SUN;
+  sun.name = Globals.MESH_NAME_SUN;
   sun.castShadow = true;
   sun.shadow.camera.far = 1e4;
   sun.shadow.mapSize.width = 4096;
@@ -136,7 +136,7 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): Plane
   const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.castShadow = true;
   mesh.receiveShadow = true;
-  mesh.name = Globals.LG_MESH_NAME_PLANET;
+  mesh.name = Globals.MESH_NAME_PLANET;
 
   return {
     mesh,
@@ -161,7 +161,7 @@ export function createClouds(data: PlanetData, textureBuffer: Uint8Array): Cloud
   const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.castShadow = true;
   mesh.receiveShadow = true;
-  mesh.name = Globals.LG_MESH_NAME_CLOUDS;
+  mesh.name = Globals.MESH_NAME_CLOUDS;
 
   return {
     mesh,
@@ -178,7 +178,7 @@ export function createAtmosphere(data: PlanetData, sunPos: Vector3): AtmosphereM
   const tslMaterial = new AtmosphereTSLMaterial(dataConverter.convert());
   const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.userData.lens = "no-occlusion";
-  mesh.name = Globals.LG_MESH_NAME_ATMOSPHERE;
+  mesh.name = Globals.MESH_NAME_ATMOSPHERE;
   mesh.castShadow = true;
 
   return {

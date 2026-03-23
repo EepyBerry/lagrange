@@ -1,5 +1,5 @@
-import { LG_MESH_NAME_PLANET, LG_MESH_NAME_RING_ANCHOR } from '../globals';
-import { damp } from 'three/src/math/MathUtils.js';
+import { MESH_NAME_PLANET, MESH_NAME_RING_ANCHOR } from "../globals";
+import { damp } from "three/src/math/MathUtils.js";
 import {
   Camera,
   Clock,
@@ -13,12 +13,12 @@ import {
   type Intersection,
   type NodeMaterial,
   type WebGPURenderer,
-} from 'three/webgpu';
+} from "three/webgpu";
 import {
   LensFlareTSLMaterial,
   type LensFlareData,
   type LensFlareUniforms,
-} from '@core/tsl/materials/lens-flare.tslmat';
+} from "@core/tsl/materials/lens-flare.tslmat";
 
 /**
  * Custom class that contains all the processing required to create lens flares.
@@ -63,7 +63,7 @@ export class LensFlareEffect {
       if (iMaterial.transparent && iMaterial.opacity < 0.98) {
         this._internalOpacity = 1 / (iMaterial.opacity * 10);
       } else {
-        this._internalOpacity = iObject.userData.lens === 'no-occlusion' ? 1 : 0;
+        this._internalOpacity = iObject.userData.lens === "no-occlusion" ? 1 : 0;
       }
     }
   }
@@ -87,8 +87,8 @@ export class LensFlareEffect {
 
     this._raycaster.setFromCamera(new Vector2(projectedPosition.x, projectedPosition.y), camera);
 
-    const planet = scene.getObjectByName(LG_MESH_NAME_PLANET);
-    const rings = scene.getObjectByName(LG_MESH_NAME_RING_ANCHOR)?.children;
+    const planet = scene.getObjectByName(MESH_NAME_PLANET);
+    const rings = scene.getObjectByName(MESH_NAME_RING_ANCHOR)?.children;
     if (planet && rings) {
       const intersects = this._raycaster.intersectObjects([planet, ...rings], false);
       this.checkTransparency(intersects);
