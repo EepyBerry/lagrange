@@ -6,22 +6,22 @@
 </template>
 
 <script setup lang="ts">
-import { clampedPRNG, clampedPRNGSpaced } from "@/core/utils/math-utils";
-import { sleep } from "@/core/utils/utils";
-import { useTemplateRef } from "vue";
+import { clampedPRNG, clampedPRNGSpaced } from '@/core/utils/math-utils';
+import { sleep } from '@/core/utils/utils';
+import { useTemplateRef } from 'vue';
 
-const smallExplosionSrc = "/extras/explosion-small.gif";
-const largeExplosionSrc = "/extras/explosion-large.gif";
+const smallExplosionSrc = '/extras/explosion-small.gif';
+const largeExplosionSrc = '/extras/explosion-large.gif';
 
-const smallExplosionRefs = useTemplateRef("smallExplosionRef");
-const largeExplosionRef = useTemplateRef("largeExplosionRef");
+const smallExplosionRefs = useTemplateRef('smallExplosionRef');
+const largeExplosionRef = useTemplateRef('largeExplosionRef');
 
 const $props = withDefaults(defineProps<{ smDelay?: number; largeDelay?: number; explosions?: number }>(), {
   smDelay: 100,
   largeDelay: 200,
   explosions: 5,
 });
-const $emit = defineEmits(["obliteration"]);
+const $emit = defineEmits(['obliteration']);
 
 defineExpose({
   doEffect: async () => {
@@ -34,13 +34,13 @@ defineExpose({
       explosionTopLeft[1] = clampedPRNGSpaced(explosionTopLeft[1], -1, 7, 3, 2);
 
       const explosionElem = smallExplosionRefs.value!.at(i)!;
-      explosionElem.style.top = explosionTopLeft[0] + "rem";
-      explosionElem.style.left = explosionTopLeft[1] + "rem";
-      explosionElem.src = smallExplosionSrc + "?t=" + Date.now();
+      explosionElem.style.top = explosionTopLeft[0] + 'rem';
+      explosionElem.style.left = explosionTopLeft[1] + 'rem';
+      explosionElem.src = smallExplosionSrc + '?t=' + Date.now();
     }
     await sleep($props.largeDelay);
     largeExplosionRef.value!.src = largeExplosionSrc;
-    $emit("obliteration");
+    $emit('obliteration');
     await sleep(1500);
   },
 });
