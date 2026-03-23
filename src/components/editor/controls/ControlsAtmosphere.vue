@@ -70,7 +70,7 @@
                 {{ $t('editor.controls.atmosphere.rgba_mode_direct') }}
               </ParameterRadioOption>
               <ParameterRadioOption
-                :id="'1'"
+                :id="'2'"
                 v-model="EDITOR_STATE.planetData.atmosphereColorMode"
                 icon="mingcute:color-filter-line"
                 name="atmos-mode"

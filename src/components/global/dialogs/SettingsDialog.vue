@@ -67,7 +67,7 @@
                     {{ $t('dialog.settings.general_theme_supernova') }}
                   </ParameterRadioOption>
                   <ParameterRadioOption
-                    :id="'1'"
+                    :id="'2'"
                     v-model="appSettings.theme"
                     name="theme-select"
                     value="voyager"

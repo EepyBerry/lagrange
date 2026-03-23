@@ -1,17 +1,17 @@
-import type PlanetData from '../models/planet-data.model';
-import { Observer, ObservableEventAction, ObservableEvent, type ObservableEventType } from '../utils/observable-utils';
-import * as Globals from '@core/globals';
-import * as ComponentHelper from '@/core/helpers/component.helper';
-import * as TextureHelper from '@/core/helpers/texture.helper';
-import { degToRad } from 'three/src/math/MathUtils.js';
-import type { PlanetMeshData, EditorSceneData, AtmosphereMeshData, CloudsMeshData, RingMeshData } from '../types';
-import type { AmbientLight, DirectionalLight, Group } from 'three';
-import type { LensFlareEffect } from '../effects/lens-flare.effect';
-import type { BiomeParameters } from '../models/biome-parameters.model';
-import { RingParameters } from '../models/ring-parameters.model';
-import type { ColorRamp } from '../models/color-ramp.model';
-import type { NodeMaterial } from 'three/webgpu';
-import { EDITOR_STATE } from '../state/editor.state';
+import type PlanetData from "../models/planet-data.model";
+import { Observer, ObservableEventAction, ObservableEvent, type ObservableEventType } from "../utils/observable-utils";
+import * as Globals from "@core/globals";
+import * as ComponentHelper from "@/core/helpers/component.helper";
+import * as TextureHelper from "@/core/helpers/texture.helper";
+import { degToRad } from "three/src/math/MathUtils.js";
+import type { PlanetMeshData, EditorSceneData, AtmosphereMeshData, CloudsMeshData, RingMeshData } from "../types";
+import type { AmbientLight, DirectionalLight, Group } from "three";
+import type { LensFlareEffect } from "../effects/lens-flare.effect";
+import type { BiomeParameters } from "../models/biome-parameters.model";
+import { RingParameters } from "../models/ring-parameters.model";
+import type { ColorRamp } from "../models/color-ramp.model";
+import type { NodeMaterial } from "three/webgpu";
+import { EDITOR_STATE } from "../state/editor.state";
 
 type ObservableEventOperation = (event: ObservableEvent) => void;
 type ObservableEventHandler = { type?: ObservableEventType; handle: ObservableEventOperation };
@@ -21,11 +21,11 @@ const universalHandler: ObservableEventHandlerCtor = (operation: ObservableEvent
   handle: operation,
 });
 const globalHandler: ObservableEventHandlerCtor = (operation: ObservableEventOperation) => ({
-  type: 'global',
+  type: "global",
   handle: operation,
 });
 const keyedHandler: ObservableEventHandlerCtor = (operation: ObservableEventOperation) => ({
-  type: 'keyed',
+  type: "keyed",
   handle: operation,
 });
 
@@ -61,9 +61,9 @@ export class PlanetDataToUniformsObserver extends Observer {
 
   public onEvent(event: ObservableEvent): void {
     EDITOR_STATE.value.planetEditedFlag = true;
-    if (event.type === 'global') {
+    if (event.type === "global") {
       this.eventHandlerMap.forEach((handler) => {
-        if (handler.type === 'keyed') return;
+        if (handler.type === "keyed") return;
         handler.handle(event);
       });
     } else {
