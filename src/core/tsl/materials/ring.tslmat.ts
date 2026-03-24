@@ -4,11 +4,11 @@ import {
   MeshStandardNodeMaterial,
   Node,
   Texture,
+  UniformNode,
   type TextureNode,
 } from 'three/webgpu';
-import type { UniformNumberNode } from '../tsl-types';
-import type { TSLMaterial } from './tsl-material';
-import { float, length, positionGeometry, texture, uniform, uv, vec2, type ShaderNodeObject } from 'three/tsl';
+import { TSLMaterial } from './tsl-material';
+import { float, length, positionGeometry, texture, uniform, uv, vec2 } from 'three/tsl';
 import { flattenUV } from '../utils/vertex-utils';
 
 export type RingUniformData = {
@@ -17,15 +17,13 @@ export type RingUniformData = {
   texture: Texture;
 };
 export type RingUniforms = {
-  innerRadius: UniformNumberNode;
-  outerRadius: UniformNumberNode;
+  innerRadius: UniformNode<'float', number>;
+  outerRadius: UniformNode<'float', number>;
   texture: TextureNode;
 };
-export class RingTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, RingUniformData, RingUniforms> {
-  public readonly uniforms: RingUniforms;
-
-  constructor(data: RingUniformData) {
-    this.uniforms = {
+export class RingTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, RingUniformData, RingUniforms> {
+  uniformize(data: RingUniformData): RingUniforms {
+    return {
       innerRadius: uniform(data.innerRadius, 'float').setName('uInnerRadius'),
       outerRadius: uniform(data.outerRadius, 'float').setName('uOuterRadius'),
       texture: texture(data.texture).setName('uTexture'),
@@ -51,7 +49,7 @@ export class RingTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, Ri
 
   // --------------------------------------------------------------------------
 
-  private sampleRampTexture(pos: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
+  private sampleRampTexture(pos: Node<'vec3'>): Node<'vec4'> {
     const distanceToCenter = length(pos.xy).toVar('distanceToCenter');
     const rampFactor = float(
       this.clampToRange(distanceToCenter, this.uniforms.innerRadius, this.uniforms.outerRadius),
@@ -61,10 +59,10 @@ export class RingTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, Ri
   }
 
   private clampToRange(
-    i_v: ShaderNodeObject<Node>,
-    i_min: UniformNumberNode,
-    i_max: UniformNumberNode,
-  ): ShaderNodeObject<Node> {
+    i_v: Node<'float'>,
+    i_min: Node<'float'>,
+    i_max: Node<'float'>,
+  ): Node<'float'> {
     return i_v.sub(i_min).div(i_max.sub(i_min));
   }
 }

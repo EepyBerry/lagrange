@@ -2,11 +2,11 @@ import { MESH_NAME_PLANET, MESH_NAME_RING_ANCHOR } from '../globals';
 import { damp } from 'three/src/math/MathUtils.js';
 import {
   Camera,
-  Clock,
   Mesh,
   PlaneGeometry,
   Raycaster,
   Scene,
+  Timer,
   Vector2,
   Vector3,
   Vector4,
@@ -68,8 +68,8 @@ export class LensFlareEffect {
     }
   }
 
-  public update(renderer: WebGPURenderer, scene: Scene, camera: Camera, clock: Clock) {
-    const dt = clock.getDelta();
+  public update(renderer: WebGPURenderer, scene: Scene, camera: Camera, timer: Timer) {
+    const dt = timer.getDelta();
 
     renderer.getViewport(this._viewport);
     this._mesh.lookAt(camera.position);

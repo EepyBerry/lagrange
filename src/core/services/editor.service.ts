@@ -86,7 +86,7 @@ function renderFrame() {
     editorSceneData.renderer!,
     editorSceneData.scene!,
     editorSceneData.camera!,
-    editorSceneData.clock!,
+    editorSceneData.timer!,
   );
   editorSceneData.renderer!.render(editorSceneData.scene!, editorSceneData.camera!);
 }

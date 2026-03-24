@@ -3,7 +3,7 @@ import type PlanetData from "../models/planet-data.model";
 import { EditorSceneCreationMode, type EditorSceneData, type RingMeshData } from "../types";
 import * as ComponentHelper from "./component.helper";
 import * as Globals from "@core/globals";
-import { Group, Clock } from "three";
+import { Group, Timer } from "three";
 import { degToRad } from "three/src/math/MathUtils.js";
 
 export async function buildEditorScene(
@@ -80,7 +80,7 @@ async function buildScene(
   sceneData.scene = scene;
   sceneData.renderer = renderer;
   sceneData.camera = camera;
-  sceneData.clock = new Clock();
+  sceneData.timer = new Timer();
 }
 
 function buildSceneLighting(sceneData: EditorSceneData, data: PlanetData): void {

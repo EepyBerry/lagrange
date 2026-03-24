@@ -8,6 +8,7 @@ import {
   Vector2,
   Vector3,
   Vector4,
+  UniformNode,
 } from 'three/webgpu';
 import {
   bitangentLocal,
@@ -29,22 +30,18 @@ import {
   uniform,
   uniformArray,
   uv,
+  Var,
   vec2,
   vec3,
   vec4,
-  type ShaderNodeObject,
 } from 'three/tsl';
-import { type TSLMaterial } from './tsl-material';
+import { TSLMaterial } from './tsl-material';
 import { displace, layer, warp } from '../features/lwd';
 import type {
   DisplacementData,
   NoiseData,
-  UniformNumberNode,
-  UniformVector2Node,
-  UniformVector3Node,
-  UniformVector4Node,
   WarpingData,
-} from '../tsl-types';
+} from '../tsl-commons';
 import { applyBump } from '../features/bump';
 import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes';
 import { sobel } from '../utils/sobel-utils';
@@ -97,30 +94,30 @@ export type PlanetUniformData = {
   };
 };
 export type PlanetUniforms = {
-  radius: UniformNumberNode;
-  bumpStrength: UniformNumberNode;
-  flags: UniformArrayNode;
+  radius: UniformNode<'float', number>;
+  bumpStrength: UniformNode<'float', number>;
+  flags: UniformArrayNode<'int'>;
   pbr: {
-    waterLevel: UniformNumberNode;
-    metallicRoughness: UniformVector4Node;
-    emissive: UniformVector2Node;
+    waterLevel: UniformNode<'float', number>;
+    metallicRoughness: UniformNode<'vec4', Vector4>;
+    emissive: UniformNode<'vec2', Vector2>;
   };
   surface: {
     baseTexture?: TextureNode;
-    noise: UniformVector4Node;
-    warping: UniformVector4Node;
+    noise: UniformNode<'vec4', Vector4>;
+    warping: UniformNode<'vec4', Vector4>;
     displacement: {
-      params: UniformVector3Node;
-      noise: UniformVector4Node;
+      params: UniformNode<'vec3', Vector3>;
+      noise: UniformNode<'vec4', Vector4>;
     };
   };
   biomes: {
     baseTexture?: TextureNode;
     emissiveTexture?: TextureNode;
-    temperatureMode: UniformNumberNode;
-    temperatureNoise: UniformVector4Node;
-    humidityMode: UniformNumberNode;
-    humidityNoise: UniformVector4Node;
+    temperatureMode: UniformNode<'float', number>;
+    temperatureNoise: UniformNode<'vec4', Vector4>;
+    humidityMode: UniformNode<'float', number>;
+    humidityNoise: UniformNode<'vec4', Vector4>;
   };
   // uniforms used for baking only
   baking: {
@@ -128,13 +125,12 @@ export type PlanetUniforms = {
     heightMapTexture?: TextureNode;
   };
 };
-export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, PlanetUniformData, PlanetUniforms> {
-  public readonly uniforms: PlanetUniforms;
+export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, PlanetUniformData, PlanetUniforms> {
 
-  constructor(data: PlanetUniformData) {
-    this.uniforms = {
-      radius: uniform(data.radius, 'float'),
-      bumpStrength: uniform(data.bumpStrength, 'float'),
+  uniformize(data: PlanetUniformData): PlanetUniforms {
+    return {
+      radius: uniform(data.radius),
+      bumpStrength: uniform(data.bumpStrength),
       flags: uniformArray(
         [
           +data.flags.showWarping,
@@ -142,11 +138,10 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
           +data.flags.showBumps,
           +data.flags.showBiomes,
           +data.flags.showEmissive,
-        ],
-        'int',
+        ]
       ),
       pbr: {
-        waterLevel: uniform(data.pbr.waterLevel, 'float'),
+        waterLevel: uniform(data.pbr.waterLevel),
         metallicRoughness: uniform(
           new Vector4(
             data.pbr.metallicRoughness.waterRoughness,
@@ -154,12 +149,8 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
             data.pbr.metallicRoughness.groundRoughness,
             data.pbr.metallicRoughness.groundMetalness,
           ),
-          'vec4',
         ),
-        emissive: uniform(
-          new Vector2(data.pbr.emissive.waterEmissiveIntensity, data.pbr.emissive.groundEmissiveIntensity),
-          'vec2',
-        ),
+        emissive: uniform(new Vector2(data.pbr.emissive.waterEmissiveIntensity, data.pbr.emissive.groundEmissiveIntensity)),
       },
       surface: {
         baseTexture: texture(data.surface.baseTexture),
@@ -170,7 +161,6 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
             data.surface.noise.lacunarity,
             data.surface.noise.octaves,
           ),
-          'vec4',
         ),
         warping: uniform(
           new Vector4(
@@ -179,7 +169,6 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
             data.surface.warping.warpFactor.y,
             data.surface.warping.warpFactor.z,
           ),
-          'vec4',
         ),
         displacement: {
           params: uniform(
@@ -188,7 +177,6 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
               data.surface.displacement.params.epsilon,
               data.surface.displacement.params.multiplier,
             ),
-            'vec3',
           ),
           noise: uniform(
             new Vector4(
@@ -197,7 +185,6 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
               data.surface.displacement.noise.lacunarity,
               data.surface.displacement.noise.octaves,
             ),
-            'vec4',
           ),
         },
       },
@@ -212,7 +199,6 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
             data.biomes.temperatureNoise.lacunarity,
             data.biomes.temperatureNoise.octaves,
           ),
-          'vec4',
         ),
         humidityMode: uniform(data.biomes.humidityMode),
         humidityNoise: uniform(
@@ -222,7 +208,6 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
             data.biomes.humidityNoise.lacunarity,
             data.biomes.humidityNoise.octaves,
           ),
-          'vec4',
         ),
       },
       baking: {
@@ -231,6 +216,10 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
       },
     };
   }
+  
+  // --------------------------------------------------
+  // |              Building functions                |
+  // --------------------------------------------------
 
   buildMaterial(): MeshStandardNodeMaterial {
     if (!this.uniforms.surface.baseTexture) {
@@ -248,9 +237,9 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
     // Heightmap & global flags
     const heightLimit = float(1.0).sub(EPSILON);
-    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar();
-    const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar();
-    const FLAG_BIOMES = FLAG_LAND.mul(float(this.uniforms.flags.element(int(3))));
+    const height = Var(layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x), 'height');
+    const FLAG_LAND = Var(step(this.uniforms.pbr.waterLevel, height), 'FLAG_LAND');
+    const FLAG_BIOMES = Var(FLAG_LAND.mul(float(this.uniforms.flags.element(3))), 'FLAG_BIOMES');
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord');
@@ -267,7 +256,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const material = new MeshStandardNodeMaterial();
     material.colorNode = vec4(colour, 1.0);
     material.normalNode = transformNormalToView(
-      mix(normalLocal, bump, FLAG_LAND.mul(this.uniforms.flags.element(int(2)))),
+      mix(normalLocal, bump, FLAG_LAND.mul(int(this.uniforms.flags.element(2)))),
     );
     material.roughnessNode = mix(
       this.uniforms.pbr.metallicRoughness.x,
@@ -304,7 +293,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const heightLimit = float(1.0).sub(EPSILON);
     const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).setName('height');
     const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, height).setName('FLAG_SURFACE_TYPE');
-    const FLAG_BIOMES_ENABLED = FLAG_SURFACE_TYPE.mul(float(this.uniforms.flags.element(int(3)))).setName(
+    const FLAG_BIOMES_ENABLED = FLAG_SURFACE_TYPE.mul(float(this.uniforms.flags.element(3))).setName(
       'FLAG_BIOMES_ENABLED',
     );
 
@@ -361,7 +350,7 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const heightLimit = float(1.0).sub(EPSILON);
     const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar();
     const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, height).toVar();
-    const FLAG_BIOMES_ENABLED = FLAG_SURFACE_TYPE.mul(float(this.uniforms.flags.element(int(3))));
+    const FLAG_BIOMES_ENABLED = FLAG_SURFACE_TYPE.mul(float(this.uniforms.flags.element(3)));
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord');
@@ -421,7 +410,6 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     const s20 = texNode.sample(uv().add(offset.xz)).x.toVar('s02');
     const s21 = texNode.sample(uv().add(offset.yz)).x.toVar('s12');
     const s22 = texNode.sample(uv().add(offset.zz)).x.toVar('s22');
-    // @ts-expect-error: Invalid type definitions for mat3(...) using nodes
     const sobelMat = mat3(s00, s01, s02, s10, uv().x, s12, s20, s21, s22).toVar('sobelMat');
     const normal = sobel(sobelMat, float(texNode.value.width).mul(this.uniforms.bumpStrength)).toVar('N');
 
@@ -431,10 +419,12 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
     return material;
   }
 
-  // --------------------------------------------------------------------------
+  // --------------------------------------------------
+  // |               Utility functions                |
+  // --------------------------------------------------
 
-  private applyXYZTransformations(vPos: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
-    vPos = warp(vPos, this.uniforms.surface.warping, this.uniforms.flags.element(int(0)));
+  private applyXYZTransformations(vPos: Node<'vec3'>): Node<'vec3'> {
+    vPos = warp(vPos, this.uniforms.surface.warping, this.uniforms.flags.element(0));
     return displace(
       vPos,
       this.uniforms.surface.displacement.params,
@@ -444,9 +434,9 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   }
 
   private calculateBiomeTextureCoordinates(
-    vPos: ShaderNodeObject<Node>,
-    heightLimit: ShaderNodeObject<Node>,
-    FLAG_BIOMES_ENABLED: ShaderNodeObject<Node>,
+    vPos: Node<'vec3'>,
+    heightLimit: Node<'float'>,
+    FLAG_BIOMES_ENABLED: Node<'float'>,
   ) {
     const temp = float(
       computeTemperature(vPos, this.uniforms.biomes.temperatureNoise, this.uniforms.biomes.temperatureMode),
@@ -459,19 +449,19 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
   }
 
   private renderBiomes(
-    colour: ShaderNodeObject<Node>,
+    colour: Node<'vec3'>,
     texture: TextureNode,
-    texCoords: ShaderNodeObject<Node>,
-    FLAG_BIOMES_ENABLED: ShaderNodeObject<Node>,
-  ): ShaderNodeObject<Node> {
+    texCoords: Node<'vec2'>,
+    FLAG_BIOMES_ENABLED: Node<'float'>,
+  ): Node<'vec3'> {
     return mix(colour, sampleBiomeTexture(texture, texCoords.x, texCoords.y, colour), FLAG_BIOMES_ENABLED);
   }
 
-  private applyBumpMap(vPos: ShaderNodeObject<Node>, height: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
-    const dx = vec3(tangentLocal.mul(this.uniforms.surface.warping.yzw).mul(0.005)).toVar();
-    const dy = vec3(bitangentLocal.mul(this.uniforms.surface.warping.yzw).mul(0.005)).toVar();
-    const dxHeight = float(layer(vPos.add(dx), this.uniforms.surface.noise, this.uniforms.surface.warping.x)).toVar();
-    const dyHeight = float(layer(vPos.add(dy), this.uniforms.surface.noise, this.uniforms.surface.warping.x)).toVar();
+  private applyBumpMap(vPos: Node<'vec3'>, height: Node<'float'>): Node<'vec3'> {
+    const dx = vec3(tangentLocal.mul(this.uniforms.surface.warping.yzw).mul(0.005)).toVar('dx');
+    const dy = vec3(bitangentLocal.toVec3().mul(this.uniforms.surface.warping.yzw).mul(0.005)).toVar('dy');
+    const dxHeight = float(layer(vPos.add(dx), this.uniforms.surface.noise, this.uniforms.surface.warping.x)).toVar('dxHeight');
+    const dyHeight = float(layer(vPos.add(dy), this.uniforms.surface.noise, this.uniforms.surface.warping.x)).toVar('dyHeight');
     return vec3(
       applyBump(
         normalLocal,
@@ -484,16 +474,16 @@ export class PlanetTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
         this.uniforms.radius,
         this.uniforms.bumpStrength,
       ),
-    ).toVar();
+    );
   }
 
   private applyEmissiveIntensity = Fn(
     ([fragmentColor, biomeTexture, biomeEmissiveTexture, biomeTexCoord, FLAG_SURFACE_TYPE]: [
-      ShaderNodeObject<Node>,
+      Node<'vec3'>,
       TextureNode,
       TextureNode,
-      ShaderNodeObject<Node>,
-      ShaderNodeObject<Node>,
+      Node<'vec2'>,
+      Node<'float'>,
     ]) => {
       // X/Y axes are flipped on texture, so we must also flip coords
       const emissiveColor = vec3(fragmentColor).toVar('emissiveColor');

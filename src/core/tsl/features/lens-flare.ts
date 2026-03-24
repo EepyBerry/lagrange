@@ -24,10 +24,9 @@ import {
   max,
   smoothstep,
 } from 'three/tsl';
-import type { UniformNumberNode, UniformVector2Node, UniformVector3Node } from '../tsl-types';
-import type { VaryingNode } from 'three/webgpu';
+import type { Node } from 'three/webgpu';
 
-export const rand = /*@__PURE__*/ Fn(([i_n]: [UniformNumberNode]) => {
+export const rand = /*@__PURE__*/ Fn(([i_n]: [Node<'float'>]) => {
   return fract(sin(i_n).mul(43758.5453123));
 }).setLayout({
   name: 'LF_rand',
@@ -35,7 +34,7 @@ export const rand = /*@__PURE__*/ Fn(([i_n]: [UniformNumberNode]) => {
   inputs: [{ name: 'n', type: 'float' }],
 });
 
-export const noise = /*@__PURE__*/ Fn(([i_p]: [UniformNumberNode]) => {
+export const noise = /*@__PURE__*/ Fn(([i_p]: [Node<'float'>]) => {
   const fl = float(floor(i_p)).toVar('fl');
   const fc = float(fract(i_p)).toVar('fc');
   return mix(rand(fl), rand(fl.add(1.0)), fc);
@@ -45,7 +44,7 @@ export const noise = /*@__PURE__*/ Fn(([i_p]: [UniformNumberNode]) => {
   inputs: [{ name: 'p', type: 'float' }],
 });
 
-export const hsv2rgb = /*@__PURE__*/ Fn(([i_c]: [UniformVector3Node]) => {
+export const hsv2rgb = /*@__PURE__*/ Fn(([i_c]: [Node<'vec3'>]) => {
   const k = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0).toVar('k');
   const p = vec3(abs(fract(i_c.xxx.add(k.xyz)).mul(6.0).sub(k.www))).toVar('p');
   return i_c.z.mul(mix(k.xxx, clamp(p.sub(k.xxx), 0.0, 1.0), i_c.y));
@@ -55,7 +54,7 @@ export const hsv2rgb = /*@__PURE__*/ Fn(([i_c]: [UniformVector3Node]) => {
   inputs: [{ name: 'c', type: 'vec3' }],
 });
 
-export const saturate2 = /*@__PURE__*/ Fn(([i_x]: [UniformNumberNode]) => {
+export const saturate2 = /*@__PURE__*/ Fn(([i_x]: [Node<'float'>]) => {
   return clamp(i_x, 0, 1);
 }).setLayout({
   name: 'LF_saturate2',
@@ -63,10 +62,12 @@ export const saturate2 = /*@__PURE__*/ Fn(([i_x]: [UniformNumberNode]) => {
   inputs: [{ name: 'x', type: 'float' }],
 });
 
-export const rotateUV = /*@__PURE__*/ Fn(([i_origUv, i_rotation]: [UniformVector2Node, UniformVector3Node]) => {
+export const rotateUV = /*@__PURE__*/ Fn(([i_origUv, i_rotation]: [Node<'vec2'>, Node<'vec3'>]) => {
+  const rotCosine = vec3(cos(i_rotation.x), cos(i_rotation.y), cos(i_rotation.z)).toVar('rotCosine');
+  const rotSine = vec3(sin(i_rotation.x), sin(i_rotation.y), sin(i_rotation.z)).toVar('rotSine');
   return vec2(
-    cos(i_rotation).mul(i_origUv.x).add(sin(i_rotation).mul(i_origUv.y)),
-    cos(i_rotation).mul(i_origUv.y).sub(sin(i_rotation).mul(i_origUv.x)),
+    rotCosine.mul(i_origUv.x).add(rotSine.mul(i_origUv.y)),
+    rotCosine.mul(i_origUv.y).sub(rotSine.mul(i_origUv.x)),
   );
 }).setLayout({
   name: 'LF_rotateUV',
@@ -79,11 +80,11 @@ export const rotateUV = /*@__PURE__*/ Fn(([i_origUv, i_rotation]: [UniformVector
 
 export const drawflare = /*@__PURE__*/ Fn(
   ([i_p, i_rand, i_flareShape, i_flareSize, i_starPoints]: [
-    UniformVector3Node,
-    UniformNumberNode,
-    UniformNumberNode,
-    UniformNumberNode,
-    UniformNumberNode,
+    Node<'vec3'>,
+    Node<'float'>,
+    Node<'float'>,
+    Node<'float'>,
+    Node<'float'>,
   ]) => {
     const lingrad = float(distance(vec2(0), i_p)).toVar('lingrad');
     const expgrad = float(div(1, exp(lingrad.mul(fract(i_rand).mul(0.66).add(0.33))))).toVar('expgrad');
@@ -105,7 +106,7 @@ export const drawflare = /*@__PURE__*/ Fn(
   ],
 });
 
-export const dist = /*@__PURE__*/ Fn(([i_a, i_b]: UniformVector3Node[]) => {
+export const dist = /*@__PURE__*/ Fn(([i_a, i_b]: [Node<'vec3'>, Node<'vec3'>]) => {
   return abs(i_a.x.sub(i_b.x))
     .add(abs(i_a.y.sub(i_b.y)))
     .add(abs(i_a.z.sub(i_b.z)));
@@ -120,10 +121,10 @@ export const dist = /*@__PURE__*/ Fn(([i_a, i_b]: UniformVector3Node[]) => {
 
 export const glare = /*@__PURE__*/ Fn(
   ([i_origUv, i_mouse, i_size, i_starPoints]: [
-    UniformVector2Node,
-    UniformVector2Node,
-    UniformNumberNode,
-    UniformNumberNode,
+    Node<'vec2'>,
+    Node<'vec2'>,
+    Node<'float'>,
+    Node<'float'>,
   ]) => {
     const main = vec2(i_origUv.sub(i_mouse)).toVar('main');
     const ang = float(atan(main.y, main.x).mul(i_starPoints)).toVar('ang');
@@ -146,11 +147,11 @@ export const glare = /*@__PURE__*/ Fn(
 
 export const lensFlare = /*@__PURE__*/ Fn(
   ([i_origUv, i_pos, i_flareParams, i_glareParams, i_starPoints]: [
-    UniformVector2Node,
-    VaryingNode,
-    UniformVector2Node,
-    UniformVector2Node,
-    UniformVector2Node,
+    Node<'vec2'>,
+    Node<'vec3'>,
+    Node<'vec2'>,
+    Node<'vec2'>,
+    Node<'vec2'>,
   ]) => {
     const main = vec2(i_origUv.sub(i_pos)).toVar('main');
     const uvd = vec2(i_origUv.mul(length(i_origUv))).toVar('uvd');
@@ -208,7 +209,7 @@ export const lensFlare = /*@__PURE__*/ Fn(
   ],
 });
 
-export const rndf = /*@__PURE__*/ Fn(([i_w]: [UniformNumberNode]) => {
+export const rndf = /*@__PURE__*/ Fn(([i_w]: [Node<'float'>]) => {
   return float(fract(sin(i_w).mul(1000)));
 }).setLayout({
   name: 'rndf',
@@ -217,7 +218,7 @@ export const rndf = /*@__PURE__*/ Fn(([i_w]: [UniformNumberNode]) => {
 });
 
 export const regShape = /*@__PURE__*/ Fn(
-  ([i_p, i_N, i_streakScale]: [UniformVector2Node, UniformNumberNode, UniformNumberNode]) => {
+  ([i_p, i_N, i_streakScale]: [Node<'vec2'>, Node<'float'>, Node<'float'>]) => {
     const n = int(i_N).toVar('n');
     const a = float(atan(i_p.x, i_p.y).add(0.2)).toVar('a');
     const b = float(div(6.28319, n.toFloat())).toVar('b');
@@ -246,14 +247,14 @@ export const regShape = /*@__PURE__*/ Fn(
 
 export const circle = /*@__PURE__*/ Fn(
   ([i_p, i_size, i_decay, i_color, i_dist, i_pos, i_streakScale, i_colorGain]: [
-    UniformVector2Node,
-    UniformNumberNode,
-    UniformNumberNode,
-    UniformVector3Node,
-    UniformNumberNode,
-    UniformVector2Node,
-    UniformNumberNode,
-    UniformVector3Node,
+    Node<'vec2'>,
+    Node<'float'>,
+    Node<'float'>,
+    Node<'vec3'>,
+    Node<'float'>,
+    Node<'vec2'>,
+    Node<'float'>,
+    Node<'vec3'>,
   ]) => {
     const vColor = vec3(i_color).toVar('vColor');
 
@@ -272,7 +273,8 @@ export const circle = /*@__PURE__*/ Fn(
       ).mul(1.5),
     ).toVar('s');
 
-    vColor.assign(cos(i_colorGain).mul(0.5).add(0.5));
+    const colorGainCosine = vec3(cos(i_colorGain.x), cos(i_colorGain.y), cos(i_colorGain.z)).toVar('colorGainCosine')
+    vColor.assign(colorGainCosine.mul(0.5).add(0.5));
     const f = vec3(c.mul(vColor)).toVar('f');
     f.addAssign(c1.mul(vColor));
     f.addAssign(c2.mul(vColor));

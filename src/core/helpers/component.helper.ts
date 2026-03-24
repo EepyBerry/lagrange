@@ -109,6 +109,7 @@ export function createLensFlare(data: PlanetData, pos: Vector3, color: Color) {
 
 export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): PlanetMeshData {
   const geometry = createSphereGeometryComponent(data.planetMeshQuality);
+  geometry.computeTangents();
   const surfaceTex = TextureHelper.createRampTexture(
     surfaceTexBuf,
     Globals.TEXTURE_SIZES.SURFACE,

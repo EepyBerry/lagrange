@@ -8,6 +8,7 @@ import {
   UniformArrayNode,
   Vector3,
   Vector4,
+  UniformNode,
 } from 'three/webgpu';
 import {
   EPSILON,
@@ -19,22 +20,19 @@ import {
   uniform,
   uniformArray,
   uv,
+  Var,
   vec2,
   vec3,
   vec4,
-  type ShaderNodeObject,
 } from 'three/tsl';
-import { type TSLMaterial } from './tsl-material';
+import { TSLMaterial } from './tsl-material';
 import { displace, warp } from '../features/lwd';
 import { fbm3 } from '../noise/fbm3';
 import type {
   DisplacementData,
   NoiseData,
-  UniformColorNode,
-  UniformVector3Node,
-  UniformVector4Node,
   WarpingData,
-} from '../tsl-types';
+} from '../tsl-commons';
 import { flattenUV } from '../utils/vertex-utils';
 
 export type CloudsUniformData = {
@@ -52,26 +50,23 @@ export type CloudsUniformData = {
   texture: Texture;
 };
 export type CloudsUniforms = {
-  flags: UniformArrayNode;
-  color: UniformColorNode;
-  noise: UniformVector4Node;
-  warping: UniformVector4Node;
+  flags: UniformArrayNode<'int'>;
+  color: UniformNode<'color', Color>;
+  noise: UniformNode<'vec4', Vector4>;
+  warping: UniformNode<'vec4', Vector4>;
   displacement: {
-    params: UniformVector3Node;
-    noise: UniformVector4Node;
+    params: UniformNode<'vec3', Vector3>;
+    noise: UniformNode<'vec4', Vector4>;
   };
   texture: TextureNode;
 };
-export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, CloudsUniformData, CloudsUniforms> {
-  public readonly uniforms: CloudsUniforms;
-
-  constructor(data: CloudsUniformData) {
-    this.uniforms = {
+export class CloudsTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, CloudsUniformData, CloudsUniforms> {
+  uniformize(data: CloudsUniformData): CloudsUniforms {
+    return {
       flags: uniformArray([+data.flags.showWarping, +data.flags.showDisplacement], 'int'),
       color: uniform(data.color),
       noise: uniform(
         new Vector4(data.noise.frequency, data.noise.amplitude, data.noise.lacunarity, data.noise.octaves),
-        'vec4',
       ),
       warping: uniform(
         new Vector4(
@@ -80,7 +75,6 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
           data.warping.warpFactor.y,
           data.warping.warpFactor.z,
         ),
-        'vec4',
       ),
       displacement: {
         params: uniform(
@@ -89,7 +83,6 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
             data.displacement.params.epsilon,
             data.displacement.params.multiplier,
           ),
-          'vec3',
         ),
         noise: uniform(
           new Vector4(
@@ -98,7 +91,6 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
             data.displacement.noise.lacunarity,
             data.displacement.noise.octaves,
           ),
-          'vec4',
         ),
       },
       texture: texture(data.texture),
@@ -132,17 +124,17 @@ export class CloudsTSLMaterial implements TSLMaterial<MeshStandardNodeMaterial, 
 
   // --------------------------------------------------------------------------
 
-  private applyXYZTransformations(vPos: ShaderNodeObject<Node>): ShaderNodeObject<Node> {
-    vPos = vec3(warp(vPos, this.uniforms.warping, this.uniforms.flags.element(int(0)))).toVar('vPos');
+  private applyXYZTransformations(vPos: Node<'vec3'>): Node<'vec3'> {
+    const warpedVPos = Var(vec3(warp(vPos, this.uniforms.warping, this.uniforms.flags.element(int(0)))), 'warpedVPos');
     return displace(
-      vPos,
+      warpedVPos,
       this.uniforms.displacement.params,
       this.uniforms.displacement.noise,
       this.uniforms.flags.element(int(1)),
     );
   }
 
-  private calculateOpacity(vPos: ShaderNodeObject<Node>) {
+  private calculateOpacity(vPos: Node<'vec3'>) {
     const DVEC_A = vec3(0.1, 0.1, 0.0).toVar('DVEC_A');
     const DVEC_B = vec3(0.2, 0.2, 0.0).toVar('DVEC_B');
 

@@ -1,5 +1,5 @@
 import { Fn, float, mat3, mul, normalize, vec3 } from 'three/tsl';
-import type { UniformMatrix3Node, UniformNumberNode } from '../tsl-types';
+import type { UniformMatrix3Node, UniformNumberNode } from '../tsl-commons';
 import { getMatrixElement } from './math-utils';
 
 export const sobel = Fn(([i_heights, i_strength]: [UniformMatrix3Node, UniformNumberNode]) => {

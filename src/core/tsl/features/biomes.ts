@@ -1,10 +1,9 @@
 import { fbm3 } from '../noise/fbm3';
 import { float, step, abs, mix, smoothstep, Fn, vec2, vec4 } from 'three/tsl';
-import type { TextureNode, UniformArrayNode } from 'three/webgpu';
-import type { UniformNumberNode, UniformVector3Node, UniformVector4Node } from '../tsl-types';
+import type { TextureNode, Node } from 'three/webgpu';
 
 export const computeTemperature = /*@__PURE__*/ Fn(
-  ([i_position, i_noiseparams, i_mode]: [UniformVector3Node, UniformVector4Node, UniformNumberNode]) => {
+  ([i_position, i_noiseparams, i_mode]: [Node<'vec3'>, Node<'vec4'>, Node<'float'>]) => {
     const FLAG_POLAR = float(step(0.5, i_mode)).toVar('FLAG_POLAR');
     const FLAG_NOISE = float(step(1.5, i_mode)).toVar('FLAG_NOISE');
 
@@ -24,7 +23,7 @@ export const computeTemperature = /*@__PURE__*/ Fn(
 });
 
 export const computeHumidity = /*@__PURE__*/ Fn(
-  ([i_position, i_noiseparams, i_mode]: [UniformVector3Node, UniformArrayNode, UniformNumberNode]) => {
+  ([i_position, i_noiseparams, i_mode]: [Node<'vec3'>, Node<'vec4'>, Node<'float'>]) => {
     const FLAG_POLAR = float(step(0.5, i_mode)).toVar('FLAG_POLAR');
     const FLAG_NOISE = float(step(1.5, i_mode)).toVar('FLAG_NOISE');
 
@@ -47,20 +46,20 @@ export const computeHumidity = /*@__PURE__*/ Fn(
 export const sampleBiomeTexture = /*@__PURE__*/ Fn(
   ([i_tex, i_temperature, i_humidity, i_color]: [
     TextureNode,
-    UniformNumberNode,
-    UniformNumberNode,
-    UniformVector3Node,
+    Node<'float'>,
+    Node<'float'>,
+    Node<'vec3'>,
   ]) => {
     const texel = vec4(i_tex.sample(vec2(i_humidity, i_temperature))).toVar('texel');
     return mix(i_color, texel.xyz, texel.w);
   },
-); /*.setLayout({
+)/* .setLayout({
   name: 'LG_BIOME_sampleBiomeTexture',
   type: 'float',
   inputs: [
-    { name: 'tex', type: 'sampler2D' },
+    { name: 'tex', type: 'texture' },
     { name: 'temperature', type: 'float' },
     { name: 'humidity', type: 'float' },
     { name: 'color', type: 'vec3' },
   ]
-})*/
+}); */

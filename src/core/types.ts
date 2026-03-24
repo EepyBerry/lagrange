@@ -1,6 +1,5 @@
 import type {
   AmbientLight,
-  Clock,
   DataTexture,
   DirectionalLight,
   Group,
@@ -8,6 +7,7 @@ import type {
   PerspectiveCamera,
   Scene,
   Texture,
+  Timer,
 } from 'three';
 import type { LensFlareEffect } from './effects/lens-flare.effect';
 import type { WebGPURenderer } from 'three/webgpu';
@@ -81,7 +81,7 @@ export type EditorSceneData = {
   lensFlare?: LensFlareEffect;
 
   // Misc
-  clock?: Clock;
+  timer?: Timer;
 };
 
 // ------------------------------------ Mesh data -----------------------------------

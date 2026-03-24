@@ -1,6 +1,5 @@
-import { Color, NodeMaterial, type Vector3 } from 'three/webgpu';
-import type { TSLMaterial } from './tsl-material';
-import type { UniformColorNode, UniformNumberNode, UniformVector3Node } from '../tsl-types';
+import { Color, Node, NodeMaterial, UniformNode, type Vector3 } from 'three/webgpu';
+import { TSLMaterial } from './tsl-material';
 import {
   cameraPosition,
   Discard,
@@ -46,35 +45,33 @@ export type AtmosphereUniformsData = {
 };
 export type AtmosphereUniforms = {
   sunlight: {
-    position: UniformVector3Node;
-    intensity: UniformNumberNode;
+    position: UniformNode<'vec3', Vector3>;
+    intensity: UniformNode<'float', number>;
   };
   transform: {
-    radius: UniformNumberNode;
-    surfaceRadius: UniformNumberNode;
+    radius: UniformNode<'float', number>;
+    surfaceRadius: UniformNode<'float', number>;
   };
   render: {
-    density: UniformNumberNode;
-    intensity: UniformNumberNode;
-    colorMode: UniformNumberNode;
-    hue: UniformNumberNode;
-    tint: UniformColorNode;
+    density: UniformNode<'float', number>;
+    intensity: UniformNode<'float', number>;
+    colorMode: UniformNode<'float', number>;
+    hue: UniformNode<'float', number>;
+    tint: UniformNode<'color', Color>;
     advanced: {
-      mieScatteringConstant: UniformNumberNode;
-      rayleighDensityRatio: UniformNumberNode;
-      mieDensityRatio: UniformNumberNode;
-      opticalDensityRatio: UniformNumberNode;
+      mieScatteringConstant: UniformNode<'float', number>;
+      rayleighDensityRatio: UniformNode<'float', number>;
+      mieDensityRatio: UniformNode<'float', number>;
+      opticalDensityRatio: UniformNode<'float', number>;
     };
   };
 };
-export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, AtmosphereUniformsData, AtmosphereUniforms> {
-  public readonly uniforms: AtmosphereUniforms;
-
-  constructor(data: AtmosphereUniformsData) {
-    this.uniforms = {
+export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereUniformsData, AtmosphereUniforms> {
+  uniformize(data: AtmosphereUniformsData): AtmosphereUniforms {
+    return {
       sunlight: {
-        position: uniform(data.sunlight.position, 'vec3').setName('uLightPosition'),
-        intensity: uniform(data.sunlight.intensity, 'float').setName('uLightIntensity'),
+        position: uniform(data.sunlight.position).setName('uLightPosition'),
+        intensity: uniform(data.sunlight.intensity).setName('uLightIntensity'),
       },
       transform: {
         radius: uniform(data.transform.radius).setName('uRadius'),
@@ -83,7 +80,7 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
       render: {
         density: uniform(data.render.density).setName('uDensity'),
         intensity: uniform(data.render.intensity).setName('uIntensity'),
-        colorMode: uniform(data.render.colorMode, 'int').setName('uColorMode'),
+        colorMode: uniform(data.render.colorMode).setName('uColorMode'),
         hue: uniform(data.render.hue).setName('uHue'),
         tint: uniform(data.render.tint).setName('uTint'),
         advanced: {
@@ -97,7 +94,7 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
   }
 
   buildMaterial(): NodeMaterial {
-    const fragmentNode = Fn(([posGeo, posWorld]: [UniformVector3Node, UniformVector3Node]) => {
+    const fragmentNode = Fn(([posGeo, posWorld]: [Node<'vec3'>, Node<'vec3'>]) => {
       const eye = vec3(cameraPosition).toVar('eye');
       const rayDir = rayDirection(modelWorldMatrix, posGeo, eye).toVar('rayDir');
       const sunglightDir = vec3(normalize(this.uniforms.sunlight.position.sub(posWorld.xyz))).toVar('sunlightDir');
@@ -139,7 +136,7 @@ export class AtmosphereTSLMaterial implements TSLMaterial<NodeMaterial, Atmosphe
       If(this.uniforms.render.colorMode.equal(int(2)), () => {
         colorNode.assign(IShifted.mul(tint).mul(this.uniforms.render.intensity));
       });
-      colorNode.a.clampAssign(0.0, 1.0);
+      colorNode.a = colorNode.a.clamp(0.0, 1.0);
       return colorNode;
     }).setLayout({
       name: 'fragmentNode',

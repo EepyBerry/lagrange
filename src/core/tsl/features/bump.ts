@@ -1,5 +1,5 @@
 import { vec3, cross, normalize, mix, Fn } from 'three/tsl';
-import type { UniformNumberNode, UniformVector3Node } from '../tsl-types';
+import type { Node } from 'three/webgpu';
 
 // Transpiled (GLSL) from Daniel Greenheck:
 // https://github.com/dgreenheck/threejs-procedural-planets
@@ -27,15 +27,15 @@ import type { UniformNumberNode, UniformVector3Node } from '../tsl-types';
 // SOFTWARE.
 export const applyBump = /*@__PURE__*/ Fn(
   ([i_normal, i_position, i_dx, i_dy, i_height, i_dxHeight, i_dyHeight, i_radius, i_strength]: [
-    UniformVector3Node,
-    UniformVector3Node,
-    UniformVector3Node,
-    UniformVector3Node,
-    UniformNumberNode,
-    UniformNumberNode,
-    UniformNumberNode,
-    UniformNumberNode,
-    UniformNumberNode,
+    Node<'vec3'>,
+    Node<'vec3'>,
+    Node<'vec3'>,
+    Node<'vec3'>,
+    Node<'float'>,
+    Node<'float'>,
+    Node<'float'>,
+    Node<'float'>,
+    Node<'float'>,
   ]) => {
     const hPos = vec3(i_position.mul(i_radius.add(i_height))).toVar('hPos');
     const dxPos = vec3(i_position.add(i_dx)).mul(i_radius.add(i_dxHeight)).toVar('dxPos');
