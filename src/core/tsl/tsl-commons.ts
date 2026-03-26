@@ -1,5 +1,5 @@
-import { struct } from 'three/tsl';
 import type { Vector3 } from 'three/webgpu';
+import { struct } from 'three/tsl';
 
 export type WarpingData = {
   layers: number;
@@ -8,7 +8,7 @@ export type WarpingData = {
 export const WarpingStruct = struct({
   layers: 'float',
   warpFactor: 'vec3',
-})
+});
 
 export type DisplacementData = {
   factor: number;
@@ -19,7 +19,7 @@ export const DisplacementStruct = struct({
   factor: 'float',
   epsilon: 'float',
   multiplier: 'float',
-})
+});
 
 export type NoiseData = {
   frequency: number;
@@ -32,4 +32,4 @@ export const NoiseStruct = struct({
   amplitude: 'float',
   lacunarity: 'float',
   octaves: 'float',
-})
+});

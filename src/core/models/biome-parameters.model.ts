@@ -1,31 +1,31 @@
-import { Color } from 'three';
-import { nanoid } from 'nanoid';
-import { clamp } from 'three/src/math/MathUtils.js';
 import { clampedPRNG } from '@core/utils/math-utils';
+import { nanoid } from 'nanoid';
+import { Color } from 'three';
+import { clamp } from 'three/src/math/MathUtils.js';
 import { ObservableRelay, type ObservableNotifyFunction } from '../utils/observable-utils';
 
 export class BiomeDimensions {
-  temperatureMin: number = 0.0;
-  temperatureMax: number = 1.0;
-  humidityMin: number = 0.0;
-  humidityMax: number = 1.0;
+  temperatureMin: number = 0;
+  temperatureMax: number = 1;
+  humidityMin: number = 0;
+  humidityMax: number = 1;
 }
 export class BiomeParameters extends ObservableRelay {
   private _id: string;
 
-  private _tempMin: number = 0.0;
-  private _tempMax: number = 1.0;
-  private _humiMin: number = 0.0;
-  private _humiMax: number = 1.0;
+  private _tempMin: number = 0;
+  private _tempMax: number = 1;
+  private _humiMin: number = 0;
+  private _humiMax: number = 1;
 
   private _color: Color;
   private _smoothness: number = 0.2;
 
   private _emissiveOverride: boolean = false;
-  private _emissiveIntensity: number = 0.0;
+  private _emissiveIntensity: number = 0;
 
   // Parent values
-  private _parentEmissiveIntensity: number = 0.0;
+  private _parentEmissiveIntensity: number = 0;
 
   constructor(
     keyPrefix: string,
@@ -46,7 +46,7 @@ export class BiomeParameters extends ObservableRelay {
     this._color = new Color(color);
     this._smoothness = smoothness;
     this._emissiveOverride = emissiveOverride ?? false;
-    this._emissiveIntensity = emissiveIntensity ?? 0.0;
+    this._emissiveIntensity = emissiveIntensity ?? 0;
   }
 
   public get id(): string {
@@ -60,7 +60,7 @@ export class BiomeParameters extends ObservableRelay {
     return this._tempMin;
   }
   public set tempMin(value: number) {
-    this._tempMin = clamp(value, 0.0, 1.0);
+    this._tempMin = clamp(value, 0, 1);
     this._tempMax = clamp(this._tempMax, this._tempMin, 1);
     this.relayNotify({ key: this.keyPrefix, data: { biome: this } });
   }
@@ -68,7 +68,7 @@ export class BiomeParameters extends ObservableRelay {
     return this._tempMax;
   }
   public set tempMax(value: number) {
-    this._tempMax = clamp(value, 0.0, 1.0);
+    this._tempMax = clamp(value, 0, 1);
     this._tempMin = clamp(this._tempMin, 0, this._tempMax);
     this.relayNotify({ key: this.keyPrefix, data: { biome: this } });
   }
@@ -77,7 +77,7 @@ export class BiomeParameters extends ObservableRelay {
     return this._humiMin;
   }
   public set humiMin(value: number) {
-    this._humiMin = clamp(value, 0.0, 1.0);
+    this._humiMin = clamp(value, 0, 1);
     this._humiMax = clamp(this._humiMax, this._humiMin, 1);
     this.relayNotify({ key: this.keyPrefix, data: { biome: this } });
   }
@@ -85,7 +85,7 @@ export class BiomeParameters extends ObservableRelay {
     return this._humiMax;
   }
   public set humiMax(value: number) {
-    this._humiMax = clamp(value, 0.0, 1.0);
+    this._humiMax = clamp(value, 0, 1);
     this._humiMin = clamp(this._humiMin, 0, this._humiMax);
     this.relayNotify({ key: this.keyPrefix, data: { biome: this } });
   }
@@ -101,7 +101,7 @@ export class BiomeParameters extends ObservableRelay {
     return this._smoothness;
   }
   public set smoothness(value: number) {
-    this._smoothness = clamp(value, 0.0, 1.0);
+    this._smoothness = clamp(value, 0, 1);
     this.relayNotify({ key: this.keyPrefix, data: { biome: this } });
   }
 

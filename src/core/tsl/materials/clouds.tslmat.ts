@@ -1,16 +1,4 @@
 import {
-  Color,
-  Texture,
-  MeshBasicNodeMaterial,
-  MeshStandardNodeMaterial,
-  Node,
-  TextureNode,
-  UniformArrayNode,
-  Vector3,
-  Vector4,
-  UniformNode,
-} from 'three/webgpu';
-import {
   EPSILON,
   float,
   int,
@@ -25,15 +13,23 @@ import {
   vec3,
   vec4,
 } from 'three/tsl';
-import { TSLMaterial } from './tsl-material';
+import {
+  Color,
+  Texture,
+  MeshBasicNodeMaterial,
+  MeshStandardNodeMaterial,
+  Node,
+  TextureNode,
+  UniformArrayNode,
+  Vector3,
+  Vector4,
+  UniformNode,
+} from 'three/webgpu';
+import type { DisplacementData, NoiseData, WarpingData } from '../tsl-commons';
 import { displace, warp } from '../features/lwd';
 import { fbm3 } from '../noise/fbm3';
-import type {
-  DisplacementData,
-  NoiseData,
-  WarpingData,
-} from '../tsl-commons';
 import { flattenUV } from '../utils/vertex-utils';
+import { TSLMaterial } from './tsl-material';
 
 export type CloudsUniformData = {
   flags: {
@@ -135,8 +131,8 @@ export class CloudsTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Clo
   }
 
   private calculateOpacity(vPos: Node<'vec3'>) {
-    const DVEC_A = vec3(0.1, 0.1, 0.0).toVar('DVEC_A');
-    const DVEC_B = vec3(0.2, 0.2, 0.0).toVar('DVEC_B');
+    const DVEC_A = vec3(0.1, 0.1, 0).toVar('DVEC_A');
+    const DVEC_B = vec3(0.2, 0.2, 0).toVar('DVEC_B');
 
     const fOpacity = vec3(
       fbm3(vPos, this.uniforms.noise),
@@ -144,7 +140,7 @@ export class CloudsTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Clo
       fbm3(vPos.add(DVEC_B), this.uniforms.noise),
     ).toVar('fOpacity');
     const opacity = vec3(fbm3(vPos.add(fOpacity), this.uniforms.noise)).toVar('opacity');
-    const texCoords = vec2(min(float(1.0).sub(EPSILON), opacity.x)).toVar('texCoords');
+    const texCoords = vec2(min(float(1).sub(EPSILON), opacity.x)).toVar('texCoords');
     return this.uniforms.texture.sample(texCoords).xyz;
   }
 }

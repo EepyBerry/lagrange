@@ -1,10 +1,10 @@
 import type { Vector3 } from 'three';
+import type { AtmosphereUniformsData } from '@/core/tsl/materials/atmosphere.tslmat';
 import type PlanetData from '../planet-data.model';
 import { ModelConverter } from './model-converter';
-import type { AtmosphereUniformsData } from '@/core/tsl/materials/atmosphere.tslmat';
 
 export class AtmosphereDataConverter extends ModelConverter<PlanetData, AtmosphereUniformsData> {
-  private _sunPosition: Vector3;
+  private readonly _sunPosition: Vector3;
 
   constructor(data: PlanetData, sunPosition: Vector3) {
     super(data);

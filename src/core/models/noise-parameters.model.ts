@@ -1,6 +1,6 @@
-import { clamp } from 'three/src/math/MathUtils.js';
-import { Vector3 } from 'three';
 import { clampedPRNG } from '@core/utils/math-utils';
+import { Vector3 } from 'three';
+import { clamp } from 'three/src/math/MathUtils.js';
 import { ObservableRelay, type ObservableNotifyFunction } from '../utils/observable-utils';
 
 export class NoiseParameters extends ObservableRelay {
@@ -10,7 +10,7 @@ export class NoiseParameters extends ObservableRelay {
   private _octaves: number = 2;
 
   private _layers: number = 1;
-  private _warpFactor: Vector3 = new Vector3(1.0);
+  private _warpFactor: Vector3 = new Vector3(1);
 
   constructor(
     keyPrefix: string,
@@ -25,8 +25,8 @@ export class NoiseParameters extends ObservableRelay {
     this._amplitude = clamp(amp ?? this._amplitude, 0, 10);
     this._lacunarity = clamp(lac ?? this._lacunarity, 0, 10);
     this._octaves = clamp(oct ?? this._octaves, 0, 8);
-    this._layers = 1.0;
-    this._warpFactor.setScalar(1.0);
+    this._layers = 1;
+    this._warpFactor.setScalar(1);
   }
 
   public get frequency(): number {
@@ -101,9 +101,9 @@ export class NoiseParameters extends ObservableRelay {
     this.lacunarity = clamp(data?._lacunarity ?? this._lacunarity, 0, 10);
     this.octaves = clamp(data?._octaves ?? this._octaves, 0, 8);
     this.layers = clamp(data?._layers ?? 1, 1, 3);
-    this.xWarpFactor = data?._warpFactor ? data._warpFactor.x : 1.0;
-    this.yWarpFactor = data?._warpFactor ? data._warpFactor.y : 1.0;
-    this.zWarpFactor = data?._warpFactor ? data._warpFactor.z : 1.0;
+    this.xWarpFactor = data?._warpFactor ? data._warpFactor.x : 1;
+    this.yWarpFactor = data?._warpFactor ? data._warpFactor.y : 1;
+    this.zWarpFactor = data?._warpFactor ? data._warpFactor.z : 1;
   }
 
   public reset(freq: number, amp: number, lac: number, oct: number, layers?: number, warpScalar?: number): void {
@@ -112,9 +112,9 @@ export class NoiseParameters extends ObservableRelay {
     this.lacunarity = clamp(lac, 0, 10);
     this.octaves = clamp(oct, 0, 8);
     this.layers = clamp(layers ?? 1, 1, 3);
-    this.xWarpFactor = warpScalar ?? 1.0;
-    this.yWarpFactor = warpScalar ?? 1.0;
-    this.zWarpFactor = warpScalar ?? 1.0;
+    this.xWarpFactor = warpScalar ?? 1;
+    this.yWarpFactor = warpScalar ?? 1;
+    this.zWarpFactor = warpScalar ?? 1;
   }
 
   // Note: adjusted ranges to get more coherent data

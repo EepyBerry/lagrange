@@ -1,3 +1,4 @@
+import { float, length, positionGeometry, texture, uniform, uv, vec2 } from 'three/tsl';
 import {
   DoubleSide,
   MeshBasicNodeMaterial,
@@ -7,9 +8,8 @@ import {
   UniformNode,
   type TextureNode,
 } from 'three/webgpu';
-import { TSLMaterial } from './tsl-material';
-import { float, length, positionGeometry, texture, uniform, uv, vec2 } from 'three/tsl';
 import { flattenUV } from '../utils/vertex-utils';
+import { TSLMaterial } from './tsl-material';
 
 export type RingUniformData = {
   innerRadius: number;
@@ -58,11 +58,7 @@ export class RingTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, RingU
     return this.uniforms.texture.sample(texCoord);
   }
 
-  private clampToRange(
-    i_v: Node<'float'>,
-    i_min: Node<'float'>,
-    i_max: Node<'float'>,
-  ): Node<'float'> {
+  private clampToRange(i_v: Node<'float'>, i_min: Node<'float'>, i_max: Node<'float'>): Node<'float'> {
     return i_v.sub(i_min).div(i_max.sub(i_min));
   }
 }

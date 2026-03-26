@@ -34,16 +34,16 @@
       </CollapsibleSection>
     </template>
     <template #actions>
-      <LgvButton v-if="!!allowRendererFallback" class="warn" icon="tabler:reload" @click="closeWithFallback">
+      <LgvButton v-if="allowRendererFallback" class="warn" icon="tabler:reload" @click="closeWithFallback">
         {{ $t('dialog.editorerror.$action_reload_fallback_renderer') }}
       </LgvButton>
     </template>
   </DialogElement>
 </template>
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
-import DialogElement from '@components/global/elements/DialogElement.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
+import DialogElement from '@components/global/elements/DialogElement.vue';
+import { ref, type Ref } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
 const allowRendererFallback: Ref<boolean> = ref(false);

@@ -1,4 +1,8 @@
-import { MESH_NAME_PLANET, MESH_NAME_RING_ANCHOR } from '../globals';
+import {
+  LensFlareTSLMaterial,
+  type LensFlareData,
+  type LensFlareUniforms,
+} from '@core/tsl/materials/lens-flare.tslmat';
 import { damp } from 'three/src/math/MathUtils.js';
 import {
   Camera,
@@ -14,11 +18,7 @@ import {
   type NodeMaterial,
   type WebGPURenderer,
 } from 'three/webgpu';
-import {
-  LensFlareTSLMaterial,
-  type LensFlareData,
-  type LensFlareUniforms,
-} from '@core/tsl/materials/lens-flare.tslmat';
+import { MESH_NAME_PLANET, MESH_NAME_RING_ANCHOR } from '../globals';
 
 /**
  * Custom class that contains all the processing required to create lens flares.
@@ -26,18 +26,17 @@ import {
  * Based on Anderson Mancini's code: https://github.com/ektogamat/lensflare-threejs-vanilla
  */
 export class LensFlareEffect {
-  private _parameters: LensFlareData;
-  private _tslMaterial: LensFlareTSLMaterial;
-  private _mesh: Mesh;
-  private _uniforms: LensFlareUniforms;
+  private readonly _parameters: LensFlareData;
+  private readonly _tslMaterial: LensFlareTSLMaterial;
+  private readonly _mesh: Mesh;
+  private readonly _uniforms: LensFlareUniforms;
 
-  private _internalOpacity: number;
-  private _viewport: Vector4;
-  private _flarePosition: Vector3;
-  private _raycaster: Raycaster;
+  private _internalOpacity: number = 1;
+  private readonly _viewport: Vector4;
+  private readonly _flarePosition: Vector3;
+  private readonly _raycaster: Raycaster;
 
   constructor(data: LensFlareData) {
-    this._internalOpacity = 1;
     this._viewport = new Vector4();
     this._flarePosition = new Vector3();
     this._raycaster = new Raycaster();
@@ -57,14 +56,14 @@ export class LensFlareEffect {
 
     const iObject = intersects[0].object as Mesh;
     const iMaterial = iObject.material as NodeMaterial;
-    if (!iObject.visible) {
-      this._internalOpacity = 1;
-    } else {
+    if (iObject.visible) {
       if (iMaterial.transparent && iMaterial.opacity < 0.98) {
         this._internalOpacity = 1 / (iMaterial.opacity * 10);
       } else {
         this._internalOpacity = iObject.userData.lens === 'no-occlusion' ? 1 : 0;
       }
+    } else {
+      this._internalOpacity = 1;
     }
   }
 

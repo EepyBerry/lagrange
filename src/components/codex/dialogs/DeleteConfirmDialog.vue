@@ -30,10 +30,10 @@
   </DialogElement>
 </template>
 <script setup lang="ts">
-import LgvButton from '@/_lib/components/LgvButton.vue';
-import type { IDBPlanet } from '@/dexie.config';
 import DialogElement from '@components/global/elements/DialogElement.vue';
 import { ref, type Ref } from 'vue';
+import type { IDBPlanet } from '@/dexie.config';
+import LgvButton from '@/_lib/components/LgvButton.vue';
 
 const planet: Ref<IDBPlanet | null> = ref(null);
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);

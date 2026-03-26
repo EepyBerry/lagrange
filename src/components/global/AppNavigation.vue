@@ -36,13 +36,13 @@
 </template>
 
 <script setup lang="ts">
-import { EventBus } from '@/core/event-bus';
 import { uwuifyPath } from '@core/extras';
+import * as Globals from '@core/globals';
 import { useFloating, autoUpdate, offset, type Placement } from '@floating-ui/vue';
 import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
-import * as Globals from '@core/globals';
 import LgvLink from '@/_lib/components/LgvLink.vue';
+import { EventBus } from '@/core/event-bus';
 
 const navMenuTrigger = useTemplateRef('navMenuTrigger');
 const navMenu = useTemplateRef('navMenu');

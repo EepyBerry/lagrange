@@ -12,11 +12,11 @@
 </template>
 
 <script setup lang="ts">
-import LgvLink from '@/_lib/components/LgvLink.vue';
 import AppLogo from '@components/global/elements/AppLogo.vue';
 import { useHead } from '@unhead/vue';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import LgvLink from '@/_lib/components/LgvLink.vue';
 
 const i18n = useI18n();
 useHead({
@@ -74,7 +74,10 @@ function loadMessage(): string {
     font-weight: 400;
   }
   .ultra {
-    font-family: VCR OSD Mono;
+    font-family:
+      VCR OSD Mono,
+      Jetbrains Mono,
+      monospace;
   }
 }
 </style>

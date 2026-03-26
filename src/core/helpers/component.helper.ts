@@ -173,7 +173,7 @@ export function createClouds(data: PlanetData, textureBuffer: Uint8Array): Cloud
 }
 
 export function createAtmosphere(data: PlanetData, sunPos: Vector3): AtmosphereMeshData {
-  // note: geometry is scaled via the planetGroup: always set to [1.0 + height]
+  // note: geometry is scaled via the planetGroup: always set to [1 + height]
   const geometry = createSphereGeometryComponent(data.planetMeshQuality, 1 + data.atmosphereHeight);
   const dataConverter = new AtmosphereDataConverter(data, sunPos);
   const tslMaterial = new AtmosphereTSLMaterial(dataConverter.convert());

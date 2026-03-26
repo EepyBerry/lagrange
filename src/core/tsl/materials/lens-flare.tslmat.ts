@@ -1,8 +1,8 @@
 import type { Color, Vector3 } from 'three';
-import { AdditiveBlending, Node, NodeMaterial, UniformNode, Vector2 } from 'three/webgpu';
-import { TSLMaterial } from './tsl-material';
 import { float, Fn, If, Loop, positionGeometry, pow, uniform, uv, vec2, vec3, vec4 } from 'three/tsl';
+import { AdditiveBlending, Node, NodeMaterial, UniformNode, Vector2 } from 'three/webgpu';
 import { circle, lensFlare, rndf } from '../features/lens-flare';
+import { TSLMaterial } from './tsl-material';
 
 export type LensFlareData = {
   lensPosition: Vector3;
@@ -31,7 +31,6 @@ export type LensFlareUniforms = {
   streaksScale: UniformNode<'float', number>;
 };
 export class LensFlareTSLMaterial extends TSLMaterial<NodeMaterial, LensFlareData, LensFlareUniforms> {
-
   uniformize(data: LensFlareData): LensFlareUniforms {
     return {
       resolution: uniform(new Vector2(window.innerWidth, window.innerHeight)).setName('uResolution'),
@@ -66,7 +65,7 @@ export class LensFlareTSLMaterial extends TSLMaterial<NodeMaterial, LensFlareDat
       );
       const finalColor = vec3(
         lensFlare(localUv, mouse, flareParams, glareParams, starPointsParams)
-          .mul(20.0)
+          .mul(20)
           .mul(this.uniforms.colorGain)
           .div(2),
       ).toVar('finalColor');
@@ -78,7 +77,7 @@ export class LensFlareTSLMaterial extends TSLMaterial<NodeMaterial, LensFlareDat
             circle(
               localUv,
               pow(rndf(float(i).mul(2000)).mul(2.8), 0.1).add(1.41),
-              0.0,
+              0,
               circColor.add(vec3(i)),
               rndf(float(i).mul(20))
                 .mul(3)
@@ -96,7 +95,7 @@ export class LensFlareTSLMaterial extends TSLMaterial<NodeMaterial, LensFlareDat
 
     // init material & set outputs
     const material = new NodeMaterial();
-    material.vertexNode = Fn(() => vec4(positionGeometry, 1.0))();
+    material.vertexNode = Fn(() => vec4(positionGeometry, 1))();
     material.fragmentNode = mainNode(uv());
     material.transparent = true;
     material.depthWrite = false;

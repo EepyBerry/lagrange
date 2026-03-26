@@ -25,7 +25,7 @@
       @click="togglePanel"
     />
   </div>
-  <table v-show="panelOpen" class="panel-table">
+  <table role="presentation" v-show="panelOpen" class="panel-table">
     <template v-for="step of lgColorRamp?.steps" :key="step.id">
       <tr>
         <td class="action">
@@ -58,7 +58,7 @@
         </td>
         <td>
           <div class="color-wrapper">
-            <span
+            <div
               class="current-color"
               :style="{ backgroundColor: `#${step.color.getHexString()}` }"
               @click="togglePicker(step.id)"
@@ -68,7 +68,7 @@
                 class="alpha-color"
                 :style="{ background: alphaToGrayscale(step.alpha, true) }"
               ></div>
-            </span>
+            </div>
             <LgvButton
               class="sm"
               :class="{ success: pickerIdOpen === step.id }"
@@ -124,11 +124,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, type Ref } from 'vue';
-import { ColorPicker } from 'vue-accessible-color-picker';
 import InputSliderElement from '@components/global/elements/InputSliderElement.vue';
 import { ColorRamp, type ColorRampStep } from '@core/models/color-ramp.model';
 import { alphaToGrayscale, colorRampToStyle } from '@core/utils/render-utils';
+import { onMounted, ref, watch, type Ref } from 'vue';
+import { ColorPicker } from 'vue-accessible-color-picker';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 
 const lgColorRamp = defineModel<ColorRamp>();
@@ -190,16 +190,16 @@ function addStep() {
 
 function updateStepFactor(id: string, e: Event) {
   const htmlInput = e.target as HTMLInputElement;
-  if (!htmlInput.valueAsNumber || isNaN(htmlInput.valueAsNumber)) {
+  if (!htmlInput.valueAsNumber || Number.isNaN(htmlInput.valueAsNumber)) {
     return;
   }
   lgColorRamp.value?.updateStep(id, { factor: htmlInput.valueAsNumber });
   updateRamp();
 }
 function updateStepColor(step: ColorRampStep, c: string) {
-  const intAlpha = parseInt(c.substring(7), 16);
-  const floatAlpha = parseFloat((intAlpha / 255.0).toFixed(2));
-  const alpha = $props.mode === 'rgba' ? floatAlpha : 1.0;
+  const intAlpha = Number.parseInt(c.substring(7), 16);
+  const floatAlpha = Number.parseFloat((intAlpha / 255).toFixed(2));
+  const alpha = $props.mode === 'rgba' ? floatAlpha : 1;
   lgColorRamp.value?.updateStep(step.id, { color: c.substring(0, 7), alpha });
   updateRamp();
 }

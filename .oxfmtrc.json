@@ -9,7 +9,7 @@
   "bracketSpacing": true,
   "sortImports": {
     "order": "asc",
-    "newlinesBetween": true,
+    "newlinesBetween": false,
     "groups": [
       "type-import",
       ["value-builtin", "value-external"],
@@ -17,7 +17,6 @@
       "value-internal",
       ["type-parent", "type-sibling", "type-index"],
       ["value-parent", "value-sibling", "value-index"],
-      "ts-equals-import",
       "unknown"
     ]
   },

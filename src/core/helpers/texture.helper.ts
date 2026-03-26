@@ -7,20 +7,6 @@ import Rect from "../utils/math/rect";
 
 const CUBE_TEXTURE_LOADER = new CubeTextureLoader();
 
-/**
- *
- * @param path Loads a THREE.CubeTexture from the given path and faces
- * @param faces the faces of the cubemap
- */
-export function loadCubeTexture(path: string, faces: string[], filter?: MinificationTextureFilter) {
-  if (faces.length !== 6) {
-    throw new Error("Exactly six faces are required for a CubeTexture !");
-  }
-  const cubemap = CUBE_TEXTURE_LOADER.setPath(path).load(faces);
-  cubemap.minFilter = filter ?? NearestFilter;
-  return cubemap;
-}
-
 export function loadCubeTextureSkybox(scene: Scene, path: string, filter?: MinificationTextureFilter) {
   const cubemap = CUBE_TEXTURE_LOADER.setPath(path).load([
     "right.png",
@@ -70,10 +56,10 @@ function fillRamp(buffer: Uint8Array, w: number, steps: ColorRampStep[]) {
     for (let px = 0; px < totalPixels; px++) {
       lerpColor.lerpColors(currentStep.color, nextStep.color, truncateTo(px / totalPixels, 1e4));
       lerpAlpha = lerp(currentStep.alpha, nextStep.alpha, truncateTo(px / totalPixels, 1e4));
-      buffer[stride] = clamp(lerpColor.r * 255.0, 0, 255);
-      buffer[stride + 1] = clamp(lerpColor.g * 255.0, 0, 255);
-      buffer[stride + 2] = clamp(lerpColor.b * 255.0, 0, 255);
-      buffer[stride + 3] = clamp(lerpAlpha * 255.0, 0, 255);
+      buffer[stride] = clamp(lerpColor.r * 255, 0, 255);
+      buffer[stride + 1] = clamp(lerpColor.g * 255, 0, 255);
+      buffer[stride + 2] = clamp(lerpColor.b * 255, 0, 255);
+      buffer[stride + 3] = clamp(lerpAlpha * 255, 0, 255);
       stride += 4;
     }
   }
@@ -112,7 +98,7 @@ export function fillBiomeEmissivityLayer(biome: BiomeParameters, canvas: Offscre
   // Modulate emissivity value by biome intensity (10 = max value)
   // Note: only using green channel, which the human eye is more sensitive to
   const texColor = new Color("#000000");
-  texColor.g = (biome.emissiveOverride ? biome.emissiveIntensity : biome.parentEmissiveIntensity) / 10.0;
+  texColor.g = (biome.emissiveOverride ? biome.emissiveIntensity : biome.parentEmissiveIntensity) / 10;
   // Early return if smoothness is zero
   if (biome.smoothness <= 1e-4) {
     fillRect(canvas, biomeRect, biome.color);
@@ -143,7 +129,7 @@ function fillRect(canvas: OffscreenCanvas, startRect: Rect, color: Color) {
  * @param canvas the OffscreenCanvas to draw on
  * @param startRect the Rect to start drwaing at
  * @param baseColor base color to draw with
- * @param smoothingDistance orthogonal distance between the edge of the section and the first rect where pixels have an alpha of 1.0
+ * @param smoothingDistance orthogonal distance between the edge of the section and the first rect where pixels have an alpha of 1
  */
 function shrinkFillRect(canvas: OffscreenCanvas, startRect: Rect, baseColor: Color, smoothingDistance: number): void {
   // ---- Precalculation phase ----
@@ -175,7 +161,7 @@ function shrinkFillRect(canvas: OffscreenCanvas, startRect: Rect, baseColor: Col
     // draw stroked rect
     ctx.strokeStyle = `rgba(${baseColor.r * 255}, ${baseColor.g * 255}, ${baseColor.b * 255}, ${clamp(
       truncateTo(pixelShift / smoothingDistance, 1e4),
-      0.0,
+      0,
       0.99,
     )})`;
     ctx.clearRect(drawingRect.x - 0.5, drawingRect.y - 0.5, drawingRect.w + 1, drawingRect.h + 1);

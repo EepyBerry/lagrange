@@ -1,3 +1,8 @@
+import type { AtmosphereUniforms } from '@core/tsl/materials/atmosphere.tslmat';
+import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat';
+import type { LensFlareUniforms } from '@core/tsl/materials/lens-flare.tslmat';
+import type { PlanetUniforms } from '@core/tsl/materials/planet.tslmat';
+import type { RingUniforms } from '@core/tsl/materials/ring.tslmat';
 import type {
   AmbientLight,
   DataTexture,
@@ -9,15 +14,10 @@ import type {
   Texture,
   Timer,
 } from 'three';
-import type { LensFlareEffect } from './effects/lens-flare.effect';
 import type { WebGPURenderer } from 'three/webgpu';
-import type { PlanetUniforms } from '@core/tsl/materials/planet.tslmat';
-import type { AtmosphereUniforms } from '@core/tsl/materials/atmosphere.tslmat';
-import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat';
-import type { RingUniforms } from '@core/tsl/materials/ring.tslmat';
-import type { LensFlareUniforms } from '@core/tsl/materials/lens-flare.tslmat';
-import type { LayeredDataTexture } from './utils/texture/layered-data-texture';
+import type { LensFlareEffect } from './effects/lens-flare.effect';
 import type { BiomeParameters } from './models/biome-parameters.model';
+import type { LayeredDataTexture } from './utils/texture/layered-data-texture';
 
 // ---------------------------------- Editor types ----------------------------------
 export type EditorMessageLevel = 'success' | 'info' | 'warn' | 'wip';

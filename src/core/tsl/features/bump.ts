@@ -1,5 +1,5 @@
-import { vec3, cross, normalize, mix, Fn } from 'three/tsl';
 import type { Node } from 'three/webgpu';
+import { vec3, cross, normalize, mix, Fn } from 'three/tsl';
 
 // Transpiled (GLSL) from Daniel Greenheck:
 // https://github.com/dgreenheck/threejs-procedural-planets

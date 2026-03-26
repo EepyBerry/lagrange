@@ -1,11 +1,12 @@
 import type { ColorRamp } from '@core/models/color-ramp.model';
-import { type TypedArray } from 'three';
 import type { WebGPURenderer } from 'three/webgpu';
+import { type TypedArray } from 'three';
 
 type EditorBackendType = 'webgl' | 'webgpu';
 
 /**
  * Renders a buffer onto an OffscreenCanvas
+ * @param renderer current renderer
  * @param buf the buffer, represented as a `TypedArray` (usually `UInt8Array`)
  * @param w width of the output (in pixels)
  * @param h height of the output (in pixels)
@@ -49,12 +50,11 @@ export function flipBufferY(buffer: Uint8Array, w: number, h: number): Uint8Arra
 export function colorRampToStyle(ramp: ColorRamp): { color: string; alpha: string } {
   const gradient: string[] = [];
   const alphaGradient: string[] = [];
-  for (let i = 0; i < ramp.steps.length; i++) {
-    const step = ramp.steps[i];
+  for (const step of ramp.steps) {
     const rgb = step.color.getHexString();
     const a = Math.ceil(step.alpha * 255).toString(16);
-    gradient.push(`#${rgb} ${step.factor * 100.0}%`);
-    alphaGradient.push(`#${a + a + a} ${step.factor * 100.0}%`);
+    gradient.push(`#${rgb} ${step.factor * 100}%`);
+    alphaGradient.push(`#${a + a + a} ${step.factor * 100}%`);
   }
   return {
     color: `linear-gradient(90deg, ${gradient.join(', ')})`,

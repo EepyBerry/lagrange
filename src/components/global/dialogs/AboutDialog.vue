@@ -9,7 +9,7 @@
         <div class="about-text">
           <p class="highlight">{{ $t('dialog.about.description') }}</p>
           <p>{{ $t('dialog.about.motivation') }}</p>
-          <hr width="100%" />
+          <hr />
           <p>{{ $t('dialog.about.tech') }}:</p>
         </div>
         <div class="about-tech">
@@ -119,10 +119,10 @@
 
 <script setup lang="ts">
 import AppLogo from '@components/global/elements/AppLogo.vue';
-import DialogElement from '@components/global/elements/DialogElement.vue';
-import LgvChip from '@/_lib/components/LgvChip.vue';
-import { onMounted, ref, type Ref } from 'vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
+import DialogElement from '@components/global/elements/DialogElement.vue';
+import { onMounted, ref, type Ref } from 'vue';
+import LgvChip from '@/_lib/components/LgvChip.vue';
 
 const version = ref('UNKNOWN_VERSION');
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
@@ -158,6 +158,7 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION));
       font-size: 1rem;
       hr {
         margin: 1rem 0;
+        width: 100%;
       }
     }
     .about-tech {

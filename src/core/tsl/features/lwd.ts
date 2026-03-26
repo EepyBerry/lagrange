@@ -1,7 +1,7 @@
-import { vec3, float, mix, Fn, clamp } from 'three/tsl';
-import { fbm3 } from '../noise/fbm3';
 import type { Node } from 'three/webgpu';
+import { vec3, float, mix, Fn, clamp } from 'three/tsl';
 import { fbm1 } from '../noise/fbm1';
+import { fbm3 } from '../noise/fbm3';
 
 export const doDisplace = /*@__PURE__*/ Fn(
   ([i_position, i_params, i_noise]: [Node<'vec3'>, Node<'vec3'>, Node<'vec4'>]) => {
@@ -38,8 +38,8 @@ export const doDisplace = /*@__PURE__*/ Fn(
 export const layer = /*@__PURE__*/ Fn(
   ([i_position, i_noise, i_layers]: [Node<'vec3'>, Node<'vec4'>, Node<'float'>]) => {
     const height = float(fbm3(i_position, i_noise)).toVar('height');
-    height.assign(mix(height, fbm1(height, i_noise), clamp(i_layers.sub(1.0), 0.0, 1.0)));
-    height.assign(mix(height, fbm1(height, i_noise), clamp(i_layers.sub(2.0), 0.0, 1.0)));
+    height.assign(mix(height, fbm1(height, i_noise), clamp(i_layers.sub(1), 0, 1)));
+    height.assign(mix(height, fbm1(height, i_noise), clamp(i_layers.sub(2), 0, 1)));
     return height;
   },
 ).setLayout({
@@ -55,9 +55,9 @@ export const layer = /*@__PURE__*/ Fn(
 export const warp = /*@__PURE__*/ Fn(
   ([i_position, i_params, i_enable]: [Node<'vec3'>, Node<'vec4'>, Node<'float'>]) => {
     const vPos = vec3(i_position).toVar('vPos');
-    vPos.x.mulAssign(mix(1.0, i_params.y, i_enable));
-    vPos.y.mulAssign(mix(1.0, i_params.z, i_enable));
-    vPos.z.mulAssign(mix(1.0, i_params.w, i_enable));
+    vPos.x.mulAssign(mix(1, i_params.y, i_enable));
+    vPos.y.mulAssign(mix(1, i_params.z, i_enable));
+    vPos.z.mulAssign(mix(1, i_params.w, i_enable));
     return vPos;
   },
 ).setLayout({
@@ -71,12 +71,7 @@ export const warp = /*@__PURE__*/ Fn(
 });
 
 export const displace = /*@__PURE__*/ Fn(
-  ([i_position, i_params, i_noise, i_enable]: [
-    Node<'vec3'>,
-    Node<'vec3'>,
-    Node<'vec4'>,
-    Node<'float'>,
-  ]) => {
+  ([i_position, i_params, i_noise, i_enable]: [Node<'vec3'>, Node<'vec3'>, Node<'vec4'>, Node<'float'>]) => {
     const vPos = vec3(i_position).toVar('vPos');
     const enabled = float(i_enable).toVar('enabled');
     return mix(vPos, doDisplace(i_position, i_params, i_noise), enabled);

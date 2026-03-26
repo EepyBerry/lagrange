@@ -12,7 +12,7 @@
         <span class="current-color" :style="{ backgroundColor: `#${lgParam?.color?.getHexString()}` }"></span>
         <span class="biome-index">{{ getPartialId() }}</span>
       </div>
-      <span class="biome-actions">
+      <div class="biome-actions">
         <LgvButton class="sm" icon="mingcute:up-fill" :disabled="index === 0" @click="$emit('moveup', lgParam!.id)" />
         <LgvButton
           class="sm"
@@ -22,7 +22,7 @@
         />
         <hr class="action-divider" />
         <LgvButton class="sm warn" icon="mingcute:delete-2-line" @click="$emit('delete', lgParam!.id)" />
-      </span>
+      </div>
     </div>
     <div v-show="_expanded" class="biome-content">
       <hr class="info-divider" />
@@ -89,13 +89,13 @@
   </div>
 </template>
 <script setup lang="ts">
-import ParameterSlider from '@components/global/parameters/ParameterSlider.vue';
 import type { BiomeParameters } from '@core/models/biome-parameters.model';
-import ParameterDivider from './ParameterDivider.vue';
-import { useI18n } from 'vue-i18n';
-import ParameterColor from './ParameterColor.vue';
+import ParameterSlider from '@components/global/parameters/ParameterSlider.vue';
 import { onMounted, ref, type Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import LgvButton from '@/_lib/components/LgvButton.vue';
+import ParameterColor from './ParameterColor.vue';
+import ParameterDivider from './ParameterDivider.vue';
 
 const lgParam = defineModel<BiomeParameters>();
 const i18n = useI18n();
@@ -109,13 +109,13 @@ const temperatureTypeTable: BiomeType[] = [
   { min: 0.3, max: 0.5, label: i18n.t('main.planet_data.biome_type_temperate') },
   { min: 0.5, max: 0.6, label: i18n.t('main.planet_data.biome_type_subtropical') },
   { min: 0.6, max: 0.8, label: i18n.t('main.planet_data.biome_type_tropical') },
-  { min: 0.8, max: 1.0, label: i18n.t('main.planet_data.biome_type_volcanic') },
+  { min: 0.8, max: 1, label: i18n.t('main.planet_data.biome_type_volcanic') },
 ];
 const humidityTypeTable: BiomeType[] = [
   { min: 0, max: 0.25, label: i18n.t('main.planet_data.biome_type_arid') },
   { min: 0.25, max: 0.5, label: i18n.t('main.planet_data.biome_type_dry') },
   { min: 0.5, max: 0.75, label: i18n.t('main.planet_data.biome_type_semihumid') },
-  { min: 0.75, max: 1.0, label: i18n.t('main.planet_data.biome_type_humid') },
+  { min: 0.75, max: 1, label: i18n.t('main.planet_data.biome_type_humid') },
 ];
 
 defineEmits(['moveup', 'movedown', 'delete']);

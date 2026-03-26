@@ -1,5 +1,3 @@
-import { Color, Node, NodeMaterial, UniformNode, type Vector3 } from 'three/webgpu';
-import { TSLMaterial } from './tsl-material';
 import {
   cameraPosition,
   Discard,
@@ -17,8 +15,10 @@ import {
   vec3,
   vec4,
 } from 'three/tsl';
+import { Color, Node, NodeMaterial, UniformNode, type Vector3 } from 'three/webgpu';
 import { applyInScatter, rayDirection, rayVsSphere } from '../utils/atmosphere-utils';
 import { shiftHue, tintToMatrix, whitescale } from '../utils/color-utils';
+import { TSLMaterial } from './tsl-material';
 
 export type AtmosphereUniformsData = {
   sunlight: {
@@ -122,11 +122,11 @@ export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereU
           ),
         ),
       ).toVar('I');
-      //I.powAssign(vec4(1.0 / 2.2))
+      //I.powAssign(vec4(1 / 2.2))
       const IShifted = vec4(shiftHue(I.xyz, this.uniforms.render.hue.mul(PI)), I.a).toVar('IShifted');
-      const tint = vec4(this.uniforms.render.tint, 1.0).toVar('tint');
+      const tint = vec4(this.uniforms.render.tint, 1).toVar('tint');
 
-      const colorNode = vec4(0.0).toVar('colorNode');
+      const colorNode = vec4(0).toVar('colorNode');
       If(this.uniforms.render.colorMode.equal(int(0)), () => {
         colorNode.assign(IShifted.mul(this.uniforms.render.intensity));
       });
@@ -136,7 +136,7 @@ export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereU
       If(this.uniforms.render.colorMode.equal(int(2)), () => {
         colorNode.assign(IShifted.mul(tint).mul(this.uniforms.render.intensity));
       });
-      colorNode.a = colorNode.a.clamp(0.0, 1.0);
+      colorNode.a = colorNode.a.clamp(0, 1);
       return colorNode;
     }).setLayout({
       name: 'fragmentNode',

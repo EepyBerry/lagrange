@@ -1,17 +1,17 @@
-import type PlanetData from '../models/planet-data.model';
-import { Observer, ObservableEventAction, ObservableEvent, type ObservableEventType } from '../utils/observable-utils';
+import type { AmbientLight, DirectionalLight, Group } from 'three';
+import type { NodeMaterial } from 'three/webgpu';
 import * as Globals from '@core/globals';
+import { degToRad } from 'three/src/math/MathUtils.js';
 import * as ComponentHelper from '@/core/helpers/component.helper';
 import * as TextureHelper from '@/core/helpers/texture.helper';
-import { degToRad } from 'three/src/math/MathUtils.js';
-import type { PlanetMeshData, EditorSceneData, AtmosphereMeshData, CloudsMeshData, RingMeshData } from '../types';
-import type { AmbientLight, DirectionalLight, Group } from 'three';
 import type { LensFlareEffect } from '../effects/lens-flare.effect';
 import type { BiomeParameters } from '../models/biome-parameters.model';
-import { RingParameters } from '../models/ring-parameters.model';
 import type { ColorRamp } from '../models/color-ramp.model';
-import type { NodeMaterial } from 'three/webgpu';
+import type PlanetData from '../models/planet-data.model';
+import type { PlanetMeshData, EditorSceneData, AtmosphereMeshData, CloudsMeshData, RingMeshData } from '../types';
+import { RingParameters } from '../models/ring-parameters.model';
 import { EDITOR_STATE } from '../state/editor.state';
+import { Observer, ObservableEventAction, ObservableEvent, type ObservableEventType } from '../utils/observable-utils';
 
 type ObservableEventOperation = (event: ObservableEvent) => void;
 type ObservableEventHandler = { type?: ObservableEventType; handle: ObservableEventOperation };
@@ -34,19 +34,19 @@ export class PlanetDataToUniformsObserver extends Observer {
 
   public hookEditorSceneData(sceneData: EditorSceneData) {
     const planetData = EDITOR_STATE.value.planetData;
-    this.registerLightingDataUpdates(planetData, sceneData.sunLight!, sceneData.ambLight!, sceneData.lensFlare!);
+    this.registerLightingDataUpdates(planetData, sceneData.sunLight, sceneData.ambLight, sceneData.lensFlare!);
     this.registerPlanetRenderingDataUpdates(
       planetData,
-      sceneData.planetGroup!,
-      sceneData.planet!,
-      sceneData.atmosphere!,
-      sceneData.clouds!,
+      sceneData.planetGroup,
+      sceneData.planet,
+      sceneData.atmosphere,
+      sceneData.clouds,
     );
-    this.registerSurfaceDataUpdates(planetData, sceneData.planet!);
-    this.registerBiomeDataUpdates(planetData, sceneData.planet!);
-    this.registerAtmosphereDataUpdates(planetData, sceneData.atmosphere!);
-    this.registerCloudDataUpdates(planetData, sceneData.clouds!);
-    this.registerRingsDataUpdates(planetData, sceneData.ringAnchor, sceneData.rings!);
+    this.registerSurfaceDataUpdates(planetData, sceneData.planet);
+    this.registerBiomeDataUpdates(planetData, sceneData.planet);
+    this.registerAtmosphereDataUpdates(planetData, sceneData.atmosphere);
+    this.registerCloudDataUpdates(planetData, sceneData.clouds);
+    this.registerRingsDataUpdates(planetData, sceneData.ringAnchor, sceneData.rings);
   }
 
   public unhookEditorSceneData() {
@@ -80,7 +80,7 @@ export class PlanetDataToUniformsObserver extends Observer {
     this.registerEvent('_lensFlarePointsIntensity', universalHandler(() => lensFlare.uniforms.starPointsIntensity.value = data.lensFlarePointsIntensity));
     this.registerEvent('_lensFlareGlareIntensity',  universalHandler(() => lensFlare.uniforms.glareIntensity.value = data.lensFlareGlareIntensity));
     this.registerEvent('_sunLightAngle',            universalHandler(() => {
-      const v = degToRad(isNaN(data.sunLightAngle) ? 0 : data.sunLightAngle);
+      const v = degToRad(Number.isNaN(data.sunLightAngle) ? 0 : data.sunLightAngle);
       const newPos = Globals.SUN_INIT_POS.clone().applyAxisAngle(Globals.AXIS_X, v);
       sunLight.position.set(newPos.x, newPos.y, newPos.z);
     }));
@@ -109,12 +109,12 @@ export class PlanetDataToUniformsObserver extends Observer {
       atmosphere.uniforms!.transform.radius.value = data.planetRadius + data.atmosphereHeight;
     }));
     this.registerEvent('_planetAxialTilt', universalHandler(() => {
-      const v = degToRad(isNaN(data.planetAxialTilt) ? 0 : data.planetAxialTilt);
+      const v = degToRad(Number.isNaN(data.planetAxialTilt) ? 0 : data.planetAxialTilt);
       planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, v);
     }));
     this.registerEvent('_planetRotation', universalHandler(() => {
-      const vRad = degToRad(isNaN(data.planetRotation) ? 0 : data.planetRotation);
-      const cloudsRotationRad = degToRad(isNaN(data.cloudsRotation) ? 0 : data.cloudsRotation);
+      const vRad = degToRad(Number.isNaN(data.planetRotation) ? 0 : data.planetRotation);
+      const cloudsRotationRad = degToRad(Number.isNaN(data.cloudsRotation) ? 0 : data.cloudsRotation);
       planet.mesh!.setRotationFromAxisAngle(planet.mesh!.up, vRad);
       clouds.mesh!.setRotationFromAxisAngle(clouds.mesh!.up, vRad + cloudsRotationRad);
     }));
@@ -145,6 +145,7 @@ export class PlanetDataToUniformsObserver extends Observer {
     // Warping
     this.registerEvent('_planetSurfaceShowWarping', universalHandler(() => (planet.uniforms!.flags.array[0] = +data.planetSurfaceShowWarping)));
     this.registerEvent('_planetSurfaceNoise._warpFactor', universalHandler(() => {
+      // noinspection JSSuspiciousNameCombination
       planet.uniforms!.surface.warping.value.y = data.planetSurfaceNoise.xWarpFactor
       planet.uniforms!.surface.warping.value.z = data.planetSurfaceNoise.yWarpFactor
       planet.uniforms!.surface.warping.value.w = data.planetSurfaceNoise.zWarpFactor
@@ -193,12 +194,12 @@ export class PlanetDataToUniformsObserver extends Observer {
       if (biomeParamsIdx === -1) return;
       switch (event.action) {
         case ObservableEventAction.ADD:
-          planet.biomeLayersTexture!.addLayer(biome!);
-          planet.biomeEmissiveLayersTexture!.addLayer(biome!);
+          planet.biomeLayersTexture!.addLayer(biome);
+          planet.biomeEmissiveLayersTexture!.addLayer(biome);
           break;
         case ObservableEventAction.EDIT:
-          planet.biomeLayersTexture!.updateLayer(biomeParamsIdx, biome!);
-          planet.biomeEmissiveLayersTexture!.updateLayer(biomeParamsIdx, biome!);
+          planet.biomeLayersTexture!.updateLayer(biomeParamsIdx, biome);
+          planet.biomeEmissiveLayersTexture!.updateLayer(biomeParamsIdx, biome);
           break;
         case ObservableEventAction.DELETE:
           planet.biomeLayersTexture!.removeLayer(biomeParamsIdx);
@@ -222,13 +223,14 @@ export class PlanetDataToUniformsObserver extends Observer {
   private registerCloudDataUpdates(data: PlanetData, clouds: CloudsMeshData): void {
     this.registerEvent('_cloudsEnabled',  universalHandler(() => (clouds.mesh!.visible = data.cloudsEnabled)));
     this.registerEvent('_cloudsRotation', universalHandler(() => {
-      const planetRotation = degToRad(isNaN(data.planetRotation) ? 0 : data.planetRotation);
-      const v = degToRad(isNaN(data.cloudsRotation) ? 0 : data.cloudsRotation);
+      const planetRotation = degToRad(Number.isNaN(data.planetRotation) ? 0 : data.planetRotation);
+      const v = degToRad(Number.isNaN(data.cloudsRotation) ? 0 : data.cloudsRotation);
       clouds.mesh!.setRotationFromAxisAngle(clouds.mesh!.up, planetRotation + v);
     }));
     // Warping
     this.registerEvent('_cloudsShowWarping',       universalHandler(() => (clouds.uniforms!.flags.array[0] = +data.cloudsShowWarping)));
     this.registerEvent('_cloudsNoise._warpFactor', universalHandler(() => {
+      // noinspection JSSuspiciousNameCombination
       clouds.uniforms!.warping.value.y = data.cloudsNoise.xWarpFactor;
       clouds.uniforms!.warping.value.z = data.cloudsNoise.yWarpFactor;
       clouds.uniforms!.warping.value.w = data.cloudsNoise.zWarpFactor;
@@ -251,7 +253,7 @@ export class PlanetDataToUniformsObserver extends Observer {
     this.registerEvent('_cloudsColor',             universalHandler(() =>  (clouds.uniforms!.color.value = data.cloudsColor)));
     this.registerEvent('_cloudsColorRamp',         universalHandler(() =>  {
       const v = data.cloudsColorRamp;
-      TextureHelper.recalculateRampTexture(clouds.buffer!, Globals.TEXTURE_SIZES.CLOUDS, v.steps);
+      TextureHelper.recalculateRampTexture(clouds.buffer, Globals.TEXTURE_SIZES.CLOUDS, v.steps);
       clouds.texture!.needsUpdate = true;
     }));
   }
@@ -261,7 +263,7 @@ export class PlanetDataToUniformsObserver extends Observer {
     this.registerEvent('_atmosphereEnabled', universalHandler(() => (atmosphere.mesh!.visible = data.atmosphereEnabled)));
     this.registerEvent('_atmosphereHeight',  universalHandler(() => {
       atmosphere.mesh!.geometry.dispose();
-      atmosphere.mesh!.geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality, 1.0 + data.atmosphereHeight);
+      atmosphere.mesh!.geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality, 1 + data.atmosphereHeight);
       atmosphere.uniforms!.transform.radius.value = data.planetRadius + data.atmosphereHeight;
     }));
     this.registerEvent('_atmosphereDensityScale',          universalHandler(() =>  (atmosphere.uniforms!.render.density.value = data.atmosphereDensityScale)));
@@ -286,7 +288,7 @@ export class PlanetDataToUniformsObserver extends Observer {
       data.ringsParams.forEach(r => {
         const newRing = ComponentHelper.createRing(data, r)
         ringsMeshData.push(newRing)
-        ringAnchor!.add(newRing.mesh!)
+        ringAnchor.add(newRing.mesh!)
       })
     }));
     this.registerEvent('_ringsParams[element]', keyedHandler((event) => {
@@ -310,7 +312,7 @@ export class PlanetDataToUniformsObserver extends Observer {
           data.ringsParams.forEach(params => {
             const newRing = ComponentHelper.createRing(data, params)
             ringsMeshData.push(newRing)
-            ringAnchor!.add(newRing.mesh!)
+            ringAnchor.add(newRing.mesh!)
           })
           break;
         }
