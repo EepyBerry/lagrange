@@ -70,8 +70,8 @@ export async function createScene(
   // Make spherical before creating camera
   const spherical =
     creationMode === EditorSceneCreationMode.PREVIEW
-      ? new Spherical(data.initCamDistance - 1.5, Math.PI / 2.0, degToRad(data.initCamAngle))
-      : new Spherical(data.initCamDistance, Math.PI / 2.0, degToRad(data.initCamAngle));
+      ? new Spherical(data.initCamDistance - 1.5, Math.PI / 2, degToRad(data.initCamAngle))
+      : new Spherical(data.initCamDistance, Math.PI / 2, degToRad(data.initCamAngle));
 
   // setup scene (renderer, cam, lighting)
   const renderer = await createRenderer(width, height, pixelRatio);
@@ -94,7 +94,7 @@ export function createSun(data: PlanetData) {
 
 export function createLensFlare(data: PlanetData, pos: Vector3, color: Color) {
   return new LensFlareEffect({
-    lensPosition: pos ?? new Vector3(0.0),
+    lensPosition: pos ?? new Vector3(0),
     colorGain: color ?? new Color(95, 12, 10),
     starPoints: 2,
     starPointsIntensity: data.lensFlarePointsIntensity ?? 0.25,
@@ -174,13 +174,13 @@ export function createClouds(data: PlanetData, textureBuffer: Uint8Array): Cloud
 
 export function createAtmosphere(data: PlanetData, sunPos: Vector3): AtmosphereMeshData {
   // note: geometry is scaled via the planetGroup: always set to [1.0 + height]
-  const geometry = createSphereGeometryComponent(data.planetMeshQuality, 1.0 + data.atmosphereHeight);
+  const geometry = createSphereGeometryComponent(data.planetMeshQuality, 1 + data.atmosphereHeight);
   const dataConverter = new AtmosphereDataConverter(data, sunPos);
   const tslMaterial = new AtmosphereTSLMaterial(dataConverter.convert());
   const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.userData.lens = "no-occlusion";
   mesh.name = Globals.MESH_NAME_ATMOSPHERE;
-  mesh.castShadow = true;
+  mesh.castShadow = false;
 
   return {
     mesh,
@@ -242,6 +242,7 @@ export function disposeAllRings(ringAnchor: Group, ringsMeshData: RingMeshData[]
  * Creates a WebGPURenderer isntance
  * @param width canvas width
  * @param height canvas height
+ * @param pixelRatio device pixel ratio
  * @returns the renderer
  */
 export async function createRenderer(width: number, height: number, pixelRatio?: number): Promise<WebGPURenderer> {
@@ -314,8 +315,8 @@ export function createAmbientLight(color: ColorRepresentation, intensity: number
   return light;
 }
 
-export function createSphereGeometryComponent(quality: number, radius: number = 1.0): SphereGeometry {
-  return new SphereGeometry(radius, quality, quality / 2.0);
+export function createSphereGeometryComponent(quality: number, radius: number = 1): SphereGeometry {
+  return new SphereGeometry(radius, quality, quality / 2);
 }
 
 export function createRingGeometryComponent(

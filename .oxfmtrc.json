@@ -5,5 +5,23 @@
   "tabWidth": 2,
   "useTabs": false,
   "printWidth": 120,
-  "ignorePatterns": ["src/core/helpers/*"]
+  "proseWrap": "never",
+  "bracketSpacing": true,
+  "sortImports": {
+    "order": "asc",
+    "newlinesBetween": true,
+    "groups": [
+      "type-import",
+      ["value-builtin", "value-external"],
+      "type-internal",
+      "value-internal",
+      ["type-parent", "type-sibling", "type-index"],
+      ["value-parent", "value-sibling", "value-index"],
+      "ts-equals-import",
+      "unknown"
+    ]
+  },
+  "ignorePatterns": [
+    "src/core/helpers/*"
+  ]
 }

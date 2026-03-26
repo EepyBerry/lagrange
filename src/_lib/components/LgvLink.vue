@@ -11,7 +11,7 @@
     <iconify-icon v-if="icon" :icon="icon" :width="iconWidth" aria-hidden="true" />
     <slot></slot>
   </a>
-  <RouterLink v-else class="lgv" :to="href">
+  <RouterLink v-else class="lgv" :to="href ?? '/'">
     <iconify-icon v-if="icon" :icon="icon" :width="iconWidth" aria-hidden="true" />
     <slot></slot>
   </RouterLink>
@@ -43,7 +43,6 @@ a.lgv {
   border-radius: 2px;
   position: relative;
   color: var(--lg-link);
-  padding: 0;
   cursor: pointer;
 
   &:visited {
