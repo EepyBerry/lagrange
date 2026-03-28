@@ -44,7 +44,10 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
     pixelRatio,
     EditorSceneCreationMode.EDITOR,
   );
-  ComponentHelper.createOrbitControls(editorSceneData.camera, editorSceneData.renderer.domElement);
+  editorSceneData.orbitControls = ComponentHelper.createOrbitControls(
+    editorSceneData.camera,
+    editorSceneData.renderer.domElement,
+  );
 
   // Configure renderer
   editorSceneData.renderer.setSize(w, h);
@@ -135,6 +138,14 @@ export async function takePlanetScreenshot() {
   } catch (err) {
     console.error('<Lagrange> Could not export screenshot!', err);
     EventBus.sendToastEvent('warn', 'toast.screenshot_failure', 3000);
+  }
+}
+
+export function dollyCamera(direction: 'in' | 'out') {
+  if (direction === 'in') {
+    editorSceneData.orbitControls!.dollyOut(1.1);
+  } else {
+    editorSceneData.orbitControls!.dollyIn(1.1);
   }
 }
 

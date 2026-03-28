@@ -2,21 +2,26 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type PlanetData from './core/models/planet-data.model';
 
-enum KeyBindingAction {
-  ToggleLensFlare = 'toggle-lens-flare',
-  ToggleClouds = 'toggle-clouds',
-  ToggleAtmosphere = 'toggle-atmosphere',
-  ToggleBiomes = 'toggle-biomes',
-  TakeScreenshot = 'take-screenshot',
-}
+type TKeyBindingAction = (typeof KeyBindingAction)[keyof typeof KeyBindingAction];
+export const KeyBindingAction = {
+  ToggleLensFlare: 'toggle-lens-flare',
+  ToggleClouds: 'toggle-clouds',
+  ToggleAtmosphere: 'toggle-atmosphere',
+  ToggleBiomes: 'toggle-biomes',
+  TakeScreenshot: 'take-screenshot',
+  CameraRotate: 'camera-rotate',
+  CameraDolly: 'camera-dolly',
+  CameraPan: 'camera-pan',
+  StepDollyIn: 'step-dolly-in',
+  StepDollyOut: 'step-dolly-out',
+} as const;
 
-interface IDBKeyBinding {
+export interface IDBKeyBinding {
   id: number;
-  action: KeyBindingAction;
+  action: TKeyBindingAction;
   key: string;
 }
-
-interface IDBSettings {
+export interface IDBSettings {
   id: number;
   locale: string;
   theme: string;
@@ -40,8 +45,7 @@ interface IDBSettings {
   extrasMetalSlugMode?: boolean;
   extrasShowSpecialDays?: boolean;
 }
-
-interface IDBPlanet {
+export interface IDBPlanet {
   id: string;
   timestamp?: number;
   version?: string;
@@ -49,7 +53,7 @@ interface IDBPlanet {
   data: PlanetData;
 }
 
-const idb = new Dexie('LagrangeIDB', { autoOpen: true }) as Dexie & {
+export const idb = new Dexie('LagrangeIDB', { autoOpen: true }) as Dexie & {
   keyBindings: EntityTable<IDBKeyBinding, 'id'>;
   settings: EntityTable<IDBSettings, 'id'>;
   planets: EntityTable<IDBPlanet, 'id'>;
@@ -61,6 +65,3 @@ idb.version(1).stores({
   settings: '++id',
   planets: '++id, data._planetName',
 });
-
-export type { IDBKeyBinding, IDBSettings, IDBPlanet };
-export { idb, KeyBindingAction };

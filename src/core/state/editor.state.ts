@@ -1,3 +1,4 @@
+import type { EditorSceneData } from '@core/types.ts';
 import { ref, type Ref } from 'vue';
 import PlanetData from '../models/planet-data.model';
 
@@ -16,6 +17,7 @@ export const EditorStatusCode = {
 
 export type EditorState = {
   planetData: PlanetData;
+  sceneData: EditorSceneData | undefined;
   status: TEditorStatusCode;
   planetEditedFlag: boolean;
 };
@@ -24,6 +26,7 @@ export type EditorState = {
 
 export const EDITOR_STATE: Ref<EditorState> = ref({
   planetData: new PlanetData(),
+  sceneData: undefined,
   status: EditorStatusCode.Unloaded,
   planetEditedFlag: false,
 });

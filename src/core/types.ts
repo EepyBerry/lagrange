@@ -14,6 +14,7 @@ import type {
   Texture,
   Timer,
 } from 'three';
+import type { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import type { WebGPURenderer } from 'three/webgpu';
 import type { LensFlareEffect } from './effects/lens-flare.effect';
 import type { BiomeParameters } from './models/biome-parameters.model';
@@ -66,6 +67,7 @@ export type EditorSceneData = {
   scene: Scene;
   renderer: WebGPURenderer;
   camera: PerspectiveCamera;
+  orbitControls?: OrbitControls;
 
   // Groups
   planetGroup: Group;

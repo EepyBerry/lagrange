@@ -46,7 +46,7 @@ import {
   exportPlanetToGLTF,
   updateCameraRendering,
   resetPlanet,
-  randomizePlanet,
+  randomizePlanet, dollyCamera,
 } from '@/core/services/editor.service';
 import { EDITOR_STATE, EditorStatusCode } from '@/core/state/editor.state';
 import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config';
@@ -251,7 +251,15 @@ async function onWindowKeydown(event: KeyboardEvent) {
       EDITOR_STATE.value.planetData.biomesEnabled = !EDITOR_STATE.value.planetData.biomesEnabled;
       break;
     case KeyBindingAction.TakeScreenshot: {
-      takePlanetScreenshot();
+      await takePlanetScreenshot();
+      break;
+    }
+    case KeyBindingAction.StepDollyIn: {
+      dollyCamera('in');
+      break;
+    }
+    case KeyBindingAction.StepDollyOut: {
+      dollyCamera('out');
       break;
     }
   }

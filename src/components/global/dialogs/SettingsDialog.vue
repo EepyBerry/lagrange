@@ -98,6 +98,27 @@
           <template #content>
             <div class="settings-editor">
               <ParameterGrid>
+                <ParameterSelect :id="'skybox'" v-model="appSettings.skybox">
+                  {{ $t('dialog.settings.editor_skybox') }}:
+                  <template #options>
+                    <option value="deepspace">{{ $t('dialog.settings.editor_skybox_deepspace') }}</option>
+                    <option value="crimsonquadrant">{{ $t('dialog.settings.editor_skybox_crimsonquadrant') }}</option>
+                    <option value="embergreenexpanse">
+                      {{ $t('dialog.settings.editor_skybox_embergreenexpanse') }}
+                    </option>
+                    <option value="shiningstars">{{ $t('dialog.settings.editor_skybox_shiningstars') }}</option>
+                    <option value="jadenebula">
+                      {{ $t('dialog.settings.editor_skybox_jadenebula') }}
+                    </option>
+                    <option value="edgeoftheuniverse">
+                      {{ $t('dialog.settings.editor_skybox_edgeoftheuniverse') }}
+                    </option>
+                    <option value="chromakey">
+                      {{ $t('dialog.settings.editor_skybox_chromakey') }}
+                    </option>
+                  </template>
+                </ParameterSelect>
+                <ParameterDivider bordered />
                 <ParameterRadio>
                   <!-- eslint-disable-next-line vue/no-v-html -->
                   <template #title><span v-html="$t('dialog.settings.editor_rendering_backend')"></span>:</template>
@@ -135,28 +156,7 @@
                 <LgvNotification v-if="!WebGPU.isAvailable()" type="warn">
                   {{ $t('dialog.settings.editor_rendering_backend_webgpu_unavailable') }}
                 </LgvNotification>
-                <ParameterDivider />
-                <ParameterSelect id="skybox" v-model="appSettings.skybox">
-                  {{ $t('dialog.settings.editor_skybox') }}:
-                  <template #options>
-                    <option value="deepspace">{{ $t('dialog.settings.editor_skybox_deepspace') }}</option>
-                    <option value="crimsonquadrant">{{ $t('dialog.settings.editor_skybox_crimsonquadrant') }}</option>
-                    <option value="embergreenexpanse">
-                      {{ $t('dialog.settings.editor_skybox_embergreenexpanse') }}
-                    </option>
-                    <option value="shiningstars">{{ $t('dialog.settings.editor_skybox_shiningstars') }}</option>
-                    <option value="jadenebula">
-                      {{ $t('dialog.settings.editor_skybox_jadenebula') }}
-                    </option>
-                    <option value="edgeoftheuniverse">
-                      {{ $t('dialog.settings.editor_skybox_edgeoftheuniverse') }}
-                    </option>
-                    <option value="chromakey">
-                      {{ $t('dialog.settings.editor_skybox_chromakey') }}
-                    </option>
-                  </template>
-                </ParameterSelect>
-                <ParameterDivider />
+                <ParameterDivider bordered />
                 <ParameterRadio>
                   <template #title> {{ $t('dialog.settings.editor_baking_resolution') }}: </template>
                   <template #options>
@@ -210,49 +210,75 @@
                 >
                   {{ $t('dialog.settings.editor_baking_pixelize') }}:
                 </ParameterCheckbox>
-                <ParameterDivider />
-                <ParameterKeyBinding
-                  icon="mingcute:sun-line"
-                  :key-bind="getKeyBind('toggle-lens-flare')"
-                  :selected="selectedAction === 'toggle-lens-flare'"
-                  @toggle="toggleAction('toggle-lens-flare')"
-                >
-                  {{ $t('dialog.settings.editor_lensflare') }}
-                </ParameterKeyBinding>
-                <ParameterKeyBinding
-                  icon="mingcute:mountain-2-line"
-                  :key-bind="getKeyBind('toggle-biomes')"
-                  :selected="selectedAction === 'toggle-biomes'"
-                  @toggle="toggleAction('toggle-biomes')"
-                >
-                  {{ $t('dialog.settings.editor_biomes') }}
-                </ParameterKeyBinding>
-                <ParameterKeyBinding
-                  icon="mingcute:clouds-line"
-                  :key-bind="getKeyBind('toggle-clouds')"
-                  :selected="selectedAction === 'toggle-clouds'"
-                  @toggle="toggleAction('toggle-clouds')"
-                >
-                  {{ $t('dialog.settings.editor_clouds') }}
-                </ParameterKeyBinding>
-                <ParameterKeyBinding
-                  icon="material-symbols:line-curve-rounded"
-                  :key-bind="getKeyBind('toggle-atmosphere')"
-                  :selected="selectedAction === 'toggle-atmosphere'"
-                  @toggle="toggleAction('toggle-atmosphere')"
-                >
-                  {{ $t('dialog.settings.editor_atmosphere') }}
-                </ParameterKeyBinding>
-                <ParameterKeyBinding
-                  icon="mingcute:screenshot-line"
-                  :key-bind="getKeyBind('take-screenshot')"
-                  :selected="selectedAction === 'take-screenshot'"
-                  @toggle="toggleAction('take-screenshot')"
-                >
-                  {{ $t('dialog.settings.editor_screenshot') }}
-                </ParameterKeyBinding>
               </ParameterGrid>
             </div>
+          </template>
+        </CollapsibleSection>
+
+        <CollapsibleSection icon="mingcute:hotkey-line" class="section-keybinds">
+          <template #title>
+            {{ $t('dialog.settings.keybinds') }}
+          </template>
+          <template #content>
+            <ParameterGrid>
+              <ParameterKeyBinding
+                icon="mingcute:zoom-in-line"
+                :key-bind="getKeyBind(KeyBindingAction.StepDollyIn)"
+                :selected="selectedAction === KeyBindingAction.StepDollyIn"
+                @toggle="toggleAction(KeyBindingAction.StepDollyIn)"
+              >
+                {{ $t('dialog.settings.editor_stepzoomin') }}
+              </ParameterKeyBinding>
+              <ParameterKeyBinding
+                icon="mingcute:zoom-out-line"
+                :key-bind="getKeyBind(KeyBindingAction.StepDollyOut)"
+                :selected="selectedAction === KeyBindingAction.StepDollyOut"
+                @toggle="toggleAction(KeyBindingAction.StepDollyOut)"
+              >
+                {{ $t('dialog.settings.editor_stepzoomout') }}
+              </ParameterKeyBinding>
+              <ParameterDivider bordered />
+              <ParameterKeyBinding
+                icon="mingcute:zoom-out-line"
+                :key-bind="getKeyBind(KeyBindingAction.ToggleLensFlare)"
+                :selected="selectedAction === KeyBindingAction.ToggleLensFlare"
+                @toggle="toggleAction(KeyBindingAction.ToggleLensFlare)"
+              >
+                {{ $t('dialog.settings.editor_lensflare') }}
+              </ParameterKeyBinding>
+              <ParameterKeyBinding
+                icon="mingcute:mountain-2-line"
+                :key-bind="getKeyBind(KeyBindingAction.ToggleBiomes)"
+                :selected="selectedAction === KeyBindingAction.ToggleBiomes"
+                @toggle="toggleAction(KeyBindingAction.ToggleBiomes)"
+              >
+                {{ $t('dialog.settings.editor_biomes') }}
+              </ParameterKeyBinding>
+              <ParameterKeyBinding
+                icon="mingcute:clouds-line"
+                :key-bind="getKeyBind(KeyBindingAction.ToggleClouds)"
+                :selected="selectedAction === KeyBindingAction.ToggleClouds"
+                @toggle="toggleAction(KeyBindingAction.ToggleClouds)"
+              >
+                {{ $t('dialog.settings.editor_clouds') }}
+              </ParameterKeyBinding>
+              <ParameterKeyBinding
+                icon="material-symbols:line-curve-rounded"
+                :key-bind="getKeyBind(KeyBindingAction.ToggleAtmosphere)"
+                :selected="selectedAction === KeyBindingAction.ToggleAtmosphere"
+                @toggle="toggleAction(KeyBindingAction.ToggleAtmosphere)"
+              >
+                {{ $t('dialog.settings.editor_atmosphere') }}
+              </ParameterKeyBinding>
+              <ParameterKeyBinding
+                icon="mingcute:screenshot-line"
+                :key-bind="getKeyBind(KeyBindingAction.TakeScreenshot)"
+                :selected="selectedAction === KeyBindingAction.TakeScreenshot"
+                @toggle="toggleAction(KeyBindingAction.TakeScreenshot)"
+              >
+                {{ $t('dialog.settings.editor_screenshot') }}
+              </ParameterKeyBinding>
+            </ParameterGrid>
           </template>
         </CollapsibleSection>
 
@@ -423,7 +449,8 @@ import LgvNotification from '@/_lib/components/LgvNotification.vue';
 import WebGPU from '@/core/capabilities/WebGPU';
 import * as DexieService from '@/core/services/dexie.service';
 import { swapSceneSkybox } from '@/core/services/editor.service';
-import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config';
+import { idb, type IDBKeyBinding, type IDBSettings, KeyBindingAction } from '@/dexie.config';
+
 const AppClearDataConfirmDialog = defineAsyncComponent(
   () => import('@components/codex/dialogs/ClearDataConfirmDialog.vue'),
 );
@@ -515,8 +542,9 @@ async function importData(event: Event) {
   appSettings.value = data.settings!;
   keyBinds.value.splice(0);
   keyBinds.value.push(...data.keyBindings);
-  updateSettings();
-  EventBus.sendToastEvent('success', 'toast.settings_import_success', 5000);
+  await updateSettings().then(
+    () => EventBus.sendToastEvent('success', 'toast.settings_import_success', 5000)
+  );
 }
 
 async function exportData() {

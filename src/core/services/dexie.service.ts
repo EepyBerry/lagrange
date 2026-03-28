@@ -1,63 +1,79 @@
-import { idb, KeyBindingAction, type IDBSettings } from '@/dexie.config';
+import { idb, KeyBindingAction, type IDBSettings, type IDBKeyBinding } from '@/dexie.config';
 import { I18N_SUPPORTED_LANGS } from '@/i18n.config';
 import { prefersReducedMotion } from '../utils/utils';
 
-export async function initDefaultSettings(): Promise<void> {
-  idb.settings.put({
+export async function initSettings(): Promise<IDBSettings> {
+  const settings = await idb.settings.limit(1).first();
+  await idb.settings.upsert(1, {
     // general
-    theme: 'default',
-    locale: navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US',
-    font: 'default',
-    showInitDialog: true,
+    theme: settings?.theme ?? 'default',
+    locale: settings?.locale ?? (navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US'),
+    font: settings?.font ?? 'default',
+    showInitDialog: settings?.showInitDialog ?? true,
     // rendering
-    renderingBackend: 'webgl',
-    skybox: 'deepspace',
+    renderingBackend: settings?.renderingBackend ?? 'webgl',
+    skybox: settings?.skybox ?? 'deepspace',
     // baking
-    bakingResolution: 2048,
-    bakingPixelize: false,
+    bakingResolution: settings?.bakingResolution ?? 2048,
+    bakingPixelize: settings?.bakingPixelize ?? false,
     // accessibility
-    enableEffects: !prefersReducedMotion(),
-    enableAnimations: !prefersReducedMotion(),
+    enableEffects: settings?.enableEffects ?? !prefersReducedMotion(),
+    enableAnimations: settings?.enableAnimations ?? !prefersReducedMotion(),
     // extras
-    extrasCRTEffect: false,
-    extrasHologramEffect: false,
-    extrasMetalSlugMode: false,
-    extrasShowSpecialDays: true,
+    extrasCRTEffect: settings?.extrasCRTEffect ?? false,
+    extrasHologramEffect: settings?.extrasHologramEffect ?? false,
+    extrasMetalSlugMode: settings?.extrasMetalSlugMode ?? false,
+    extrasShowSpecialDays: settings?.extrasShowSpecialDays ?? true,
   });
+  return (await idb.settings.limit(1).first()) as IDBSettings;
 }
 
-export async function addDefaultKeyBindings(): Promise<void> {
-  idb.keyBindings.bulkPut([
-    { action: KeyBindingAction.ToggleLensFlare, key: 'L' },
-    { action: KeyBindingAction.ToggleBiomes, key: 'B' },
-    { action: KeyBindingAction.ToggleClouds, key: 'C' },
-    { action: KeyBindingAction.ToggleAtmosphere, key: 'A' },
-    { action: KeyBindingAction.TakeScreenshot, key: 'X' },
-  ]);
-}
-
-export async function injectMissingSettings(settings: IDBSettings): Promise<void> {
-  idb.settings.update(settings.id, {
-    // general
-    theme: settings.theme ?? 'default',
-    locale: settings.locale ?? (navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US'),
-    font: settings.font ?? 'default',
-    showInitDialog: settings.showInitDialog ?? true,
-    // rendering
-    renderingBackend: settings.renderingBackend ?? 'webgl',
-    skybox: settings.skybox ?? 'deepspace',
-    // baking
-    bakingResolution: settings.bakingResolution ?? 2048,
-    bakingPixelize: settings.bakingPixelize ?? false,
-    // accessibility
-    enableEffects: settings.enableEffects ?? !prefersReducedMotion(),
-    enableAnimations: settings.enableAnimations ?? !prefersReducedMotion(),
-    // extras
-    extrasCRTEffect: settings.extrasCRTEffect ?? false,
-    extrasHologramEffect: settings.extrasHologramEffect ?? false,
-    extrasMetalSlugMode: settings.extrasMetalSlugMode ?? false,
-    extrasShowSpecialDays: settings.extrasShowSpecialDays ?? true,
+export async function initKeyBindings(): Promise<IDBKeyBinding[]> {
+  const keybinds = await idb.keyBindings.toArray();
+  await idb.keyBindings.upsert(1, {
+    action: KeyBindingAction.ToggleLensFlare,
+    key: tryGetKeyFromBinding(keybinds, 1) ?? 'L',
   });
+  await idb.keyBindings.upsert(2, {
+    action: KeyBindingAction.ToggleBiomes,
+    key: tryGetKeyFromBinding(keybinds, 2) ?? 'B',
+  });
+  await idb.keyBindings.upsert(3, {
+    action: KeyBindingAction.ToggleClouds,
+    key: tryGetKeyFromBinding(keybinds, 3) ?? 'C',
+  });
+  await idb.keyBindings.upsert(4, {
+    action: KeyBindingAction.ToggleAtmosphere,
+    key: tryGetKeyFromBinding(keybinds, 4) ?? 'A',
+  });
+  await idb.keyBindings.upsert(5, {
+    action: KeyBindingAction.TakeScreenshot,
+    key: tryGetKeyFromBinding(keybinds, 5) ?? 'X',
+  });
+  await idb.keyBindings.upsert(6, {
+    action: KeyBindingAction.CameraRotate,
+    key: tryGetKeyFromBinding(keybinds, 6) ?? 'MOUSE_LEFT',
+  });
+  await idb.keyBindings.upsert(7, {
+    action: KeyBindingAction.CameraDolly,
+    key: tryGetKeyFromBinding(keybinds, 7) ?? 'MOUSE_MIDDLE',
+  });
+  await idb.keyBindings.upsert(8, {
+    action: KeyBindingAction.CameraPan,
+    key: tryGetKeyFromBinding(keybinds, 8) ?? 'MOUSE_RIGHT',
+  });
+  await idb.keyBindings.upsert(9, {
+    action: KeyBindingAction.StepDollyIn,
+    key: tryGetKeyFromBinding(keybinds, 9) ?? '+',
+  });
+  await idb.keyBindings.upsert(10, {
+    action: KeyBindingAction.StepDollyOut,
+    key: tryGetKeyFromBinding(keybinds, 10) ?? '-',
+  });
+  return idb.keyBindings.toArray();
+}
+function tryGetKeyFromBinding(keybinds: IDBKeyBinding[], id: number): string | undefined {
+  return keybinds.find((keybind) => keybind.id === id)?.key;
 }
 
 export async function setRenderingBackendFallback() {
@@ -90,7 +106,7 @@ export async function clearData(): Promise<void> {
     extrasMetalSlugMode: false,
   });
   await idb.keyBindings.clear();
-  await addDefaultKeyBindings();
+  await initKeyBindings();
   await idb.planets.clear();
 }
 
