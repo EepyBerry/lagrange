@@ -227,7 +227,7 @@
                 :selected="selectedAction === KeyBindingAction.StepDollyIn"
                 @toggle="toggleAction(KeyBindingAction.StepDollyIn)"
               >
-                {{ $t('dialog.settings.editor_stepzoomin') }}
+                {{ $t('dialog.settings.keybinds_stepdollyin') }}
               </ParameterKeyBinding>
               <ParameterKeyBinding
                 icon="mingcute:zoom-out-line"
@@ -235,16 +235,16 @@
                 :selected="selectedAction === KeyBindingAction.StepDollyOut"
                 @toggle="toggleAction(KeyBindingAction.StepDollyOut)"
               >
-                {{ $t('dialog.settings.editor_stepzoomout') }}
+                {{ $t('dialog.settings.keybinds_stepdollyout') }}
               </ParameterKeyBinding>
               <ParameterDivider bordered />
               <ParameterKeyBinding
-                icon="mingcute:zoom-out-line"
+                icon="mingcute:sun-line"
                 :key-bind="getKeyBind(KeyBindingAction.ToggleLensFlare)"
                 :selected="selectedAction === KeyBindingAction.ToggleLensFlare"
                 @toggle="toggleAction(KeyBindingAction.ToggleLensFlare)"
               >
-                {{ $t('dialog.settings.editor_lensflare') }}
+                {{ $t('dialog.settings.keybinds_lensflare') }}
               </ParameterKeyBinding>
               <ParameterKeyBinding
                 icon="mingcute:mountain-2-line"
@@ -252,7 +252,7 @@
                 :selected="selectedAction === KeyBindingAction.ToggleBiomes"
                 @toggle="toggleAction(KeyBindingAction.ToggleBiomes)"
               >
-                {{ $t('dialog.settings.editor_biomes') }}
+                {{ $t('dialog.settings.keybinds_biomes') }}
               </ParameterKeyBinding>
               <ParameterKeyBinding
                 icon="mingcute:clouds-line"
@@ -260,7 +260,7 @@
                 :selected="selectedAction === KeyBindingAction.ToggleClouds"
                 @toggle="toggleAction(KeyBindingAction.ToggleClouds)"
               >
-                {{ $t('dialog.settings.editor_clouds') }}
+                {{ $t('dialog.settings.keybinds_clouds') }}
               </ParameterKeyBinding>
               <ParameterKeyBinding
                 icon="material-symbols:line-curve-rounded"
@@ -268,7 +268,7 @@
                 :selected="selectedAction === KeyBindingAction.ToggleAtmosphere"
                 @toggle="toggleAction(KeyBindingAction.ToggleAtmosphere)"
               >
-                {{ $t('dialog.settings.editor_atmosphere') }}
+                {{ $t('dialog.settings.keybinds_atmosphere') }}
               </ParameterKeyBinding>
               <ParameterKeyBinding
                 icon="mingcute:screenshot-line"
@@ -276,7 +276,7 @@
                 :selected="selectedAction === KeyBindingAction.TakeScreenshot"
                 @toggle="toggleAction(KeyBindingAction.TakeScreenshot)"
               >
-                {{ $t('dialog.settings.editor_screenshot') }}
+                {{ $t('dialog.settings.keybinds_screenshot') }}
               </ParameterKeyBinding>
             </ParameterGrid>
           </template>
