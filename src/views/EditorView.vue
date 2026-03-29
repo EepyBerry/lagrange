@@ -10,10 +10,11 @@
     />
     <span class="filler"></span>
   </ViewHeader>
-  <EditorSidebarControls :compact-mode="showCompactControls" />
 
-  <div id="scene-root" ref="sceneRoot"></div>
-  <OverlaySpinner :load="showSpinner" />
+  <div id="scene-root" ref="sceneRoot" :class="{ compact: showCompactControls }">
+    <OverlaySpinner :load="showSpinner" />
+  </div>
+  <EditorSidebarControls :compact-mode="showCompactControls" />
 
   <EditorErrorDialog ref="editorErrorDialogRef" @close="handleEditorInitError" />
   <WarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
@@ -28,7 +29,7 @@ import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
 import { sleep } from '@core/utils/utils';
 import { useHead } from '@unhead/vue';
 import { nanoid } from 'nanoid';
-import { defineAsyncComponent, onMounted, onUnmounted, ref, toRaw, type Ref, useTemplateRef } from 'vue';
+import { defineAsyncComponent, onMounted, onUnmounted, ref, type Ref, toRaw, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import EditorHeaderControls from '@/components/editor/controls/EditorHeaderControls.vue';
@@ -40,19 +41,21 @@ import WebGPU from '@/core/capabilities/WebGPU';
 import PlanetData from '@/core/models/planet-data.model';
 import {
   bootstrapEditor,
-  unloadEditor,
+  dollyCamera,
   exportPlanetPreview,
-  takePlanetScreenshot,
   exportPlanetToGLTF,
-  updateCameraRendering,
+  randomizePlanet,
   resetPlanet,
-  randomizePlanet, dollyCamera,
+  takePlanetScreenshot,
+  unloadEditor,
+  updateCameraRendering,
 } from '@/core/services/editor.service';
 import { EDITOR_STATE, EditorStatusCode } from '@/core/state/editor.state';
-import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config';
+import { idb, type IDBPlanet, KeyBindingAction } from '@/dexie.config';
 import type { EditorInitErrorDialogExposes } from "@components/editor/dialogs/EditorInitErrorDialog.types.ts";
 import type { WarnSaveDialogExposes } from "@components/editor/dialogs/WarnSaveDialog.types.ts";
 import type { ExportProgressDialogExposes } from "@components/editor/dialogs/ExportProgressDialog.types.ts";
+import { COMPACT_CONTROLS_HEIGHT } from "@core/globals";
 
 const WarnSaveDialog = defineAsyncComponent(() => import('@components/editor/dialogs/WarnSaveDialog.vue'));
 const ExportProgressDialog = defineAsyncComponent(() => import('@components/editor/dialogs/ExportProgressDialog.vue'));
@@ -91,8 +94,9 @@ onUnmounted(() => {
     unloadEditor();
   }
   EventBus.deregisterWindowEventListener('click', onWindowClick);
-  EventBus.deregisterWindowEventListener('resize', onWindowResize);
   EventBus.deregisterWindowEventListener('keydown', onWindowKeydown);
+  EventBus.deregisterWindowEventListener('resize', computeViewRendering);
+  EventBus.deregisterWindowEventListener('deviceorientation', computeViewRenderingDeferred);
 });
 onBeforeRouteLeave(() => {
   if (EDITOR_STATE.value.planetEditedFlag) {
@@ -193,23 +197,14 @@ async function initData() {
 
 async function initCanvas() {
   computeResponsiveness();
-
-  const width = window.innerWidth,
-    height = window.innerHeight,
-    pixelRatio = window.devicePixelRatio;
-  let effectiveWidth = width,
-    effectiveHeight = height;
-
-  if (showCompactControls.value) {
-    effectiveWidth = window.outerWidth;
-    effectiveHeight = window.outerHeight * 0.5;
-  }
+  const canvasSize = computeCanvasSize();
 
   // Bootstrap editor service
-  await bootstrapEditor(sceneRoot.value!, effectiveWidth, effectiveHeight, pixelRatio);
+  await bootstrapEditor(sceneRoot.value!, canvasSize.width, canvasSize.height, globalThis.devicePixelRatio);
   EventBus.registerWindowEventListener('click', onWindowClick);
-  EventBus.registerWindowEventListener('resize', onWindowResize);
   EventBus.registerWindowEventListener('keydown', onWindowKeydown);
+  EventBus.registerWindowEventListener('resize', computeViewRendering);
+  EventBus.registerWindowEventListener('deviceorientation', computeViewRenderingDeferred);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -217,7 +212,6 @@ async function initCanvas() {
 async function onWindowClick(event: MouseEvent) {
   EventBus.sendClickEvent(event);
 }
-
 async function onWindowKeydown(event: KeyboardEvent) {
   const keyBinds = await idb.keyBindings.toArray();
   const kb = keyBinds.find((k) => k.key === event.key.toUpperCase());
@@ -266,19 +260,23 @@ function patchMetaHead() {
 
 // ------------------------------------------------------------------------------------------------
 
-function onWindowResize() {
+function computeViewRendering() {
   computeResponsiveness();
-  let effectiveWidth = window.innerWidth,
-    effectiveHeight = window.innerHeight;
-  if (showCompactControls.value) {
-    effectiveWidth = window.outerWidth;
-    effectiveHeight = window.outerHeight * 0.5;
-  }
-  updateCameraRendering(effectiveWidth, effectiveHeight);
+  const canvasSize = computeCanvasSize();
+  updateCameraRendering(canvasSize.width, canvasSize.height);
 }
-
+function computeViewRenderingDeferred() {
+  setTimeout(() => computeViewRendering(), 50);
+}
 function computeResponsiveness() {
   showCompactControls.value = window.innerWidth <= Globals.SM_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth;
+}
+function computeCanvasSize() {
+  if (showCompactControls.value) {
+    return { width: globalThis.innerWidth, height: globalThis.innerHeight - COMPACT_CONTROLS_HEIGHT };
+  } else {
+    return { width: globalThis.innerWidth, height: globalThis.innerHeight };
+  }
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -334,10 +332,19 @@ function exportPlanet() {
 }
 
 #scene-root {
+  flex: 1;
+  position: relative;
   box-shadow: black 5px 10px 10px;
-
   & > canvas {
     background: transparent;
+    width: 100dvw;
   }
 }
+#scene-root.compact {
+  height: calc(100dvh - 320px);
+  & > canvas {
+    height: calc(100dvh - 320px);
+  }
+}
+
 </style>

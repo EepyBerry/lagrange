@@ -65,6 +65,7 @@ export function disposeScene(sceneData: EditorSceneData) {
 
   sceneData.scene.children.forEach((c) => sceneData.scene.remove(c));
   sceneData.renderer.dispose();
+  sceneData.timer!.disconnect();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -88,6 +89,7 @@ async function buildScene(
   sceneData.renderer = renderer;
   sceneData.camera = camera;
   sceneData.timer = new Timer();
+  sceneData.timer.connect(document);
 }
 
 function buildSceneLighting(sceneData: EditorSceneData, data: PlanetData): void {

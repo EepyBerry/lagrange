@@ -89,6 +89,7 @@ export function unloadEditor() {
 // ------------------------------------------------------------------------------------------------ //
 
 function renderFrame() {
+  editorSceneData.timer!.update();
   editorSceneData.lensFlare!.update(
     editorSceneData.renderer,
     editorSceneData.scene,

@@ -4,6 +4,8 @@ import { Vector3 } from 'three';
 export const XS_WIDTH_THRESHOLD = 568;
 export const SM_WIDTH_THRESHOLD = 768;
 export const MD_WIDTH_THRESHOLD = 1200;
+// Compact controls height
+export const COMPACT_CONTROLS_HEIGHT = 320;
 
 // Internationalization
 export const LOCALE_MAP: { [k: string]: string } = {
