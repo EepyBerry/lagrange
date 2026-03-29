@@ -97,12 +97,10 @@ onUnmounted(() => {
   EventBus.deregisterWindowEventListener('resize', onWindowResize);
   EventBus.deregisterWindowEventListener('keydown', onWindowKeydown);
 });
-onBeforeRouteLeave((_to, _from, next) => {
+onBeforeRouteLeave(() => {
   if (EDITOR_STATE.value.planetEditedFlag) {
-    next(false);
     warnSaveDialogRef.value?.open();
-  } else {
-    next();
+    return false;
   }
 });
 
