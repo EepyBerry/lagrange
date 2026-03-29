@@ -5,7 +5,8 @@
     :show-title="true"
     :closeable="true"
     :aria-label="$t('a11y.dialog_settings')"
-    style="height: 80%"
+    @open="handleOpen()"
+    @close="handleClose()"
   >
     <template #title>
       <iconify-icon icon="mingcute:settings-3-line" width="1.5rem" aria-hidden="true" />
@@ -98,7 +99,20 @@
           <template #content>
             <div class="settings-editor">
               <ParameterGrid>
-                <ParameterSelect :id="'skybox'" v-model="appSettings.skybox">
+                <ParameterSlider
+                  id="settings-fov"
+                  :modelValue="appSettings.cameraFOV"
+                  @update:modelValue="appSettings.cameraFOV = $event as number; setCameraFOV($event as number)"
+                  :min="30"
+                  :max="90"
+                >
+                  {{ $t('dialog.settings.editor_fov') }}
+                </ParameterSlider>
+                <ParameterSelect
+                  :id="'skybox'"
+                  :modelValue="appSettings.skybox"
+                  @update:modelValue="appSettings.skybox = $event as SkyboxName; swapEditorSkybox()"
+                >
                   {{ $t('dialog.settings.editor_skybox') }}:
                   <template #options>
                     <option value="deepspace">{{ $t('dialog.settings.editor_skybox_deepspace') }}</option>
@@ -221,6 +235,16 @@
           </template>
           <template #content>
             <ParameterGrid>
+              <ParameterCheckbox
+                id="settings-camera-mouse-controls"
+                true-value="inverted"
+                false-value="standard"
+                :modelValue="appSettings.cameraMouseControlsScheme"
+                @update:modelValue="appSettings.cameraMouseControlsScheme = $event as CameraMouseControlsScheme; updateCameraMouseControlsScheme()"
+              >
+                {{ $t('dialog.settings.keybinds_cameramousecontrols') }}:
+              </ParameterCheckbox>
+              <ParameterDivider bordered />
               <ParameterKeyBinding
                 icon="mingcute:zoom-in-line"
                 :key-bind="getKeyBind(KeyBindingAction.StepDollyIn)"
@@ -448,8 +472,16 @@ import LgvButton from '@/_lib/components/LgvButton.vue';
 import LgvNotification from '@/_lib/components/LgvNotification.vue';
 import WebGPU from '@/core/capabilities/WebGPU';
 import * as DexieService from '@/core/services/dexie.service';
-import { swapSceneSkybox } from '@/core/services/editor.service';
-import { idb, type IDBKeyBinding, type IDBSettings, KeyBindingAction } from '@/dexie.config';
+import { setCameraControlScheme, setCameraFOV, swapSceneSkybox } from '@/core/services/editor.service';
+import {
+  type CameraMouseControlsScheme,
+  idb,
+  type IDBKeyBinding,
+  type IDBSettings,
+  KeyBindingAction,
+  type SkyboxName
+} from '@/dexie.config';
+import ParameterSlider from "@components/global/parameters/ParameterSlider.vue";
 
 const AppClearDataConfirmDialog = defineAsyncComponent(
   () => import('@components/codex/dialogs/ClearDataConfirmDialog.vue'),
@@ -460,12 +492,10 @@ const catModeOverride = ref('en-UwU');
 
 const dialogRef = useTemplateRef<{
   open: () => void;
-  close: () => void;
   ignoreNativeEvents: (v: boolean) => void;
-  isOpen: boolean;
-} | null>('dialogRef');
+}>('dialogRef');
 const fileInput = useTemplateRef('fileInput');
-const confirmDialogRef = useTemplateRef<{ open: () => void; close: () => void } | null>('confirmDialogRef');
+const confirmDialogRef = useTemplateRef<{ open: () => void }>('confirmDialogRef');
 const appSettings: Ref<IDBSettings> = ref({
   id: 0,
   locale: 'en-US',
@@ -473,7 +503,9 @@ const appSettings: Ref<IDBSettings> = ref({
   font: '',
   showInitDialog: true,
   renderingBackend: 'webgl',
+  cameraFOV: 50,
   skybox: 'deepspace',
+  cameraMouseControlsScheme: 'standard',
   bakingResolution: 2048,
   bakingPixelize: false,
   enableAnimations: true,
@@ -491,13 +523,7 @@ const keyBinds: Ref<IDBKeyBinding[]> = ref([]);
 let dataLoaded = false;
 
 defineExpose({
-  open: async () => {
-    if (!dataLoaded) {
-      await loadData();
-      dataLoaded = true;
-    }
-    dialogRef.value?.open();
-  },
+  open: () => dialogRef.value?.open(),
 });
 
 onMounted(async () => {
@@ -505,23 +531,23 @@ onMounted(async () => {
     persistStorage.value = await navigator.storage.persisted();
   }
 });
+watch(() => appSettings.value, updateSettings, { deep: true });
 
-watch(
-  [() => appSettings.value, () => dialogRef.value?.isOpen],
-  ([_, isDialogOpen]) => {
-    if (!dataLoaded) {
-      return;
-    }
-    swapEditorSkybox();
-    updateSettings();
-    if (!isDialogOpen && selectedAction.value) {
-      const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value);
-      keyBinds.value[kbidx].key = '[unset]';
-      toggleAction(selectedAction.value);
-    }
-  },
-  { deep: true },
-);
+async function handleOpen() {
+  if (!dataLoaded) {
+    await loadData();
+    dataLoaded = true;
+  }
+}
+function handleClose() {
+  if (selectedAction.value) {
+    const kbIdx = keyBinds.value.findIndex((k) => k.action === selectedAction.value);
+    keyBinds.value[kbIdx].key = '[unset]';
+    toggleAction(selectedAction.value);
+  }
+}
+
+// ------------------------------------------------------------------------------------------------
 
 async function loadData() {
   const settings = await idb.settings.limit(1).first();
@@ -550,7 +576,7 @@ async function importData(event: Event) {
 async function exportData() {
   const settings = await idb.settings.limit(1).first();
   const keyBindings = await idb.keyBindings.toArray();
-  saveAs(new Blob([JSON.stringify({ settings, keyBindings }, null, 2)]), 'lagrange_data.json');
+  saveAs(new Blob([JSON.stringify({ settings, keyBindings }, null, 2)]), 'lagrange_settings.json');
 }
 
 async function clearAllData() {
@@ -585,20 +611,8 @@ async function updateSettings() {
   EXTRAS_SPECIAL_DAYS.value = appSettings.value!.extrasShowSpecialDays!;
 
   await idb.settings.update(appSettings.value!.id, {
+    ...appSettings.value!,
     locale: mapLocale(appSettings.value!.locale),
-    theme: appSettings.value!.theme,
-    font: appSettings.value!.font,
-    showInitDialog: appSettings.value!.showInitDialog,
-    renderingBackend: appSettings.value!.renderingBackend,
-    skybox: appSettings.value!.skybox,
-    bakingResolution: appSettings.value!.bakingResolution,
-    bakingPixelize: appSettings.value!.bakingPixelize,
-    enableEffects: appSettings.value!.enableEffects,
-    enableAnimations: appSettings.value!.enableAnimations,
-    extrasCRTEffect: appSettings.value!.extrasCRTEffect,
-    extrasHologramEffect: appSettings.value!.extrasHologramEffect,
-    extrasMetalSlugMode: appSettings.value!.extrasMetalSlugMode,
-    extrasShowSpecialDays: appSettings.value!.extrasShowSpecialDays,
   });
 }
 
@@ -612,6 +626,9 @@ async function tryPersistStorage() {
 
 function swapEditorSkybox() {
   swapSceneSkybox(appSettings.value!.skybox);
+}
+function updateCameraMouseControlsScheme() {
+  setCameraControlScheme(appSettings.value!.cameraMouseControlsScheme as CameraMouseControlsScheme);
 }
 
 async function setSelectedActionKey(event: KeyboardEvent) {
@@ -645,6 +662,7 @@ function getKeyBind(action: string) {
 #dialog-settings {
   min-width: 36rem;
   max-width: 36rem;
+  height: 80%;
   .settings-grid {
     display: flex;
     flex-direction: column;

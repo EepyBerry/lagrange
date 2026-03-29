@@ -1,14 +1,15 @@
 import * as Globals from '@core/globals';
 import * as BakingHelper from '@core/helpers/baking.helper';
 import * as ComponentHelper from '@core/helpers/component.helper';
-import { EditorSceneCreationMode, type BakingTarget, type EditorSceneData } from '@core/types';
+import { type BakingTarget, EditorSceneCreationMode, type EditorSceneData } from '@core/types';
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
 import { sleep } from '@core/utils/utils';
 import { saveAs } from 'file-saver';
-import { degToRad } from 'three/src/math/MathUtils.js';
-import { DoubleSide, Group, MeshStandardNodeMaterial, NearestFilter, Vector2, type NodeMaterial } from 'three/webgpu';
+import { MOUSE } from 'three';
+import { clamp, degToRad } from 'three/src/math/MathUtils.js';
+import { DoubleSide, Group, MeshStandardNodeMaterial, NearestFilter, type NodeMaterial, Vector2 } from 'three/webgpu';
 import { watch } from 'vue';
-import { idb } from '@/dexie.config';
+import { type CameraMouseControlsScheme, idb } from '@/dexie.config';
 import { EventBus } from '../event-bus';
 import * as ExportHelper from '../helpers/export.helper';
 import * as PreviewHelper from '../helpers/preview.helper';
@@ -44,7 +45,7 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
     pixelRatio,
     EditorSceneCreationMode.EDITOR,
   );
-  editorSceneData.orbitControls = ComponentHelper.createOrbitControls(
+  editorSceneData.orbitControls = await ComponentHelper.createOrbitControls(
     editorSceneData.camera,
     editorSceneData.renderer.domElement,
   );
@@ -148,6 +149,22 @@ export function dollyCamera(direction: 'in' | 'out') {
     editorSceneData.orbitControls!.dollyIn(1.1);
   }
 }
+export function setCameraFOV(fov: number) {
+  editorSceneData.camera.fov = clamp(fov, 30, 90);
+  editorSceneData.camera.updateProjectionMatrix();
+}
+export function setCameraControlScheme(scheme: CameraMouseControlsScheme) {
+  editorSceneData.orbitControls!.mouseButtons = {
+    LEFT: scheme === 'standard' ? MOUSE.ROTATE : MOUSE.DOLLY,
+    MIDDLE: MOUSE.DOLLY,
+    RIGHT: scheme === 'standard' ? MOUSE.DOLLY : MOUSE.ROTATE,
+  };
+  editorSceneData.orbitControls!.update();
+}
+
+// ------------------------------------------------------------------------------------------------ //
+//                                         EXPORT FUNCTIONS                                         //
+// ------------------------------------------------------------------------------------------------ //
 
 export async function exportPlanetPreview(): Promise<string> {
   EDITOR_STATE.value.status = EditorStatusCode.PreviewGeneration;

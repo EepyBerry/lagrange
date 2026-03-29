@@ -52,6 +52,9 @@ const handleClick = (evt: Event) => {
   }
 };
 
+const $emit = defineEmits(['open', 'close']);
+defineExpose({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open });
+
 const $props = defineProps<{
   showTitle?: boolean;
   showActions?: boolean;
@@ -72,17 +75,18 @@ function open() {
   EventBus.disableWindowEventListener('keydown');
   dialog.value?.showModal();
   dialogInner.value?.focus();
+  $emit('open');
 }
 function close() {
   EventBus.enableWindowEventListener('keydown');
   dialog.value?.close();
+  $emit('close');
 }
 
 function ignoreNativeEvents(enabled: boolean) {
   ignoresNativeEvents.value = enabled;
 }
 
-defineExpose({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open });
 </script>
 
 <style scoped lang="scss">

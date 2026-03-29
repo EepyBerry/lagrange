@@ -1,6 +1,15 @@
-// db.ts
 import Dexie, { type EntityTable } from 'dexie';
 import type PlanetData from './core/models/planet-data.model';
+
+export type SkyboxName =
+  | 'deepspace'
+  | 'crimsonquadrant'
+  | 'embergreenexpanse'
+  | 'shiningstars'
+  | 'jadenebula'
+  | 'edgeoftheuniverse'
+  | 'chromakey';
+export type CameraMouseControlsScheme = 'standard' | 'inverted';
 
 type TKeyBindingAction = (typeof KeyBindingAction)[keyof typeof KeyBindingAction];
 export const KeyBindingAction = {
@@ -9,9 +18,6 @@ export const KeyBindingAction = {
   ToggleAtmosphere: 'toggle-atmosphere',
   ToggleBiomes: 'toggle-biomes',
   TakeScreenshot: 'take-screenshot',
-  CameraRotate: 'camera-rotate',
-  CameraDolly: 'camera-dolly',
-  CameraPan: 'camera-pan',
   StepDollyIn: 'step-dolly-in',
   StepDollyOut: 'step-dolly-out',
 } as const;
@@ -28,14 +34,9 @@ export interface IDBSettings {
   font: string;
   showInitDialog?: boolean;
   renderingBackend: 'webgl' | 'webgpu';
-  skybox:
-    | 'deepspace'
-    | 'crimsonquadrant'
-    | 'embergreenexpanse'
-    | 'shiningstars'
-    | 'jadenebula'
-    | 'edgeoftheuniverse'
-    | 'chromakey';
+  cameraMouseControlsScheme: CameraMouseControlsScheme;
+  cameraFOV: number;
+  skybox: SkyboxName;
   bakingResolution?: number;
   bakingPixelize?: boolean;
   enableEffects?: boolean;

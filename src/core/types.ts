@@ -1,6 +1,5 @@
 import type { AtmosphereUniforms } from '@core/tsl/materials/atmosphere.tslmat';
 import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat';
-import type { LensFlareUniforms } from '@core/tsl/materials/lens-flare.tslmat';
 import type { PlanetUniforms } from '@core/tsl/materials/planet.tslmat';
 import type { RingUniforms } from '@core/tsl/materials/ring.tslmat';
 import type {
@@ -27,7 +26,7 @@ export enum EditorSceneCreationMode {
   PREVIEW,
 }
 
-// ----------------------------------- Editor types ---------------------------------
+// ----------------------------------- Model subtypes ---------------------------------
 export enum PlanetType {
   PLANET,
   MOON,
@@ -114,10 +113,6 @@ export type RingMeshData = {
 
   buffer: Uint8Array | null;
   texture?: DataTexture;
-};
-export type LensFlareMeshdata = {
-  mesh?: Mesh;
-  uniforms?: LensFlareUniforms;
 };
 
 // ----------------------------------- Baking types ---------------------------------

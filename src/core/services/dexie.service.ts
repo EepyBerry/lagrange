@@ -12,6 +12,9 @@ export async function initSettings(): Promise<IDBSettings> {
     showInitDialog: settings?.showInitDialog ?? true,
     // rendering
     renderingBackend: settings?.renderingBackend ?? 'webgl',
+    // editor
+    cameraMouseControlsScheme: settings?.cameraMouseControlsScheme ?? 'standard',
+    cameraFOV: settings?.cameraFOV ?? 50,
     skybox: settings?.skybox ?? 'deepspace',
     // baking
     bakingResolution: settings?.bakingResolution ?? 2048,
@@ -51,24 +54,12 @@ export async function initKeyBindings(): Promise<IDBKeyBinding[]> {
     key: tryGetKeyFromBinding(keybinds, 5) ?? 'X',
   });
   await idb.keyBindings.upsert(6, {
-    action: KeyBindingAction.CameraRotate,
-    key: tryGetKeyFromBinding(keybinds, 6) ?? 'MOUSE_LEFT',
+    action: KeyBindingAction.StepDollyIn,
+    key: tryGetKeyFromBinding(keybinds, 6) ?? '+',
   });
   await idb.keyBindings.upsert(7, {
-    action: KeyBindingAction.CameraDolly,
-    key: tryGetKeyFromBinding(keybinds, 7) ?? 'MOUSE_MIDDLE',
-  });
-  await idb.keyBindings.upsert(8, {
-    action: KeyBindingAction.CameraPan,
-    key: tryGetKeyFromBinding(keybinds, 8) ?? 'MOUSE_RIGHT',
-  });
-  await idb.keyBindings.upsert(9, {
-    action: KeyBindingAction.StepDollyIn,
-    key: tryGetKeyFromBinding(keybinds, 9) ?? '+',
-  });
-  await idb.keyBindings.upsert(10, {
     action: KeyBindingAction.StepDollyOut,
-    key: tryGetKeyFromBinding(keybinds, 10) ?? '-',
+    key: tryGetKeyFromBinding(keybinds, 7) ?? '-',
   });
   return idb.keyBindings.toArray();
 }

@@ -59,10 +59,9 @@ export async function createScene(
   pixelRatio: number,
   creationMode: EditorSceneCreationMode,
 ): Promise<EditorSceneObjects> {
-  // setup cubemap
+  const idbSettings = await idb.settings.limit(1).first();
   const scene = new Scene();
   if (creationMode === EditorSceneCreationMode.EDITOR) {
-    const idbSettings = await idb.settings.limit(1).first();
     TextureHelper.loadCubeTextureSkybox(scene, `/skyboxes/${idbSettings?.skybox ?? "deepspace"}/`);
   }
   scene.userData.lens = "no-occlusion";
@@ -75,7 +74,7 @@ export async function createScene(
 
   // setup scene (renderer, cam, lighting)
   const renderer = await createRenderer(width, height, pixelRatio);
-  const camera = createPerspectiveCamera(50, width / height, 0.1, 1e6, spherical);
+  const camera = createPerspectiveCamera(idbSettings!.cameraFOV, width / height, 0.1, 1e6, spherical);
   return { scene, renderer, camera };
 }
 
@@ -333,7 +332,8 @@ export function createRingGeometryComponent(
  * @param canvas the render canvas
  * @returns an instance of OrbitControls
  */
-export function createOrbitControls(camera: Camera, canvas: HTMLCanvasElement): OrbitControls {
+export async function createOrbitControls(camera: Camera, canvas: HTMLCanvasElement): Promise<OrbitControls> {
+  const idbSettings = await idb.settings.limit(1).first();
   const controls = new OrbitControls(camera, canvas);
   controls.enablePan = false;
   controls.enableDamping = false;
@@ -345,9 +345,13 @@ export function createOrbitControls(camera: Camera, canvas: HTMLCanvasElement): 
   controls.rotateSpeed = 0.5;
   controls.zoomSpeed = 2;
   controls.mouseButtons = {
-    LEFT: MOUSE.ROTATE,
+    LEFT: idbSettings?.cameraMouseControlsScheme === 'standard'
+      ? MOUSE.ROTATE
+      : MOUSE.DOLLY,
     MIDDLE: MOUSE.DOLLY,
-    RIGHT: MOUSE.DOLLY,
+    RIGHT: idbSettings?.cameraMouseControlsScheme === 'standard'
+      ? MOUSE.DOLLY
+      : MOUSE.ROTATE,
   };
   return controls;
 }
