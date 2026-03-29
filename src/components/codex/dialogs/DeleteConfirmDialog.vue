@@ -20,10 +20,10 @@
       </div>
     </template>
     <template #actions>
-      <LgvButton icon="mingcute:close-line" @click="cancelAndClose">
+      <LgvButton icon="mingcute:close-line" @click="close(false)">
         {{ $t('dialog.delete.$action_cancel') }}
       </LgvButton>
-      <LgvButton class="warn" icon="mingcute:delete-2-line" @click="confirmAndClose">
+      <LgvButton class="warn" icon="mingcute:delete-2-line" @click="close(true)">
         {{ $t('dialog.delete.$action_confirm') }}
       </LgvButton>
     </template>
@@ -31,28 +31,27 @@
 </template>
 <script setup lang="ts">
 import DialogElement from '@components/global/elements/DialogElement.vue';
-import { ref, type Ref } from 'vue';
+import { ref, type Ref, useTemplateRef } from 'vue';
 import type { IDBPlanet } from '@/dexie.config';
 import LgvButton from '@/_lib/components/LgvButton.vue';
+import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
+import type { DeleteConfirmDialogExposes } from "@components/codex/dialogs/DeleteConfirmDialog.types.ts";
 
 const planet: Ref<IDBPlanet | null> = ref(null);
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef')
 
 const $emit = defineEmits(['confirm']);
-defineExpose({
-  open: (p: IDBPlanet) => {
-    planet.value = p;
-    dialogRef.value?.open();
-  },
-});
+defineExpose<DeleteConfirmDialogExposes>({ open });
 
-function cancelAndClose() {
-  planet.value = null;
-  dialogRef.value?.close();
+function open(p: IDBPlanet) {
+  planet.value = p;
+  dialogRef.value?.open();
 }
 
-function confirmAndClose() {
-  $emit('confirm', planet.value!.id);
+function close(confirm: boolean) {
+  if (confirm) {
+    $emit('confirm', planet.value!.id);
+  }
   planet.value = null;
   dialogRef.value?.close();
 }

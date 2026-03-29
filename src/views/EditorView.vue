@@ -28,7 +28,7 @@ import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
 import { sleep } from '@core/utils/utils';
 import { useHead } from '@unhead/vue';
 import { nanoid } from 'nanoid';
-import { defineAsyncComponent, onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue';
+import { defineAsyncComponent, onMounted, onUnmounted, ref, toRaw, type Ref, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import EditorHeaderControls from '@/components/editor/controls/EditorHeaderControls.vue';
@@ -50,6 +50,9 @@ import {
 } from '@/core/services/editor.service';
 import { EDITOR_STATE, EditorStatusCode } from '@/core/state/editor.state';
 import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config';
+import type { EditorInitErrorDialogExposes } from "@components/editor/dialogs/EditorInitErrorDialog.types.ts";
+import type { WarnSaveDialogExposes } from "@components/editor/dialogs/WarnSaveDialog.types.ts";
+import type { ExportProgressDialogExposes } from "@components/editor/dialogs/ExportProgressDialog.types.ts";
 
 const WarnSaveDialog = defineAsyncComponent(() => import('@components/editor/dialogs/WarnSaveDialog.vue'));
 const ExportProgressDialog = defineAsyncComponent(() => import('@components/editor/dialogs/ExportProgressDialog.vue'));
@@ -63,18 +66,12 @@ const head = useHead({
 })!;
 
 // Dialogs
-const editorErrorDialogRef: Ref<{
-  openWithError: (error: string, stack?: string, isWebGPUError?: boolean) => void;
-} | null> = ref(null);
-const warnSaveDialogRef: Ref<{ open: () => void } | null> = ref(null);
-const exportProgressDialogRef: Ref<{
-  open: () => void;
-  setProgress: (value: number) => void;
-  setError: (value: unknown) => void;
-} | null> = ref(null);
-let loadedCorrectly = false;
+const editorErrorDialogRef = useTemplateRef<EditorInitErrorDialogExposes>('editorErrorDialogRef')
+const warnSaveDialogRef = useTemplateRef<WarnSaveDialogExposes>('warnSaveDialogRef');
+const exportProgressDialogRef = useTemplateRef<ExportProgressDialogExposes>('exportProgressDialogRef');
 
 // Data
+let loadedCorrectly = false;
 const $planetEntityId: Ref<string> = ref('');
 const $planetEntityPreviewDataURL: Ref<string | undefined> = ref('');
 
@@ -82,7 +79,7 @@ const $planetEntityPreviewDataURL: Ref<string | undefined> = ref('');
 const showCompactControls: Ref<boolean> = ref(false);
 
 // THREE canvas/scene root
-const sceneRoot: Ref<HTMLCanvasElement | null> = ref(null);
+const sceneRoot = useTemplateRef('sceneRoot');
 const showSpinner: Ref<boolean> = ref(true);
 
 onMounted(async () => {
@@ -113,7 +110,7 @@ async function initThree() {
       if (!(await WebGPU.isAvailable())) {
         showSpinner.value = false;
         const webgpuErrorMessage = WebGPU.getErrorMessage(i18n);
-        editorErrorDialogRef.value!.openWithError(webgpuErrorMessage, undefined, true);
+        editorErrorDialogRef.value!.open(webgpuErrorMessage, undefined, true);
         return;
       }
       await initData();
@@ -129,7 +126,7 @@ async function initThree() {
       if (!WebGL.isWebGL2Available()) {
         showSpinner.value = false;
         const webglErrorMessage = WebGL.getWebGL2ErrorMessage(i18n);
-        editorErrorDialogRef.value!.openWithError(webglErrorMessage);
+        editorErrorDialogRef.value!.open(webglErrorMessage);
         return;
       }
       await initData();
@@ -144,11 +141,11 @@ async function initThree() {
 function handleInitThreeError(error: unknown) {
   EDITOR_STATE.value.status = EditorStatusCode.Error;
   if (error instanceof Error || error instanceof DOMException) {
-    editorErrorDialogRef.value!.openWithError(error.message, error.stack);
+    editorErrorDialogRef.value!.open(error.message, error.stack);
   } else if (typeof error === 'string') {
-    editorErrorDialogRef.value!.openWithError(error);
+    editorErrorDialogRef.value!.open(error);
   } else {
-    editorErrorDialogRef.value!.openWithError(i18n.t('main.error.default_unknown'));
+    editorErrorDialogRef.value!.open(i18n.t('main.error.default_unknown'));
   }
 }
 
@@ -210,8 +207,6 @@ async function initCanvas() {
 
   // Bootstrap editor service
   await bootstrapEditor(sceneRoot.value!, effectiveWidth, effectiveHeight, pixelRatio);
-
-  // Register event listeners
   EventBus.registerWindowEventListener('click', onWindowClick);
   EventBus.registerWindowEventListener('resize', onWindowResize);
   EventBus.registerWindowEventListener('keydown', onWindowKeydown);

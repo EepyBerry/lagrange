@@ -35,7 +35,7 @@ watch(
 //                                           BOOTSTRAPPING                                          //
 // ------------------------------------------------------------------------------------------------ //
 
-export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
+export async function bootstrapEditor(sceneRoot: HTMLElement, w: number, h: number, pixelRatio: number) {
   EDITOR_STATE.value.status = EditorStatusCode.Initialization;
   await sleep(50);
   editorSceneData = await SceneHelper.buildEditorScene(
@@ -51,10 +51,13 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   );
 
   // Configure renderer
+  if (!editorSceneData.renderer.initialized) {
+    await editorSceneData.renderer.init();
+  }
   editorSceneData.renderer.setSize(w, h);
   editorSceneData.renderer.setAnimationLoop(() => renderFrame());
   editorSceneData.renderer.domElement.ariaLabel = '3D planet viewer';
-  canvas.appendChild(editorSceneData.renderer.domElement);
+  sceneRoot.appendChild(editorSceneData.renderer.domElement);
   EDITOR_STATE.value.status = EditorStatusCode.Edition;
 
   // Observe changes in model

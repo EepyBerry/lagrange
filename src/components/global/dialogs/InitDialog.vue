@@ -170,18 +170,21 @@
 import AppLogo from '@components/global/elements/AppLogo.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
-import { ref, type Ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import type { IDBKeyBinding } from '@/dexie.config';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 import LgvNotification from '@/_lib/components/LgvNotification.vue';
+import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
+import type { InitDialogExposes } from "@components/global/dialogs/InitDialog.types.ts";
 
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef')
+defineExpose<InitDialogExposes>({ open: () => dialogRef.value?.open!() });
+
 const shouldShowOnNextVisits = ref(true);
 const shouldEnableStoragePersistence = ref(true);
 
 const $emit = defineEmits(['disableInitDialog', 'enablePersistence']);
 defineProps<{ keybinds: IDBKeyBinding[] }>();
-defineExpose({ open: () => dialogRef.value?.open() });
 
 function doClose() {
   if (!shouldShowOnNextVisits.value) {
@@ -190,7 +193,7 @@ function doClose() {
   if (shouldEnableStoragePersistence.value) {
     $emit('enablePersistence');
   }
-  dialogRef.value?.close();
+  dialogRef.value?.close!();
 }
 </script>
 

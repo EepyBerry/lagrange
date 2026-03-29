@@ -75,18 +75,20 @@ import NewCardElement from '@/components/codex/elements/NewCardElement.vue';
 import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue';
 import ViewHeader from '@/components/global/ViewHeader.vue';
 import { idb, type IDBPlanet } from '@/dexie.config';
+import type { DeleteConfirmDialogExposes } from "@components/codex/dialogs/DeleteConfirmDialog.types.ts";
+import type { PlanetInfoDialogExposes } from "@components/codex/dialogs/PlanetInfoDialog.types.ts";
 
 const AppPlanetInfoDialog = defineAsyncComponent(() => import('@components/codex/dialogs/PlanetInfoDialog.vue'));
 const AppDeleteConfirmDialog = defineAsyncComponent(() => import('@components/codex/dialogs/DeleteConfirmDialog.vue'));
 
-const planets: Ref<IDBPlanet[]> = ref([]);
+const deleteDialogRef = useTemplateRef<DeleteConfirmDialogExposes>('deleteDialogRef');
+const planetInfoDialogRef = useTemplateRef<PlanetInfoDialogExposes>('planetInfoDialogRef');
 
+const planets: Ref<IDBPlanet[]> = ref([]);
 const i18n = useI18n();
 const fileInput = useTemplateRef('fileInput');
 const planetCardRefs = useTemplateRef('planetCardRef');
-const planetInfoDialogRef = useTemplateRef('planetInfoDialogRef');
 
-const deleteDialogRef = useTemplateRef('deleteDialogRef');
 const showInlineFooter: Ref<boolean> = ref(false);
 
 useHead({

@@ -5,7 +5,6 @@
     :show-title="true"
     :closeable="true"
     :aria-label="$t('a11y.dialog_settings')"
-    @open="handleOpen()"
     @close="handleClose()"
   >
     <template #title>
@@ -482,20 +481,22 @@ import {
   type SkyboxName
 } from '@/dexie.config';
 import ParameterSlider from "@components/global/parameters/ParameterSlider.vue";
+import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
+import type { SettingsDialogExposes } from "@components/global/dialogs/SettingsDialog.types.ts";
+import type { ClearDataConfirmDialogExposes } from "@components/global/dialogs/ClearDataConfirmDialog.types.ts";
 
 const AppClearDataConfirmDialog = defineAsyncComponent(
-  () => import('@components/codex/dialogs/ClearDataConfirmDialog.vue'),
+  () => import('@components/global/dialogs/ClearDataConfirmDialog.vue'),
 );
 
 const i18n = useI18n();
 const catModeOverride = ref('en-UwU');
 
-const dialogRef = useTemplateRef<{
-  open: () => void;
-  ignoreNativeEvents: (v: boolean) => void;
-}>('dialogRef');
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+const confirmDialogRef = useTemplateRef<ClearDataConfirmDialogExposes>('confirmDialogRef');
+defineExpose<SettingsDialogExposes>({ open });
+
 const fileInput = useTemplateRef('fileInput');
-const confirmDialogRef = useTemplateRef<{ open: () => void }>('confirmDialogRef');
 const appSettings: Ref<IDBSettings> = ref({
   id: 0,
   locale: 'en-US',
@@ -522,10 +523,6 @@ const keyBinds: Ref<IDBKeyBinding[]> = ref([]);
 
 let dataLoaded = false;
 
-defineExpose({
-  open: () => dialogRef.value?.open(),
-});
-
 onMounted(async () => {
   if (navigator.storage) {
     persistStorage.value = await navigator.storage.persisted();
@@ -533,7 +530,8 @@ onMounted(async () => {
 });
 watch(() => appSettings.value, updateSettings, { deep: true });
 
-async function handleOpen() {
+async function open() {
+  dialogRef.value?.open()
   if (!dataLoaded) {
     await loadData();
     dataLoaded = true;

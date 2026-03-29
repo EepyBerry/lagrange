@@ -43,14 +43,18 @@
 <script setup lang="ts">
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
-import { ref, type Ref } from 'vue';
+import { ref, type Ref, useTemplateRef } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
-const allowRendererFallback: Ref<boolean> = ref(false);
+import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
+import type { EditorInitErrorDialogExposes } from "@components/editor/dialogs/EditorInitErrorDialog.types.ts";
+
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef')
+defineExpose<EditorInitErrorDialogExposes>({ open: openWithError });
 
 const _error: Ref<string> = ref('');
 const _stack: Ref<string[]> = ref([]);
 const _wantsFallback: Ref<boolean> = ref(false);
+const allowRendererFallback: Ref<boolean> = ref(false);
 
 function openWithError(error: string, stack?: string, isWebGPUError: boolean = false) {
   _error.value = error;
@@ -71,8 +75,6 @@ async function closeWithFallback() {
   dialogRef.value!.close();
 }
 
-defineEmits(['close']);
-defineExpose({ openWithError });
 </script>
 <style scoped lang="scss">
 #dialog-editorerror {
