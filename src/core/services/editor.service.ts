@@ -1,21 +1,21 @@
-import { watch } from 'vue';
-import { degToRad } from 'three/src/math/MathUtils.js';
 import * as Globals from '@core/globals';
-import * as ComponentHelper from '@core/helpers/component.helper';
 import * as BakingHelper from '@core/helpers/baking.helper';
+import * as ComponentHelper from '@core/helpers/component.helper';
 import { EditorSceneCreationMode, type BakingTarget, type EditorSceneData } from '@core/types';
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
-import * as ExportHelper from '../helpers/export.helper';
-import { idb } from '@/dexie.config';
 import { sleep } from '@core/utils/utils';
-import * as SceneHelper from '../helpers/scene.helper';
-import * as PreviewHelper from '../helpers/preview.helper';
-import * as TextureHelper from '../helpers/texture.helper';
-import { DoubleSide, Group, MeshStandardNodeMaterial, NearestFilter, Vector2, type NodeMaterial } from 'three/webgpu';
 import { saveAs } from 'file-saver';
+import { degToRad } from 'three/src/math/MathUtils.js';
+import { DoubleSide, Group, MeshStandardNodeMaterial, NearestFilter, Vector2, type NodeMaterial } from 'three/webgpu';
+import { watch } from 'vue';
+import { idb } from '@/dexie.config';
 import { EventBus } from '../event-bus';
-import { EDITOR_STATE, EditorStatusCode } from '../state/editor.state';
+import * as ExportHelper from '../helpers/export.helper';
+import * as PreviewHelper from '../helpers/preview.helper';
+import * as SceneHelper from '../helpers/scene.helper';
+import * as TextureHelper from '../helpers/texture.helper';
 import { PlanetDataToUniformsObserver } from '../observers/planet-data-to-uniforms.observer';
+import { EDITOR_STATE, EditorStatusCode } from '../state/editor.state';
 
 // Internal attributes
 let editorSceneData!: EditorSceneData;
@@ -47,10 +47,10 @@ export async function bootstrapEditor(canvas: HTMLCanvasElement, w: number, h: n
   ComponentHelper.createOrbitControls(editorSceneData.camera, editorSceneData.renderer.domElement);
 
   // Configure renderer
-  editorSceneData.renderer!.setSize(w, h);
-  editorSceneData.renderer!.setAnimationLoop(() => renderFrame());
-  editorSceneData.renderer!.domElement.ariaLabel = '3D planet viewer';
-  canvas.appendChild(editorSceneData.renderer!.domElement);
+  editorSceneData.renderer.setSize(w, h);
+  editorSceneData.renderer.setAnimationLoop(() => renderFrame());
+  editorSceneData.renderer.domElement.ariaLabel = '3D planet viewer';
+  canvas.appendChild(editorSceneData.renderer.domElement);
   EDITOR_STATE.value.status = EditorStatusCode.Edition;
 
   // Observe changes in model
@@ -83,18 +83,18 @@ export function unloadEditor() {
 
 function renderFrame() {
   editorSceneData.lensFlare!.update(
-    editorSceneData.renderer!,
-    editorSceneData.scene!,
-    editorSceneData.camera!,
-    editorSceneData.clock!,
+    editorSceneData.renderer,
+    editorSceneData.scene,
+    editorSceneData.camera,
+    editorSceneData.timer!,
   );
-  editorSceneData.renderer!.render(editorSceneData.scene!, editorSceneData.camera!);
+  editorSceneData.renderer.render(editorSceneData.scene, editorSceneData.camera);
 }
 
 export function updateCameraRendering(w: number, h: number) {
-  editorSceneData.camera!.aspect = w / h;
-  editorSceneData.camera!.updateProjectionMatrix();
-  editorSceneData.renderer!.setSize(w, h);
+  editorSceneData.camera.aspect = w / h;
+  editorSceneData.camera.updateProjectionMatrix();
+  editorSceneData.renderer.setSize(w, h);
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -125,7 +125,7 @@ export function swapSceneSkybox(skybox: string) {
 
 export async function takePlanetScreenshot() {
   try {
-    await editorSceneData.renderer.render(editorSceneData.scene, editorSceneData.camera);
+    editorSceneData.renderer.render(editorSceneData.scene, editorSceneData.camera);
     editorSceneData.renderer.domElement.toBlob((blob) =>
       saveAs(
         blob as Blob,
@@ -223,7 +223,7 @@ export async function exportPlanetToGLTF(progressDialog: {
       metalnessMap: bakePlanetMetallicRoughnessTex,
       emissiveMap: bakePlanetEmissivityTex,
       normalMap: bakePlanetNormalTex,
-      normalScale: new Vector2(planetData.planetSurfaceBumpStrength).multiplyScalar(2.0),
+      normalScale: new Vector2(planetData.planetSurfaceBumpStrength).multiplyScalar(2),
     });
     bakingTargets.push({
       mesh: bakePlanet,
@@ -243,7 +243,7 @@ export async function exportPlanetToGLTF(progressDialog: {
 
       bakeClouds.material = new MeshStandardNodeMaterial({
         map: bakeCloudsTex,
-        opacity: 1.0,
+        opacity: 1,
         transparent: true,
       });
       bakingTargets.push({ mesh: bakeClouds, textures: [bakeCloudsTex] });

@@ -20,9 +20,9 @@
 </template>
 
 <script setup lang="ts">
-import LgvButton from '@/_lib/components/LgvButton.vue';
 import type { EditorMessageLevel } from '@core/types';
 import { computed, type ComputedRef } from 'vue';
+import LgvButton from '@/_lib/components/LgvButton.vue';
 
 const $props = defineProps<{ type: EditorMessageLevel; visible: boolean }>();
 defineEmits(['close']);

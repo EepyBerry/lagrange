@@ -113,13 +113,13 @@
 </template>
 <script setup lang="ts">
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
-import ControlsLighting from './ControlsLighting.vue';
-import ControlsRendering from './ControlsRendering.vue';
-import ControlsSurface from './ControlsSurface.vue';
+import ControlsAtmosphere from './ControlsAtmosphere.vue';
+import ControlsBasicData from './ControlsBasicData.vue';
 import ControlsBiomes from './ControlsBiomes.vue';
 import ControlsClouds from './ControlsClouds.vue';
-import ControlsAtmosphere from './ControlsAtmosphere.vue';
+import ControlsLighting from './ControlsLighting.vue';
+import ControlsRendering from './ControlsRendering.vue';
 import ControlsRing from './ControlsRings.vue';
-import ControlsBasicData from './ControlsBasicData.vue';
+import ControlsSurface from './ControlsSurface.vue';
 defineProps<{ compactMode: boolean }>();
 </script>

@@ -28,8 +28,8 @@
   </DialogElement>
 </template>
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
+import { ref, type Ref } from 'vue';
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
 
 const bakingSteps = 8;

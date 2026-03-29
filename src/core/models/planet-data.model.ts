@@ -1,14 +1,14 @@
-import { ColorRamp, ColorRampStep } from './color-ramp.model';
 import { ColorMode, GradientMode, PlanetClass, PlanetType } from '@core/types';
 import { clampedPRNG, isNumeric, randomBoolean, randomColor, randomIntervals } from '@core/utils/math-utils';
 import { Color } from 'three';
-import { NoiseParameters } from './noise-parameters.model';
-import { BiomeParameters } from './biome-parameters.model';
 import { clamp } from 'three/src/math/MathUtils.js';
-import { DisplacementParameters } from './displacement-parameters.model';
-import { RingParameters } from './ring-parameters.model';
 import { convertLegacyRingStorage } from '../helpers/compatibility.helper';
 import { Observable, ObservableEventAction } from '../utils/observable-utils';
+import { BiomeParameters } from './biome-parameters.model';
+import { ColorRamp, ColorRampStep } from './color-ramp.model';
+import { DisplacementParameters } from './displacement-parameters.model';
+import { NoiseParameters } from './noise-parameters.model';
+import { RingParameters } from './ring-parameters.model';
 
 export default class PlanetData extends Observable {
   // --------------------------------------------------
@@ -465,7 +465,7 @@ export default class PlanetData extends Observable {
     return this._atmosphereDensityScale;
   }
   public set atmosphereDensityScale(value: number) {
-    this._atmosphereDensityScale = clamp(value, 0.25, 20.0);
+    this._atmosphereDensityScale = clamp(value, 0.25, 20);
     this.notify({ key: '_atmosphereDensityScale' });
   }
 
@@ -473,7 +473,7 @@ export default class PlanetData extends Observable {
     return this._atmosphereIntensity;
   }
   public set atmosphereIntensity(value: number) {
-    this._atmosphereIntensity = clamp(value, 0, 5.0);
+    this._atmosphereIntensity = clamp(value, 0, 5);
     this.notify({ key: '_atmosphereIntensity' });
   }
   public get atmosphereColorMode(): number {
@@ -487,7 +487,7 @@ export default class PlanetData extends Observable {
     return this._atmosphereHue;
   }
   public set atmosphereHue(value: number) {
-    this._atmosphereHue = clamp(value, 0.0, 2.0);
+    this._atmosphereHue = clamp(value, 0, 2);
     this.notify({ key: '_atmosphereHue' });
   }
   public get atmosphereTint(): Color {
@@ -509,21 +509,21 @@ export default class PlanetData extends Observable {
     return this._atmosphereRayleighDensityRatio;
   }
   public set atmosphereRayleighDensityRatio(value: number) {
-    this._atmosphereRayleighDensityRatio = clamp(value, 0.0, 1.0);
+    this._atmosphereRayleighDensityRatio = clamp(value, 0, 1);
     this.notify({ key: '_atmosphereRayleighDensityRatio' });
   }
   public get atmosphereMieDensityRatio(): number {
     return this._atmosphereMieDensityRatio;
   }
   public set atmosphereMieDensityRatio(value: number) {
-    this._atmosphereMieDensityRatio = clamp(value, 0.0, 1.0);
+    this._atmosphereMieDensityRatio = clamp(value, 0, 1);
     this.notify({ key: '_atmosphereMieDensityRatio' });
   }
   public get atmosphereOpticalDensityRatio(): number {
     return this._atmosphereOpticalDensityRatio;
   }
   public set atmosphereOpticalDensityRatio(value: number) {
-    this._atmosphereOpticalDensityRatio = clamp(value, 0.0, 1.0);
+    this._atmosphereOpticalDensityRatio = clamp(value, 0, 1);
     this.notify({ key: '_atmosphereOpticalDensityRatio' });
   }
 
@@ -561,27 +561,27 @@ export default class PlanetData extends Observable {
     this._lensFlareEnabled = true;
     this._lensFlarePointsIntensity = 0.25;
     this._lensFlareGlareIntensity = 0.4;
-    this._sunLightAngle = -30.0;
+    this._sunLightAngle = -30;
     this._sunLightColor = new Color(0xfff6e8);
-    this._sunLightIntensity = 10.0;
+    this._sunLightIntensity = 10;
     this._ambLightColor = new Color(0xffffff);
-    this._ambLightIntensity = 0.0;
+    this._ambLightIntensity = 0;
 
     // Planet & Rendering
     this._planetType = PlanetType.PLANET;
     this._planetClass = PlanetClass.PLANET_TELLURIC;
-    this._planetMeshQuality = 64.0;
-    this._planetRadius = 1.0;
-    this._planetAxialTilt = -15.0;
-    this._planetRotation = 0.0;
+    this._planetMeshQuality = 64;
+    this._planetRadius = 1;
+    this._planetAxialTilt = -15;
+    this._planetRotation = 0;
     this._planetWaterRoughness = 0.55;
     this._planetWaterMetalness = 0.1;
     this._planetGroundRoughness = 0.8;
     this._planetGroundMetalness = 0.1;
     this._planetWaterLevel = 0.5;
     this._planetShowEmissive = false;
-    this._planetWaterEmissiveIntensity = 2.0;
-    this._planetGroundEmissiveIntensity = 0.0;
+    this._planetWaterEmissiveIntensity = 2;
+    this._planetGroundEmissiveIntensity = 0;
 
     // Surface
     this._planetSurfaceShowBumps = true;
@@ -591,9 +591,9 @@ export default class PlanetData extends Observable {
     this._planetSurfaceDisplacement = new DisplacementParameters(
       '_planetSurfaceDisplacement',
       this.notifyRelayCallback,
-      2.0,
+      2,
       0.2,
-      2.0,
+      2,
       6,
     );
     this._planetSurfaceNoise = new NoiseParameters(
@@ -626,23 +626,16 @@ export default class PlanetData extends Observable {
       6,
     );
     this._biomesHumidityMode = GradientMode.FULLNOISE;
-    this._biomesHumidityNoise = new NoiseParameters(
-      '_biomesHumidityNoise',
-      this.notifyRelayCallback,
-      3.0,
-      0.63,
-      2.53,
-      6,
-    );
+    this._biomesHumidityNoise = new NoiseParameters('_biomesHumidityNoise', this.notifyRelayCallback, 3, 0.63, 2.53, 6);
     this._biomesParams = [
       new BiomeParameters(
         '_biomesParams[element]',
         this.notifyRelayCallback,
         {
-          temperatureMin: 0.0,
+          temperatureMin: 0,
           temperatureMax: 0.1,
           humidityMin: 0.35,
-          humidityMax: 1.0,
+          humidityMax: 1,
         },
         new Color(0xffffff),
         0.25,
@@ -652,9 +645,9 @@ export default class PlanetData extends Observable {
         this.notifyRelayCallback,
         {
           temperatureMin: 0.8,
-          temperatureMax: 1.0,
-          humidityMin: 0.0,
-          humidityMax: 1.0,
+          temperatureMax: 1,
+          humidityMin: 0,
+          humidityMax: 1,
         },
         new Color(0xbaa345),
         0.25,
@@ -663,9 +656,9 @@ export default class PlanetData extends Observable {
         '_biomesParams[element]',
         this.notifyRelayCallback,
         {
-          temperatureMin: 0.0,
-          temperatureMax: 1.0,
-          humidityMin: 0.0,
+          temperatureMin: 0,
+          temperatureMax: 1,
+          humidityMin: 0,
           humidityMax: 0.685,
         },
         new Color(0x132e06),
@@ -676,33 +669,33 @@ export default class PlanetData extends Observable {
 
     // Clouds
     this._cloudsEnabled = true;
-    this._cloudsRotation = 0.0;
+    this._cloudsRotation = 0;
     this._cloudsHeight = 1.005;
     this._cloudsShowWarping = false;
     this._cloudsShowDisplacement = false;
     this._cloudsDisplacement = new DisplacementParameters(
       '_cloudsDisplacement',
       this.notifyRelayCallback,
-      2.0,
+      2,
       0.2,
-      2.0,
+      2,
       6,
     );
-    this._cloudsNoise = new NoiseParameters('_cloudsNoise', this.notifyRelayCallback, 4.0, 0.6, 1.75, 6);
+    this._cloudsNoise = new NoiseParameters('_cloudsNoise', this.notifyRelayCallback, 4, 0.6, 1.75, 6);
     this._cloudsColor = new Color(0xffffff);
     this._cloudsColorRamp = new ColorRamp('_cloudsColorRamp', this.notifyRelayCallback, [
-      new ColorRampStep(0x000000, 0.0, true),
+      new ColorRampStep(0x000000, 0, true),
       new ColorRampStep(0x000000, 0.6),
-      new ColorRampStep(0xffffff, 1.0, true),
+      new ColorRampStep(0xffffff, 1, true),
     ]);
 
     // Atmosphere
     this._atmosphereEnabled = true;
     this._atmosphereHeight = 0.01;
-    this._atmosphereDensityScale = 10.0;
+    this._atmosphereDensityScale = 10;
     this._atmosphereIntensity = 1.5;
     this._atmosphereColorMode = ColorMode.REALISTIC;
-    this._atmosphereHue = 0.0;
+    this._atmosphereHue = 0;
     this._atmosphereTint = new Color(0xffffff);
     this._atmosphereMieScatteringConstant = -0.999;
     this._atmosphereRayleighDensityRatio = 0.05;
@@ -726,26 +719,26 @@ export default class PlanetData extends Observable {
     this.lensFlareEnabled = data._lensFlareEnabled ?? true;
     this.lensFlarePointsIntensity = data._lensFlarePointsIntensity ?? 0.25;
     this.lensFlareGlareIntensity = data._lensFlareGlareIntensity ?? 0.4;
-    this.sunLightAngle = data._sunLightAngle ?? -30.0;
+    this.sunLightAngle = data._sunLightAngle ?? -30;
     this.sunLightColor.set(data._sunLightColor ?? 0xfff6e8);
-    this.sunLightIntensity = data._sunLightIntensity ?? 10.0;
+    this.sunLightIntensity = data._sunLightIntensity ?? 10;
     this.ambLightColor.set(data._ambLightColor ?? 0xffffff);
     this.ambLightIntensity = data._ambLightIntensity ?? 0.02;
 
     // Planet & Rendering
     this.planetType = data._planetType ?? PlanetType.PLANET;
     this.planetClass = data._planetClass ?? PlanetClass.PLANET_TELLURIC;
-    this.planetRadius = data._planetRadius ?? 1.0;
-    this.planetAxialTilt = data._planetAxialTilt ?? 15.0;
-    this.planetRotation = data._planetRotation ?? 0.0;
+    this.planetRadius = data._planetRadius ?? 1;
+    this.planetAxialTilt = data._planetAxialTilt ?? 15;
+    this.planetRotation = data._planetRotation ?? 0;
     this.planetWaterRoughness = data._planetWaterRoughness ?? 0.55;
     this.planetWaterMetalness = data._planetWaterMetalness ?? 0.5;
     this.planetGroundRoughness = data._planetGroundRoughness ?? 0.8;
     this.planetGroundMetalness = data._planetGroundMetalness ?? 0.1;
     this.planetWaterLevel = data._planetWaterLevel ?? 0.5;
     this.planetShowEmissive = data._planetShowEmissive ?? false;
-    this.planetWaterEmissiveIntensity = data._planetWaterEmissiveIntensity ?? 2.0;
-    this.planetGroundEmissiveIntensity = data._planetGroundEmissiveIntensity ?? 0.0;
+    this.planetWaterEmissiveIntensity = data._planetWaterEmissiveIntensity ?? 2;
+    this.planetGroundEmissiveIntensity = data._planetGroundEmissiveIntensity ?? 0;
 
     // Surface
     this.planetSurfaceShowBumps = data._planetSurfaceShowBumps ?? true;
@@ -783,15 +776,15 @@ export default class PlanetData extends Observable {
           '_biomesParams[element]',
           this.notifyRelayCallback,
           {
-            temperatureMin: params._tempMin ?? 0.0,
+            temperatureMin: params._tempMin ?? 0,
             temperatureMax: params._tempMax ?? 0.5,
-            humidityMin: params._humiMin ?? 0.0,
-            humidityMax: params._humiMax ?? 1.0,
+            humidityMin: params._humiMin ?? 0,
+            humidityMax: params._humiMax ?? 1,
           },
           new Color(params._color),
           params._smoothness ?? 0.25,
           params._emissiveOverride ?? false,
-          params._emissiveIntensity ?? 0.0,
+          params._emissiveIntensity ?? 0,
           params._id,
         );
         b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity
@@ -801,7 +794,7 @@ export default class PlanetData extends Observable {
 
     // Clouds
     this.cloudsEnabled = data._cloudsEnabled ?? true;
-    this.cloudsRotation = data._cloudsRotation ?? 0.0;
+    this.cloudsRotation = data._cloudsRotation ?? 0;
     this.cloudsShowWarping = data._cloudsShowWarping ?? false;
     this.cloudsShowDisplacement = data._cloudsShowDisplacement ?? false;
     this.cloudsDisplacement.loadData(data._cloudsDisplacement);
@@ -811,9 +804,9 @@ export default class PlanetData extends Observable {
       data._cloudsColorRamp
         ? data._cloudsColorRamp._steps
         : [
-            new ColorRampStep(0x000000, 0.0, true),
+            new ColorRampStep(0x000000, 0, true),
             new ColorRampStep(0x000000, 0.6),
-            new ColorRampStep(0xffffff, 1.0, true),
+            new ColorRampStep(0xffffff, 1, true),
           ],
     );
 
@@ -823,7 +816,7 @@ export default class PlanetData extends Observable {
     this.atmosphereDensityScale = data._atmosphereDensityScale ?? 7.5;
     this.atmosphereIntensity = data._atmosphereIntensity ?? 1.35;
     this.atmosphereColorMode = data._atmosphereColorMode ?? ColorMode.REALISTIC;
-    this.atmosphereHue = data._atmosphereHue ?? 0.0;
+    this.atmosphereHue = data._atmosphereHue ?? 0;
     this.atmosphereTint.set(data._atmosphereTint ?? 0xffffff);
     this.atmosphereMieScatteringConstant = data._atmosphereMieScatteringConstant ?? -0.78;
     this.atmosphereRayleighDensityRatio = data._atmosphereRayleighDensityRatio ?? 0.05;
@@ -867,9 +860,7 @@ export default class PlanetData extends Observable {
     // Planet & Rendering
     this._planetType = Math.round(clampedPRNG(0, 2)) as PlanetType;
     const availablePlanetClasses = this.getPlanetClassesFromType(this._planetType);
-    this._planetClass = availablePlanetClasses[
-      Math.round(clampedPRNG(0, availablePlanetClasses.length - 1))
-    ] as PlanetClass;
+    this._planetClass = availablePlanetClasses[Math.round(clampedPRNG(0, availablePlanetClasses.length - 1))];
     this._planetRadius = clampedPRNG(0.5, 1);
     this._planetAxialTilt = clampedPRNG(-180, 180);
     this._planetRotation = clampedPRNG(0, 360);
@@ -913,9 +904,9 @@ export default class PlanetData extends Observable {
     this._cloudsNoise.randomize();
     this._cloudsColor.set(clampedPRNG(0, 1) * 0xffffff);
     this._cloudsColorRamp.loadFromSteps([
-      new ColorRampStep(0x000000, 0.0, true),
+      new ColorRampStep(0x000000, 0, true),
       new ColorRampStep(randomColor(true), clampedPRNG(0.05, 0.95)),
-      new ColorRampStep(randomColor(true), 1.0, true),
+      new ColorRampStep(randomColor(true), 1, true),
     ]);
 
     // Atmosphere
@@ -935,10 +926,10 @@ export default class PlanetData extends Observable {
     this._ringsEnabled = randomBoolean();
     this._ringsParams.splice(0);
     const ringIntervals = randomIntervals(1.25, 4.75, 2 * Math.round(clampedPRNG(2, 16) / 2));
-    for (let i = 0; i < ringIntervals.length; i++) {
+    for (const interval of ringIntervals) {
       const newRing = RingParameters.createRandom('_ringsParams[element]', this.notifyRelayCallback);
-      newRing.innerRadius = ringIntervals[i][0];
-      newRing.outerRadius = ringIntervals[i][1];
+      newRing.innerRadius = interval[0];
+      newRing.outerRadius = interval[1];
       this._ringsParams.push(newRing);
     }
     this.notify({ type: 'global' });
@@ -948,12 +939,12 @@ export default class PlanetData extends Observable {
     const observers = this.observers;
     Object.assign(this, new PlanetData());
     this.observers = observers;
-    this._planetSurfaceDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05);
-    this._planetSurfaceNoise.reset(3.75, 0.48, 2.45, 6, 1, 1.0);
+    this._planetSurfaceDisplacement.reset(2, 0.05, 2, 6, 0.001, 2, 0.05);
+    this._planetSurfaceNoise.reset(3.75, 0.48, 2.45, 6, 1, 1);
     this._biomesTemperatureNoise.reset(2.5, 1.25, 2.4, 6);
     this._biomesHumidityNoise.reset(35, 0.63, 2.53, 6);
-    this._cloudsDisplacement.reset(2.0, 0.05, 2.0, 6, 0.001, 2.0, 0.05);
-    this._cloudsNoise.reset(4.0, 0.6, 1.75, 6, 1, 1.0);
+    this._cloudsDisplacement.reset(2, 0.05, 2, 6, 0.001, 2, 0.05);
+    this._cloudsNoise.reset(4, 0.6, 1.75, 6, 1, 1);
     this.notify({ type: 'global' });
   }
 
@@ -966,10 +957,10 @@ export default class PlanetData extends Observable {
       '_biomesParams[element]',
       this.notifyRelayCallback,
       {
-        temperatureMin: 0.0,
-        temperatureMax: 1.0,
-        humidityMin: 0.0,
-        humidityMax: 1.0,
+        temperatureMin: 0,
+        temperatureMax: 1,
+        humidityMin: 0,
+        humidityMax: 1,
       },
       new Color(0xffffff),
       0.2,

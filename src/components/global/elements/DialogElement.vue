@@ -19,7 +19,7 @@
       />
     </header>
     <div ref="dialogInner" class="dialog-inner" tabindex="-1">
-      <div class="dialog-content" role="group">
+      <div class="dialog-content">
         <slot name="content"></slot>
       </div>
       <footer v-if="showActions" class="dialog-actions">
@@ -32,8 +32,8 @@
 <script setup lang="ts">
 import { EventBus } from '@core/event-bus';
 import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
-import CornerDeco from '../decoration/CornerDeco.vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
+import CornerDeco from '../decoration/CornerDeco.vue';
 
 const dialog: Ref<HTMLDialogElement | null> = ref(null);
 const dialogInner: Ref<HTMLDivElement | null> = ref(null);
@@ -88,7 +88,7 @@ defineExpose({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open });
 <style scoped lang="scss">
 dialog[open] {
   &:host {
-    scroll-behavior: none;
+    scroll-behavior: unset;
   }
   position: fixed;
   padding: 0;
@@ -103,7 +103,6 @@ dialog[open] {
 
   display: flex;
   flex-direction: column;
-  align-items: space-between;
   gap: 0;
 
   .dialog-header {

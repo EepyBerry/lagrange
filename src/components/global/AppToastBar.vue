@@ -7,10 +7,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, type Ref } from 'vue';
+import type { EditorMessageLevel } from '@core/types';
 import ToastElement from '@components/global/elements/ToastElement.vue';
 import { EventBus } from '@core/event-bus';
-import type { EditorMessageLevel } from '@core/types';
+import { ref, watch, type Ref } from 'vue';
 
 const toastType: Ref<EditorMessageLevel> = ref('info');
 const toastMessageRaw: Ref<string> = ref('');

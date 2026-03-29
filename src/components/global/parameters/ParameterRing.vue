@@ -9,9 +9,9 @@
           @click="toggleExpand()"
           @keydown.enter="toggleExpand()"
         />
-        <span class="current-color" :style="{ background: colorRampToStyle(lgParam!.colorRamp).color }">
+        <div class="current-color" :style="{ background: colorRampToStyle(lgParam!.colorRamp).color }">
           <div class="alpha-color" :style="{ background: colorRampToStyle(lgParam!.colorRamp).alpha }"></div>
-        </span>
+        </div>
         <span class="ring-index">{{ getPartialId() }}</span>
       </div>
       <span class="ring-actions">
@@ -34,10 +34,10 @@
 </template>
 
 <script setup lang="ts">
-import LgvButton from '@/_lib/components/LgvButton.vue';
 import type { RingParameters } from '@core/models/ring-parameters.model';
 import { colorRampToStyle } from '@core/utils/render-utils';
 import { onMounted, ref, type Ref } from 'vue';
+import LgvButton from '@/_lib/components/LgvButton.vue';
 
 const lgParam = defineModel<RingParameters>();
 

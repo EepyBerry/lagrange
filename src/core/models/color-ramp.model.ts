@@ -1,24 +1,22 @@
-import { nanoid } from 'nanoid';
 import { clampedPRNG } from '@core/utils/math-utils';
 import { sha1 } from 'crypto-hash';
-import { ObservableRelay, type ObservableNotifyFunction } from '../utils/observable-utils';
+import { nanoid } from 'nanoid';
 import { Color, type ColorRepresentation } from 'three';
+import { ObservableRelay, type ObservableNotifyFunction } from '../utils/observable-utils';
 
 export class ColorRampStep {
-  static EMPTY = new ColorRampStep(0x0, 1);
-
-  private _id: string; // internal ID for tracking changes
-  private _color: Color;
+  private readonly _id: string; // internal ID for tracking changes
+  private readonly _color: Color;
+  private readonly _isBound: boolean;
   private _alpha: number;
   private _factor: number;
-  private _isBound: boolean;
 
   constructor(color: ColorRepresentation, factor: number, isBound: boolean = false) {
     this._id = nanoid();
     this._color = new Color(color);
-    this._alpha = 1.0;
-    this._factor = factor;
     this._isBound = isBound;
+    this._alpha = 1;
+    this._factor = factor;
   }
 
   static newWithAlpha(
@@ -28,7 +26,7 @@ export class ColorRampStep {
     isBound: boolean = false,
   ): ColorRampStep {
     const step = new ColorRampStep(color, factor, isBound);
-    step.alpha = alpha ?? 1.0;
+    step.alpha = alpha ?? 1;
     return step;
   }
 
@@ -117,7 +115,7 @@ export class ColorRamp extends ObservableRelay {
     if (this._steps.length >= this._maxSize - 1) {
       throw new Error('(ColorRamp) Maximum size reached');
     }
-    this._steps.push(new ColorRampStep('black', this._steps[this._steps.length - 2].factor));
+    this._steps.push(new ColorRampStep('black', this._steps.at(-2)!.factor));
     this.sortSteps();
     this.relayNotify({ key: this.keyPrefix, data: { ramp: this } });
     this.generateHash();

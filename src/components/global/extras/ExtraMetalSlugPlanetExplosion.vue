@@ -1,14 +1,21 @@
 <template>
   <div class="explosion-container" role="presentation">
-    <img v-for="i in explosions" :key="i" ref="smallExplosionRef" src="/extras/placeholder.png" class="explosion sm" />
-    <img ref="largeExplosionRef" src="/extras/placeholder.png" class="explosion large" />
+    <img
+      v-for="i in explosions"
+      :key="i"
+      ref="smallExplosionRef"
+      src="/extras/placeholder.png"
+      alt="explosion"
+      class="explosion sm"
+    />
+    <img ref="largeExplosionRef" src="/extras/placeholder.png" alt="large explosion" class="explosion large" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useTemplateRef } from 'vue';
 import { clampedPRNG, clampedPRNGSpaced } from '@/core/utils/math-utils';
 import { sleep } from '@/core/utils/utils';
-import { useTemplateRef } from 'vue';
 
 const smallExplosionSrc = '/extras/explosion-small.gif';
 const largeExplosionSrc = '/extras/explosion-large.gif';

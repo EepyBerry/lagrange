@@ -1,6 +1,6 @@
+import type { PlanetUniformData } from '@core/tsl/materials/planet.tslmat';
 import type { Texture } from 'three';
 import type PlanetData from '../planet-data.model';
-import type { PlanetUniformData } from '@core/tsl/materials/planet.tslmat';
 import { ModelConverter } from './model-converter';
 
 export class PlanetDataConverter extends ModelConverter<PlanetData, PlanetUniformData> {
@@ -15,27 +15,27 @@ export class PlanetDataConverter extends ModelConverter<PlanetData, PlanetUnifor
     super(data);
   }
 
-  public withSurfaceTexture(tex: Texture): PlanetDataConverter {
+  public withSurfaceTexture(tex: Texture): this {
     this._surfaceTexture = tex;
     return this;
   }
 
-  public withBiomesTexture(tex: Texture): PlanetDataConverter {
+  public withBiomesTexture(tex: Texture): this {
     this._biomesTexture = tex;
     return this;
   }
 
-  public withBiomesEmissiveTexture(tex: Texture): PlanetDataConverter {
+  public withBiomesEmissiveTexture(tex: Texture): this {
     this._biomesEmissiveTexture = tex;
     return this;
   }
 
-  public withBakingUnifiedSurfaceTexture(tex: Texture): PlanetDataConverter {
+  public withBakingUnifiedSurfaceTexture(tex: Texture): this {
     this._bakingUnifiedSurfaceTexture = tex;
     return this;
   }
 
-  public withBakingSurfaceHeightMapTexture(tex: Texture): PlanetDataConverter {
+  public withBakingSurfaceHeightMapTexture(tex: Texture): this {
     this._bakingSurfaceHeightMapTexture = tex;
     return this;
   }

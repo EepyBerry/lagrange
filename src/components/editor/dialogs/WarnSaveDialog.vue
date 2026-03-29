@@ -34,9 +34,9 @@
   </DialogElement>
 </template>
 <script setup lang="ts">
-import LgvButton from '@/_lib/components/LgvButton.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
 import { ref, type Ref } from 'vue';
+import LgvButton from '@/_lib/components/LgvButton.vue';
 
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
 const $emit = defineEmits(['save-confirm', 'confirm']);

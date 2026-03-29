@@ -1,4 +1,4 @@
-import type { ShaderNodeObject } from 'three/src/nodes/TSL.js';
+import type { Node } from 'three/webgpu';
 import {
   Fn,
   float,
@@ -20,8 +20,6 @@ import {
   mat4,
   normalize,
 } from 'three/tsl';
-import type { UniformNumberNode, UniformVector2Node, UniformVector3Node, UniformVector4Node } from '../tsl-types';
-import type { Node } from 'three/webgpu';
 
 /*
  * DISCLAIMER:
@@ -42,10 +40,10 @@ const NUM_IN_SCATTER = 10;
  * Camera-to-atmosphere ray direction calculation
  */
 export const rayDirection = /*@__PURE__*/ Fn(
-  ([i_modelWorldMatrix, i_position, i_camPosition]: ShaderNodeObject<Node>[]) => {
+  ([i_modelWorldMatrix, i_position, i_camPosition]: [Node<'mat4'>, Node<'vec3'>, Node<'vec3'>]) => {
     const m = mat4(i_modelWorldMatrix).toVar('m');
     const pos = vec3(i_position).toVar('pos');
-    const ray = m.mul(pos).sub(vec4(i_camPosition, 1.0));
+    const ray = m.mul(pos).sub(vec4(i_camPosition, 1));
     return normalize(ray.toVec3());
   },
 ).setLayout({
@@ -62,15 +60,17 @@ export const rayDirection = /*@__PURE__*/ Fn(
  * Ray & sphere intersection function
  */
 // e = -b +/- sqrt( b^2 - c )
-export const rayVsSphere = /*@__PURE__*/ Fn(([i_position, i_direction, i_r]: ShaderNodeObject<Node>[]) => {
-  const b = float(dot(i_position, i_direction)).toVar('b');
-  const c = float(dot(i_position, i_position).sub(i_r.mul(i_r))).toVar('c');
-  const d = float(b.mul(b).sub(c)).toVar('d');
-  If(d.lessThan(0.0), () => vec2(MAX, float(MAX).negate()));
+export const rayVsSphere = /*@__PURE__*/ Fn(
+  ([i_position, i_direction, i_r]: [Node<'vec3'>, Node<'vec3'>, Node<'float'>]) => {
+    const b = float(dot(i_position, i_direction)).toVar('b');
+    const c = float(dot(i_position, i_position).sub(i_r.mul(i_r))).toVar('c');
+    const d = float(b.mul(b).sub(c)).toVar('d');
+    If(d.lessThan(0), () => vec2(MAX, float(MAX).negate()));
 
-  d.assign(sqrt(d));
-  return vec2(negate(b).sub(d), negate(b).add(d));
-}).setLayout({
+    d.assign(sqrt(d));
+    return vec2(negate(b).sub(d), negate(b).add(d));
+  },
+).setLayout({
   name: 'LG_ATMOS_rayVsSphere',
   type: 'vec2',
   inputs: [
@@ -87,14 +87,14 @@ export const rayVsSphere = /*@__PURE__*/ Fn(([i_position, i_direction, i_r]: Sha
 //      3 * ( 1 - g^2 )               1 + c^2
 // F = ----------------- * -------------------------------
 //  (8 * PI/3) * (2 + g^2)   (1 + g^2 - 2 * g * c)^(3/2)
-export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<Node>[]) => {
+export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: [Node<'float'>, Node<'float'>, Node<'float'>]) => {
   const gg = float(i_g.mul(i_g)).toVar('gg');
-  const a = float(sub(1.0, gg).mul(add(1.0, i_cc))).toVar('a');
-  const b = float(add(1.0, gg.sub(mul(2.0, i_g).mul(i_c)))).toVar('b');
+  const a = float(sub(1, gg).mul(add(1, i_cc))).toVar('a');
+  const b = float(add(1, gg.sub(mul(2, i_g).mul(i_c)))).toVar('b');
   b.mulAssign(sqrt(b));
-  b.mulAssign(add(2.0, gg));
+  b.mulAssign(add(2, gg));
 
-  return float((8 * Math.PI) / 3.0)
+  return float((8 * Math.PI) / 3)
     .mul(a)
     .div(b);
 }).setLayout({
@@ -112,8 +112,8 @@ export const computeMie = /*@__PURE__*/ Fn(([i_g, i_c, i_cc]: ShaderNodeObject<N
  */
 // g : 0
 // F = 3/4 * ( 1 + c^2 )
-export const computeRayleigh = /*@__PURE__*/ Fn(([i_cc]: ShaderNodeObject<Node>[]) => {
-  return float(0.75).mul(add(1.0, i_cc));
+export const computeRayleigh = /*@__PURE__*/ Fn(([i_cc]: [Node<'float'>]) => {
+  return float(0.75).mul(add(1, i_cc));
 }).setLayout({
   name: 'LG_ATMOS_computeRayleigh',
   type: 'float',
@@ -122,14 +122,14 @@ export const computeRayleigh = /*@__PURE__*/ Fn(([i_cc]: ShaderNodeObject<Node>[
 
 export const computeDensity = /*@__PURE__*/ Fn(
   ([i_p, i_ph, i_radius, i_surfaceRadius, i_density]: [
-    ShaderNodeObject<Node>,
-    ShaderNodeObject<Node>,
-    UniformNumberNode,
-    UniformNumberNode,
-    UniformNumberNode,
+    Node<'vec3'>,
+    Node<'float'>,
+    Node<'float'>,
+    Node<'float'>,
+    Node<'float'>,
   ]) => {
     const rho = float(i_density).toVar('rho');
-    const scalingFactor = float(1.0).div(i_radius.sub(i_surfaceRadius)).toVar('scalingFactor');
+    const scalingFactor = float(1).div(i_radius.sub(i_surfaceRadius)).toVar('scalingFactor');
     return exp(negate(length(i_p).sub(i_surfaceRadius)).mul(scalingFactor))
       .mul(rho)
       .mul(i_ph);
@@ -148,17 +148,17 @@ export const computeDensity = /*@__PURE__*/ Fn(
 
 export const optic = /*@__PURE__*/ Fn(
   ([i_p, i_q, i_ph, i_radius, i_surfaceRadius, i_density]: [
-    ShaderNodeObject<Node>,
-    ShaderNodeObject<Node>,
-    ShaderNodeObject<Node>,
-    UniformNumberNode,
-    UniformNumberNode,
-    UniformNumberNode,
+    Node<'vec3'>,
+    Node<'vec3'>,
+    Node<'float'>,
+    Node<'float'>,
+    Node<'float'>,
+    Node<'float'>,
   ]) => {
     const stepValue = vec3(div(i_q.sub(i_p), float(NUM_OUT_SCATTER))).toVar('stepValue');
     const v = vec3(i_p.add(stepValue.mul(0.5))).toVar('v');
 
-    const sum = float(0.0).toVar('sum');
+    const sum = float(0).toVar('sum');
     Loop({ start: int(0), end: NUM_OUT_SCATTER, condition: '<' }, () => {
       sum.addAssign(computeDensity(v, i_ph, i_radius, i_surfaceRadius, i_density));
       v.addAssign(stepValue);
@@ -180,12 +180,12 @@ export const optic = /*@__PURE__*/ Fn(
 
 export const applyInScatter = /*@__PURE__*/ Fn(
   ([i_o, i_dir, i_e, i_light, i_atmos, i_constants]: [
-    ShaderNodeObject<Node>,
-    ShaderNodeObject<Node>,
-    UniformVector2Node,
-    UniformVector4Node, // XYZ = direction, W = intensity
-    UniformVector3Node, // radius, surface radius, density (passed to rayVsSphere & computeDensity)
-    UniformVector4Node, // mie scattering, rayleigh density ratio (phRay), mie density ratio (phMie), optical density ratio (phOptical)
+    Node<'vec3'>,
+    Node<'vec3'>,
+    Node<'vec2'>,
+    Node<'vec4'>, // XYZ = direction, W = intensity
+    Node<'vec3'>, // radius, surface radius, density (passed to rayVsSphere & computeDensity)
+    Node<'vec4'>, // mie scattering, rayleigh density ratio (phRay), mie density ratio (phMie), optical density ratio (phOptical)
   ]) => {
     // density ratios
     const mieScatteringConstant = float(i_constants.x).toVar('mieScatteringConstant');
@@ -194,18 +194,18 @@ export const applyInScatter = /*@__PURE__*/ Fn(
     const phOptical = float(i_constants.w).toVar('phOptical');
 
     const k_ray = vec3(3.8, 13.5, 33.1);
-    const k_mie = vec3(21.0);
-    const k_alpha = float(2.0);
+    const k_mie = vec3(21);
+    const k_alpha = float(2);
 
     const len = float(i_e.y.sub(i_e.x).div(float(NUM_IN_SCATTER))).toVar('len');
     const stepValue = vec3(i_dir.mul(len)).toVar('stepValue');
     const v = vec3(i_o.add(i_dir.mul(i_e.x.add(len.mul(0.5))))).toVar('v');
 
-    const n_ray0 = float(0.0).toVar('n_ray0');
-    const n_mie0 = float(0.0).toVar('n_mie0');
-    const sum_ray = vec3(0.0).toVar('sum_ray');
-    const sum_mie = vec3(0.0).toVar('sum_mie');
-    const sum_alpha = float(0.0).toVar('sum_alpha');
+    const n_ray0 = float(0).toVar('n_ray0');
+    const n_mie0 = float(0).toVar('n_mie0');
+    const sum_ray = vec3(0).toVar('sum_ray');
+    const sum_mie = vec3(0).toVar('sum_mie');
+    const sum_alpha = float(0).toVar('sum_alpha');
     Loop({ start: int(0), end: NUM_IN_SCATTER, condition: '<' }, () => {
       const f = vec2(rayVsSphere(v, i_light.xyz, i_atmos.x)).toVar('f');
       const u = vec3(v.add(i_light.xyz.mul(f.y))).toVar('u');
@@ -220,7 +220,8 @@ export const applyInScatter = /*@__PURE__*/ Fn(
       const n_ray1 = float(optic(v, u, phRay, i_atmos.x, i_atmos.y, i_atmos.z)).toVar('n_ray1');
       const n_mie1 = float(optic(v, u, phMie, i_atmos.x, i_atmos.y, i_atmos.z)).toVar('n_mie1');
 
-      const att = vec3(exp(n_ray0.add(n_ray1).negate().mul(k_ray).sub(n_mie0.add(n_mie1).mul(k_mie)))).toVar('att');
+      const raw_att = n_ray0.add(n_ray1).negate().mul(k_ray).sub(n_mie0.add(n_mie1).mul(k_mie)).toVar('raw_att');
+      const att = vec3(exp(raw_att.x), exp(raw_att.y), exp(raw_att.z)).toVar('att');
 
       sum_ray.addAssign(d_ray.mul(att));
       sum_mie.addAssign(d_mie.mul(att));

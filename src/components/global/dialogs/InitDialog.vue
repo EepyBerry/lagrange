@@ -167,13 +167,13 @@
 </template>
 
 <script setup lang="ts">
-import type { IDBKeyBinding } from '@/dexie.config';
 import AppLogo from '@components/global/elements/AppLogo.vue';
-import DialogElement from '@components/global/elements/DialogElement.vue';
-import LgvNotification from '@/_lib/components/LgvNotification.vue';
-import { ref, type Ref } from 'vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
+import DialogElement from '@components/global/elements/DialogElement.vue';
+import { ref, type Ref } from 'vue';
+import type { IDBKeyBinding } from '@/dexie.config';
 import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvNotification from '@/_lib/components/LgvNotification.vue';
 
 const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
 const shouldShowOnNextVisits = ref(true);

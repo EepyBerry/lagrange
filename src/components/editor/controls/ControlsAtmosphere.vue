@@ -146,6 +146,6 @@
   </ParameterGrid>
 </template>
 <script setup lang="ts">
-import { EDITOR_STATE } from '@/core/state/editor.state';
 import { ColorMode } from '@core/types';
+import { EDITOR_STATE } from '@/core/state/editor.state';
 </script>

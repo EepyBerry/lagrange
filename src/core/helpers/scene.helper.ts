@@ -3,7 +3,7 @@ import type PlanetData from "../models/planet-data.model";
 import { EditorSceneCreationMode, type EditorSceneData, type RingMeshData } from "../types";
 import * as ComponentHelper from "./component.helper";
 import * as Globals from "@core/globals";
-import { Group, Clock } from "three";
+import { Group, Timer } from "three";
 import { degToRad } from "three/src/math/MathUtils.js";
 
 export async function buildEditorScene(
@@ -24,7 +24,14 @@ export async function buildEditorScene(
     planetGroup: new Group(),
     ringAnchor: new Group(),
   };
-  await buildScene(sceneData as EditorSceneData, data, renderWidth, renderHeight, renderPixelRatio, creationMode);
+  await buildScene(
+    sceneData as EditorSceneData,
+    data,
+    renderWidth,
+    renderHeight,
+    renderPixelRatio,
+    creationMode,
+  );
   buildSceneLighting(sceneData as EditorSceneData, data);
   buildScenePlanet(sceneData as EditorSceneData, data, creationMode);
   return sceneData as EditorSceneData;
@@ -33,14 +40,14 @@ export async function buildEditorScene(
 export function disposeScene(sceneData: EditorSceneData) {
   sceneData.sunLight.dispose();
   sceneData.ambLight.dispose();
-  sceneData.scene.remove(sceneData.sunLight!);
-  sceneData.scene.remove(sceneData.ambLight!);
-  (sceneData.lensFlare!.mesh!.material as NodeMaterial).dispose();
-  sceneData.lensFlare!.mesh!.geometry.dispose();
+  sceneData.scene.remove(sceneData.sunLight);
+  sceneData.scene.remove(sceneData.ambLight);
+  (sceneData.lensFlare!.mesh.material as NodeMaterial).dispose();
+  sceneData.lensFlare!.mesh.geometry.dispose();
   (sceneData.planet.mesh!.material as NodeMaterial).dispose();
   sceneData.planet.mesh!.geometry.dispose();
-  (sceneData.atmosphere!.mesh!.material as NodeMaterial).dispose();
-  sceneData.atmosphere!.mesh!.geometry.dispose();
+  (sceneData.atmosphere.mesh!.material as NodeMaterial).dispose();
+  sceneData.atmosphere.mesh!.geometry.dispose();
   (sceneData.clouds.mesh!.material as NodeMaterial).dispose();
   sceneData.clouds.mesh!.geometry.dispose();
   sceneData.rings.forEach((r) => {
@@ -80,17 +87,20 @@ async function buildScene(
   sceneData.scene = scene;
   sceneData.renderer = renderer;
   sceneData.camera = camera;
-  sceneData.clock = new Clock();
+  sceneData.timer = new Timer();
 }
 
 function buildSceneLighting(sceneData: EditorSceneData, data: PlanetData): void {
   const sun = ComponentHelper.createSun(data);
-  sceneData.scene!.add(sun);
+  sceneData.scene.add(sun);
   sceneData.sunLight = sun;
 
-  const ambientLight = ComponentHelper.createAmbientLight(data.ambLightColor, data.ambLightIntensity);
+  const ambientLight = ComponentHelper.createAmbientLight(
+    data.ambLightColor,
+    data.ambLightIntensity,
+  );
   ambientLight.name = Globals.MESH_NAME_AMBLIGHT;
-  sceneData.scene!.add(ambientLight);
+  sceneData.scene.add(ambientLight);
   sceneData.ambLight = ambientLight;
 
   const lensFlare = ComponentHelper.createLensFlare(data, sun.position, sun.color);
@@ -98,16 +108,20 @@ function buildSceneLighting(sceneData: EditorSceneData, data: PlanetData): void 
   sceneData.lensFlare = lensFlare;
 
   // Set initial rotations
-  const dataSunlightAngle = degToRad(isNaN(data.sunLightAngle) ? -15 : data.sunLightAngle);
+  const dataSunlightAngle = degToRad(Number.isNaN(data.sunLightAngle) ? -15 : data.sunLightAngle);
   const pos = Globals.SUN_INIT_POS.clone().applyAxisAngle(Globals.AXIS_X, dataSunlightAngle);
   sceneData.sunLight.position.set(pos.x, pos.y, pos.z);
   sceneData.lensFlare.updatePosition(sceneData.sunLight.position);
 }
 
-function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData, creationMode: EditorSceneCreationMode): void {
+function buildScenePlanet(
+  sceneData: EditorSceneData,
+  data: PlanetData,
+  creationMode: EditorSceneCreationMode,
+): void {
   const planet = ComponentHelper.createPlanet(data, sceneData.planet.surfaceBuffer);
   const clouds = ComponentHelper.createClouds(data, sceneData.clouds.buffer);
-  const atmosphere = ComponentHelper.createAtmosphere(data, sceneData.sunLight!.position);
+  const atmosphere = ComponentHelper.createAtmosphere(data, sceneData.sunLight.position);
   const rings: RingMeshData[] = [];
   if (creationMode === EditorSceneCreationMode.EDITOR) {
     rings.push(...data.ringsParams.map((param) => ComponentHelper.createRing(data, param)));
@@ -130,7 +144,7 @@ function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData, creation
   });
   sceneData.planetGroup.add(sceneData.ringAnchor);
 
-  sceneData.scene!.add(sceneData.planetGroup);
+  sceneData.scene.add(sceneData.planetGroup);
   sceneData.planet = planet;
   sceneData.clouds = clouds;
   sceneData.atmosphere = atmosphere;
@@ -138,7 +152,10 @@ function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData, creation
 
   // Set initial rotations
   sceneData.planetGroup.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(data.planetAxialTilt));
-  sceneData.planet.mesh!.setRotationFromAxisAngle(sceneData.planet.mesh!.up, degToRad(data.planetRotation));
+  sceneData.planet.mesh!.setRotationFromAxisAngle(
+    sceneData.planet.mesh!.up,
+    degToRad(data.planetRotation),
+  );
   sceneData.clouds.mesh!.setRotationFromAxisAngle(
     sceneData.clouds.mesh!.up,
     degToRad(data.planetRotation + data.cloudsRotation),
@@ -146,7 +163,7 @@ function buildScenePlanet(sceneData: EditorSceneData, data: PlanetData, creation
   sceneData.ringAnchor.setRotationFromAxisAngle(Globals.AXIS_X, degToRad(90));
 
   // Set lighting target
-  sceneData.sunLight!.target = sceneData.planetGroup;
+  sceneData.sunLight.target = sceneData.planetGroup;
 
   // Set scale
   sceneData.planetGroup.scale.setScalar(data.planetRadius);

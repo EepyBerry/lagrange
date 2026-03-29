@@ -1,6 +1,6 @@
 import { idb, KeyBindingAction, type IDBSettings } from '@/dexie.config';
-import { prefersReducedMotion } from '../utils/utils';
 import { I18N_SUPPORTED_LANGS } from '@/i18n.config';
+import { prefersReducedMotion } from '../utils/utils';
 
 export async function initDefaultSettings(): Promise<void> {
   idb.settings.put({
@@ -69,7 +69,7 @@ export async function setRenderingBackendFallback() {
 
 export async function clearData(): Promise<void> {
   const settings = await idb.settings.limit(1).toArray();
-  await idb.settings.update(settings[0]!.id, {
+  await idb.settings.update(settings[0].id, {
     // general
     theme: 'default',
     locale: navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US',
@@ -125,14 +125,14 @@ export async function initStoragePersistence() {
       or if it was already persisted.
 */
 export async function tryPersistWithoutPromptingUser(): Promise<string> {
-  if (!navigator.storage || !navigator.storage.persisted) {
+  if (!navigator.storage?.persisted) {
     return 'never';
   }
   let persisted = await navigator.storage.persisted();
   if (persisted) {
     return 'persisted';
   }
-  if (!navigator.permissions || !navigator.permissions.query) {
+  if (!navigator.permissions?.query) {
     return 'prompt'; // It MAY be successful to prompt. Don't know.
   }
   const permission = await navigator.permissions.query({

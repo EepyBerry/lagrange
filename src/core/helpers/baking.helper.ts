@@ -117,8 +117,10 @@ type BakingObjects = {
 };
 /**
  * Creates the main baking objects, as well as a base RenderTarget
+ * @param width device width in pixels
+ * @param height device height in pixels
  * @param pixelRatio device pixel ratio
- * @returns Scene, WebGPURenderer, OrthographicCamera and RenderTarget root objects
+ * @returns Scene, WebGPURenderer, OrthographicCamera, and RenderTarget root objects
  */
 export async function createBakingObjects(width: number, height: number, pixelRatio: number): Promise<BakingObjects> {
   return {
@@ -142,13 +144,16 @@ export async function bakeMesh(
   camera: OrthographicCamera,
   renderTarget: RenderTarget,
   mesh: Mesh,
-): Promise<CanvasTexture> {
+): Promise<CanvasTexture<OffscreenCanvas>> {
   const size = new Vector2();
   renderer.getSize(size);
 
   const rawBuffer = new Uint8Array(size.x * size.y * 4);
+  if (!renderer.initialized) {
+    await renderer.init();
+  }
   renderer.setRenderTarget(renderTarget);
-  await renderer.renderAsync(mesh, camera);
+  renderer.render(mesh, camera);
 
   /* await renderer!.debug.getShaderAsync(
     new THREE.Scene(),

@@ -91,13 +91,13 @@
 </template>
 
 <script setup lang="ts">
-import AppResetConfirmDialog from '../dialogs/ResetConfirmDialog.vue';
-import { ref, useTemplateRef, watch, type Ref } from 'vue';
 import { EventBus } from '@core/event-bus';
-import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
 import * as MathUtils from '@core/utils/math-utils';
+import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
+import { ref, useTemplateRef, watch, type Ref } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 import { EDITOR_STATE } from '@/core/state/editor.state';
+import AppResetConfirmDialog from '../dialogs/ResetConfirmDialog.vue';
 
 const editMode: Ref<boolean> = ref(false);
 
@@ -208,7 +208,7 @@ function toggleSaveMenu(override?: boolean) {
       width: 24ch;
       height: 2rem;
       font-size: 0.875rem;
-      font-family: Poppins, Inter;
+      font-family: Poppins, Inter, sans-serif;
     }
     p {
       white-space: nowrap;

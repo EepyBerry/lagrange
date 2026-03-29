@@ -1,10 +1,5 @@
 <template>
-  <svg
-    id="svggraph-biomes"
-    :viewBox="`${svgRect.x} ${svgRect.y} ${svgRect.w} ${svgRect.h}`"
-    role="figure"
-    :title="$t('dialog.planetinfo.biomes')"
-  >
+  <svg id="svggraph-biomes" :viewBox="`${svgRect.x} ${svgRect.y} ${svgRect.w} ${svgRect.h}`" role="figure">
     <defs>
       <pattern id="grid" :width="graphRect.w / 10" :height="graphRect.h / 10" patternUnits="userSpaceOnUse">
         <path d="M 0 0 L 45 0 45 45" fill="none" stroke="var(--lg-accent)" stroke-width="2" />
@@ -45,8 +40,8 @@
           v-for="bd of biomeData.toReversed()"
           ref="graphAreas"
           :key="bd.id"
-          :x="`${bd.rect.x * 100.0}%`"
-          :y="`${(1 - bd.rect.y - bd.rect.h) * 100.0}%`"
+          :x="`${bd.rect.x * 100}%`"
+          :y="`${(1 - bd.rect.y - bd.rect.h) * 100}%`"
           :width="graphRect.w * bd.rect.w"
           :height="graphRect.h * bd.rect.h"
           :fill="bd.color"
@@ -96,10 +91,10 @@
   </svg>
 </template>
 <script setup lang="ts">
+import { onMounted, ref, type Ref } from 'vue';
 import { BiomeParameters } from '@/core/models/biome-parameters.model';
 import Rect from '@/core/utils/math/rect';
 import { makeSVGLinearPath } from '@/core/utils/svg-utils';
-import { onMounted, ref, type Ref } from 'vue';
 
 const width = 480,
   height = 270;

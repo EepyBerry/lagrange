@@ -31,8 +31,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, ref, type Ref } from 'vue';
 import ExtraSpecialDayElement from '@components/global/extras/ExtraSpecialDayElement.vue';
+import { defineAsyncComponent, ref, type Ref } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 import LgvLink from '@/_lib/components/LgvLink.vue';
 

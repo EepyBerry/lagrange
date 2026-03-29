@@ -359,7 +359,7 @@
                 <LgvButton
                   class="sm"
                   icon="mingcute:download-line"
-                  :disabled="!!persistStorage || failedToPersist"
+                  :disabled="persistStorage || failedToPersist"
                   @click="tryPersistStorage"
                 >
                   {{
@@ -395,23 +395,16 @@
 </template>
 
 <script setup lang="ts">
-import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config';
-import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
-import ParameterGrid from '@components/global/parameters/ParameterGrid.vue';
+import ParameterCategory from '@components/global/parameters/ParameterCategory.vue';
 import ParameterCheckbox from '@components/global/parameters/ParameterCheckbox.vue';
-import ParameterRadio from '@components/global/parameters/ParameterRadio.vue';
 import ParameterDivider from '@components/global/parameters/ParameterDivider.vue';
+import ParameterGrid from '@components/global/parameters/ParameterGrid.vue';
+import ParameterKeyBinding from '@components/global/parameters/ParameterKeyBinding.vue';
+import ParameterRadio from '@components/global/parameters/ParameterRadio.vue';
 import ParameterRadioOption from '@components/global/parameters/ParameterRadioOption.vue';
 import ParameterSelect from '@components/global/parameters/ParameterSelect.vue';
-import { useI18n } from 'vue-i18n';
-import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
-import { mapLocale } from '@core/utils/utils';
-import ParameterKeyBinding from '@components/global/parameters/ParameterKeyBinding.vue';
-import LgvNotification from '@/_lib/components/LgvNotification.vue';
-import ParameterCategory from '@components/global/parameters/ParameterCategory.vue';
-import * as DexieService from '@/core/services/dexie.service';
-import { swapSceneSkybox } from '@/core/services/editor.service';
 import { EventBus } from '@core/event-bus';
 import {
   EXTRAS_CAT_MODE,
@@ -420,10 +413,17 @@ import {
   EXTRAS_METAL_SLUG_MODE,
   EXTRAS_SPECIAL_DAYS,
 } from '@core/extras';
-import { saveAs } from 'file-saver';
 import { readFileSettings } from '@core/helpers/import.helper';
-import WebGPU from '@/core/capabilities/WebGPU';
+import { mapLocale } from '@core/utils/utils';
+import { saveAs } from 'file-saver';
+import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvNotification from '@/_lib/components/LgvNotification.vue';
+import WebGPU from '@/core/capabilities/WebGPU';
+import * as DexieService from '@/core/services/dexie.service';
+import { swapSceneSkybox } from '@/core/services/editor.service';
+import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config';
 const AppClearDataConfirmDialog = defineAsyncComponent(
   () => import('@components/codex/dialogs/ClearDataConfirmDialog.vue'),
 );
@@ -533,13 +533,13 @@ async function clearAllData() {
 
 function toggleAction(action: string): void {
   if (selectedAction.value === action) {
-    window.removeEventListener('keydown', setSelectedActionKey);
+    globalThis.removeEventListener('keydown', setSelectedActionKey);
     dialogRef.value?.ignoreNativeEvents(false);
     selectedAction.value = null;
   } else {
     selectedAction.value = action;
     dialogRef.value?.ignoreNativeEvents(true);
-    window.addEventListener('keydown', setSelectedActionKey);
+    globalThis.addEventListener('keydown', setSelectedActionKey);
   }
 }
 
@@ -547,10 +547,10 @@ async function updateSettings() {
   if (!EXTRAS_CAT_MODE.value) {
     i18n.locale.value = appSettings.value!.locale;
   }
-  document.documentElement.setAttribute('data-theme', appSettings.value!.theme);
-  document.documentElement.setAttribute('data-font', appSettings.value!.font);
-  document.documentElement.setAttribute('data-effects', appSettings.value!.enableEffects ? 'on' : 'off');
-  document.documentElement.setAttribute('data-animations', appSettings.value!.enableAnimations ? 'on' : 'off');
+  document.documentElement.dataset.theme = appSettings.value!.theme;
+  document.documentElement.dataset.font = appSettings.value!.font;
+  document.documentElement.dataset.effects = appSettings.value!.enableEffects ? 'on' : 'off';
+  document.documentElement.dataset.animations = appSettings.value!.enableAnimations ? 'on' : 'off';
   EXTRAS_CRT_EFFECT.value = appSettings.value!.extrasCRTEffect!;
   EXTRAS_HOLOGRAM_EFFECT.value = appSettings.value!.extrasHologramEffect!;
   EXTRAS_METAL_SLUG_MODE.value = appSettings.value!.extrasMetalSlugMode!;

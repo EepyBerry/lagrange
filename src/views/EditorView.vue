@@ -15,21 +15,29 @@
   <div id="scene-root" ref="sceneRoot"></div>
   <OverlaySpinner :load="showSpinner" />
 
-  <EditorErrorDialog ref="editorErrorDialogRef" @close="handleInitError" />
+  <EditorErrorDialog ref="editorErrorDialogRef" @close="handleEditorInitError" />
   <WarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
   <ExportProgressDialog ref="exportProgressDialogRef" />
 </template>
 
 <script setup lang="ts">
-import EditorSidebarControls from '@/components/editor/controls/EditorSidebarControls.vue';
-import EditorHeaderControls from '@/components/editor/controls/EditorHeaderControls.vue';
-import { defineAsyncComponent, onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue';
-import * as Globals from '@core/globals';
-import { useHead } from '@unhead/vue';
-import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config';
 import { EventBus } from '@core/event-bus';
+import * as Globals from '@core/globals';
+import * as DexieService from '@core/services/dexie.service';
+import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
+import { sleep } from '@core/utils/utils';
+import { useHead } from '@unhead/vue';
+import { nanoid } from 'nanoid';
+import { defineAsyncComponent, onMounted, onUnmounted, ref, toRaw, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
+import EditorHeaderControls from '@/components/editor/controls/EditorHeaderControls.vue';
+import EditorSidebarControls from '@/components/editor/controls/EditorSidebarControls.vue';
+import EditorErrorDialog from '@/components/editor/dialogs/EditorInitErrorDialog.vue';
+import ViewHeader from '@/components/global/ViewHeader.vue';
+import WebGL from '@/core/capabilities/WebGL';
+import WebGPU from '@/core/capabilities/WebGPU';
+import PlanetData from '@/core/models/planet-data.model';
 import {
   bootstrapEditor,
   unloadEditor,
@@ -40,16 +48,8 @@ import {
   resetPlanet,
   randomizePlanet,
 } from '@/core/services/editor.service';
-import { sleep } from '@core/utils/utils';
-import { nanoid } from 'nanoid';
-import EditorErrorDialog from '@/components/editor/dialogs/EditorInitErrorDialog.vue';
-import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
-import WebGPU from '@/core/capabilities/WebGPU';
-import * as DexieService from '@core/services/dexie.service';
-import WebGL from '@/core/capabilities/WebGL';
-import ViewHeader from '@/components/global/ViewHeader.vue';
 import { EDITOR_STATE, EditorStatusCode } from '@/core/state/editor.state';
-import PlanetData from '@/core/models/planet-data.model';
+import { idb, KeyBindingAction, type IDBPlanet } from '@/dexie.config';
 
 const WarnSaveDialog = defineAsyncComponent(() => import('@components/editor/dialogs/WarnSaveDialog.vue'));
 const ExportProgressDialog = defineAsyncComponent(() => import('@components/editor/dialogs/ExportProgressDialog.vue'));
@@ -97,12 +97,10 @@ onUnmounted(() => {
   EventBus.deregisterWindowEventListener('resize', onWindowResize);
   EventBus.deregisterWindowEventListener('keydown', onWindowKeydown);
 });
-onBeforeRouteLeave((_to, _from, next) => {
+onBeforeRouteLeave(() => {
   if (EDITOR_STATE.value.planetEditedFlag) {
-    next(false);
     warnSaveDialogRef.value?.open();
-  } else {
-    next();
+    return false;
   }
 });
 
@@ -123,14 +121,7 @@ async function initThree() {
       loadedCorrectly = true;
       showSpinner.value = false;
     } catch (error) {
-      EDITOR_STATE.value.status = EditorStatusCode.Error;
-      if (error instanceof Error) {
-        editorErrorDialogRef.value!.openWithError(error.message, error.stack);
-      } else if (typeof error === 'string') {
-        editorErrorDialogRef.value!.openWithError(error);
-      } else {
-        editorErrorDialogRef.value!.openWithError(i18n.t('main.error.default_unknown'));
-      }
+      handleInitThreeError(error);
     }
     // Try starting with WebGL2
   } else {
@@ -146,15 +137,18 @@ async function initThree() {
       loadedCorrectly = true;
       showSpinner.value = false;
     } catch (error) {
-      EDITOR_STATE.value.status = EditorStatusCode.Error;
-      if (error instanceof Error || error instanceof DOMException) {
-        editorErrorDialogRef.value!.openWithError(error.message, error.stack);
-      } else if (typeof error === 'string') {
-        editorErrorDialogRef.value!.openWithError(error);
-      } else {
-        editorErrorDialogRef.value!.openWithError(i18n.t('main.error.default_unknown'));
-      }
+      handleInitThreeError(error);
     }
+  }
+}
+function handleInitThreeError(error: unknown) {
+  EDITOR_STATE.value.status = EditorStatusCode.Error;
+  if (error instanceof Error || error instanceof DOMException) {
+    editorErrorDialogRef.value!.openWithError(error.message, error.stack);
+  } else if (typeof error === 'string') {
+    editorErrorDialogRef.value!.openWithError(error);
+  } else {
+    editorErrorDialogRef.value!.openWithError(i18n.t('main.error.default_unknown'));
   }
 }
 
@@ -167,7 +161,7 @@ function redirectToCodex() {
   router.push('/');
 }
 
-async function handleInitError(reloadWithFallback: boolean = false) {
+async function handleEditorInitError(reloadWithFallback: boolean = false) {
   if (reloadWithFallback) {
     await DexieService.setRenderingBackendFallback();
     router.go(0);
@@ -178,7 +172,10 @@ async function handleInitError(reloadWithFallback: boolean = false) {
 
 async function initData() {
   // https://stackoverflow.com/questions/3891641/regex-test-only-works-every-other-time
-  if ((route.params.id as string) !== 'new') {
+  if ((route.params.id as string) === 'new') {
+    console.info('No planet ID found in the URL, assuming new planet');
+    EDITOR_STATE.value.planetData = new PlanetData();
+  } else {
     const idbPlanetData = await idb.planets.filter((p) => p.id === route.params.id).first();
     if (!idbPlanetData) {
       console.warn(`<Lagrange> Cannot find planet with ID: ${route.params.id}`);
@@ -192,9 +189,6 @@ async function initData() {
       `<Lagrange> Loaded planet [${EDITOR_STATE.value.planetData.planetName}] with ID: ${$planetEntityId.value}`,
     );
     console.debug(toRaw(EDITOR_STATE.value.planetData));
-  } else {
-    console.info('No planet ID found in the URL, assuming new planet');
-    EDITOR_STATE.value.planetData = new PlanetData();
   }
   regeneratePRNGIfNecessary(true);
   patchMetaHead();

@@ -1,13 +1,13 @@
-import { nanoid } from 'nanoid';
-import { ColorRamp, ColorRampStep } from './color-ramp.model';
 import { clampedPRNG } from '@core/utils/math-utils';
+import { nanoid } from 'nanoid';
 import { ObservableRelay, type ObservableNotifyFunction } from '../utils/observable-utils';
+import { ColorRamp, ColorRampStep } from './color-ramp.model';
 
 export class RingParameters extends ObservableRelay {
   private _id: string;
   private _innerRadius: number;
   private _outerRadius: number;
-  private _colorRamp: ColorRamp;
+  private readonly _colorRamp: ColorRamp;
 
   constructor(
     keyPrefix: string,
@@ -22,9 +22,9 @@ export class RingParameters extends ObservableRelay {
     this._innerRadius = innerRadius;
     this._outerRadius = outerRadius;
     this._colorRamp = new ColorRamp(`${keyPrefix}._colorRamp`, notifyFunc, [
-      new ColorRampStep(0x856f4e, 0.0, true),
+      new ColorRampStep(0x856f4e, 0, true),
       new ColorRampStep(0x000000, 0.5),
-      new ColorRampStep(0xbf9a5e, 1.0, true),
+      new ColorRampStep(0xbf9a5e, 1, true),
     ]);
     if (colorRampSteps) {
       this._colorRamp.loadFromSteps(colorRampSteps);
