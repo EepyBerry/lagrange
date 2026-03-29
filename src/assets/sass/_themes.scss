@@ -118,7 +118,7 @@
   --lg-warn: #b61a4e;
   --lg-warn-hover: #991045;
   --lg-warn-active: #7a0536;
-  --lg-warn-panel: #2e0606;
+  --lg-warn-panel: #2e061d;
 }
 :root[data-theme='voyager'] {
   --lg-primary: repeating-linear-gradient(to bottom, #0c0903, #0c0903 0.375rem, #1a1102 0.5rem);
@@ -171,11 +171,11 @@
 }
 :root[data-font='lowvision'] {
   body * {
-    font-family: Atkinson Hyperlegible;
+    font-family: Atkinson Hyperlegible, serif;
   }
 }
 :root[data-font='dyslexia'] {
   body * {
-    font-family: 'Open-Dyslexic';
+    font-family: 'Open-Dyslexic', serif;
   }
 }

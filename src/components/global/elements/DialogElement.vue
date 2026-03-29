@@ -31,12 +31,13 @@
 
 <script setup lang="ts">
 import { EventBus } from '@core/event-bus';
-import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 import CornerDeco from '../decoration/CornerDeco.vue';
+import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
 
-const dialog: Ref<HTMLDialogElement | null> = ref(null);
-const dialogInner: Ref<HTMLDivElement | null> = ref(null);
+const dialog = useTemplateRef('dialog')
+const dialogInner = useTemplateRef('dialogInner');
 
 const ignoresNativeEvents = ref(false);
 const handleCancel = (evt: Event) => {
@@ -51,6 +52,9 @@ const handleClick = (evt: Event) => {
     close();
   }
 };
+
+const $emit = defineEmits(['open', 'close']);
+defineExpose<DialogElementExposes>({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open ?? false });
 
 const $props = defineProps<{
   showTitle?: boolean;
@@ -72,17 +76,18 @@ function open() {
   EventBus.disableWindowEventListener('keydown');
   dialog.value?.showModal();
   dialogInner.value?.focus();
+  $emit('open');
 }
 function close() {
   EventBus.enableWindowEventListener('keydown');
   dialog.value?.close();
+  $emit('close');
 }
 
 function ignoreNativeEvents(enabled: boolean) {
   ignoresNativeEvents.value = enabled;
 }
 
-defineExpose({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open });
 </script>
 
 <style scoped lang="scss">

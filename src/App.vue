@@ -43,10 +43,9 @@ const keybinds: Ref<IDBKeyBinding[]> = ref([]);
 const settings: Ref<IDBSettings | undefined> = ref(undefined);
 
 onMounted(async () => {
+  // Init IndexedDB via Dexie
   await DexieService.initStoragePersistence();
   await initDexie();
-  keybinds.value = await idb.keyBindings.toArray();
-  settings.value = await idb.settings.limit(1).first();
 
   // Set locale
   const url = new URL(globalThis.location.href);
@@ -76,27 +75,14 @@ onMounted(async () => {
 });
 
 async function initDexie() {
-  // Init standard settings
-  let settings = await idb.settings.limit(1).first();
-  if (!settings) {
-    console.debug('<Lagrange> No settings found in IndexedDB, adding defaults');
-    await DexieService.initDefaultSettings();
-    settings = await idb.settings.limit(1).first();
-  }
-  await DexieService.injectMissingSettings(settings!);
-
-  // Init keybinds
-  const kb = await idb.keyBindings.limit(4).toArray();
-  if (kb.length === 0) {
-    console.debug('<Lagrange> No keybinds found in IndexedDB, adding defaults');
-    await DexieService.addDefaultKeyBindings();
-  }
+  settings.value = await DexieService.initSettings();
+  keybinds.value = await DexieService.initKeyBindings();
 
   // Init HTML data (theme, font, effects)
-  document.documentElement.dataset.theme = settings!.theme ?? 'default';
-  document.documentElement.dataset.font = settings!.font ?? 'default';
-  document.documentElement.dataset.effects = settings!.enableEffects ? 'on' : 'off';
-  document.documentElement.dataset.animations = settings!.enableAnimations ? 'on' : 'off';
+  document.documentElement.dataset.theme = settings.value.theme;
+  document.documentElement.dataset.font = settings.value.font;
+  document.documentElement.dataset.effects = settings.value.enableEffects ? 'on' : 'off';
+  document.documentElement.dataset.animations = settings.value.enableAnimations ? 'on' : 'off';
 }
 
 async function disableInitDialog() {

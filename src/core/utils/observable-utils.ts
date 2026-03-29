@@ -18,11 +18,6 @@ export abstract class Observable {
   public connect(observer: Observer): void {
     this.observers.push(observer);
   }
-  public disconnect(observer: Observer): void {
-    const idx = this.observers.findIndex((o) => o === observer);
-    if (idx < 0) return;
-    this.observers.splice(idx, 1);
-  }
   public disconnectAll(): void {
     this.observers.splice(0);
   }
@@ -39,7 +34,7 @@ export abstract class ObservableRelay {
   public readonly keyPrefix: string;
   protected relayNotify: ObservableNotifyFunction;
 
-  constructor(keyPrefix: string, notifyFunc: ObservableNotifyFunction) {
+  protected constructor(keyPrefix: string, notifyFunc: ObservableNotifyFunction) {
     this.keyPrefix = keyPrefix;
     this.relayNotify = notifyFunc;
   }

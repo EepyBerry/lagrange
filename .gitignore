@@ -28,6 +28,7 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+.eslintcache
 
 # rollup-plugin-visualizer output
 stats.html

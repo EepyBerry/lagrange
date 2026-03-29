@@ -1,6 +1,5 @@
 import type { AtmosphereUniforms } from '@core/tsl/materials/atmosphere.tslmat';
 import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat';
-import type { LensFlareUniforms } from '@core/tsl/materials/lens-flare.tslmat';
 import type { PlanetUniforms } from '@core/tsl/materials/planet.tslmat';
 import type { RingUniforms } from '@core/tsl/materials/ring.tslmat';
 import type {
@@ -14,6 +13,7 @@ import type {
   Texture,
   Timer,
 } from 'three';
+import type { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import type { WebGPURenderer } from 'three/webgpu';
 import type { LensFlareEffect } from './effects/lens-flare.effect';
 import type { BiomeParameters } from './models/biome-parameters.model';
@@ -26,7 +26,7 @@ export enum EditorSceneCreationMode {
   PREVIEW,
 }
 
-// ----------------------------------- Editor types ---------------------------------
+// ----------------------------------- Model subtypes ---------------------------------
 export enum PlanetType {
   PLANET,
   MOON,
@@ -66,6 +66,7 @@ export type EditorSceneData = {
   scene: Scene;
   renderer: WebGPURenderer;
   camera: PerspectiveCamera;
+  orbitControls?: OrbitControls;
 
   // Groups
   planetGroup: Group;
@@ -112,10 +113,6 @@ export type RingMeshData = {
 
   buffer: Uint8Array | null;
   texture?: DataTexture;
-};
-export type LensFlareMeshdata = {
-  mesh?: Mesh;
-  uniforms?: LensFlareUniforms;
 };
 
 // ----------------------------------- Baking types ---------------------------------

@@ -32,11 +32,11 @@
           </div>
         </section>
 
-        <CollapsibleSection icon="oui:keyboard-shortcut">
-          <template #title>{{ $t('dialog.init.shortcuts') }}</template>
+        <CollapsibleSection icon="mingcute-hotkey-line">
+          <template #title>{{ $t('dialog.init.keybinds') }}</template>
           <template #content>
             <p>
-              {{ $t('dialog.init.shortcuts_note') }}
+              {{ $t('dialog.init.keybinds_note') }}
               <span class="nowrap">
                 (<iconify-icon
                   style="transform: translateY(0.125rem)"
@@ -47,25 +47,25 @@
               </span>
             </p>
             <ul class="controls-container controls">
-              <li class="lg">
+              <li>
                 <span class="keybind">{{ keybinds[0]?.key }}</span>
-                <span>{{ $t('dialog.init.shortcuts_lensflare') }}</span>
+                <span>{{ $t('dialog.init.keybinds_lensflare') }}</span>
               </li>
-              <li class="lg">
+              <li>
                 <span class="keybind">{{ keybinds[1]?.key }}</span>
-                <span>{{ $t('dialog.init.shortcuts_biomes') }}</span>
+                <span>{{ $t('dialog.init.keybinds_biomes') }}</span>
               </li>
-              <li class="lg">
+              <li>
                 <span class="keybind">{{ keybinds[2]?.key }}</span>
-                <span>{{ $t('dialog.init.shortcuts_clouds') }}</span>
+                <span>{{ $t('dialog.init.keybinds_clouds') }}</span>
               </li>
-              <li class="lg">
+              <li>
                 <span class="keybind">{{ keybinds[3]?.key }}</span>
-                <span>{{ $t('dialog.init.shortcuts_atmosphere') }}</span>
+                <span>{{ $t('dialog.init.keybinds_atmosphere') }}</span>
               </li>
-              <li class="lg">
+              <li>
                 <span class="keybind">{{ keybinds[4]?.key }}</span>
-                <span>{{ $t('dialog.init.shortcuts_screenshot') }}</span>
+                <span>{{ $t('dialog.init.keybinds_screenshot') }}</span>
               </li>
             </ul>
           </template>
@@ -80,11 +80,11 @@
                 {{ $t('main.nav.codex') }}
               </p>
               <ul class="controls">
-                <li class="lg">
+                <li>
                   <iconify-icon icon="mingcute:upload-line" width="1.25rem" aria-hidden="true" />
                   {{ $t('dialog.init.topbar_import') }}
                 </li>
-                <li class="lg">
+                <li>
                   <iconify-icon icon="mingcute:folder-zip-line" width="1.25rem" aria-hidden="true" />
                   {{ $t('dialog.init.topbar_export_all') }}
                 </li>
@@ -97,27 +97,27 @@
                 {{ $t('main.nav.editor') }}
               </p>
               <ul class="controls">
-                <li class="lg">
+                <li>
                   <iconify-icon icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
                   {{ $t('dialog.init.topbar_rename') }}
                 </li>
-                <li class="lg">
+                <li>
                   <iconify-icon icon="tabler:reload" width="1.25rem" aria-hidden="true" />
                   {{ $t('dialog.init.topbar_reset') }}
                 </li>
-                <li class="lg">
+                <li>
                   <iconify-icon icon="mingcute:shuffle-2-fill" width="1.25rem" aria-hidden="true" />
                   {{ $t('dialog.init.topbar_random') }}
                 </li>
-                <li class="lg">
+                <li>
                   <iconify-icon icon="mingcute:save-2-line" width="1.25rem" aria-hidden="true" />
                   {{ $t('dialog.init.topbar_save') }}
                 </li>
-                <li class="lg">
+                <li>
                   <iconify-icon icon="mingcute:copy-2-line" width="1.25rem" aria-hidden="true" />
                   {{ $t('dialog.init.topbar_copy') }}
                 </li>
-                <li class="lg">
+                <li>
                   <iconify-icon icon="simple-icons:gltf" width="1.25rem" aria-hidden="true" />
                   {{ $t('dialog.init.topbar_gltf') }}
                 </li>
@@ -130,15 +130,15 @@
           <template #title>{{ $t('dialog.init.footer') }}</template>
           <template #content>
             <ul class="controls-container controls">
-              <li class="lg">
+              <li>
                 <iconify-icon icon="mingcute:information-line" width="1.25rem" aria-hidden="true" />
                 {{ $t('dialog.init.footer_about') }}
               </li>
-              <li class="lg">
+              <li>
                 <iconify-icon icon="mingcute:settings-6-line" width="1.25rem" aria-hidden="true" />
                 {{ $t('dialog.init.footer_settings') }}
               </li>
-              <li class="lg">
+              <li>
                 <iconify-icon icon="mingcute:github-line" width="1.25rem" aria-hidden="true" />
                 {{ $t('dialog.init.footer_github') }}
               </li>
@@ -170,18 +170,21 @@
 import AppLogo from '@components/global/elements/AppLogo.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
-import { ref, type Ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import type { IDBKeyBinding } from '@/dexie.config';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 import LgvNotification from '@/_lib/components/LgvNotification.vue';
+import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
+import type { InitDialogExposes } from "@components/global/dialogs/InitDialog.types.ts";
 
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef')
+defineExpose<InitDialogExposes>({ open: () => dialogRef.value?.open!() });
+
 const shouldShowOnNextVisits = ref(true);
 const shouldEnableStoragePersistence = ref(true);
 
 const $emit = defineEmits(['disableInitDialog', 'enablePersistence']);
 defineProps<{ keybinds: IDBKeyBinding[] }>();
-defineExpose({ open: () => dialogRef.value?.open() });
 
 function doClose() {
   if (!shouldShowOnNextVisits.value) {
@@ -190,7 +193,7 @@ function doClose() {
   if (shouldEnableStoragePersistence.value) {
     $emit('enablePersistence');
   }
-  dialogRef.value?.close();
+  dialogRef.value?.close!();
 }
 </script>
 
@@ -291,12 +294,14 @@ function doClose() {
     flex-wrap: wrap;
 
     li {
+      height: 2.5rem;
+      flex-wrap: nowrap;
+      text-overflow: ellipsis;
+      line-height: 1.1;
+
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      flex-wrap: nowrap;
-      text-overflow: ellipsis;
-      height: 2.5rem;
 
       .keybind {
         display: flex;

@@ -20,10 +20,10 @@
       </div>
     </template>
     <template #actions>
-      <LgvButton icon="mingcute:close-line" @click="cancelAndClose">
+      <LgvButton icon="mingcute:close-line" @click="close(false)">
         {{ $t('dialog.clear_data.$action_cancel') }}
       </LgvButton>
-      <LgvButton class="warn" icon="mingcute:delete-2-line" @click="confirmAndClose">
+      <LgvButton class="warn" icon="mingcute:delete-2-line" @click="close(true)">
         {{ $t('dialog.clear_data.$action_confirm') }}
       </LgvButton>
     </template>
@@ -31,24 +31,20 @@
 </template>
 <script setup lang="ts">
 import DialogElement from '@components/global/elements/DialogElement.vue';
-import { ref, type Ref } from 'vue';
+import { useTemplateRef } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
+import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
+import type { ClearDataConfirmDialogExposes } from "@components/global/dialogs/ClearDataConfirmDialog.types.ts";
 
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+defineExpose<ClearDataConfirmDialogExposes>({ open: () => dialogRef.value?.open() });
 
 const $emit = defineEmits(['confirm']);
-defineExpose({
-  open: () => {
-    dialogRef.value?.open();
-  },
-});
 
-function cancelAndClose() {
-  dialogRef.value?.close();
-}
-
-function confirmAndClose() {
-  $emit('confirm');
+function close(confirm: boolean) {
+  if (confirm) {
+    $emit('confirm');
+  }
   dialogRef.value?.close();
 }
 </script>

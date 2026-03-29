@@ -112,7 +112,7 @@
           </p>
         </div>
       </div>
-      <span id="app-version">{{ version }}</span>
+      <span id="app-version">{{ appVersion }}</span>
     </template>
   </DialogElement>
 </template>
@@ -121,14 +121,15 @@
 import AppLogo from '@components/global/elements/AppLogo.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
-import { onMounted, ref, type Ref } from 'vue';
+import { useTemplateRef } from 'vue';
 import LgvChip from '@/_lib/components/LgvChip.vue';
+import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
+import type { AboutDialogExposes } from "@components/global/dialogs/AboutDialog.types.ts";
 
-const version = ref('UNKNOWN_VERSION');
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
-defineExpose({ open: () => dialogRef.value?.open(), close: () => dialogRef.value?.close() });
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+defineExpose<AboutDialogExposes>({ open: () => dialogRef.value?.open!(), close: () => dialogRef.value?.close!() });
 
-onMounted(() => (version.value = import.meta.env.APP_VERSION));
+const appVersion = import.meta.env.APP_VERSION;
 </script>
 
 <style scoped lang="scss">

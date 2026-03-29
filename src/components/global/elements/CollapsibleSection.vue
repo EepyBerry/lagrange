@@ -6,10 +6,10 @@
     :aria-expanded="_expanded"
   >
     <button class="collapsible-section-title" @click="toggleExpand()" @keydown.enter="toggleExpand()">
-      <h3>
+      <span class="title-container">
         <iconify-icon :icon="icon" width="1.25rem" aria-hidden="true" />
         <span><slot name="title">SECTION_TITLE</slot></span>
-      </h3>
+      </span>
       <iconify-icon class="indicator" icon="mingcute:right-fill" width="1.25rem" aria-hidden="true" />
     </button>
     <div v-show="_expanded" class="collapsible-section-content">
@@ -42,7 +42,6 @@ function toggleExpand() {
 
   display: flex;
   flex-direction: column;
-  align-items: space-between;
   gap: 4px;
 
   &.compact {
@@ -58,6 +57,7 @@ function toggleExpand() {
     color: unset;
     font-size: 1rem;
     font-weight: 600;
+    font-family: inherit;
     padding: 0.75rem;
 
     cursor: pointer;
@@ -66,11 +66,23 @@ function toggleExpand() {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    .title-container {
+      gap: 0.5rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      font-family: inherit;
+      line-height: 1;
+
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
   }
   .collapsible-section-content {
     font-size: 0.875rem;
     font-weight: 300;
-    padding: 0 0.75rem 0.75rem;
+    margin: 0 0.75rem 0.75rem;
     overflow-x: auto;
   }
   .collapsible-section-content .default {
@@ -90,7 +102,9 @@ function toggleExpand() {
 
     .collapsible-section-title {
       min-width: 0;
-      span,
+      .title-container > span {
+        display: none;
+      }
       .indicator {
         display: none;
       }
