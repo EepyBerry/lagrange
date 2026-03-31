@@ -58,7 +58,7 @@ function toggleExpand() {
     font-size: 1rem;
     font-weight: 600;
     font-family: inherit;
-    padding: 0.625rem;
+    padding: 0.75rem;
 
     cursor: pointer;
     user-select: none;

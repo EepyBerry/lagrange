@@ -238,6 +238,7 @@ function toggleSaveMenu(override?: boolean) {
 
     .name-wrapper {
       flex: 1;
+      height: 2.75rem;
       font-size: 1em;
       justify-content: space-between;
       width: 0;
@@ -247,6 +248,10 @@ function toggleSaveMenu(override?: boolean) {
     }
     .name-wrapper > input {
       width: 100%;
+    }
+    button {
+      width: 2.75rem;
+      height: 2.75rem;
     }
   }
 }
