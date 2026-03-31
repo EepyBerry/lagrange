@@ -51,7 +51,7 @@ function set(ev: Event) {
     width: 6rem;
   }
   &.md input[type='range'] {
-    width: 8rem;
+    width: 7rem;
   }
   &.fw input[type='range'] {
     width: 100%;
@@ -115,7 +115,7 @@ input[type='number'] {
 }
 input[type='range'] {
   -webkit-appearance: none;
-  width: 8rem;
+  width: 7rem;
   appearance: none;
   padding: 0;
   min-height: 1.5rem;

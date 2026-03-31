@@ -402,6 +402,19 @@
         "rgba": "Color & opacity",
         "rgba_opacity": "Opacity",
         "rgba_colorramp": "Color ramp (RGBA)"
+      },
+      "postprocessing": {
+        "$title": "Post-processing",
+        "bloom": "Bloom",
+        "bloom_enabled": "Show bloom",
+        "bloom_threshold": "Threshold",
+        "bloom_intensity": "Intensity",
+        "bloom_radius": "Radius",
+        "pixelation": "Pixelation",
+        "pixelation_enabled": "Show pixelation",
+        "pixelation_pixelsize": "Pixel size",
+        "pixelation_normaledgeintensity": "Normal edge intensity",
+        "pixelation_depthedgeintensity": "Depth edge intensity"
       }
     }
   },

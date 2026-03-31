@@ -1,7 +1,7 @@
-import { clampedPRNG } from '@core/utils/math-utils';
+import { ColorRamp, ColorRampStep } from '@core/models/planet/color-ramp.model.ts';
+import { clampedPRNG } from '@core/utils/math-utils.ts';
+import { ObservableRelay, type ObservableNotifyFunction } from '@core/utils/observable-utils.ts';
 import { nanoid } from 'nanoid';
-import { ObservableRelay, type ObservableNotifyFunction } from '../utils/observable-utils';
-import { ColorRamp, ColorRampStep } from './color-ramp.model';
 
 export class RingParameters extends ObservableRelay {
   private _id: string;

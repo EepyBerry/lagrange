@@ -1,7 +1,7 @@
 import * as Globals from "@core/globals";
 import * as ComponentHelper from "@core/helpers/component.helper";
 
-import type PlanetData from "@core/models/planet-data.model";
+import type PlanetData from "@core/models/planet/planet-data.model.ts";
 import { renderToCanvas } from "@core/utils/render-utils";
 import {
   CanvasTexture,

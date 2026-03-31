@@ -82,7 +82,7 @@
 <script setup lang="ts">
 import Rect from '@core/utils/math/rect';
 import { onMounted, ref, type Ref } from 'vue';
-import type { RingParameters } from '@/core/models/ring-parameters.model';
+import type { RingParameters } from '@core/models/planet/ring-parameters.model.ts';
 import { makeSVGLinearPath } from '@/core/utils/svg-utils';
 
 const width = 480,

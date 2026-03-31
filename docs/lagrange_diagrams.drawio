@@ -97,7 +97,7 @@
             <mxPoint x="320" y="320" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="EmRo9OJPOUBvlvMMLyUU-42" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#314D58;fontColor=#FFFFFF;strokeColor=none;rotation=0;fontFamily=Helvetica;fontStyle=1;connectable=1;allowArrows=0;fillStyle=solid;" value="planet-data-to-uniforms.observer.ts" vertex="1">
+        <mxCell id="EmRo9OJPOUBvlvMMLyUU-42" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#314D58;fontColor=#FFFFFF;strokeColor=none;rotation=0;fontFamily=Helvetica;fontStyle=1;connectable=1;allowArrows=0;fillStyle=solid;" value="planet-data.observer.ts" vertex="1">
           <mxGeometry height="40" width="180" x="70" y="360" as="geometry" />
         </mxCell>
         <mxCell id="EmRo9OJPOUBvlvMMLyUU-84" edge="1" parent="1" source="EmRo9OJPOUBvlvMMLyUU-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;strokeColor=#FFFFFF;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="EmRo9OJPOUBvlvMMLyUU-42">

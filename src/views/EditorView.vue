@@ -38,7 +38,7 @@ import EditorErrorDialog from '@/components/editor/dialogs/EditorInitErrorDialog
 import ViewHeader from '@/components/global/ViewHeader.vue';
 import WebGL from '@/core/capabilities/WebGL';
 import WebGPU from '@/core/capabilities/WebGPU';
-import PlanetData from '@/core/models/planet-data.model';
+import PlanetData from '@core/models/planet/planet-data.model.ts';
 import {
   bootstrapEditor,
   dollyCamera,

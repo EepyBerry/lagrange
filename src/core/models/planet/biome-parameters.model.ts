@@ -1,8 +1,8 @@
-import { clampedPRNG } from '@core/utils/math-utils';
+import { clampedPRNG } from '@core/utils/math-utils.ts';
+import { ObservableRelay, type ObservableNotifyFunction } from '@core/utils/observable-utils.ts';
 import { nanoid } from 'nanoid';
 import { Color } from 'three';
 import { clamp } from 'three/src/math/MathUtils.js';
-import { ObservableRelay, type ObservableNotifyFunction } from '../utils/observable-utils';
 
 export class BiomeDimensions {
   temperatureMin: number = 0;

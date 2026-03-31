@@ -403,6 +403,19 @@
         "rgba": "Cowow & opacity",
         "rgba_opacity": "Opacity",
         "rgba_colorramp": "Cowow wamp (RGBA)"
+      },
+      "postprocessing": {
+        "$title": "Post-pwocessing",
+        "bloom": "Bwoom",
+        "bloom_enabled": "Show bwoom",
+        "bloom_threshold": "Thweshowd",
+        "bloom_intensity": "Intensity",
+        "bloom_radius": "Wadius",
+        "pixelation": "Pixewation",
+        "pixelation_enabled": "Show pixewation",
+        "pixelation_pixelsize": "Pixew size",
+        "pixelation_normaledgeintensity": "Nowmaw edge intensity",
+        "pixelation_depthedgeintensity": "Depth edge intensity"
       }
     }
   },

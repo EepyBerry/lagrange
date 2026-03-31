@@ -90,8 +90,8 @@ function toggleNavMenu(override?: boolean) {
 
 <style lang="scss">
 #nav-toggle {
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 2.5rem;
+  height: 2.5rem;
 }
 #nav-menu {
   z-index: 1;

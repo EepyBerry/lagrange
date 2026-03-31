@@ -1,6 +1,6 @@
 import type { NodeMaterial } from "three/webgpu";
-import type PlanetData from "../models/planet-data.model";
-import { EditorSceneCreationMode, type EditorSceneData, type RingMeshData } from "../types";
+import type PlanetData from "src/core/models/planet/planet-data.model.ts";
+import { EditorSceneCreationMode, type EditorSceneData, type RingMeshData, type TEditorSceneCreationMode } from "../types";
 import * as ComponentHelper from "./component.helper";
 import * as Globals from "@core/globals";
 import { Group, Timer } from "three";
@@ -11,7 +11,7 @@ export async function buildEditorScene(
   renderWidth: number,
   renderHeight: number,
   renderPixelRatio: number,
-  creationMode: EditorSceneCreationMode,
+  creationMode: TEditorSceneCreationMode,
 ): Promise<EditorSceneData> {
   const sceneData: Partial<EditorSceneData> = {
     planet: {
@@ -76,7 +76,7 @@ async function buildScene(
   renderWidth: number,
   renderHeight: number,
   renderPixelRatio: number,
-  creationMode: EditorSceneCreationMode,
+  creationMode: TEditorSceneCreationMode,
 ): Promise<void> {
   const { scene, renderer, camera } = await ComponentHelper.createScene(
     data,
@@ -119,13 +119,13 @@ function buildSceneLighting(sceneData: EditorSceneData, data: PlanetData): void 
 function buildScenePlanet(
   sceneData: EditorSceneData,
   data: PlanetData,
-  creationMode: EditorSceneCreationMode,
+  creationMode: TEditorSceneCreationMode,
 ): void {
   const planet = ComponentHelper.createPlanet(data, sceneData.planet.surfaceBuffer);
   const clouds = ComponentHelper.createClouds(data, sceneData.clouds.buffer);
   const atmosphere = ComponentHelper.createAtmosphere(data, sceneData.sunLight.position);
   const rings: RingMeshData[] = [];
-  if (creationMode === EditorSceneCreationMode.EDITOR) {
+  if (creationMode === EditorSceneCreationMode.Editor) {
     rings.push(...data.ringsParams.map((param) => ComponentHelper.createRing(data, param)));
   }
 

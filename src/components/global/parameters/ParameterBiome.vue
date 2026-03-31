@@ -89,7 +89,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { BiomeParameters } from '@core/models/biome-parameters.model';
+import type { BiomeParameters } from '@core/models/planet/biome-parameters.model.ts';
 import ParameterSlider from '@components/global/parameters/ParameterSlider.vue';
 import { onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';

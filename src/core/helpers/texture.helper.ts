@@ -1,7 +1,7 @@
-import type { BiomeParameters } from "@core/models/biome-parameters.model";
+import type { BiomeParameters } from "@core/models/planet/biome-parameters.model.ts";
 import { avg, truncateTo } from "@core/utils/math-utils";
 import { Color, CubeTextureLoader, DataTexture, NearestFilter, Scene, type MinificationTextureFilter } from "three";
-import type { ColorRampStep } from "../models/color-ramp.model";
+import type { ColorRampStep } from "@core/models/planet/color-ramp.model.ts";
 import { clamp, lerp } from "three/src/math/MathUtils.js";
 import Rect from "../utils/math/rect";
 

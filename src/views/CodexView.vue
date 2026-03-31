@@ -61,7 +61,7 @@ import { EventBus } from '@core/event-bus';
 import { EXTRAS_METAL_SLUG_MODE, uwuifyPath } from '@core/extras';
 import { SM_WIDTH_THRESHOLD } from '@core/globals';
 import { readFileData } from '@core/helpers/import.helper';
-import PlanetData from '@core/models/planet-data.model';
+import PlanetData from '@core/models/planet/planet-data.model.ts';
 import { useHead } from '@unhead/vue';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';

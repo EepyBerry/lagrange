@@ -1,13 +1,14 @@
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { degToRad } from "three/src/math/MathUtils.js";
 import * as TextureHelper from "./texture.helper";
-import type PlanetData from "../models/planet-data.model";
+import type PlanetData from "@core/models/planet/planet-data.model.ts";
 import {
   type PlanetMeshData,
   type AtmosphereMeshData,
   type CloudsMeshData,
   type RingMeshData,
   EditorSceneCreationMode,
+  type TEditorSceneCreationMode
 } from "../types";
 import { LensFlareEffect } from "../effects/lens-flare.effect";
 import * as Globals from "@core/globals";
@@ -37,13 +38,16 @@ import { AtmosphereTSLMaterial } from "@core/tsl/materials/atmosphere.tslmat";
 import { CloudsTSLMaterial } from "@core/tsl/materials/clouds.tslmat";
 import { RingTSLMaterial } from "@core/tsl/materials/ring.tslmat";
 import { idb } from "@/dexie.config";
-import { LayeredDataTexture } from "../utils/texture/layered-data-texture";
-import type { BiomeParameters } from "../models/biome-parameters.model";
-import { PlanetDataConverter } from "../models/converters/planet-data.converter";
-import { CloudsDataConverter } from "../models/converters/clouds-data.converter";
-import { RingDataConverter } from "../models/converters/ring-data.converter";
+import { LayeredDataTexture } from "@core/utils/texture/layered-data-texture";
+import type { BiomeParameters } from "@core/models/planet/biome-parameters.model.ts";
+import { PlanetDataConverter } from "@core/models/converters/planet-data.converter";
+import { CloudsDataConverter } from "@core/models/converters/clouds-data.converter";
+import { RingDataConverter } from "@core/models/converters/ring-data.converter";
 import { AtmosphereDataConverter } from "../models/converters/atmosphere-data.converter";
-import type { RingParameters } from "../models/ring-parameters.model";
+import type { RingParameters } from "@core/models/planet/ring-parameters.model.ts";
+import TSLRenderPipeline from "@core/tsl/rendering/render-pipeline.ts";
+import type RenderPipelineData from "@core/models/renderpipeline/render-pipeline-data.model.ts";
+import { RenderPipelineDataConverter } from "@core/models/converters/render-pipeline-data.converter.ts";
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
@@ -57,18 +61,18 @@ export async function createScene(
   width: number,
   height: number,
   pixelRatio: number,
-  creationMode: EditorSceneCreationMode,
+  creationMode: TEditorSceneCreationMode,
 ): Promise<EditorSceneObjects> {
   const idbSettings = await idb.settings.limit(1).first();
   const scene = new Scene();
-  if (creationMode === EditorSceneCreationMode.EDITOR) {
+  if (creationMode === EditorSceneCreationMode.Editor) {
     TextureHelper.loadCubeTextureSkybox(scene, `/skyboxes/${idbSettings?.skybox ?? "deepspace"}/`);
   }
   scene.userData.lens = "no-occlusion";
 
   // Make spherical before creating camera
   const spherical =
-    creationMode === EditorSceneCreationMode.PREVIEW
+    creationMode === EditorSceneCreationMode.Preview
       ? new Spherical(data.initCamDistance - 1.5, Math.PI / 2, degToRad(data.initCamAngle))
       : new Spherical(data.initCamDistance, Math.PI / 2, degToRad(data.initCamAngle));
 
@@ -264,6 +268,11 @@ export async function createRenderer(width: number, height: number, pixelRatio?:
     `<Lagrange> Initialised renderer using ${idbSettings!.renderingBackend == "webgl" ? "WebGL" : "WebGPU"} backend.`,
   );
   return renderer;
+}
+
+export function createRenderPipeline(data: RenderPipelineData, renderer: WebGPURenderer): TSLRenderPipeline {
+  const dataConverter = new RenderPipelineDataConverter(data);
+  return new TSLRenderPipeline(dataConverter.convert(), renderer);
 }
 
 /**

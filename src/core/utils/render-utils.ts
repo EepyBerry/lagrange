@@ -1,4 +1,4 @@
-import type { ColorRamp } from '@core/models/color-ramp.model';
+import type { ColorRamp } from '@core/models/planet/color-ramp.model.ts';
 import type { WebGPURenderer } from 'three/webgpu';
 import { type TypedArray } from 'three';
 

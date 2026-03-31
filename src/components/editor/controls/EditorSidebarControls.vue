@@ -21,7 +21,7 @@ defineProps<{ compactMode: boolean }>();
   z-index: 10;
   position: absolute;
   inset: 0 auto 0;
-  margin-top: 3.875rem;
+  margin-top: 3.25rem;
 
   display: flex;
   flex-direction: column;
@@ -68,7 +68,7 @@ defineProps<{ compactMode: boolean }>();
         min-width: 0;
       }
       & > section.expanded {
-        min-width: 26rem;
+        min-width: 25rem;
       }
     }
   }

@@ -1,6 +1,6 @@
+import type PlanetData from '@core/models/planet/planet-data.model.ts';
 import type { Vector3 } from 'three';
 import type { AtmosphereUniformsData } from '@/core/tsl/materials/atmosphere.tslmat';
-import type PlanetData from '../planet-data.model';
 import { ModelConverter } from './model-converter';
 
 export class AtmosphereDataConverter extends ModelConverter<PlanetData, AtmosphereUniformsData> {

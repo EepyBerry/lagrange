@@ -7,7 +7,7 @@
 .param-grid {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 16rem;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 8px 0;
 }

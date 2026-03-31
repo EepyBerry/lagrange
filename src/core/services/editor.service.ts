@@ -1,6 +1,8 @@
 import * as Globals from '@core/globals';
 import * as BakingHelper from '@core/helpers/baking.helper';
 import * as ComponentHelper from '@core/helpers/component.helper';
+import { PlanetDataObserver } from '@core/observers/planet-data.observer.ts';
+import { RenderPipelineDataObserver } from '@core/observers/render-pipeline-data.observer.ts';
 import { type BakingTarget, EditorSceneCreationMode, type EditorSceneData } from '@core/types';
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
 import { sleep } from '@core/utils/utils';
@@ -15,12 +17,12 @@ import * as ExportHelper from '../helpers/export.helper';
 import * as PreviewHelper from '../helpers/preview.helper';
 import * as SceneHelper from '../helpers/scene.helper';
 import * as TextureHelper from '../helpers/texture.helper';
-import { PlanetDataToUniformsObserver } from '../observers/planet-data-to-uniforms.observer';
 import { EDITOR_STATE, EditorStatusCode } from '../state/editor.state';
 
 // Internal attributes
 let editorSceneData!: EditorSceneData;
-const planetDataToUniformsObserver: PlanetDataToUniformsObserver = new PlanetDataToUniformsObserver();
+const planetDataObserver: PlanetDataObserver = new PlanetDataObserver();
+const renderPipelineObserver: RenderPipelineDataObserver = new RenderPipelineDataObserver();
 
 // ------------------------------------------------------------------------------------------------ //
 //                                           EVENT HANDLING                                         //
@@ -43,7 +45,7 @@ export async function bootstrapEditor(sceneRoot: HTMLElement, w: number, h: numb
     w,
     h,
     pixelRatio,
-    EditorSceneCreationMode.EDITOR,
+    EditorSceneCreationMode.Editor,
   );
   editorSceneData.orbitControls = await ComponentHelper.createOrbitControls(
     editorSceneData.camera,
@@ -55,14 +57,25 @@ export async function bootstrapEditor(sceneRoot: HTMLElement, w: number, h: numb
     await editorSceneData.renderer.init();
   }
   editorSceneData.renderer.setSize(w, h);
-  editorSceneData.renderer.setAnimationLoop(() => renderFrame());
+  await editorSceneData.renderer.setAnimationLoop(() => renderFrame());
   editorSceneData.renderer.domElement.ariaLabel = '3D planet viewer';
   sceneRoot.appendChild(editorSceneData.renderer.domElement);
-  EDITOR_STATE.value.status = EditorStatusCode.Edition;
 
-  // Observe changes in model
-  planetDataToUniformsObserver.hookEditorSceneData(editorSceneData);
-  EDITOR_STATE.value.planetData.connect(planetDataToUniformsObserver);
+  // Connect renderPipeline
+  editorSceneData.renderPipeline = ComponentHelper.createRenderPipeline(
+    EDITOR_STATE.value.renderPipelineData,
+    editorSceneData.renderer,
+  );
+  editorSceneData.renderPipeline.updateOutputNode(editorSceneData.scene, editorSceneData.camera);
+
+  // Observe changes in models
+  planetDataObserver.hookEditorSceneData(editorSceneData);
+  EDITOR_STATE.value.planetData.connect(planetDataObserver);
+  renderPipelineObserver.hookRenderPipelineData(editorSceneData);
+  EDITOR_STATE.value.renderPipelineData.connect(renderPipelineObserver);
+
+  // Set state - editor is ready
+  EDITOR_STATE.value.status = EditorStatusCode.Edition;
 
   /* LG_SCENE_DATA.renderer!.debug.getShaderAsync(
     LG_SCENE_DATA.scene,
@@ -76,9 +89,12 @@ export async function bootstrapEditor(sceneRoot: HTMLElement, w: number, h: numb
  */
 export function unloadEditor() {
   EDITOR_STATE.value.status = EditorStatusCode.SceneDisposal;
-  console.debug('<Lagrange> Clearing scene... ');
-  planetDataToUniformsObserver.unhookEditorSceneData();
+  console.debug('<Lagrange> Disconnecting observers... ');
+  planetDataObserver.unhookEventHandlers();
   EDITOR_STATE.value.planetData.disconnectAll();
+  renderPipelineObserver.unhookEventHandlers();
+  EDITOR_STATE.value.renderPipelineData.disconnectAll();
+  console.debug('<Lagrange> Clearing scene... ');
   SceneHelper.disposeScene(editorSceneData);
   console.debug('<Lagrange> ...done!');
   EDITOR_STATE.value.status = EditorStatusCode.Unloaded;
@@ -96,7 +112,8 @@ function renderFrame() {
     editorSceneData.camera,
     editorSceneData.timer!,
   );
-  editorSceneData.renderer.render(editorSceneData.scene, editorSceneData.camera);
+  //editorSceneData.renderer.render(editorSceneData.scene, editorSceneData.camera);
+  editorSceneData.renderPipeline?.pipeline.render();
 }
 
 export function updateCameraRendering(w: number, h: number) {
