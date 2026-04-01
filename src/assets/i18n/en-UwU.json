@@ -409,7 +409,7 @@
         "bloom": "Bwoom",
         "bloom_enabled": "Show bwoom",
         "bloom_threshold": "Thweshowd",
-        "bloom_intensity": "Intensity",
+        "bloom_strength": "Stwength",
         "bloom_radius": "Wadius",
         "pixelation": "Pixewation",
         "pixelation_enabled": "Show pixewation",

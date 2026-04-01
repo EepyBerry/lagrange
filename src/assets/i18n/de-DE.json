@@ -408,7 +408,7 @@
         "bloom": "Bloom-Effekt",
         "bloom_enabled": "Bloom anzeigen",
         "bloom_threshold": "Schwelle",
-        "bloom_intensity": "Intensität",
+        "bloom_strength": "Intensität",
         "bloom_radius": "Radius",
         "pixelation": "Verpixelung",
         "pixelation_enabled": "Verpixelung anzeigen",

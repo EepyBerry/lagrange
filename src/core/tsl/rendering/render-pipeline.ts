@@ -1,6 +1,7 @@
 import { Camera, type Scene } from 'three';
-import { pass, uniform } from 'three/tsl';
-import { PassNode, RenderPipeline, UniformNode, WebGPURenderer } from 'three/webgpu';
+import BloomNode, { bloom } from 'three/addons/tsl/display/BloomNode.js';
+import { emissive, float, mrt, output, pass, uniform } from 'three/tsl';
+import { RenderPipeline, UniformNode, WebGPURenderer, Node } from 'three/webgpu';
 
 export type RenderPipelineUniformData = {
   pixelation: {
@@ -12,7 +13,7 @@ export type RenderPipelineUniformData = {
   bloom: {
     enabled: boolean;
     threshold: number;
-    intensity: number;
+    strength: number;
     radius: number;
   };
 };
@@ -26,7 +27,7 @@ export type RenderPipelineUniforms = {
   bloom: {
     enabled: UniformNode<'float', number>;
     threshold: UniformNode<'float', number>;
-    intensity: UniformNode<'float', number>;
+    strength: UniformNode<'float', number>;
     radius: UniformNode<'float', number>;
   };
 };
@@ -34,8 +35,9 @@ export default class TSLRenderPipeline {
   public readonly pipeline: RenderPipeline;
   public readonly uniforms: RenderPipelineUniforms;
 
-  constructor(data: RenderPipelineUniformData, renderer: WebGPURenderer) {
-    this.pipeline = new RenderPipeline(renderer);
+  public readonly bloomNode!: BloomNode;
+
+  constructor(data: RenderPipelineUniformData, renderer: WebGPURenderer, scene: Scene, camera: Camera) {
     this.uniforms = {
       pixelation: {
         enabled: uniform(+data.pixelation.enabled),
@@ -46,20 +48,34 @@ export default class TSLRenderPipeline {
       bloom: {
         enabled: uniform(+data.bloom.enabled),
         threshold: uniform(data.bloom.threshold),
-        intensity: uniform(data.bloom.intensity),
+        strength: uniform(data.bloom.strength),
         radius: uniform(data.bloom.radius),
       },
     };
-  }
-
-  public updateOutputNode(scene: Scene, camera: Camera) {
+    this.pipeline = new RenderPipeline(renderer);
     this.pipeline.outputNode = this.composePipelinePasses(scene, camera);
     this.pipeline.needsUpdate = true;
   }
 
-  private composePipelinePasses(scene: Scene, camera: Camera): PassNode {
-    const composedPass: PassNode = pass(scene, camera);
+  private composePipelinePasses(scene: Scene, camera: Camera): Node {
+    const scenePass = pass(scene, camera);
+    scenePass.setMRT(
+      mrt({
+        output,
+        emissive,
+        bloomIntensity: float(0),
+      }),
+    );
 
-    return composedPass;
+    const outputPass = scenePass.getTextureNode();
+    const bloomIntensityPass = scenePass.getTextureNode('bloomIntensity');
+    // @ts-expect-error Bad @types/three typings
+    this.bloomNode = bloom(
+      outputPass.mul(bloomIntensityPass).mul(this.uniforms.bloom.enabled),
+      this.uniforms.bloom.strength.value,
+      this.uniforms.bloom.radius.value,
+      this.uniforms.bloom.threshold.value,
+    );
+    return outputPass.add(this.bloomNode!).renderOutput();
   }
 }

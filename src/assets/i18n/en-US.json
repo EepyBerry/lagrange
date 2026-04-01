@@ -408,7 +408,7 @@
         "bloom": "Bloom",
         "bloom_enabled": "Show bloom",
         "bloom_threshold": "Threshold",
-        "bloom_intensity": "Intensity",
+        "bloom_strength": "Strength",
         "bloom_radius": "Radius",
         "pixelation": "Pixelation",
         "pixelation_enabled": "Show pixelation",

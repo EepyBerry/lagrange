@@ -270,9 +270,9 @@ export async function createRenderer(width: number, height: number, pixelRatio?:
   return renderer;
 }
 
-export function createRenderPipeline(data: RenderPipelineData, renderer: WebGPURenderer): TSLRenderPipeline {
+export function createRenderPipeline(data: RenderPipelineData, renderer: WebGPURenderer, scene: Scene, camera: Camera): TSLRenderPipeline {
   const dataConverter = new RenderPipelineDataConverter(data);
-  return new TSLRenderPipeline(dataConverter.convert(), renderer);
+  return new TSLRenderPipeline(dataConverter.convert(), renderer, scene, camera);
 }
 
 /**

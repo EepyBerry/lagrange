@@ -8,6 +8,7 @@ import {
   mat3,
   min,
   mix,
+  mrt,
   mul,
   normalLocal,
   positionLocal,
@@ -270,6 +271,9 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
       biomeTexCoord,
       FLAG_LAND,
     );
+
+    // Connect MRT data
+    material.mrtNode = mrt({ bloomIntensity: uniform(1.0) });
     return material;
   }
 

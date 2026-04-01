@@ -408,7 +408,7 @@
         "bloom": "Flou lumineux",
         "bloom_enabled": "Afficher flou lumineux",
         "bloom_threshold": "Threshold",
-        "bloom_intensity": "Intensité",
+        "bloom_strength": "Intensité",
         "bloom_radius": "Rayon",
         "pixelation": "Pixélisation",
         "pixelation_enabled": "Afficher pixélisation",

@@ -65,8 +65,9 @@ export async function bootstrapEditor(sceneRoot: HTMLElement, w: number, h: numb
   editorSceneData.renderPipeline = ComponentHelper.createRenderPipeline(
     EDITOR_STATE.value.renderPipelineData,
     editorSceneData.renderer,
+    editorSceneData.scene,
+    editorSceneData.camera,
   );
-  editorSceneData.renderPipeline.updateOutputNode(editorSceneData.scene, editorSceneData.camera);
 
   // Observe changes in models
   planetDataObserver.hookEditorSceneData(editorSceneData);

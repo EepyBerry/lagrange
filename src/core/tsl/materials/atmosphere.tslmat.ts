@@ -6,6 +6,7 @@ import {
   int,
   min,
   modelWorldMatrix,
+  mrt,
   normalize,
   PI,
   positionGeometry,
@@ -151,7 +152,9 @@ export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereU
     const material = new NodeMaterial();
     material.transparent = true;
     material.depthWrite = false;
-    material.fragmentNode = fragmentNode(positionGeometry, positionWorld);
+    material.colorNode = fragmentNode(positionGeometry, positionWorld);
+    // Connect MRT data
+    material.mrtNode = mrt({ bloomIntensity: uniform(1.0) });
     return material;
   }
 }

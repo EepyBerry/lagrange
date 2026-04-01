@@ -14,7 +14,7 @@ export class RenderPipelineDataConverter extends ModelConverter<RenderPipelineDa
       bloom: {
         enabled: this._data.bloomEnabled,
         threshold: this._data.bloomThreshold,
-        intensity: this._data.bloomIntensity,
+        strength: this._data.bloomStrength,
         radius: this._data.bloomRadius,
       },
     };

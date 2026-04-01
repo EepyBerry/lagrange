@@ -2,8 +2,8 @@ import { Observable } from '@core/utils/observable-utils.ts';
 
 export default class RenderPipelineData extends Observable {
   private _bloomEnabled: boolean;
+  private _bloomStrength: number;
   private _bloomThreshold: number;
-  private _bloomIntensity: number;
   private _bloomRadius: number;
 
   private _pixelationEnabled: boolean;
@@ -15,7 +15,7 @@ export default class RenderPipelineData extends Observable {
     super();
     this._bloomEnabled = false;
     this._bloomThreshold = 0;
-    this._bloomIntensity = 0;
+    this._bloomStrength = 0;
     this._bloomRadius = 0;
     this._pixelationEnabled = false;
     this._pixelationPixelSize = 1;
@@ -31,20 +31,20 @@ export default class RenderPipelineData extends Observable {
     this.notify({ key: 'RP_bloomEnabled' });
   }
 
+  public get bloomStrength(): number {
+    return this._bloomStrength;
+  }
+  public set bloomStrength(value: number) {
+    this._bloomStrength = value;
+    this.notify({ key: 'RP_bloomStrength' });
+  }
+
   public get bloomThreshold(): number {
     return this._bloomThreshold;
   }
   public set bloomThreshold(value: number) {
     this._bloomThreshold = value;
     this.notify({ key: 'RP_bloomThreshold' });
-  }
-
-  public get bloomIntensity(): number {
-    return this._bloomIntensity;
-  }
-  public set bloomIntensity(value: number) {
-    this._bloomIntensity = value;
-    this.notify({ key: 'RP_bloomIntensity' });
   }
 
   public get bloomRadius(): number {

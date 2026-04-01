@@ -1,4 +1,4 @@
-import { float, length, positionGeometry, texture, uniform, uv, vec2 } from 'three/tsl';
+import { float, length, mrt, positionGeometry, texture, uniform, uv, vec2 } from 'three/tsl';
 import {
   DoubleSide,
   MeshBasicNodeMaterial,
@@ -35,6 +35,9 @@ export class RingTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, RingU
     material.colorNode = this.sampleRampTexture(positionGeometry);
     material.transparent = true;
     material.side = DoubleSide;
+
+    // Connect MRT data
+    material.mrtNode = mrt({ bloomIntensity: uniform(1.0) });
     return material;
   }
 
