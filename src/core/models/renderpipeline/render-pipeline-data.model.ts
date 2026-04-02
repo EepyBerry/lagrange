@@ -15,7 +15,7 @@ export default class RenderPipelineData extends Observable {
     super();
     this._bloomEnabled = false;
     this._bloomThreshold = 0;
-    this._bloomStrength = 0;
+    this._bloomStrength = 0.1;
     this._bloomRadius = 0;
     this._pixelationEnabled = false;
     this._pixelationPixelSize = 1;

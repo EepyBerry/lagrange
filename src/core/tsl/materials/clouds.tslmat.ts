@@ -3,7 +3,6 @@ import {
   float,
   int,
   min,
-  mrt,
   positionGeometry,
   texture,
   uniform,
@@ -104,9 +103,6 @@ export class CloudsTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Clo
     material.metalness = 0.5;
     material.transparent = true;
     material.colorNode = vec4(this.uniforms.color, opacity.x);
-
-    // Connect MRT data
-    material.mrtNode = mrt({ bloomIntensity: uniform(1.0) });
 
     return material;
   }

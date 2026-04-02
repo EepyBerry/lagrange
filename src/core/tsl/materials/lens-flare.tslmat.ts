@@ -1,5 +1,5 @@
 import type { Color, Vector3 } from 'three';
-import { float, Fn, If, Loop, mrt, positionGeometry, pow, uniform, uv, vec2, vec3, vec4 } from 'three/tsl';
+import { float, Fn, If, Loop, positionGeometry, pow, uniform, uv, vec2, vec3, vec4 } from 'three/tsl';
 import { AdditiveBlending, Node, NodeMaterial, UniformNode, Vector2 } from 'three/webgpu';
 import { circle, lensFlare, rndf } from '../features/lens-flare';
 import { TSLMaterial } from './tsl-material';
@@ -102,8 +102,6 @@ export class LensFlareTSLMaterial extends TSLMaterial<NodeMaterial, LensFlareDat
     material.depthTest = false;
     material.blending = AdditiveBlending;
     material.name = 'LensFlareShader';
-    // Connect MRT data
-    material.mrtNode = mrt({ bloomIntensity: uniform(1.0) });
     return material;
   }
 }

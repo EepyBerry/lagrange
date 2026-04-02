@@ -151,7 +151,7 @@ export function swapSceneSkybox(skybox: string) {
 
 export async function takePlanetScreenshot() {
   try {
-    editorSceneData.renderer.render(editorSceneData.scene, editorSceneData.camera);
+    editorSceneData.renderPipeline?.pipeline.render();
     editorSceneData.renderer.domElement.toBlob((blob) =>
       saveAs(
         blob as Blob,

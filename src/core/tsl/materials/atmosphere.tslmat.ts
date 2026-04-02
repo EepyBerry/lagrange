@@ -6,7 +6,6 @@ import {
   int,
   min,
   modelWorldMatrix,
-  mrt,
   normalize,
   PI,
   positionGeometry,
@@ -95,7 +94,7 @@ export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereU
   }
 
   buildMaterial(): NodeMaterial {
-    const fragmentNode = Fn(([posGeo, posWorld]: [Node<'vec3'>, Node<'vec3'>]) => {
+    const mainNode = Fn(([posGeo, posWorld]: [Node<'vec3'>, Node<'vec3'>]) => {
       const eye = vec3(cameraPosition).toVar('eye');
       const rayDir = rayDirection(modelWorldMatrix, posGeo, eye).toVar('rayDir');
       const sunglightDir = vec3(normalize(this.uniforms.sunlight.position.sub(posWorld.xyz))).toVar('sunlightDir');
@@ -152,9 +151,7 @@ export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereU
     const material = new NodeMaterial();
     material.transparent = true;
     material.depthWrite = false;
-    material.colorNode = fragmentNode(positionGeometry, positionWorld);
-    // Connect MRT data
-    material.mrtNode = mrt({ bloomIntensity: uniform(1.0) });
+    material.colorNode = mainNode(positionGeometry, positionWorld);
     return material;
   }
 }

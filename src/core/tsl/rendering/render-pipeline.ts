@@ -1,6 +1,7 @@
 import { Camera, type Scene } from 'three';
 import BloomNode, { bloom } from 'three/addons/tsl/display/BloomNode.js';
-import { emissive, float, mrt, output, pass, uniform } from 'three/tsl';
+import { pixelationPass } from 'three/addons/tsl/display/PixelationPassNode.js';
+import { uniform } from 'three/tsl';
 import { RenderPipeline, UniformNode, WebGPURenderer, Node } from 'three/webgpu';
 
 export type RenderPipelineUniformData = {
@@ -58,20 +59,20 @@ export default class TSLRenderPipeline {
   }
 
   private composePipelinePasses(scene: Scene, camera: Camera): Node {
-    const scenePass = pass(scene, camera);
-    scenePass.setMRT(
-      mrt({
-        output,
-        emissive,
-        bloomIntensity: float(0),
-      }),
+    const scenePass = pixelationPass(
+      scene,
+      camera,
+      this.uniforms.pixelation.pixelSize,
+      this.uniforms.pixelation.normalEdgeIntensity,
+      this.uniforms.pixelation.depthEdgeIntensity,
     );
 
-    const outputPass = scenePass.getTextureNode();
-    const bloomIntensityPass = scenePass.getTextureNode('bloomIntensity');
+    let outputPass = scenePass.getTextureNode('output');
+    // outputPass = outputPass.add(rgbShift(outputPass));
+
     // @ts-expect-error Bad @types/three typings
     this.bloomNode = bloom(
-      outputPass.mul(bloomIntensityPass).mul(this.uniforms.bloom.enabled),
+      outputPass.mul(this.uniforms.bloom.enabled),
       this.uniforms.bloom.strength.value,
       this.uniforms.bloom.radius.value,
       this.uniforms.bloom.threshold.value,
