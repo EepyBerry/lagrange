@@ -405,16 +405,18 @@
       },
       "postprocessing": {
         "$title": "Post-processing",
+        "basepipeline": "Base render pipeline",
+        "basepipeline_select": "Select pipeline",
+        "basepipeline_none": "(none)",
+        "basepipeline_pixelation": "Pixelation",
+        "basepipeline_pixelation_pixelsize": "Pixel size",
+        "basepipeline_pixelation_normaledgeintensity": "Normal edge intensity",
+        "basepipeline_pixelation_depthedgeintensity": "Depth edge intensity",
+        "basepipeline_retro": "Retro",
         "bloom": "Bloom",
-        "bloom_enabled": "Show bloom",
         "bloom_threshold": "Threshold",
         "bloom_strength": "Strength",
-        "bloom_radius": "Radius",
-        "pixelation": "Pixelation",
-        "pixelation_enabled": "Show pixelation",
-        "pixelation_pixelsize": "Pixel size",
-        "pixelation_normaledgeintensity": "Normal edge intensity",
-        "pixelation_depthedgeintensity": "Depth edge intensity"
+        "bloom_radius": "Radius"
       }
     }
   },

@@ -1,6 +1,7 @@
 import type RenderPipelineData from '@core/models/renderpipeline/render-pipeline-data.model.ts';
 import type TSLRenderPipeline from '@core/tsl/rendering/render-pipeline.ts';
 import type { EditorSceneData } from '@core/types.ts';
+import type { NodeMaterial } from 'three/webgpu';
 import { EDITOR_STATE } from '@core/state/editor.state.ts';
 import {
   type ObservableEventHandlerCtor,
@@ -15,51 +16,45 @@ const handler: ObservableEventHandlerCtor = (operation: ObservableEventOperation
 export class RenderPipelineDataObserver extends Observer {
   public hookRenderPipelineData(sceneData: EditorSceneData): void {
     const renderPipelineData = EDITOR_STATE.value.renderPipelineData;
+    // Base pipeline handlers
+    this.registerBasePipelineDataUpdates(renderPipelineData, sceneData, sceneData.renderPipeline!);
+    // Extra effects handlers
     this.registerBloomDataUpdates(renderPipelineData, sceneData.renderPipeline!);
-    this.registerPixelationDataUpdates(renderPipelineData, sceneData.renderPipeline!);
+  }
+
+  private registerBasePipelineDataUpdates(
+    data: RenderPipelineData,
+    sceneData: EditorSceneData,
+    renderPipeline: TSLRenderPipeline,
+  ): void {
+    this.registerEventHandler(
+      'RP_basePipelineIdentifier',
+      handler(async () => {
+        renderPipeline.updatePipelinePasses(data.basePipelineIdentifier, sceneData.scene, sceneData.camera);
+        (sceneData.planet.mesh!.material! as NodeMaterial).needsUpdate = true;
+        (sceneData.clouds.mesh!.material! as NodeMaterial).needsUpdate = true;
+        (sceneData.atmosphere.mesh!.material! as NodeMaterial).needsUpdate = true;
+      }),
+    );
+    this.registerEventHandler(
+      'RP_BASE_pixelation',
+      handler(() => {
+        renderPipeline.uniforms.pixelation.pixelSize.value = data.basePipelinePixelation.pixelSize;
+        renderPipeline.uniforms.pixelation.normalEdgeIntensity.value = data.basePipelinePixelation.normalEdgeIntensity;
+        renderPipeline.uniforms.pixelation.depthEdgeIntensity.value = data.basePipelinePixelation.depthEdgeIntensity;
+      }),
+    );
   }
 
   private registerBloomDataUpdates(data: RenderPipelineData, renderPipeline: TSLRenderPipeline): void {
     this.registerEventHandler(
-      'RP_bloomEnabled',
+      'RP_EFFECT_bloom',
       handler(() => {
         renderPipeline.uniforms!.bloom.enabled.value = +data.bloomEnabled;
+        renderPipeline.uniforms!.bloom.threshold.value = data.bloomThreshold;
+        renderPipeline.uniforms!.bloom.strength.value = data.bloomStrength;
+        renderPipeline.uniforms!.bloom.radius.value = data.bloomRadius;
       }),
-    );
-    this.registerEventHandler(
-      'RP_bloomThreshold',
-      handler(() => {
-        renderPipeline.bloomNode.threshold.value = data.bloomThreshold;
-      }),
-    );
-    this.registerEventHandler(
-      'RP_bloomStrength',
-      handler(() => (renderPipeline.bloomNode.strength.value = data.bloomStrength)),
-    );
-    this.registerEventHandler(
-      'RP_bloomRadius',
-      handler(() => (renderPipeline.bloomNode.radius.value = data.bloomRadius)),
-    );
-  }
-
-  private registerPixelationDataUpdates(data: RenderPipelineData, renderPipeline: TSLRenderPipeline): void {
-    this.registerEventHandler(
-      'RP_pixelationEnabled',
-      handler(() => (renderPipeline.uniforms!.pixelation.enabled.value = +data.pixelationEnabled)),
-    );
-    this.registerEventHandler(
-      'RP_pixelationPixelSize',
-      handler(() => (renderPipeline.uniforms!.pixelation.pixelSize.value = data.pixelationPixelSize)),
-    );
-    this.registerEventHandler(
-      'RP_pixelationNormalEdgeIntensity',
-      handler(
-        () => (renderPipeline.uniforms!.pixelation.normalEdgeIntensity.value = data.pixelationNormalEdgeIntensity),
-      ),
-    );
-    this.registerEventHandler(
-      'RP_pixelationDepthEdgeIntensity',
-      handler(() => (renderPipeline.uniforms!.pixelation.depthEdgeIntensity.value = data.pixelationDepthEdgeIntensity)),
     );
   }
 }

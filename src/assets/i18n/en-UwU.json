@@ -406,16 +406,18 @@
       },
       "postprocessing": {
         "$title": "Post-pwocessing",
+        "basepipeline": "Base wendew pipewine",
+        "basepipeline_select": "Sewect pipewine",
+        "basepipeline_none": "(none)",
+        "basepipeline_pixelation": "Pixewation",
+        "basepipeline_pixelation_pixelsize": "Pixew size",
+        "basepipeline_pixelation_normaledgeintensity": "Nowmaw edge intensity",
+        "basepipeline_pixelation_depthedgeintensity": "Depth edge intensity",
+        "basepipeline_retro": "Wetwo",
         "bloom": "Bwoom",
-        "bloom_enabled": "Show bwoom",
         "bloom_threshold": "Thweshowd",
         "bloom_strength": "Stwength",
-        "bloom_radius": "Wadius",
-        "pixelation": "Pixewation",
-        "pixelation_enabled": "Show pixewation",
-        "pixelation_pixelsize": "Pixew size",
-        "pixelation_normaledgeintensity": "Nowmaw edge intensity",
-        "pixelation_depthedgeintensity": "Depth edge intensity"
+        "bloom_radius": "Wadius"
       }
     }
   },

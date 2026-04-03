@@ -405,16 +405,19 @@
       },
       "postprocessing": {
         "$title": "Postprocessing",
+        "basepipeline": "Grund-Render-Pipeline",
+        "basepipeline_select": "Pipeline auswählen",
+        "basepipeline_none": "(keine)",
+        "basepipeline_pixelation": "Verpixelung",
+        "basepipeline_pixelation_enabled": "Show pixewation",
+        "basepipeline_pixelation_pixelsize": "Pixelgröße",
+        "basepipeline_pixelation_normaledgeintensity": "Intensität (Normale)",
+        "basepipeline_pixelation_depthedgeintensity": "Intensität (Tiefe)",
+        "basepipeline_retro": "Retro",
         "bloom": "Bloom-Effekt",
-        "bloom_enabled": "Bloom anzeigen",
         "bloom_threshold": "Schwelle",
         "bloom_strength": "Intensität",
-        "bloom_radius": "Radius",
-        "pixelation": "Verpixelung",
-        "pixelation_enabled": "Verpixelung anzeigen",
-        "pixelation_pixelsize": "Pixelgröße",
-        "pixelation_normaledgeintensity": "Intensität (Normale)",
-        "pixelation_depthedgeintensity": "Intensität (Tiefe)"
+        "bloom_radius": "Radius"
       }
     }
   },

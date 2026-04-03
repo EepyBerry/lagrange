@@ -410,11 +410,14 @@
         "bloom_threshold": "Threshold",
         "bloom_strength": "Intensité",
         "bloom_radius": "Rayon",
-        "pixelation": "Pixélisation",
-        "pixelation_enabled": "Afficher pixélisation",
-        "pixelation_pixelsize": "Taille de pixel",
-        "pixelation_normaledgeintensity": "Intensité (normales)",
-        "pixelation_depthedgeintensity": "Intensité (disparité/profondeur)"
+        "basepipeline": "Pipeline de rendu de base",
+        "basepipeline_select": "Sélectionner",
+        "basepipeline_none": "(aucune)",
+        "basepipeline_pixelation": "Pixélisation",
+        "basepipeline_pixelation_pixelsize": "Taille de pixel",
+        "basepipeline_pixelation_normaledgeintensity": "Intensité (normales)",
+        "basepipeline_pixelation_depthedgeintensity": "Intensité (disparité/profondeur)",
+        "basepipeline_retro": "Rétro"
       }
     }
   },

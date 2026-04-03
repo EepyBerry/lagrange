@@ -34,7 +34,13 @@ const keyedHandler: ObservableEventHandlerCtor = (operation: ObservableEventOper
 export class PlanetDataObserver extends Observer {
   public hookEditorSceneData(sceneData: EditorSceneData) {
     const planetData = EDITOR_STATE.value.planetData;
-    this.registerLightingDataUpdates(planetData, sceneData.sunLight, sceneData.ambLight, sceneData.lensFlare!);
+    this.registerLightingDataUpdates(
+      planetData,
+      sceneData.sunLight,
+      sceneData.ambLight,
+      sceneData.atmosphere,
+      sceneData.lensFlare!,
+    );
     this.registerPlanetRenderingDataUpdates(
       planetData,
       sceneData.planetGroup,
@@ -66,7 +72,7 @@ export class PlanetDataObserver extends Observer {
   // ----------------------------------------------------------------------------
 
   // prettier-ignore
-  private registerLightingDataUpdates(data: PlanetData, sunLight: DirectionalLight, ambLight: AmbientLight, lensFlare: LensFlareEffect): void {
+  private registerLightingDataUpdates(data: PlanetData, sunLight: DirectionalLight, ambLight: AmbientLight, atmosphere: AtmosphereMeshData, lensFlare: LensFlareEffect): void {
     this.registerEventHandler('_lensFlareEnabled',         genericHandler(() => lensFlare.mesh.visible = data.lensFlareEnabled));
     this.registerEventHandler('_lensFlareEnabled',         genericHandler(() => lensFlare.mesh.visible = data.lensFlareEnabled));
     this.registerEventHandler('_lensFlarePointsIntensity', genericHandler(() => lensFlare.uniforms.starPointsIntensity.value = data.lensFlarePointsIntensity));
@@ -75,6 +81,7 @@ export class PlanetDataObserver extends Observer {
       const v = degToRad(Number.isNaN(data.sunLightAngle) ? 0 : data.sunLightAngle);
       const newPos = Globals.SUN_INIT_POS.clone().applyAxisAngle(Globals.AXIS_X, v);
       sunLight.position.set(newPos.x, newPos.y, newPos.z);
+      atmosphere.uniforms!.sunlight.position.value = sunLight.position;
     }));
     this.registerEventHandler('_sunLightColor', genericHandler(() => {
       sunLight.color.set(data.sunLightColor);

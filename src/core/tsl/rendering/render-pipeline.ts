@@ -1,12 +1,14 @@
+import type { BaseRenderPipelineIdentifier } from '@core/tsl/rendering/base-render-pipeline.model.ts';
 import { Camera, type Scene } from 'three';
 import BloomNode, { bloom } from 'three/addons/tsl/display/BloomNode.js';
 import { pixelationPass } from 'three/addons/tsl/display/PixelationPassNode.js';
-import { uniform } from 'three/tsl';
-import { RenderPipeline, UniformNode, WebGPURenderer, Node } from 'three/webgpu';
+import { pass, uniform } from 'three/tsl';
+import { RenderPipeline, UniformNode, WebGPURenderer, Node, TextureNode, PassNode } from 'three/webgpu';
 
 export type RenderPipelineUniformData = {
+  baseRenderPipelineStr: BaseRenderPipelineIdentifier;
+  baseRenderPipeline: number;
   pixelation: {
-    enabled: boolean;
     pixelSize: number;
     normalEdgeIntensity: number;
     depthEdgeIntensity: number;
@@ -19,8 +21,8 @@ export type RenderPipelineUniformData = {
   };
 };
 export type RenderPipelineUniforms = {
+  baseRenderPipeline: UniformNode<'float', number>;
   pixelation: {
-    enabled: UniformNode<'float', number>;
     pixelSize: UniformNode<'float', number>;
     normalEdgeIntensity: UniformNode<'float', number>;
     depthEdgeIntensity: UniformNode<'float', number>;
@@ -40,8 +42,8 @@ export default class TSLRenderPipeline {
 
   constructor(data: RenderPipelineUniformData, renderer: WebGPURenderer, scene: Scene, camera: Camera) {
     this.uniforms = {
+      baseRenderPipeline: uniform(data.baseRenderPipeline),
       pixelation: {
-        enabled: uniform(+data.pixelation.enabled),
         pixelSize: uniform(data.pixelation.pixelSize),
         normalEdgeIntensity: uniform(data.pixelation.normalEdgeIntensity),
         depthEdgeIntensity: uniform(data.pixelation.depthEdgeIntensity),
@@ -54,29 +56,51 @@ export default class TSLRenderPipeline {
       },
     };
     this.pipeline = new RenderPipeline(renderer);
-    this.pipeline.outputNode = this.composePipelinePasses(scene, camera);
+    this.pipeline.outputNode = this.composePipelinePasses(data.baseRenderPipelineStr, scene, camera);
     this.pipeline.needsUpdate = true;
   }
 
-  private composePipelinePasses(scene: Scene, camera: Camera): Node {
-    const scenePass = pixelationPass(
-      scene,
-      camera,
-      this.uniforms.pixelation.pixelSize,
-      this.uniforms.pixelation.normalEdgeIntensity,
-      this.uniforms.pixelation.depthEdgeIntensity,
-    );
+  public updatePipelinePasses(brpId: BaseRenderPipelineIdentifier, scene: Scene, camera: Camera) {
+    this.pipeline.outputNode = this.composePipelinePasses(brpId, scene, camera);
+    this.pipeline.needsUpdate = true;
+  }
 
+  private composePipelinePasses(brpId: BaseRenderPipelineIdentifier, scene: Scene, camera: Camera): Node {
+    // ------------------------------------------------------------------------
+    // prepare base pipelines
+
+    let scenePass: PassNode;
+    switch (brpId) {
+      case 'none':
+        scenePass = pass(scene, camera);
+        break;
+      case 'pixelation':
+        scenePass = pixelationPass(
+          scene,
+          camera,
+          this.uniforms.pixelation.pixelSize,
+          this.uniforms.pixelation.normalEdgeIntensity,
+          this.uniforms.pixelation.depthEdgeIntensity,
+        );
+        break;
+      case 'retro':
+        // TODO implement retroPass here (threejs example -> webgpu_postprocessing_retro)
+        scenePass = pass(scene, camera);
+        break;
+    }
     let outputPass = scenePass.getTextureNode('output');
-    // outputPass = outputPass.add(rgbShift(outputPass));
 
-    // @ts-expect-error Bad @types/three typings
-    this.bloomNode = bloom(
-      outputPass.mul(this.uniforms.bloom.enabled),
-      this.uniforms.bloom.strength.value,
-      this.uniforms.bloom.radius.value,
-      this.uniforms.bloom.threshold.value,
-    );
-    return outputPass.add(this.bloomNode!).renderOutput();
+    // ------------------------------------------------------------------------
+    // Add extra effects (toggleable)
+
+    const bloomNode = bloom(outputPass.mul(this.uniforms.bloom.enabled));
+    bloomNode.strength = this.uniforms.bloom.strength;
+    bloomNode.radius = this.uniforms.bloom.radius;
+    bloomNode.threshold = this.uniforms.bloom.threshold;
+    outputPass = outputPass.add(bloomNode) as TextureNode;
+
+    // TODO add more effects here (rgbShift, chromaticAberration & others?)
+
+    return outputPass.renderOutput();
   }
 }

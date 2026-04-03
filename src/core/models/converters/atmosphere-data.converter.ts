@@ -14,7 +14,7 @@ export class AtmosphereDataConverter extends ModelConverter<PlanetData, Atmosphe
   public convert(): AtmosphereUniformsData {
     return {
       sunlight: {
-        position: this._sunPosition,
+        position: this._sunPosition.clone(),
         intensity: this._data.sunLightIntensity,
       },
       transform: {

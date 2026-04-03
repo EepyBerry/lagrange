@@ -24,8 +24,9 @@ label {
 }
 select {
   grid-column: 2;
-  width: 16rem;
+  min-width: 12rem;
   text-align: center;
+  justify-self: flex-end;
 }
 
 @media screen and (max-width: 567px) {
