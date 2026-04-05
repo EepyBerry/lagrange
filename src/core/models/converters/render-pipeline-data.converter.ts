@@ -8,16 +8,43 @@ export class RenderPipelineDataConverter extends ModelConverter<RenderPipelineDa
     return {
       baseRenderPipelineStr: this._data.basePipelineIdentifier,
       baseRenderPipeline: this.convertBaseRenderPipelineIdentifier(this._data.basePipelineIdentifier),
-      pixelation: {
+      basePixelation: {
         pixelSize: this._data.basePipelinePixelation.pixelSize,
         normalEdgeIntensity: this._data.basePipelinePixelation.normalEdgeIntensity,
         depthEdgeIntensity: this._data.basePipelinePixelation.depthEdgeIntensity,
       },
-      bloom: {
+      baseRetro: {
+        colorDepthSteps: this._data.basePipelineRetro.colorDepthSteps,
+        colorBleeding: this._data.basePipelineRetro.colorBleeding,
+        scanlineIntensity: this._data.basePipelineRetro.scanlineIntensity,
+        scanlineDensity: this._data.basePipelineRetro.scanlineDensity,
+        scanlineSpeed: this._data.basePipelineRetro.scanlineSpeed,
+        curvature: this._data.basePipelineRetro.curvature,
+      },
+      effectRgbShift: {
+        enabled: this._data.rgbShiftEnabled,
+        angle: this._data.rgbShiftAngle,
+        amount: this._data.rgbShiftAmount,
+      },
+      effectChromaticAberration: {
+        enabled: this._data.chromaticAberrationEnabled,
+        strength: this._data.chromaticAberrationStrength,
+        scale: this._data.chromaticAberrationScale,
+      },
+      effectBloom: {
         enabled: this._data.bloomEnabled,
         threshold: this._data.bloomThreshold,
         strength: this._data.bloomStrength,
         radius: this._data.bloomRadius,
+      },
+      effectVignette: {
+        enabled: this._data.vignetteEnabled,
+        intensity: this._data.vignetteIntensity,
+        smoothness: this._data.vignetteSmoothness,
+      },
+      effectAntiAliasing: {
+        enabled: this._data.antiAliasingEnabled,
+        mode: this._data.antiAliasingMode,
       },
     };
   }

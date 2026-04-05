@@ -1,5 +1,5 @@
-import Dexie, { type EntityTable } from 'dexie';
 import type PlanetData from '@core/models/planet/planet-data.model.ts';
+import Dexie, { type EntityTable } from 'dexie';
 
 export type SkyboxName =
   | 'deepspace'

@@ -56,6 +56,8 @@
 </template>
 
 <script setup lang="ts">
+import type { DeleteConfirmDialogExposes } from '@components/codex/dialogs/DeleteConfirmDialog.types.ts';
+import type { PlanetInfoDialogExposes } from '@components/codex/dialogs/PlanetInfoDialog.types.ts';
 import InlineFooter from '@components/global/InlineFooter.vue';
 import { EventBus } from '@core/event-bus';
 import { EXTRAS_METAL_SLUG_MODE, uwuifyPath } from '@core/extras';
@@ -75,8 +77,6 @@ import NewCardElement from '@/components/codex/elements/NewCardElement.vue';
 import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue';
 import ViewHeader from '@/components/global/ViewHeader.vue';
 import { idb, type IDBPlanet } from '@/dexie.config';
-import type { DeleteConfirmDialogExposes } from "@components/codex/dialogs/DeleteConfirmDialog.types.ts";
-import type { PlanetInfoDialogExposes } from "@components/codex/dialogs/PlanetInfoDialog.types.ts";
 
 const AppPlanetInfoDialog = defineAsyncComponent(() => import('@components/codex/dialogs/PlanetInfoDialog.vue'));
 const AppDeleteConfirmDialog = defineAsyncComponent(() => import('@components/codex/dialogs/DeleteConfirmDialog.vue'));

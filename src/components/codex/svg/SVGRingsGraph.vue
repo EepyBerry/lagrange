@@ -80,9 +80,9 @@
   </svg>
 </template>
 <script setup lang="ts">
+import type { RingParameters } from '@core/models/planet/ring-parameters.model.ts';
 import Rect from '@core/utils/math/rect';
 import { onMounted, ref, type Ref } from 'vue';
-import type { RingParameters } from '@core/models/planet/ring-parameters.model.ts';
 import { makeSVGLinearPath } from '@/core/utils/svg-utils';
 
 const width = 480,

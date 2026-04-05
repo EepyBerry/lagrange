@@ -31,7 +31,7 @@
     <ParameterGroup :toggleable="true">
       <template #title>{{ $t('editor.controls.lighting.sunlight') }}</template>
       <template #content>
-        <ParameterSlider id="l-angle" v-model="EDITOR_STATE.planetData.sunLightAngle" :step="0.1" :min="-90" :max="90">
+        <ParameterSlider id="l-angle" v-model="EDITOR_STATE.planetData.sunLightAngle" :step="0.5" :min="-90" :max="90">
           {{ $t('editor.controls.lighting.sunlight_angle') }} <sup>(°)</sup>
         </ParameterSlider>
         <ParameterSlider id="l-int" v-model="EDITOR_STATE.planetData.sunLightIntensity" :step="0.1" :min="0" :max="50">

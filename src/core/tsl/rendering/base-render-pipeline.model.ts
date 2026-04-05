@@ -53,8 +53,8 @@ export class BaseRenderPipelinePixelation extends BaseRenderPipeline {
   constructor(notifyFunc: ObservableNotifyFunction) {
     super('RP_BASE_pixelation', notifyFunc);
     this._pixelSize = 4;
-    this._normalEdgeIntensity = 1;
-    this._depthEdgeIntensity = 1;
+    this._normalEdgeIntensity = 0;
+    this._depthEdgeIntensity = 0;
   }
 }
 
@@ -69,8 +69,6 @@ export class BaseRenderPipelineRetro extends BaseRenderPipeline {
   private _scanlineSpeed: number;
 
   private _curvature: number;
-  private _affineDistortion: number;
-  private _vignetteIntensity: number;
 
   public get colorDepthSteps(): number {
     return this._colorDepthSteps;
@@ -120,22 +118,6 @@ export class BaseRenderPipelineRetro extends BaseRenderPipeline {
     this.relayNotify({ key: this.keyPrefix });
   }
 
-  public get affineDistortion(): number {
-    return this._affineDistortion;
-  }
-  public set affineDistortion(value: number) {
-    this._affineDistortion = value;
-    this.relayNotify({ key: this.keyPrefix });
-  }
-
-  public get vignetteIntensity(): number {
-    return this._vignetteIntensity;
-  }
-  public set vignetteIntensity(value: number) {
-    this._vignetteIntensity = value;
-    this.relayNotify({ key: this.keyPrefix });
-  }
-
   constructor(notifyFunc: ObservableNotifyFunction) {
     super('RP_BASE_retro', notifyFunc);
     this._colorDepthSteps = 32;
@@ -146,7 +128,5 @@ export class BaseRenderPipelineRetro extends BaseRenderPipeline {
     this._scanlineSpeed = 0;
 
     this._curvature = 0.02;
-    this._affineDistortion = 1;
-    this._vignetteIntensity = 0.35;
   }
 }

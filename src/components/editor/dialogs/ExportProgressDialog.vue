@@ -28,10 +28,10 @@
   </DialogElement>
 </template>
 <script setup lang="ts">
+import type { ExportProgressDialogExposes } from '@components/editor/dialogs/ExportProgressDialog.types.ts';
+import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import DialogElement from '@components/global/elements/DialogElement.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
-import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
-import type { ExportProgressDialogExposes } from "@components/editor/dialogs/ExportProgressDialog.types.ts";
 
 const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
 defineExpose<ExportProgressDialogExposes>({ open, setProgress, setError });

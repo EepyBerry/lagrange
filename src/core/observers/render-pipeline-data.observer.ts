@@ -8,6 +8,7 @@ import {
   type ObservableEventOperation,
   Observer,
 } from '@core/utils/observable-utils.ts';
+import { degToRad } from 'three/src/math/MathUtils.js';
 
 const handler: ObservableEventHandlerCtor = (operation: ObservableEventOperation) => ({
   handle: operation,
@@ -19,7 +20,7 @@ export class RenderPipelineDataObserver extends Observer {
     // Base pipeline handlers
     this.registerBasePipelineDataUpdates(renderPipelineData, sceneData, sceneData.renderPipeline!);
     // Extra effects handlers
-    this.registerBloomDataUpdates(renderPipelineData, sceneData.renderPipeline!);
+    this.registerEffectDataUpdates(renderPipelineData, sceneData.renderPipeline!);
   }
 
   private registerBasePipelineDataUpdates(
@@ -39,21 +40,65 @@ export class RenderPipelineDataObserver extends Observer {
     this.registerEventHandler(
       'RP_BASE_pixelation',
       handler(() => {
-        renderPipeline.uniforms.pixelation.pixelSize.value = data.basePipelinePixelation.pixelSize;
-        renderPipeline.uniforms.pixelation.normalEdgeIntensity.value = data.basePipelinePixelation.normalEdgeIntensity;
-        renderPipeline.uniforms.pixelation.depthEdgeIntensity.value = data.basePipelinePixelation.depthEdgeIntensity;
+        renderPipeline.uniforms.basePixelation.pixelSize.value = data.basePipelinePixelation.pixelSize;
+        renderPipeline.uniforms.basePixelation.normalEdgeIntensity.value =
+          data.basePipelinePixelation.normalEdgeIntensity;
+        renderPipeline.uniforms.basePixelation.depthEdgeIntensity.value =
+          data.basePipelinePixelation.depthEdgeIntensity;
+      }),
+    );
+    this.registerEventHandler(
+      'RP_BASE_retro',
+      handler(() => {
+        renderPipeline.uniforms.baseRetro.colorDepthSteps.value = data.basePipelineRetro.colorDepthSteps;
+        renderPipeline.uniforms.baseRetro.colorBleeding.value = data.basePipelineRetro.colorBleeding;
+        renderPipeline.uniforms.baseRetro.scanlineIntensity.value = data.basePipelineRetro.scanlineIntensity;
+        renderPipeline.uniforms.baseRetro.scanlineDensity.value = data.basePipelineRetro.scanlineDensity;
+        renderPipeline.uniforms.baseRetro.scanlineSpeed.value = data.basePipelineRetro.scanlineSpeed;
+        renderPipeline.uniforms.baseRetro.curvature.value = data.basePipelineRetro.curvature;
       }),
     );
   }
 
-  private registerBloomDataUpdates(data: RenderPipelineData, renderPipeline: TSLRenderPipeline): void {
+  private registerEffectDataUpdates(data: RenderPipelineData, renderPipeline: TSLRenderPipeline): void {
+    this.registerEventHandler(
+      'RP_EFFECT_rgbshift',
+      handler(() => {
+        renderPipeline.uniforms!.effectRgbShift.enabled.value = +data.rgbShiftEnabled;
+        renderPipeline.uniforms!.effectRgbShift.angle.value = degToRad(data.rgbShiftAngle);
+        renderPipeline.uniforms!.effectRgbShift.amount.value = data.rgbShiftAmount;
+      }),
+    );
+    this.registerEventHandler(
+      'RP_EFFECT_chromaticaberration',
+      handler(() => {
+        renderPipeline.uniforms!.effectChromaticAberration.enabled.value = +data.chromaticAberrationEnabled;
+        renderPipeline.uniforms!.effectChromaticAberration.strength.value = data.chromaticAberrationStrength;
+        renderPipeline.uniforms!.effectChromaticAberration.scale.value = data.chromaticAberrationScale;
+      }),
+    );
     this.registerEventHandler(
       'RP_EFFECT_bloom',
       handler(() => {
-        renderPipeline.uniforms!.bloom.enabled.value = +data.bloomEnabled;
-        renderPipeline.uniforms!.bloom.threshold.value = data.bloomThreshold;
-        renderPipeline.uniforms!.bloom.strength.value = data.bloomStrength;
-        renderPipeline.uniforms!.bloom.radius.value = data.bloomRadius;
+        renderPipeline.uniforms!.effectBloom.enabled.value = +data.bloomEnabled;
+        renderPipeline.uniforms!.effectBloom.threshold.value = data.bloomThreshold;
+        renderPipeline.uniforms!.effectBloom.strength.value = data.bloomStrength;
+        renderPipeline.uniforms!.effectBloom.radius.value = data.bloomRadius;
+      }),
+    );
+    this.registerEventHandler(
+      'RP_EFFECT_vignette',
+      handler(() => {
+        renderPipeline.uniforms!.effectVignette.enabled.value = +data.vignetteEnabled;
+        renderPipeline.uniforms!.effectVignette.intensity.value = data.vignetteIntensity;
+        renderPipeline.uniforms!.effectVignette.smoothness.value = data.vignetteSmoothness;
+      }),
+    );
+    this.registerEventHandler(
+      'RP_EFFECT_antialiasing',
+      handler(() => {
+        renderPipeline.uniforms!.effectAntiAliasing.enabled.value = +data.antiAliasingEnabled;
+        renderPipeline.uniforms!.effectAntiAliasing.mode.value = data.antiAliasingMode;
       }),
     );
   }

@@ -3,7 +3,7 @@
     <slot>ParameterName</slot>
   </label>
   <InputSliderElement
-    v-model="(lgParam as number)"
+    v-model="lgParam as number"
     class="lg"
     :class="extras"
     :iid="id"

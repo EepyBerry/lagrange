@@ -30,13 +30,13 @@
 </template>
 
 <script setup lang="ts">
+import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import { EventBus } from '@core/event-bus';
 import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 import CornerDeco from '../decoration/CornerDeco.vue';
-import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
 
-const dialog = useTemplateRef('dialog')
+const dialog = useTemplateRef('dialog');
 const dialogInner = useTemplateRef('dialogInner');
 
 const ignoresNativeEvents = ref(false);
@@ -87,7 +87,6 @@ function close() {
 function ignoreNativeEvents(enabled: boolean) {
   ignoresNativeEvents.value = enabled;
 }
-
 </script>
 
 <style scoped lang="scss">

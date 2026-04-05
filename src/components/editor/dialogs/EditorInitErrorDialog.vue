@@ -41,14 +41,14 @@
   </DialogElement>
 </template>
 <script setup lang="ts">
+import type { EditorInitErrorDialogExposes } from '@components/editor/dialogs/EditorInitErrorDialog.types.ts';
+import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
-import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
-import type { EditorInitErrorDialogExposes } from "@components/editor/dialogs/EditorInitErrorDialog.types.ts";
 
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef')
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
 defineExpose<EditorInitErrorDialogExposes>({ open: openWithError });
 
 const _error: Ref<string> = ref('');
@@ -74,7 +74,6 @@ async function closeWithFallback() {
   _wantsFallback.value = true;
   dialogRef.value!.close();
 }
-
 </script>
 <style scoped lang="scss">
 #dialog-editorerror {

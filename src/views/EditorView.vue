@@ -22,8 +22,13 @@
 </template>
 
 <script setup lang="ts">
+import type { EditorInitErrorDialogExposes } from '@components/editor/dialogs/EditorInitErrorDialog.types.ts';
+import type { ExportProgressDialogExposes } from '@components/editor/dialogs/ExportProgressDialog.types.ts';
+import type { WarnSaveDialogExposes } from '@components/editor/dialogs/WarnSaveDialog.types.ts';
 import { EventBus } from '@core/event-bus';
 import * as Globals from '@core/globals';
+import { COMPACT_CONTROLS_HEIGHT } from '@core/globals';
+import PlanetData from '@core/models/planet/planet-data.model.ts';
 import * as DexieService from '@core/services/dexie.service';
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
 import { sleep } from '@core/utils/utils';
@@ -38,7 +43,6 @@ import EditorErrorDialog from '@/components/editor/dialogs/EditorInitErrorDialog
 import ViewHeader from '@/components/global/ViewHeader.vue';
 import WebGL from '@/core/capabilities/WebGL';
 import WebGPU from '@/core/capabilities/WebGPU';
-import PlanetData from '@core/models/planet/planet-data.model.ts';
 import {
   bootstrapEditor,
   dollyCamera,
@@ -52,10 +56,6 @@ import {
 } from '@/core/services/editor.service';
 import { EDITOR_STATE, EditorStatusCode } from '@/core/state/editor.state';
 import { idb, type IDBPlanet, KeyBindingAction } from '@/dexie.config';
-import type { EditorInitErrorDialogExposes } from "@components/editor/dialogs/EditorInitErrorDialog.types.ts";
-import type { WarnSaveDialogExposes } from "@components/editor/dialogs/WarnSaveDialog.types.ts";
-import type { ExportProgressDialogExposes } from "@components/editor/dialogs/ExportProgressDialog.types.ts";
-import { COMPACT_CONTROLS_HEIGHT } from "@core/globals";
 
 const WarnSaveDialog = defineAsyncComponent(() => import('@components/editor/dialogs/WarnSaveDialog.vue'));
 const ExportProgressDialog = defineAsyncComponent(() => import('@components/editor/dialogs/ExportProgressDialog.vue'));
@@ -69,7 +69,7 @@ const head = useHead({
 })!;
 
 // Dialogs
-const editorErrorDialogRef = useTemplateRef<EditorInitErrorDialogExposes>('editorErrorDialogRef')
+const editorErrorDialogRef = useTemplateRef<EditorInitErrorDialogExposes>('editorErrorDialogRef');
 const warnSaveDialogRef = useTemplateRef<WarnSaveDialogExposes>('warnSaveDialogRef');
 const exportProgressDialogRef = useTemplateRef<ExportProgressDialogExposes>('exportProgressDialogRef');
 
@@ -346,5 +346,4 @@ function exportPlanet() {
     height: calc(100dvh - 320px);
   }
 }
-
 </style>

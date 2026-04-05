@@ -126,6 +126,7 @@
   </CollapsibleSection>
 </template>
 <script setup lang="ts">
+import ControlsPostProcessing from '@components/editor/controls/ControlsPostProcessing.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import ControlsAtmosphere from './ControlsAtmosphere.vue';
 import ControlsBasicData from './ControlsBasicData.vue';
@@ -135,6 +136,5 @@ import ControlsLighting from './ControlsLighting.vue';
 import ControlsRendering from './ControlsRendering.vue';
 import ControlsRing from './ControlsRings.vue';
 import ControlsSurface from './ControlsSurface.vue';
-import ControlsPostProcessing from "@components/editor/controls/ControlsPostProcessing.vue";
 defineProps<{ compactMode: boolean }>();
 </script>

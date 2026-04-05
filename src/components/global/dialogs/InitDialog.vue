@@ -167,6 +167,8 @@
 </template>
 
 <script setup lang="ts">
+import type { InitDialogExposes } from '@components/global/dialogs/InitDialog.types.ts';
+import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import AppLogo from '@components/global/elements/AppLogo.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
@@ -174,10 +176,8 @@ import { ref, useTemplateRef } from 'vue';
 import type { IDBKeyBinding } from '@/dexie.config';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 import LgvNotification from '@/_lib/components/LgvNotification.vue';
-import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
-import type { InitDialogExposes } from "@components/global/dialogs/InitDialog.types.ts";
 
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef')
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
 defineExpose<InitDialogExposes>({ open: () => dialogRef.value?.open!() });
 
 const shouldShowOnNextVisits = ref(true);
