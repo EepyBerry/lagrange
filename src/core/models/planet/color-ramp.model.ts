@@ -1,8 +1,8 @@
-import { clampedPRNG } from '@core/utils/math-utils';
+import { clampedPRNG } from '@core/utils/math-utils.ts';
+import { ObservableRelay, type ObservableNotifyFunction } from '@core/utils/observable-utils.ts';
 import { sha1 } from 'crypto-hash';
 import { nanoid } from 'nanoid';
 import { Color, type ColorRepresentation } from 'three';
-import { ObservableRelay, type ObservableNotifyFunction } from '../utils/observable-utils';
 
 export class ColorRampStep {
   private readonly _id: string; // internal ID for tracking changes

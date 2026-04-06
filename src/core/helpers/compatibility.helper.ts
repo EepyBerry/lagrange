@@ -1,6 +1,6 @@
-import type { ColorRamp } from '../models/color-ramp.model'
-import type PlanetData from '../models/planet-data.model'
-import { RingParameters } from '../models/ring-parameters.model'
+import type { ColorRamp } from '@core/models/planet/color-ramp.model.ts'
+import type PlanetData from '@core/models/planet/planet-data.model.ts'
+import { RingParameters } from '@core/models/planet/ring-parameters.model.ts'
 
 type LegacyRingPlanetData = PlanetData & {
   _id: string

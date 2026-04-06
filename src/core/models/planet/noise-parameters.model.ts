@@ -1,7 +1,7 @@
-import { clampedPRNG } from '@core/utils/math-utils';
+import { clampedPRNG } from '@core/utils/math-utils.ts';
+import { ObservableRelay, type ObservableNotifyFunction } from '@core/utils/observable-utils.ts';
 import { Vector3 } from 'three';
 import { clamp } from 'three/src/math/MathUtils.js';
-import { ObservableRelay, type ObservableNotifyFunction } from '../utils/observable-utils';
 
 export class NoiseParameters extends ObservableRelay {
   private _frequency: number = 3;

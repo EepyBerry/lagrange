@@ -21,7 +21,7 @@ defineProps<{ compactMode: boolean }>();
   z-index: 10;
   position: absolute;
   inset: 0 auto 0;
-  margin-top: 3.875rem;
+  margin-top: 3.25rem;
 
   display: flex;
   flex-direction: column;
@@ -48,46 +48,28 @@ defineProps<{ compactMode: boolean }>();
 }
 #controls.compact {
   z-index: 5;
-  position: absolute;
-  inset: 50% 0 0;
-  padding: 0.75rem 0.5rem 0.5rem;
+  height: 20rem;
+  padding: 0.5rem;
+  overflow-y: auto;
+  border-top: 2px solid var(--lg-logo);
+
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   gap: 0.5rem;
-  overflow-y: auto;
 }
 
 @media screen and (max-width: 1199px) {
   #controls:not(.compact) {
     .sidebar {
-      padding: 0 1.5rem 0 0.5rem;
+      padding: 0.5rem;
 
       & > section {
         min-width: 0;
       }
       & > section.expanded {
-        min-width: 26rem;
+        min-width: 25rem;
       }
-    }
-  }
-}
-@media screen and (max-width: 767px) {
-  #controls:not(.compact) {
-    min-width: 2rem;
-    margin-bottom: 3.875rem;
-
-    .sidebar {
-      padding: 0.5rem;
-    }
-  }
-}
-@media screen and (max-width: 567px) {
-  #controls:not(.compact) {
-    .sidebar {
-      padding: 0.5rem;
-      min-width: 0;
-      max-width: 100%;
     }
   }
 }

@@ -1,3 +1,4 @@
+import type { BiomeParameters } from '@core/models/planet/biome-parameters.model.ts';
 import type { AtmosphereUniforms } from '@core/tsl/materials/atmosphere.tslmat';
 import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat';
 import type { PlanetUniforms } from '@core/tsl/materials/planet.tslmat';
@@ -15,16 +16,18 @@ import type {
 } from 'three';
 import type { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import type { WebGPURenderer } from 'three/webgpu';
+import TSLRenderPipeline from '@core/tsl/rendering/render-pipeline.ts';
 import type { LensFlareEffect } from './effects/lens-flare.effect';
-import type { BiomeParameters } from './models/biome-parameters.model';
 import type { LayeredDataTexture } from './utils/texture/layered-data-texture';
 
 // ---------------------------------- Editor types ----------------------------------
 export type EditorMessageLevel = 'success' | 'info' | 'warn' | 'wip';
-export enum EditorSceneCreationMode {
-  EDITOR,
-  PREVIEW,
-}
+
+export type TEditorSceneCreationMode = (typeof EditorSceneCreationMode)[keyof typeof EditorSceneCreationMode];
+export const EditorSceneCreationMode = {
+  Editor: 'editor',
+  Preview: 'preview',
+} as const;
 
 // ----------------------------------- Model subtypes ---------------------------------
 export enum PlanetType {
@@ -67,6 +70,9 @@ export type EditorSceneData = {
   renderer: WebGPURenderer;
   camera: PerspectiveCamera;
   orbitControls?: OrbitControls;
+
+  // Special components
+  renderPipeline?: TSLRenderPipeline;
 
   // Groups
   planetGroup: Group;

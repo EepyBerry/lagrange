@@ -25,7 +25,7 @@ import AppNavigation from './AppNavigation.vue';
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   grid-template-rows: 1fr;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: 0.5rem;
 
@@ -98,10 +98,6 @@ import AppNavigation from './AppNavigation.vue';
 @media screen and (max-width: 767px) {
   .view-header {
     gap: 0;
-    #nav-toggle {
-      margin-top: 0;
-      margin-left: 0.25rem;
-    }
   }
   .view-header.xs-fullwidth {
     grid-template-columns: unset;

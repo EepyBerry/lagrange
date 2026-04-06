@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import type { RingParameters } from '@core/models/ring-parameters.model';
+import type { RingParameters } from '@core/models/planet/ring-parameters.model.ts';
 import { colorRampToStyle } from '@core/utils/render-utils';
 import { onMounted, ref, type Ref } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';

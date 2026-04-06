@@ -110,8 +110,23 @@
       <ControlsRing />
     </template>
   </CollapsibleSection>
+
+  <!-- Post-processing -->
+  <CollapsibleSection
+    icon="mingcute:camera-2-line"
+    :expand="false"
+    :compact-mode="compactMode"
+    :allow-icon-mode="true"
+    :button-aria-label="$t('editor.controls.postprocessing.$title')"
+  >
+    <template #title>{{ $t('editor.controls.postprocessing.$title') }}</template>
+    <template #content>
+      <ControlsPostProcessing />
+    </template>
+  </CollapsibleSection>
 </template>
 <script setup lang="ts">
+import ControlsPostProcessing from '@components/editor/controls/ControlsPostProcessing.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import ControlsAtmosphere from './ControlsAtmosphere.vue';
 import ControlsBasicData from './ControlsBasicData.vue';

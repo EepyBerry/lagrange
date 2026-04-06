@@ -402,6 +402,22 @@
         "rgba": "Farbe & Transparenz",
         "rgba_opacity": "Transparenz",
         "rgba_colorramp": "Farbverlauf (RGBA)"
+      },
+      "postprocessing": {
+        "$title": "Postprocessing",
+        "basepipeline": "Grund-Render-Pipeline",
+        "basepipeline_select": "Pipeline auswählen",
+        "basepipeline_none": "(keine)",
+        "basepipeline_pixelation": "Verpixelung",
+        "basepipeline_pixelation_enabled": "Show pixewation",
+        "basepipeline_pixelation_pixelsize": "Pixelgröße",
+        "basepipeline_pixelation_normaledgeintensity": "Intensität (Normale)",
+        "basepipeline_pixelation_depthedgeintensity": "Intensität (Tiefe)",
+        "basepipeline_retro": "Retro",
+        "bloom": "Bloom-Effekt",
+        "bloom_threshold": "Schwelle",
+        "bloom_strength": "Intensität",
+        "bloom_radius": "Radius"
       }
     }
   },

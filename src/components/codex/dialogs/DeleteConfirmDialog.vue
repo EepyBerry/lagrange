@@ -30,15 +30,15 @@
   </DialogElement>
 </template>
 <script setup lang="ts">
+import type { DeleteConfirmDialogExposes } from '@components/codex/dialogs/DeleteConfirmDialog.types.ts';
+import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import DialogElement from '@components/global/elements/DialogElement.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 import type { IDBPlanet } from '@/dexie.config';
 import LgvButton from '@/_lib/components/LgvButton.vue';
-import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
-import type { DeleteConfirmDialogExposes } from "@components/codex/dialogs/DeleteConfirmDialog.types.ts";
 
 const planet: Ref<IDBPlanet | null> = ref(null);
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef')
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
 
 const $emit = defineEmits(['confirm']);
 defineExpose<DeleteConfirmDialogExposes>({ open });

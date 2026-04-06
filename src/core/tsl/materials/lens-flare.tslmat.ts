@@ -96,7 +96,7 @@ export class LensFlareTSLMaterial extends TSLMaterial<NodeMaterial, LensFlareDat
     // init material & set outputs
     const material = new NodeMaterial();
     material.vertexNode = Fn(() => vec4(positionGeometry, 1))();
-    material.fragmentNode = mainNode(uv());
+    material.colorNode = mainNode(uv());
     material.transparent = true;
     material.depthWrite = false;
     material.depthTest = false;

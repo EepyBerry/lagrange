@@ -210,6 +210,8 @@
   </DialogElement>
 </template>
 <script setup lang="ts">
+import type { PlanetInfoDialogExposes } from '@components/codex/dialogs/PlanetInfoDialog.types.ts';
+import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import DialogElement from '@components/global/elements/DialogElement.vue';
 import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT } from '@core/extras';
 import { ref, type Ref, useTemplateRef } from 'vue';
@@ -223,8 +225,6 @@ import { makeSVGCircleArc } from '@/core/utils/svg-utils';
 import PlanetCardFeatureBoxElement from '../elements/PlanetCardFeatureBoxElement.vue';
 import SVGBiomeGraph from '../svg/SVGBiomeGraph.vue';
 import SVGRingsGraph from '../svg/SVGRingsGraph.vue';
-import type { PlanetInfoDialogExposes } from "@components/codex/dialogs/PlanetInfoDialog.types.ts";
-import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
 
 const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
 defineExpose<PlanetInfoDialogExposes>({ open });

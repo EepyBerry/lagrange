@@ -2,9 +2,8 @@
   <label :for="id">
     <slot>ParameterName</slot>
   </label>
-  <!-- prettier-ignore-attribute -->
   <InputSliderElement
-    v-model="(lgParam as number)"
+    v-model="lgParam as number"
     class="lg"
     :class="extras"
     :iid="id"
@@ -17,7 +16,7 @@
 
 <script setup lang="ts">
 import InputSliderElement from '@components/global/elements/InputSliderElement.vue';
-const lgParam = defineModel<string | number | boolean>();
+const lgParam = defineModel<number>();
 
 type SliderExtras = 'rgb' | undefined;
 defineProps<{ id: string; step?: number; min?: number; max?: number; extras?: SliderExtras; disabled?: boolean }>();
@@ -32,9 +31,6 @@ input {
   grid-column: 2;
   justify-self: end;
   text-align: end;
-}
-input:not([type='checkbox'], [type='radio'], [type='range']) {
-  width: 3rem;
 }
 
 @media screen and (max-width: 567px) {

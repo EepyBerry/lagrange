@@ -38,7 +38,7 @@ function toggleExpand() {
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
   border-radius: 2px;
-  min-width: 26rem;
+  min-width: 25rem;
 
   display: flex;
   flex-direction: column;
@@ -94,7 +94,7 @@ function toggleExpand() {
   border-color: var(--lg-warn-active);
 }
 
-@media screen and (max-width: 1199px) {
+@media screen and (max-width: 1366px) {
   .collapsible-section:not(.expanded, .compact).allow-icon-mode {
     align-self: flex-start;
     width: fit-content;

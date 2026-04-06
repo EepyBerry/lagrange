@@ -1,7 +1,7 @@
 import { CanvasTexture, LinearSRGBColorSpace, RenderTarget } from 'three';
 import * as Globals from '@core/globals'
 import * as SceneHelper from './scene.helper'
-import type PlanetData from '../models/planet-data.model';
+import type PlanetData from '@core/models/planet/planet-data.model.ts';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { EditorSceneCreationMode, type EditorSceneData } from '../types';
 import { blobToDataURL, renderToCanvas } from '../utils/render-utils';
@@ -14,7 +14,7 @@ export async function generatePlanetPreview(data: PlanetData): Promise<string> {
     const previewRenderTarget = new RenderTarget(w, h, { colorSpace: LinearSRGBColorSpace })
 
     // ------------------------- Initialize scene & components --------------------------
-    const sceneData: EditorSceneData = await SceneHelper.buildEditorScene(data, w, h, w/h, EditorSceneCreationMode.PREVIEW)
+    const sceneData: EditorSceneData = await SceneHelper.buildEditorScene(data, w, h, w/h, EditorSceneCreationMode.Preview)
     sceneData.camera.setRotationFromAxisAngle(Globals.AXIS_Y, degToRad(data.initCamAngle))
     sceneData.camera.updateProjectionMatrix()
     sceneData.lensFlare!.mesh.visible = false

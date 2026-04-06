@@ -125,7 +125,7 @@
 
 <script setup lang="ts">
 import InputSliderElement from '@components/global/elements/InputSliderElement.vue';
-import { ColorRamp, type ColorRampStep } from '@core/models/color-ramp.model';
+import { ColorRamp, type ColorRampStep } from '@core/models/planet/color-ramp.model.ts';
 import { alphaToGrayscale, colorRampToStyle } from '@core/utils/render-utils';
 import { onMounted, ref, watch, type Ref } from 'vue';
 import { ColorPicker } from 'vue-accessible-color-picker';

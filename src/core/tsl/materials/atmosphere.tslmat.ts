@@ -94,8 +94,8 @@ export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereU
   }
 
   buildMaterial(): NodeMaterial {
-    const fragmentNode = Fn(([posGeo, posWorld]: [Node<'vec3'>, Node<'vec3'>]) => {
-      const eye = vec3(cameraPosition).toVar('eye');
+    const mainNode = Fn(([posGeo, posWorld, camPos]: [Node<'vec3'>, Node<'vec3'>, Node<'vec3'>]) => {
+      const eye = vec3(camPos).toVar('eye');
       const rayDir = rayDirection(modelWorldMatrix, posGeo, eye).toVar('rayDir');
       const sunglightDir = vec3(normalize(this.uniforms.sunlight.position.sub(posWorld.xyz))).toVar('sunlightDir');
 
@@ -126,6 +126,7 @@ export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereU
       const IShifted = vec4(shiftHue(I.xyz, this.uniforms.render.hue.mul(PI)), I.a).toVar('IShifted');
       const tint = vec4(this.uniforms.render.tint, 1).toVar('tint');
 
+      // set colorNode depending on current color mode (realistic/direct/mixed)
       const colorNode = vec4(0).toVar('colorNode');
       If(this.uniforms.render.colorMode.equal(int(0)), () => {
         colorNode.assign(IShifted.mul(this.uniforms.render.intensity));
@@ -138,20 +139,12 @@ export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereU
       });
       colorNode.a = colorNode.a.clamp(0, 1);
       return colorNode;
-    }).setLayout({
-      name: 'fragmentNode',
-      type: 'vec4',
-      inputs: [
-        { name: 'posGeo', type: 'vec3' },
-        { name: 'posWorld', type: 'vec3' },
-      ],
     });
 
-    // set colorNode depending on current color mode (realistic/direct/mixed)
     const material = new NodeMaterial();
     material.transparent = true;
     material.depthWrite = false;
-    material.fragmentNode = fragmentNode(positionGeometry, positionWorld);
+    material.colorNode = mainNode(positionGeometry, positionWorld, cameraPosition);
     return material;
   }
 }

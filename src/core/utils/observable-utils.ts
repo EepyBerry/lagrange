@@ -46,18 +46,34 @@ export abstract class ObservableRelay {
  * These have a special handler function `onEvent` called when an event is sent by the `Observable`.
  */
 export abstract class Observer {
-  public abstract onEvent(event: ObservableEvent): void;
+  protected readonly eventHandlerMap: Map<string, ObservableEventHandler> = new Map<string, ObservableEventHandler>();
+
+  protected registerEventHandler(key: string, handler: ObservableEventHandler) {
+    this.eventHandlerMap.set(key, handler);
+  }
+
+  public unhookEventHandlers() {
+    this.eventHandlerMap.clear();
+  }
+
+  public onEvent(event: ObservableEvent): void {
+    this.eventHandlerMap.get(event.key!)?.handle(event);
+  }
 }
+export type ObservableEventOperation = (event: ObservableEvent) => void;
+export type ObservableEventHandler = { type?: ObservableEventType; handle: ObservableEventOperation };
+export type ObservableEventHandlerCtor = (operation: ObservableEventOperation) => ObservableEventHandler;
 
 // ----------------------------------------------------------------------------
 
-export enum ObservableEventAction {
-  ADD,
-  EDIT,
-  DELETE,
-  SORT_UP,
-  SORT_DOWN,
-}
+export type TObservableEventAction = (typeof ObservableEventAction)[keyof typeof ObservableEventAction];
+export const ObservableEventAction = {
+  ADD: 'add',
+  EDIT: 'edit',
+  DELETE: 'delete',
+  SORT_UP: 'sort-up',
+  SORT_DOWN: 'sort-down',
+} as const;
 export type ObservableEventType = 'keyed' | 'global';
 
 export type ObservableEventOptions = {
@@ -65,7 +81,7 @@ export type ObservableEventOptions = {
   source?: ObservableSource;
   key?: string;
   data?: Record<string, unknown>;
-  action?: ObservableEventAction;
+  action?: TObservableEventAction;
 };
 
 export class ObservableEvent {
@@ -73,7 +89,7 @@ export class ObservableEvent {
   public readonly source?: ObservableSource;
   public readonly key?: string = '';
   public readonly data?: Record<string, unknown> = {};
-  public readonly action?: ObservableEventAction = ObservableEventAction.EDIT;
+  public readonly action?: TObservableEventAction = ObservableEventAction.EDIT;
 
   constructor(opts: ObservableEventOptions) {
     this.type = opts.type ?? 'keyed';

@@ -91,8 +91,8 @@
   </svg>
 </template>
 <script setup lang="ts">
+import { BiomeParameters } from '@core/models/planet/biome-parameters.model.ts';
 import { onMounted, ref, type Ref } from 'vue';
-import { BiomeParameters } from '@/core/models/biome-parameters.model';
 import Rect from '@/core/utils/math/rect';
 import { makeSVGLinearPath } from '@/core/utils/svg-utils';
 

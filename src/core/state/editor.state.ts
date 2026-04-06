@@ -1,5 +1,6 @@
+import PlanetData from '@core/models/planet/planet-data.model.ts';
+import RenderPipelineData from '@core/models/renderpipeline/render-pipeline-data.model.ts';
 import { ref, type Ref } from 'vue';
-import PlanetData from '../models/planet-data.model';
 
 type TEditorStatusCode = (typeof EditorStatusCode)[keyof typeof EditorStatusCode];
 export const EditorStatusCode = {
@@ -16,6 +17,7 @@ export const EditorStatusCode = {
 
 export type EditorState = {
   planetData: PlanetData;
+  renderPipelineData: RenderPipelineData;
   status: TEditorStatusCode;
   planetEditedFlag: boolean;
 };
@@ -24,6 +26,7 @@ export type EditorState = {
 
 export const EDITOR_STATE: Ref<EditorState> = ref({
   planetData: new PlanetData(),
+  renderPipelineData: new RenderPipelineData(),
   status: EditorStatusCode.Unloaded,
   planetEditedFlag: false,
 });

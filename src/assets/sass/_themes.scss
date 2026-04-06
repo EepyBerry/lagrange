@@ -55,13 +55,13 @@
 
   --lg-hue-background: linear-gradient(
     to right,
-    #00ffff 0%,
-    #00ff00 17%,
-    #ffff00 33%,
-    #ff0000 50%,
-    #ff00ff 67%,
-    #0000ff 83%,
-    #00ffff 100%
+    #00ffff50 0%,
+    #00ff0050 17%,
+    #ffff0050 33%,
+    #ff000050 50%,
+    #ff00ff50 67%,
+    #0000ff50 83%,
+    #00ffff50 100%
   );
   --lg-logo-update: #453264;
   --lg-update-05-background: linear-gradient(90deg, #453264 0%, #251642 100%);
@@ -171,7 +171,9 @@
 }
 :root[data-font='lowvision'] {
   body * {
-    font-family: Atkinson Hyperlegible, serif;
+    font-family:
+      Atkinson Hyperlegible,
+      serif;
   }
 }
 :root[data-font='dyslexia'] {

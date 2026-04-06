@@ -1,14 +1,14 @@
-import { ColorMode, GradientMode, PlanetClass, PlanetType } from '@core/types';
-import { clampedPRNG, isNumeric, randomBoolean, randomColor, randomIntervals } from '@core/utils/math-utils';
+import { convertLegacyRingStorage } from '@core/helpers/compatibility.helper.ts';
+import { BiomeParameters } from '@core/models/planet/biome-parameters.model.ts';
+import { ColorRamp, ColorRampStep } from '@core/models/planet/color-ramp.model.ts';
+import { DisplacementParameters } from '@core/models/planet/displacement-parameters.model.ts';
+import { NoiseParameters } from '@core/models/planet/noise-parameters.model.ts';
+import { RingParameters } from '@core/models/planet/ring-parameters.model.ts';
+import { ColorMode, GradientMode, PlanetClass, PlanetType } from '@core/types.ts';
+import { clampedPRNG, isNumeric, randomBoolean, randomColor, randomIntervals } from '@core/utils/math-utils.ts';
+import { Observable, ObservableEventAction } from '@core/utils/observable-utils.ts';
 import { Color } from 'three';
 import { clamp } from 'three/src/math/MathUtils.js';
-import { convertLegacyRingStorage } from '../helpers/compatibility.helper';
-import { Observable, ObservableEventAction } from '../utils/observable-utils';
-import { BiomeParameters } from './biome-parameters.model';
-import { ColorRamp, ColorRampStep } from './color-ramp.model';
-import { DisplacementParameters } from './displacement-parameters.model';
-import { NoiseParameters } from './noise-parameters.model';
-import { RingParameters } from './ring-parameters.model';
 
 export default class PlanetData extends Observable {
   // --------------------------------------------------

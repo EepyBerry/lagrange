@@ -101,7 +101,10 @@
                 <ParameterSlider
                   id="settings-fov"
                   :modelValue="appSettings.cameraFOV"
-                  @update:modelValue="appSettings.cameraFOV = $event as number; setCameraFOV($event as number)"
+                  @update:modelValue="
+                    appSettings.cameraFOV = $event as number;
+                    setCameraFOV($event as number);
+                  "
                   :min="30"
                   :max="90"
                 >
@@ -110,7 +113,10 @@
                 <ParameterSelect
                   :id="'skybox'"
                   :modelValue="appSettings.skybox"
-                  @update:modelValue="appSettings.skybox = $event as SkyboxName; swapEditorSkybox()"
+                  @update:modelValue="
+                    appSettings.skybox = $event as SkyboxName;
+                    swapEditorSkybox();
+                  "
                 >
                   {{ $t('dialog.settings.editor_skybox') }}:
                   <template #options>
@@ -239,7 +245,10 @@
                 true-value="inverted"
                 false-value="standard"
                 :modelValue="appSettings.cameraMouseControlsScheme"
-                @update:modelValue="appSettings.cameraMouseControlsScheme = $event as CameraMouseControlsScheme; updateCameraMouseControlsScheme()"
+                @update:modelValue="
+                  appSettings.cameraMouseControlsScheme = $event as CameraMouseControlsScheme;
+                  updateCameraMouseControlsScheme();
+                "
               >
                 {{ $t('dialog.settings.keybinds_cameramousecontrols') }}:
               </ParameterCheckbox>
@@ -444,6 +453,9 @@
 </template>
 
 <script setup lang="ts">
+import type { ClearDataConfirmDialogExposes } from '@components/global/dialogs/ClearDataConfirmDialog.types.ts';
+import type { SettingsDialogExposes } from '@components/global/dialogs/SettingsDialog.types.ts';
+import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
 import ParameterCategory from '@components/global/parameters/ParameterCategory.vue';
@@ -454,6 +466,7 @@ import ParameterKeyBinding from '@components/global/parameters/ParameterKeyBindi
 import ParameterRadio from '@components/global/parameters/ParameterRadio.vue';
 import ParameterRadioOption from '@components/global/parameters/ParameterRadioOption.vue';
 import ParameterSelect from '@components/global/parameters/ParameterSelect.vue';
+import ParameterSlider from '@components/global/parameters/ParameterSlider.vue';
 import { EventBus } from '@core/event-bus';
 import {
   EXTRAS_CAT_MODE,
@@ -478,12 +491,8 @@ import {
   type IDBKeyBinding,
   type IDBSettings,
   KeyBindingAction,
-  type SkyboxName
+  type SkyboxName,
 } from '@/dexie.config';
-import ParameterSlider from "@components/global/parameters/ParameterSlider.vue";
-import type { DialogElementExposes } from "@components/global/elements/DialogElement.types.ts";
-import type { SettingsDialogExposes } from "@components/global/dialogs/SettingsDialog.types.ts";
-import type { ClearDataConfirmDialogExposes } from "@components/global/dialogs/ClearDataConfirmDialog.types.ts";
 
 const AppClearDataConfirmDialog = defineAsyncComponent(
   () => import('@components/global/dialogs/ClearDataConfirmDialog.vue'),
@@ -531,7 +540,7 @@ onMounted(async () => {
 watch(() => appSettings.value, updateSettings, { deep: true });
 
 async function open() {
-  dialogRef.value?.open()
+  dialogRef.value?.open();
   if (!dataLoaded) {
     await loadData();
     dataLoaded = true;
@@ -566,9 +575,7 @@ async function importData(event: Event) {
   appSettings.value = data.settings!;
   keyBinds.value.splice(0);
   keyBinds.value.push(...data.keyBindings);
-  await updateSettings().then(
-    () => EventBus.sendToastEvent('success', 'toast.settings_import_success', 5000)
-  );
+  await updateSettings().then(() => EventBus.sendToastEvent('success', 'toast.settings_import_success', 5000));
 }
 
 async function exportData() {

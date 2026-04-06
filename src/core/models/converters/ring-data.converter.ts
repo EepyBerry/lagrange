@@ -1,6 +1,6 @@
+import type { RingParameters } from '@core/models/planet/ring-parameters.model.ts';
 import type { RingUniformData } from '@core/tsl/materials/ring.tslmat';
 import type { Texture } from 'three';
-import type { RingParameters } from '../ring-parameters.model';
 import { ModelConverter } from './model-converter';
 
 export class RingDataConverter extends ModelConverter<RingParameters, RingUniformData> {

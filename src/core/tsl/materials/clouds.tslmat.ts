@@ -103,6 +103,7 @@ export class CloudsTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Clo
     material.metalness = 0.5;
     material.transparent = true;
     material.colorNode = vec4(this.uniforms.color, opacity.x);
+
     return material;
   }
 
