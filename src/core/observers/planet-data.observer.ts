@@ -188,21 +188,22 @@ export class PlanetDataObserver extends Observer {
       planet.biomeEmissiveLayersTexture!.reset(data.biomesParams);
     }));
     this.registerEventHandler('_biomesParams[element]', keyedHandler((event) => {
-      const biome = event.data!.biome as BiomeParameters;
-      const biomeParamsIdx = data.findBiomeIndexById(biome.id);
-      if (biomeParamsIdx === -1) return;
+      const eventData = event.data!;
+      const biomeParamsIdx = data.findBiomeIndexById((<BiomeParameters>eventData.biome).id);
+      if (event.action !== ObservableEventAction.DELETE && biomeParamsIdx === -1) return;
       switch (event.action) {
         case ObservableEventAction.ADD:
-          planet.biomeLayersTexture!.addLayer(biome);
-          planet.biomeEmissiveLayersTexture!.addLayer(biome);
+          planet.biomeLayersTexture!.addLayer(<BiomeParameters>eventData.biome);
+          planet.biomeEmissiveLayersTexture!.addLayer(<BiomeParameters>eventData.biome);
           break;
         case ObservableEventAction.EDIT:
-          planet.biomeLayersTexture!.updateLayer(biomeParamsIdx, biome);
-          planet.biomeEmissiveLayersTexture!.updateLayer(biomeParamsIdx, biome);
+          planet.biomeLayersTexture!.updateLayer(biomeParamsIdx, <BiomeParameters>eventData.biome);
+          planet.biomeEmissiveLayersTexture!.updateLayer(biomeParamsIdx, <BiomeParameters>eventData.biome);
           break;
         case ObservableEventAction.DELETE:
-          planet.biomeLayersTexture!.removeLayer(biomeParamsIdx);
-          planet.biomeEmissiveLayersTexture!.removeLayer(biomeParamsIdx);
+          // biome already deleted, use the provided id
+          planet.biomeLayersTexture!.removeLayer(<number>eventData.biomeIdx);
+          planet.biomeEmissiveLayersTexture!.removeLayer(<number>eventData.biomeIdx);
           break;
         case ObservableEventAction.SORT_UP:
           // biome already moved up, take the index from the previous position (i+1)

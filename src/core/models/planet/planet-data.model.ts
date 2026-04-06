@@ -992,7 +992,7 @@ export default class PlanetData extends Observable {
       throw new Error(`Cannot delete non-existent biome of ID: ${id}`);
     }
     this._biomesParams.splice(biomeIdx, 1);
-    this.notify({ key: '_biomesParams[element]', action: ObservableEventAction.DELETE, data: { biome } });
+    this.notify({ key: '_biomesParams[element]', action: ObservableEventAction.DELETE, data: { biome, biomeIdx } });
   }
 
   public addRing(): RingParameters {
