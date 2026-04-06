@@ -191,7 +191,6 @@ export class PlanetDataObserver extends Observer {
       const eventData = event.data!;
       const biomeParamsIdx = data.findBiomeIndexById((<BiomeParameters>eventData.biome).id);
       if (event.action !== ObservableEventAction.DELETE && biomeParamsIdx === -1) return;
-      console.log(event)
       switch (event.action) {
         case ObservableEventAction.ADD:
           planet.biomeLayersTexture!.addLayer(<BiomeParameters>eventData.biome);
