@@ -48,6 +48,8 @@ defineProps<{ compactMode: boolean }>();
 }
 #controls.compact {
   z-index: 5;
+  position: absolute;
+  inset: auto 0 0;
   height: 20rem;
   padding: 0.5rem;
   overflow-y: auto;
