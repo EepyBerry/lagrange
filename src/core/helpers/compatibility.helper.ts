@@ -1,6 +1,6 @@
-import type { ColorRamp } from '../models/color-ramp.model'
-import type PlanetData from '../models/planet-data.model'
-import { RingParameters } from '../models/ring-parameters.model'
+import type { ColorRamp } from '@core/models/planet/color-ramp.model.ts'
+import type PlanetData from '@core/models/planet/planet-data.model.ts'
+import { RingParameters } from '@core/models/planet/ring-parameters.model.ts'
 
 type LegacyRingPlanetData = PlanetData & {
   _id: string
@@ -20,8 +20,8 @@ export function convertLegacyRingStorage(self: PlanetData, legacyData: LegacyRin
   if (legacyData._ringInnerRadius) {
     self.ringsEnabled = legacyData._ringEnabled ?? false
     const convertedParams = new RingParameters(
-      self.changedProps,
       '_ringsParams',
+      self.notifyRelayCallback,
       legacyData._ringInnerRadius ?? 1.25,
       legacyData._ringOuterRadius ?? 1.5,
       legacyData._ringColorRamp?._steps,

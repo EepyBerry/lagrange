@@ -21,8 +21,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import LgvButton from '@/_lib/components/LgvButton.vue';
 import type { IDBKeyBinding } from '@/dexie.config';
+import LgvButton from '@/_lib/components/LgvButton.vue';
 
 const $emit = defineEmits(['toggle']);
 defineProps<{ keyBind?: IDBKeyBinding; selected: boolean; icon: string }>();
@@ -60,10 +60,12 @@ function tryGetKeyRepresentation(key?: string) {
   gap: 0.5rem;
   padding-right: 0.5rem;
   flex: 1;
+  word-wrap: anywhere;
 }
 
 .keybinds-key-wrapper {
   grid-column: 2;
+  min-width: 0;
   justify-self: end;
   display: flex;
   gap: 8px;

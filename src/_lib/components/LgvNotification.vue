@@ -25,6 +25,7 @@ defineProps<{ type: EditorMessageLevel }>();
   gap: 0.5rem;
   align-items: center;
   font-size: 0.875rem;
+  text-wrap: wrap;
 
   &.success {
     background: var(--lg-success-panel);

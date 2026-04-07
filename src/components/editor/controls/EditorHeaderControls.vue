@@ -4,14 +4,14 @@
       <input
         v-if="editMode"
         ref="planetNameInput"
-        v-model="LG_PLANET_DATA.planetName"
+        v-model="EDITOR_STATE.planetData.planetName"
         class="lg"
         type="text"
         minlength="0"
         maxlength="32"
         @keyup.enter="toggleEditMode"
       />
-      <p v-else @click="toggleEditMode">{{ LG_PLANET_DATA.planetName }}</p>
+      <p v-else @click="toggleEditMode">{{ EDITOR_STATE.planetData.planetName }}</p>
 
       <LgvButton
         variant="icon"
@@ -37,7 +37,7 @@
     <div id="randomizer-menu" ref="randomMenu" class="floating" :style="randomFloating.floatingStyles.value">
       <div class="floating-content">
         <label for="random-seed">Seed</label>
-        <input id="random-seed" v-model="MathUtils.PRNG_SEED.value" class="lg" type="text" />
+        <input id="random-seed" v-model="MathUtils.PRNG_SEED.value" type="text" />
       </div>
       <div class="floating-actions">
         <LgvButton class="sm" icon="tabler:seeding" @click="MathUtils.regenerateSeed()">
@@ -91,13 +91,13 @@
 </template>
 
 <script setup lang="ts">
-import AppResetConfirmDialog from '../dialogs/ResetConfirmDialog.vue';
-import { LG_PLANET_DATA } from '@/core/services/editor.service';
-import { ref, useTemplateRef, watch, type Ref } from 'vue';
 import { EventBus } from '@core/event-bus';
-import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
 import * as MathUtils from '@core/utils/math-utils';
+import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
+import { ref, useTemplateRef, watch, type Ref } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
+import { EDITOR_STATE } from '@/core/state/editor.state';
+import AppResetConfirmDialog from '../dialogs/ResetConfirmDialog.vue';
 
 const editMode: Ref<boolean> = ref(false);
 
@@ -208,7 +208,7 @@ function toggleSaveMenu(override?: boolean) {
       width: 24ch;
       height: 2rem;
       font-size: 0.875rem;
-      font-family: Poppins, Inter;
+      font-family: Poppins, Inter, sans-serif;
     }
     p {
       white-space: nowrap;
@@ -233,11 +233,12 @@ function toggleSaveMenu(override?: boolean) {
 @media screen and (max-width: 767px) {
   #planet-info {
     width: 100%;
-    height: 2.5rem;
+    height: unset;
     flex: 1;
 
     .name-wrapper {
       flex: 1;
+      height: 2.75rem;
       font-size: 1em;
       justify-content: space-between;
       width: 0;
@@ -247,6 +248,10 @@ function toggleSaveMenu(override?: boolean) {
     }
     .name-wrapper > input {
       width: 100%;
+    }
+    button {
+      width: 2.75rem;
+      height: 2.75rem;
     }
   }
 }

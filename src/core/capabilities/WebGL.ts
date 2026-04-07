@@ -17,17 +17,6 @@ export default class WebGL {
     }
   }
 
-  static isColorSpaceAvailable(colorSpace: PredefinedColorSpace) {
-    try {
-      const canvas = document.createElement('canvas');
-      const ctx = window.WebGL2RenderingContext && canvas.getContext('webgl2')!;
-      ctx.drawingBufferColorSpace = colorSpace;
-      return ctx.drawingBufferColorSpace === colorSpace;
-    } catch (_) {
-      return false;
-    }
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static getWebGL2ErrorMessage(i18n: Composer<any>): string {
     return this._error ? this._error.message : i18n.t('main.error.default_webgl_support');

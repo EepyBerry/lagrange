@@ -1,22 +1,24 @@
-import type { ColorRamp } from '@core/models/color-ramp.model';
-import { EditorBackendType } from '@core/types';
-import { type TypedArray } from 'three';
+import type { ColorRamp } from '@core/models/planet/color-ramp.model.ts';
 import type { WebGPURenderer } from 'three/webgpu';
+import { type TypedArray } from 'three';
+
+type EditorBackendType = 'webgl' | 'webgpu';
 
 /**
  * Renders a buffer onto an OffscreenCanvas
+ * @param renderer current renderer
  * @param buf the buffer, represented as a `TypedArray` (usually `UInt8Array`)
  * @param w width of the output (in pixels)
  * @param h height of the output (in pixels)
  * @returns an `OffscreenCanvas` instance containing data from the buffer
  */
 export function renderToCanvas(renderer: WebGPURenderer, buf: TypedArray, w: number, h: number): OffscreenCanvas {
-  const backendType = Object.hasOwn(renderer.backend, 'gl') ? EditorBackendType.WEBGL : EditorBackendType.WEBGPU;
+  const backendType: EditorBackendType = Object.hasOwn(renderer.backend, 'gl') ? 'webgl' : 'webgpu';
 
   const canvas = new OffscreenCanvas(w, h);
   const ctx = canvas.getContext('2d')!;
   const imageData = ctx.createImageData(w, h);
-  imageData.data.set(backendType === EditorBackendType.WEBGL ? flipBufferY(buf as Uint8Array, w, h) : buf);
+  imageData.data.set(backendType === 'webgl' ? flipBufferY(buf as Uint8Array, w, h) : buf);
   ctx.putImageData(imageData, 0, 0);
   return canvas;
 }
@@ -48,12 +50,11 @@ export function flipBufferY(buffer: Uint8Array, w: number, h: number): Uint8Arra
 export function colorRampToStyle(ramp: ColorRamp): { color: string; alpha: string } {
   const gradient: string[] = [];
   const alphaGradient: string[] = [];
-  for (let i = 0; i < ramp.steps.length; i++) {
-    const step = ramp.steps[i];
+  for (const step of ramp.steps) {
     const rgb = step.color.getHexString();
     const a = Math.ceil(step.alpha * 255).toString(16);
-    gradient.push(`#${rgb} ${step.factor * 100.0}%`);
-    alphaGradient.push(`#${a + a + a} ${step.factor * 100.0}%`);
+    gradient.push(`#${rgb} ${step.factor * 100}%`);
+    alphaGradient.push(`#${a + a + a} ${step.factor * 100}%`);
   }
   return {
     color: `linear-gradient(90deg, ${gradient.join(', ')})`,

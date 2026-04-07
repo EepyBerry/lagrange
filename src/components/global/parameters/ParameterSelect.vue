@@ -24,14 +24,15 @@ label {
 }
 select {
   grid-column: 2;
-  min-width: 16rem;
+  min-width: 12rem;
   text-align: center;
+  justify-self: flex-end;
 }
 
 @media screen and (max-width: 567px) {
   select {
+    width: auto;
     min-width: 0;
-    width: 100%;
     text-align: center;
   }
 }

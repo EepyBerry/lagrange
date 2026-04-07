@@ -7,10 +7,10 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
 import SVGAppLogo from '@components/global/svg/SVGAppLogo.vue';
-import SVGAppLogoUwU from '@components/global/svg/SVGAppLogoUwU.vue';
 import SVGAppLogoUpdate from '@components/global/svg/SVGAppLogoUpdate.vue';
+import SVGAppLogoUwU from '@components/global/svg/SVGAppLogoUwU.vue';
+import { useRoute } from 'vue-router';
 const $route = useRoute();
 defineProps<{ showUpdate?: boolean }>();
 </script>

@@ -56,7 +56,6 @@ body:has(dialog[open]) {
   touch-action: none;
   overflow: hidden;
   overscroll-behavior: none;
-  -webkit-overflow-scrolling: none;
 }
 
 hr {

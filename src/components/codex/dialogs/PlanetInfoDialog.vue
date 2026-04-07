@@ -61,10 +61,9 @@
         </section>
 
         <!-- Basic planet data -->
-        <section id="planet-basic-data" role="grid">
+        <section id="planet-basic-data">
           <GenericBoxElement
             id="planet-basic-data-type"
-            ref="planetBasicDataTypeRef"
             :value-label="$t('dialog.planetinfo.basic.type')"
             role="gridcell"
           >
@@ -72,7 +71,6 @@
           </GenericBoxElement>
           <GenericBoxElement
             id="planet-basic-data-class"
-            ref="planetBasicDataClassRef"
             :value-label="$t('dialog.planetinfo.basic.class')"
             :background-color="getPlanetClassStyle()[0]"
             :text-color="getPlanetClassStyle()[1]"
@@ -212,37 +210,36 @@
   </DialogElement>
 </template>
 <script setup lang="ts">
-import type { IDBPlanet } from '@/dexie.config';
+import type { PlanetInfoDialogExposes } from '@components/codex/dialogs/PlanetInfoDialog.types.ts';
+import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import DialogElement from '@components/global/elements/DialogElement.vue';
-import { ref, type Ref } from 'vue';
 import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT } from '@core/extras';
+import { ref, type Ref, useTemplateRef } from 'vue';
+import type { IDBPlanet } from '@/dexie.config';
+import SeparatorGreebleDeco from '@/components/global/decoration/SeparatorGreebleDeco.vue';
+import GenericBoxElement from '@/components/global/elements/GenericBoxElement.vue';
+import MeasurementBoxElement from '@/components/global/elements/MeasurementBoxElement.vue';
+import { PlanetClass } from '@/core/types';
+import { getI18nPlanetClass, getI18nPlanetType } from '@/core/utils/i18n-utils';
+import { makeSVGCircleArc } from '@/core/utils/svg-utils';
+import PlanetCardFeatureBoxElement from '../elements/PlanetCardFeatureBoxElement.vue';
 import SVGBiomeGraph from '../svg/SVGBiomeGraph.vue';
 import SVGRingsGraph from '../svg/SVGRingsGraph.vue';
-import SeparatorGreebleDeco from '@/components/global/decoration/SeparatorGreebleDeco.vue';
-import PlanetCardFeatureBoxElement from '../elements/PlanetCardFeatureBoxElement.vue';
-import { makeSVGCircleArc } from '@/core/utils/svg-utils';
-import MeasurementBoxElement from '@/components/global/elements/MeasurementBoxElement.vue';
-import GenericBoxElement from '@/components/global/elements/GenericBoxElement.vue';
-import { getI18nPlanetClass, getI18nPlanetType } from '@/core/utils/i18n-utils';
-import { PlanetClass } from '@/core/types';
+
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+defineExpose<PlanetInfoDialogExposes>({ open });
 
 const planet: Ref<IDBPlanet | null> = ref(null);
-const planetRadius: Ref<string> = ref('100%');
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
+const cssPlanetRadius: Ref<string> = ref('100%');
 
-const planetBasicDataTypeRef: Ref<HTMLElement | null> = ref(null);
-const planetBasicDataClassRef: Ref<HTMLElement | null> = ref(null);
-
-defineExpose({
-  open: (p: IDBPlanet) => {
-    planet.value = p;
-    planetRadius.value = planet.value.data.planetRadius * 100.0 + '%';
-    dialogRef.value?.open();
-  },
-});
+function open(p: IDBPlanet) {
+  planet.value = p;
+  cssPlanetRadius.value = planet.value.data.planetRadius * 100 + '%';
+  dialogRef.value?.open();
+}
 
 function getPlanetCircleRadius() {
-  return 128.0 * (planet.value?.data.planetRadius ?? 0);
+  return 128 * (planet.value?.data.planetRadius ?? 0);
 }
 
 // prettier-ignore
@@ -303,12 +300,12 @@ function getPlanetClassStyle(): string[] {
     .planet-image {
       max-width: 16rem;
       border-radius: 2px;
-      image-rendering: optimizeQuality;
+      image-rendering: high-quality;
     }
     .effect-crt {
       border-radius: 50%;
-      width: v-bind(planetRadius);
-      height: v-bind(planetRadius);
+      width: v-bind(cssPlanetRadius);
+      height: v-bind(cssPlanetRadius);
     }
   }
   .planet-features {
@@ -345,7 +342,6 @@ function getPlanetClassStyle(): string[] {
   #planet-basic-data {
     position: relative;
     height: fit-content;
-    font-size: 1.05rem;
     min-width: 16rem;
 
     display: grid;

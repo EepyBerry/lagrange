@@ -1,6 +1,6 @@
 <template>
   <main>
-    <span v-if="$route.path.includes('/codex')" class="blur" />
+    <span v-if="$route.path === '/'" class="blur" />
     <RouterView></RouterView>
   </main>
   <AppToastBar />
@@ -15,14 +15,13 @@
 
 <script setup lang="ts">
 import AppFooter from '@components/global/AppFooter.vue';
+import AppToastBar from '@components/global/AppToastBar.vue';
+import AppInitDialog from '@components/global/dialogs/InitDialog.vue';
+import { useHead } from '@unhead/vue';
+import { onMounted, ref, type Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import * as DexieService from '@/core/services/dexie.service';
 import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config';
-import { onMounted, ref, type Ref } from 'vue';
-import AppInitDialog from '@components/global/dialogs/InitDialog.vue';
-import { useI18n } from 'vue-i18n';
-import { mapLocale } from './core/utils/utils';
-import { useHead } from '@unhead/vue';
-import AppToastBar from '@components/global/AppToastBar.vue';
 import { EventBus } from './core/event-bus';
 import {
   EXTRAS_CAT_MODE,
@@ -31,6 +30,7 @@ import {
   EXTRAS_METAL_SLUG_MODE,
   EXTRAS_SPECIAL_DAYS,
 } from './core/extras';
+import { mapLocale } from './core/utils/utils';
 
 const i18n = useI18n();
 useHead({
@@ -43,13 +43,12 @@ const keybinds: Ref<IDBKeyBinding[]> = ref([]);
 const settings: Ref<IDBSettings | undefined> = ref(undefined);
 
 onMounted(async () => {
+  // Init IndexedDB via Dexie
   await DexieService.initStoragePersistence();
   await initDexie();
-  keybinds.value = await idb.keyBindings.toArray();
-  settings.value = await idb.settings.limit(1).first();
 
   // Set locale
-  const url = new URL(window.location.href);
+  const url = new URL(globalThis.location.href);
   const params = new URLSearchParams(url.search);
   const queryParams = Object.fromEntries(params);
   if (queryParams.uwu !== undefined) {
@@ -76,27 +75,14 @@ onMounted(async () => {
 });
 
 async function initDexie() {
-  // Init standard settings
-  let settings = await idb.settings.limit(1).first();
-  if (!settings) {
-    console.debug('<Lagrange> No settings found in IndexedDB, adding defaults');
-    await DexieService.initDefaultSettings();
-    settings = await idb.settings.limit(1).first();
-  }
-  await DexieService.injectMissingSettings(settings!);
-
-  // Init keybinds
-  const kb = await idb.keyBindings.limit(4).toArray();
-  if (kb.length === 0) {
-    console.debug('<Lagrange> No keybinds found in IndexedDB, adding defaults');
-    await DexieService.addDefaultKeyBindings();
-  }
+  settings.value = await DexieService.initSettings();
+  keybinds.value = await DexieService.initKeyBindings();
 
   // Init HTML data (theme, font, effects)
-  document.documentElement.setAttribute('data-theme', settings!.theme ?? 'default');
-  document.documentElement.setAttribute('data-font', settings!.font ?? 'default');
-  document.documentElement.setAttribute('data-effects', settings!.enableEffects ? 'on' : 'off');
-  document.documentElement.setAttribute('data-animations', settings!.enableAnimations ? 'on' : 'off');
+  document.documentElement.dataset.theme = settings.value.theme;
+  document.documentElement.dataset.font = settings.value.font;
+  document.documentElement.dataset.effects = settings.value.enableEffects ? 'on' : 'off';
+  document.documentElement.dataset.animations = settings.value.enableAnimations ? 'on' : 'off';
 }
 
 async function disableInitDialog() {

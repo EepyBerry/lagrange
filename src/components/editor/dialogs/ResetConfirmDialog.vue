@@ -30,13 +30,15 @@
   </DialogElement>
 </template>
 <script setup lang="ts">
-import LgvButton from '@/_lib/components/LgvButton.vue';
+import type { ResetConfirmDialogExposes } from '@components/editor/dialogs/ResetConfirmDialog.types.ts';
+import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import DialogElement from '@components/global/elements/DialogElement.vue';
-import { ref, type Ref } from 'vue';
+import { useTemplateRef } from 'vue';
+import LgvButton from '@/_lib/components/LgvButton.vue';
 
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+defineExpose<ResetConfirmDialogExposes>({ open: () => dialogRef.value?.open() });
 const $emit = defineEmits(['confirm']);
-defineExpose({ open: () => dialogRef.value?.open() });
 
 function confirmAndClose() {
   $emit('confirm');

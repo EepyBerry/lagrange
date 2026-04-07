@@ -25,8 +25,8 @@
 </template>
 
 <script setup lang="ts">
+import { useTemplateRef } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
-import { ref, useTemplateRef, type Ref } from 'vue';
 
 defineProps<{
   name: string;

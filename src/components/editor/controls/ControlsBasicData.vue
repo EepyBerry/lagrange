@@ -3,7 +3,7 @@
     <ParameterGroup toggleable>
       <template #title>{{ $t('editor.controls.basic_data.classification') }}</template>
       <template #content>
-        <ParameterSelect id="b-type" v-model="LG_PLANET_DATA.planetType" @change="resetPlanetClass">
+        <ParameterSelect id="b-type" v-model="EDITOR_STATE.planetData.planetType" @change="resetPlanetClass">
           {{ $t('editor.controls.basic_data.classification_type') }}:
           <template #options>
             <option v-for="opt in listPlanetTypeValues()" :key="opt" :value="opt">
@@ -11,7 +11,7 @@
             </option>
           </template>
         </ParameterSelect>
-        <ParameterSelect id="b-type" v-model="LG_PLANET_DATA.planetClass">
+        <ParameterSelect id="b-class" v-model="EDITOR_STATE.planetData.planetClass">
           {{ $t('editor.controls.basic_data.classification_class') }}:
           <template #options>
             <option v-for="opt in listPlanetClassValues()" :key="opt" :value="opt">
@@ -25,9 +25,9 @@
 </template>
 <script setup lang="ts">
 import ParameterSelect from '@/components/global/parameters/ParameterSelect.vue';
+import { EDITOR_STATE } from '@/core/state/editor.state';
 import { PlanetClass, PlanetType } from '@/core/types';
 import { getI18nPlanetClass, getI18nPlanetType } from '@/core/utils/i18n-utils';
-import { LG_PLANET_DATA } from '@/core/services/editor.service';
 
 function listPlanetTypeValues(): PlanetType[] {
   return Object.entries(PlanetType)
@@ -35,10 +35,10 @@ function listPlanetTypeValues(): PlanetType[] {
     .map(([_, v]) => v) as PlanetType[];
 }
 function listPlanetClassValues(): PlanetClass[] {
-  return LG_PLANET_DATA.value.getPlanetClassesFromType(LG_PLANET_DATA.value.planetType);
+  return EDITOR_STATE.value.planetData.getPlanetClassesFromType(EDITOR_STATE.value.planetData.planetType);
 }
 
 function resetPlanetClass() {
-  LG_PLANET_DATA.value.planetClass = PlanetClass.INDETERMINATE;
+  EDITOR_STATE.value.planetData.planetClass = PlanetClass.INDETERMINATE;
 }
 </script>

@@ -1,9 +1,8 @@
-import { createI18n } from 'vue-i18n';
-
+import deDE from '@assets/i18n/de-DE.json';
 import enUS from '@assets/i18n/en-US.json';
 import enUwU from '@assets/i18n/en-UwU.json';
 import frFR from '@assets/i18n/fr-FR.json';
-import deDE from '@assets/i18n/de-DE.json';
+import { createI18n } from 'vue-i18n';
 
 const I18N_SUPPORTED_LANGS = ['en', 'en-US', 'en-UwU', 'fr', 'fr-FR', 'de', 'de-DE'] as const;
 

@@ -2,11 +2,11 @@
   <label :for="id">
     <slot>ParameterName</slot>
   </label>
+  <!--suppress HtmlUnknownAttribute (true-value and false-value exist but aren't recognized properly) -->
   <input
     :id="id"
-    v-model="lgParam"
     type="checkbox"
-    class="lg"
+    v-model="lgParam"
     :true-value="trueValue"
     :false-value="falseValue"
     :disabled="disabled"
@@ -27,5 +27,8 @@ input {
   grid-column: 2;
   justify-self: end;
   text-align: end;
+  &:hover {
+    cursor: pointer;
+  }
 }
 </style>

@@ -1,10 +1,10 @@
-import type { Texture } from 'three';
-import type PlanetData from '../planet-data.model';
+import type PlanetData from '@core/models/planet/planet-data.model.ts';
 import type { CloudsUniformData } from '@core/tsl/materials/clouds.tslmat';
+import type { Texture } from 'three';
 import { ModelConverter } from './model-converter';
 
 export class CloudsDataConverter extends ModelConverter<PlanetData, CloudsUniformData> {
-  private _opacityTexture: Texture;
+  private readonly _opacityTexture: Texture;
 
   constructor(data: PlanetData, tex: Texture) {
     super(data);

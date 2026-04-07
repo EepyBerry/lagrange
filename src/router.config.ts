@@ -1,19 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import CodexView from './views/CodexView.vue';
-import PlanetEditorView from './views/PlanetEditorView.vue';
-import PageNotFoundView from './views/PageNotFoundView.vue';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    {
-      path: '/',
-      redirect: '/codex',
-    },
+    /**
+     * Legacy route redirection to avoid breaking existing behaviour
+     * @since v0.5.2
+     */
     {
       path: '/codex',
+      redirect: '/',
+    },
+    {
+      path: '/',
       name: 'codex',
-      component: CodexView,
+      component: () => import('./views/CodexView.vue'),
       meta: { title: 'Codex' },
     },
     {
@@ -23,13 +24,13 @@ const router = createRouter({
     {
       path: '/planet-editor/:id',
       name: 'planet-editor',
-      component: PlanetEditorView,
+      component: () => import('./views/EditorView.vue'),
       meta: { title: 'Planet Editor' },
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'page-not-found',
-      component: PageNotFoundView,
+      component: () => import('./views/PageNotFoundView.vue'),
       meta: { title: 'Page Not Found' },
     },
   ],

@@ -69,7 +69,7 @@
           v-else
           class="planet-image-fallback"
           icon="bi:question-circle"
-          :width="planet.data.planetRadius * 128.0"
+          :width="planet.data.planetRadius * 128"
         />
       </div>
 
@@ -124,18 +124,18 @@
 
 <script setup lang="ts">
 import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, uwuifyPath } from '@core/extras';
-import { type IDBPlanet } from '@/dexie.config';
 import { onMounted, ref, useTemplateRef } from 'vue';
-import { makeSVGCircleArc } from '@/core/utils/svg-utils';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 import LgvLink from '@/_lib/components/LgvLink.vue';
 import ExtraMetalSlugPlanetExplosion from '@/components/global/extras/ExtraMetalSlugPlanetExplosion.vue';
+import { makeSVGCircleArc } from '@/core/utils/svg-utils';
+import { type IDBPlanet } from '@/dexie.config';
 
 const cardRoot = useTemplateRef('cardRoot');
 const extraPlanetExplosionRef = useTemplateRef('extraPlanetExplosionRef');
 
 const $props = defineProps<{ planet: IDBPlanet }>();
-const planetRadius = ref($props.planet.data.planetRadius * 100.0 + '%');
+const planetRadius = ref($props.planet.data.planetRadius * 100 + '%');
 const obliterationDisableControls = ref(false);
 const obliterationHidePlanetImage = ref(false);
 
@@ -149,7 +149,7 @@ async function obliteratePlanet() {
 }
 
 function getPlanetCircleRadius() {
-  return 128.0 * $props.planet.data.planetRadius;
+  return 128 * $props.planet.data.planetRadius;
 }
 </script>
 

@@ -1,9 +1,14 @@
 <template>
   <ParameterGrid>
-    <ParameterCheckbox id="b-biomes" v-model="LG_PLANET_DATA.biomesEnabled" :true-value="true" :false-value="false">
+    <ParameterCheckbox
+      id="b-biomes"
+      v-model="EDITOR_STATE.planetData.biomesEnabled"
+      :true-value="true"
+      :false-value="false"
+    >
       {{ $t('editor.controls.biomes.biomes_show') }}
     </ParameterCheckbox>
-    <template v-if="LG_PLANET_DATA.biomesEnabled">
+    <template v-if="EDITOR_STATE.planetData.biomesEnabled">
       <ParameterGroup :toggleable="true">
         <template #title>{{ $t('editor.controls.biomes.temperature') }}</template>
         <template #content>
@@ -12,7 +17,7 @@
             <template #options>
               <ParameterRadioOption
                 :id="'0'"
-                v-model="LG_PLANET_DATA.biomesTemperatureMode"
+                v-model="EDITOR_STATE.planetData.biomesTemperatureMode"
                 icon="mingcute:photo-album-line"
                 name="temp-mode"
                 :value="GradientMode.REALISTIC"
@@ -23,7 +28,7 @@
               </ParameterRadioOption>
               <ParameterRadioOption
                 :id="'1'"
-                v-model="LG_PLANET_DATA.biomesTemperatureMode"
+                v-model="EDITOR_STATE.planetData.biomesTemperatureMode"
                 icon="material-symbols:gradient-outline"
                 name="temp-mode"
                 :value="GradientMode.POLE_TO_POLE"
@@ -34,7 +39,7 @@
               </ParameterRadioOption>
               <ParameterRadioOption
                 :id="'2'"
-                v-model="LG_PLANET_DATA.biomesTemperatureMode"
+                v-model="EDITOR_STATE.planetData.biomesTemperatureMode"
                 icon="tabler:ease-in-out-control-points"
                 name="temp-mode"
                 :value="GradientMode.FULLNOISE"
@@ -45,12 +50,17 @@
               </ParameterRadioOption>
             </template>
           </ParameterRadio>
-          <ParameterSlider id="b-tfreq" v-model="LG_PLANET_DATA.biomesTemperatureNoise.frequency" :step="0.01" :max="5">
+          <ParameterSlider
+            id="b-tfreq"
+            v-model="EDITOR_STATE.planetData.biomesTemperatureNoise.frequency"
+            :step="0.01"
+            :max="5"
+          >
             {{ $t('editor.general.noise_fbm_frequency') }}
           </ParameterSlider>
           <ParameterSlider
             id="b-tamp"
-            v-model="LG_PLANET_DATA.biomesTemperatureNoise.amplitude"
+            v-model="EDITOR_STATE.planetData.biomesTemperatureNoise.amplitude"
             :step="0.01"
             :min="0"
             :max="2"
@@ -59,7 +69,7 @@
           </ParameterSlider>
           <ParameterSlider
             id="b-tlac"
-            v-model="LG_PLANET_DATA.biomesTemperatureNoise.lacunarity"
+            v-model="EDITOR_STATE.planetData.biomesTemperatureNoise.lacunarity"
             :step="0.01"
             :min="1"
             :max="3"
@@ -68,7 +78,7 @@
           </ParameterSlider>
           <ParameterSlider
             id="b-toct"
-            v-model="LG_PLANET_DATA.biomesTemperatureNoise.octaves"
+            v-model="EDITOR_STATE.planetData.biomesTemperatureNoise.octaves"
             :step="1"
             :min="1"
             :max="8"
@@ -85,9 +95,9 @@
             <template #options>
               <ParameterRadioOption
                 :id="'0'"
-                v-model="LG_PLANET_DATA.biomesHumidityMode"
+                v-model="EDITOR_STATE.planetData.biomesHumidityMode"
                 icon="mingcute:photo-album-line"
-                name="temp-mode"
+                name="humi-mode"
                 :value="GradientMode.REALISTIC"
                 :button-aria-label="$t('editor.controls.biomes.gradient_mode_realistic')"
                 :title="$t('tooltip.gradient_mode_realistic')"
@@ -96,9 +106,9 @@
               </ParameterRadioOption>
               <ParameterRadioOption
                 :id="'1'"
-                v-model="LG_PLANET_DATA.biomesHumidityMode"
+                v-model="EDITOR_STATE.planetData.biomesHumidityMode"
                 icon="material-symbols:gradient-outline"
-                name="temp-mode"
+                name="humi-mode"
                 :value="GradientMode.POLE_TO_POLE"
                 :button-aria-label="$t('editor.controls.biomes.gradient_mode_poletopole')"
                 :title="$t('tooltip.gradient_mode_poletopole')"
@@ -107,9 +117,9 @@
               </ParameterRadioOption>
               <ParameterRadioOption
                 :id="'2'"
-                v-model="LG_PLANET_DATA.biomesHumidityMode"
+                v-model="EDITOR_STATE.planetData.biomesHumidityMode"
                 icon="tabler:ease-in-out-control-points"
-                name="temp-mode"
+                name="humi-mode"
                 :value="GradientMode.FULLNOISE"
                 :button-aria-label="$t('editor.controls.biomes.gradient_mode_fullnoise')"
                 :title="$t('tooltip.gradient_mode_fullnoise')"
@@ -118,12 +128,17 @@
               </ParameterRadioOption>
             </template>
           </ParameterRadio>
-          <ParameterSlider id="b-tfreq" v-model="LG_PLANET_DATA.biomesHumidityNoise.frequency" :step="0.01" :max="5">
+          <ParameterSlider
+            id="b-tfreq"
+            v-model="EDITOR_STATE.planetData.biomesHumidityNoise.frequency"
+            :step="0.01"
+            :max="5"
+          >
             {{ $t('editor.general.noise_fbm_frequency') }}
           </ParameterSlider>
           <ParameterSlider
             id="b-tamp"
-            v-model="LG_PLANET_DATA.biomesHumidityNoise.amplitude"
+            v-model="EDITOR_STATE.planetData.biomesHumidityNoise.amplitude"
             :step="0.01"
             :min="0"
             :max="2"
@@ -132,14 +147,20 @@
           </ParameterSlider>
           <ParameterSlider
             id="b-tlac"
-            v-model="LG_PLANET_DATA.biomesHumidityNoise.lacunarity"
+            v-model="EDITOR_STATE.planetData.biomesHumidityNoise.lacunarity"
             :step="0.01"
             :min="1"
             :max="3"
           >
             {{ $t('editor.general.noise_fbm_lacunarity') }}
           </ParameterSlider>
-          <ParameterSlider id="b-toct" v-model="LG_PLANET_DATA.biomesHumidityNoise.octaves" :step="1" :min="1" :max="8">
+          <ParameterSlider
+            id="b-toct"
+            v-model="EDITOR_STATE.planetData.biomesHumidityNoise.octaves"
+            :step="1"
+            :min="1"
+            :max="8"
+          >
             {{ $t('editor.general.noise_fbm_octaves') }}
           </ParameterSlider>
         </template>
@@ -147,22 +168,22 @@
       <ParameterGroup :toggleable="true">
         <template #title>{{ $t('editor.controls.biomes.biome_list') }}</template>
         <template #content>
-          <template v-for="(b, index) in LG_PLANET_DATA.biomesParams" :key="b.id">
+          <template v-for="(b, index) in EDITOR_STATE.planetData.biomesParams" :key="b.id">
             <!-- prettier-ignore-attribute -->
             <ParameterBiome
-              v-model="LG_PLANET_DATA.biomesParams[index]"
+              v-model="EDITOR_STATE.planetData.biomesParams[index]"
               :index="index"
-              :max-index="LG_PLANET_DATA.biomesParams.length - 1"
-              @moveup="moveBiome(index, -1)"
-              @movedown="moveBiome(index, 1)"
-              @delete="deleteBiome"
+              :max-index="EDITOR_STATE.planetData.biomesParams.length - 1"
+              @moveup="EDITOR_STATE.planetData.moveBiome(b.id, -1)"
+              @movedown="EDITOR_STATE.planetData.moveBiome(b.id, 1)"
+              @delete="EDITOR_STATE.planetData.removeBiome(b.id)"
             />
           </template>
           <LgvButton
-            v-show="LG_PLANET_DATA.biomesParams.length < 16"
+            v-show="EDITOR_STATE.planetData.biomesParams.length < 16"
             class="sm action-add"
             icon="mingcute:add-line"
-            @click="addBiome"
+            @click="EDITOR_STATE.planetData.addBiome()"
           >
             {{ $t('editor.$action_add') }}
           </LgvButton>
@@ -172,66 +193,10 @@
   </ParameterGrid>
 </template>
 <script setup lang="ts">
-import { LG_PLANET_DATA } from '@/core/services/editor.service';
 import ParameterBiome from '@components/global/parameters/ParameterBiome.vue';
 import { GradientMode } from '@core/types';
-import { BiomeParameters } from '@core/models/biome-parameters.model';
-import { Color } from 'three';
-import { ChangeAction } from '@core/models/change-tracker.model';
 import LgvButton from '@/_lib/components/LgvButton.vue';
-
-/**
- * Moves a biome up or down the list
- * @param idx the numbered index of the biome in `LG_PLANET_DATA.value.biomesParams`
- * @param diff index difference: -1 means towards the start of the list (up), 1 means towards the end of the list (down)
- */
-function moveBiome(idx: number, diff: -1 | 1) {
-  const element = LG_PLANET_DATA.value.biomesParams[idx];
-  LG_PLANET_DATA.value.biomesParams.splice(idx, 1);
-  LG_PLANET_DATA.value.biomesParams.splice(idx + diff, 0, element);
-  LG_PLANET_DATA.value.markForChange(
-    '_biomesParams[element]',
-    { arrayIndex: idx, data: element },
-    diff === -1 ? ChangeAction.SORT_UP : ChangeAction.SORT_DOWN,
-  );
-}
-
-/**
- * Creates a new biome that is subsequently added to the end of `LG_PLANET_DATA.value.biomesParams`
- */
-function addBiome() {
-  const newBiome = new BiomeParameters(
-    LG_PLANET_DATA.value.changedProps,
-    '_biomesParams[element]',
-    {
-      temperatureMin: 0.0,
-      temperatureMax: 1.0,
-      humidityMin: 0.0,
-      humidityMax: 1.0,
-    },
-    new Color(0xffffff),
-    0.2,
-  );
-  LG_PLANET_DATA.value.biomesParams.push(newBiome);
-  LG_PLANET_DATA.value.markForChange(
-    '_biomesParams[element]',
-    { arrayIndex: LG_PLANET_DATA.value.biomesParams.length - 1, data: newBiome },
-    ChangeAction.ADD,
-  );
-}
-
-/**
- * Deletes a biome
- * @param id biome ID (nanoid)
- */
-function deleteBiome(id: string) {
-  const biomeIdx = LG_PLANET_DATA.value.biomesParams.findIndex((b) => b.id === id);
-  if (biomeIdx < 0) {
-    throw new Error('Cannot delete non-existent biome!');
-  }
-  LG_PLANET_DATA.value.biomesParams.splice(biomeIdx, 1);
-  LG_PLANET_DATA.value.markForChange('_biomesParams[element]', { arrayIndex: biomeIdx }, ChangeAction.DELETE);
-}
+import { EDITOR_STATE } from '@/core/state/editor.state';
 </script>
 <style scoped lang="scss">
 .action-add {

@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="dialog" class="lg" @abort="close">
+  <dialog ref="dialog" @abort="close">
     <CornerDeco class="tl" :class="{ warn: isWarn }" />
     <CornerDeco class="br" :class="{ warn: isWarn }" />
     <header class="dialog-header">
@@ -19,7 +19,7 @@
       />
     </header>
     <div ref="dialogInner" class="dialog-inner" tabindex="-1">
-      <div class="dialog-content" role="group">
+      <div class="dialog-content">
         <slot name="content"></slot>
       </div>
       <footer v-if="showActions" class="dialog-actions">
@@ -30,13 +30,14 @@
 </template>
 
 <script setup lang="ts">
+import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import { EventBus } from '@core/event-bus';
-import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
-import CornerDeco from '../decoration/CornerDeco.vue';
+import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
+import CornerDeco from '../decoration/CornerDeco.vue';
 
-const dialog: Ref<HTMLDialogElement | null> = ref(null);
-const dialogInner: Ref<HTMLDivElement | null> = ref(null);
+const dialog = useTemplateRef('dialog');
+const dialogInner = useTemplateRef('dialogInner');
 
 const ignoresNativeEvents = ref(false);
 const handleCancel = (evt: Event) => {
@@ -51,6 +52,9 @@ const handleClick = (evt: Event) => {
     close();
   }
 };
+
+const $emit = defineEmits(['open', 'close']);
+defineExpose<DialogElementExposes>({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open ?? false });
 
 const $props = defineProps<{
   showTitle?: boolean;
@@ -72,23 +76,23 @@ function open() {
   EventBus.disableWindowEventListener('keydown');
   dialog.value?.showModal();
   dialogInner.value?.focus();
+  $emit('open');
 }
 function close() {
   EventBus.enableWindowEventListener('keydown');
   dialog.value?.close();
+  $emit('close');
 }
 
 function ignoreNativeEvents(enabled: boolean) {
   ignoresNativeEvents.value = enabled;
 }
-
-defineExpose({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open });
 </script>
 
 <style scoped lang="scss">
 dialog[open] {
   &:host {
-    scroll-behavior: none;
+    scroll-behavior: unset;
   }
   position: fixed;
   padding: 0;
@@ -103,7 +107,6 @@ dialog[open] {
 
   display: flex;
   flex-direction: column;
-  align-items: space-between;
   gap: 0;
 
   .dialog-header {

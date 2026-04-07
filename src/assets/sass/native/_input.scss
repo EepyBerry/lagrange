@@ -15,10 +15,103 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+// ----------------------------------------------------------------------------
+
 input[type='checkbox'] {
   accent-color: var(--lg-contrast);
   width: 1rem;
 }
+
+// ----------------------------------------------------------------------------
+
+input[type='number'] {
+  text-align: end;
+
+  &:disabled {
+    background: var(--lg-input-disabled);
+    border-color: var(--lg-border-disabled);
+    cursor: not-allowed;
+    color: var(--lg-text-disabled);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 1rem;
+  min-height: 1rem;
+  margin: 0.25rem 0;
+
+  border-radius: 4px;
+  background: var(--lg-input);
+  outline: none;
+
+  &::-webkit-slider-thumb {
+    z-index: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 1.5rem;
+
+    border: 1px solid var(--lg-panel);
+    border-radius: 4px;
+    background: var(--lg-input-contrast-focus);
+    cursor: pointer;
+  }
+  &::-moz-range-thumb {
+    z-index: 1;
+    width: 10px;
+    height: 1.5rem;
+
+    border: 1px solid var(--lg-panel);
+    border-radius: 4px;
+    background: var(--lg-input-contrast-focus);
+    cursor: pointer;
+  }
+
+  &:focus {
+    background: var(--lg-input-focus);
+  }
+  &:focus::-webkit-slider-thumb {
+    background: var(--lg-input-contrast-focus);
+    border: 1px solid var(--lg-text);
+  }
+  &:focus::-moz-range-thumb {
+    background: var(--lg-input-contrast-focus);
+    border: 1px solid var(--lg-text);
+  }
+
+  &:disabled {
+    background: var(--lg-input-disabled);
+    border-color: var(--lg-border-disabled);
+    cursor: not-allowed;
+
+    &::-webkit-slider-thumb {
+      background: var(--lg-button-disabled);
+      cursor: not-allowed;
+    }
+    &::-moz-range-thumb {
+      background: var(--lg-button-disabled);
+      cursor: not-allowed;
+    }
+    &:focus {
+      background: var(--lg-button-disabled);
+      cursor: not-allowed;
+    }
+    &:focus::-moz-range-thumb {
+      background: var(--lg-button-disabled);
+      cursor: not-allowed;
+    }
+    &:focus::-webkit-slider-thumb {
+      background: var(--lg-button-disabled);
+      cursor: not-allowed;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
 
 @media screen and (max-width: 767px) {
   input[type='checkbox'] {

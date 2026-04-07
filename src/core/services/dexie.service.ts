@@ -1,59 +1,70 @@
-import { idb, KeyBindingAction, type IDBSettings } from '@/dexie.config';
-import { prefersReducedMotion } from '../utils/utils';
+import { idb, KeyBindingAction, type IDBSettings, type IDBKeyBinding } from '@/dexie.config';
 import { I18N_SUPPORTED_LANGS } from '@/i18n.config';
+import { prefersReducedMotion } from '../utils/utils';
 
-export async function initDefaultSettings(): Promise<void> {
-  idb.settings.put({
+export async function initSettings(): Promise<IDBSettings> {
+  const settings = await idb.settings.limit(1).first();
+  await idb.settings.upsert(1, {
     // general
-    theme: 'default',
-    locale: navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US',
-    font: 'default',
-    showInitDialog: true,
+    theme: settings?.theme ?? 'default',
+    locale: settings?.locale ?? (navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US'),
+    font: settings?.font ?? 'default',
+    showInitDialog: settings?.showInitDialog ?? true,
     // rendering
-    renderingBackend: 'webgl',
-    bakingResolution: 2048,
-    bakingPixelize: false,
+    renderingBackend: settings?.renderingBackend ?? 'webgl',
+    // editor
+    cameraMouseControlsScheme: settings?.cameraMouseControlsScheme ?? 'standard',
+    cameraFOV: settings?.cameraFOV ?? 50,
+    skybox: settings?.skybox ?? 'deepspace',
+    // baking
+    bakingResolution: settings?.bakingResolution ?? 2048,
+    bakingPixelize: settings?.bakingPixelize ?? false,
     // accessibility
-    enableEffects: !prefersReducedMotion(),
-    enableAnimations: !prefersReducedMotion(),
+    enableEffects: settings?.enableEffects ?? !prefersReducedMotion(),
+    enableAnimations: settings?.enableAnimations ?? !prefersReducedMotion(),
     // extras
-    extrasCRTEffect: false,
-    extrasHologramEffect: false,
-    extrasMetalSlugMode: false,
-    extrasShowSpecialDays: true,
+    extrasCRTEffect: settings?.extrasCRTEffect ?? false,
+    extrasHologramEffect: settings?.extrasHologramEffect ?? false,
+    extrasMetalSlugMode: settings?.extrasMetalSlugMode ?? false,
+    extrasShowSpecialDays: settings?.extrasShowSpecialDays ?? true,
   });
+  return (await idb.settings.limit(1).first()) as IDBSettings;
 }
 
-export async function addDefaultKeyBindings(): Promise<void> {
-  idb.keyBindings.bulkPut([
-    { action: KeyBindingAction.ToggleLensFlare, key: 'L' },
-    { action: KeyBindingAction.ToggleBiomes, key: 'B' },
-    { action: KeyBindingAction.ToggleClouds, key: 'C' },
-    { action: KeyBindingAction.ToggleAtmosphere, key: 'A' },
-    { action: KeyBindingAction.TakeScreenshot, key: 'X' },
-  ]);
-}
-
-export async function injectMissingSettings(settings: IDBSettings): Promise<void> {
-  idb.settings.update(settings.id, {
-    // general
-    theme: settings.theme ?? 'default',
-    locale: settings.locale ?? (navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US'),
-    font: settings.font ?? 'default',
-    showInitDialog: settings.showInitDialog ?? true,
-    // rendering
-    renderingBackend: settings.renderingBackend ?? 'webgl',
-    bakingResolution: settings.bakingResolution ?? 2048,
-    bakingPixelize: settings.bakingPixelize ?? false,
-    // accessibility
-    enableEffects: settings.enableEffects ?? !prefersReducedMotion(),
-    enableAnimations: settings.enableAnimations ?? !prefersReducedMotion(),
-    // extras
-    extrasCRTEffect: settings.extrasCRTEffect ?? false,
-    extrasHologramEffect: settings.extrasHologramEffect ?? false,
-    extrasMetalSlugMode: settings.extrasMetalSlugMode ?? false,
-    extrasShowSpecialDays: settings.extrasShowSpecialDays ?? true,
+export async function initKeyBindings(): Promise<IDBKeyBinding[]> {
+  const keybinds = await idb.keyBindings.toArray();
+  await idb.keyBindings.upsert(1, {
+    action: KeyBindingAction.ToggleLensFlare,
+    key: tryGetKeyFromBinding(keybinds, 1) ?? 'L',
   });
+  await idb.keyBindings.upsert(2, {
+    action: KeyBindingAction.ToggleBiomes,
+    key: tryGetKeyFromBinding(keybinds, 2) ?? 'B',
+  });
+  await idb.keyBindings.upsert(3, {
+    action: KeyBindingAction.ToggleClouds,
+    key: tryGetKeyFromBinding(keybinds, 3) ?? 'C',
+  });
+  await idb.keyBindings.upsert(4, {
+    action: KeyBindingAction.ToggleAtmosphere,
+    key: tryGetKeyFromBinding(keybinds, 4) ?? 'A',
+  });
+  await idb.keyBindings.upsert(5, {
+    action: KeyBindingAction.TakeScreenshot,
+    key: tryGetKeyFromBinding(keybinds, 5) ?? 'X',
+  });
+  await idb.keyBindings.upsert(6, {
+    action: KeyBindingAction.StepDollyIn,
+    key: tryGetKeyFromBinding(keybinds, 6) ?? '+',
+  });
+  await idb.keyBindings.upsert(7, {
+    action: KeyBindingAction.StepDollyOut,
+    key: tryGetKeyFromBinding(keybinds, 7) ?? '-',
+  });
+  return idb.keyBindings.toArray();
+}
+function tryGetKeyFromBinding(keybinds: IDBKeyBinding[], id: number): string | undefined {
+  return keybinds.find((keybind) => keybind.id === id)?.key;
 }
 
 export async function setRenderingBackendFallback() {
@@ -71,8 +82,10 @@ export async function clearData(): Promise<void> {
     locale: navigator.language in I18N_SUPPORTED_LANGS ? navigator.language : 'en-US',
     font: 'default',
     showInitDialog: true,
-    // baking
+    // rendering
     renderingBackend: 'webgl',
+    skybox: 'deepspace',
+    // baking
     bakingResolution: 2048,
     bakingPixelize: false,
     // accessibility
@@ -84,7 +97,7 @@ export async function clearData(): Promise<void> {
     extrasMetalSlugMode: false,
   });
   await idb.keyBindings.clear();
-  await addDefaultKeyBindings();
+  await initKeyBindings();
   await idb.planets.clear();
 }
 
@@ -102,8 +115,11 @@ export async function initStoragePersistence() {
         console.warn('<Lagrange> Storage not persisted, user should be prompted first');
         break;
     }
-  } catch (_error) {
-    console.error('<Lagrange> Failed to persist storage despite granted permission, continuing in best-effort mode.');
+  } catch (error) {
+    console.error(
+      '<Lagrange> Failed to persist storage despite granted permission, continuing in best-effort mode.',
+      error,
+    );
   }
 }
 
@@ -116,14 +132,14 @@ export async function initStoragePersistence() {
       or if it was already persisted.
 */
 export async function tryPersistWithoutPromptingUser(): Promise<string> {
-  if (!navigator.storage || !navigator.storage.persisted) {
+  if (!navigator.storage?.persisted) {
     return 'never';
   }
   let persisted = await navigator.storage.persisted();
   if (persisted) {
     return 'persisted';
   }
-  if (!navigator.permissions || !navigator.permissions.query) {
+  if (!navigator.permissions?.query) {
     return 'prompt'; // It MAY be successful to prompt. Don't know.
   }
   const permission = await navigator.permissions.query({

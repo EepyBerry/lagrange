@@ -27,12 +27,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
-import AppAboutDialog from '@components/global/dialogs/AboutDialog.vue';
-import AppSettingsDialog from '@components/global/dialogs/SettingsDialog.vue';
 import ExtraSpecialDayElement from '@components/global/extras/ExtraSpecialDayElement.vue';
+import { defineAsyncComponent, ref, type Ref } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 import LgvLink from '@/_lib/components/LgvLink.vue';
+
+const AppAboutDialog = defineAsyncComponent(() => import('@components/global/dialogs/AboutDialog.vue'));
+const AppSettingsDialog = defineAsyncComponent(() => import('@components/global/dialogs/SettingsDialog.vue'));
 
 const infoDialog: Ref<{ open: () => void } | null> = ref(null);
 const settingsDialog: Ref<{ open: () => void } | null> = ref(null);
@@ -40,7 +41,7 @@ const settingsDialog: Ref<{ open: () => void } | null> = ref(null);
 
 <style scoped lang="scss">
 hr {
-  margin: 0.5rem 0;
+  margin: 0 0 0.5rem;
   width: 50%;
   align-self: center;
 }
@@ -58,8 +59,5 @@ hr {
 }
 .filler {
   flex: 1;
-}
-hr {
-  margin-top: 0;
 }
 </style>

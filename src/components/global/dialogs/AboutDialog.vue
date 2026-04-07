@@ -9,7 +9,7 @@
         <div class="about-text">
           <p class="highlight">{{ $t('dialog.about.description') }}</p>
           <p>{{ $t('dialog.about.motivation') }}</p>
-          <hr width="100%" />
+          <hr />
           <p>{{ $t('dialog.about.tech') }}:</p>
         </div>
         <div class="about-tech">
@@ -77,6 +77,9 @@
                   <li style="margin-top: 0.5rem" starred>{{ $t('dialog.about.changelogs.051_emissivity') }}</li>
                   <li>{{ $t('dialog.about.changelogs.051_atmosphere') }}</li>
                   <li>{{ $t('dialog.about.changelogs.051_ui') }}</li>
+                  <li starred>{{ $t('dialog.about.changelogs.052_postprocessing') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.052_skyboxes') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.052_controls') }}</li>
                 </ul>
               </template>
             </CollapsibleSection>
@@ -112,23 +115,24 @@
           </p>
         </div>
       </div>
-      <span id="app-version">{{ version }}</span>
+      <span id="app-version">{{ appVersion }}</span>
     </template>
   </DialogElement>
 </template>
 
 <script setup lang="ts">
+import type { AboutDialogExposes } from '@components/global/dialogs/AboutDialog.types.ts';
+import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import AppLogo from '@components/global/elements/AppLogo.vue';
-import DialogElement from '@components/global/elements/DialogElement.vue';
-import LgvChip from '@/_lib/components/LgvChip.vue';
-import { onMounted, ref, type Ref } from 'vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
+import DialogElement from '@components/global/elements/DialogElement.vue';
+import { useTemplateRef } from 'vue';
+import LgvChip from '@/_lib/components/LgvChip.vue';
 
-const version = ref('UNKNOWN_VERSION');
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
-defineExpose({ open: () => dialogRef.value?.open(), close: () => dialogRef.value?.close() });
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+defineExpose<AboutDialogExposes>({ open: () => dialogRef.value?.open!(), close: () => dialogRef.value?.close!() });
 
-onMounted(() => (version.value = import.meta.env.APP_VERSION));
+const appVersion = import.meta.env.APP_VERSION;
 </script>
 
 <style scoped lang="scss">
@@ -158,6 +162,7 @@ onMounted(() => (version.value = import.meta.env.APP_VERSION));
       font-size: 1rem;
       hr {
         margin: 1rem 0;
+        width: 100%;
       }
     }
     .about-tech {

@@ -28,9 +28,13 @@
   </DialogElement>
 </template>
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
+import type { ExportProgressDialogExposes } from '@components/editor/dialogs/ExportProgressDialog.types.ts';
+import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import DialogElement from '@components/global/elements/DialogElement.vue';
-const dialogRef: Ref<{ open: () => void; close: () => void } | null> = ref(null);
+import { ref, type Ref, useTemplateRef } from 'vue';
+
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+defineExpose<ExportProgressDialogExposes>({ open, setProgress, setError });
 
 const bakingSteps = 8;
 const _progressStep: Ref<number> = ref(1);
@@ -56,9 +60,6 @@ function setError(value: unknown) {
     _progressError.value = value;
   }
 }
-
-defineEmits(['close']);
-defineExpose({ open, setProgress, setError });
 </script>
 <style scoped lang="scss">
 #dialog-exportprogress {

@@ -5,7 +5,7 @@
     :show-title="true"
     :closeable="true"
     :aria-label="$t('a11y.dialog_settings')"
-    style="height: 80%"
+    @close="handleClose()"
   >
     <template #title>
       <iconify-icon icon="mingcute:settings-3-line" width="1.5rem" aria-hidden="true" />
@@ -67,7 +67,7 @@
                     {{ $t('dialog.settings.general_theme_supernova') }}
                   </ParameterRadioOption>
                   <ParameterRadioOption
-                    :id="'1'"
+                    :id="'2'"
                     v-model="appSettings.theme"
                     name="theme-select"
                     value="voyager"
@@ -98,6 +98,46 @@
           <template #content>
             <div class="settings-editor">
               <ParameterGrid>
+                <ParameterSlider
+                  id="settings-fov"
+                  :modelValue="appSettings.cameraFOV"
+                  @update:modelValue="
+                    appSettings.cameraFOV = $event as number;
+                    setCameraFOV($event as number);
+                  "
+                  :min="30"
+                  :max="90"
+                >
+                  {{ $t('dialog.settings.editor_fov') }}
+                </ParameterSlider>
+                <ParameterSelect
+                  :id="'skybox'"
+                  :modelValue="appSettings.skybox"
+                  @update:modelValue="
+                    appSettings.skybox = $event as SkyboxName;
+                    swapEditorSkybox();
+                  "
+                >
+                  {{ $t('dialog.settings.editor_skybox') }}:
+                  <template #options>
+                    <option value="deepspace">{{ $t('dialog.settings.editor_skybox_deepspace') }}</option>
+                    <option value="crimsonquadrant">{{ $t('dialog.settings.editor_skybox_crimsonquadrant') }}</option>
+                    <option value="embergreenexpanse">
+                      {{ $t('dialog.settings.editor_skybox_embergreenexpanse') }}
+                    </option>
+                    <option value="shiningstars">{{ $t('dialog.settings.editor_skybox_shiningstars') }}</option>
+                    <option value="jadenebula">
+                      {{ $t('dialog.settings.editor_skybox_jadenebula') }}
+                    </option>
+                    <option value="edgeoftheuniverse">
+                      {{ $t('dialog.settings.editor_skybox_edgeoftheuniverse') }}
+                    </option>
+                    <option value="chromakey">
+                      {{ $t('dialog.settings.editor_skybox_chromakey') }}
+                    </option>
+                  </template>
+                </ParameterSelect>
+                <ParameterDivider bordered />
                 <ParameterRadio>
                   <!-- eslint-disable-next-line vue/no-v-html -->
                   <template #title><span v-html="$t('dialog.settings.editor_rendering_backend')"></span>:</template>
@@ -135,7 +175,7 @@
                 <LgvNotification v-if="!WebGPU.isAvailable()" type="warn">
                   {{ $t('dialog.settings.editor_rendering_backend_webgpu_unavailable') }}
                 </LgvNotification>
-                <ParameterDivider />
+                <ParameterDivider bordered />
                 <ParameterRadio>
                   <template #title> {{ $t('dialog.settings.editor_baking_resolution') }}: </template>
                   <template #options>
@@ -189,49 +229,88 @@
                 >
                   {{ $t('dialog.settings.editor_baking_pixelize') }}:
                 </ParameterCheckbox>
-                <ParameterDivider />
-                <ParameterKeyBinding
-                  icon="mingcute:sun-line"
-                  :key-bind="getKeyBind('toggle-lens-flare')"
-                  :selected="selectedAction === 'toggle-lens-flare'"
-                  @toggle="toggleAction('toggle-lens-flare')"
-                >
-                  {{ $t('dialog.settings.editor_lensflare') }}
-                </ParameterKeyBinding>
-                <ParameterKeyBinding
-                  icon="mingcute:mountain-2-line"
-                  :key-bind="getKeyBind('toggle-biomes')"
-                  :selected="selectedAction === 'toggle-biomes'"
-                  @toggle="toggleAction('toggle-biomes')"
-                >
-                  {{ $t('dialog.settings.editor_biomes') }}
-                </ParameterKeyBinding>
-                <ParameterKeyBinding
-                  icon="mingcute:clouds-line"
-                  :key-bind="getKeyBind('toggle-clouds')"
-                  :selected="selectedAction === 'toggle-clouds'"
-                  @toggle="toggleAction('toggle-clouds')"
-                >
-                  {{ $t('dialog.settings.editor_clouds') }}
-                </ParameterKeyBinding>
-                <ParameterKeyBinding
-                  icon="material-symbols:line-curve-rounded"
-                  :key-bind="getKeyBind('toggle-atmosphere')"
-                  :selected="selectedAction === 'toggle-atmosphere'"
-                  @toggle="toggleAction('toggle-atmosphere')"
-                >
-                  {{ $t('dialog.settings.editor_atmosphere') }}
-                </ParameterKeyBinding>
-                <ParameterKeyBinding
-                  icon="mingcute:screenshot-line"
-                  :key-bind="getKeyBind('take-screenshot')"
-                  :selected="selectedAction === 'take-screenshot'"
-                  @toggle="toggleAction('take-screenshot')"
-                >
-                  {{ $t('dialog.settings.editor_screenshot') }}
-                </ParameterKeyBinding>
               </ParameterGrid>
             </div>
+          </template>
+        </CollapsibleSection>
+
+        <CollapsibleSection icon="mingcute:hotkey-line" class="section-keybinds">
+          <template #title>
+            {{ $t('dialog.settings.keybinds') }}
+          </template>
+          <template #content>
+            <ParameterGrid>
+              <ParameterCheckbox
+                id="settings-camera-mouse-controls"
+                true-value="inverted"
+                false-value="standard"
+                :modelValue="appSettings.cameraMouseControlsScheme"
+                @update:modelValue="
+                  appSettings.cameraMouseControlsScheme = $event as CameraMouseControlsScheme;
+                  updateCameraMouseControlsScheme();
+                "
+              >
+                {{ $t('dialog.settings.keybinds_cameramousecontrols') }}:
+              </ParameterCheckbox>
+              <ParameterDivider bordered />
+              <ParameterKeyBinding
+                icon="mingcute:zoom-in-line"
+                :key-bind="getKeyBind(KeyBindingAction.StepDollyIn)"
+                :selected="selectedAction === KeyBindingAction.StepDollyIn"
+                @toggle="toggleAction(KeyBindingAction.StepDollyIn)"
+              >
+                {{ $t('dialog.settings.keybinds_stepdollyin') }}
+              </ParameterKeyBinding>
+              <ParameterKeyBinding
+                icon="mingcute:zoom-out-line"
+                :key-bind="getKeyBind(KeyBindingAction.StepDollyOut)"
+                :selected="selectedAction === KeyBindingAction.StepDollyOut"
+                @toggle="toggleAction(KeyBindingAction.StepDollyOut)"
+              >
+                {{ $t('dialog.settings.keybinds_stepdollyout') }}
+              </ParameterKeyBinding>
+              <ParameterDivider bordered />
+              <ParameterKeyBinding
+                icon="mingcute:sun-line"
+                :key-bind="getKeyBind(KeyBindingAction.ToggleLensFlare)"
+                :selected="selectedAction === KeyBindingAction.ToggleLensFlare"
+                @toggle="toggleAction(KeyBindingAction.ToggleLensFlare)"
+              >
+                {{ $t('dialog.settings.keybinds_lensflare') }}
+              </ParameterKeyBinding>
+              <ParameterKeyBinding
+                icon="mingcute:mountain-2-line"
+                :key-bind="getKeyBind(KeyBindingAction.ToggleBiomes)"
+                :selected="selectedAction === KeyBindingAction.ToggleBiomes"
+                @toggle="toggleAction(KeyBindingAction.ToggleBiomes)"
+              >
+                {{ $t('dialog.settings.keybinds_biomes') }}
+              </ParameterKeyBinding>
+              <ParameterKeyBinding
+                icon="mingcute:clouds-line"
+                :key-bind="getKeyBind(KeyBindingAction.ToggleClouds)"
+                :selected="selectedAction === KeyBindingAction.ToggleClouds"
+                @toggle="toggleAction(KeyBindingAction.ToggleClouds)"
+              >
+                {{ $t('dialog.settings.keybinds_clouds') }}
+              </ParameterKeyBinding>
+              <ParameterKeyBinding
+                icon="material-symbols:line-curve-rounded"
+                :key-bind="getKeyBind(KeyBindingAction.ToggleAtmosphere)"
+                :selected="selectedAction === KeyBindingAction.ToggleAtmosphere"
+                @toggle="toggleAction(KeyBindingAction.ToggleAtmosphere)"
+              >
+                {{ $t('dialog.settings.keybinds_atmosphere') }}
+              </ParameterKeyBinding>
+              <ParameterKeyBinding
+                icon="mingcute:screenshot-line"
+                :key-bind="getKeyBind(KeyBindingAction.TakeScreenshot)"
+                :selected="selectedAction === KeyBindingAction.TakeScreenshot"
+                @toggle="toggleAction(KeyBindingAction.TakeScreenshot)"
+              >
+                {{ $t('dialog.settings.keybinds_screenshot') }}
+              </ParameterKeyBinding>
+            </ParameterGrid>
           </template>
         </CollapsibleSection>
 
@@ -338,7 +417,7 @@
                 <LgvButton
                   class="sm"
                   icon="mingcute:download-line"
-                  :disabled="!!persistStorage || failedToPersist"
+                  :disabled="persistStorage || failedToPersist"
                   @click="tryPersistStorage"
                 >
                   {{
@@ -363,7 +442,6 @@
                 >
                   {{ $t('dialog.settings.advanced_clear_data') }}
                 </LgvButton>
-                <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
               </ParameterGrid>
             </div>
           </template>
@@ -371,26 +449,24 @@
       </div>
     </template>
   </DialogElement>
+  <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
 </template>
 
 <script setup lang="ts">
-import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config';
-import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import type { ClearDataConfirmDialogExposes } from '@components/global/dialogs/ClearDataConfirmDialog.types.ts';
+import type { SettingsDialogExposes } from '@components/global/dialogs/SettingsDialog.types.ts';
+import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
+import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
-import ParameterGrid from '@components/global/parameters/ParameterGrid.vue';
+import ParameterCategory from '@components/global/parameters/ParameterCategory.vue';
 import ParameterCheckbox from '@components/global/parameters/ParameterCheckbox.vue';
-import ParameterRadio from '@components/global/parameters/ParameterRadio.vue';
 import ParameterDivider from '@components/global/parameters/ParameterDivider.vue';
+import ParameterGrid from '@components/global/parameters/ParameterGrid.vue';
+import ParameterKeyBinding from '@components/global/parameters/ParameterKeyBinding.vue';
+import ParameterRadio from '@components/global/parameters/ParameterRadio.vue';
 import ParameterRadioOption from '@components/global/parameters/ParameterRadioOption.vue';
 import ParameterSelect from '@components/global/parameters/ParameterSelect.vue';
-import { useI18n } from 'vue-i18n';
-import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
-import { mapLocale } from '@core/utils/utils';
-import ParameterKeyBinding from '@components/global/parameters/ParameterKeyBinding.vue';
-import LgvNotification from '@/_lib/components/LgvNotification.vue';
-import ParameterCategory from '@components/global/parameters/ParameterCategory.vue';
-import AppClearDataConfirmDialog from '@components/codex/dialogs/ClearDataConfirmDialog.vue';
-import * as DexieService from '@/core/services/dexie.service';
+import ParameterSlider from '@components/global/parameters/ParameterSlider.vue';
 import { EventBus } from '@core/event-bus';
 import {
   EXTRAS_CAT_MODE,
@@ -399,22 +475,37 @@ import {
   EXTRAS_METAL_SLUG_MODE,
   EXTRAS_SPECIAL_DAYS,
 } from '@core/extras';
-import { saveAs } from 'file-saver';
 import { readFileSettings } from '@core/helpers/import.helper';
-import WebGPU from '@/core/capabilities/WebGPU';
+import { mapLocale } from '@core/utils/utils';
+import { saveAs } from 'file-saver';
+import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvNotification from '@/_lib/components/LgvNotification.vue';
+import WebGPU from '@/core/capabilities/WebGPU';
+import * as DexieService from '@/core/services/dexie.service';
+import { setCameraControlScheme, setCameraFOV, swapSceneSkybox } from '@/core/services/editor.service';
+import {
+  type CameraMouseControlsScheme,
+  idb,
+  type IDBKeyBinding,
+  type IDBSettings,
+  KeyBindingAction,
+  type SkyboxName,
+} from '@/dexie.config';
+
+const AppClearDataConfirmDialog = defineAsyncComponent(
+  () => import('@components/global/dialogs/ClearDataConfirmDialog.vue'),
+);
 
 const i18n = useI18n();
 const catModeOverride = ref('en-UwU');
 
-const dialogRef = useTemplateRef<{
-  open: () => void;
-  close: () => void;
-  ignoreNativeEvents: (v: boolean) => void;
-  isOpen: boolean;
-} | null>('dialogRef');
+const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+const confirmDialogRef = useTemplateRef<ClearDataConfirmDialogExposes>('confirmDialogRef');
+defineExpose<SettingsDialogExposes>({ open });
+
 const fileInput = useTemplateRef('fileInput');
-const confirmDialogRef = useTemplateRef<{ open: () => void; close: () => void } | null>('confirmDialogRef');
 const appSettings: Ref<IDBSettings> = ref({
   id: 0,
   locale: 'en-US',
@@ -422,6 +513,9 @@ const appSettings: Ref<IDBSettings> = ref({
   font: '',
   showInitDialog: true,
   renderingBackend: 'webgl',
+  cameraFOV: 50,
+  skybox: 'deepspace',
+  cameraMouseControlsScheme: 'standard',
   bakingResolution: 2048,
   bakingPixelize: false,
   enableAnimations: true,
@@ -438,37 +532,29 @@ const keyBinds: Ref<IDBKeyBinding[]> = ref([]);
 
 let dataLoaded = false;
 
-defineExpose({
-  open: async () => {
-    if (!dataLoaded) {
-      await loadData();
-      dataLoaded = true;
-    }
-    dialogRef.value?.open();
-  },
-});
-
 onMounted(async () => {
   if (navigator.storage) {
     persistStorage.value = await navigator.storage.persisted();
   }
 });
+watch(() => appSettings.value, updateSettings, { deep: true });
 
-watch(
-  [() => appSettings.value, () => dialogRef.value?.isOpen],
-  ([_, isDialogOpen]) => {
-    if (!dataLoaded) {
-      return;
-    }
-    updateSettings();
-    if (!isDialogOpen && selectedAction.value) {
-      const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value);
-      keyBinds.value[kbidx].key = '[unset]';
-      toggleAction(selectedAction.value);
-    }
-  },
-  { deep: true },
-);
+async function open() {
+  dialogRef.value?.open();
+  if (!dataLoaded) {
+    await loadData();
+    dataLoaded = true;
+  }
+}
+function handleClose() {
+  if (selectedAction.value) {
+    const kbIdx = keyBinds.value.findIndex((k) => k.action === selectedAction.value);
+    keyBinds.value[kbIdx].key = '[unset]';
+    toggleAction(selectedAction.value);
+  }
+}
+
+// ------------------------------------------------------------------------------------------------
 
 async function loadData() {
   const settings = await idb.settings.limit(1).first();
@@ -489,14 +575,13 @@ async function importData(event: Event) {
   appSettings.value = data.settings!;
   keyBinds.value.splice(0);
   keyBinds.value.push(...data.keyBindings);
-  updateSettings();
-  EventBus.sendToastEvent('success', 'toast.settings_import_success', 5000);
+  await updateSettings().then(() => EventBus.sendToastEvent('success', 'toast.settings_import_success', 5000));
 }
 
 async function exportData() {
   const settings = await idb.settings.limit(1).first();
   const keyBindings = await idb.keyBindings.toArray();
-  saveAs(new Blob([JSON.stringify({ settings, keyBindings }, null, 2)]), 'lagrange_data.json');
+  saveAs(new Blob([JSON.stringify({ settings, keyBindings }, null, 2)]), 'lagrange_settings.json');
 }
 
 async function clearAllData() {
@@ -507,13 +592,13 @@ async function clearAllData() {
 
 function toggleAction(action: string): void {
   if (selectedAction.value === action) {
-    window.removeEventListener('keydown', setSelectedActionKey);
+    globalThis.removeEventListener('keydown', setSelectedActionKey);
     dialogRef.value?.ignoreNativeEvents(false);
     selectedAction.value = null;
   } else {
     selectedAction.value = action;
     dialogRef.value?.ignoreNativeEvents(true);
-    window.addEventListener('keydown', setSelectedActionKey);
+    globalThis.addEventListener('keydown', setSelectedActionKey);
   }
 }
 
@@ -521,29 +606,18 @@ async function updateSettings() {
   if (!EXTRAS_CAT_MODE.value) {
     i18n.locale.value = appSettings.value!.locale;
   }
-  document.documentElement.setAttribute('data-theme', appSettings.value!.theme);
-  document.documentElement.setAttribute('data-font', appSettings.value!.font);
-  document.documentElement.setAttribute('data-effects', appSettings.value!.enableEffects ? 'on' : 'off');
-  document.documentElement.setAttribute('data-animations', appSettings.value!.enableAnimations ? 'on' : 'off');
+  document.documentElement.dataset.theme = appSettings.value!.theme;
+  document.documentElement.dataset.font = appSettings.value!.font;
+  document.documentElement.dataset.effects = appSettings.value!.enableEffects ? 'on' : 'off';
+  document.documentElement.dataset.animations = appSettings.value!.enableAnimations ? 'on' : 'off';
   EXTRAS_CRT_EFFECT.value = appSettings.value!.extrasCRTEffect!;
   EXTRAS_HOLOGRAM_EFFECT.value = appSettings.value!.extrasHologramEffect!;
   EXTRAS_METAL_SLUG_MODE.value = appSettings.value!.extrasMetalSlugMode!;
   EXTRAS_SPECIAL_DAYS.value = appSettings.value!.extrasShowSpecialDays!;
 
   await idb.settings.update(appSettings.value!.id, {
+    ...appSettings.value!,
     locale: mapLocale(appSettings.value!.locale),
-    theme: appSettings.value!.theme,
-    font: appSettings.value!.font,
-    showInitDialog: appSettings.value!.showInitDialog,
-    renderingBackend: appSettings.value!.renderingBackend,
-    bakingResolution: appSettings.value!.bakingResolution,
-    bakingPixelize: appSettings.value!.bakingPixelize,
-    enableEffects: appSettings.value!.enableEffects,
-    enableAnimations: appSettings.value!.enableAnimations,
-    extrasCRTEffect: appSettings.value!.extrasCRTEffect,
-    extrasHologramEffect: appSettings.value!.extrasHologramEffect,
-    extrasMetalSlugMode: appSettings.value!.extrasMetalSlugMode,
-    extrasShowSpecialDays: appSettings.value!.extrasShowSpecialDays,
   });
 }
 
@@ -554,6 +628,13 @@ async function tryPersistStorage() {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+function swapEditorSkybox() {
+  swapSceneSkybox(appSettings.value!.skybox);
+}
+function updateCameraMouseControlsScheme() {
+  setCameraControlScheme(appSettings.value!.cameraMouseControlsScheme as CameraMouseControlsScheme);
+}
 
 async function setSelectedActionKey(event: KeyboardEvent) {
   const kbidx = keyBinds.value.findIndex((k) => k.action === selectedAction.value);
@@ -586,6 +667,7 @@ function getKeyBind(action: string) {
 #dialog-settings {
   min-width: 36rem;
   max-width: 36rem;
+  height: 80%;
   .settings-grid {
     display: flex;
     flex-direction: column;

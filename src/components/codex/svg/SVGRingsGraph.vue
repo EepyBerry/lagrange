@@ -1,10 +1,5 @@
 <template>
-  <svg
-    id="svggraph-rings"
-    :viewBox="`${svgRect.x} ${svgRect.y} ${svgRect.w} ${svgRect.h}`"
-    role="figure"
-    :title="$t('dialog.planetinfo.rings')"
-  >
+  <svg id="svggraph-rings" :viewBox="`${svgRect.x} ${svgRect.y} ${svgRect.w} ${svgRect.h}`" role="figure">
     <defs>
       <marker
         id="svggraph-rings-grad"
@@ -22,7 +17,7 @@
     </defs>
     <svg :x="graphRect.x" :y="graphRect.y" :width="graphRect.w" :height="graphRect.h">
       <g id="svggraph-rings-planet">
-        <circle cx="0" cy="90" :r="(props.planetRadius * 460.0) / 5.0" fill="none" stroke="white" stroke-width="2" />
+        <circle cx="0" cy="90" :r="(props.planetRadius * 460) / 5" fill="none" stroke="white" stroke-width="2" />
         <path
           :d="makeSVGLinearPath([0, 90], [460, 90], 4)"
           stroke="white"
@@ -34,9 +29,9 @@
         <line x1="1" y1="86" x2="1" y2="94" stroke="white" stroke-width="2" />
         <line x1="0" y1="90" x2="5" y2="90" stroke="white" stroke-width="2" />
         <line
-          :x1="(props.planetRadius * 460.0) / 5.0 - 3"
+          :x1="(props.planetRadius * 460) / 5 - 3"
           y1="90"
-          :x2="(props.planetRadius * 460.0) / 5.0 + 3"
+          :x2="(props.planetRadius * 460) / 5 + 3"
           y2="90"
           stroke="white"
           stroke-width="2"
@@ -44,7 +39,7 @@
 
         <text x="5" y="84" text-anchor="start" font-style="italic" font-size="10" fill="white">c</text>
         <text
-          :x="(props.planetRadius * 460.0) / 5.0 + 5"
+          :x="(props.planetRadius * 460) / 5.0 + 5"
           y="84"
           text-anchor="start"
           font-style="italic"
@@ -85,10 +80,10 @@
   </svg>
 </template>
 <script setup lang="ts">
-import type { RingParameters } from '@/core/models/ring-parameters.model';
-import { makeSVGLinearPath } from '@/core/utils/svg-utils';
+import type { RingParameters } from '@core/models/planet/ring-parameters.model.ts';
 import Rect from '@core/utils/math/rect';
 import { onMounted, ref, type Ref } from 'vue';
+import { makeSVGLinearPath } from '@/core/utils/svg-utils';
 
 const width = 480,
   height = 200;
@@ -104,7 +99,7 @@ onMounted(() => {
     .forEach((r) =>
       ringData.value.push({
         id: r.id,
-        center: (r.innerRadius + r.outerRadius) / 2.0,
+        center: (r.innerRadius + r.outerRadius) / 2,
         width: r.outerRadius - r.innerRadius,
       }),
     );

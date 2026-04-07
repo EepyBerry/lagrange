@@ -1,6 +1,10 @@
+import type { BiomeParameters } from '@core/models/planet/biome-parameters.model.ts';
+import type { AtmosphereUniforms } from '@core/tsl/materials/atmosphere.tslmat';
+import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat';
+import type { PlanetUniforms } from '@core/tsl/materials/planet.tslmat';
+import type { RingUniforms } from '@core/tsl/materials/ring.tslmat';
 import type {
   AmbientLight,
-  Clock,
   DataTexture,
   DirectionalLight,
   Group,
@@ -8,46 +12,24 @@ import type {
   PerspectiveCamera,
   Scene,
   Texture,
+  Timer,
 } from 'three';
-import type { LensFlareEffect } from './effects/lens-flare.effect';
+import type { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import type { WebGPURenderer } from 'three/webgpu';
-import type { PlanetUniforms } from '@core/tsl/materials/planet.tslmat';
-import type { AtmosphereUniforms } from '@core/tsl/materials/atmosphere.tslmat';
-import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat';
-import type { RingUniforms } from '@core/tsl/materials/ring.tslmat';
-import type { LensFlareUniforms } from '@core/tsl/materials/lens-flare.tslmat';
+import TSLRenderPipeline from '@core/tsl/rendering/render-pipeline.ts';
+import type { LensFlareEffect } from './effects/lens-flare.effect';
 import type { LayeredDataTexture } from './utils/texture/layered-data-texture';
-import type { BiomeParameters } from './models/biome-parameters.model';
 
 // ---------------------------------- Editor types ----------------------------------
 export type EditorMessageLevel = 'success' | 'info' | 'warn' | 'wip';
-export enum EditorSceneCreationMode {
-  EDITOR,
-  PREVIEW,
-}
-export enum EditorBackendType {
-  WEBGL,
-  WEBGPU,
-}
-export enum EditorState {
-  INITIALIZATION = 'INITIALIZATION',
-  EDITION = 'EDITION',
-  RANDOMIZATION = 'RANDOMIZATION',
-  RESET = 'RESET',
-  PREVIEW_GENERATION = 'PREVIEW_GENERATION',
-  SCENE_DISPOSAL = 'SCENE_DISPOSAL',
-  EXPORT = 'EXPORT',
-  ERROR = 'ERROR',
-}
 
-// ---------------------------------- Shader loader ---------------------------------
-export enum ShaderFileType {
-  CORE,
-  BAKING,
-  FUNCTION,
-}
+export type TEditorSceneCreationMode = (typeof EditorSceneCreationMode)[keyof typeof EditorSceneCreationMode];
+export const EditorSceneCreationMode = {
+  Editor: 'editor',
+  Preview: 'preview',
+} as const;
 
-// ----------------------------------- Editor types ---------------------------------
+// ----------------------------------- Model subtypes ---------------------------------
 export enum PlanetType {
   PLANET,
   MOON,
@@ -87,6 +69,10 @@ export type EditorSceneData = {
   scene: Scene;
   renderer: WebGPURenderer;
   camera: PerspectiveCamera;
+  orbitControls?: OrbitControls;
+
+  // Special components
+  renderPipeline?: TSLRenderPipeline;
 
   // Groups
   planetGroup: Group;
@@ -102,7 +88,7 @@ export type EditorSceneData = {
   lensFlare?: LensFlareEffect;
 
   // Misc
-  clock?: Clock;
+  timer?: Timer;
 };
 
 // ------------------------------------ Mesh data -----------------------------------
@@ -133,10 +119,6 @@ export type RingMeshData = {
 
   buffer: Uint8Array | null;
   texture?: DataTexture;
-};
-export type LensFlareMeshdata = {
-  mesh?: Mesh;
-  uniforms?: LensFlareUniforms;
 };
 
 // ----------------------------------- Baking types ---------------------------------

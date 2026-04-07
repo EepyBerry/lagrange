@@ -55,13 +55,13 @@
 
   --lg-hue-background: linear-gradient(
     to right,
-    #00ffff 0%,
-    #00ff00 17%,
-    #ffff00 33%,
-    #ff0000 50%,
-    #ff00ff 67%,
-    #0000ff 83%,
-    #00ffff 100%
+    #00ffff50 0%,
+    #00ff0050 17%,
+    #ffff0050 33%,
+    #ff000050 50%,
+    #ff00ff50 67%,
+    #0000ff50 83%,
+    #00ffff50 100%
   );
   --lg-logo-update: #453264;
   --lg-update-05-background: linear-gradient(90deg, #453264 0%, #251642 100%);
@@ -118,7 +118,7 @@
   --lg-warn: #b61a4e;
   --lg-warn-hover: #991045;
   --lg-warn-active: #7a0536;
-  --lg-warn-panel: #2e0606;
+  --lg-warn-panel: #2e061d;
 }
 :root[data-theme='voyager'] {
   --lg-primary: repeating-linear-gradient(to bottom, #0c0903, #0c0903 0.375rem, #1a1102 0.5rem);
@@ -171,11 +171,13 @@
 }
 :root[data-font='lowvision'] {
   body * {
-    font-family: Atkinson Hyperlegible;
+    font-family:
+      Atkinson Hyperlegible,
+      serif;
   }
 }
 :root[data-font='dyslexia'] {
   body * {
-    font-family: 'Open-Dyslexic';
+    font-family: 'Open-Dyslexic', serif;
   }
 }

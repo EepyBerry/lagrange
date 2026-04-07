@@ -56,36 +56,39 @@
 </template>
 
 <script setup lang="ts">
-import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue';
+import type { DeleteConfirmDialogExposes } from '@components/codex/dialogs/DeleteConfirmDialog.types.ts';
+import type { PlanetInfoDialogExposes } from '@components/codex/dialogs/PlanetInfoDialog.types.ts';
 import InlineFooter from '@components/global/InlineFooter.vue';
-import AppPlanetInfoDialog from '@components/codex/dialogs/PlanetInfoDialog.vue';
-import AppDeleteConfirmDialog from '@components/codex/dialogs/DeleteConfirmDialog.vue';
-import { idb, type IDBPlanet } from '@/dexie.config';
-import { useHead } from '@unhead/vue';
-import { onMounted, onUnmounted, ref, useTemplateRef, watch, type Ref } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { EventBus } from '@core/event-bus';
-import { SM_WIDTH_THRESHOLD } from '@core/globals';
-import pako from 'pako';
-import { saveAs } from 'file-saver';
-import PlanetData from '@core/models/planet-data.model';
-import JSZip from 'jszip';
-import NewCardElement from '@/components/codex/elements/NewCardElement.vue';
-import { readFileData } from '@core/helpers/import.helper';
-import { nanoid } from 'nanoid';
 import { EXTRAS_METAL_SLUG_MODE, uwuifyPath } from '@core/extras';
-import ViewHeader from '@/components/global/ViewHeader.vue';
+import { SM_WIDTH_THRESHOLD } from '@core/globals';
+import { readFileData } from '@core/helpers/import.helper';
+import PlanetData from '@core/models/planet/planet-data.model.ts';
+import { useHead } from '@unhead/vue';
+import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
+import { nanoid } from 'nanoid';
+import pako from 'pako';
+import { defineAsyncComponent, onMounted, onUnmounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 import LgvLink from '@/_lib/components/LgvLink.vue';
+import NewCardElement from '@/components/codex/elements/NewCardElement.vue';
+import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue';
+import ViewHeader from '@/components/global/ViewHeader.vue';
+import { idb, type IDBPlanet } from '@/dexie.config';
+
+const AppPlanetInfoDialog = defineAsyncComponent(() => import('@components/codex/dialogs/PlanetInfoDialog.vue'));
+const AppDeleteConfirmDialog = defineAsyncComponent(() => import('@components/codex/dialogs/DeleteConfirmDialog.vue'));
+
+const deleteDialogRef = useTemplateRef<DeleteConfirmDialogExposes>('deleteDialogRef');
+const planetInfoDialogRef = useTemplateRef<PlanetInfoDialogExposes>('planetInfoDialogRef');
 
 const planets: Ref<IDBPlanet[]> = ref([]);
-
 const i18n = useI18n();
 const fileInput = useTemplateRef('fileInput');
 const planetCardRefs = useTemplateRef('planetCardRef');
-const planetInfoDialogRef = useTemplateRef('planetInfoDialogRef');
 
-const deleteDialogRef = useTemplateRef('deleteDialogRef');
 const showInlineFooter: Ref<boolean> = ref(false);
 
 useHead({
@@ -175,7 +178,8 @@ async function importPlanetFile(event: Event) {
     } else {
       EventBus.sendToastEvent('warn', 'toast.import_partial', 3000);
     }
-  } catch (_) {
+  } catch (err) {
+    console.warn('<Lagrange> Failed to import all planet files', err);
     EventBus.sendToastEvent('warn', 'toast.import_partial', 3000);
   } finally {
     await loadPlanets();
@@ -196,7 +200,6 @@ async function exportPlanets() {
 }
 
 function exportPlanet(planet: IDBPlanet) {
-  planet.data.changedProps.splice(0);
   const jsonParams = JSON.stringify(planet);
   const gzipParams = pako.deflate(jsonParams);
   const planetFilename = planet.data.planetName.replaceAll(' ', '_');
@@ -218,7 +221,8 @@ async function deleteTargetedPlanet(id: string) {
     try {
       await idb.planets.delete(id);
       EventBus.sendToastEvent('success', 'toast.extras_obliterate_success', 3000);
-    } catch (_) {
+    } catch (err) {
+      console.error(`<Lagrange> Failed to obliterate planet with id ${id}`, err);
       EventBus.sendToastEvent('warn', 'toast.extras_obliterate_failure', 3000);
     } finally {
       await loadPlanets();
@@ -227,7 +231,8 @@ async function deleteTargetedPlanet(id: string) {
     try {
       await idb.planets.delete(id);
       EventBus.sendToastEvent('success', 'toast.delete_success', 3000);
-    } catch (_) {
+    } catch (err) {
+      console.error(`<Lagrange> Failed to delete planet with id ${id}`, err);
       EventBus.sendToastEvent('warn', 'toast.delete_failure', 3000);
     } finally {
       await loadPlanets();
