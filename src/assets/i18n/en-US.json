@@ -206,7 +206,10 @@
         "05_rewrite": "Full rewrite of the internal app structure to help future development efforts",
         "051_emissivity": "(0.5.1) Surfaces and biomes can now be independently emissive! This effect is preserved on exports",
         "051_atmosphere": "(0.5.1) Full refactoring of the atmosphere shader, also includes new advanced parameters!",
-        "051_ui": "(0.5.1) UI refresh on the Codex, dialogs, and others. Includes better error handling on editor initialization"
+        "051_ui": "(0.5.1) UI refresh on the Codex, dialogs, and others. Includes better error handling on editor initialization",
+        "052_postprocessing": "(0.5.2) Introduces a new post-processing pipeline with many effects!",
+        "052_skyboxes": "(0.5.2) New editor skyboxes for more variety in your screenshots. Includes a Chroma Key background!",
+        "052_controls": "(0.5.2) Additional controls and shortcuts for the camera (dolly, FOV, rotation)"
       },
       "credits": {
         "$title": "Credits & attribution",
@@ -419,7 +422,6 @@
         "basepipeline_retro_scanlinedensity": "Scanline density",
         "basepipeline_retro_scanlinespeed": "Scanline speed",
         "basepipeline_retro_curvature": "Curvature",
-        "basepipeline_retro_vignetteintensity": "Vignette",
         "rgbshift": "RGB Shift",
         "rgbshift_angle": "Angle",
         "rgbshift_amount": "Amount",

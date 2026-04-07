@@ -206,7 +206,10 @@
         "05_rewrite": "Komplette Umschreibung der internen App Struktur um zukünftige Entwicklungen zu vereinfachen",
         "051_emissivity": "(0.5.1) Die Oberflächen und Biomen können jetzt emissiv sein! Das Effekt bleibt beim exportieren vorhanden",
         "051_atmosphere": "(0.5.1) Der atmosphärische Shader wurde bearbeitet, und enthält neue fortgeschrittene Parameter!",
-        "051_ui": "(0.5.1) Update der Benutzeroberfläche des Codexs, der Modalen, usw. Beinhaltet eine robustere Fehlerbehandlung des Editors am Start."
+        "051_ui": "(0.5.1) Update der Benutzeroberfläche des Codexs, der Modalen, usw. Beinhaltet eine robustere Fehlerbehandlung des Editors am Start.",
+        "052_postprocessing": "(0.5.2) Introduziert eine neue Post-Processing Pipeline, mit lauter Effeken!",
+        "052_skyboxes": "(0.5.2) Neue Editor Skyboxen für mehr Vielfalt in Ihren Screenshots. Beinthaltet einen Chroma Key Hintergrund!",
+        "052_controls": "(0.5.2) Zusätzliche Kontrollen/Einstellungen und Tastaturkürzel für die Kamera (Dolly, FOV, Rotation)"
       },
       "credits": {
         "$title": "Erwähnungen und Dank",
@@ -414,10 +417,29 @@
         "basepipeline_pixelation_normaledgeintensity": "Intensität (Normale)",
         "basepipeline_pixelation_depthedgeintensity": "Intensität (Tiefe)",
         "basepipeline_retro": "Retro",
+        "basepipeline_retro_colordepthsteps": "Farbtiefe",
+        "basepipeline_retro_colorbleeding": "Farbbluten",
+        "basepipeline_retro_scanlineintensity": "Abtastzeilen",
+        "basepipeline_retro_scanlinedensity": "Abtastzeilendichte",
+        "basepipeline_retro_scanlinespeed": "Abtastzeilengeschwindigkeit",
+        "basepipeline_retro_curvature": "Krümmung",
+        "rgbshift": "RGB Shift",
+        "rgbshift_angle": "Winkel",
+        "rgbshift_amount": "Betrag",
+        "chromaticaberration": "Chromatische Aberration",
+        "chromaticaberration_strength": "Intensität",
+        "chromaticaberration_scale": "Größe",
         "bloom": "Bloom-Effekt",
         "bloom_threshold": "Schwelle",
         "bloom_strength": "Intensität",
-        "bloom_radius": "Radius"
+        "bloom_radius": "Radius",
+        "vignette": "Vignette",
+        "vignette_intensity": "Intensität",
+        "vignette_smoothness": "Glättungsfaktor",
+        "antialiasing": "Antialiasing",
+        "antialiasing_mode": "Modus",
+        "antialiasing_mode_fxaa": "FXAA",
+        "antialiasing_mode_smaa": "SMAA"
       }
     }
   },
