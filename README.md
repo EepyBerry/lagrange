@@ -6,8 +6,8 @@
 
 <p>
   <img src="https://img.shields.io/badge/VueJS-3.5-%2342B883?logo=vuedotjs&labelColor=%2335495E&logoColor=white">
-  <img src="https://img.shields.io/badge/Vite-7.1-%23BD34FE?logo=vite&labelColor=%2335495E&logoColor=white">
-  <img src="https://img.shields.io/badge/ThreeJS-r180-%23049EF4?logo=threedotjs&labelColor=%2335495E&logoColor=white">
+  <img src="https://img.shields.io/badge/Vite-8.0-%23BD34FE?logo=vite&labelColor=%2335495E&logoColor=white">
+  <img src="https://img.shields.io/badge/ThreeJS-r183-%23049EF4?logo=threedotjs&labelColor=%2335495E&logoColor=white">
 </p>
 
 A WebGL2 & WebGPU project using VueJS and ThreeJS! <br>
@@ -29,14 +29,16 @@ Check the [releases](https://github.com/EepyBerry/lagrange/releases) page for a 
 ## 🖼️ Showcase
 
 <div align="center">
-  <img width="30%" src="https://github.com/user-attachments/assets/937ec6c2-6969-49fa-a32c-856a759524f0" title="Kormeg" alt="planet:Kormeg">
-  <img width="30%" src="https://github.com/user-attachments/assets/27988862-2186-4704-97e3-5c1b579a1a8d" title="Meriana" alt="planet:Meriana">
-  <img width="30%" src="https://github.com/user-attachments/assets/437c28a6-d002-4cd4-bf5d-9fdf6fab679d" title="Hoven" alt="planet:Hoven">
+  <img width="30%" src="https://github.com/user-attachments/assets/4818ff14-3af6-4a77-b647-1e569107af2e" title="Kormeg" alt="planet:Kormeg" />
+  <img width="30%" src="https://github.com/user-attachments/assets/b6e488ed-9570-4b40-9d3b-498ce51203c2" title="Xu&#39;Alatl" alt="planet:Xu&#39;Alatl" />
+  <img width="30%" src="https://github.com/user-attachments/assets/eef9eca9-0ad6-4270-8c19-06d1fc980b32" title="Gleba" alt="planet:Gleba" />
 </div>
+
+
 <div align="center">
-  <img width="30%" src="https://github.com/user-attachments/assets/4496c676-dc7d-4cbd-9d58-87e2f985d396" title="Gleba" alt="planet:Gleba">
-  <img width="30%" src="https://github.com/user-attachments/assets/ebe1b5ae-627f-49f2-9365-cf45628d9754" title="Hermeus Major" alt="planet:Hermeus Major">
-  <img width="30%" src="https://github.com/user-attachments/assets/23be7f8a-625c-4fe1-a52d-428a702507d7" title="Xu'Alatl" alt="planet:Xu'Alatl">
+  <img width="30%" src="https://github.com/user-attachments/assets/125315e4-5f45-4ec2-a4a1-985fe7d22fbe" title="Ephyra" alt="planet:Ephyra" />
+  <img width="30%" src="https://github.com/user-attachments/assets/ffddfe9d-6e0b-4aea-a744-9b674f20d7b1" title="Hoven" alt="planet:Hoven" />
+  <img width="30%" src="https://github.com/user-attachments/assets/e8710184-0f9e-46c6-abcf-7ddf44b02df1" title="Arpen III" alt="planet:Arpen III" />
 </div>
 
 ## ⚠️ Requirements
@@ -75,20 +77,23 @@ Vite copies the output to the `dist` folder, creating it first if need be.
 
 - 📋 Create, import & export your planets!
 - 🔎 See previews of your creations!
-- 🪐 Check basic information for each planet, such as its radius, axial tilt & biome composition!
+- 🪐 Check basic information for each planet: type, class, radius, axial tilt, biome composition and ring system!
 
 ### Editor
 
+- 📓 **Basic classification!** (type, class)
 - ☀️ **Lighting parameters!** (sunlight, ambient light, color)
-- 🌍 **Planet & Rendering parameters!** (transform, water level, PBR settings)
+- 🌍 **Planet & Rendering parameters!** (transform, water level, PBR settings, emissivity)
 - 🗺️ **Surface parameters!** (bump mapping, warping, displacement, noise settings, color ramp)
-- ⛰️ **Biome parameters!** (temperature/humidity mapping, per-biome min/max values & color)
+- ⛰️ **Biome parameters!** (temperature/humidity mapping, per-biome min/max values & color, emissivity)
 - ☁️ **Clouds parameters!** (transform, warping, noise settings, color, opacity ramp)
-- 🌈 **Atmosphere parameters!** (height, density, color mixing modes)
+- 🌈 **Atmosphere parameters!** (height, density, color mixing modes, Rayleigh/Mie scattering settings)
 - 🪐 **Ring System parameters!** (number of rings, per-ring radii & color ramps)
+- 📷 **Post-Processing!** (base pipeline, additional toggleable effects)
 
 ## ⏰ Planned features
 
+- Integrated lore, to craft a story fit for each of your worlds!
 - Dark side "night lights"!
 - Cracks & Craters!
 - Planet animations!
