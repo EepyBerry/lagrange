@@ -77,20 +77,23 @@ Vite copies the output to the `dist` folder, creating it first if need be.
 
 - 📋 Create, import & export your planets!
 - 🔎 See previews of your creations!
-- 🪐 Check basic information for each planet, such as its radius, axial tilt & biome composition!
+- 🪐 Check basic information for each planet: type, class, radius, axial tilt, biome composition and ring system!
 
 ### Editor
 
+- 📓 **Basic classification!** (type, class)
 - ☀️ **Lighting parameters!** (sunlight, ambient light, color)
-- 🌍 **Planet & Rendering parameters!** (transform, water level, PBR settings)
+- 🌍 **Planet & Rendering parameters!** (transform, water level, PBR settings, emissivity)
 - 🗺️ **Surface parameters!** (bump mapping, warping, displacement, noise settings, color ramp)
-- ⛰️ **Biome parameters!** (temperature/humidity mapping, per-biome min/max values & color)
+- ⛰️ **Biome parameters!** (temperature/humidity mapping, per-biome min/max values & color, emissivity)
 - ☁️ **Clouds parameters!** (transform, warping, noise settings, color, opacity ramp)
-- 🌈 **Atmosphere parameters!** (height, density, color mixing modes)
+- 🌈 **Atmosphere parameters!** (height, density, color mixing modes, Rayleigh/Mie scattering settings)
 - 🪐 **Ring System parameters!** (number of rings, per-ring radii & color ramps)
+- 📷 **Post-Processing!** (base pipeline, additional toggleable effects)
 
 ## ⏰ Planned features
 
+- Integrated lore, to craft a story fit for each of your worlds!
 - Dark side "night lights"!
 - Cracks & Craters!
 - Planet animations!
