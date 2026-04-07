@@ -419,7 +419,6 @@
         "basepipeline_retro_scanlinedensity": "Scanline density",
         "basepipeline_retro_scanlinespeed": "Scanline speed",
         "basepipeline_retro_curvature": "Curvature",
-        "basepipeline_retro_vignetteintensity": "Vignette",
         "rgbshift": "RGB Shift",
         "rgbshift_angle": "Angle",
         "rgbshift_amount": "Amount",
