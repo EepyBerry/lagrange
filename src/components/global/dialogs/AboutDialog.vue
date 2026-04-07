@@ -77,6 +77,9 @@
                   <li style="margin-top: 0.5rem" starred>{{ $t('dialog.about.changelogs.051_emissivity') }}</li>
                   <li>{{ $t('dialog.about.changelogs.051_atmosphere') }}</li>
                   <li>{{ $t('dialog.about.changelogs.051_ui') }}</li>
+                  <li starred>{{ $t('dialog.about.changelogs.052_postprocessing') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.052_skyboxes') }}</li>
+                  <li>{{ $t('dialog.about.changelogs.052_controls') }}</li>
                 </ul>
               </template>
             </CollapsibleSection>

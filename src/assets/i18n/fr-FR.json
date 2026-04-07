@@ -206,7 +206,10 @@
         "05_rewrite": "Refonte de la structure interne de l'application pour simplifier les futurs développements",
         "051_emissivity": "(0.5.1) Les surfaces et biomes peuvent maintenant être émissives ! L'effet est conservé après export",
         "051_atmosphere": "(0.5.1) Le shader atmosphérique a été retravaillé, et inclut des nouveaux paramètres avancés !",
-        "051_ui": "(0.5.1) Mise à jour de l'interface du Codex, des modales, etc. Inclut une gestion d'erreur de l'éditeur plus robuste au lancement."
+        "051_ui": "(0.5.1) Mise à jour de l'interface du Codex, des modales, etc. Inclut une gestion d'erreur de l'éditeur plus robuste au lancement.",
+        "052_postprocessing": "(0.5.2) Ajoute un système de post-processing avec plusieurs effets disponibles!",
+        "052_skyboxes": "(0.5.2) Nouvelles skyboxes dans l'éditeur pour plus de variété dans vos captures d'écran. Inclut un fond Chroma Key!",
+        "052_controls": "(0.5.2) Ajout de contrôles et raccourcis pour la caméra (dolly, champ de vision, rotation)"
       },
       "credits": {
         "$title": "Mentions et remerciements",
