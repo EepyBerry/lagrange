@@ -5,13 +5,16 @@
 # Lagrange - Procedural Planet Builder 🪐
 
 <p>
-  <img src="https://img.shields.io/badge/VueJS-3.5-%2342B883?logo=vuedotjs&labelColor=%2335495E&logoColor=white">
-  <img src="https://img.shields.io/badge/Vite-8.0-%23BD34FE?logo=vite&labelColor=%2335495E&logoColor=white">
-  <img src="https://img.shields.io/badge/ThreeJS-r183-%23049EF4?logo=threedotjs&labelColor=%2335495E&logoColor=white">
+  <img src="https://img.shields.io/badge/%3C-%23000000?style=for-the-badge" alt="left_bracket">
+  <img src="https://img.shields.io/badge/pnpm-%232A2212?style=for-the-badge&logo=pnpm&logoColor=%23F69220&link=https%3A%2F%2Fpnpm.io" alt="pnpm_badge">
+  <img src="https://img.shields.io/badge/Three-%23222222?style=for-the-badge&logo=threedotjs&logoColor=white&link=https%3A%2F%2Fthreejs.org" alt="three_badge">
+  <img src="https://img.shields.io/badge/Vue-%23213547?style=for-the-badge&logo=vuedotjs&logoColor=%2342b883&link=https%3A%2F%2Fvuejs.org" alt="vue_badge">
+  <img src="https://img.shields.io/badge/Vite-%230A090D?style=for-the-badge&logo=vite&logoColor=%23B39AFF&link=https%3A%2F%2Fvite.dev" alt="vite_badge">
+  <img src="https://img.shields.io/badge/Oxc-%230A090D?style=for-the-badge&logo=oxc&logoColor=%2332F3E9&link=https%3A%2F%2Foxc.rs" alt="oxc_badge">
+  <img src="https://img.shields.io/badge/%2F%3E-%23000000?style=for-the-badge" alt="right_bracket">
 </p>
 
-A WebGL2 & WebGPU project using VueJS and ThreeJS! <br>
-Lagrange is a browser application to help you create your own planets, using procedural noise as a foundation to build upon.
+A WebGL2 & WebGPU project using VueJS and ThreeJS! <br> Lagrange is a browser application to help you create your own planets, using procedural noise as a foundation to build upon.
 
 **🪐✨ [Check out the app here!](https://lagrange.eepyberry.me) ✨🪐**
 
@@ -34,7 +37,6 @@ Check the [releases](https://github.com/EepyBerry/lagrange/releases) page for a 
   <img width="30%" src="https://github.com/user-attachments/assets/eef9eca9-0ad6-4270-8c19-06d1fc980b32" title="Gleba" alt="planet:Gleba" />
 </div>
 
-
 <div align="center">
   <img width="30%" src="https://github.com/user-attachments/assets/125315e4-5f45-4ec2-a4a1-985fe7d22fbe" title="Ephyra" alt="planet:Ephyra" />
   <img width="30%" src="https://github.com/user-attachments/assets/ffddfe9d-6e0b-4aea-a744-9b674f20d7b1" title="Hoven" alt="planet:Hoven" />
@@ -43,8 +45,7 @@ Check the [releases](https://github.com/EepyBerry/lagrange/releases) page for a 
 
 ## ⚠️ Requirements
 
-**IMPORTANT:** to properly run the application, [**WebGL2 browser support**](https://get.webgl.org/webgl2/) is required! <br>
-Additionally, [**WebGPU browser support**](https://webgpureport.org/) is required to use the WebGPU rendering engine. <br>
+**IMPORTANT:** to properly run the application, [**WebGL2 browser support**](https://get.webgl.org/webgl2/) is required! <br> Additionally, [**WebGPU browser support**](https://webgpureport.org/) is required to use the WebGPU rendering engine. <br>
 
 The following websites will give you more information on your WebGL2 & WebGPU capabilites: [**WebGL Report**](https://webglreport.com/?v=2), [**WebGPU Report**](https://webgpureport.org/)
 
@@ -118,8 +119,7 @@ This project is heavily inspired by the awesome projects below:
 
 The "Lagrange" logo, including _every_ update variant, is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International license ([CC BY-NC-SA 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/))
 
-Original assets and source code from this project are provided under the "I'm So Tired" Software License 1.0 - No-Resale version.<br>
-Please consult the [license file](LICENSE) for full information.
+Original assets and source code from this project are provided under the "I'm So Tired" Software License 1.0 - No-Resale version.<br> Please consult the [license file](LICENSE) for full information.
 
 Content from other parties is provided under their respective license, and attribution is given either at the top of the aforementioned content, or in a separate license file.
 
