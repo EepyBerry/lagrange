@@ -17,14 +17,14 @@
             <iconify-icon mode="svg" icon="simple-icons:vuedotjs" width="3rem" style="fill: var(--lg-text)" />
             <div>
               <p>{{ $t('dialog.about.prefix_framework') }} <span class="highlight nowrap">Vue + Vite</span></p>
-              <LgvChip class="contrast">3.5.21</LgvChip> <LgvChip class="contrast">7.1.4</LgvChip>
+              <LgvChip class="contrast">3.5.32</LgvChip> <LgvChip class="contrast">8.0.7</LgvChip>
             </div>
           </div>
           <div class="tech-block">
             <iconify-icon mode="svg" icon="logos:threejs" width="3rem" style="fill: var(--lg-text)" />
             <div>
               <p>{{ $t('dialog.about.prefix_engine') }} <span class="highlight">three.js</span></p>
-              <LgvChip class="contrast">r180</LgvChip>
+              <LgvChip class="contrast">r183</LgvChip>
             </div>
           </div>
         </div>
