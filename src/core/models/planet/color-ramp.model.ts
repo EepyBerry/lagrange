@@ -102,7 +102,7 @@ export class ColorRamp extends ObservableRelay {
   // Utility functions
 
   private async generateHash() {
-    this._hash = await sha1(JSON.stringify(this, (k, v) => (k === '_changedProps' ? undefined : v)));
+    this._hash = await sha1(JSON.stringify(this));
   }
 
   public sortSteps(markChange: boolean = true) {

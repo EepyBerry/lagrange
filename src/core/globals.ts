@@ -40,6 +40,7 @@ export const TEXTURE_SIZES = {
   CLOUDS: 256,
   BIOME: 256,
   RING: 256,
+  CRACKS: 256,
 };
 
 // Miscellaneous

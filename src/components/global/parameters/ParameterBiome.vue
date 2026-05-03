@@ -27,7 +27,7 @@
     <div v-show="_expanded" class="biome-content">
       <hr class="info-divider" />
       <div class="biome-type">
-        <strong>{{ $t('editor.controls.biomes.biome_type') }}:</strong>
+        <strong>{{ $t('editor.controls.features.biomes.biome_type') }}:</strong>
         <div>
           <iconify-icon icon="mingcute:high-temperature-line" height="1.25rem" />
           <span>{{ getBiomeTemperatureType() }},</span>
@@ -39,17 +39,17 @@
       </div>
       <ParameterDivider />
       <ParameterSlider :id="lgParam!.id + '-b-tmin'" v-model="lgParam!.tempMin" :step="0.005" :min="0" :max="1">
-        {{ $t('editor.controls.biomes.temperature_min') }}
+        {{ $t('editor.controls.features.biomes.temperature_min') }}
       </ParameterSlider>
       <ParameterSlider :id="lgParam!.id + '-b-tmax'" v-model="lgParam!.tempMax" :step="0.005" :min="0" :max="1">
-        {{ $t('editor.controls.biomes.temperature_max') }}
+        {{ $t('editor.controls.features.biomes.temperature_max') }}
       </ParameterSlider>
       <ParameterDivider />
       <ParameterSlider :id="lgParam!.id + '-b-hmin'" v-model="lgParam!.humiMin" :step="0.005" :min="0" :max="1">
-        {{ $t('editor.controls.biomes.humidity_min') }}
+        {{ $t('editor.controls.features.biomes.humidity_min') }}
       </ParameterSlider>
       <ParameterSlider :id="lgParam!.id + '-b-hmax'" v-model="lgParam!.humiMax" :step="0.005" :min="0" :max="1">
-        {{ $t('editor.controls.biomes.humidity_max') }}
+        {{ $t('editor.controls.features.biomes.humidity_max') }}
       </ParameterSlider>
       <ParameterDivider />
       <ParameterSlider
@@ -59,7 +59,7 @@
         :min="0"
         :max="0.5"
       >
-        {{ $t('editor.controls.biomes.smoothness') }}
+        {{ $t('editor.controls.features.biomes.smoothness') }}
       </ParameterSlider>
       <ParameterCheckbox
         :id="lgParam!.id + '-b-emioverride'"
@@ -67,7 +67,7 @@
         :true-value="true"
         :false-value="false"
       >
-        {{ $t('editor.controls.biomes.emissive_override') }}
+        {{ $t('editor.controls.features.biomes.emissive_override') }}
       </ParameterCheckbox>
       <template v-if="lgParam!.emissiveOverride">
         <ParameterSlider
@@ -78,7 +78,7 @@
           :min="0"
           :max="10"
         >
-          {{ $t('editor.controls.biomes.emissive_intensity') }}
+          {{ $t('editor.controls.features.biomes.emissive_intensity') }}
         </ParameterSlider>
       </template>
       <ParameterDivider />
