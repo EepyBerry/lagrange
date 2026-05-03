@@ -1,7 +1,19 @@
 {
   "name": "lagrange",
-  "version": "0.5.2",
+  "version": "0.5.2a",
   "private": true,
+  "keywords": [
+    "threejs",
+    "typescript",
+    "vue",
+    "vuejs"
+  ],
+  "license": "ISTSL-NR 1.0",
+  "author": "EepyBerry",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EepyBerry/lagrange.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,18 +28,6 @@
     "lint:eslint": "eslint . --fix",
     "format": "oxfmt src/"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/EepyBerry/lagrange.git"
-  },
-  "keywords": [
-    "vue",
-    "vuejs",
-    "typescript",
-    "threejs"
-  ],
-  "author": "EepyBerry",
-  "license": "ISTSL-NR 1.0",
   "dependencies": {
     "@floating-ui/vue": "^1.1.11",
     "@unhead/vue": "^2.1.13",
