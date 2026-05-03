@@ -61,11 +61,11 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :button-aria-label="$t('editor.controls.biomes.$title')"
+    :button-aria-label="$t('editor.controls.features.$title')"
   >
-    <template #title>{{ $t('editor.controls.biomes.$title') }}</template>
+    <template #title>{{ $t('editor.controls.features.$title') }}</template>
     <template #content>
-      <ControlsBiomes />
+      <ControlsFeatures />
     </template>
   </CollapsibleSection>
 
@@ -130,8 +130,8 @@ import ControlsPostProcessing from '@components/editor/controls/ControlsPostProc
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import ControlsAtmosphere from './ControlsAtmosphere.vue';
 import ControlsBasicData from './ControlsBasicData.vue';
-import ControlsBiomes from './ControlsBiomes.vue';
 import ControlsClouds from './ControlsClouds.vue';
+import ControlsFeatures from './ControlsFeatures.vue';
 import ControlsLighting from './ControlsLighting.vue';
 import ControlsRendering from './ControlsRendering.vue';
 import ControlsRing from './ControlsRings.vue';

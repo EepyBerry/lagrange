@@ -345,27 +345,37 @@
         "bumpmap_show": "Show bumps",
         "bumpmap_strength": "Bump strength"
       },
-      "biomes": {
-        "$title": "Biomes",
-        "biomes_show": "Show biomes",
-        "texture_resolution": "Resolution",
-        "temperature": "Temperature gradient",
-        "humidity": "Humidity gradient",
-        "gradient_mode": "Gradient mode",
-        "gradient_mode_realistic": "Realistic",
-        "gradient_mode_poletopole": "Pole-to-pole",
-        "gradient_mode_fullnoise": "Full noise",
-        "biome_list": "Biomes",
-        "biome_type": "Type",
-        "height_min": "Min. height",
-        "height_max": "Max. height",
-        "temperature_min": "Min. temperature",
-        "temperature_max": "Max. temperature",
-        "humidity_min": "Min. humidity",
-        "humidity_max": "Max. humidity",
-        "smoothness": "Smoothness",
-        "emissive_override": "Override emissivity",
-        "emissive_intensity": "Emissive intensity"
+      "features": {
+        "$title": "Features",
+        "cracks": {
+          "$title": "Cracks",
+          "noise": "Noise parameters",
+          "noise_a": "",
+          "rgba": "Color",
+          "rgba_colorramp": "@:editor.general.noise_rgbramp"
+        },
+        "biomes": {
+          "$title": "Biomes",
+          "biomes_show": "Show biomes",
+          "texture_resolution": "Resolution",
+          "temperature": "Temperature gradient",
+          "humidity": "Humidity gradient",
+          "gradient_mode": "Gradient mode",
+          "gradient_mode_realistic": "Realistic",
+          "gradient_mode_poletopole": "Pole-to-pole",
+          "gradient_mode_fullnoise": "Noise",
+          "biome_list": "Biomes",
+          "biome_type": "Type",
+          "height_min": "Min. height",
+          "height_max": "Max. height",
+          "temperature_min": "Min. temperature",
+          "temperature_max": "Max. temperature",
+          "humidity_min": "Min. humidity",
+          "humidity_max": "Max. humidity",
+          "smoothness": "Smoothness",
+          "emissive_override": "Override emissivity",
+          "emissive_intensity": "Emissive intensity"
+        }
       },
       "clouds": {
         "$title": "Clouds",
