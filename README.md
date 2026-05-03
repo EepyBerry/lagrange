@@ -20,7 +20,7 @@ A WebGL2 & WebGPU project using VueJS and ThreeJS! <br> Lagrange is a browser ap
 
 _(**note:** this is something I am working on during my free time, which means that update frequency will vary!)_
 
-## 🚀 Latest version: "Core Overhaul"!
+## 🚀 Latest major version: "Core Overhaul"!
 
 <ul>
   <li>⭐ Introduces WebGPU support! Renderer selection is now available in the app settings!</li>
@@ -36,7 +36,6 @@ Check the [releases](https://github.com/EepyBerry/lagrange/releases) page for a 
   <img width="30%" src="https://github.com/user-attachments/assets/b6e488ed-9570-4b40-9d3b-498ce51203c2" title="Xu&#39;Alatl" alt="planet:Xu&#39;Alatl" />
   <img width="30%" src="https://github.com/user-attachments/assets/eef9eca9-0ad6-4270-8c19-06d1fc980b32" title="Gleba" alt="planet:Gleba" />
 </div>
-
 <div align="center">
   <img width="30%" src="https://github.com/user-attachments/assets/125315e4-5f45-4ec2-a4a1-985fe7d22fbe" title="Ephyra" alt="planet:Ephyra" />
   <img width="30%" src="https://github.com/user-attachments/assets/ffddfe9d-6e0b-4aea-a744-9b674f20d7b1" title="Hoven" alt="planet:Hoven" />
