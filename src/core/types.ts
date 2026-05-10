@@ -1,4 +1,4 @@
-import type { BiomeParameters } from '@core/models/planet/biome-parameters.model.ts';
+import type { BiomeParameters } from '@core/models/planet/features/biome-parameters.model.ts';
 import type { AtmosphereUniforms } from '@core/tsl/materials/atmosphere.tslmat';
 import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat';
 import type { PlanetUniforms } from '@core/tsl/materials/planet.tslmat';

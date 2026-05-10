@@ -78,11 +78,9 @@ export async function bootstrapEditor(sceneRoot: HTMLElement, w: number, h: numb
   // Set state - editor is ready
   EDITOR_STATE.value.status = EditorStatusCode.Edition;
 
-  /* LG_SCENE_DATA.renderer!.debug.getShaderAsync(
-    LG_SCENE_DATA.scene,
-    LG_SCENE_DATA.camera,
-    LG_SCENE_DATA.planet.mesh!,
-  ).then((data) => console.log(data.fragmentShader)) */
+  /*editorSceneData
+    .renderer!.debug.getShaderAsync(editorSceneData.scene, editorSceneData.camera, editorSceneData.planet.mesh!)
+    .then((data) => console.log(data.fragmentShader));*/
 }
 
 /**

@@ -1,8 +1,8 @@
 import { convertLegacyRingStorage } from '@core/helpers/compatibility.helper.ts';
-import { BiomeParameters } from '@core/models/planet/biome-parameters.model.ts';
 import { ColorRamp, ColorRampStep } from '@core/models/planet/color-ramp.model.ts';
 import { DisplacementParameters } from '@core/models/planet/displacement-parameters.model.ts';
-import { NoiseParameters } from '@core/models/planet/noise-parameters.model.ts';
+import { BiomeParameters } from '@core/models/planet/features/biome-parameters.model.ts';
+import { FbmNoiseParameters } from '@core/models/planet/noise/fbm-noise-parameters.model.ts';
 import { RingParameters } from '@core/models/planet/ring-parameters.model.ts';
 import { ColorMode, GradientMode, PlanetClass, PlanetType } from '@core/types.ts';
 import { clampedPRNG, isNumeric, randomBoolean, randomColor, randomIntervals } from '@core/utils/math-utils.ts';
@@ -255,7 +255,7 @@ export default class PlanetData extends Observable {
   private _planetSurfaceShowWarping: boolean;
   private _planetSurfaceShowDisplacement: boolean;
   private _planetSurfaceDisplacement: DisplacementParameters;
-  private _planetSurfaceNoise: NoiseParameters;
+  private _planetSurfaceNoise: FbmNoiseParameters;
   private _planetSurfaceColorRamp: ColorRamp;
 
   // --------------------------------------------------
@@ -294,7 +294,7 @@ export default class PlanetData extends Observable {
     return this._planetSurfaceDisplacement;
   }
 
-  public get planetSurfaceNoise(): NoiseParameters {
+  public get planetSurfaceNoise(): FbmNoiseParameters {
     return this._planetSurfaceNoise;
   }
 
@@ -311,9 +311,9 @@ export default class PlanetData extends Observable {
 
   private _biomesEnabled: boolean;
   private _biomesTemperatureMode: GradientMode;
-  private _biomesTemperatureNoise: NoiseParameters;
+  private _biomesTemperatureNoise: FbmNoiseParameters;
   private _biomesHumidityMode: GradientMode;
-  private _biomesHumidityNoise: NoiseParameters;
+  private _biomesHumidityNoise: FbmNoiseParameters;
   private _biomesParams: BiomeParameters[];
 
   // --------------------------------------------------
@@ -333,7 +333,7 @@ export default class PlanetData extends Observable {
     this._biomesTemperatureMode = value;
     this.notify({ key: 'biomesTemperatureMode' });
   }
-  public get biomesTemperatureNoise(): NoiseParameters {
+  public get biomesTemperatureNoise(): FbmNoiseParameters {
     return this._biomesTemperatureNoise;
   }
 
@@ -344,7 +344,7 @@ export default class PlanetData extends Observable {
     this._biomesHumidityMode = value;
     this.notify({ key: 'biomesHumidityMode' });
   }
-  public get biomesHumidityNoise(): NoiseParameters {
+  public get biomesHumidityNoise(): FbmNoiseParameters {
     return this._biomesHumidityNoise;
   }
 
@@ -357,7 +357,7 @@ export default class PlanetData extends Observable {
   // --------------------------------------------------
 
   private _cracksEnabled: boolean;
-  private _cracksNoise: NoiseParameters;
+  private _cracksNoise: FbmNoiseParameters;
   private _cracksColorRamp: ColorRamp;
   private _cracksEmissiveIntensity: number = 3;
 
@@ -371,7 +371,7 @@ export default class PlanetData extends Observable {
     this.notify({ key: 'cracksEnabled' });
   }
 
-  public get cracksNoise(): NoiseParameters {
+  public get cracksNoise(): FbmNoiseParameters {
     return this._cracksNoise;
   }
 
@@ -397,7 +397,7 @@ export default class PlanetData extends Observable {
   private _cloudsShowWarping: boolean;
   private _cloudsShowDisplacement: boolean;
   private _cloudsDisplacement: DisplacementParameters;
-  private _cloudsNoise: NoiseParameters;
+  private _cloudsNoise: FbmNoiseParameters;
   private _cloudsColor: Color;
   private _cloudsColorRamp: ColorRamp;
 
@@ -446,7 +446,7 @@ export default class PlanetData extends Observable {
     return this._cloudsDisplacement;
   }
 
-  public get cloudsNoise(): NoiseParameters {
+  public get cloudsNoise(): FbmNoiseParameters {
     return this._cloudsNoise;
   }
 
@@ -634,7 +634,14 @@ export default class PlanetData extends Observable {
       2,
       6,
     );
-    this._planetSurfaceNoise = new NoiseParameters('planetSurfaceNoise', this.notifyRelayCallback, 3.75, 0.48, 2.45, 6);
+    this._planetSurfaceNoise = new FbmNoiseParameters(
+      'planetSurfaceNoise',
+      this.notifyRelayCallback,
+      3.75,
+      0.48,
+      2.45,
+      6,
+    );
     this._planetSurfaceColorRamp = new ColorRamp('planetSurfaceColorRamp', this.notifyRelayCallback, [
       new ColorRampStep(0x000000, 0, true),
       new ColorRampStep(0x0b1931, 0.4),
@@ -647,7 +654,7 @@ export default class PlanetData extends Observable {
 
     // Features
     this._cracksEnabled = false;
-    this._cracksNoise = new NoiseParameters('cracksNoise', this.notifyRelayCallback, 2.5, 1.25, 2.4, 6);
+    this._cracksNoise = new FbmNoiseParameters('cracksNoise', this.notifyRelayCallback, 2.5, 1.25, 2.4, 6);
     this._cracksColorRamp = new ColorRamp('cracksColorRamp', this.notifyRelayCallback, [
       new ColorRampStep(0x2e221b, 0, true),
       new ColorRampStep(0xad5a11, 0.55),
@@ -657,7 +664,7 @@ export default class PlanetData extends Observable {
 
     this._biomesEnabled = true;
     this._biomesTemperatureMode = GradientMode.REALISTIC;
-    this._biomesTemperatureNoise = new NoiseParameters(
+    this._biomesTemperatureNoise = new FbmNoiseParameters(
       'biomesTemperatureNoise',
       this.notifyRelayCallback,
       2.5,
@@ -666,7 +673,14 @@ export default class PlanetData extends Observable {
       6,
     );
     this._biomesHumidityMode = GradientMode.FULLNOISE;
-    this._biomesHumidityNoise = new NoiseParameters('biomesHumidityNoise', this.notifyRelayCallback, 3, 0.63, 2.53, 6);
+    this._biomesHumidityNoise = new FbmNoiseParameters(
+      'biomesHumidityNoise',
+      this.notifyRelayCallback,
+      3,
+      0.63,
+      2.53,
+      6,
+    );
     this._biomesParams = [
       new BiomeParameters(
         'biomesParams[element]',
@@ -714,7 +728,7 @@ export default class PlanetData extends Observable {
     this._cloudsShowWarping = false;
     this._cloudsShowDisplacement = false;
     this._cloudsDisplacement = new DisplacementParameters('cloudsDisplacement', this.notifyRelayCallback, 2, 0.2, 2, 6);
-    this._cloudsNoise = new NoiseParameters('cloudsNoise', this.notifyRelayCallback, 4, 0.6, 1.75, 6);
+    this._cloudsNoise = new FbmNoiseParameters('cloudsNoise', this.notifyRelayCallback, 4, 0.6, 1.75, 6);
     this._cloudsColor = new Color(0xffffff);
     this._cloudsColorRamp = new ColorRamp('cloudsColorRamp', this.notifyRelayCallback, [
       new ColorRampStep(0x000000, 0, true),

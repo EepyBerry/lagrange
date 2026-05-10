@@ -44,7 +44,7 @@ export const rayDirection = /*@__PURE__*/ Fn(
     const m = mat4(i_modelWorldMatrix).toVar('m');
     const pos = vec3(i_position).toVar('pos');
     const ray = m.mul(pos).sub(vec4(i_camPosition, 1));
-    return normalize(ray.toVec3());
+    return normalize(ray.xyz);
   },
 ).setLayout({
   name: 'LG_ATMOS_rayDirection',

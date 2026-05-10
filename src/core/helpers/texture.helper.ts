@@ -1,4 +1,4 @@
-import type { BiomeParameters } from "@core/models/planet/biome-parameters.model.ts";
+import type { BiomeParameters } from "src/core/models/planet/features/biome-parameters.model.ts";
 import { avg, truncateTo } from "@core/utils/math-utils";
 import { Color, CubeTextureLoader, DataTexture, NearestFilter, Scene, type MinificationTextureFilter } from "three";
 import type { ColorRampStep } from "@core/models/planet/color-ramp.model.ts";

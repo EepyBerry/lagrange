@@ -1,5 +1,5 @@
-import type { BiomeParameters } from '@core/models/planet/biome-parameters.model.ts';
 import type { ColorRamp } from '@core/models/planet/color-ramp.model.ts';
+import type { BiomeParameters } from '@core/models/planet/features/biome-parameters.model.ts';
 import type PlanetData from '@core/models/planet/planet-data.model.ts';
 import type { AmbientLight, DirectionalLight, Group } from 'three';
 import type { NodeMaterial } from 'three/webgpu';

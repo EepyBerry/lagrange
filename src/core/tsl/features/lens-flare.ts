@@ -62,25 +62,9 @@ export const saturate2 = /*@__PURE__*/ Fn(([i_x]: [Node<'float'>]) => {
   inputs: [{ name: 'x', type: 'float' }],
 });
 
-export const rotateUV = /*@__PURE__*/ Fn(([i_origUv, i_rotation]: [Node<'vec2'>, Node<'vec3'>]) => {
-  const rotCosine = vec3(cos(i_rotation.x), cos(i_rotation.y), cos(i_rotation.z)).toVar('rotCosine');
-  const rotSine = vec3(sin(i_rotation.x), sin(i_rotation.y), sin(i_rotation.z)).toVar('rotSine');
-  return vec2(
-    rotCosine.mul(i_origUv.x).add(rotSine.mul(i_origUv.y)),
-    rotCosine.mul(i_origUv.y).sub(rotSine.mul(i_origUv.x)),
-  );
-}).setLayout({
-  name: 'LF_rotateUV',
-  type: 'vec2',
-  inputs: [
-    { name: 'origUv', type: 'vec2' },
-    { name: 'rotation', type: 'float' },
-  ],
-});
-
 export const drawflare = /*@__PURE__*/ Fn(
   ([i_p, i_rand, i_flareShape, i_flareSize, i_starPoints]: [
-    Node<'vec3'>,
+    Node<'vec2'>,
     Node<'float'>,
     Node<'float'>,
     Node<'float'>,
@@ -148,7 +132,7 @@ export const lensFlare = /*@__PURE__*/ Fn(
     Node<'vec2'>,
     Node<'vec2'>,
   ]) => {
-    const main = vec2(i_origUv.sub(i_pos)).toVar('main');
+    const main = vec2(i_origUv.sub(i_pos).xy).toVar('main');
     const uvd = vec2(i_origUv.mul(length(i_origUv))).toVar('uvd');
     const ang = float(atan(main.x, main.y)).toVar('angle');
 
@@ -181,9 +165,9 @@ export const lensFlare = /*@__PURE__*/ Fn(
     const f6 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.3, i_pos))), 1.61)), 0).mul(3.159)).toVar('f6');
     const f62 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.325, i_pos))), 1.614)), 0).mul(3.14)).toVar('f62');
     const f63 = float(max(sub(0.01, pow(length(uvx.sub(mul(0.389, i_pos))), 1.623)), 0).mul(3.12)).toVar('f63');
-    const c = vec3(glare(i_origUv, i_pos, i_glareParams.x, i_starPoints.x)).toVar('c');
+    const c = vec3(glare(i_origUv, i_pos.xy, i_glareParams.x, i_starPoints.x)).toVar('c');
 
-    const prot = vec2(i_origUv.sub(i_pos)).toVar('prot');
+    const prot = vec2(i_origUv.sub(i_pos).xy).toVar('prot');
     c.addAssign(drawflare(prot, 0.1, i_flareParams.x, i_flareParams.y, i_starPoints.x));
     c.r.addAssign(f1.add(f2).add(f4).add(f5).add(f6).mul(i_glareParams.y));
     c.g.addAssign(f1.add(f22).add(f42).add(f52).add(f62).mul(i_glareParams.y));
@@ -260,10 +244,9 @@ export const circle = /*@__PURE__*/ Fn(
       'c2',
     );
     const s = float(
-      max(
-        sub(0.02, pow(regShape(i_p.mul(5).add(i_pos.mul(i_dist).mul(5)).add(i_decay), int(6), i_streakScale), 1)),
-        0,
-      ).mul(1.5),
+      max(sub(0.02, pow(regShape(i_p.mul(5).add(i_pos.mul(i_dist).mul(5)).add(i_decay), 6, i_streakScale), 1)), 0).mul(
+        1.5,
+      ),
     ).toVar('s');
 
     const colorGainCosine = vec3(cos(i_colorGain.x), cos(i_colorGain.y), cos(i_colorGain.z)).toVar('colorGainCosine');

@@ -2,7 +2,7 @@ import { Fn, float, mat3, mul, normalize, vec3 } from 'three/tsl';
 import { Node } from 'three/webgpu';
 import { getMatrixElement } from './math-utils';
 
-export const sobel = Fn(([i_heights, i_strength]: [Node<'mat3'>, Node<'vec3'>]) => {
+export const sobel = /*@__PURE__*/ Fn(([i_heights, i_strength]: [Node<'mat3'>, Node<'float'>]) => {
   const scale = float(i_strength).toVar('scale');
   const heights = mat3(i_heights).toVar('heights');
   const sobelX = float(

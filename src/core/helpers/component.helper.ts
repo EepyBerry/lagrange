@@ -39,7 +39,7 @@ import { CloudsTSLMaterial } from "@core/tsl/materials/clouds.tslmat";
 import { RingTSLMaterial } from "@core/tsl/materials/ring.tslmat";
 import { idb } from "@/dexie.config";
 import { LayeredDataTexture } from "@core/utils/texture/layered-data-texture";
-import type { BiomeParameters } from "@core/models/planet/biome-parameters.model.ts";
+import type { BiomeParameters } from "src/core/models/planet/features/biome-parameters.model.ts";
 import { PlanetDataConverter } from "@core/models/converters/planet-data.converter";
 import { CloudsDataConverter } from "@core/models/converters/clouds-data.converter";
 import { RingDataConverter } from "@core/models/converters/ring-data.converter";

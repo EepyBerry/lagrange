@@ -1,3 +1,4 @@
+import { cellular3 } from '@core/tsl/noise/cellular3.ts';
 import {
   bitangentLocal,
   EPSILON,
@@ -18,7 +19,6 @@ import {
   uniform,
   uniformArray,
   uv,
-  Var,
   vec2,
   vec3,
   vec4,
@@ -232,9 +232,9 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
 
     // Heightmap & global flags
     const heightLimit = float(1).sub(EPSILON);
-    const height = Var(layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x), 'height');
-    const FLAG_LAND = Var(step(this.uniforms.pbr.waterLevel, height), 'FLAG_LAND');
-    const FLAG_BIOMES = Var(FLAG_LAND.mul(float(this.uniforms.flags.element(3))), 'FLAG_BIOMES');
+    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar('height');
+    const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar('FLAG_LAND');
+    const FLAG_BIOMES = FLAG_LAND.mul(float(this.uniforms.flags.element(3))).toVar('FLAG_BIOMES');
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord');
@@ -243,6 +243,9 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     // Render biomes
     const biomeTexCoord = this.calculateBiomeTextureCoordinates(vPos, heightLimit, FLAG_BIOMES).toVar('biomeTexCoord');
     colour = this.renderBiomes(colour, this.uniforms.biomes.baseTexture, biomeTexCoord, FLAG_BIOMES);
+
+    // Render cracks
+    colour = this.renderCracks(vPos);
 
     // Render bump-map (under MIT license)
     const bump = this.applyBumpMap(vPos, height);
@@ -419,12 +422,12 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
   // --------------------------------------------------
 
   private applyXYZTransformations(vPos: Node<'vec3'>): Node<'vec3'> {
-    vPos = warp(vPos, this.uniforms.surface.warping, this.uniforms.flags.element(0));
+    vPos = warp(vPos, this.uniforms.surface.warping, float(this.uniforms.flags.element(0)));
     return displace(
       vPos,
       this.uniforms.surface.displacement.params,
       this.uniforms.surface.displacement.noise,
-      this.uniforms.flags.element(int(1)),
+      float(this.uniforms.flags.element(1)),
     );
   }
 
@@ -452,9 +455,14 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     return mix(colour, sampleBiomeTexture(texture, texCoords.x, texCoords.y, colour), FLAG_BIOMES_ENABLED);
   }
 
+  private renderCracks(vPos: Node<'vec3'>): Node<'vec3'> {
+    const cellularNoiseF1 = cellular3(vPos, 1.0).x;
+    return vec3(cellularNoiseF1);
+  }
+
   private applyBumpMap(vPos: Node<'vec3'>, height: Node<'float'>): Node<'vec3'> {
     const dx = vec3(tangentLocal.mul(this.uniforms.surface.warping.yzw).mul(0.005)).toVar('dx');
-    const dy = vec3(bitangentLocal.toVec3().mul(this.uniforms.surface.warping.yzw).mul(0.005)).toVar('dy');
+    const dy = vec3(bitangentLocal.mul(this.uniforms.surface.warping.yzw).mul(0.005)).toVar('dy');
     const dxHeight = float(layer(vPos.add(dx), this.uniforms.surface.noise, this.uniforms.surface.warping.x)).toVar(
       'dxHeight',
     );

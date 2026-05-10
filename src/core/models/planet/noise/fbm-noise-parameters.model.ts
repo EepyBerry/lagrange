@@ -3,7 +3,7 @@ import { ObservableRelay, type ObservableNotifyFunction } from '@core/utils/obse
 import { Vector3 } from 'three';
 import { clamp } from 'three/src/math/MathUtils.js';
 
-export class NoiseParameters extends ObservableRelay {
+export class FbmNoiseParameters extends ObservableRelay {
   private _frequency: number = 3;
   private _amplitude: number = 0.5;
   private _lacunarity: number = 2;
@@ -95,7 +95,7 @@ export class NoiseParameters extends ObservableRelay {
     this.relayNotify({ key: `${this.keyPrefix}._warpFactor` });
   }
 
-  public loadData(data?: NoiseParameters) {
+  public loadData(data?: FbmNoiseParameters) {
     this.frequency = clamp(data?._frequency ?? this._frequency, 0, 10);
     this.amplitude = clamp(data?._amplitude ?? this._amplitude, 0, 10);
     this.lacunarity = clamp(data?._lacunarity ?? this._lacunarity, 0, 10);
