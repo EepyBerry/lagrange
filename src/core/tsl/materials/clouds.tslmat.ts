@@ -25,7 +25,7 @@ import {
   Vector4,
   UniformNode,
 } from 'three/webgpu';
-import type { DisplacementData, NoiseData, WarpingData } from '../tsl-commons';
+import type { DisplacementData, FbmNoiseData, WarpingData } from '../tsl-commons';
 import { displace, warp } from '../features/lwd';
 import { fbm3 } from '../noise/fbm3';
 import { flattenUV } from '../utils/vertex-utils';
@@ -37,11 +37,11 @@ export type CloudsUniformData = {
     showDisplacement: boolean;
   };
   color: Color;
-  noise: NoiseData;
+  noise: FbmNoiseData;
   warping: WarpingData;
   displacement: {
     params: DisplacementData;
-    noise: NoiseData;
+    noise: FbmNoiseData;
   };
   texture: Texture;
 };
@@ -122,7 +122,7 @@ export class CloudsTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Clo
   // --------------------------------------------------------------------------
 
   private applyXYZTransformations(vPos: Node<'vec3'>): Node<'vec3'> {
-    const warpedVPos = Var(vec3(warp(vPos, this.uniforms.warping, this.uniforms.flags.element(int(0)))), 'warpedVPos');
+    const warpedVPos = Var(vec3(warp(vPos, this.uniforms.warping, this.uniforms.flags.element(0))), 'warpedVPos');
     return displace(
       warpedVPos,
       this.uniforms.displacement.params,

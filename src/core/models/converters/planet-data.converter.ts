@@ -6,10 +6,10 @@ import { ModelConverter } from './model-converter';
 export class PlanetDataConverter extends ModelConverter<PlanetData, PlanetUniformData> {
   private _surfaceTexture?: Texture;
   private _biomesTexture?: Texture;
+  private _cracksTexture?: Texture;
   private _biomesEmissiveTexture?: Texture;
 
   private _bakingSurfaceHeightMapTexture?: Texture;
-  private _bakingUnifiedSurfaceTexture?: Texture;
 
   constructor(data: PlanetData) {
     super(data);
@@ -20,6 +20,11 @@ export class PlanetDataConverter extends ModelConverter<PlanetData, PlanetUnifor
     return this;
   }
 
+  public withCracksTexture(tex: Texture): this {
+    this._cracksTexture = tex;
+    return this;
+  }
+
   public withBiomesTexture(tex: Texture): this {
     this._biomesTexture = tex;
     return this;
@@ -27,11 +32,6 @@ export class PlanetDataConverter extends ModelConverter<PlanetData, PlanetUnifor
 
   public withBiomesEmissiveTexture(tex: Texture): this {
     this._biomesEmissiveTexture = tex;
-    return this;
-  }
-
-  public withBakingUnifiedSurfaceTexture(tex: Texture): this {
-    this._bakingUnifiedSurfaceTexture = tex;
     return this;
   }
 
@@ -90,26 +90,43 @@ export class PlanetDataConverter extends ModelConverter<PlanetData, PlanetUnifor
           },
         },
       },
-      biomes: {
-        baseTexture: this._biomesTexture,
-        emissiveTexture: this._biomesEmissiveTexture,
-        temperatureMode: this._data.biomesTemperatureMode,
-        temperatureNoise: {
-          frequency: this._data.biomesTemperatureNoise.frequency,
-          amplitude: this._data.biomesTemperatureNoise.amplitude,
-          lacunarity: this._data.biomesTemperatureNoise.lacunarity,
-          octaves: this._data.biomesTemperatureNoise.octaves,
+      features: {
+        cracks: {
+          baseTexture: this._cracksTexture,
+          emissiveIntensity: this._data.cracksEmissiveIntensity,
+          noise: {
+            scale: this._data.cracksNoise.scale,
+            jitter: this._data.cracksNoise.jitter,
+            strength: this._data.cracksNoise.strength,
+            lacunarity: this._data.cracksNoise.lacunarity,
+          },
+          limiterNoise: {
+            frequency: this._data.cracksLimiterNoise.frequency,
+            amplitude: this._data.cracksLimiterNoise.amplitude,
+            lacunarity: this._data.cracksLimiterNoise.lacunarity,
+            octaves: this._data.cracksLimiterNoise.octaves,
+          },
         },
-        humidityMode: this._data.biomesHumidityMode,
-        humidityNoise: {
-          frequency: this._data.biomesHumidityNoise.frequency,
-          amplitude: this._data.biomesHumidityNoise.amplitude,
-          lacunarity: this._data.biomesHumidityNoise.lacunarity,
-          octaves: this._data.biomesHumidityNoise.octaves,
+        biomes: {
+          baseTexture: this._biomesTexture,
+          emissiveTexture: this._biomesEmissiveTexture,
+          temperatureMode: this._data.biomesTemperatureMode,
+          temperatureNoise: {
+            frequency: this._data.biomesTemperatureNoise.frequency,
+            amplitude: this._data.biomesTemperatureNoise.amplitude,
+            lacunarity: this._data.biomesTemperatureNoise.lacunarity,
+            octaves: this._data.biomesTemperatureNoise.octaves,
+          },
+          humidityMode: this._data.biomesHumidityMode,
+          humidityNoise: {
+            frequency: this._data.biomesHumidityNoise.frequency,
+            amplitude: this._data.biomesHumidityNoise.amplitude,
+            lacunarity: this._data.biomesHumidityNoise.lacunarity,
+            octaves: this._data.biomesHumidityNoise.octaves,
+          },
         },
       },
       baking: {
-        unifiedSurfaceTexture: this._bakingUnifiedSurfaceTexture,
         heightMapTexture: this._bakingSurfaceHeightMapTexture,
       },
     };

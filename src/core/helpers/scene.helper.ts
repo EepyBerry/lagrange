@@ -1,6 +1,6 @@
 import type { NodeMaterial } from "three/webgpu";
 import type PlanetData from "src/core/models/planet/planet-data.model.ts";
-import { EditorSceneCreationMode, type EditorSceneData, type RingMeshData, type TEditorSceneCreationMode } from "../types";
+import { type EditorSceneData, type RingMeshData, EditorSceneCreationMode } from "../types";
 import * as ComponentHelper from "./component.helper";
 import * as Globals from "@core/globals";
 import { Group, Timer } from "three";
@@ -11,11 +11,12 @@ export async function buildEditorScene(
   renderWidth: number,
   renderHeight: number,
   renderPixelRatio: number,
-  creationMode: TEditorSceneCreationMode,
+  creationMode: EditorSceneCreationMode,
 ): Promise<EditorSceneData> {
   const sceneData: Partial<EditorSceneData> = {
     planet: {
       surfaceBuffer: new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4),
+      cracksBuffer: new Uint8Array(Globals.TEXTURE_SIZES.CRACKS * 4),
     },
     clouds: {
       buffer: new Uint8Array(Globals.TEXTURE_SIZES.CLOUDS * 4),
@@ -76,7 +77,7 @@ async function buildScene(
   renderWidth: number,
   renderHeight: number,
   renderPixelRatio: number,
-  creationMode: TEditorSceneCreationMode,
+  creationMode: EditorSceneCreationMode,
 ): Promise<void> {
   const { scene, renderer, camera } = await ComponentHelper.createScene(
     data,
@@ -108,6 +109,7 @@ function buildSceneLighting(sceneData: EditorSceneData, data: PlanetData): void 
   const lensFlare = ComponentHelper.createLensFlare(data, sun.position, sun.color);
   sun.add(lensFlare.mesh);
   sceneData.lensFlare = lensFlare;
+  lensFlare.mesh.visible = data.lensFlareEnabled;
 
   // Set initial rotations
   const dataSunlightAngle = degToRad(Number.isNaN(data.sunLightAngle) ? -15 : data.sunLightAngle);
@@ -119,9 +121,9 @@ function buildSceneLighting(sceneData: EditorSceneData, data: PlanetData): void 
 function buildScenePlanet(
   sceneData: EditorSceneData,
   data: PlanetData,
-  creationMode: TEditorSceneCreationMode,
+  creationMode: EditorSceneCreationMode,
 ): void {
-  const planet = ComponentHelper.createPlanet(data, sceneData.planet.surfaceBuffer);
+  const planet = ComponentHelper.createPlanet(data, sceneData.planet.surfaceBuffer, sceneData.planet.cracksBuffer);
   const clouds = ComponentHelper.createClouds(data, sceneData.clouds.buffer);
   const atmosphere = ComponentHelper.createAtmosphere(data, sceneData.sunLight.position);
   const rings: RingMeshData[] = [];

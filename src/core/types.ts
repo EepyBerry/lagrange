@@ -23,8 +23,8 @@ import type { LayeredDataTexture } from './utils/texture/layered-data-texture';
 // ---------------------------------- Editor types ----------------------------------
 export type EditorMessageLevel = 'success' | 'info' | 'warn' | 'wip';
 
-export type TEditorSceneCreationMode = (typeof EditorSceneCreationMode)[keyof typeof EditorSceneCreationMode];
-export const EditorSceneCreationMode = {
+export type EditorSceneCreationMode = (typeof EditorSceneCreationMode)[keyof typeof EditorSceneCreationMode];
+export const EditorSceneCreationMode: Record<string, string> = {
   Editor: 'editor',
   Preview: 'preview',
 } as const;
@@ -101,6 +101,9 @@ export type PlanetMeshData = {
 
   biomeLayersTexture?: LayeredDataTexture<BiomeParameters>;
   biomeEmissiveLayersTexture?: LayeredDataTexture<BiomeParameters>;
+
+  cracksBuffer: Uint8Array;
+  cracksTexture?: DataTexture;
 };
 export type CloudsMeshData = {
   mesh?: Mesh;

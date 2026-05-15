@@ -26,7 +26,9 @@ export function createBakingPlanet(data: PlanetData, surfaceTex: DataTexture, bi
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality);
   geometry.computeTangents();
 
-  const dataConverter = new PlanetDataConverter(data).withSurfaceTexture(surfaceTex).withBiomesTexture(biomeTex);
+  const dataConverter = new PlanetDataConverter(data)
+    .withSurfaceTexture(surfaceTex)
+    .withBiomesTexture(biomeTex);
   const tslMaterial = new PlanetTSLMaterial(dataConverter.convert());
   const mesh = new Mesh(geometry, tslMaterial.buildSurfaceBakeMaterial());
   mesh.castShadow = true;
@@ -77,7 +79,8 @@ export function createBakingHeightMap(data: PlanetData): Mesh {
 }
 
 export function createBakingNormalMap(data: PlanetData, heightMapTex: Texture): Mesh {
-  const dataConverter = new PlanetDataConverter(data).withBakingSurfaceHeightMapTexture(heightMapTex);
+  const dataConverter = new PlanetDataConverter(data)
+    .withBakingSurfaceHeightMapTexture(heightMapTex);
   const tslMaterial = new PlanetTSLMaterial(dataConverter.convert());
   const mesh = new Mesh(new PlaneGeometry(), tslMaterial.buildNormalMapBakeMaterial());
   mesh.name = Globals.MESH_NAME_NORMALMAP;

@@ -2,7 +2,7 @@ import PlanetData from '@core/models/planet/planet-data.model.ts';
 import RenderPipelineData from '@core/models/renderpipeline/render-pipeline-data.model.ts';
 import { ref, type Ref } from 'vue';
 
-type TEditorStatusCode = (typeof EditorStatusCode)[keyof typeof EditorStatusCode];
+type EditorStatusCode = (typeof EditorStatusCode)[keyof typeof EditorStatusCode];
 export const EditorStatusCode = {
   Initialization: 'INITIALIZATION',
   Edition: 'EDITION',
@@ -18,7 +18,7 @@ export const EditorStatusCode = {
 export type EditorState = {
   planetData: PlanetData;
   renderPipelineData: RenderPipelineData;
-  status: TEditorStatusCode;
+  status: EditorStatusCode;
   planetEditedFlag: boolean;
 };
 

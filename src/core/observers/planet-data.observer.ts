@@ -74,7 +74,6 @@ export class PlanetDataObserver extends Observer {
   // prettier-ignore
   private registerLightingDataUpdates(data: PlanetData, sunLight: DirectionalLight, ambLight: AmbientLight, atmosphere: AtmosphereMeshData, lensFlare: LensFlareEffect): void {
     this.registerEventHandler('lensFlareEnabled',         genericHandler(() => lensFlare.mesh.visible = data.lensFlareEnabled));
-    this.registerEventHandler('lensFlareEnabled',         genericHandler(() => lensFlare.mesh.visible = data.lensFlareEnabled));
     this.registerEventHandler('lensFlarePointsIntensity', genericHandler(() => lensFlare.uniforms.starPointsIntensity.value = data.lensFlarePointsIntensity));
     this.registerEventHandler('lensFlareGlareIntensity',  genericHandler(() => lensFlare.uniforms.glareIntensity.value = data.lensFlareGlareIntensity));
     this.registerEventHandler('sunLightAngle',            genericHandler(() => {
@@ -172,17 +171,17 @@ export class PlanetDataObserver extends Observer {
   private registerBiomeDataUpdates(data: PlanetData, planet: PlanetMeshData): void {
     this.registerEventHandler('biomesEnabled',                      genericHandler(() => (planet.uniforms!.flags.array[3] = +data.biomesEnabled)));
     // Temperature
-    this.registerEventHandler('biomesTemperatureMode',              genericHandler(() => (planet.uniforms!.biomes.temperatureMode.value = data.biomesTemperatureMode)));
-    this.registerEventHandler('biomesTemperatureNoise._frequency',  genericHandler(() => (planet.uniforms!.biomes.temperatureNoise.value.x = data.biomesTemperatureNoise.frequency)));
-    this.registerEventHandler('biomesTemperatureNoise._amplitude',  genericHandler(() => (planet.uniforms!.biomes.temperatureNoise.value.y = data.biomesTemperatureNoise.amplitude)));
-    this.registerEventHandler('biomesTemperatureNoise._lacunarity', genericHandler(() => (planet.uniforms!.biomes.temperatureNoise.value.z = data.biomesTemperatureNoise.lacunarity)));
-    this.registerEventHandler('biomesTemperatureNoise._octaves',    genericHandler(() => (planet.uniforms!.biomes.temperatureNoise.value.w = data.biomesTemperatureNoise.octaves)));
+    this.registerEventHandler('biomesTemperatureMode',              genericHandler(() => (planet.uniforms!.features.biomes.temperatureMode.value = data.biomesTemperatureMode)));
+    this.registerEventHandler('biomesTemperatureNoise._frequency',  genericHandler(() => (planet.uniforms!.features.biomes.temperatureNoise.value.x = data.biomesTemperatureNoise.frequency)));
+    this.registerEventHandler('biomesTemperatureNoise._amplitude',  genericHandler(() => (planet.uniforms!.features.biomes.temperatureNoise.value.y = data.biomesTemperatureNoise.amplitude)));
+    this.registerEventHandler('biomesTemperatureNoise._lacunarity', genericHandler(() => (planet.uniforms!.features.biomes.temperatureNoise.value.z = data.biomesTemperatureNoise.lacunarity)));
+    this.registerEventHandler('biomesTemperatureNoise._octaves',    genericHandler(() => (planet.uniforms!.features.biomes.temperatureNoise.value.w = data.biomesTemperatureNoise.octaves)));
     // Humidity
-    this.registerEventHandler('biomesHumidityMode',                 genericHandler(() => (planet.uniforms!.biomes.humidityMode.value = data.biomesHumidityMode)));
-    this.registerEventHandler('biomesHumidityNoise._frequency',     genericHandler(() => (planet.uniforms!.biomes.humidityNoise.value.x = data.biomesHumidityNoise.frequency)));
-    this.registerEventHandler('biomesHumidityNoise._amplitude',     genericHandler(() => (planet.uniforms!.biomes.humidityNoise.value.y = data.biomesHumidityNoise.amplitude)));
-    this.registerEventHandler('biomesHumidityNoise._lacunarity',    genericHandler(() => (planet.uniforms!.biomes.humidityNoise.value.z = data.biomesHumidityNoise.lacunarity)));
-    this.registerEventHandler('biomesHumidityNoise._octaves',       genericHandler(() => (planet.uniforms!.biomes.humidityNoise.value.w = data.biomesHumidityNoise.octaves)));
+    this.registerEventHandler('biomesHumidityMode',                 genericHandler(() => (planet.uniforms!.features.biomes.humidityMode.value = data.biomesHumidityMode)));
+    this.registerEventHandler('biomesHumidityNoise._frequency',     genericHandler(() => (planet.uniforms!.features.biomes.humidityNoise.value.x = data.biomesHumidityNoise.frequency)));
+    this.registerEventHandler('biomesHumidityNoise._amplitude',     genericHandler(() => (planet.uniforms!.features.biomes.humidityNoise.value.y = data.biomesHumidityNoise.amplitude)));
+    this.registerEventHandler('biomesHumidityNoise._lacunarity',    genericHandler(() => (planet.uniforms!.features.biomes.humidityNoise.value.z = data.biomesHumidityNoise.lacunarity)));
+    this.registerEventHandler('biomesHumidityNoise._octaves',       genericHandler(() => (planet.uniforms!.features.biomes.humidityNoise.value.w = data.biomesHumidityNoise.octaves)));
     this.registerEventHandler('biomesParams', globalHandler(() => {
       planet.biomeLayersTexture!.reset(data.biomesParams);
       planet.biomeEmissiveLayersTexture!.reset(data.biomesParams);

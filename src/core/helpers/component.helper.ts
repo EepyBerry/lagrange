@@ -8,7 +8,6 @@ import {
   type CloudsMeshData,
   type RingMeshData,
   EditorSceneCreationMode,
-  type TEditorSceneCreationMode
 } from "../types";
 import { LensFlareEffect } from "../effects/lens-flare.effect";
 import * as Globals from "@core/globals";
@@ -61,7 +60,7 @@ export async function createScene(
   width: number,
   height: number,
   pixelRatio: number,
-  creationMode: TEditorSceneCreationMode,
+  creationMode: EditorSceneCreationMode,
 ): Promise<EditorSceneObjects> {
   const idbSettings = await idb.settings.limit(1).first();
   const scene = new Scene();
@@ -110,7 +109,7 @@ export function createLensFlare(data: PlanetData, pos: Vector3, color: Color) {
   });
 }
 
-export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): PlanetMeshData {
+export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array, cracksTexBuf: Uint8Array): PlanetMeshData {
   const geometry = createSphereGeometryComponent(data.planetMeshQuality);
   geometry.computeTangents();
   const surfaceTex = TextureHelper.createRampTexture(
@@ -124,18 +123,26 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): Plane
     data.biomesParams,
     TextureHelper.fillBiomeLayer,
   );
+  const cracksTex = TextureHelper.createRampTexture(
+    cracksTexBuf,
+    Globals.TEXTURE_SIZES.CRACKS,
+    data.cracksColorRamp.steps,
+  );
   const biomeEmissivityLayersTex = new LayeredDataTexture<BiomeParameters>(
     Globals.TEXTURE_SIZES.BIOME,
     Globals.TEXTURE_SIZES.BIOME,
     data.biomesParams,
     TextureHelper.fillBiomeEmissivityLayer,
   );
-  //setTimeout(() => biomeEmissivityLayersTex.debugSaveTexture(), 10000)
 
   const dataConverter = new PlanetDataConverter(data)
     .withSurfaceTexture(surfaceTex)
     .withBiomesTexture(biomeLayersTex.texture)
-    .withBiomesEmissiveTexture(biomeEmissivityLayersTex.texture);
+    .withBiomesEmissiveTexture(biomeEmissivityLayersTex.texture)
+    .withCracksTexture(cracksTex);
+
+  //setTimeout(() => saveAs(new Blob([cracksTex.image.data]), 'tex.raw'), 1000)
+
   const tslMaterial = new PlanetTSLMaterial(dataConverter.convert());
   const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.castShadow = true;
@@ -149,6 +156,8 @@ export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): Plane
     surfaceTexture: surfaceTex,
     biomeLayersTexture: biomeLayersTex,
     biomeEmissiveLayersTexture: biomeEmissivityLayersTex,
+    cracksBuffer: cracksTexBuf,
+    cracksTexture: cracksTex,
   };
 }
 

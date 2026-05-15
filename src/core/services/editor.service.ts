@@ -25,7 +25,7 @@ const planetDataObserver: PlanetDataObserver = new PlanetDataObserver();
 const renderPipelineObserver: RenderPipelineDataObserver = new RenderPipelineDataObserver();
 
 // ------------------------------------------------------------------------------------------------ //
-//                                           EVENT HANDLING                                         //
+//                                             DEBUGGING                                            //
 // ------------------------------------------------------------------------------------------------ //
 
 watch(

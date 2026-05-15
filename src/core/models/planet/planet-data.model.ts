@@ -2,6 +2,7 @@ import { convertLegacyRingStorage } from '@core/helpers/compatibility.helper.ts'
 import { ColorRamp, ColorRampStep } from '@core/models/planet/color-ramp.model.ts';
 import { DisplacementParameters } from '@core/models/planet/displacement-parameters.model.ts';
 import { BiomeParameters } from '@core/models/planet/features/biome-parameters.model.ts';
+import { CellularNoiseParameters } from '@core/models/planet/noise/cellular-noise-parameters.model.ts';
 import { FbmNoiseParameters } from '@core/models/planet/noise/fbm-noise-parameters.model.ts';
 import { RingParameters } from '@core/models/planet/ring-parameters.model.ts';
 import { ColorMode, GradientMode, PlanetClass, PlanetType } from '@core/types.ts';
@@ -357,9 +358,10 @@ export default class PlanetData extends Observable {
   // --------------------------------------------------
 
   private _cracksEnabled: boolean;
-  private _cracksNoise: FbmNoiseParameters;
-  private _cracksColorRamp: ColorRamp;
   private _cracksEmissiveIntensity: number = 3;
+  private _cracksNoise: CellularNoiseParameters;
+  private _cracksColorRamp: ColorRamp;
+  private _cracksLimiterNoise: FbmNoiseParameters;
 
   // --------------------------------------------------
 
@@ -371,20 +373,23 @@ export default class PlanetData extends Observable {
     this.notify({ key: 'cracksEnabled' });
   }
 
-  public get cracksNoise(): FbmNoiseParameters {
-    return this._cracksNoise;
-  }
-
-  public get cracksColorRamp(): ColorRamp {
-    return this._cracksColorRamp;
-  }
-
   public get cracksEmissiveIntensity(): number {
     return this._cracksEmissiveIntensity;
   }
   public set cracksEmissiveIntensity(value: number) {
     this._cracksEmissiveIntensity = value;
     this.notify({ key: 'cracksEmissiveIntensity' });
+  }
+
+  public get cracksNoise(): CellularNoiseParameters {
+    return this._cracksNoise;
+  }
+  public get cracksColorRamp(): ColorRamp {
+    return this._cracksColorRamp;
+  }
+
+  public get cracksLimiterNoise(): FbmNoiseParameters {
+    return this._cracksLimiterNoise;
   }
 
   // --------------------------------------------------
@@ -422,10 +427,6 @@ export default class PlanetData extends Observable {
   public get cloudsHeight() {
     return this._cloudsHeight;
   }
-  public set cloudsHeight(height: number) {
-    this._cloudsHeight = clamp(height, 0, 10);
-    this.notify({ key: 'cloudsHeight' });
-  }
 
   public get cloudsShowWarping(): boolean {
     return this._cloudsShowWarping;
@@ -460,9 +461,6 @@ export default class PlanetData extends Observable {
 
   public get cloudsColorRamp(): ColorRamp {
     return this._cloudsColorRamp;
-  }
-  public get cloudsColorRampSize(): number {
-    return this._cloudsColorRamp.steps.length;
   }
 
   // --------------------------------------------------
@@ -606,6 +604,7 @@ export default class PlanetData extends Observable {
     this._ambLightIntensity = 0;
 
     // Planet & Rendering
+
     this._planetType = PlanetType.PLANET;
     this._planetClass = PlanetClass.PLANET_TELLURIC;
     this._planetMeshQuality = 64;
@@ -622,6 +621,7 @@ export default class PlanetData extends Observable {
     this._planetGroundEmissiveIntensity = 0;
 
     // Surface
+
     this._planetSurfaceShowBumps = true;
     this._planetSurfaceBumpStrength = 0.09;
     this._planetSurfaceShowWarping = false;
@@ -653,14 +653,6 @@ export default class PlanetData extends Observable {
     ]);
 
     // Features
-    this._cracksEnabled = false;
-    this._cracksNoise = new FbmNoiseParameters('cracksNoise', this.notifyRelayCallback, 2.5, 1.25, 2.4, 6);
-    this._cracksColorRamp = new ColorRamp('cracksColorRamp', this.notifyRelayCallback, [
-      new ColorRampStep(0x2e221b, 0, true),
-      new ColorRampStep(0xad5a11, 0.55),
-      new ColorRampStep(0xe6962e, 0.8),
-      new ColorRampStep(0xffdc73, 1, true),
-    ]);
 
     this._biomesEnabled = true;
     this._biomesTemperatureMode = GradientMode.REALISTIC;
@@ -721,7 +713,19 @@ export default class PlanetData extends Observable {
     ];
     this._biomesParams.forEach((b) => (b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity));
 
+    this._cracksEnabled = false;
+    this._cracksNoise = new CellularNoiseParameters('cracksNoise', this.notifyRelayCallback, 4, 1, 2, 2.5);
+    this._cracksColorRamp = new ColorRamp('cracksColorRamp', this.notifyRelayCallback, [
+      new ColorRampStep(0x2e221b, 0, true),
+      new ColorRampStep(0xad5a11, 0.55),
+      new ColorRampStep(0xe6962e, 0.8),
+      new ColorRampStep(0xffdc73, 1, true),
+    ]);
+    this._cracksLimiterNoise = new FbmNoiseParameters('cracksLimiterNoise', this.notifyRelayCallback, 3, 1.25, 2.4, 4);
+    this._cracksEmissiveIntensity = 2.5;
+
     // Clouds
+
     this._cloudsEnabled = true;
     this._cloudsRotation = 0;
     this._cloudsHeight = 1.005;
@@ -737,6 +741,7 @@ export default class PlanetData extends Observable {
     ]);
 
     // Atmosphere
+
     this._atmosphereEnabled = true;
     this._atmosphereHeight = 0.01;
     this._atmosphereDensityScale = 10;
@@ -750,6 +755,7 @@ export default class PlanetData extends Observable {
     this._atmosphereOpticalDensityRatio = 0.25;
 
     // Ring
+
     this._ringsEnabled = false;
     this._ringsParams = [];
   }
@@ -837,6 +843,20 @@ export default class PlanetData extends Observable {
         return b
       }),
     );
+
+    // Cracks
+    this.cracksEnabled = data._cracksEnabled ?? false;
+    this.cracksEmissiveIntensity = data._cracksEmissiveIntensity ?? 2.5;
+    this.cracksColorRamp.loadFromSteps(
+      data._cracksColorRamp?._steps ?? [
+        new ColorRampStep(0x2e221b, 0, true),
+        new ColorRampStep(0xad5a11, 0.55),
+        new ColorRampStep(0xe6962e, 0.8),
+        new ColorRampStep(0xffdc73, 1, true),
+      ],
+    );
+    this.cracksNoise.loadData(data._cracksNoise);
+    this.cracksLimiterNoise.loadData(data._cracksLimiterNoise);
 
     // Clouds
     this.cloudsEnabled = data._cloudsEnabled ?? true;
@@ -940,6 +960,13 @@ export default class PlanetData extends Observable {
       b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity;
       this._biomesParams.push(b);
     }
+
+    // Cracks
+    this._cracksEnabled = randomBoolean();
+    this._cracksEmissiveIntensity = clampedPRNG(0, 10);
+    this._cracksNoise.randomize();
+    this._cracksColorRamp.randomize(4);
+    this._cracksLimiterNoise.randomize();
 
     // Clouds
     this._cloudsEnabled = randomBoolean();
