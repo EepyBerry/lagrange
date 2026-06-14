@@ -1,5 +1,5 @@
 import type PlanetData from '@core/models/planet/planet-data.model.ts';
-import type { PlanetUniformData } from '@core/tsl/materials/planet.tslmat';
+import type { PlanetUniformData } from '@tsl/materials/planet.tslmat';
 import type { Texture } from 'three';
 import { ModelConverter } from './model-converter';
 
@@ -49,6 +49,7 @@ export class PlanetDataConverter extends ModelConverter<PlanetData, PlanetUnifor
         showDisplacement: this._data.planetSurfaceShowDisplacement,
         showBumps: this._data.planetSurfaceShowBumps,
         showBiomes: this._data.biomesEnabled,
+        showCracks: this._data.cracksEnabled,
         showEmissive: this._data.planetShowEmissive,
       },
       pbr: {
@@ -93,18 +94,30 @@ export class PlanetDataConverter extends ModelConverter<PlanetData, PlanetUnifor
       features: {
         cracks: {
           baseTexture: this._cracksTexture,
+          distanceToEdge: this._data.cracksDistanceToEdge,
           emissiveIntensity: this._data.cracksEmissiveIntensity,
-          noise: {
-            scale: this._data.cracksNoise.scale,
-            jitter: this._data.cracksNoise.jitter,
-            strength: this._data.cracksNoise.strength,
-            lacunarity: this._data.cracksNoise.lacunarity,
+          baseNoise: {
+            scale: this._data.cracksBaseNoise.scale,
+            jitter: this._data.cracksBaseNoise.jitter,
+            mode: this._data.cracksBaseNoise.mode,
+          },
+          detailNoise: {
+            frequency: this._data.cracksDetailNoise.frequency,
+            amplitude: this._data.cracksDetailNoise.amplitude,
+            lacunarity: this._data.cracksDetailNoise.lacunarity,
+            octaves: this._data.cracksDetailNoise.octaves,
           },
           limiterNoise: {
             frequency: this._data.cracksLimiterNoise.frequency,
             amplitude: this._data.cracksLimiterNoise.amplitude,
             lacunarity: this._data.cracksLimiterNoise.lacunarity,
             octaves: this._data.cracksLimiterNoise.octaves,
+          },
+          colorNoise: {
+            frequency: this._data.cracksColorNoise.frequency,
+            amplitude: this._data.cracksColorNoise.amplitude,
+            lacunarity: this._data.cracksColorNoise.lacunarity,
+            octaves: this._data.cracksColorNoise.octaves,
           },
         },
         biomes: {

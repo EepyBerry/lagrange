@@ -1,5 +1,5 @@
 import type { Node } from 'three/webgpu';
-import { perm4 } from '@core/tsl/utils/math-utils.ts';
+import { perm4 } from '@tsl/utils/math.tsl.ts';
 import { float, floor, Fn, fract, int, Loop, mul, sub, vec2, vec3, vec4 } from 'three/tsl';
 
 // 3D fractal Brownian motion - noise function

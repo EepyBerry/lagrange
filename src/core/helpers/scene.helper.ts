@@ -1,5 +1,5 @@
 import type { NodeMaterial } from "three/webgpu";
-import type PlanetData from "src/core/models/planet/planet-data.model.ts";
+import type PlanetData from "@core/models/planet/planet-data.model.ts";
 import { type EditorSceneData, type RingMeshData, EditorSceneCreationMode } from "../types";
 import * as ComponentHelper from "./component.helper";
 import * as Globals from "@core/globals";
@@ -60,6 +60,8 @@ export function disposeScene(sceneData: EditorSceneData) {
   sceneData.planet.surfaceTexture!.dispose();
   sceneData.planet.biomeLayersTexture!.dispose();
   sceneData.planet.biomeEmissiveLayersTexture!.dispose();
+  sceneData.planet.cracksBuffer?.fill(0);
+  sceneData.planet.cracksTexture!.dispose();
   sceneData.clouds.texture!.dispose();
   sceneData.ringAnchor.clear();
   sceneData.planetGroup.clear();

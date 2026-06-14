@@ -299,8 +299,13 @@
       "noise_fbm_lacunarity": "Wacunawity",
       "noise_fbm_octaves": "Octaves",
       "noise_color": "Cowow",
-      "noise_rgbramp": "Cowow wamp",
-      "noise_rgbaramp": "Cowow/awpha wamp"
+      "noise_voronoi_scale": "Scawe",
+      "noise_voronoi_jitter": "Jittew",
+      "colorramp_rgb": "Cowow wamp",
+      "colorramp_rgba": "Cowow/awpha wamp",
+      "colorramp_opacity": "Opacity wamp",
+      "color": "Cowow",
+      "color_opacity": "Cowow & opacity"
     },
     "controls": {
       "basic_data": {
@@ -346,27 +351,37 @@
         "bumpmap_show": "Show bumps :3",
         "bumpmap_strength": "Bump stwength"
       },
-      "biomes": {
-        "$title": "Biomes",
-        "biomes_show": "Show biomes :3",
-        "texture_resolution": "Wesowution",
-        "temperature": "Tempewatuwe gwadient",
-        "humidity": "Humidity gwadient",
-        "gradient_mode": "Gwadient mode",
-        "gradient_mode_realistic": "Weawistic",
-        "gradient_mode_poletopole": "Powe-to-powe",
-        "gradient_mode_fullnoise": "Nyoise",
-        "biome_list": "Biomes",
-        "biome_type": "Type",
-        "height_min": "Min. height",
-        "height_max": "Max. height",
-        "temperature_min": "Min. tempewatuwe",
-        "temperature_max": "Max. tempewatuwe",
-        "humidity_min": "Min. humidity",
-        "humidity_max": "Max. humidity",
-        "smoothness": "Smoothnyess",
-        "emissive_override": "Ovewwide emissivity",
-        "emissive_intensity": "Emissive intensity"
+      "features": {
+        "$title": "Featuwes",
+        "cracks": {
+          "$title": "Cwacks",
+          "noise_base_detail": "Base & detaiw nyoise",
+          "noise_limiter": "Wimitew nyoise",
+          "noise_color": "Cowow nyoise",
+          "distance_to_edge": "Distyance to edge"
+        },
+        "biomes": {
+          "$title": "Biomes",
+          "biomes_show": "Show biomes :3",
+          "texture_resolution": "Wesowution",
+          "temperature": "Tempewatuwe gwadient",
+          "humidity": "Humidity gwadient",
+          "gradient_mode": "Gwadient mode",
+          "gradient_mode_realistic": "Weawistic",
+          "gradient_mode_poletopole": "Powe-to-powe",
+          "gradient_mode_fullnoise": "Nyoise",
+          "biome_list": "Biomes",
+          "biome_type": "Type",
+          "height_min": "Min. height",
+          "height_max": "Max. height",
+          "temperature_min": "Min. tempewatuwe",
+          "temperature_max": "Max. tempewatuwe",
+          "humidity_min": "Min. humidity",
+          "humidity_max": "Max. humidity",
+          "smoothness": "Smoothnyess",
+          "emissive_override": "Ovewwide emissivity",
+          "emissive_intensity": "Emissive intensity"
+        }
       },
       "clouds": {
         "$title": "Cwouds",
@@ -402,10 +417,7 @@
         "ring_list": "Wings",
         "transform": "Twansfowm",
         "transform_radius_inner": "Innyew wadius",
-        "transform_radius_outer": "Outew wadius",
-        "rgba": "Cowow & opacity",
-        "rgba_opacity": "Opacity",
-        "rgba_colorramp": "Cowow wamp (RGBA)"
+        "transform_radius_outer": "Outew wadius"
       },
       "postprocessing": {
         "$title": "Post-pwocessing",

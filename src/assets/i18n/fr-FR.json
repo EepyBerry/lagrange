@@ -299,8 +299,13 @@
       "noise_fbm_lacunarity": "Lacunarité",
       "noise_fbm_octaves": "Octaves",
       "noise_color": "Couleur",
-      "noise_rgbramp": "Rampe de couleurs",
-      "noise_rgbaramp": "Rampe de couleurs (RGBA)"
+      "noise_voronoi_scale": "Échelle",
+      "noise_voronoi_jitter": "Perturbation",
+      "colorramp_rgb": "Rampe de couleurs",
+      "colorramp_rgba": "Couleur & transparence",
+      "colorramp_opacity": "Opacity wamp",
+      "color": "Couleur",
+      "color_opacity": "Couleur & transparence"
     },
     "controls": {
       "basic_data": {
@@ -345,27 +350,37 @@
         "bumpmap_show": "Afficher les bumps",
         "bumpmap_strength": "Intensité des bumps"
       },
-      "biomes": {
-        "$title": "Biomes",
-        "biomes_show": "Afficher biomes",
-        "texture_resolution": "Résolution",
-        "temperature": "Gradient de température",
-        "humidity": "Gradient d'humidité",
-        "gradient_mode": "Mode de gradient",
-        "gradient_mode_realistic": "Réaliste",
-        "gradient_mode_poletopole": "Pôle-à-pôle",
-        "gradient_mode_fullnoise": "Bruit",
-        "biome_list": "Biomes",
-        "biome_type": "Type",
-        "height_min": "Hauteur min.",
-        "height_max": "Hauteur max.",
-        "temperature_min": "Température min.",
-        "temperature_max": "Température max.",
-        "humidity_min": "Humidité min.",
-        "humidity_max": "Humidité max.",
-        "smoothness": "Facteur de lissage",
-        "emissive_override": "Émissivité forcée",
-        "emissive_intensity": "Intensité de l'émission"
+      "features": {
+        "$title": "",
+        "cracks": {
+          "$title": "Craquelures",
+          "noise_base_detail": "Bruit de base & détail",
+          "noise_limiter": "Bruit limiteur",
+          "noise_color": "Bruit de couleur",
+          "distance_to_edge": "Distance des bords"
+        },
+        "biomes": {
+          "$title": "Biomes",
+          "biomes_show": "Afficher biomes",
+          "texture_resolution": "Résolution",
+          "temperature": "Gradient de température",
+          "humidity": "Gradient d'humidité",
+          "gradient_mode": "Mode de gradient",
+          "gradient_mode_realistic": "Réaliste",
+          "gradient_mode_poletopole": "Pôle-à-pôle",
+          "gradient_mode_fullnoise": "Bruit",
+          "biome_list": "Biomes",
+          "biome_type": "Type",
+          "height_min": "Hauteur min.",
+          "height_max": "Hauteur max.",
+          "temperature_min": "Température min.",
+          "temperature_max": "Température max.",
+          "humidity_min": "Humidité min.",
+          "humidity_max": "Humidité max.",
+          "smoothness": "Facteur de lissage",
+          "emissive_override": "Émissivité forcée",
+          "emissive_intensity": "Intensité de l'émission"
+        }
       },
       "clouds": {
         "$title": "Nuages",
@@ -401,10 +416,7 @@
         "ring_list": "Anneaux",
         "transform": "Transform",
         "transform_radius_inner": "Rayon interne",
-        "transform_radius_outer": "Rayon externe",
-        "rgba": "Couleur & transparence",
-        "rgba_opacity": "Transparence",
-        "rgba_colorramp": "Rampe de couleurs (RGBA)"
+        "transform_radius_outer": "Rayon externe"
       },
       "postprocessing": {
         "$title": "Post-processing",

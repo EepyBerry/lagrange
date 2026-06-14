@@ -298,9 +298,14 @@
       "noise_fbm_amplitude": "Amplitude",
       "noise_fbm_lacunarity": "Lacunarity",
       "noise_fbm_octaves": "Octaves",
+      "noise_voronoi_scale": "Scale",
+      "noise_voronoi_jitter": "Jitter",
       "noise_color": "Color",
-      "noise_rgbramp": "Color ramp",
-      "noise_rgbaramp": "Color/alpha ramp"
+      "colorramp_rgb": "Color ramp",
+      "colorramp_rgba": "Color/alpha ramp",
+      "colorramp_opacity": "Opacity ramp",
+      "color": "Color",
+      "color_opacity": "Color & opacity"
     },
     "controls": {
       "basic_data": {
@@ -349,10 +354,10 @@
         "$title": "Features",
         "cracks": {
           "$title": "Cracks",
-          "noise": "Noise parameters",
-          "noise_a": "",
-          "rgba": "Color",
-          "rgba_colorramp": "@:editor.general.noise_rgbramp"
+          "noise_base_detail": "Base & detail noise",
+          "noise_limiter": "Limiter noise",
+          "noise_color": "Color noise",
+          "distance_to_edge": "Distance to edge"
         },
         "biomes": {
           "$title": "Biomes",
@@ -411,10 +416,7 @@
         "ring_list": "Rings",
         "transform": "Transform",
         "transform_radius_inner": "Inner radius",
-        "transform_radius_outer": "Outer radius",
-        "rgba": "Color & opacity",
-        "rgba_opacity": "Opacity",
-        "rgba_colorramp": "Color ramp (RGBA)"
+        "transform_radius_outer": "Outer radius"
       },
       "postprocessing": {
         "$title": "Post-processing",

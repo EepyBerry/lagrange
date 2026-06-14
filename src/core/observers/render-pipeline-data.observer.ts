@@ -1,6 +1,6 @@
 import type RenderPipelineData from '@core/models/renderpipeline/render-pipeline-data.model.ts';
-import type TSLRenderPipeline from '@core/tsl/rendering/render-pipeline.ts';
 import type { EditorSceneData } from '@core/types.ts';
+import type TSLRenderPipeline from '@tsl/rendering/render-pipeline.ts';
 import type { NodeMaterial } from 'three/webgpu';
 import { EDITOR_STATE } from '@core/state/editor.state.ts';
 import {

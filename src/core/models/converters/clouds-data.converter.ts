@@ -1,5 +1,5 @@
 import type PlanetData from '@core/models/planet/planet-data.model.ts';
-import type { CloudsUniformData } from '@core/tsl/materials/clouds.tslmat';
+import type { CloudsUniformData } from '@tsl/materials/clouds.tslmat';
 import type { Texture } from 'three';
 import { ModelConverter } from './model-converter';
 

@@ -1,3 +1,4 @@
+import type { VoronoiMode } from '@core/models/planet/noise/voronoi-noise-parameters.model.ts';
 import type { Vector3 } from 'three/webgpu';
 
 export type WarpingData = {
@@ -18,9 +19,8 @@ export type FbmNoiseData = {
   octaves: number;
 };
 
-export type CellularNoiseData = {
+export type VoronoiNoiseData = {
   scale: number;
   jitter: number;
-  strength: number;
-  lacunarity: number;
+  mode: VoronoiMode;
 };

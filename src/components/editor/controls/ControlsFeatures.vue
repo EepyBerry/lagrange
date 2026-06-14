@@ -2,7 +2,157 @@
   <ParameterGrid>
     <ParameterGroup v-model="EDITOR_STATE.planetData.cracksEnabled" :toggleable="EDITOR_STATE.planetData.cracksEnabled">
       <template #title>{{ $t('editor.controls.features.cracks.$title') }}</template>
-      <template #content> </template>
+      <template #content>
+        <ParameterGroup :toggleable="true">
+          <template #title>{{ $t('editor.controls.features.cracks.noise_base_detail') }}</template>
+          <template #content>
+            <ParameterSlider
+              id="b-tfreq"
+              v-model="EDITOR_STATE.planetData.cracksDistanceToEdge"
+              :step="0.001"
+              :max="0.02"
+            >
+              {{ $t('editor.controls.features.cracks.distance_to_edge') }}
+            </ParameterSlider>
+            <ParameterSlider id="b-tfreq" v-model="EDITOR_STATE.planetData.cracksBaseNoise.scale" :step="0.01" :max="5">
+              {{ $t('editor.general.noise_voronoi_scale') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="b-tamp"
+              v-model="EDITOR_STATE.planetData.cracksBaseNoise.jitter"
+              :step="0.01"
+              :min="0"
+              :max="1"
+            >
+              {{ $t('editor.general.noise_voronoi_jitter') }}
+            </ParameterSlider>
+            <ParameterDivider />
+            <ParameterSlider
+              id="b-tfreq"
+              v-model="EDITOR_STATE.planetData.cracksDetailNoise.frequency"
+              :step="0.01"
+              :max="5"
+            >
+              {{ $t('editor.general.noise_fbm_frequency') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="b-tamp"
+              v-model="EDITOR_STATE.planetData.cracksDetailNoise.amplitude"
+              :step="0.01"
+              :min="0"
+              :max="2"
+            >
+              {{ $t('editor.general.noise_fbm_amplitude') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="b-tlac"
+              v-model="EDITOR_STATE.planetData.cracksDetailNoise.lacunarity"
+              :step="0.01"
+              :min="1"
+              :max="3"
+            >
+              {{ $t('editor.general.noise_fbm_lacunarity') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="b-toct"
+              v-model="EDITOR_STATE.planetData.cracksDetailNoise.octaves"
+              :step="1"
+              :min="1"
+              :max="8"
+            >
+              {{ $t('editor.general.noise_fbm_octaves') }}
+            </ParameterSlider>
+          </template>
+        </ParameterGroup>
+        <ParameterGroup :toggleable="true">
+          <template #title>{{ $t('editor.controls.features.cracks.noise_limiter') }}</template>
+          <template #content>
+            <ParameterSlider
+              id="b-tfreq"
+              v-model="EDITOR_STATE.planetData.cracksLimiterNoise.frequency"
+              :step="0.01"
+              :max="5"
+            >
+              {{ $t('editor.general.noise_fbm_frequency') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="b-tamp"
+              v-model="EDITOR_STATE.planetData.cracksLimiterNoise.amplitude"
+              :step="0.01"
+              :min="0"
+              :max="2"
+            >
+              {{ $t('editor.general.noise_fbm_amplitude') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="b-tlac"
+              v-model="EDITOR_STATE.planetData.cracksLimiterNoise.lacunarity"
+              :step="0.01"
+              :min="1"
+              :max="2"
+            >
+              {{ $t('editor.general.noise_fbm_lacunarity') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="b-toct"
+              v-model="EDITOR_STATE.planetData.cracksLimiterNoise.octaves"
+              :step="1"
+              :min="1"
+              :max="4"
+            >
+              {{ $t('editor.general.noise_fbm_octaves') }}
+            </ParameterSlider>
+          </template>
+        </ParameterGroup>
+        <ParameterGroup :toggleable="true">
+          <template #title>{{ $t('editor.controls.features.cracks.noise_color') }}</template>
+          <template #content>
+            <ParameterSlider
+              id="b-tfreq"
+              v-model="EDITOR_STATE.planetData.cracksColorNoise.frequency"
+              :step="0.01"
+              :max="5"
+            >
+              {{ $t('editor.general.noise_fbm_frequency') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="b-tamp"
+              v-model="EDITOR_STATE.planetData.cracksColorNoise.amplitude"
+              :step="0.01"
+              :min="0"
+              :max="2"
+            >
+              {{ $t('editor.general.noise_fbm_amplitude') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="b-tlac"
+              v-model="EDITOR_STATE.planetData.cracksColorNoise.lacunarity"
+              :step="0.01"
+              :min="1"
+              :max="3"
+            >
+              {{ $t('editor.general.noise_fbm_lacunarity') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="b-toct"
+              v-model="EDITOR_STATE.planetData.cracksColorNoise.octaves"
+              :step="1"
+              :min="1"
+              :max="6"
+            >
+              {{ $t('editor.general.noise_fbm_octaves') }}
+            </ParameterSlider>
+            <ParameterDivider />
+            <ParameterColorRamp
+              :key="EDITOR_STATE.planetData.planetName"
+              v-model="EDITOR_STATE.planetData.cracksColorRamp"
+              mode="rgb"
+            >
+              {{ $t('editor.general.colorramp_rgb') }}
+            </ParameterColorRamp>
+          </template>
+        </ParameterGroup>
+      </template>
     </ParameterGroup>
     <ParameterGroup v-model="EDITOR_STATE.planetData.biomesEnabled" :toggleable="EDITOR_STATE.planetData.biomesEnabled">
       <template #title>{{ $t('editor.controls.features.biomes.$title') }}</template>
@@ -193,6 +343,7 @@
 </template>
 <script setup lang="ts">
 import ParameterBiome from '@components/global/parameters/ParameterBiome.vue';
+import ParameterDivider from '@components/global/parameters/ParameterDivider.vue';
 import ParameterGroup from '@components/global/parameters/ParameterGroup.vue';
 import { GradientMode } from '@core/types';
 import LgvButton from '@/_lib/components/LgvButton.vue';

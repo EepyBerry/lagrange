@@ -1,6 +1,6 @@
+import { getMatrixElement } from '@tsl/utils/math.tsl.ts';
 import { Fn, float, mat3, mul, normalize, vec3 } from 'three/tsl';
 import { Node, TextureNode } from 'three/webgpu';
-import { getMatrixElement } from './math-utils';
 
 export const sampleSobel = /*@__PURE__*/ Fn(
   ([i_texture, i_uv, i_offset]: [TextureNode, Node<'vec2'>, Node<'vec3'>]) => {

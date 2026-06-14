@@ -1,3 +1,4 @@
+import { flattenUV } from '@tsl/utils/vertex.tsl.ts';
 import { float, length, positionGeometry, texture, uniform, uv, vec2 } from 'three/tsl';
 import {
   DoubleSide,
@@ -8,7 +9,6 @@ import {
   UniformNode,
   type TextureNode,
 } from 'three/webgpu';
-import { flattenUV } from '../utils/vertex-utils';
 import { TSLMaterial } from './tsl-material';
 
 export type RingUniformData = {

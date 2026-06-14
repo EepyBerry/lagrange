@@ -32,19 +32,19 @@ import {
   WebGPURenderer,
   type ColorRepresentation,
 } from "three/webgpu";
-import { PlanetTSLMaterial } from "@core/tsl/materials/planet.tslmat";
-import { AtmosphereTSLMaterial } from "@core/tsl/materials/atmosphere.tslmat";
-import { CloudsTSLMaterial } from "@core/tsl/materials/clouds.tslmat";
-import { RingTSLMaterial } from "@core/tsl/materials/ring.tslmat";
+import { PlanetTSLMaterial } from "@tsl/materials/planet.tslmat";
+import { AtmosphereTSLMaterial } from "@tsl/materials/atmosphere.tslmat";
+import { CloudsTSLMaterial } from "@tsl/materials/clouds.tslmat";
+import { RingTSLMaterial } from "@tsl/materials/ring.tslmat";
 import { idb } from "@/dexie.config";
 import { LayeredDataTexture } from "@core/utils/texture/layered-data-texture";
-import type { BiomeParameters } from "src/core/models/planet/features/biome-parameters.model.ts";
+import type { BiomeParameters } from "@core/models/planet/features/biome-parameters.model.ts";
 import { PlanetDataConverter } from "@core/models/converters/planet-data.converter";
 import { CloudsDataConverter } from "@core/models/converters/clouds-data.converter";
 import { RingDataConverter } from "@core/models/converters/ring-data.converter";
 import { AtmosphereDataConverter } from "../models/converters/atmosphere-data.converter";
 import type { RingParameters } from "@core/models/planet/ring-parameters.model.ts";
-import TSLRenderPipeline from "@core/tsl/rendering/render-pipeline.ts";
+import TSLRenderPipeline from "@tsl/rendering/render-pipeline.ts";
 import type RenderPipelineData from "@core/models/renderpipeline/render-pipeline-data.model.ts";
 import { RenderPipelineDataConverter } from "@core/models/converters/render-pipeline-data.converter.ts";
 

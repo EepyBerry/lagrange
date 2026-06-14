@@ -1,7 +1,7 @@
 // @ts-nocheck
 // NOTE: @types/three types for post-processing nodes are completely borked...
 // I had no choice but to entirely disable type-cheks for this file, sorry :c
-import type { BaseRenderPipelineIdentifier } from '@core/tsl/rendering/base-render-pipeline.model.ts';
+import type { BaseRenderPipelineIdentifier } from '@tsl/rendering/base-render-pipeline.model.ts';
 import { Camera, type Scene } from 'three';
 import BloomNode, { bloom } from 'three/addons/tsl/display/BloomNode.js';
 import { chromaticAberration } from 'three/addons/tsl/display/ChromaticAberrationNode.js';

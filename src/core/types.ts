@@ -1,8 +1,8 @@
 import type { BiomeParameters } from '@core/models/planet/features/biome-parameters.model.ts';
-import type { AtmosphereUniforms } from '@core/tsl/materials/atmosphere.tslmat';
-import type { CloudsUniforms } from '@core/tsl/materials/clouds.tslmat';
-import type { PlanetUniforms } from '@core/tsl/materials/planet.tslmat';
-import type { RingUniforms } from '@core/tsl/materials/ring.tslmat';
+import type { AtmosphereUniforms } from '@tsl/materials/atmosphere.tslmat';
+import type { CloudsUniforms } from '@tsl/materials/clouds.tslmat';
+import type { PlanetUniforms } from '@tsl/materials/planet.tslmat';
+import type { RingUniforms } from '@tsl/materials/ring.tslmat';
 import type {
   AmbientLight,
   DataTexture,
@@ -16,7 +16,7 @@ import type {
 } from 'three';
 import type { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import type { WebGPURenderer } from 'three/webgpu';
-import TSLRenderPipeline from '@core/tsl/rendering/render-pipeline.ts';
+import TSLRenderPipeline from '@tsl/rendering/render-pipeline.ts';
 import type { LensFlareEffect } from './effects/lens-flare.effect';
 import type { LayeredDataTexture } from './utils/texture/layered-data-texture';
 

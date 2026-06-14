@@ -1,3 +1,4 @@
+import { flattenUV } from '@tsl/utils/vertex.tsl.ts';
 import {
   EPSILON,
   float,
@@ -28,7 +29,6 @@ import {
 import type { DisplacementData, FbmNoiseData, WarpingData } from '../tsl-commons';
 import { displace, warp } from '../features/lwd';
 import { fbm3 } from '../noise/fbm3';
-import { flattenUV } from '../utils/vertex-utils';
 import { TSLMaterial } from './tsl-material';
 
 export type CloudsUniformData = {

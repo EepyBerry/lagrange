@@ -2,8 +2,8 @@ import { convertLegacyRingStorage } from '@core/helpers/compatibility.helper.ts'
 import { ColorRamp, ColorRampStep } from '@core/models/planet/color-ramp.model.ts';
 import { DisplacementParameters } from '@core/models/planet/displacement-parameters.model.ts';
 import { BiomeParameters } from '@core/models/planet/features/biome-parameters.model.ts';
-import { CellularNoiseParameters } from '@core/models/planet/noise/cellular-noise-parameters.model.ts';
 import { FbmNoiseParameters } from '@core/models/planet/noise/fbm-noise-parameters.model.ts';
+import { VoronoiMode, VoronoiNoiseParameters } from '@core/models/planet/noise/voronoi-noise-parameters.model.ts';
 import { RingParameters } from '@core/models/planet/ring-parameters.model.ts';
 import { ColorMode, GradientMode, PlanetClass, PlanetType } from '@core/types.ts';
 import { clampedPRNG, isNumeric, randomBoolean, randomColor, randomIntervals } from '@core/utils/math-utils.ts';
@@ -19,7 +19,7 @@ export default class PlanetData extends Observable {
   // |                      Init                      |
   // --------------------------------------------------
 
-  private _defaultPlanetName: string;
+  private readonly _defaultPlanetName: string;
   private _planetName: string;
 
   private _initCamDistance: number = 4;
@@ -50,9 +50,9 @@ export default class PlanetData extends Observable {
   private _lensFlarePointsIntensity: number;
   private _lensFlareGlareIntensity: number;
   private _sunLightAngle: number;
-  private _sunLightColor: Color;
+  private readonly _sunLightColor: Color;
   private _sunLightIntensity: number;
-  private _ambLightColor: Color;
+  private readonly _ambLightColor: Color;
   private _ambLightIntensity: number;
 
   // --------------------------------------------------
@@ -255,9 +255,9 @@ export default class PlanetData extends Observable {
   private _planetSurfaceBumpStrength: number;
   private _planetSurfaceShowWarping: boolean;
   private _planetSurfaceShowDisplacement: boolean;
-  private _planetSurfaceDisplacement: DisplacementParameters;
-  private _planetSurfaceNoise: FbmNoiseParameters;
-  private _planetSurfaceColorRamp: ColorRamp;
+  private readonly _planetSurfaceDisplacement: DisplacementParameters;
+  private readonly _planetSurfaceNoise: FbmNoiseParameters;
+  private readonly _planetSurfaceColorRamp: ColorRamp;
 
   // --------------------------------------------------
 
@@ -312,10 +312,10 @@ export default class PlanetData extends Observable {
 
   private _biomesEnabled: boolean;
   private _biomesTemperatureMode: GradientMode;
-  private _biomesTemperatureNoise: FbmNoiseParameters;
+  private readonly _biomesTemperatureNoise: FbmNoiseParameters;
   private _biomesHumidityMode: GradientMode;
-  private _biomesHumidityNoise: FbmNoiseParameters;
-  private _biomesParams: BiomeParameters[];
+  private readonly _biomesHumidityNoise: FbmNoiseParameters;
+  private readonly _biomesParams: BiomeParameters[];
 
   // --------------------------------------------------
 
@@ -359,9 +359,12 @@ export default class PlanetData extends Observable {
 
   private _cracksEnabled: boolean;
   private _cracksEmissiveIntensity: number = 3;
-  private _cracksNoise: CellularNoiseParameters;
-  private _cracksColorRamp: ColorRamp;
-  private _cracksLimiterNoise: FbmNoiseParameters;
+  private _cracksDistanceToEdge: number = 0.01;
+  private readonly _cracksBaseNoise: VoronoiNoiseParameters;
+  private readonly _cracksDetailNoise: FbmNoiseParameters;
+  private readonly _cracksLimiterNoise: FbmNoiseParameters;
+  private readonly _cracksColorNoise: FbmNoiseParameters;
+  private readonly _cracksColorRamp: ColorRamp;
 
   // --------------------------------------------------
 
@@ -373,6 +376,15 @@ export default class PlanetData extends Observable {
     this.notify({ key: 'cracksEnabled' });
   }
 
+  public get cracksDistanceToEdge(): number {
+    return this._cracksDistanceToEdge;
+  }
+
+  public set cracksDistanceToEdge(value: number) {
+    this._cracksDistanceToEdge = clamp(value, 0.001, 0.02);
+    this.notify({ key: 'cracksDistanceToEdge' });
+  }
+
   public get cracksEmissiveIntensity(): number {
     return this._cracksEmissiveIntensity;
   }
@@ -381,15 +393,21 @@ export default class PlanetData extends Observable {
     this.notify({ key: 'cracksEmissiveIntensity' });
   }
 
-  public get cracksNoise(): CellularNoiseParameters {
-    return this._cracksNoise;
+  public get cracksBaseNoise(): VoronoiNoiseParameters {
+    return this._cracksBaseNoise;
   }
-  public get cracksColorRamp(): ColorRamp {
-    return this._cracksColorRamp;
+  public get cracksDetailNoise(): FbmNoiseParameters {
+    return this._cracksDetailNoise;
   }
-
   public get cracksLimiterNoise(): FbmNoiseParameters {
     return this._cracksLimiterNoise;
+  }
+  public get cracksColorNoise(): FbmNoiseParameters {
+    return this._cracksColorNoise;
+  }
+
+  public get cracksColorRamp(): ColorRamp {
+    return this._cracksColorRamp;
   }
 
   // --------------------------------------------------
@@ -398,13 +416,13 @@ export default class PlanetData extends Observable {
 
   private _cloudsEnabled: boolean;
   private _cloudsRotation: number;
-  private _cloudsHeight: number;
+  private readonly _cloudsHeight: number;
   private _cloudsShowWarping: boolean;
   private _cloudsShowDisplacement: boolean;
-  private _cloudsDisplacement: DisplacementParameters;
-  private _cloudsNoise: FbmNoiseParameters;
-  private _cloudsColor: Color;
-  private _cloudsColorRamp: ColorRamp;
+  private readonly _cloudsDisplacement: DisplacementParameters;
+  private readonly _cloudsNoise: FbmNoiseParameters;
+  private readonly _cloudsColor: Color;
+  private readonly _cloudsColorRamp: ColorRamp;
 
   // --------------------------------------------------
 
@@ -473,7 +491,7 @@ export default class PlanetData extends Observable {
   private _atmosphereIntensity: number;
   private _atmosphereColorMode: number;
   private _atmosphereHue: number;
-  private _atmosphereTint: Color;
+  private readonly _atmosphereTint: Color;
   // Advanced values
   private _atmosphereMieScatteringConstant: number;
   private _atmosphereRayleighDensityRatio: number;
@@ -568,7 +586,7 @@ export default class PlanetData extends Observable {
   // --------------------------------------------------
 
   private _ringsEnabled: boolean;
-  private _ringsParams: RingParameters[];
+  private readonly _ringsParams: RingParameters[];
 
   // --------------------------------------------------
 
@@ -714,16 +732,24 @@ export default class PlanetData extends Observable {
     this._biomesParams.forEach((b) => (b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity));
 
     this._cracksEnabled = false;
-    this._cracksNoise = new CellularNoiseParameters('cracksNoise', this.notifyRelayCallback, 4, 1, 2, 2.5);
+    this._cracksDistanceToEdge = 0.01;
+    this._cracksBaseNoise = new VoronoiNoiseParameters(
+      'cracksBaseNoise',
+      this.notifyRelayCallback,
+      4,
+      1,
+      VoronoiMode.DistanceToEdge,
+    );
+    this._cracksDetailNoise = new FbmNoiseParameters('cracksDetailNoise', this.notifyRelayCallback, 6, 1, 2.5, 6);
+    this._cracksLimiterNoise = new FbmNoiseParameters('cracksLimiterNoise', this.notifyRelayCallback, 3, 1.25, 1.25, 4);
+    this._cracksColorNoise = new FbmNoiseParameters('cracksColorNoise', this.notifyRelayCallback, 2.5, 1.25, 1.75, 4);
     this._cracksColorRamp = new ColorRamp('cracksColorRamp', this.notifyRelayCallback, [
       new ColorRampStep(0x2e221b, 0, true),
       new ColorRampStep(0xad5a11, 0.55),
       new ColorRampStep(0xe6962e, 0.8),
       new ColorRampStep(0xffdc73, 1, true),
     ]);
-    this._cracksLimiterNoise = new FbmNoiseParameters('cracksLimiterNoise', this.notifyRelayCallback, 3, 1.25, 2.4, 4);
     this._cracksEmissiveIntensity = 2.5;
-
     // Clouds
 
     this._cloudsEnabled = true;
@@ -846,7 +872,12 @@ export default class PlanetData extends Observable {
 
     // Cracks
     this.cracksEnabled = data._cracksEnabled ?? false;
+    this.cracksDistanceToEdge = data._cracksDistanceToEdge ?? 0.01;
     this.cracksEmissiveIntensity = data._cracksEmissiveIntensity ?? 2.5;
+    this.cracksBaseNoise.loadData(data._cracksBaseNoise);
+    this.cracksDetailNoise.loadData(data._cracksDetailNoise);
+    this.cracksLimiterNoise.loadData(data._cracksLimiterNoise);
+    this.cracksColorNoise.loadData(data._cracksColorNoise);
     this.cracksColorRamp.loadFromSteps(
       data._cracksColorRamp?._steps ?? [
         new ColorRampStep(0x2e221b, 0, true),
@@ -855,8 +886,6 @@ export default class PlanetData extends Observable {
         new ColorRampStep(0xffdc73, 1, true),
       ],
     );
-    this.cracksNoise.loadData(data._cracksNoise);
-    this.cracksLimiterNoise.loadData(data._cracksLimiterNoise);
 
     // Clouds
     this.cloudsEnabled = data._cloudsEnabled ?? true;
@@ -964,7 +993,7 @@ export default class PlanetData extends Observable {
     // Cracks
     this._cracksEnabled = randomBoolean();
     this._cracksEmissiveIntensity = clampedPRNG(0, 10);
-    this._cracksNoise.randomize();
+    this._cracksBaseNoise.randomize();
     this._cracksColorRamp.randomize(4);
     this._cracksLimiterNoise.randomize();
 

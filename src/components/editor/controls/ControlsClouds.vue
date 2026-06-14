@@ -133,7 +133,7 @@
         </template>
       </ParameterGroup>
       <ParameterGroup :toggleable="true">
-        <template #title>{{ $t('editor.controls.clouds.rgba') }}</template>
+        <template #title>{{ $t('editor.general.color_opacity') }}</template>
         <template #content>
           <ParameterColor v-model="EDITOR_STATE.planetData.cloudsColor">
             {{ $t('editor.general.noise_color') }}
@@ -144,7 +144,7 @@
             v-model="EDITOR_STATE.planetData.cloudsColorRamp"
             mode="opacity"
           >
-            {{ $t('editor.controls.clouds.rgba_opacityramp') }}
+            {{ $t('editor.general.colorramp_opacity') }}
           </ParameterColorRamp>
         </template>
       </ParameterGroup>

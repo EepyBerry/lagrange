@@ -1,8 +1,4 @@
-import {
-  LensFlareTSLMaterial,
-  type LensFlareData,
-  type LensFlareUniforms,
-} from '@core/tsl/materials/lens-flare.tslmat';
+import { LensFlareTSLMaterial, type LensFlareData, type LensFlareUniforms } from '@tsl/materials/lens-flare.tslmat';
 import { damp } from 'three/src/math/MathUtils.js';
 import {
   Camera,

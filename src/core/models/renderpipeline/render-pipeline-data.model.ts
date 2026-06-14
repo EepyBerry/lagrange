@@ -1,10 +1,10 @@
+import { Observable } from '@core/utils/observable-utils.ts';
 import {
   type BaseRenderPipelineIdentifier,
   BaseRenderPipelineNone,
   BaseRenderPipelinePixelation,
   BaseRenderPipelineRetro,
-} from '@core/tsl/rendering/base-render-pipeline.model.ts';
-import { Observable } from '@core/utils/observable-utils.ts';
+} from '@tsl/rendering/base-render-pipeline.model.ts';
 import { clamp } from 'three/src/math/MathUtils.js';
 
 export enum AntiAliasingMode {

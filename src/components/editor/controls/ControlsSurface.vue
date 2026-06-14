@@ -172,7 +172,7 @@
           v-model="EDITOR_STATE.planetData.planetSurfaceColorRamp"
           mode="rgb"
         >
-          {{ $t('editor.general.noise_rgbramp') }}
+          {{ $t('editor.general.colorramp_rgb') }}
         </ParameterColorRamp>
       </template>
     </ParameterGroup>

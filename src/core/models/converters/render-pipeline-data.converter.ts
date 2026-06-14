@@ -1,5 +1,5 @@
-import type { BaseRenderPipelineIdentifier } from '@core/tsl/rendering/base-render-pipeline.model.ts';
-import type { RenderPipelineUniformData } from '@core/tsl/rendering/render-pipeline.ts';
+import type { BaseRenderPipelineIdentifier } from '@tsl/rendering/base-render-pipeline.model.ts';
+import type { RenderPipelineUniformData } from '@tsl/rendering/render-pipeline.ts';
 import { ModelConverter } from '@core/models/converters/model-converter.ts';
 import RenderPipelineData from '@core/models/renderpipeline/render-pipeline-data.model.ts';
 

@@ -50,6 +50,7 @@ export class PlanetDataObserver extends Observer {
     );
     this.registerSurfaceDataUpdates(planetData, sceneData.planet);
     this.registerBiomeDataUpdates(planetData, sceneData.planet);
+    this.registerCracksDataUpdates(planetData, sceneData.planet);
     this.registerAtmosphereDataUpdates(planetData, sceneData.atmosphere);
     this.registerCloudDataUpdates(planetData, sceneData.clouds);
     this.registerRingsDataUpdates(planetData, sceneData.ringAnchor, sceneData.rings);
@@ -121,7 +122,7 @@ export class PlanetDataObserver extends Observer {
     this.registerEventHandler('planetWaterMetalness',          genericHandler(() => (planet.uniforms!.pbr.metallicRoughness.value.y = data.planetWaterMetalness)));
     this.registerEventHandler('planetGroundRoughness',         genericHandler(() => (planet.uniforms!.pbr.metallicRoughness.value.z = data.planetGroundRoughness)));
     this.registerEventHandler('planetGroundMetalness',         genericHandler(() => (planet.uniforms!.pbr.metallicRoughness.value.w = data.planetGroundMetalness)));
-    this.registerEventHandler('planetShowEmissive',            genericHandler(() => (planet.uniforms!.flags.array[4] = +data.planetShowEmissive)));
+    this.registerEventHandler('planetShowEmissive',            genericHandler(() => (planet.uniforms!.flags.array[5] = +data.planetShowEmissive)));
     this.registerEventHandler('planetWaterEmissiveIntensity',  genericHandler(() => (planet.uniforms!.pbr.emissive.value.x = data.planetWaterEmissiveIntensity)));
     this.registerEventHandler('planetGroundEmissiveIntensity', genericHandler(() => {
       planet.uniforms!.pbr.emissive.value.y = data.planetGroundEmissiveIntensity;
@@ -218,6 +219,32 @@ export class PlanetDataObserver extends Observer {
     }));
   }
 
+  //prettier-ignore
+  private registerCracksDataUpdates(data: PlanetData, planet: PlanetMeshData): void {
+    this.registerEventHandler('cracksEnabled',                  genericHandler(() => (planet.uniforms!.flags.array[4] = +data.cracksEnabled)));
+    this.registerEventHandler('cracksDistanceToEdge',           genericHandler(() => (planet.uniforms!.features.cracks.distanceToEdge.value = data.cracksDistanceToEdge)));
+    this.registerEventHandler('cracksBaseNoise.scale',          genericHandler(() => (planet.uniforms!.features.cracks.baseNoise.value.x = data.cracksBaseNoise.scale)));
+    this.registerEventHandler('cracksBaseNoise.jitter',         genericHandler(() => (planet.uniforms!.features.cracks.baseNoise.value.y = data.cracksBaseNoise.jitter)));
+    this.registerEventHandler('cracksBaseNoise._mode',          genericHandler(() => (planet.uniforms!.features.cracks.baseNoise.value.z = data.cracksBaseNoise.mode)));
+    this.registerEventHandler('cracksDetailNoise._frequency',   genericHandler(() => (planet.uniforms!.features.cracks.detailNoise.value.x = data.cracksDetailNoise.frequency)));
+    this.registerEventHandler('cracksDetailNoise._amplitude',   genericHandler(() => (planet.uniforms!.features.cracks.detailNoise.value.y = data.cracksDetailNoise.amplitude)));
+    this.registerEventHandler('cracksDetailNoise._lacunarity',  genericHandler(() => (planet.uniforms!.features.cracks.detailNoise.value.z = data.cracksDetailNoise.lacunarity)));
+    this.registerEventHandler('cracksDetailNoise._octaves',     genericHandler(() => (planet.uniforms!.features.cracks.detailNoise.value.w = data.cracksDetailNoise.octaves)));
+    this.registerEventHandler('cracksLimiterNoise._frequency',  genericHandler(() => (planet.uniforms!.features.cracks.limiterNoise.value.x = data.cracksLimiterNoise.frequency)));
+    this.registerEventHandler('cracksLimiterNoise._amplitude',  genericHandler(() => (planet.uniforms!.features.cracks.limiterNoise.value.y = data.cracksLimiterNoise.amplitude)));
+    this.registerEventHandler('cracksLimiterNoise._lacunarity', genericHandler(() => (planet.uniforms!.features.cracks.limiterNoise.value.z = data.cracksLimiterNoise.lacunarity)));
+    this.registerEventHandler('cracksLimiterNoise._octaves',    genericHandler(() => (planet.uniforms!.features.cracks.limiterNoise.value.w = data.cracksLimiterNoise.octaves)));
+    this.registerEventHandler('cracksColorNoise._frequency',    genericHandler(() => (planet.uniforms!.features.cracks.colorNoise.value.x = data.cracksColorNoise.frequency)));
+    this.registerEventHandler('cracksColorNoise._amplitude',    genericHandler(() => (planet.uniforms!.features.cracks.colorNoise.value.y = data.cracksColorNoise.amplitude)));
+    this.registerEventHandler('cracksColorNoise._lacunarity',   genericHandler(() => (planet.uniforms!.features.cracks.colorNoise.value.z = data.cracksColorNoise.lacunarity)));
+    this.registerEventHandler('cracksColorNoise._octaves',      genericHandler(() => (planet.uniforms!.features.cracks.colorNoise.value.w = data.cracksColorNoise.octaves)));
+    this.registerEventHandler('cracksColorRamp', genericHandler(() => {
+      const v = data.cracksColorRamp;
+      TextureHelper.recalculateRampTexture(planet.cracksBuffer, Globals.TEXTURE_SIZES.CRACKS, v.steps);
+      planet.cracksTexture!.needsUpdate = true;
+    }));
+  }
+
   // prettier-ignore
   private registerCloudDataUpdates(data: PlanetData, clouds: CloudsMeshData): void {
     this.registerEventHandler('cloudsEnabled',  genericHandler(() => (clouds.mesh!.visible = data.cloudsEnabled)));
@@ -265,15 +292,15 @@ export class PlanetDataObserver extends Observer {
       atmosphere.mesh!.geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality, 1 + data.atmosphereHeight);
       atmosphere.uniforms!.transform.radius.value = data.planetRadius + data.atmosphereHeight;
     }));
-    this.registerEventHandler('atmosphereDensityScale',          genericHandler(() =>  (atmosphere.uniforms!.render.density.value = data.atmosphereDensityScale)));
-    this.registerEventHandler('atmosphereIntensity',             genericHandler(() =>  (atmosphere.uniforms!.render.intensity.value = data.atmosphereIntensity)));
-    this.registerEventHandler('atmosphereColorMode',             genericHandler(() =>  (atmosphere.uniforms!.render.colorMode.value = data.atmosphereColorMode)));
-    this.registerEventHandler('atmosphereHue',                   genericHandler(() =>  (atmosphere.uniforms!.render.hue.value = data.atmosphereHue)));
-    this.registerEventHandler('atmosphereTint',                  genericHandler(() =>  (atmosphere.uniforms!.render.tint.value = data.atmosphereTint)));
-    this.registerEventHandler('atmosphereMieScatteringConstant', genericHandler(() =>  (atmosphere.uniforms!.render.advanced.mieScatteringConstant.value = data.atmosphereMieScatteringConstant)));
-    this.registerEventHandler('atmosphereRayleighDensityRatio',  genericHandler(() =>  (atmosphere.uniforms!.render.advanced.rayleighDensityRatio.value = data.atmosphereRayleighDensityRatio)));
-    this.registerEventHandler('atmosphereMieDensityRatio',       genericHandler(() =>  (atmosphere.uniforms!.render.advanced.mieDensityRatio.value = data.atmosphereMieDensityRatio)));
-    this.registerEventHandler('atmosphereOpticalDensityRatio',   genericHandler(() =>  (atmosphere.uniforms!.render.advanced.opticalDensityRatio.value = data.atmosphereOpticalDensityRatio)));
+    this.registerEventHandler('atmosphereDensityScale',          genericHandler(() => (atmosphere.uniforms!.render.density.value = data.atmosphereDensityScale)));
+    this.registerEventHandler('atmosphereIntensity',             genericHandler(() => (atmosphere.uniforms!.render.intensity.value = data.atmosphereIntensity)));
+    this.registerEventHandler('atmosphereColorMode',             genericHandler(() => (atmosphere.uniforms!.render.colorMode.value = data.atmosphereColorMode)));
+    this.registerEventHandler('atmosphereHue',                   genericHandler(() => (atmosphere.uniforms!.render.hue.value = data.atmosphereHue)));
+    this.registerEventHandler('atmosphereTint',                  genericHandler(() =>   (atmosphere.uniforms!.render.tint.value = data.atmosphereTint)));
+    this.registerEventHandler('atmosphereMieScatteringConstant', genericHandler(() => (atmosphere.uniforms!.render.advanced.mieScatteringConstant.value = data.atmosphereMieScatteringConstant)));
+    this.registerEventHandler('atmosphereRayleighDensityRatio',  genericHandler(() => (atmosphere.uniforms!.render.advanced.rayleighDensityRatio.value = data.atmosphereRayleighDensityRatio)));
+    this.registerEventHandler('atmosphereMieDensityRatio',       genericHandler(() => (atmosphere.uniforms!.render.advanced.mieDensityRatio.value = data.atmosphereMieDensityRatio)));
+    this.registerEventHandler('atmosphereOpticalDensityRatio',   genericHandler(() => (atmosphere.uniforms!.render.advanced.opticalDensityRatio.value = data.atmosphereOpticalDensityRatio)));
   }
 
   // prettier-ignore
