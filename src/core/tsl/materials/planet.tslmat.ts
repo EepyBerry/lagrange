@@ -1,4 +1,4 @@
-import { voronoi3 } from '@tsl/noise/voronoi3.ts';
+import { computeCracks } from '@tsl/features/cracks.ts';
 import { sampleSobel, sobel } from '@tsl/utils/sobel.tsl.ts';
 import { flattenUV } from '@tsl/utils/vertex.tsl.ts';
 import {
@@ -13,7 +13,6 @@ import {
   mul,
   normalLocal,
   positionLocal,
-  remapClamp,
   step,
   tangentLocal,
   texture,
@@ -315,7 +314,17 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     ).toVec3();
 
     // Render cracks
-    colour = mix(colour, this.renderCracks(colour, vPos, FLAG_SURFACE_TYPE).toVec3(), FLAG_CRACKS_ENABLED).toVec3();
+    const cracksColour = computeCracks(
+      colour,
+      vPos,
+      this.uniforms.features.cracks.baseNoise,
+      this.uniforms.features.cracks.detailNoise,
+      this.uniforms.features.cracks.limiterNoise,
+      this.uniforms.features.cracks.colorNoise,
+      this.uniforms.features.cracks.baseTexture!,
+      this.uniforms.features.cracks.distanceToEdge,
+    );
+    colour = mix(colour, cracksColour, FLAG_CRACKS_ENABLED).toVec3();
 
     // Render bump-map (under MIT license)
     const bump = this.applyBumpMap(vPos, height);
@@ -358,6 +367,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     const FLAG_BIOMES_ENABLED = FLAG_SURFACE_TYPE.mul(float(this.uniforms.flags.element(3))).setName(
       'FLAG_BIOMES_ENABLED',
     );
+    const FLAG_CRACKS_ENABLED = float(this.uniforms.flags.element(4)).toVar('FLAG_CRACKS_ENABLED');
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord');
@@ -373,6 +383,19 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
       biomeTexCoord,
       FLAG_BIOMES_ENABLED,
     ).toVec3();
+
+    // Render cracks
+    const cracksColour = computeCracks(
+      colour,
+      vPos,
+      this.uniforms.features.cracks.baseNoise,
+      this.uniforms.features.cracks.detailNoise,
+      this.uniforms.features.cracks.limiterNoise,
+      this.uniforms.features.cracks.colorNoise,
+      this.uniforms.features.cracks.baseTexture!,
+      this.uniforms.features.cracks.distanceToEdge,
+    );
+    colour = mix(colour, cracksColour, FLAG_CRACKS_ENABLED).toVec3();
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial();
@@ -519,26 +542,11 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     return mix(colour, sampleBiomeTexture(texture, texCoords.x, texCoords.y, colour), FLAG_BIOMES_ENABLED);
   }
 
-  private renderCracks(color: Node<'vec3'>, vPos: Node<'vec3'>, _FLAG_LAND: Node<'float'>): Node<'vec3'> {
-    const cracksDistance = voronoi3(
-      vPos.mul(this.uniforms.features.cracks.baseNoise.x),
-      this.uniforms.features.cracks.baseNoise.y,
-    ).toVar('cnoise');
-    const cracksDetail = layer(vPos, this.uniforms.features.cracks.detailNoise, 1);
-    const _cracksDistanceMix = mix(cracksDetail, cracksDistance, 0.9);
-    const cracksExtent = mix(1, 0, remapClamp(cracksDistance, 0, this.uniforms.features.cracks.distanceToEdge, 0, 1));
-
-    const cracksColorNoiseHeight = layer(vPos, this.uniforms.features.cracks.colorNoise, 1);
-    const cracksColorNoiseColor = vec3(
-      this.uniforms.features.cracks.baseTexture!.sample(vec2(cracksColorNoiseHeight, 0.5)).xyz,
-    );
-
-    return mix(color, cracksColorNoiseColor, cracksExtent);
-  }
-
   private applyBumpMap(vPos: Node<'vec3'>, height: Node<'float'>): Node<'vec3'> {
     const dx = vec3(tangentLocal.mul(this.uniforms.surface.warping.yzw).mul(0.005)).toVar('dx');
-    const dy = vec3(bitangentLocal.mul(this.uniforms.surface.warping.yzw).mul(0.005)).toVar('dy');
+    const dy = vec3(
+      (bitangentLocal as unknown as Node<'vec3'>).mul(this.uniforms.surface.warping.yzw).mul(0.005),
+    ).toVar('dy');
     const dxHeight = float(layer(vPos.add(dx), this.uniforms.surface.noise, this.uniforms.surface.warping.x)).toVar(
       'dxHeight',
     );
