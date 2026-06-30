@@ -17,7 +17,7 @@ export const computeCracks = Fn(
     const cracksDistance = voronoi3(vPos.mul(baseNoise.x), baseNoise.y).toVar('cnoise');
     const cracksDetail = layer(vPos, detailNoise, 1);
     const _cracksDistanceMix = mix(cracksDetail, cracksDistance, 0.9);
-    const cracksExtent = mix(1, 0, remapClamp(cracksDistance, 0, distanceToEdge, 0, 1));
+    const cracksExtent = mix(1, 0, remapClamp(cracksDistance, 0, distanceToEdge.mul(baseNoise.x), 0, 1));
 
     const cracksColorNoiseHeight = layer(vPos, colorNoise, 1);
     const cracksColorNoiseColor = vec3(baseTexture.sample(vec2(cracksColorNoiseHeight, 0.5)).xyz);

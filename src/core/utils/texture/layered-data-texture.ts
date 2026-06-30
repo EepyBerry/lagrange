@@ -2,13 +2,13 @@ import saveAs from 'file-saver';
 import { nanoid } from 'nanoid';
 import { DataTexture } from 'three';
 
+type Layer = { id: string; canvas: OffscreenCanvas };
+
 /**
  * DataTexture wrapper to manage multiple layers more efficiently, such as for biomes.
  *
  * *Note: layers are stored in descending order.*
  */
-export type LayerDrawOptions = { width?: number; height?: number };
-export type Layer = { id: string; canvas: OffscreenCanvas };
 export class LayeredDataTexture<DataObject> {
   private _layers: Layer[] = [];
   private _workCanvas: OffscreenCanvas;
@@ -40,6 +40,14 @@ export class LayeredDataTexture<DataObject> {
     this.updateTexture();
   }
 
+  private updateTexture() {
+    const ctx = this._workCanvas.getContext('2d', { willReadFrequently: true })!;
+    ctx.clearRect(0, 0, this._width, this._height);
+    this._layers.toReversed().forEach((layer) => ctx.drawImage(layer.canvas, 0, 0));
+    this._texture.image = ctx.getImageData(0, 0, this._width, this._height);
+    this._texture.needsUpdate = true;
+  }
+
   public dispose() {
     this._layers.splice(0);
     this._texture.dispose();
@@ -47,14 +55,6 @@ export class LayeredDataTexture<DataObject> {
 
   public debugSaveTexture() {
     this._workCanvas.convertToBlob({ type: 'image/png' }).then((data) => saveAs(data, 'layeredtex.png'));
-  }
-
-  public updateTexture() {
-    const ctx = this._workCanvas.getContext('2d', { willReadFrequently: true })!;
-    ctx.clearRect(0, 0, this._width, this._height);
-    this._layers.toReversed().forEach((layer) => ctx.drawImage(layer.canvas, 0, 0));
-    this._texture.image = ctx.getImageData(0, 0, this._width, this._height);
-    this._texture.needsUpdate = true;
   }
 
   public updateAllLayers(data: DataObject[]) {
