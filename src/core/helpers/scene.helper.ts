@@ -1,30 +1,20 @@
 import type { NodeMaterial } from "three/webgpu";
 import type PlanetData from "@core/models/planet/planet-data.model.ts";
-import { type EditorSceneData, type RingMeshData, EditorSceneCreationMode } from "../types";
+import { type EditorSceneData, EditorSceneCreationMode, type MeshData } from "../types";
 import * as ComponentHelper from "./component.helper";
 import * as Globals from "@core/globals";
-import { Group, Timer } from "three";
+import { Timer } from "three";
 import { degToRad } from "three/src/math/MathUtils.js";
+import type { RingTSLMaterial } from "@tsl/materials/ring.tslmat.ts";
 
 export async function buildEditorScene(
   data: PlanetData,
+  sceneData: Partial<EditorSceneData>,
   renderWidth: number,
   renderHeight: number,
   renderPixelRatio: number,
   creationMode: EditorSceneCreationMode,
-): Promise<EditorSceneData> {
-  const sceneData: Partial<EditorSceneData> = {
-    planet: {
-      surfaceBuffer: new Uint8Array(Globals.TEXTURE_SIZES.SURFACE * 4),
-      cracksBuffer: new Uint8Array(Globals.TEXTURE_SIZES.CRACKS * 4),
-    },
-    clouds: {
-      buffer: new Uint8Array(Globals.TEXTURE_SIZES.CLOUDS * 4),
-    },
-    rings: [],
-    planetGroup: new Group(),
-    ringAnchor: new Group(),
-  };
+): Promise<void> {
   await buildScene(
     sceneData as EditorSceneData,
     data,
@@ -35,7 +25,6 @@ export async function buildEditorScene(
   );
   buildSceneLighting(sceneData as EditorSceneData, data);
   buildScenePlanet(sceneData as EditorSceneData, data, creationMode);
-  return sceneData as EditorSceneData;
 }
 
 export function disposeScene(sceneData: EditorSceneData) {
@@ -56,13 +45,12 @@ export function disposeScene(sceneData: EditorSceneData) {
     r.mesh!.geometry.dispose();
   });
 
-  sceneData.planet.surfaceBuffer?.fill(0);
-  sceneData.planet.surfaceTexture!.dispose();
-  sceneData.planet.biomeLayersTexture!.dispose();
-  sceneData.planet.biomeEmissiveLayersTexture!.dispose();
-  sceneData.planet.cracksBuffer?.fill(0);
-  sceneData.planet.cracksTexture!.dispose();
-  sceneData.clouds.texture!.dispose();
+  sceneData.planet.tslMaterial!.dispose();
+  sceneData.clouds.tslMaterial!.dispose();
+  sceneData.atmosphere.tslMaterial!.dispose();
+  sceneData.lensFlare!.tslMaterial.dataEventEndpoint.dispose();
+  sceneData.rings.forEach((r) => r.tslMaterial!.dispose());
+  sceneData.rings.splice(0);
   sceneData.ringAnchor.clear();
   sceneData.planetGroup.clear();
 
@@ -125,10 +113,10 @@ function buildScenePlanet(
   data: PlanetData,
   creationMode: EditorSceneCreationMode,
 ): void {
-  const planet = ComponentHelper.createPlanet(data, sceneData.planet.surfaceBuffer, sceneData.planet.cracksBuffer);
-  const clouds = ComponentHelper.createClouds(data, sceneData.clouds.buffer);
-  const atmosphere = ComponentHelper.createAtmosphere(data, sceneData.sunLight.position);
-  const rings: RingMeshData[] = [];
+  const planet = ComponentHelper.createPlanet(data);
+  const clouds = ComponentHelper.createClouds(data);
+  const atmosphere = ComponentHelper.createAtmosphere(data, sceneData.sunLight);
+  const rings: MeshData<RingTSLMaterial>[] = [];
   if (creationMode === EditorSceneCreationMode.Editor) {
     rings.push(...data.ringsParams.map((param) => ComponentHelper.createRing(data, param)));
   }
@@ -136,6 +124,7 @@ function buildScenePlanet(
   // Toggle elements
   clouds.mesh!.visible = data.cloudsEnabled;
   atmosphere.mesh!.visible = data.atmosphereEnabled;
+  sceneData.ringAnchor.visible = data.ringsEnabled;
   rings.forEach((r) => (r.mesh!.visible = data.ringsEnabled));
 
   // Add to scene

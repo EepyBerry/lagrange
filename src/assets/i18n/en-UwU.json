@@ -226,11 +226,12 @@
       "step_1": "Pwepawing",
       "step_2": "Baking suwface textuwe",
       "step_3": "Baking suwface PBR",
-      "step_4": "Baking suwface n-nowmals",
-      "step_5": "Baking cwouds textuwe",
-      "step_6": "Baking wing systyem textuwes",
-      "step_7": "F-finawizing",
-      "step_8": "Done!!! :3",
+      "step_4": "Baking suwface emissivity",
+      "step_5": "Baking suwface n-nowmals",
+      "step_6": "Baking cwouds textuwe",
+      "step_7": "Baking wing systyem textuwes",
+      "step_8": "F-finawizing",
+      "step_9": "Done!!! :3",
       "step_failed": "faiwed :c"
     },
     "reset": {
@@ -349,7 +350,8 @@
         "$title": "Suwface",
         "bumpmap": "Bump map",
         "bumpmap_show": "Show bumps :3",
-        "bumpmap_strength": "Bump stwength"
+        "bumpmap_strength": "Stwength",
+        "bumpmap_offset": "Offset"
       },
       "features": {
         "$title": "Featuwes",

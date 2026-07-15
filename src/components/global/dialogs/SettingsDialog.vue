@@ -467,7 +467,7 @@ import ParameterRadio from '@components/global/parameters/ParameterRadio.vue';
 import ParameterRadioOption from '@components/global/parameters/ParameterRadioOption.vue';
 import ParameterSelect from '@components/global/parameters/ParameterSelect.vue';
 import ParameterSlider from '@components/global/parameters/ParameterSlider.vue';
-import { EventBus } from '@core/event-bus';
+import { setCameraControlScheme, setCameraFOV, swapSceneSkybox } from '@core/editor/editor.service.ts';
 import {
   EXTRAS_CAT_MODE,
   EXTRAS_CRT_EFFECT,
@@ -476,6 +476,7 @@ import {
   EXTRAS_SPECIAL_DAYS,
 } from '@core/extras';
 import { readFileSettings } from '@core/helpers/import.helper';
+import { UIEventBus } from '@core/ui-event-bus.ts';
 import { mapLocale } from '@core/utils/utils';
 import { saveAs } from 'file-saver';
 import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
@@ -484,7 +485,6 @@ import LgvButton from '@/_lib/components/LgvButton.vue';
 import LgvNotification from '@/_lib/components/LgvNotification.vue';
 import WebGPU from '@/core/capabilities/WebGPU';
 import * as DexieService from '@/core/services/dexie.service';
-import { setCameraControlScheme, setCameraFOV, swapSceneSkybox } from '@/core/services/editor.service';
 import {
   type CameraMouseControlsScheme,
   idb,
@@ -575,7 +575,7 @@ async function importData(event: Event) {
   appSettings.value = data.settings!;
   keyBinds.value.splice(0);
   keyBinds.value.push(...data.keyBindings);
-  await updateSettings().then(() => EventBus.sendToastEvent('success', 'toast.settings_import_success', 5000));
+  await updateSettings().then(() => UIEventBus.sendToastEvent('success', 'toast.settings_import_success', 5000));
 }
 
 async function exportData() {
@@ -587,7 +587,7 @@ async function exportData() {
 async function clearAllData() {
   await DexieService.clearData();
   await loadData();
-  EventBus.sendDataClearEvent();
+  UIEventBus.sendDataClearEvent();
 }
 
 function toggleAction(action: string): void {

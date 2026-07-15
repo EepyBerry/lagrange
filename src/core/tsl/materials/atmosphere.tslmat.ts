@@ -1,3 +1,7 @@
+import type { DataEventPayloadTypeMap } from '@core/editor/event/data-event.types.ts';
+import type PlanetData from '@core/models/planet/planet-data.model.ts';
+import { DataEventEndpoint } from '@core/editor/event/data-event-endpoint.ts';
+import { EDITOR_SCENE_DATA } from '@core/editor/state/editor.state.ts';
 import { shiftHue, tintToMatrix, whitescale } from '@tsl/utils/color.tsl.ts';
 import {
   add,
@@ -31,29 +35,7 @@ import {
 import { Color, Node, NodeMaterial, UniformNode, type Vector3 } from 'three/webgpu';
 import { TSLMaterial } from './tsl-material';
 
-export type AtmosphereUniformsData = {
-  sunlight: {
-    position: Vector3;
-    intensity: number;
-  };
-  transform: {
-    radius: number;
-    surfaceRadius: number;
-  };
-  render: {
-    density: number;
-    intensity: number;
-    colorMode: number;
-    hue: number;
-    tint: Color;
-    advanced: {
-      mieScatteringConstant: number;
-      rayleighDensityRatio: number;
-      mieDensityRatio: number;
-      opticalDensityRatio: number;
-    };
-  };
-};
+export type AtmosphereInitExtras = { sunlightPosition: Vector3; sunlightIntensity: number };
 export type AtmosphereUniforms = {
   sunlight: {
     position: UniformNode<'vec3', Vector3>;
@@ -70,35 +52,61 @@ export type AtmosphereUniforms = {
     hue: UniformNode<'float', number>;
     tint: UniformNode<'color', Color>;
     advanced: {
-      mieScatteringConstant: UniformNode<'float', number>;
       rayleighDensityRatio: UniformNode<'float', number>;
       mieDensityRatio: UniformNode<'float', number>;
+      mieScatteringConstant: UniformNode<'float', number>;
       opticalDensityRatio: UniformNode<'float', number>;
     };
   };
 };
-export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereUniformsData, AtmosphereUniforms> {
-  uniformize(data: AtmosphereUniformsData): AtmosphereUniforms {
+export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereUniforms> {
+  public readonly dataEventEndpoint = new DataEventEndpoint<keyof DataEventPayloadTypeMap>('endpoint-atmosphere');
+
+  // prettier-ignore
+  constructor(initData: PlanetData, extras: AtmosphereInitExtras) {
+    super();
+    this.uniforms = this.initUniforms(initData, extras);
+    this.dataEventEndpoint.canProcess = (payload) => (!payload.context || payload.context === 'atmosphere');
+    this.dataEventEndpoint
+      .on('sunlightAngle', () => (this.uniforms.sunlight.position.value = EDITOR_SCENE_DATA.sunLight!.position))
+      .on('sunlightIntensity', (payload) => (this.uniforms.sunlight.intensity.value = payload.value))
+      .on('radius', (payload) => {
+        this.uniforms.transform.surfaceRadius.value = payload.value.surface;
+        this.uniforms.transform.radius.value = payload.value.atmosphere;
+      })
+      .on('atmosphereHeight', (payload) => (this.uniforms.transform.radius.value = payload.value))
+      .on('atmosphereDensityScale', (payload) => this.uniforms.render.density.value = payload.value)
+      .on('atmosphereIntensity', (payload) => this.uniforms.render.intensity.value = payload.value)
+      .on('atmosphereColorMode', (payload) => this.uniforms.render.colorMode.value = payload.value)
+      .on('atmosphereHue', (payload) => this.uniforms.render.hue.value = payload.value)
+      .on('atmosphereTint', (payload) => this.uniforms.render.tint.value = payload.value)
+      .on('atmosphereMieScatteringConstant', (payload) => this.uniforms.render.advanced.mieScatteringConstant.value = payload.value)
+      .on('atmosphereRayleighDensityRatio', (payload) => this.uniforms.render.advanced.rayleighDensityRatio.value = payload.value)
+      .on('atmosphereMieDensityRatio', (payload) => this.uniforms.render.advanced.mieDensityRatio.value = payload.value)
+      .on('atmosphereOpticalDensityRatio', (payload) => this.uniforms.render.advanced.opticalDensityRatio.value = payload.value);
+  }
+
+  initUniforms(data: PlanetData, extras: AtmosphereInitExtras): AtmosphereUniforms {
     return {
       sunlight: {
-        position: uniform(data.sunlight.position).setName('uLightPosition'),
-        intensity: uniform(data.sunlight.intensity).setName('uLightIntensity'),
+        position: uniform(extras.sunlightPosition).setName('uLightPosition'),
+        intensity: uniform(extras.sunlightIntensity).setName('uLightIntensity'),
       },
       transform: {
-        radius: uniform(data.transform.radius).setName('uRadius'),
-        surfaceRadius: uniform(data.transform.surfaceRadius).setName('uSurfaceRadius'),
+        radius: uniform(data.planetRadius + data.atmosphereHeight).setName('uRadius'),
+        surfaceRadius: uniform(data.planetRadius).setName('uSurfaceRadius'),
       },
       render: {
-        density: uniform(data.render.density).setName('uDensity'),
-        intensity: uniform(data.render.intensity).setName('uIntensity'),
-        colorMode: uniform(data.render.colorMode).setName('uColorMode'),
-        hue: uniform(data.render.hue).setName('uHue'),
-        tint: uniform(data.render.tint).setName('uTint'),
+        density: uniform(data.atmosphereDensityScale).setName('uDensity'),
+        intensity: uniform(data.atmosphereIntensity).setName('uIntensity'),
+        colorMode: uniform(data.atmosphereColorMode).setName('uColorMode'),
+        hue: uniform(data.atmosphereHue).setName('uHue'),
+        tint: uniform(data.atmosphereTint).setName('uTint'),
         advanced: {
-          mieScatteringConstant: uniform(data.render.advanced.mieScatteringConstant).setName('uMieScatteringConstant'),
-          rayleighDensityRatio: uniform(data.render.advanced.rayleighDensityRatio).setName('uRayleighDensityRatio'),
-          mieDensityRatio: uniform(data.render.advanced.mieDensityRatio).setName('uMieDensityRatio'),
-          opticalDensityRatio: uniform(data.render.advanced.opticalDensityRatio).setName('uOpticalDensityRatio'),
+          rayleighDensityRatio: uniform(data.atmosphereRayleighDensityRatio).setName('uRayleighDensityRatio'),
+          mieDensityRatio: uniform(data.atmosphereMieDensityRatio).setName('uMieDensityRatio'),
+          mieScatteringConstant: uniform(data.atmosphereMieScatteringConstant).setName('uMieScatteringConstant'),
+          opticalDensityRatio: uniform(data.atmosphereOpticalDensityRatio).setName('uOpticalDensityRatio'),
         },
       },
     };
@@ -139,13 +147,13 @@ export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereU
 
       // set colorNode depending on current color mode (realistic/direct/mixed)
       const colorNode = vec4(0).toVar('colorNode');
-      If(this.uniforms.render.colorMode.equal(int(0)), () => {
+      If(this.uniforms.render.colorMode.equal(0), () => {
         colorNode.assign(IShifted.mul(this.uniforms.render.intensity));
       });
-      If(this.uniforms.render.colorMode.equal(int(1)), () => {
+      If(this.uniforms.render.colorMode.equal(1), () => {
         colorNode.assign(whitescale(I).mul(tintToMatrix(tint)).mul(this.uniforms.render.intensity));
       });
-      If(this.uniforms.render.colorMode.equal(int(2)), () => {
+      If(this.uniforms.render.colorMode.equal(2), () => {
         colorNode.assign(IShifted.mul(tint).mul(this.uniforms.render.intensity));
       });
       colorNode.a = colorNode.a.clamp(0, 1);

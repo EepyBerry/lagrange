@@ -226,11 +226,12 @@
       "step_1": "Preparing",
       "step_2": "Baking surface texture",
       "step_3": "Baking surface PBR",
-      "step_4": "Baking surface normals",
-      "step_5": "Baking clouds texture",
-      "step_6": "Baking ring system textures",
-      "step_7": "Finalizing",
-      "step_8": "Done!",
+      "step_4": "Baking surface emissivity",
+      "step_5": "Baking surface normals",
+      "step_6": "Baking clouds texture",
+      "step_7": "Baking ring system textures",
+      "step_8": "Finalizing",
+      "step_9": "Done!",
       "step_failed": "failed!"
     },
     "reset": {
@@ -348,7 +349,8 @@
         "$title": "Surface",
         "bumpmap": "Bump map",
         "bumpmap_show": "Show bumps",
-        "bumpmap_strength": "Bump strength"
+        "bumpmap_strength": "Strength",
+        "bumpmap_offset": "Offset"
       },
       "features": {
         "$title": "Features",

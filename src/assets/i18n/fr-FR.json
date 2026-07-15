@@ -226,11 +226,12 @@
       "step_1": "Préparation",
       "step_2": "Baking de la surface",
       "step_3": "Baking des données PBR",
-      "step_4": "Baking des normales",
-      "step_5": "Baking des nuages",
-      "step_6": "Baking des anneaux",
-      "step_7": "Finalisation",
-      "step_8": "Terminé !",
+      "step_4": "Baking de l'émission",
+      "step_5": "Baking des normales",
+      "step_6": "Baking des nuages",
+      "step_7": "Baking des anneaux",
+      "step_8": "Finalisation",
+      "step_9": "Terminé !",
       "step_failed": "échec !"
     },
     "reset": {
@@ -346,9 +347,10 @@
       },
       "surface": {
         "$title": "Surface",
-        "bumpmap": "Bump mapping",
-        "bumpmap_show": "Afficher les bumps",
-        "bumpmap_strength": "Intensité des bumps"
+        "bumpmap": "Reliefs",
+        "bumpmap_show": "Afficher les reliefs",
+        "bumpmap_strength": "Intensité",
+        "bumpmap_offset": "Décalage"
       },
       "features": {
         "$title": "",

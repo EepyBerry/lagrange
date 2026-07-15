@@ -17,7 +17,7 @@
             <ParameterRing
               v-model="EDITOR_STATE.planetData.ringsParams[index]"
               :index="index"
-              @delete="EDITOR_STATE.planetData.removeRing(r.id)"
+              @delete="EDITOR_STATE.planetData.removeRing(r)"
             />
           </template>
           <LgvButton
@@ -35,8 +35,8 @@
 </template>
 <script setup lang="ts">
 import ParameterRing from '@components/global/parameters/ParameterRing.vue';
+import { EDITOR_STATE } from '@core/editor/state/editor.state';
 import LgvButton from '@/_lib/components/LgvButton.vue';
-import { EDITOR_STATE } from '@/core/state/editor.state';
 </script>
 <style scoped lang="scss">
 .action-add {

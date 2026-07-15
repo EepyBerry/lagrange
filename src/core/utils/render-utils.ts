@@ -1,8 +1,7 @@
 import type { ColorRamp } from '@core/models/planet/color-ramp.model.ts';
+import type { EditorBackendType } from '@core/types.ts';
 import type { WebGPURenderer } from 'three/webgpu';
-import { type TypedArray } from 'three';
-
-type EditorBackendType = 'webgl' | 'webgpu';
+import { DataTexture, type TypedArray } from 'three';
 
 /**
  * Renders a buffer onto an OffscreenCanvas
@@ -82,4 +81,10 @@ export async function blobToDataURL(blob: Blob): Promise<string> {
     reader.onerror = reject;
     reader.readAsDataURL(blob);
   });
+}
+
+export function toDataTexture(buffer: Uint8ClampedArray, width: number, height: number) {
+  const dt = new DataTexture(buffer, width, height);
+  dt.needsUpdate = true;
+  return dt;
 }

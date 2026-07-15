@@ -1,21 +1,24 @@
-import { type ObservableNotifyFunction, ObservableRelay } from '@core/utils/observable-utils.ts';
+import type { DataEventEndpoint } from '@core/editor/event/data-event-endpoint.ts';
+import type { DataEventPayloadTypeMap } from '@core/editor/event/data-event.types.ts';
 
 export type BaseRenderPipelineIdentifier = 'none' | 'pixelation' | 'retro';
-export abstract class BaseRenderPipeline extends ObservableRelay {
+export abstract class BaseRenderPipeline {
   protected readonly _id!: BaseRenderPipelineIdentifier;
+  protected readonly _parentDataEventEndpointRef!: DataEventEndpoint<keyof DataEventPayloadTypeMap>;
+
   public get id(): BaseRenderPipelineIdentifier {
     return this._id;
   }
 
-  protected constructor(keyPrefix: string, notifyFunc: ObservableNotifyFunction) {
-    super(keyPrefix, notifyFunc);
+  protected constructor(parentDataEventEndpointRef: DataEventEndpoint<keyof DataEventPayloadTypeMap>) {
+    this._parentDataEventEndpointRef = parentDataEventEndpointRef;
   }
 }
 
 export class BaseRenderPipelineNone extends BaseRenderPipeline {
   protected readonly _id: BaseRenderPipelineIdentifier = 'none';
-  constructor(notifyFunc: ObservableNotifyFunction) {
-    super('RP_BASE_none', notifyFunc);
+  constructor(parentDataEventEndpointRef: DataEventEndpoint<keyof DataEventPayloadTypeMap>) {
+    super(parentDataEventEndpointRef);
   }
 }
 
@@ -31,7 +34,7 @@ export class BaseRenderPipelinePixelation extends BaseRenderPipeline {
   }
   public set pixelSize(value: number) {
     this._pixelSize = value;
-    this.relayNotify({ key: this.keyPrefix });
+    this._parentDataEventEndpointRef.emit('renderPipelinePixelation', { value: this });
   }
 
   public get normalEdgeIntensity(): number {
@@ -39,7 +42,7 @@ export class BaseRenderPipelinePixelation extends BaseRenderPipeline {
   }
   public set normalEdgeIntensity(value: number) {
     this._normalEdgeIntensity = value;
-    this.relayNotify({ key: this.keyPrefix });
+    this._parentDataEventEndpointRef.emit('renderPipelinePixelation', { value: this });
   }
 
   public get depthEdgeIntensity(): number {
@@ -47,11 +50,11 @@ export class BaseRenderPipelinePixelation extends BaseRenderPipeline {
   }
   public set depthEdgeIntensity(value: number) {
     this._depthEdgeIntensity = value;
-    this.relayNotify({ key: this.keyPrefix });
+    this._parentDataEventEndpointRef.emit('renderPipelinePixelation', { value: this });
   }
 
-  constructor(notifyFunc: ObservableNotifyFunction) {
-    super('RP_BASE_pixelation', notifyFunc);
+  constructor(parentDataEventEndpointRef: DataEventEndpoint<keyof DataEventPayloadTypeMap>) {
+    super(parentDataEventEndpointRef);
     this._pixelSize = 4;
     this._normalEdgeIntensity = 0;
     this._depthEdgeIntensity = 0;
@@ -75,7 +78,7 @@ export class BaseRenderPipelineRetro extends BaseRenderPipeline {
   }
   public set colorDepthSteps(value: number) {
     this._colorDepthSteps = value;
-    this.relayNotify({ key: this.keyPrefix });
+    this._parentDataEventEndpointRef.emit('renderPipelineRetro', { value: this });
   }
 
   public get colorBleeding(): number {
@@ -83,7 +86,7 @@ export class BaseRenderPipelineRetro extends BaseRenderPipeline {
   }
   public set colorBleeding(value: number) {
     this._colorBleeding = value;
-    this.relayNotify({ key: this.keyPrefix });
+    this._parentDataEventEndpointRef.emit('renderPipelineRetro', { value: this });
   }
 
   public get scanlineIntensity(): number {
@@ -91,7 +94,7 @@ export class BaseRenderPipelineRetro extends BaseRenderPipeline {
   }
   public set scanlineIntensity(value: number) {
     this._scanlineIntensity = value;
-    this.relayNotify({ key: this.keyPrefix });
+    this._parentDataEventEndpointRef.emit('renderPipelineRetro', { value: this });
   }
 
   public get scanlineDensity(): number {
@@ -99,7 +102,7 @@ export class BaseRenderPipelineRetro extends BaseRenderPipeline {
   }
   public set scanlineDensity(value: number) {
     this._scanlineDensity = value;
-    this.relayNotify({ key: this.keyPrefix });
+    this._parentDataEventEndpointRef.emit('renderPipelineRetro', { value: this });
   }
 
   public get scanlineSpeed(): number {
@@ -107,7 +110,7 @@ export class BaseRenderPipelineRetro extends BaseRenderPipeline {
   }
   public set scanlineSpeed(value: number) {
     this._scanlineSpeed = value;
-    this.relayNotify({ key: this.keyPrefix });
+    this._parentDataEventEndpointRef.emit('renderPipelineRetro', { value: this });
   }
 
   public get curvature(): number {
@@ -115,11 +118,11 @@ export class BaseRenderPipelineRetro extends BaseRenderPipeline {
   }
   public set curvature(value: number) {
     this._curvature = value;
-    this.relayNotify({ key: this.keyPrefix });
+    this._parentDataEventEndpointRef.emit('renderPipelineRetro', { value: this });
   }
 
-  constructor(notifyFunc: ObservableNotifyFunction) {
-    super('RP_BASE_retro', notifyFunc);
+  constructor(parentDataEventEndpointRef: DataEventEndpoint<keyof DataEventPayloadTypeMap>) {
+    super(parentDataEventEndpointRef);
     this._colorDepthSteps = 32;
     this._colorBleeding = 0.001;
 

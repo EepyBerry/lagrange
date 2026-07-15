@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
-import { EventBus } from '@core/event-bus';
+import { UIEventBus } from '@core/ui-event-bus.ts';
 import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 import CornerDeco from '../decoration/CornerDeco.vue';
@@ -73,13 +73,13 @@ onBeforeUnmount(() => {
 });
 
 function open() {
-  EventBus.disableWindowEventListener('keydown');
+  UIEventBus.disableWindowEventListener('keydown');
   dialog.value?.showModal();
   dialogInner.value?.focus();
   $emit('open');
 }
 function close() {
-  EventBus.enableWindowEventListener('keydown');
+  UIEventBus.enableWindowEventListener('keydown');
   dialog.value?.close();
   $emit('close');
 }

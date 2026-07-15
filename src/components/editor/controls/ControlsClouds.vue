@@ -152,5 +152,5 @@
   </ParameterGrid>
 </template>
 <script setup lang="ts">
-import { EDITOR_STATE } from '@/core/state/editor.state';
+import { EDITOR_STATE } from '@core/editor/state/editor.state';
 </script>

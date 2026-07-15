@@ -71,11 +71,11 @@ idb.version(1).stores({
 // Hooks
 // PlanetDataMutator
 const addMutator: RequestMutatorFn<DBCoreAddRequest> = (req: DBCoreAddRequest) => {
-  req.values = req.values.map((planetData: IDBPlanet) =>
+  req.values = req.values.map((idbPlanet: IDBPlanet) =>
     JSON.parse(
       JSON.stringify({
-        ...planetData,
-        data: { ...planetData.data, observers: [] },
+        ...idbPlanet,
+        data: { ...idbPlanet.data, dataEventEndpoint: undefined },
       }),
     ),
   );
@@ -92,13 +92,11 @@ idb.use({
           ...downlevelTable,
           mutate: async (req: DBCoreMutateRequest) => {
             const request = { ...req };
-            // Mutate request data as needed
             mutateDBCoreRequestOn(
               request as DBCoreAddRequest,
               addMutator,
               request.type === 'add' && tableName === 'planets',
             );
-            // Pass mutated request to DBCore
             return await downlevelTable.mutate(request);
           },
         };

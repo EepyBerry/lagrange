@@ -38,11 +38,11 @@
 <script setup lang="ts">
 import { uwuifyPath } from '@core/extras';
 import * as Globals from '@core/globals';
+import { UIEventBus } from '@core/ui-event-bus.ts';
 import { useFloating, autoUpdate, offset, type Placement } from '@floating-ui/vue';
 import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 import LgvLink from '@/_lib/components/LgvLink.vue';
-import { EventBus } from '@/core/event-bus';
 
 const navMenuTrigger = useTemplateRef('navMenuTrigger');
 const navMenu = useTemplateRef('navMenu');
@@ -55,11 +55,11 @@ const navFloatingStyles = useFloating(navMenuTrigger, navMenu, {
 const isNavMenuOpen: Ref<boolean> = ref(false);
 
 onMounted(() => {
-  EventBus.registerWindowEventListener('resize', updateNavFloatingLayout);
+  UIEventBus.registerWindowEventListener('resize', updateNavFloatingLayout);
   updateNavFloatingLayout();
 });
 watch(
-  () => EventBus.clickEvent.value,
+  () => UIEventBus.clickEvent.value,
   (evt) => {
     if (!evt) return;
     if ((evt.target as HTMLElement).id === navMenuTrigger.value!.$el.id) {

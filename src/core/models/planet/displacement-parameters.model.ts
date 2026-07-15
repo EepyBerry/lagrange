@@ -1,8 +1,9 @@
+import type { DataEventEmitOptions } from '@core/editor/event/data-event.types.ts';
 import { clampedPRNG } from '@core/utils/math-utils.ts';
-import { ObservableRelay, type ObservableNotifyFunction } from '@core/utils/observable-utils.ts';
 import { clamp } from 'three/src/math/MathUtils.js';
 
-export class DisplacementParameters extends ObservableRelay {
+export class DisplacementParameters {
+  private readonly _eventEmitOpts: DataEventEmitOptions;
   private _epsilon: number = 0.001;
   private _multiplier: number = 2;
   private _factor: number = 0.05;
@@ -12,8 +13,7 @@ export class DisplacementParameters extends ObservableRelay {
   private _octaves: number = 8;
 
   constructor(
-    keyPrefix: string,
-    notifyFunc: ObservableNotifyFunction,
+    eventEmitOpts: DataEventEmitOptions,
     freq?: number,
     amp?: number,
     lac?: number,
@@ -22,7 +22,7 @@ export class DisplacementParameters extends ObservableRelay {
     multiplier?: number,
     factor?: number,
   ) {
-    super(keyPrefix, notifyFunc);
+    this._eventEmitOpts = eventEmitOpts;
     this._frequency = clamp(freq ?? this._frequency, 0, 10);
     this._amplitude = clamp(amp ?? this._amplitude, 0, 1.25);
     this._lacunarity = clamp(lac ?? this._lacunarity, 0, 3);
@@ -37,21 +37,30 @@ export class DisplacementParameters extends ObservableRelay {
   }
   public set epsilon(value: number) {
     this._epsilon = clamp(value, 0, 0.25);
-    this.relayNotify({ key: `${this.keyPrefix}._epsilon` });
+    this._eventEmitOpts.endpointRef.emit('displacementParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
   public get multiplier(): number {
     return this._multiplier;
   }
   public set multiplier(value: number) {
     this._multiplier = clamp(value, 0.25, 3);
-    this.relayNotify({ key: `${this.keyPrefix}._multiplier` });
+    this._eventEmitOpts.endpointRef.emit('displacementParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
   public get factor(): number {
     return this._factor;
   }
   public set factor(value: number) {
     this._factor = clamp(value, 0, 1);
-    this.relayNotify({ key: `${this.keyPrefix}._factor` });
+    this._eventEmitOpts.endpointRef.emit('displacementParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 
   public get frequency(): number {
@@ -59,7 +68,10 @@ export class DisplacementParameters extends ObservableRelay {
   }
   public set frequency(value: number) {
     this._frequency = clamp(value, 0, 10);
-    this.relayNotify({ key: `${this.keyPrefix}._frequency` });
+    this._eventEmitOpts.endpointRef.emit('displacementParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 
   public get amplitude(): number {
@@ -67,7 +79,10 @@ export class DisplacementParameters extends ObservableRelay {
   }
   public set amplitude(value: number) {
     this._amplitude = clamp(value, 0, 1.25);
-    this.relayNotify({ key: `${this.keyPrefix}._amplitude` });
+    this._eventEmitOpts.endpointRef.emit('displacementParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 
   public get lacunarity(): number {
@@ -75,7 +90,10 @@ export class DisplacementParameters extends ObservableRelay {
   }
   public set lacunarity(value: number) {
     this._lacunarity = clamp(value, 0, 3);
-    this.relayNotify({ key: `${this.keyPrefix}._lacunarity` });
+    this._eventEmitOpts.endpointRef.emit('displacementParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 
   public get octaves(): number {
@@ -83,7 +101,10 @@ export class DisplacementParameters extends ObservableRelay {
   }
   public set octaves(value: number) {
     this._octaves = clamp(value, 1, 8);
-    this.relayNotify({ key: `${this.keyPrefix}._octaves` });
+    this._eventEmitOpts.endpointRef.emit('displacementParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 
   public loadData(data?: DisplacementParameters) {

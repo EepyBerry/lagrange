@@ -1,17 +1,20 @@
-import { Observable } from '@core/utils/observable-utils.ts';
+import type { DataEventPayloadTypeMap } from '@core/editor/event/data-event.types.ts';
+import { DataEventEndpoint } from '@core/editor/event/data-event-endpoint.ts';
 import {
   type BaseRenderPipelineIdentifier,
   BaseRenderPipelineNone,
   BaseRenderPipelinePixelation,
   BaseRenderPipelineRetro,
-} from '@tsl/rendering/base-render-pipeline.model.ts';
+} from '@core/models/renderpipeline/base-render-pipeline.model.ts';
 import { clamp } from 'three/src/math/MathUtils.js';
 
 export enum AntiAliasingMode {
   FXAA,
   SMAA,
 }
-export default class RenderPipelineData extends Observable {
+export default class RenderPipelineData {
+  public readonly dataEventEndpoint = new DataEventEndpoint<keyof DataEventPayloadTypeMap>();
+
   // --------------------------------------------------
   // |              Base render pipeline              |
   // --------------------------------------------------
@@ -30,7 +33,7 @@ export default class RenderPipelineData extends Observable {
   }
   public set basePipelineIdentifier(pipelineId: BaseRenderPipelineIdentifier) {
     this._basePipelineIdentifier = pipelineId;
-    this.notify({ key: 'RP_basePipelineIdentifier' });
+    this.dataEventEndpoint.emit('renderBasePipeline', { value: pipelineId });
   }
 
   get basePipelineRetro(): BaseRenderPipelineRetro {
@@ -56,7 +59,13 @@ export default class RenderPipelineData extends Observable {
   }
   set rgbShiftEnabled(value: boolean) {
     this._rgbShiftEnabled = value;
-    this.notify({ key: 'RP_EFFECT_rgbshift' });
+    this.dataEventEndpoint.emit('renderEffectRgbShift', {
+      value: {
+        enabled: value,
+        angle: this.rgbShiftAngle,
+        amount: this.rgbShiftAmount,
+      },
+    });
   }
 
   get rgbShiftAngle(): number {
@@ -64,7 +73,13 @@ export default class RenderPipelineData extends Observable {
   }
   set rgbShiftAngle(value: number) {
     this._rgbShiftAngle = clamp(value, 0, 360);
-    this.notify({ key: 'RP_EFFECT_rgbshift' });
+    this.dataEventEndpoint.emit('renderEffectRgbShift', {
+      value: {
+        enabled: this.rgbShiftEnabled,
+        angle: value,
+        amount: this.rgbShiftAmount,
+      },
+    });
   }
 
   get rgbShiftAmount(): number {
@@ -72,7 +87,13 @@ export default class RenderPipelineData extends Observable {
   }
   set rgbShiftAmount(value: number) {
     this._rgbShiftAmount = clamp(value, 0, 0.01);
-    this.notify({ key: 'RP_EFFECT_rgbshift' });
+    this.dataEventEndpoint.emit('renderEffectRgbShift', {
+      value: {
+        enabled: this.rgbShiftEnabled,
+        angle: this.rgbShiftAngle,
+        amount: value,
+      },
+    });
   }
 
   // --------------------------------------------------
@@ -88,7 +109,13 @@ export default class RenderPipelineData extends Observable {
   }
   set chromaticAberrationEnabled(value: boolean) {
     this._chromaticAberrationEnabled = value;
-    this.notify({ key: 'RP_EFFECT_chromaticaberration' });
+    this.dataEventEndpoint.emit('renderEffectChromaticAberration', {
+      value: {
+        enabled: value,
+        strength: this.chromaticAberrationStrength,
+        scale: this.chromaticAberrationScale,
+      },
+    });
   }
 
   get chromaticAberrationStrength(): number {
@@ -96,7 +123,13 @@ export default class RenderPipelineData extends Observable {
   }
   set chromaticAberrationStrength(value: number) {
     this._chromaticAberrationStrength = clamp(value, 0.01, 1);
-    this.notify({ key: 'RP_EFFECT_chromaticaberration' });
+    this.dataEventEndpoint.emit('renderEffectChromaticAberration', {
+      value: {
+        enabled: this.chromaticAberrationEnabled,
+        strength: value,
+        scale: this.chromaticAberrationScale,
+      },
+    });
   }
 
   get chromaticAberrationScale(): number {
@@ -104,7 +137,13 @@ export default class RenderPipelineData extends Observable {
   }
   set chromaticAberrationScale(value: number) {
     this._chromaticAberrationScale = clamp(value, 0.01, 2);
-    this.notify({ key: 'RP_EFFECT_chromaticaberration' });
+    this.dataEventEndpoint.emit('renderEffectChromaticAberration', {
+      value: {
+        enabled: this.chromaticAberrationEnabled,
+        strength: this.chromaticAberrationStrength,
+        scale: value,
+      },
+    });
   }
 
   // --------------------------------------------------
@@ -121,7 +160,14 @@ export default class RenderPipelineData extends Observable {
   }
   public set bloomEnabled(value: boolean) {
     this._bloomEnabled = value;
-    this.notify({ key: 'RP_EFFECT_bloom' });
+    this.dataEventEndpoint.emit('renderEffectBloom', {
+      value: {
+        enabled: value,
+        strength: this.bloomStrength,
+        threshold: this.bloomThreshold,
+        radius: this.bloomRadius,
+      },
+    });
   }
 
   public get bloomStrength(): number {
@@ -129,7 +175,14 @@ export default class RenderPipelineData extends Observable {
   }
   public set bloomStrength(value: number) {
     this._bloomStrength = clamp(value, 0, 3);
-    this.notify({ key: 'RP_EFFECT_bloom' });
+    this.dataEventEndpoint.emit('renderEffectBloom', {
+      value: {
+        enabled: this.bloomEnabled,
+        strength: value,
+        threshold: this.bloomThreshold,
+        radius: this.bloomRadius,
+      },
+    });
   }
 
   public get bloomThreshold(): number {
@@ -137,7 +190,14 @@ export default class RenderPipelineData extends Observable {
   }
   public set bloomThreshold(value: number) {
     this._bloomThreshold = clamp(value, 0, 1);
-    this.notify({ key: 'RP_EFFECT_bloom' });
+    this.dataEventEndpoint.emit('renderEffectBloom', {
+      value: {
+        enabled: this.bloomEnabled,
+        strength: this.bloomStrength,
+        threshold: value,
+        radius: this.bloomRadius,
+      },
+    });
   }
 
   public get bloomRadius(): number {
@@ -145,7 +205,14 @@ export default class RenderPipelineData extends Observable {
   }
   public set bloomRadius(value: number) {
     this._bloomRadius = clamp(value, 0, 1);
-    this.notify({ key: 'RP_EFFECT_bloom' });
+    this.dataEventEndpoint.emit('renderEffectBloom', {
+      value: {
+        enabled: this.bloomEnabled,
+        strength: this.bloomStrength,
+        threshold: this.bloomThreshold,
+        radius: value,
+      },
+    });
   }
 
   // --------------------------------------------------
@@ -161,7 +228,13 @@ export default class RenderPipelineData extends Observable {
   }
   set vignetteEnabled(value: boolean) {
     this._vignetteEnabled = value;
-    this.notify({ key: 'RP_EFFECT_vignette' });
+    this.dataEventEndpoint.emit('renderEffectVignette', {
+      value: {
+        enabled: value,
+        intensity: this.vignetteIntensity,
+        smoothness: this.vignetteSmoothness,
+      },
+    });
   }
 
   get vignetteIntensity(): number {
@@ -169,7 +242,13 @@ export default class RenderPipelineData extends Observable {
   }
   set vignetteIntensity(value: number) {
     this._vignetteIntensity = clamp(value, 0, 2);
-    this.notify({ key: 'RP_EFFECT_vignette' });
+    this.dataEventEndpoint.emit('renderEffectVignette', {
+      value: {
+        enabled: this.vignetteEnabled,
+        intensity: value,
+        smoothness: this.vignetteSmoothness,
+      },
+    });
   }
 
   get vignetteSmoothness(): number {
@@ -177,7 +256,13 @@ export default class RenderPipelineData extends Observable {
   }
   set vignetteSmoothness(value: number) {
     this._vignetteSmoothness = clamp(value, 0.05, 1);
-    this.notify({ key: 'RP_EFFECT_vignette' });
+    this.dataEventEndpoint.emit('renderEffectVignette', {
+      value: {
+        enabled: this.vignetteEnabled,
+        intensity: this.vignetteIntensity,
+        smoothness: value,
+      },
+    });
   }
   // --------------------------------------------------
   // |                 Anti-Aliasing                  |
@@ -191,7 +276,12 @@ export default class RenderPipelineData extends Observable {
   }
   public set antiAliasingEnabled(value: boolean) {
     this._antiAliasingEnabled = value;
-    this.notify({ key: 'RP_EFFECT_antialiasing' });
+    this.dataEventEndpoint.emit('renderEffectAntiAliasing', {
+      value: {
+        enabled: value,
+        mode: this.antiAliasingMode,
+      },
+    });
   }
 
   public get antiAliasingMode(): AntiAliasingMode {
@@ -199,15 +289,19 @@ export default class RenderPipelineData extends Observable {
   }
   public set antiAliasingMode(value: AntiAliasingMode) {
     this._antiAliasingMode = value;
-    this.notify({ key: 'RP_EFFECT_antialiasing' });
+    this.dataEventEndpoint.emit('renderEffectAntiAliasing', {
+      value: {
+        enabled: this.antiAliasingEnabled,
+        mode: value,
+      },
+    });
   }
 
   constructor() {
-    super();
     this._basePipelineIdentifier = 'none';
-    this._basePipelineNone = new BaseRenderPipelineNone(this.notifyRelayCallback);
-    this._basePipelinePixelation = new BaseRenderPipelinePixelation(this.notifyRelayCallback);
-    this._basePipelineRetro = new BaseRenderPipelineRetro(this.notifyRelayCallback);
+    this._basePipelineNone = new BaseRenderPipelineNone(this.dataEventEndpoint);
+    this._basePipelinePixelation = new BaseRenderPipelinePixelation(this.dataEventEndpoint);
+    this._basePipelineRetro = new BaseRenderPipelineRetro(this.dataEventEndpoint);
 
     this._rgbShiftEnabled = false;
     this._rgbShiftAngle = 0;

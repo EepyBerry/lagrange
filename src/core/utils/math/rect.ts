@@ -51,46 +51,15 @@ export default class Rect {
    * Finds overlaps on a given w*h plane's borders with this Rect
    * @param w total plane width
    * @param h total plane height
-   * @returns an array containing overlaps for the top, right, bottom & left sides, in that order
+   * @returns an array containing overlaps for the top, right, bottom, and left sides, in that order
    */
-  public findOverlaps(w: number, h: number): boolean[] {
+  public findCanvasBorderOverlaps(w: number, h: number): boolean[] {
     const borderOverlaps: boolean[] = [false, false, false, false];
     borderOverlaps[0] = this.y <= 0;
     borderOverlaps[1] = this.x + this.w >= w;
     borderOverlaps[2] = this.y + this.h >= h;
     borderOverlaps[3] = this.x <= 0;
     return borderOverlaps;
-  }
-
-  /**
-   * Finds the nearest point on this rect from the given (x,y) coordinates within that rect
-   * @param px point x
-   * @param py point y
-   * @returns the coordinates of the nearest rect point from (x,y)
-   */
-  public findMinDistanceWithin(px: number, py: number, overlaps: boolean[]): number {
-    return Math.min(
-      overlaps[3] ? 1e3 : px - this.x,
-      overlaps[0] ? 1e3 : py - this.y,
-      overlaps[1] ? 1e3 : this.x + this.w - px,
-      overlaps[2] ? 1e3 : this.y + this.h - py,
-    );
-  }
-
-  public adjustToHTMLCanvas(): Rect {
-    this.x += 0.5;
-    this.y += 0.5;
-    this.w--;
-    this.h--;
-    return this;
-  }
-
-  public shrink(borderOverlaps: boolean[]): Rect {
-    this.x += borderOverlaps[3] ? 0 : 1;
-    this.y += borderOverlaps[0] ? 0 : 1;
-    this.w -= borderOverlaps[1] ? (borderOverlaps[3] ? 0 : 1) : borderOverlaps[3] ? 1 : 2;
-    this.h -= borderOverlaps[2] ? (borderOverlaps[0] ? 0 : 1) : borderOverlaps[0] ? 1 : 2;
-    return this;
   }
 
   public isValid(): boolean {

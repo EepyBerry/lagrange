@@ -1,5 +1,6 @@
+import type { DataEventEndpoint } from '@core/editor/event/data-event-endpoint.ts';
+import type { DataEventEmitOptions, DataEventPayloadTypeMap } from '@core/editor/event/data-event.types.ts';
 import { clampedPRNG } from '@core/utils/math-utils.ts';
-import { ObservableRelay, type ObservableNotifyFunction } from '@core/utils/observable-utils.ts';
 import { nanoid } from 'nanoid';
 import { Color } from 'three';
 import { clamp } from 'three/src/math/MathUtils.js';
@@ -9,9 +10,17 @@ export class BiomeDimensions {
   temperatureMax: number = 1;
   humidityMin: number = 0;
   humidityMax: number = 1;
+
+  constructor(temperatureMin: number, temperatureMax: number, humidityMin: number, humidityMax: number) {
+    this.temperatureMin = temperatureMin;
+    this.temperatureMax = temperatureMax;
+    this.humidityMin = humidityMin;
+    this.humidityMax = humidityMax;
+  }
 }
-export class BiomeParameters extends ObservableRelay {
+export class BiomeParameters {
   private _id: string;
+  private readonly _eventEmitOpts: DataEventEmitOptions;
 
   private _tempMin: number = 0;
   private _tempMax: number = 1;
@@ -28,8 +37,7 @@ export class BiomeParameters extends ObservableRelay {
   private _parentEmissiveIntensity: number = 0;
 
   constructor(
-    keyPrefix: string,
-    notifyFunc: ObservableNotifyFunction,
+    eventEmitOpts: DataEventEmitOptions,
     dims: BiomeDimensions,
     color: Color,
     smoothness: number,
@@ -37,8 +45,8 @@ export class BiomeParameters extends ObservableRelay {
     emissiveIntensity?: number,
     oldId?: string,
   ) {
-    super(keyPrefix, notifyFunc);
     this._id = oldId ?? nanoid();
+    this._eventEmitOpts = eventEmitOpts;
     this._tempMin = dims.temperatureMin;
     this._tempMax = dims.temperatureMax;
     this._humiMin = dims.humidityMin;
@@ -62,7 +70,9 @@ export class BiomeParameters extends ObservableRelay {
   public set tempMin(value: number) {
     this._tempMin = clamp(value, 0, 1);
     this._tempMax = clamp(this._tempMax, this._tempMin, 1);
-    this.relayNotify({ key: this.keyPrefix, data: { biome: this } });
+    this._eventEmitOpts.endpointRef.emit('biomeParametersUpdate', {
+      value: null,
+    });
   }
   public get tempMax(): number {
     return this._tempMax;
@@ -70,7 +80,9 @@ export class BiomeParameters extends ObservableRelay {
   public set tempMax(value: number) {
     this._tempMax = clamp(value, 0, 1);
     this._tempMin = clamp(this._tempMin, 0, this._tempMax);
-    this.relayNotify({ key: this.keyPrefix, data: { biome: this } });
+    this._eventEmitOpts.endpointRef.emit('biomeParametersUpdate', {
+      value: null,
+    });
   }
 
   public get humiMin(): number {
@@ -79,7 +91,9 @@ export class BiomeParameters extends ObservableRelay {
   public set humiMin(value: number) {
     this._humiMin = clamp(value, 0, 1);
     this._humiMax = clamp(this._humiMax, this._humiMin, 1);
-    this.relayNotify({ key: this.keyPrefix, data: { biome: this } });
+    this._eventEmitOpts.endpointRef.emit('biomeParametersUpdate', {
+      value: null,
+    });
   }
   public get humiMax(): number {
     return this._humiMax;
@@ -87,7 +101,9 @@ export class BiomeParameters extends ObservableRelay {
   public set humiMax(value: number) {
     this._humiMax = clamp(value, 0, 1);
     this._humiMin = clamp(this._humiMin, 0, this._humiMax);
-    this.relayNotify({ key: this.keyPrefix, data: { biome: this } });
+    this._eventEmitOpts.endpointRef.emit('biomeParametersUpdate', {
+      value: null,
+    });
   }
 
   public get color(): Color {
@@ -95,14 +111,18 @@ export class BiomeParameters extends ObservableRelay {
   }
   public set color(value: Color) {
     this._color.set(value);
-    this.relayNotify({ key: this.keyPrefix, data: { biome: this } });
+    this._eventEmitOpts.endpointRef.emit('biomeParametersUpdate', {
+      value: null,
+    });
   }
   public get smoothness(): number {
     return this._smoothness;
   }
   public set smoothness(value: number) {
     this._smoothness = clamp(value, 0, 1);
-    this.relayNotify({ key: this.keyPrefix, data: { biome: this } });
+    this._eventEmitOpts.endpointRef.emit('biomeParametersUpdate', {
+      value: null,
+    });
   }
 
   public get emissiveOverride(): boolean {
@@ -110,14 +130,18 @@ export class BiomeParameters extends ObservableRelay {
   }
   public set emissiveOverride(value: boolean) {
     this._emissiveOverride = value;
-    this.relayNotify({ key: this.keyPrefix, data: { biome: this } });
+    this._eventEmitOpts.endpointRef.emit('biomeParametersUpdate', {
+      value: null,
+    });
   }
   public get emissiveIntensity(): number {
     return this._emissiveIntensity;
   }
   public set emissiveIntensity(value: number) {
     this._emissiveIntensity = clamp(value, 0, 10);
-    this.relayNotify({ key: this.keyPrefix, data: { biome: this } });
+    this._eventEmitOpts.endpointRef.emit('biomeParametersUpdate', {
+      value: null,
+    });
   }
 
   public get parentEmissiveIntensity(): number {
@@ -127,12 +151,29 @@ export class BiomeParameters extends ObservableRelay {
     this._parentEmissiveIntensity = value;
   }
 
-  public static createRandom(keyPrefix: string, notifyFunc: ObservableNotifyFunction) {
+  public randomize() {
+    const minTemp = clampedPRNG(0, 1),
+      minHumi = clampedPRNG(0, 1);
+    this._tempMin = minTemp;
+    this._tempMax = clampedPRNG(minTemp, 1);
+    this._humiMin = minHumi;
+    this._humiMax = clampedPRNG(minHumi, 1);
+    this._color.set(clampedPRNG(0, 1) * 0xffffff);
+    this._smoothness = clampedPRNG(0, 1);
+    this._emissiveOverride = clampedPRNG(0, 1) >= 0.5;
+    this._emissiveIntensity = clampedPRNG(0, 10);
+    this._eventEmitOpts.endpointRef.emit('biomeParametersUpdate', {
+      value: null,
+    });
+  }
+
+  public static createRandom(
+    parentDataEventEndpointRef: DataEventEndpoint<keyof DataEventPayloadTypeMap>,
+  ): BiomeParameters {
     const minTemp = clampedPRNG(0, 1),
       minHumi = clampedPRNG(0, 1);
     return new BiomeParameters(
-      keyPrefix,
-      notifyFunc,
+      { endpointRef: parentDataEventEndpointRef, context: 'biomes' },
       {
         temperatureMin: minTemp,
         temperatureMax: clampedPRNG(minTemp, 1),

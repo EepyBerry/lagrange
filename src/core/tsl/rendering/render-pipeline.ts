@@ -1,7 +1,8 @@
-// @ts-nocheck
-// NOTE: @types/three types for post-processing nodes are completely borked...
-// I had no choice but to entirely disable type-cheks for this file, sorry :c
-import type { BaseRenderPipelineIdentifier } from '@tsl/rendering/base-render-pipeline.model.ts';
+import type { DataEventPayloadTypeMap } from '@core/editor/event/data-event.types.ts';
+import type { BaseRenderPipelineIdentifier } from '@core/models/renderpipeline/base-render-pipeline.model.ts';
+import type RenderPipelineData from '@core/models/renderpipeline/render-pipeline-data.model.ts';
+import { DataEventEndpoint } from '@core/editor/event/data-event-endpoint.ts';
+import { EDITOR_SCENE_DATA } from '@core/editor/state/editor.state.ts';
 import { Camera, type Scene } from 'three';
 import BloomNode, { bloom } from 'three/addons/tsl/display/BloomNode.js';
 import { chromaticAberration } from 'three/addons/tsl/display/ChromaticAberrationNode.js';
@@ -13,51 +14,10 @@ import { rgbShift } from 'three/addons/tsl/display/RGBShiftNode.js';
 import { circle } from 'three/addons/tsl/display/Shape.js';
 import { smaa } from 'three/addons/tsl/display/SMAANode.js';
 import { bayerDither } from 'three/addons/tsl/math/Bayer.js';
+import { degToRad } from 'three/src/math/MathUtils.js';
 import { float, int, mix, pass, posterize, replaceDefaultUV, screenSize, select, uniform, vec2 } from 'three/tsl';
 import { RenderPipeline, UniformNode, WebGPURenderer, Node, PassNode } from 'three/webgpu';
 
-export type RenderPipelineUniformData = {
-  baseRenderPipelineStr: BaseRenderPipelineIdentifier;
-  baseRenderPipeline: number;
-  basePixelation: {
-    pixelSize: number;
-    normalEdgeIntensity: number;
-    depthEdgeIntensity: number;
-  };
-  baseRetro: {
-    colorDepthSteps: number;
-    colorBleeding: number;
-    scanlineIntensity: number;
-    scanlineDensity: number;
-    scanlineSpeed: number;
-    curvature: number;
-  };
-  effectRgbShift: {
-    enabled: boolean;
-    angle: number;
-    amount: number;
-  };
-  effectChromaticAberration: {
-    enabled: boolean;
-    strength: number;
-    scale: number;
-  };
-  effectBloom: {
-    enabled: boolean;
-    threshold: number;
-    strength: number;
-    radius: number;
-  };
-  effectVignette: {
-    enabled: boolean;
-    intensity: number;
-    smoothness: number;
-  };
-  effectAntiAliasing: {
-    enabled: boolean;
-    mode: number;
-  };
-};
 export type RenderPipelineUniforms = {
   baseRenderPipeline: UniformNode<'float', number>;
   basePixelation: {
@@ -102,52 +62,101 @@ export type RenderPipelineUniforms = {
 export default class TSLRenderPipeline {
   public readonly pipeline: RenderPipeline;
   public readonly uniforms: RenderPipelineUniforms;
+  public readonly dataEventEndpoint = new DataEventEndpoint<keyof DataEventPayloadTypeMap>();
 
-  constructor(data: RenderPipelineUniformData, renderer: WebGPURenderer, scene: Scene, camera: Camera) {
+  constructor(data: RenderPipelineData, renderer: WebGPURenderer, scene: Scene, camera: Camera) {
     this.uniforms = {
-      baseRenderPipeline: uniform(data.baseRenderPipeline),
+      baseRenderPipeline: uniform(this.convertBaseRenderPipelineIdentifier(data.basePipelineIdentifier)),
       basePixelation: {
-        pixelSize: uniform(data.basePixelation.pixelSize),
-        normalEdgeIntensity: uniform(data.basePixelation.normalEdgeIntensity),
-        depthEdgeIntensity: uniform(data.basePixelation.depthEdgeIntensity),
+        pixelSize: uniform(data.basePipelinePixelation.pixelSize),
+        normalEdgeIntensity: uniform(data.basePipelinePixelation.normalEdgeIntensity),
+        depthEdgeIntensity: uniform(data.basePipelinePixelation.depthEdgeIntensity),
       },
       baseRetro: {
-        colorDepthSteps: uniform(data.baseRetro.colorDepthSteps),
-        colorBleeding: uniform(data.baseRetro.colorBleeding),
-        scanlineIntensity: uniform(data.baseRetro.scanlineIntensity),
-        scanlineDensity: uniform(data.baseRetro.scanlineDensity),
-        scanlineSpeed: uniform(data.baseRetro.scanlineSpeed),
-        curvature: uniform(data.baseRetro.curvature),
+        colorDepthSteps: uniform(data.basePipelineRetro.colorDepthSteps),
+        colorBleeding: uniform(data.basePipelineRetro.colorBleeding),
+        scanlineIntensity: uniform(data.basePipelineRetro.scanlineIntensity),
+        scanlineDensity: uniform(data.basePipelineRetro.scanlineDensity),
+        scanlineSpeed: uniform(data.basePipelineRetro.scanlineSpeed),
+        curvature: uniform(data.basePipelineRetro.curvature),
       },
       effectRgbShift: {
-        enabled: uniform(+data.effectRgbShift.enabled),
-        angle: uniform(data.effectRgbShift.angle),
-        amount: uniform(data.effectRgbShift.amount),
+        enabled: uniform(+data.rgbShiftEnabled),
+        angle: uniform(data.rgbShiftAngle),
+        amount: uniform(data.rgbShiftAmount),
       },
       effectChromaticAberration: {
-        enabled: uniform(+data.effectChromaticAberration.enabled),
-        strength: uniform(data.effectChromaticAberration.strength),
-        scale: uniform(data.effectChromaticAberration.scale),
+        enabled: uniform(+data.chromaticAberrationEnabled),
+        strength: uniform(data.chromaticAberrationStrength),
+        scale: uniform(data.chromaticAberrationScale),
       },
       effectBloom: {
-        enabled: uniform(+data.effectBloom.enabled),
-        threshold: uniform(data.effectBloom.threshold),
-        strength: uniform(data.effectBloom.strength),
-        radius: uniform(data.effectBloom.radius),
+        enabled: uniform(+data.bloomEnabled),
+        threshold: uniform(data.bloomThreshold),
+        strength: uniform(data.bloomStrength),
+        radius: uniform(data.bloomRadius),
       },
       effectVignette: {
-        enabled: uniform(+data.effectVignette.enabled),
-        intensity: uniform(data.effectVignette.intensity),
-        smoothness: uniform(data.effectVignette.smoothness),
+        enabled: uniform(+data.vignetteEnabled),
+        intensity: uniform(data.vignetteIntensity),
+        smoothness: uniform(data.vignetteSmoothness),
       },
       effectAntiAliasing: {
-        enabled: uniform(+data.effectAntiAliasing.enabled),
-        mode: uniform(data.effectAntiAliasing.mode),
+        enabled: uniform(+data.antiAliasingEnabled),
+        mode: uniform(data.antiAliasingMode),
       },
     };
     this.pipeline = new RenderPipeline(renderer);
-    this.pipeline.outputNode = this.composePipelinePasses(data.baseRenderPipelineStr, scene, camera);
+    this.pipeline.outputNode = this.composePipelinePasses(data.basePipelineIdentifier, scene, camera);
     this.pipeline.needsUpdate = true;
+
+    this.initDataEventEndpoint();
+  }
+
+  private initDataEventEndpoint() {
+    this.dataEventEndpoint.canProcess = (payload) => !payload.context || payload.context === 'render-pipeline';
+    this.dataEventEndpoint
+      .on('renderBasePipeline', (payload) =>
+        this.updatePipelinePasses(payload.value, EDITOR_SCENE_DATA.scene!, EDITOR_SCENE_DATA.camera!),
+      )
+      .on('renderPipelinePixelation', (payload) => {
+        this.uniforms.basePixelation.pixelSize.value = payload.value.pixelSize;
+        this.uniforms.basePixelation.normalEdgeIntensity.value = payload.value.normalEdgeIntensity;
+        this.uniforms.basePixelation.depthEdgeIntensity.value = payload.value.depthEdgeIntensity;
+      })
+      .on('renderPipelineRetro', (payload) => {
+        this.uniforms.baseRetro.colorDepthSteps.value = payload.value.colorDepthSteps;
+        this.uniforms.baseRetro.colorBleeding.value = payload.value.colorBleeding;
+        this.uniforms.baseRetro.scanlineIntensity.value = payload.value.scanlineIntensity;
+        this.uniforms.baseRetro.scanlineDensity.value = payload.value.scanlineDensity;
+        this.uniforms.baseRetro.scanlineSpeed.value = payload.value.scanlineSpeed;
+        this.uniforms.baseRetro.curvature.value = payload.value.curvature;
+      })
+      .on('renderEffectRgbShift', (payload) => {
+        this.uniforms.effectRgbShift.enabled.value = +payload.value.enabled;
+        this.uniforms.effectRgbShift.angle.value = degToRad(payload.value.angle);
+        this.uniforms.effectRgbShift.amount.value = payload.value.amount;
+      })
+      .on('renderEffectChromaticAberration', (payload) => {
+        this.uniforms.effectChromaticAberration.enabled.value = +payload.value.enabled;
+        this.uniforms.effectChromaticAberration.strength.value = payload.value.strength;
+        this.uniforms.effectChromaticAberration.scale.value = payload.value.scale;
+      })
+      .on('renderEffectBloom', (payload) => {
+        this.uniforms.effectBloom.enabled.value = +payload.value.enabled;
+        this.uniforms.effectBloom.threshold.value = payload.value.threshold;
+        this.uniforms.effectBloom.strength.value = payload.value.strength;
+        this.uniforms.effectBloom.radius.value = payload.value.radius;
+      })
+      .on('renderEffectVignette', (payload) => {
+        this.uniforms.effectVignette.enabled.value = +payload.value.enabled;
+        this.uniforms.effectVignette.intensity.value = payload.value.intensity;
+        this.uniforms.effectVignette.smoothness.value = payload.value.smoothness;
+      })
+      .on('renderEffectAntiAliasing', (payload) => {
+        this.uniforms.effectAntiAliasing.enabled.value = +payload.value.enabled;
+        this.uniforms.effectAntiAliasing.mode.value = payload.value.mode;
+      });
   }
 
   public updatePipelinePasses(brpId: BaseRenderPipelineIdentifier, scene: Scene, camera: Camera) {
@@ -177,6 +186,7 @@ export default class TSLRenderPipeline {
     const rgbShiftNode = rgbShift(scenePass);
     rgbShiftNode.angle = this.uniforms.effectRgbShift.angle;
     rgbShiftNode.amount = this.uniforms.effectRgbShift.amount;
+    // @ts-expect-error borked typedefs
     scenePass = mix(scenePass, rgbShiftNode, this.uniforms.effectRgbShift.enabled);
 
     // Chromatic Aberration
@@ -186,6 +196,7 @@ export default class TSLRenderPipeline {
       vec2(0.5),
       this.uniforms.effectChromaticAberration.scale,
     );
+    // @ts-expect-error borked typedefs
     scenePass = mix(scenePass, chromaticAberrationNode, this.uniforms.effectChromaticAberration.enabled);
 
     // Bloom (needs special treatment via scenePass.add(...) to work properly)
@@ -193,17 +204,21 @@ export default class TSLRenderPipeline {
     bloomNode.strength = this.uniforms.effectBloom.strength;
     bloomNode.radius = this.uniforms.effectBloom.radius;
     bloomNode.threshold = this.uniforms.effectBloom.threshold;
+    // @ts-expect-error borked typedefs
     scenePass = mix(scenePass, scenePass.add(bloomNode), this.uniforms.effectBloom.enabled);
 
     // Vignette
     const vignetteNode = vignette(
+      // @ts-expect-error borked typedefs
       scenePass,
       this.uniforms.effectVignette.intensity,
       this.uniforms.effectVignette.smoothness,
     );
+    // @ts-expect-error borked typedefs
     scenePass = mix(scenePass, vignetteNode, this.uniforms.effectVignette.enabled);
 
     // Anti-aliasing
+    // @ts-expect-error borked typedefs
     scenePass = mix(scenePass, this.computeAntiAliasingPass(scenePass), this.uniforms.effectAntiAliasing.enabled);
     return scenePass;
   }
@@ -225,12 +240,18 @@ export default class TSLRenderPipeline {
       .mul(this.uniforms.baseRetro.curvature)
       .mul(0.05);
     // Build pass
-    let pass: RetroPassNode = retroPass(scene, camera, { affineDistortion: float(0) });
+    let pass = retroPass(scene, camera, { affineDistortion: float(0) });
+    // @ts-expect-error borked typedefs
     pass = replaceDefaultUV(distortedUV, pass);
+    // @ts-expect-error borked typedefs
     pass = colorBleeding(pass, this.uniforms.baseRetro.colorBleeding.add(distortedDelta));
+    // @ts-expect-error borked typedefs
     pass = bayerDither(pass, this.uniforms.baseRetro.colorDepthSteps);
+    // @ts-expect-error borked typedefs
     pass = posterize(pass, this.uniforms.baseRetro.colorDepthSteps);
+    // @ts-expect-error borked typedefs
     return scanlines(
+      // @ts-expect-error borked typedefs
       pass,
       this.uniforms.baseRetro.scanlineIntensity,
       screenSize.y.mul(this.uniforms.baseRetro.scanlineDensity),
@@ -239,8 +260,21 @@ export default class TSLRenderPipeline {
   }
 
   private computeAntiAliasingPass(renderPass: PassNode): PassNode {
+    // @ts-expect-error borked typedefs
     renderPass = select(int(this.uniforms.effectAntiAliasing.mode).lessThanEqual(0.5), fxaa(renderPass), renderPass);
+    // @ts-expect-error borked typedefs
     renderPass = select(int(this.uniforms.effectAntiAliasing.mode).greaterThanEqual(0.5), smaa(renderPass), renderPass);
     return renderPass;
+  }
+
+  private convertBaseRenderPipelineIdentifier(id: BaseRenderPipelineIdentifier): number {
+    switch (id) {
+      case 'none':
+        return 0;
+      case 'pixelation':
+        return 1;
+      case 'retro':
+        return 2;
+    }
   }
 }

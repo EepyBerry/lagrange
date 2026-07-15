@@ -17,12 +17,12 @@
 import AppFooter from '@components/global/AppFooter.vue';
 import AppToastBar from '@components/global/AppToastBar.vue';
 import AppInitDialog from '@components/global/dialogs/InitDialog.vue';
+import { UIEventBus } from '@core/ui-event-bus.ts';
 import { useHead } from '@unhead/vue';
 import { onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import * as DexieService from '@/core/services/dexie.service';
 import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config';
-import { EventBus } from './core/event-bus';
 import {
   EXTRAS_CAT_MODE,
   EXTRAS_CRT_EFFECT,
@@ -91,14 +91,14 @@ async function disableInitDialog() {
 
 async function enablePersistence() {
   if (!navigator.storage) {
-    EventBus.sendToastEvent('warn', 'toast.storage_failure_none', 3000);
+    UIEventBus.sendToastEvent('warn', 'toast.storage_failure_none', 3000);
     return;
   }
   const enabled = await navigator.storage.persist();
   if (enabled) {
-    EventBus.sendToastEvent('success', 'toast.storage_success', 3000);
+    UIEventBus.sendToastEvent('success', 'toast.storage_success', 3000);
   } else {
-    EventBus.sendToastEvent('warn', 'toast.storage_failure_rules', 3000);
+    UIEventBus.sendToastEvent('warn', 'toast.storage_failure_rules', 3000);
   }
 }
 </script>

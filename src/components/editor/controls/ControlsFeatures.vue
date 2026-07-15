@@ -322,9 +322,9 @@
                 v-model="EDITOR_STATE.planetData.biomesParams[index]"
                 :index="index"
                 :max-index="EDITOR_STATE.planetData.biomesParams.length - 1"
-                @moveup="EDITOR_STATE.planetData.moveBiome(b.id, -1)"
-                @movedown="EDITOR_STATE.planetData.moveBiome(b.id, 1)"
-                @delete="EDITOR_STATE.planetData.removeBiome(b.id)"
+                @moveup="EDITOR_STATE.planetData.moveBiomeUp(b)"
+                @movedown="EDITOR_STATE.planetData.moveBiomeDown(b)"
+                @delete="EDITOR_STATE.planetData.removeBiome(b)"
               />
             </template>
             <LgvButton
@@ -345,9 +345,9 @@
 import ParameterBiome from '@components/global/parameters/ParameterBiome.vue';
 import ParameterDivider from '@components/global/parameters/ParameterDivider.vue';
 import ParameterGroup from '@components/global/parameters/ParameterGroup.vue';
+import { EDITOR_STATE } from '@core/editor/state/editor.state';
 import { GradientMode } from '@core/types';
 import LgvButton from '@/_lib/components/LgvButton.vue';
-import { EDITOR_STATE } from '@/core/state/editor.state';
 </script>
 <style scoped lang="scss">
 .action-add {

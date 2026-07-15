@@ -20,9 +20,11 @@ export const voronoi3 = /*@__PURE__*/ Fn(
     const minDistance = float(8).toVar('minDistance');
 
     // first pass: standard voronoi
-    Loop({ start: int(-1), end: 1, name: 'k', condition: '<=' }, ({ k }) => {
-      Loop({ start: int(-1), end: 1, name: 'j', condition: '<=' }, ({ j }) => {
-        Loop({ start: int(-1), end: 1, condition: '<=' }, ({ i }) => {
+    // @ts-expect-error borked typedefs
+    Loop({ start: int(-1), end: 1, name: 'k', condition: '<=' }, ({ k }: { k: Node<'int'> }) => {
+      // @ts-expect-error borked typedefs
+      Loop({ start: int(-1), end: 1, name: 'j', condition: '<=' }, ({ j }: { j: Node<'int'> }) => {
+        Loop({ start: int(-1), end: 1, condition: '<=' }, ({ i }: { i: Node<'int'> }) => {
           cellOffset.assign(vec3(i, j, k));
           vectorToPoint.assign(cellOffset.add(hash3(cellPos.add(cellOffset.toIVec3())).mul(jitter)).sub(localPos));
           distanceToPoint.assign(dot(vectorToPoint, vectorToPoint));
@@ -38,9 +40,11 @@ export const voronoi3 = /*@__PURE__*/ Fn(
     const distanceToEdge = float(0.0).toVar('distanceToEdge');
     const perpendicularToEdge = vec3(0.0).toVar('perpendicularToEdge');
     minDistance.assign(8.0);
-    Loop({ start: int(-1), end: 1, name: 'k', condition: '<=' }, ({ k }) => {
-      Loop({ start: int(-1), end: 1, name: 'j', condition: '<=' }, ({ j }) => {
-        Loop({ start: int(-1), end: 1, condition: '<=' }, ({ i }) => {
+    // @ts-expect-error borked typedefs
+    Loop({ start: int(-1), end: 1, name: 'k', condition: '<=' }, ({ k }: { k: Node<'int'> }) => {
+      // @ts-expect-error borked typedefs
+      Loop({ start: int(-1), end: 1, name: 'j', condition: '<=' }, ({ j }: { j: Node<'int'> }) => {
+        Loop({ start: int(-1), end: 1, condition: '<=' }, ({ i }: { i: Node<'int'> }) => {
           cellOffset.assign(vec3(i, j, k));
           vectorToPoint.assign(cellOffset.add(hash3(cellPos.add(cellOffset.toIVec3())).mul(jitter)).sub(localPos));
           perpendicularToEdge.assign(vectorToPoint.sub(vectorToClosest));

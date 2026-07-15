@@ -1,9 +1,10 @@
+import type { DataEventEmitOptions } from '@core/editor/event/data-event.types.ts';
 import { clampedPRNG } from '@core/utils/math-utils.ts';
-import { ObservableRelay, type ObservableNotifyFunction } from '@core/utils/observable-utils.ts';
 import { Vector3 } from 'three';
 import { clamp } from 'three/src/math/MathUtils.js';
 
-export class FbmNoiseParameters extends ObservableRelay {
+export class FbmNoiseParameters {
+  private readonly _eventEmitOpts: DataEventEmitOptions;
   private _frequency: number = 3;
   private _amplitude: number = 0.5;
   private _lacunarity: number = 2;
@@ -12,15 +13,8 @@ export class FbmNoiseParameters extends ObservableRelay {
   private _layers: number = 1;
   private _warpFactor: Vector3 = new Vector3(1);
 
-  constructor(
-    keyPrefix: string,
-    notifyFunc: ObservableNotifyFunction,
-    freq?: number,
-    amp?: number,
-    lac?: number,
-    oct?: number,
-  ) {
-    super(keyPrefix, notifyFunc);
+  constructor(eventEmitOpts: DataEventEmitOptions, freq?: number, amp?: number, lac?: number, oct?: number) {
+    this._eventEmitOpts = eventEmitOpts;
     this._frequency = clamp(freq ?? this._frequency, 0, 10);
     this._amplitude = clamp(amp ?? this._amplitude, 0, 10);
     this._lacunarity = clamp(lac ?? this._lacunarity, 0, 10);
@@ -34,7 +28,10 @@ export class FbmNoiseParameters extends ObservableRelay {
   }
   public set frequency(value: number) {
     this._frequency = value;
-    this.relayNotify({ key: `${this.keyPrefix}._frequency` });
+    this._eventEmitOpts.endpointRef.emit('fbmNoiseParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 
   public get amplitude(): number {
@@ -42,7 +39,10 @@ export class FbmNoiseParameters extends ObservableRelay {
   }
   public set amplitude(value: number) {
     this._amplitude = value;
-    this.relayNotify({ key: `${this.keyPrefix}._amplitude` });
+    this._eventEmitOpts.endpointRef.emit('fbmNoiseParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 
   public get lacunarity(): number {
@@ -50,7 +50,10 @@ export class FbmNoiseParameters extends ObservableRelay {
   }
   public set lacunarity(value: number) {
     this._lacunarity = value;
-    this.relayNotify({ key: `${this.keyPrefix}._lacunarity` });
+    this._eventEmitOpts.endpointRef.emit('fbmNoiseParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 
   public get octaves(): number {
@@ -58,7 +61,10 @@ export class FbmNoiseParameters extends ObservableRelay {
   }
   public set octaves(value: number) {
     this._octaves = value;
-    this.relayNotify({ key: `${this.keyPrefix}._octaves` });
+    this._eventEmitOpts.endpointRef.emit('fbmNoiseParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 
   public get layers(): number {
@@ -66,7 +72,10 @@ export class FbmNoiseParameters extends ObservableRelay {
   }
   public set layers(value: number) {
     this._layers = Math.round(clamp(value, 1, 3));
-    this.relayNotify({ key: `${this.keyPrefix}._layers` });
+    this._eventEmitOpts.endpointRef.emit('fbmNoiseParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 
   public get warpFactor(): Vector3 {
@@ -78,21 +87,30 @@ export class FbmNoiseParameters extends ObservableRelay {
   }
   public set xWarpFactor(value: number) {
     this._warpFactor.x = value;
-    this.relayNotify({ key: `${this.keyPrefix}._warpFactor` });
+    this._eventEmitOpts.endpointRef.emit('fbmNoiseParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
   public get yWarpFactor(): number {
     return this._warpFactor.y;
   }
   public set yWarpFactor(value: number) {
     this._warpFactor.y = value;
-    this.relayNotify({ key: `${this.keyPrefix}._warpFactor` });
+    this._eventEmitOpts.endpointRef.emit('fbmNoiseParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
   public get zWarpFactor(): number {
     return this._warpFactor.z;
   }
   public set zWarpFactor(value: number) {
     this._warpFactor.z = value;
-    this.relayNotify({ key: `${this.keyPrefix}._warpFactor` });
+    this._eventEmitOpts.endpointRef.emit('fbmNoiseParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 
   public loadData(data?: FbmNoiseParameters) {
@@ -127,5 +145,9 @@ export class FbmNoiseParameters extends ObservableRelay {
     this._warpFactor.x = clampedPRNG(0, 8);
     this._warpFactor.y = clampedPRNG(0, 8);
     this._warpFactor.z = clampedPRNG(0, 8);
+    this._eventEmitOpts.endpointRef.emit('fbmNoiseParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 }

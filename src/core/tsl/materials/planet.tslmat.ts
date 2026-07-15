@@ -1,16 +1,20 @@
+import type { DataEventContext, DataEventPayloadTypeMap } from '@core/editor/event/data-event.types.ts';
+import type { ColorRampStep } from '@core/models/planet/color-ramp.model.ts';
+import type { BiomeParameters } from '@core/models/planet/features/biome-parameters.model.ts';
+import type PlanetData from '@core/models/planet/planet-data.model.ts';
+import { DataEventEndpoint } from '@core/editor/event/data-event-endpoint.ts';
+import { EDITOR_WORKERS } from '@core/editor/state/editor.state.ts';
+import { TEXTURE_SIZES } from '@core/globals.ts';
+import { WorkerBoundDataArrayTexture } from '@core/utils/texture/worker-bound-data-array-texture.ts';
 import { computeCracks } from '@tsl/features/cracks.ts';
-import { sampleSobel, sobel } from '@tsl/utils/sobel.tsl.ts';
-import { flattenUV } from '@tsl/utils/vertex.tsl.ts';
+import { applyEmissiveIntensity } from '@tsl/features/emissive.ts';
 import {
   bitangentLocal,
   EPSILON,
   float,
-  Fn,
-  If,
   int,
   min,
   mix,
-  mul,
   normalLocal,
   positionLocal,
   step,
@@ -19,16 +23,13 @@ import {
   transformNormalToView,
   uniform,
   uniformArray,
-  uv,
   vec2,
   vec3,
   vec4,
 } from 'three/tsl';
 import {
-  MeshBasicNodeMaterial,
   MeshStandardNodeMaterial,
   Node,
-  Texture,
   TextureNode,
   UniformArrayNode,
   UniformNode,
@@ -36,81 +37,25 @@ import {
   Vector3,
   Vector4,
 } from 'three/webgpu';
-import type { VoronoiNoiseData, DisplacementData, FbmNoiseData, WarpingData } from '../tsl-commons';
-import { computeHumidity, computeTemperature, sampleBiomeTexture } from '../features/biomes';
-import { applyBump } from '../features/bump';
-import { displace, layer, warp } from '../features/lwd';
+import { calculateBiomeTextureCoordinates, renderBiomes } from '../features/biomes';
+import { applyBumpMap } from '../features/bump';
+import { applyXYZTransformations, layer } from '../features/lwd';
 import { TSLMaterial } from './tsl-material';
 
-export type PlanetUniformData = {
-  radius: number;
-  bumpStrength: number;
-  flags: {
-    showWarping: boolean;
-    showDisplacement: boolean;
-    showBumps: boolean;
-    showBiomes: boolean;
-    showCracks: boolean;
-    showEmissive: boolean;
-  };
-  pbr: {
-    waterLevel: number;
-    metallicRoughness: {
-      waterRoughness: number;
-      waterMetalness: number;
-      groundRoughness: number;
-      groundMetalness: number;
-    };
-    emissive: {
-      waterEmissiveIntensity: number;
-      groundEmissiveIntensity: number;
-    };
-  };
-  surface: {
-    baseTexture?: Texture;
-    noise: FbmNoiseData;
-    warping: WarpingData;
-    displacement: {
-      params: DisplacementData;
-      noise: FbmNoiseData;
-    };
-  };
-  features: {
-    cracks: {
-      baseTexture?: Texture;
-      distanceToEdge: number;
-      emissiveIntensity: number;
-      baseNoise: VoronoiNoiseData;
-      detailNoise: FbmNoiseData;
-      limiterTexture?: Texture;
-      limiterNoise: FbmNoiseData;
-      colorNoise: FbmNoiseData;
-    };
-    biomes: {
-      baseTexture?: Texture;
-      emissiveTexture?: Texture;
-      temperatureMode: number;
-      temperatureNoise: FbmNoiseData;
-      humidityMode: number;
-      humidityNoise: FbmNoiseData;
-    };
-  };
-  // uniforms used for baking only
-  baking: {
-    heightMapTexture?: Texture;
-  };
-};
 export type PlanetUniforms = {
+  arrayTexture: TextureNode;
   radius: UniformNode<'float', number>;
-  bumpStrength: UniformNode<'float', number>;
   flags: UniformArrayNode<'int'>;
   pbr: {
     waterLevel: UniformNode<'float', number>;
     metallicRoughness: UniformNode<'vec4', Vector4>;
     emissive: UniformNode<'vec2', Vector2>;
   };
+  bump: {
+    offset: UniformNode<'float', number>;
+    strength: UniformNode<'float', number>;
+  };
   surface: {
-    baseTexture?: TextureNode;
     noise: UniformNode<'vec4', Vector4>;
     warping: UniformNode<'vec4', Vector4>;
     displacement: {
@@ -120,7 +65,6 @@ export type PlanetUniforms = {
   };
   features: {
     cracks: {
-      baseTexture?: TextureNode;
       distanceToEdge: UniformNode<'float', number>;
       emissiveIntensity: UniformNode<'float', number>;
       baseNoise: UniformNode<'vec3', Vector3>;
@@ -129,146 +73,357 @@ export type PlanetUniforms = {
       colorNoise: UniformNode<'vec4', Vector4>;
     };
     biomes: {
-      baseTexture?: TextureNode;
-      emissiveTexture?: TextureNode;
       temperatureMode: UniformNode<'float', number>;
       temperatureNoise: UniformNode<'vec4', Vector4>;
       humidityMode: UniformNode<'float', number>;
       humidityNoise: UniformNode<'vec4', Vector4>;
     };
   };
-  // uniforms used for baking only
-  baking: {
-    heightMapTexture?: TextureNode;
-  };
 };
-export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, PlanetUniformData, PlanetUniforms> {
-  uniformize(data: PlanetUniformData): PlanetUniforms {
+export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, PlanetUniforms> {
+  public readonly dataEventEndpoint = new DataEventEndpoint<keyof DataEventPayloadTypeMap>('endpoint-planet');
+  public static readonly ALLOWED_CONTEXTS = new Set<DataEventContext>([
+    'surface',
+    'biomes',
+    'biomesTemperatureNoise',
+    'biomesHumidityNoise',
+    'cracks',
+    'cracksBaseNoise',
+    'cracksDetailNoise',
+    'cracksLimiterNoise',
+    'cracksColorNoise',
+  ]);
+
+  /*
+   * TEXTURE REFERENCE (depth-indexed)
+   * - 0: surface
+   * - 1: biomes
+   * - 2: biomes emissive
+   * - 3: cracks
+   * - 4: heightmap (baking only)
+   */
+  public readonly workerBoundDataArrayTexture: WorkerBoundDataArrayTexture = new WorkerBoundDataArrayTexture(
+    TEXTURE_SIZES.PLANET,
+    TEXTURE_SIZES.PLANET,
+    5,
+  );
+
+  constructor(initData: PlanetData) {
+    super();
+    this.uniforms = this.initUniforms(initData);
+    this.initTextures(initData);
+    this.dataEventEndpoint.canProcess = (payload) =>
+      !payload.context || PlanetTSLMaterial.ALLOWED_CONTEXTS.has(payload.context);
+    this.dataEventEndpoint
+      .on('showWarping', (payload) => (this.uniforms.flags.array[0] = +payload.value))
+      .on('showDisplacement', (payload) => (this.uniforms.flags.array[1] = +payload.value))
+      .on('showBumps', (payload) => (this.uniforms.flags.array[2] = +payload.value))
+      .on('showBiomes', (payload) => (this.uniforms.flags.array[3] = +payload.value))
+      .on('showCracks', (payload) => (this.uniforms.flags.array[4] = +payload.value))
+      .on('showEmissive', (payload) => (this.uniforms.flags.array[5] = +payload.value))
+      // unique params
+      .on('waterLevel', (payload) => (this.uniforms.pbr.waterLevel.value = payload.value))
+      .on('pbr', (payload) => {
+        this.uniforms.pbr.metallicRoughness.value.x = payload.value.waterRoughness;
+        this.uniforms.pbr.metallicRoughness.value.y = payload.value.waterMetalness;
+        this.uniforms.pbr.metallicRoughness.value.z = payload.value.groundRoughness;
+        this.uniforms.pbr.metallicRoughness.value.w = payload.value.groundMetalness;
+      })
+      .on('emissiveIntensity', async (payload) => {
+        this.uniforms.pbr.emissive.value.x = payload.value.water;
+        this.uniforms.pbr.emissive.value.y = payload.value.ground;
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes-emissive',
+          initData.biomesParams,
+          2,
+        );
+      })
+      .on('bumpOffset', (payload) => (this.uniforms.bump.offset.value = payload.value))
+      .on('bumpStrength', (payload) => (this.uniforms.bump.strength.value = payload.value))
+      .on('biomesTemperatureMode', (payload) => (this.uniforms.features.biomes.temperatureMode.value = payload.value))
+      .on('biomesHumidityMode', (payload) => (this.uniforms.features.biomes.humidityMode.value = payload.value))
+      .on('cracksDistanceToEdge', (payload) => (this.uniforms.features.cracks.distanceToEdge.value = payload.value))
+      // noise
+      .on('displacementParametersUpdate', (payload) => {
+        this.uniforms.surface.displacement.params.value.x = payload.value.factor;
+        this.uniforms.surface.displacement.params.value.y = payload.value.epsilon;
+        this.uniforms.surface.displacement.params.value.z = payload.value.multiplier;
+        this.uniforms.surface.displacement.noise.value.x = payload.value.frequency;
+        this.uniforms.surface.displacement.noise.value.y = payload.value.amplitude;
+        this.uniforms.surface.displacement.noise.value.z = payload.value.lacunarity;
+        this.uniforms.surface.displacement.noise.value.w = payload.value.octaves;
+      })
+      .on('fbmNoiseParametersUpdate', (payload) => {
+        switch (payload.context) {
+          case 'surface':
+            this.uniforms.surface.warping.value.x = payload.value.layers;
+            this.uniforms!.surface.warping.value.y = payload.value.warpFactor.x;
+            this.uniforms!.surface.warping.value.z = payload.value.warpFactor.y;
+            this.uniforms!.surface.warping.value.w = payload.value.warpFactor.z;
+            this.uniforms.surface.noise.value.x = payload.value.frequency;
+            this.uniforms.surface.noise.value.y = payload.value.amplitude;
+            this.uniforms.surface.noise.value.z = payload.value.lacunarity;
+            this.uniforms.surface.noise.value.w = payload.value.octaves;
+            break;
+          case 'biomesTemperatureNoise':
+            this.uniforms.features.biomes.temperatureNoise.value.x = payload.value.frequency;
+            this.uniforms.features.biomes.temperatureNoise.value.y = payload.value.amplitude;
+            this.uniforms.features.biomes.temperatureNoise.value.z = payload.value.lacunarity;
+            this.uniforms.features.biomes.temperatureNoise.value.w = payload.value.octaves;
+            break;
+          case 'biomesHumidityNoise':
+            this.uniforms.features.biomes.humidityNoise.value.x = payload.value.frequency;
+            this.uniforms.features.biomes.humidityNoise.value.y = payload.value.amplitude;
+            this.uniforms.features.biomes.humidityNoise.value.z = payload.value.lacunarity;
+            this.uniforms.features.biomes.humidityNoise.value.w = payload.value.octaves;
+            break;
+          case 'cracksDetailNoise':
+            this.uniforms.features.cracks.detailNoise.value.x = payload.value.frequency;
+            this.uniforms.features.cracks.detailNoise.value.y = payload.value.amplitude;
+            this.uniforms.features.cracks.detailNoise.value.z = payload.value.lacunarity;
+            this.uniforms.features.cracks.detailNoise.value.w = payload.value.octaves;
+            break;
+          case 'cracksLimiterNoise':
+            this.uniforms.features.cracks.limiterNoise.value.x = payload.value.frequency;
+            this.uniforms.features.cracks.limiterNoise.value.y = payload.value.amplitude;
+            this.uniforms.features.cracks.limiterNoise.value.z = payload.value.lacunarity;
+            this.uniforms.features.cracks.limiterNoise.value.w = payload.value.octaves;
+            break;
+          case 'cracksColorNoise':
+            this.uniforms.features.cracks.colorNoise.value.x = payload.value.frequency;
+            this.uniforms.features.cracks.colorNoise.value.y = payload.value.amplitude;
+            this.uniforms.features.cracks.colorNoise.value.z = payload.value.lacunarity;
+            this.uniforms.features.cracks.colorNoise.value.w = payload.value.octaves;
+            break;
+        }
+      })
+      .on('voronoiNoiseParametersUpdate', (payload) => {
+        switch (payload.context) {
+          case 'cracksBaseNoise':
+            this.uniforms.features.cracks.baseNoise.value.x = payload.value.scale;
+            this.uniforms.features.cracks.baseNoise.value.y = payload.value.jitter;
+            this.uniforms.features.cracks.baseNoise.value.z = payload.value.mode;
+            break;
+        }
+      })
+      // color ramps
+      .on('colorRampUpdate', async (payload) => {
+        switch (payload.context) {
+          case 'surface':
+            await this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
+              EDITOR_WORKERS.texture!,
+              'color-ramp',
+              payload.value.steps,
+              0,
+            );
+            break;
+          case 'cracks':
+            await this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
+              EDITOR_WORKERS.texture!,
+              'color-ramp',
+              payload.value.steps,
+              3,
+            );
+            break;
+        }
+      })
+      // biomes
+      .on('biomeParametersUpdate', async () => {
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes',
+          initData.biomesParams,
+          1,
+        );
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes-emissive',
+          initData.biomesParams,
+          2,
+        );
+      })
+      .on('biomeAdd', async () => {
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes',
+          initData.biomesParams,
+          1,
+        );
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes-emissive',
+          initData.biomesParams,
+          2,
+        );
+      })
+      .on('biomeRemove', async () => {
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes',
+          initData.biomesParams,
+          1,
+        );
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes-emissive',
+          initData.biomesParams,
+          2,
+        );
+      });
+  }
+
+  dispose(): void {
+    super.dispose();
+    this.workerBoundDataArrayTexture.texture.dispose();
+  }
+
+  initUniforms(data: PlanetData): PlanetUniforms {
     return {
-      radius: uniform(data.radius),
-      bumpStrength: uniform(data.bumpStrength),
+      arrayTexture: texture(this.workerBoundDataArrayTexture.texture),
+      radius: uniform(data.planetRadius),
+      bump: {
+        offset: uniform(data.planetSurfaceBumpOffset),
+        strength: uniform(data.planetSurfaceBumpStrength),
+      },
       flags: uniformArray([
-        +data.flags.showWarping,
-        +data.flags.showDisplacement,
-        +data.flags.showBumps,
-        +data.flags.showBiomes,
-        +data.flags.showCracks,
-        +data.flags.showEmissive,
+        +data.planetSurfaceShowWarping,
+        +data.planetSurfaceShowDisplacement,
+        +data.planetSurfaceShowBumps,
+        +data.biomesEnabled,
+        +data.cracksEnabled,
+        +data.planetShowEmissive,
       ]),
       pbr: {
-        waterLevel: uniform(data.pbr.waterLevel),
+        waterLevel: uniform(data.planetWaterLevel),
         metallicRoughness: uniform(
           new Vector4(
-            data.pbr.metallicRoughness.waterRoughness,
-            data.pbr.metallicRoughness.waterMetalness,
-            data.pbr.metallicRoughness.groundRoughness,
-            data.pbr.metallicRoughness.groundMetalness,
+            data.planetWaterRoughness,
+            data.planetWaterMetalness,
+            data.planetGroundRoughness,
+            data.planetGroundMetalness,
           ),
         ),
-        emissive: uniform(
-          new Vector2(data.pbr.emissive.waterEmissiveIntensity, data.pbr.emissive.groundEmissiveIntensity),
-        ),
+        emissive: uniform(new Vector2(data.planetWaterEmissiveIntensity, data.planetGroundEmissiveIntensity)),
       },
       surface: {
-        baseTexture: texture(data.surface.baseTexture),
         noise: uniform(
           new Vector4(
-            data.surface.noise.frequency,
-            data.surface.noise.amplitude,
-            data.surface.noise.lacunarity,
-            data.surface.noise.octaves,
+            data.planetSurfaceNoise.frequency,
+            data.planetSurfaceNoise.amplitude,
+            data.planetSurfaceNoise.lacunarity,
+            data.planetSurfaceNoise.octaves,
           ),
         ),
         warping: uniform(
           new Vector4(
-            data.surface.warping.layers,
-            data.surface.warping.warpFactor.x,
-            data.surface.warping.warpFactor.y,
-            data.surface.warping.warpFactor.z,
+            data.planetSurfaceNoise.layers,
+            data.planetSurfaceNoise.warpFactor.x,
+            data.planetSurfaceNoise.warpFactor.y,
+            data.planetSurfaceNoise.warpFactor.z,
           ),
         ),
         displacement: {
           params: uniform(
             new Vector3(
-              data.surface.displacement.params.factor,
-              data.surface.displacement.params.epsilon,
-              data.surface.displacement.params.multiplier,
+              data.planetSurfaceDisplacement.factor,
+              data.planetSurfaceDisplacement.epsilon,
+              data.planetSurfaceDisplacement.multiplier,
             ),
           ),
           noise: uniform(
             new Vector4(
-              data.surface.displacement.noise.frequency,
-              data.surface.displacement.noise.amplitude,
-              data.surface.displacement.noise.lacunarity,
-              data.surface.displacement.noise.octaves,
+              data.planetSurfaceDisplacement.frequency,
+              data.planetSurfaceDisplacement.amplitude,
+              data.planetSurfaceDisplacement.lacunarity,
+              data.planetSurfaceDisplacement.octaves,
             ),
           ),
         },
       },
       features: {
         cracks: {
-          baseTexture: texture(data.features.cracks.baseTexture),
-          distanceToEdge: uniform(data.features.cracks.distanceToEdge),
-          emissiveIntensity: uniform(data.features.cracks.emissiveIntensity),
+          distanceToEdge: uniform(data.cracksDistanceToEdge),
+          emissiveIntensity: uniform(data.cracksEmissiveIntensity),
           baseNoise: uniform(
-            new Vector3(
-              data.features.cracks.baseNoise.scale,
-              data.features.cracks.baseNoise.jitter,
-              data.features.cracks.baseNoise.mode,
-            ),
+            new Vector3(data.cracksBaseNoise.scale, data.cracksBaseNoise.jitter, data.cracksBaseNoise.mode),
           ),
           detailNoise: uniform(
             new Vector4(
-              data.features.cracks.detailNoise.frequency,
-              data.features.cracks.detailNoise.amplitude,
-              data.features.cracks.detailNoise.lacunarity,
-              data.features.cracks.detailNoise.octaves,
+              data.cracksDetailNoise.frequency,
+              data.cracksDetailNoise.amplitude,
+              data.cracksDetailNoise.lacunarity,
+              data.cracksDetailNoise.octaves,
             ),
           ),
           limiterNoise: uniform(
             new Vector4(
-              data.features.cracks.limiterNoise.frequency,
-              data.features.cracks.limiterNoise.amplitude,
-              data.features.cracks.limiterNoise.lacunarity,
-              data.features.cracks.limiterNoise.octaves,
+              data.cracksLimiterNoise.frequency,
+              data.cracksLimiterNoise.amplitude,
+              data.cracksLimiterNoise.lacunarity,
+              data.cracksLimiterNoise.octaves,
             ),
           ),
           colorNoise: uniform(
             new Vector4(
-              data.features.cracks.colorNoise.frequency,
-              data.features.cracks.colorNoise.amplitude,
-              data.features.cracks.colorNoise.lacunarity,
-              data.features.cracks.colorNoise.octaves,
+              data.cracksColorNoise.frequency,
+              data.cracksColorNoise.amplitude,
+              data.cracksColorNoise.lacunarity,
+              data.cracksColorNoise.octaves,
             ),
           ),
         },
         biomes: {
-          baseTexture: texture(data.features.biomes.baseTexture),
-          emissiveTexture: texture(data.features.biomes.emissiveTexture),
-          temperatureMode: uniform(data.features.biomes.temperatureMode),
+          temperatureMode: uniform(data.biomesTemperatureMode),
           temperatureNoise: uniform(
             new Vector4(
-              data.features.biomes.temperatureNoise.frequency,
-              data.features.biomes.temperatureNoise.amplitude,
-              data.features.biomes.temperatureNoise.lacunarity,
-              data.features.biomes.temperatureNoise.octaves,
+              data.biomesTemperatureNoise.frequency,
+              data.biomesTemperatureNoise.amplitude,
+              data.biomesTemperatureNoise.lacunarity,
+              data.biomesTemperatureNoise.octaves,
             ),
           ),
-          humidityMode: uniform(data.features.biomes.humidityMode),
+          humidityMode: uniform(data.biomesHumidityMode),
           humidityNoise: uniform(
             new Vector4(
-              data.features.biomes.humidityNoise.frequency,
-              data.features.biomes.humidityNoise.amplitude,
-              data.features.biomes.humidityNoise.lacunarity,
-              data.features.biomes.humidityNoise.octaves,
+              data.biomesHumidityNoise.frequency,
+              data.biomesHumidityNoise.amplitude,
+              data.biomesHumidityNoise.lacunarity,
+              data.biomesHumidityNoise.octaves,
             ),
           ),
         },
       },
-      baking: {
-        heightMapTexture: texture(data.baking.heightMapTexture),
-      },
     };
+  }
+
+  initTextures(initData: PlanetData) {
+    Promise.all([
+      this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
+        EDITOR_WORKERS.texture!,
+        'color-ramp',
+        initData.planetSurfaceColorRamp.steps,
+        0,
+      ),
+      this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+        EDITOR_WORKERS.texture!,
+        'biomes',
+        initData.biomesParams,
+        1,
+      ),
+      this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+        EDITOR_WORKERS.texture!,
+        'biomes-emissive',
+        initData.biomesParams,
+        2,
+      ),
+      this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
+        EDITOR_WORKERS.texture!,
+        'color-ramp',
+        initData.cracksColorRamp.steps,
+        3,
+      ),
+    ]).catch(console.error);
   }
 
   // --------------------------------------------------
@@ -276,22 +431,19 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
   // --------------------------------------------------
 
   buildMaterial(): MeshStandardNodeMaterial {
-    if (!this.uniforms.surface.baseTexture) {
-      throw new Error('Cannot build material with missing uniform: surface.baseTexture');
-    }
-    if (!this.uniforms.features.biomes.baseTexture) {
-      throw new Error('Cannot build material with missing uniform: biomes.baseTexture');
-    }
-    if (!this.uniforms.features.biomes.emissiveTexture) {
-      throw new Error('Cannot build material with missing uniform: biomes.baseTexture');
-    }
-
     // XYZ Warping + displacement
-    const vPos = this.applyXYZTransformations(positionLocal);
+    const vPos = applyXYZTransformations(
+      positionLocal,
+      this.uniforms.surface.warping,
+      this.uniforms.flags.element(0),
+      this.uniforms.surface.displacement.params,
+      this.uniforms.surface.displacement.noise,
+      this.uniforms.flags.element(1),
+    );
 
     // Heightmap & global flags
     const heightLimit = float(1).sub(EPSILON).toVar('heightLimit');
-    let height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar('height');
+    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar('height');
     const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, height).toVar('FLAG_SURFACE_TYPE');
     const FLAG_BIOMES_ENABLED = FLAG_SURFACE_TYPE.mul(float(this.uniforms.flags.element(3))).toVar(
       'FLAG_BIOMES_ENABLED',
@@ -300,15 +452,21 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord');
-    let colour = vec3(this.uniforms.surface.baseTexture.sample(texCoord).xyz);
+    let colour = vec3(this.uniforms.arrayTexture.depth(int(0)).sample(texCoord).xyz);
 
     // Render biomes
-    const biomeTexCoord = this.calculateBiomeTextureCoordinates(vPos, heightLimit, FLAG_BIOMES_ENABLED).toVar(
-      'biomeTexCoord',
-    );
-    colour = this.renderBiomes(
+    const biomeTexCoord = calculateBiomeTextureCoordinates(
+      vPos,
+      heightLimit,
+      this.uniforms.features.biomes.temperatureMode,
+      this.uniforms.features.biomes.temperatureNoise,
+      this.uniforms.features.biomes.humidityMode,
+      this.uniforms.features.biomes.humidityNoise,
+      FLAG_BIOMES_ENABLED,
+    ).toVar('biomeTexCoord');
+    colour = renderBiomes(
       colour,
-      this.uniforms.features.biomes.baseTexture,
+      this.uniforms.arrayTexture.depth(int(1)),
       biomeTexCoord,
       FLAG_BIOMES_ENABLED,
     ).toVec3();
@@ -321,13 +479,23 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
       this.uniforms.features.cracks.detailNoise,
       this.uniforms.features.cracks.limiterNoise,
       this.uniforms.features.cracks.colorNoise,
-      this.uniforms.features.cracks.baseTexture!,
+      this.uniforms.arrayTexture.depth(int(3)),
       this.uniforms.features.cracks.distanceToEdge,
     );
     colour = mix(colour, cracksColour, FLAG_CRACKS_ENABLED).toVec3();
 
     // Render bump-map (under MIT license)
-    const bump = this.applyBumpMap(vPos, height);
+    const bump = applyBumpMap(
+      vPos,
+      height,
+      this.uniforms.radius,
+      vec2(this.uniforms.bump.offset, this.uniforms.bump.strength),
+      this.uniforms.surface.noise,
+      this.uniforms.surface.warping,
+      tangentLocal,
+      <Node<'vec3'>>(<unknown>bitangentLocal),
+      normalLocal,
+    );
 
     // Init material & set outputs
     const material = new MeshStandardNodeMaterial();
@@ -345,258 +513,15 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
       this.uniforms.pbr.metallicRoughness.w,
       FLAG_SURFACE_TYPE,
     );
-    material.emissiveNode = this.applyEmissiveIntensity(colour, biomeTexCoord, FLAG_SURFACE_TYPE);
-    return material;
-  }
-
-  buildSurfaceBakeMaterial(): MeshBasicNodeMaterial {
-    if (!this.uniforms.surface.baseTexture) {
-      throw new Error('Cannot build material with missing uniform: surface.baseTexture');
-    }
-    if (!this.uniforms.features.biomes.baseTexture) {
-      throw new Error('Cannot build material with missing uniform: biomes.baseTexture');
-    }
-
-    // XYZ Warping + displacement
-    const vPos = this.applyXYZTransformations(positionLocal);
-
-    // Heightmap & global flags
-    const heightLimit = float(1).sub(EPSILON);
-    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).setName('height');
-    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, height).setName('FLAG_SURFACE_TYPE');
-    const FLAG_BIOMES_ENABLED = FLAG_SURFACE_TYPE.mul(float(this.uniforms.flags.element(3))).setName(
-      'FLAG_BIOMES_ENABLED',
-    );
-    const FLAG_CRACKS_ENABLED = float(this.uniforms.flags.element(4)).toVar('FLAG_CRACKS_ENABLED');
-
-    // render noise as color
-    const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord');
-    let colour = vec3(this.uniforms.surface.baseTexture.sample(texCoord).xyz);
-
-    // Render biomes
-    const biomeTexCoord = this.calculateBiomeTextureCoordinates(vPos, heightLimit, FLAG_BIOMES_ENABLED).toVar(
-      'biomeTexCoord',
-    );
-    colour = this.renderBiomes(
+    material.emissiveNode = applyEmissiveIntensity(
       colour,
-      this.uniforms.features.biomes.baseTexture,
+      this.uniforms.pbr.emissive,
+      this.uniforms.arrayTexture.depth(int(1)),
+      this.uniforms.arrayTexture.depth(int(2)),
       biomeTexCoord,
-      FLAG_BIOMES_ENABLED,
-    ).toVec3();
-
-    // Render cracks
-    const cracksColour = computeCracks(
-      colour,
-      vPos,
-      this.uniforms.features.cracks.baseNoise,
-      this.uniforms.features.cracks.detailNoise,
-      this.uniforms.features.cracks.limiterNoise,
-      this.uniforms.features.cracks.colorNoise,
-      this.uniforms.features.cracks.baseTexture!,
-      this.uniforms.features.cracks.distanceToEdge,
+      float(this.uniforms.flags.element(5)),
+      FLAG_SURFACE_TYPE,
     );
-    colour = mix(colour, cracksColour, FLAG_CRACKS_ENABLED).toVec3();
-
-    // Init material & set outputs
-    const material = new MeshBasicNodeMaterial();
-    material.vertexNode = flattenUV(uv());
-    material.colorNode = vec4(colour, 1);
     return material;
   }
-
-  buildMetallicRoughnessBakeMaterial(): MeshBasicNodeMaterial {
-    // XYZ Warping + displacement
-    const vPos = this.applyXYZTransformations(positionLocal);
-
-    // Heightmap & global flags
-    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar();
-    const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar();
-
-    // render PBR as green/blue mask
-    const outRoughness = mix(this.uniforms.pbr.metallicRoughness.x, this.uniforms.pbr.metallicRoughness.z, FLAG_LAND);
-    const outMetalness = mix(this.uniforms.pbr.metallicRoughness.y, this.uniforms.pbr.metallicRoughness.w, FLAG_LAND);
-
-    // Init material & set outputs
-    const material = new MeshBasicNodeMaterial();
-    material.vertexNode = flattenUV(uv());
-    material.colorNode = vec4(0, outRoughness, outMetalness, 1);
-    return material;
-  }
-
-  buildEmissivityBakeMaterial(): MeshBasicNodeMaterial {
-    if (!this.uniforms.surface.baseTexture) {
-      throw new Error('Cannot build material with missing uniform: surface.baseTexture');
-    }
-    if (!this.uniforms.features.biomes.baseTexture) {
-      throw new Error('Cannot build material with missing uniform: biomes.baseTexture');
-    }
-    if (!this.uniforms.features.biomes.emissiveTexture) {
-      throw new Error('Cannot build material with missing uniform: biomes.emissiveTexture');
-    }
-
-    // XYZ Warping + displacement
-    const vPos = this.applyXYZTransformations(positionLocal);
-
-    // Heightmap & global flags
-    const heightLimit = float(1).sub(EPSILON);
-    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar();
-    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, height).toVar();
-    const FLAG_BIOMES_ENABLED = FLAG_SURFACE_TYPE.mul(float(this.uniforms.flags.element(3)));
-
-    // render noise as color
-    const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord');
-    let colour = vec3(this.uniforms.surface.baseTexture.sample(texCoord).xyz);
-
-    // get biome texcoords for emissivity calculations
-    const biomeTexCoord = this.calculateBiomeTextureCoordinates(vPos, heightLimit, FLAG_BIOMES_ENABLED).toVar(
-      'biomeTexCoord',
-    );
-    colour = this.renderBiomes(
-      colour,
-      this.uniforms.features.biomes.baseTexture,
-      biomeTexCoord,
-      FLAG_BIOMES_ENABLED,
-    ).toVec3();
-
-    // Init material & set outputs
-    const material = new MeshBasicNodeMaterial();
-    material.vertexNode = flattenUV(uv());
-    material.fragmentNode = vec4(this.applyEmissiveIntensity(colour, biomeTexCoord, FLAG_SURFACE_TYPE).xyz, 1);
-    return material;
-  }
-
-  buildHeightMapBakeMaterial(): MeshBasicNodeMaterial {
-    // XYZ Warping + displacement
-    const vPos = this.applyXYZTransformations(positionLocal);
-
-    // Heightmap & global flags
-    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar();
-    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, height).toVar();
-
-    // Init material & set outputs
-    const material = new MeshBasicNodeMaterial();
-    material.vertexNode = flattenUV(uv());
-    material.colorNode = vec4(mix(vec3(this.uniforms.pbr.waterLevel), vec3(height), FLAG_SURFACE_TYPE), 1);
-    return material;
-  }
-
-  buildNormalMapBakeMaterial(): MeshBasicNodeMaterial {
-    if (!this.uniforms.baking.heightMapTexture) {
-      throw new Error('Cannot build material with missing uniform: baking.heightMapTexture');
-    }
-
-    const texNode = this.uniforms.baking.heightMapTexture;
-    const offset = vec3(-1 / texNode.value.width, 0, 1 / texNode.value.height).toVar('offset');
-
-    // Sample height-map at 8 points around the current position
-    const sobelMat = sampleSobel(texNode, uv(), offset).toVar('sobelMat');
-    const normal = sobel(sobelMat, float(texNode.value.width).mul(this.uniforms.bumpStrength)).toVar('N');
-
-    const material = new MeshBasicNodeMaterial();
-    material.vertexNode = flattenUV(uv());
-    material.colorNode = vec4(normal, 1);
-    return material;
-  }
-
-  // --------------------------------------------------
-  // |               Utility functions                |
-  // --------------------------------------------------
-
-  private applyXYZTransformations(vPos: Node<'vec3'>): Node<'vec3'> {
-    vPos = warp(vPos, this.uniforms.surface.warping, float(this.uniforms.flags.element(0)));
-    return displace(
-      vPos,
-      this.uniforms.surface.displacement.params,
-      this.uniforms.surface.displacement.noise,
-      float(this.uniforms.flags.element(1)),
-    );
-  }
-
-  private calculateBiomeTextureCoordinates(
-    vPos: Node<'vec3'>,
-    heightLimit: Node<'float'>,
-    FLAG_BIOMES_ENABLED: Node<'float'>,
-  ) {
-    const temp = float(
-      computeTemperature(
-        vPos,
-        this.uniforms.features.biomes.temperatureNoise,
-        this.uniforms.features.biomes.temperatureMode,
-      ),
-    );
-    const humi = float(
-      computeHumidity(vPos, this.uniforms.features.biomes.humidityNoise, this.uniforms.features.biomes.humidityMode),
-    );
-    return vec2(
-      float(mix(0, temp, FLAG_BIOMES_ENABLED)).min(heightLimit),
-      float(mix(0, humi, FLAG_BIOMES_ENABLED)).min(heightLimit),
-    );
-  }
-
-  private renderBiomes(
-    colour: Node<'vec3'>,
-    texture: TextureNode,
-    texCoords: Node<'vec2'>,
-    FLAG_BIOMES_ENABLED: Node<'float'>,
-  ): Node<'vec3'> {
-    return mix(colour, sampleBiomeTexture(texture, texCoords.x, texCoords.y, colour), FLAG_BIOMES_ENABLED);
-  }
-
-  private applyBumpMap(vPos: Node<'vec3'>, height: Node<'float'>): Node<'vec3'> {
-    const dx = vec3(tangentLocal.mul(this.uniforms.surface.warping.yzw).mul(0.005)).toVar('dx');
-    const dy = vec3(
-      (bitangentLocal as unknown as Node<'vec3'>).mul(this.uniforms.surface.warping.yzw).mul(0.005),
-    ).toVar('dy');
-    const dxHeight = float(layer(vPos.add(dx), this.uniforms.surface.noise, this.uniforms.surface.warping.x)).toVar(
-      'dxHeight',
-    );
-    const dyHeight = float(layer(vPos.add(dy), this.uniforms.surface.noise, this.uniforms.surface.warping.x)).toVar(
-      'dyHeight',
-    );
-    return vec3(
-      applyBump(
-        normalLocal,
-        vPos,
-        dx,
-        dy,
-        height,
-        dxHeight,
-        dyHeight,
-        this.uniforms.radius,
-        this.uniforms.bumpStrength,
-      ),
-    );
-  }
-
-  private readonly applyEmissiveIntensity = Fn(
-    ([fragmentColor, biomeTexCoord, FLAG_SURFACE_TYPE]: [Node<'vec3'>, Node<'vec2'>, Node<'float'>]) => {
-      // X/Y axes are flipped on texture, so we must also flip coords
-      const emissiveColor = vec3(fragmentColor).toVar('emissiveColor');
-      const flippedBiomeTexCoord = vec2(biomeTexCoord.y, biomeTexCoord.x).setName('flippedBiomeTexCoord');
-
-      If(FLAG_SURFACE_TYPE.equal(1), () => {
-        // calculate emissive
-        const biomeEmissiveTexel = vec4(this.uniforms.features.biomes.baseTexture!.sample(flippedBiomeTexCoord)).toVar(
-          'biomeEmissiveTexel',
-        );
-        const emissiveFactor = mix(
-          this.uniforms.pbr.emissive.y,
-          biomeEmissiveTexel.y.mul(10),
-          biomeEmissiveTexel.w,
-        ).toVar('emissiveFactor');
-
-        // override color to biome value if we're on a biome
-        const biomeColor = vec3(
-          this.uniforms.features.biomes.emissiveTexture!.sample(flippedBiomeTexCoord).xyz,
-        ).setName('biomeTexel');
-        emissiveColor.assign(mix(emissiveColor, biomeColor, step(1e-3, biomeEmissiveTexel.w)));
-
-        // Assign and return
-        emissiveColor.mulAssign(mul(float(this.uniforms.flags.element(5)), emissiveFactor));
-      }).Else(() => {
-        emissiveColor.mulAssign(mul(float(this.uniforms.flags.element(5)), this.uniforms.pbr.emissive.x));
-      });
-      return emissiveColor;
-    },
-  );
 }

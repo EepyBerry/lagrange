@@ -24,8 +24,8 @@
   </ParameterGrid>
 </template>
 <script setup lang="ts">
+import { EDITOR_STATE } from '@core/editor/state/editor.state';
 import ParameterSelect from '@/components/global/parameters/ParameterSelect.vue';
-import { EDITOR_STATE } from '@/core/state/editor.state';
 import { PlanetClass, PlanetType } from '@/core/types';
 import { getI18nPlanetClass, getI18nPlanetType } from '@/core/utils/i18n-utils';
 

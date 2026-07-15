@@ -255,6 +255,6 @@ import ParameterGroup from '@components/global/parameters/ParameterGroup.vue';
 import ParameterRadio from '@components/global/parameters/ParameterRadio.vue';
 import ParameterSelect from '@components/global/parameters/ParameterSelect.vue';
 import ParameterSlider from '@components/global/parameters/ParameterSlider.vue';
+import { EDITOR_STATE } from '@core/editor/state/editor.state.ts';
 import { AntiAliasingMode } from '@core/models/renderpipeline/render-pipeline-data.model.ts';
-import { EDITOR_STATE } from '@core/state/editor.state.ts';
 </script>

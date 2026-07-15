@@ -59,11 +59,11 @@
 import type { DeleteConfirmDialogExposes } from '@components/codex/dialogs/DeleteConfirmDialog.types.ts';
 import type { PlanetInfoDialogExposes } from '@components/codex/dialogs/PlanetInfoDialog.types.ts';
 import InlineFooter from '@components/global/InlineFooter.vue';
-import { EventBus } from '@core/event-bus';
 import { EXTRAS_METAL_SLUG_MODE, uwuifyPath } from '@core/extras';
 import { SM_WIDTH_THRESHOLD } from '@core/globals';
 import { readFileData } from '@core/helpers/import.helper';
 import PlanetData from '@core/models/planet/planet-data.model.ts';
+import { UIEventBus } from '@core/ui-event-bus.ts';
 import { useHead } from '@unhead/vue';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
@@ -99,16 +99,16 @@ useHead({
 onMounted(async () => {
   computeResponsiveness();
   await loadPlanets();
-  EventBus.registerWindowEventListener('click', onWindowClick);
-  EventBus.registerWindowEventListener('resize', onWindowResize);
+  UIEventBus.registerWindowEventListener('click', onWindowClick);
+  UIEventBus.registerWindowEventListener('resize', onWindowResize);
 });
 onUnmounted(() => {
-  EventBus.deregisterWindowEventListener('click', onWindowClick);
-  EventBus.deregisterWindowEventListener('resize', onWindowResize);
+  UIEventBus.deregisterWindowEventListener('click', onWindowClick);
+  UIEventBus.deregisterWindowEventListener('resize', onWindowResize);
 });
 
 watch(
-  () => EventBus.clearEvent.value,
+  () => UIEventBus.clearEvent.value,
   async () => await loadPlanets(),
 );
 
@@ -121,7 +121,7 @@ async function loadPlanets() {
 // ------------------------------------------------------------------------------------------------
 
 async function onWindowClick(event: MouseEvent) {
-  EventBus.sendClickEvent(event);
+  UIEventBus.sendClickEvent(event);
 }
 function onWindowResize() {
   computeResponsiveness();
@@ -163,7 +163,7 @@ async function importPlanetFile(event: Event) {
     const newPlanets: PromiseSettledResult<IDBPlanet>[] = await Promise.allSettled(readPromises);
     const rejectedFiles = newPlanets.filter((p) => p.status === 'rejected');
     if (rejectedFiles.length === newPlanets.length) {
-      EventBus.sendToastEvent('warn', 'toast.import_failure', 3000);
+      UIEventBus.sendToastEvent('warn', 'toast.import_failure', 3000);
       return;
     }
 
@@ -174,13 +174,13 @@ async function importPlanetFile(event: Event) {
         .map((np) => ({ ...np, id: nanoid(), timestamp: Date.now(), version: np.version ?? '1' })),
     );
     if (allAdded && rejectedFiles.length === 0) {
-      EventBus.sendToastEvent('success', 'toast.import_success', 3000);
+      UIEventBus.sendToastEvent('success', 'toast.import_success', 3000);
     } else {
-      EventBus.sendToastEvent('warn', 'toast.import_partial', 3000);
+      UIEventBus.sendToastEvent('warn', 'toast.import_partial', 3000);
     }
   } catch (err) {
     console.warn('<Lagrange> Failed to import all planet files', err);
-    EventBus.sendToastEvent('warn', 'toast.import_partial', 3000);
+    UIEventBus.sendToastEvent('warn', 'toast.import_partial', 3000);
   } finally {
     await loadPlanets();
     fileInput.value!.value = '';
@@ -220,20 +220,20 @@ async function deleteTargetedPlanet(id: string) {
     await planetCardRefs.value!.find((c) => c!.planet.id === id)?.obliteratePlanet();
     try {
       await idb.planets.delete(id);
-      EventBus.sendToastEvent('success', 'toast.extras_obliterate_success', 3000);
+      UIEventBus.sendToastEvent('success', 'toast.extras_obliterate_success', 3000);
     } catch (err) {
       console.error(`<Lagrange> Failed to obliterate planet with id ${id}`, err);
-      EventBus.sendToastEvent('warn', 'toast.extras_obliterate_failure', 3000);
+      UIEventBus.sendToastEvent('warn', 'toast.extras_obliterate_failure', 3000);
     } finally {
       await loadPlanets();
     }
   } else {
     try {
       await idb.planets.delete(id);
-      EventBus.sendToastEvent('success', 'toast.delete_success', 3000);
+      UIEventBus.sendToastEvent('success', 'toast.delete_success', 3000);
     } catch (err) {
       console.error(`<Lagrange> Failed to delete planet with id ${id}`, err);
-      EventBus.sendToastEvent('warn', 'toast.delete_failure', 3000);
+      UIEventBus.sendToastEvent('warn', 'toast.delete_failure', 3000);
     } finally {
       await loadPlanets();
     }
