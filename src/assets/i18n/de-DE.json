@@ -359,7 +359,8 @@
           "noise_base_detail": "Grund- und Detailrauschen",
           "noise_limiter": "Limiter-Rauschen",
           "noise_color": "Farbrauschen",
-          "distance_to_edge": "Randabstand"
+          "distance_to_edge": "Randabstand",
+          "detail_noise_strength": "Detailrauschen Einfluss"
         },
         "biomes": {
           "$title": "Biomen",

@@ -1,6 +1,6 @@
 import type { SerializedPlanetData } from '@core/editor/workers/worker-serializer.types.ts';
 import { calculateBiomeTextureCoordinates, renderBiomes } from '@tsl/features/biomes.ts';
-import { computeCracks } from '@tsl/features/cracks.ts';
+import { calculateCracksExtents, renderCracks } from '@tsl/features/cracks.ts';
 import { applyXYZTransformations, layer } from '@tsl/features/lwd.ts';
 import { TSLMaterial } from '@tsl/materials/tsl-material.ts';
 import { flattenUV } from '@tsl/utils/vertex.tsl.ts';
@@ -225,15 +225,21 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
     colour = renderBiomes(colour, this.uniforms.textures.biomes, biomeTexCoord, FLAG_BIOMES_ENABLED).toVec3();
 
     // Render cracks
-    const cracksColour = computeCracks(
-      colour,
+    const cracksExtents = calculateCracksExtents(
       vPos,
+      this.uniforms.features.cracks.distanceToEdge,
       this.uniforms.features.cracks.baseNoise,
       this.uniforms.features.cracks.detailNoise,
       this.uniforms.features.cracks.limiterNoise,
+    ).toVar('cracksExtents');
+    const cracksColour = renderCracks(
+      height,
+      cracksExtents,
+      colour,
+      vPos,
       this.uniforms.features.cracks.colorNoise,
       this.uniforms.textures.cracks,
-      this.uniforms.features.cracks.distanceToEdge,
+      FLAG_SURFACE_TYPE,
     );
     colour = mix(colour, cracksColour, FLAG_CRACKS_ENABLED).toVec3();
 

@@ -7,18 +7,23 @@
           <template #title>{{ $t('editor.controls.features.cracks.noise_base_detail') }}</template>
           <template #content>
             <ParameterSlider
-              id="b-tfreq"
+              id="c-distedge"
               v-model="EDITOR_STATE.planetData.cracksDistanceToEdge"
               :step="0.001"
               :max="0.02"
             >
               {{ $t('editor.controls.features.cracks.distance_to_edge') }}
             </ParameterSlider>
-            <ParameterSlider id="b-tfreq" v-model="EDITOR_STATE.planetData.cracksBaseNoise.scale" :step="0.01" :max="5">
+            <ParameterSlider
+              id="c-bscale"
+              v-model="EDITOR_STATE.planetData.cracksBaseNoise.scale"
+              :step="0.01"
+              :max="5"
+            >
               {{ $t('editor.general.noise_voronoi_scale') }}
             </ParameterSlider>
             <ParameterSlider
-              id="b-tamp"
+              id="c-bjitt"
               v-model="EDITOR_STATE.planetData.cracksBaseNoise.jitter"
               :step="0.01"
               :min="0"
@@ -28,7 +33,15 @@
             </ParameterSlider>
             <ParameterDivider />
             <ParameterSlider
-              id="b-tfreq"
+              id="c-dfreq"
+              v-model="EDITOR_STATE.planetData.cracksDetailNoiseStrength"
+              :step="0.01"
+              :max="0.95"
+            >
+              {{ $t('editor.controls.features.cracks.detail_noise_strength') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="c-dfreq"
               v-model="EDITOR_STATE.planetData.cracksDetailNoise.frequency"
               :step="0.01"
               :max="5"
@@ -36,7 +49,7 @@
               {{ $t('editor.general.noise_fbm_frequency') }}
             </ParameterSlider>
             <ParameterSlider
-              id="b-tamp"
+              id="c-damp"
               v-model="EDITOR_STATE.planetData.cracksDetailNoise.amplitude"
               :step="0.01"
               :min="0"
@@ -45,7 +58,7 @@
               {{ $t('editor.general.noise_fbm_amplitude') }}
             </ParameterSlider>
             <ParameterSlider
-              id="b-tlac"
+              id="c-dlac"
               v-model="EDITOR_STATE.planetData.cracksDetailNoise.lacunarity"
               :step="0.01"
               :min="1"
@@ -54,7 +67,7 @@
               {{ $t('editor.general.noise_fbm_lacunarity') }}
             </ParameterSlider>
             <ParameterSlider
-              id="b-toct"
+              id="c-doct"
               v-model="EDITOR_STATE.planetData.cracksDetailNoise.octaves"
               :step="1"
               :min="1"
@@ -71,7 +84,7 @@
               id="b-tfreq"
               v-model="EDITOR_STATE.planetData.cracksLimiterNoise.frequency"
               :step="0.01"
-              :max="5"
+              :max="10"
             >
               {{ $t('editor.general.noise_fbm_frequency') }}
             </ParameterSlider>
@@ -80,7 +93,7 @@
               v-model="EDITOR_STATE.planetData.cracksLimiterNoise.amplitude"
               :step="0.01"
               :min="0"
-              :max="2"
+              :max="1"
             >
               {{ $t('editor.general.noise_fbm_amplitude') }}
             </ParameterSlider>
@@ -111,7 +124,7 @@
               id="b-tfreq"
               v-model="EDITOR_STATE.planetData.cracksColorNoise.frequency"
               :step="0.01"
-              :max="5"
+              :max="30"
             >
               {{ $t('editor.general.noise_fbm_frequency') }}
             </ParameterSlider>

@@ -177,7 +177,13 @@ function initEditorEventSystem(): void {
         return;
       }
       EDITOR_STATE.value.planetData.dataEventEndpoint.disconnectListenerWithId(`endpoint-ring-${ringId}`);
-      ComponentHelper.disposeRing(EDITOR_SCENE_DATA.ringAnchor!, EDITOR_SCENE_DATA.rings!, payload.value);
+      ComponentHelper.disposeRing(EDITOR_SCENE_DATA.ringAnchor!, EDITOR_SCENE_DATA.rings!, payload.value.id);
+    })
+    .on('ringsClear', (payload) => {
+      payload.value.forEach((ringId) => {
+        EDITOR_STATE.value.planetData.dataEventEndpoint.disconnectListenerWithId(`endpoint-ring-${ringId}`);
+        ComponentHelper.disposeRing(EDITOR_SCENE_DATA.ringAnchor!, EDITOR_SCENE_DATA.rings!, ringId);
+      });
     })
     // render pipeline
     .on('renderBasePipeline', () => {

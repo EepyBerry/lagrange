@@ -114,25 +114,33 @@ export class FbmNoiseParameters {
   }
 
   public loadData(data?: FbmNoiseParameters) {
-    this.frequency = clamp(data?._frequency ?? this._frequency, 0, 10);
-    this.amplitude = clamp(data?._amplitude ?? this._amplitude, 0, 10);
-    this.lacunarity = clamp(data?._lacunarity ?? this._lacunarity, 0, 10);
-    this.octaves = clamp(data?._octaves ?? this._octaves, 0, 8);
-    this.layers = clamp(data?._layers ?? 1, 1, 3);
-    this.xWarpFactor = data?._warpFactor ? data._warpFactor.x : 1;
-    this.yWarpFactor = data?._warpFactor ? data._warpFactor.y : 1;
-    this.zWarpFactor = data?._warpFactor ? data._warpFactor.z : 1;
+    this._frequency = clamp(data?._frequency ?? this._frequency, 0, 10);
+    this._amplitude = clamp(data?._amplitude ?? this._amplitude, 0, 10);
+    this._lacunarity = clamp(data?._lacunarity ?? this._lacunarity, 0, 10);
+    this._octaves = clamp(data?._octaves ?? this._octaves, 0, 8);
+    this._layers = clamp(data?._layers ?? 1, 1, 3);
+    this._warpFactor.x = data?._warpFactor ? data._warpFactor.x : 1;
+    this._warpFactor.y = data?._warpFactor ? data._warpFactor.y : 1;
+    this._warpFactor.z = data?._warpFactor ? data._warpFactor.z : 1;
+    this._eventEmitOpts.endpointRef.emit('fbmNoiseParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 
   public reset(freq: number, amp: number, lac: number, oct: number, layers?: number, warpScalar?: number): void {
-    this.frequency = clamp(freq, 0, 10);
-    this.amplitude = clamp(amp, 0, 10);
-    this.lacunarity = clamp(lac, 0, 10);
-    this.octaves = clamp(oct, 0, 8);
-    this.layers = clamp(layers ?? 1, 1, 3);
-    this.xWarpFactor = warpScalar ?? 1;
-    this.yWarpFactor = warpScalar ?? 1;
-    this.zWarpFactor = warpScalar ?? 1;
+    this._frequency = clamp(freq, 0, 10);
+    this._amplitude = clamp(amp, 0, 10);
+    this._lacunarity = clamp(lac, 0, 10);
+    this._octaves = clamp(oct, 0, 8);
+    this._layers = clamp(layers ?? 1, 1, 3);
+    this._warpFactor.x = warpScalar ?? 1;
+    this._warpFactor.y = warpScalar ?? 1;
+    this._warpFactor.z = warpScalar ?? 1;
+    this._eventEmitOpts.endpointRef.emit('fbmNoiseParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 
   // Note: adjusted ranges to get more coherent data

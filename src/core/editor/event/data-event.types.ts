@@ -84,10 +84,12 @@ export type DataEventPayloadTypeMap = {
   biomeMoveUp: DataEventPayload<BiomeParameters>;
   biomeMoveDown: DataEventPayload<BiomeParameters>;
   biomeRemove: DataEventPayload<BiomeParameters>;
+  biomesClear: DataEventPayload<void>;
   // cracks
   showCracks: DataEventPayload<boolean>;
   cracksDistanceToEdge: DataEventPayload<number>;
   cracksEmissiveIntensity: DataEventPayload<number>;
+  cracksDetailNoiseStrength: DataEventPayload<number>;
   // clouds
   cloudsEnabled: DataEventPayload<boolean>;
   cloudsRotation: DataEventPayload<{ clouds: number; surface: number }>;
@@ -110,6 +112,7 @@ export type DataEventPayloadTypeMap = {
   ringsEnabled: DataEventPayload<boolean>;
   ringAdd: DataEventPayload<RingParameters>;
   ringRemove: DataEventPayload<RingParameters>;
+  ringsClear: DataEventPayload<string[]>;
 
   // ---- dependent child objects ----
   colorRampUpdate: DataEventPayload<ColorRamp>;

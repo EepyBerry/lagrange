@@ -6,7 +6,7 @@ import { DataEventEndpoint } from '@core/editor/event/data-event-endpoint.ts';
 import { EDITOR_WORKERS } from '@core/editor/state/editor.state.ts';
 import { TEXTURE_SIZES } from '@core/globals.ts';
 import { WorkerBoundDataArrayTexture } from '@core/utils/texture/worker-bound-data-array-texture.ts';
-import { computeCracks } from '@tsl/features/cracks.ts';
+import { calculateCracksExtents, renderCracks } from '@tsl/features/cracks.ts';
 import { applyEmissiveIntensity } from '@tsl/features/emissive.ts';
 import {
   bitangentLocal,
@@ -67,6 +67,7 @@ export type PlanetUniforms = {
     cracks: {
       distanceToEdge: UniformNode<'float', number>;
       emissiveIntensity: UniformNode<'float', number>;
+      detailNoiseStrength: UniformNode<'float', number>;
       baseNoise: UniformNode<'vec3', Vector3>;
       detailNoise: UniformNode<'vec4', Vector4>;
       limiterNoise: UniformNode<'vec4', Vector4>;
@@ -144,6 +145,10 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
       .on('biomesTemperatureMode', (payload) => (this.uniforms.features.biomes.temperatureMode.value = payload.value))
       .on('biomesHumidityMode', (payload) => (this.uniforms.features.biomes.humidityMode.value = payload.value))
       .on('cracksDistanceToEdge', (payload) => (this.uniforms.features.cracks.distanceToEdge.value = payload.value))
+      .on(
+        'cracksDetailNoiseStrength',
+        (payload) => (this.uniforms.features.cracks.detailNoiseStrength.value = payload.value),
+      )
       // noise
       .on('displacementParametersUpdate', (payload) => {
         this.uniforms.surface.displacement.params.value.x = payload.value.factor;
@@ -244,6 +249,8 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
         );
       })
       .on('biomeAdd', async () => {
+        console.log('add biome');
+        console.log(initData.biomesParams);
         await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
           EDITOR_WORKERS.texture!,
           'biomes',
@@ -258,6 +265,21 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
         );
       })
       .on('biomeRemove', async () => {
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes',
+          initData.biomesParams,
+          1,
+        );
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes-emissive',
+          initData.biomesParams,
+          2,
+        );
+      })
+      .on('biomesClear', async () => {
+        console.log('clear biomes');
         await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
           EDITOR_WORKERS.texture!,
           'biomes',
@@ -345,6 +367,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
         cracks: {
           distanceToEdge: uniform(data.cracksDistanceToEdge),
           emissiveIntensity: uniform(data.cracksEmissiveIntensity),
+          detailNoiseStrength: uniform(data.cracksDetailNoiseStrength),
           baseNoise: uniform(
             new Vector3(data.cracksBaseNoise.scale, data.cracksBaseNoise.jitter, data.cracksBaseNoise.mode),
           ),
@@ -472,16 +495,22 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     ).toVec3();
 
     // Render cracks
-    const cracksColour = computeCracks(
-      colour,
+    const cracksExtents = calculateCracksExtents(
       vPos,
+      this.uniforms.features.cracks.distanceToEdge,
       this.uniforms.features.cracks.baseNoise,
       this.uniforms.features.cracks.detailNoise,
       this.uniforms.features.cracks.limiterNoise,
+    ).toVar('cracksExtents');
+    const cracksColour = renderCracks(
+      height,
+      cracksExtents,
+      colour,
+      vPos,
       this.uniforms.features.cracks.colorNoise,
       this.uniforms.arrayTexture.depth(int(3)),
-      this.uniforms.features.cracks.distanceToEdge,
-    );
+      FLAG_SURFACE_TYPE,
+    ).toVar('cracksColor');
     colour = mix(colour, cracksColour, FLAG_CRACKS_ENABLED).toVec3();
 
     // Render bump-map (under MIT license)

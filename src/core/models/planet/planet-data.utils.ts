@@ -68,32 +68,9 @@ export function loadPlanetData(target: PlanetData, data?: PrefixedWith<PlanetDat
   target.biomesTemperatureNoise.loadData(data?._biomesTemperatureNoise);
   target.biomesHumidityMode = data?._biomesHumidityMode ?? GradientMode.REALISTIC;
   target.biomesHumidityNoise.loadData(data?._biomesHumidityNoise);
-  while (target.biomesParams.length > 0) {
-    target.removeBiome(target.biomesParams[target.biomesParams.length - 1]);
-  }
+  target.clearBiomes();
   if (data?._biomesParams && data?._biomesParams?.length > 0) {
-    target.biomesParams.push(
-      // note: need a proper type here
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...data?._biomesParams.map((params: any) => {
-        const b = new BiomeParameters(
-          { endpointRef: target.dataEventEndpoint, context: 'biomes' },
-          {
-            temperatureMin: params._tempMin ?? 0,
-            temperatureMax: params._tempMax ?? 0.5,
-            humidityMin: params._humiMin ?? 0,
-            humidityMax: params._humiMax ?? 1,
-          },
-          new Color(params._color),
-          params._smoothness ?? 0.25,
-          params._emissiveOverride ?? false,
-          params._emissiveIntensity ?? 0,
-          params._id,
-        );
-        b.parentEmissiveIntensity = target.planetGroundEmissiveIntensity;
-        return b;
-      }),
-    );
+    target.addBiomesFromData(data?._biomesParams);
   }
 
   // Cracks
@@ -142,23 +119,9 @@ export function loadPlanetData(target: PlanetData, data?: PrefixedWith<PlanetDat
 
   // Ring
   target.ringsEnabled = data?._ringsEnabled ?? false;
-  while (target.ringsParams.length > 0) {
-    target.removeRing(target.ringsParams[target.ringsParams.length - 1]);
-  }
+  target.clearRings();
   if (data?._ringsParams && data?._ringsParams?.length > 0) {
-    target.ringsParams.push(
-      // prettier-ignore
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...data?._ringsParams.map((params: any) =>
-        new RingParameters(
-          { endpointRef: target.dataEventEndpoint },
-          params._innerRadius ?? 1.25,
-          params._outerRadius ?? 1.5,
-          params._colorRamp?._steps,
-          params._id,
-        ),
-      ),
-    );
+    data?._ringsParams.forEach((params) => target.addRing(params));
   }
 
   // Compatibility & conversion calls
@@ -344,11 +307,8 @@ export function resetPlanetData(target: PlanetData): void {
   target.biomesTemperatureNoise.reset(2.5, 1.25, 2.4, 6, 1, 1);
   target.biomesHumidityMode = GradientMode.FULLNOISE;
   target.biomesHumidityNoise.reset(3.15, 0.65, 2.57, 6, 1, 1);
-
-  while (target.biomesParams.length > 0) {
-    target.removeBiome(target.biomesParams[target.biomesParams.length - 1]);
-  }
-  const defaultBiomes = [
+  target.clearBiomes();
+  target.addBiomes([
     new BiomeParameters(
       { endpointRef: target.dataEventEndpoint },
       {
@@ -382,18 +342,13 @@ export function resetPlanetData(target: PlanetData): void {
       new Color(0x132e06),
       0.25,
     ),
-  ];
-  defaultBiomes.forEach((b) => {
-    b.parentEmissiveIntensity = target.planetGroundEmissiveIntensity;
-    target.biomesParams.push(b);
-    target.dataEventEndpoint.emit('biomeAdd', { value: b });
-  });
+  ]);
 
   target.cracksEnabled = false;
   target.cracksDistanceToEdge = 0.01;
   target.cracksBaseNoise.reset(4, 1);
   target.cracksDetailNoise.reset(6, 1, 2.5, 6, 1, 1);
-  target.cracksLimiterNoise.reset(3, 1.25, 1.25, 4, 1, 1);
+  target.cracksLimiterNoise.reset(2.07, 0.6, 2.5, 4, 1, 1);
   target.cracksColorNoise.reset(2.5, 1.25, 1.75, 4, 1, 1);
   target.cracksColorRamp.loadFromSteps([
     new ColorRampStep(0x2e221b, 0, true),
@@ -432,9 +387,7 @@ export function resetPlanetData(target: PlanetData): void {
 
   // Ring
   target.ringsEnabled = false;
-  while (target.ringsParams.length > 0) {
-    target.removeRing(target.ringsParams[target.ringsParams.length - 1]);
-  }
+  target.clearRings();
 }
 
 type LegacyRingPlanetData = PrefixedWith<PlanetData, '_'> & {

@@ -359,7 +359,8 @@
           "noise_base_detail": "Bruit de base & détail",
           "noise_limiter": "Bruit limiteur",
           "noise_color": "Bruit de couleur",
-          "distance_to_edge": "Distance des bords"
+          "distance_to_edge": "Distance des bords",
+          "detail_noise_strength": "Intensité des détails"
         },
         "biomes": {
           "$title": "Biomes",

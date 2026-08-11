@@ -360,7 +360,8 @@
           "noise_base_detail": "Base & detaiw nyoise",
           "noise_limiter": "Wimitew nyoise",
           "noise_color": "Cowow nyoise",
-          "distance_to_edge": "Distyance to edge"
+          "distance_to_edge": "Distyance to edge",
+          "detail_noise_strength": "Detaiw noise stwength"
         },
         "biomes": {
           "$title": "Biomes",

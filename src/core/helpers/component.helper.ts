@@ -140,11 +140,11 @@ export function createRing(data: PlanetData, ringParams: RingParameters): MeshDa
   mesh.castShadow = true;
   return { mesh, tslMaterial };
 }
-export function disposeRing(ringAnchor: Group, meshDataArr: MeshData<RingTSLMaterial>[], ringParams: RingParameters): void {
+export function disposeRing(ringAnchor: Group, meshDataArr: MeshData<RingTSLMaterial>[], ringId: string): void {
   // get ring data + mesh
-  const meshDataIdx = meshDataArr.findIndex((r) => r.tslMaterial.ringInstanceId === ringParams.id);
+  const meshDataIdx = meshDataArr.findIndex((r) => r.tslMaterial.ringInstanceId === ringId);
   if (meshDataIdx < 0) {
-    throw new Error("Cannot delete non-existent ring of ID: " + ringParams.id);
+    throw new Error("Cannot delete non-existent ring of ID: " + ringId);
   }
   const meshData = meshDataArr[meshDataIdx];
   // delete ring

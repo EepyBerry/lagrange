@@ -342,7 +342,7 @@ export default class PlanetData {
   }
 
   public set planetSurfaceBumpOffset(value: number) {
-    this._planetSurfaceBumpOffset = value;
+    this._planetSurfaceBumpOffset = clamp(value, 0.001, 0.01);
     this.dataEventEndpoint.emit('bumpOffset', { value });
   }
 
@@ -442,8 +442,9 @@ export default class PlanetData {
   // --------------------------------------------------
 
   private _cracksEnabled: boolean;
-  private _cracksEmissiveIntensity: number = 3;
   private _cracksDistanceToEdge: number = 0.01;
+  private _cracksEmissiveIntensity: number = 3;
+  private _cracksDetailNoiseStrength: number = 0.25;
   private readonly _cracksBaseNoise: VoronoiNoiseParameters;
   private readonly _cracksDetailNoise: FbmNoiseParameters;
   private readonly _cracksLimiterNoise: FbmNoiseParameters;
@@ -477,6 +478,15 @@ export default class PlanetData {
   public set cracksEmissiveIntensity(value: number) {
     this._cracksEmissiveIntensity = value;
     this.dataEventEndpoint.emit('cracksEmissiveIntensity', { value });
+  }
+
+  public get cracksDetailNoiseStrength() {
+    return this._cracksDetailNoiseStrength;
+  }
+
+  public set cracksDetailNoiseStrength(value: number) {
+    this._cracksEmissiveIntensity = clamp(value, 0, 0.95);
+    this.dataEventEndpoint.emit('cracksDetailNoiseStrength', { value });
   }
 
   public get cracksBaseNoise(): VoronoiNoiseParameters {
@@ -754,7 +764,7 @@ export default class PlanetData {
     // Surface
 
     this._planetSurfaceShowBumps = true;
-    this._planetSurfaceBumpOffset = 0.005;
+    this._planetSurfaceBumpOffset = 0.002;
     this._planetSurfaceBumpStrength = 0.09;
     this._planetSurfaceShowWarping = false;
     this._planetSurfaceShowDisplacement = false;
@@ -787,7 +797,7 @@ export default class PlanetData {
     this._biomesEnabled = true;
     this._biomesTemperatureMode = GradientMode.REALISTIC;
     this._biomesTemperatureNoise = new FbmNoiseParameters(
-      { context: 'biomes', endpointRef: this.dataEventEndpoint },
+      { context: 'biomesTemperatureNoise', endpointRef: this.dataEventEndpoint },
       2.5,
       1.25,
       2.4,
@@ -795,7 +805,7 @@ export default class PlanetData {
     );
     this._biomesHumidityMode = GradientMode.FULLNOISE;
     this._biomesHumidityNoise = new FbmNoiseParameters(
-      { context: 'biomes', endpointRef: this.dataEventEndpoint },
+      { context: 'biomesHumidityNoise', endpointRef: this.dataEventEndpoint },
       3.15,
       0.65,
       2.57,
@@ -840,28 +850,30 @@ export default class PlanetData {
 
     this._cracksEnabled = false;
     this._cracksDistanceToEdge = 0.01;
+    this._cracksEmissiveIntensity = 2.5;
+    this._cracksDetailNoiseStrength = 0.5;
     this._cracksBaseNoise = new VoronoiNoiseParameters(
-      { endpointRef: this.dataEventEndpoint },
+      { context: 'cracksBaseNoise', endpointRef: this.dataEventEndpoint },
       4,
       1,
       VoronoiMode.DistanceToEdge,
     );
     this._cracksDetailNoise = new FbmNoiseParameters(
-      { context: 'cracks', endpointRef: this.dataEventEndpoint },
+      { context: 'cracksDetailNoise', endpointRef: this.dataEventEndpoint },
       6,
       1,
       2.5,
       6,
     );
     this._cracksLimiterNoise = new FbmNoiseParameters(
-      { context: 'cracks', endpointRef: this.dataEventEndpoint },
-      3,
-      1.25,
-      1.25,
+      { context: 'cracksLimiterNoise', endpointRef: this.dataEventEndpoint },
+      2.07,
+      0.6,
+      2.5,
       4,
     );
     this._cracksColorNoise = new FbmNoiseParameters(
-      { context: 'cracks', endpointRef: this.dataEventEndpoint },
+      { context: 'cracksColorNoise', endpointRef: this.dataEventEndpoint },
       2.5,
       1.25,
       1.75,
@@ -873,7 +885,6 @@ export default class PlanetData {
       new ColorRampStep(0xe6962e, 0.8),
       new ColorRampStep(0xffdc73, 1, true),
     ]);
-    this._cracksEmissiveIntensity = 2.5;
     // Clouds
 
     this._cloudsEnabled = true;
@@ -926,21 +937,55 @@ export default class PlanetData {
   // |            Data handling functions             |
   // --------------------------------------------------
 
-  public addBiome(): BiomeParameters {
+  public addBiome(existingData?: any): BiomeParameters {
     const newBiome = new BiomeParameters(
-      { endpointRef: this.dataEventEndpoint },
+      { endpointRef: this.dataEventEndpoint, context: 'biomes' },
       {
-        temperatureMin: 0,
-        temperatureMax: 1,
-        humidityMin: 0,
-        humidityMax: 1,
+        temperatureMin: existingData?._tempMin ?? 0,
+        temperatureMax: existingData?._tempMax ?? 1,
+        humidityMin: existingData?._humiMin ?? 0,
+        humidityMax: existingData?._humiMax ?? 1,
       },
-      new Color(0xffffff),
-      0.2,
+      new Color(existingData?._color ?? 0xffffff),
+      existingData?._smoothness ?? 0.2,
+      existingData?._emissiveOverride ?? false,
+      existingData?._emissiveIntensity ?? 0,
+      existingData?._id ?? undefined,
     );
+    newBiome.parentEmissiveIntensity = this._planetGroundEmissiveIntensity;
     this._biomesParams.push(newBiome);
     this.dataEventEndpoint.emit('biomeAdd', { value: newBiome });
     return newBiome;
+  }
+
+  public addBiomes(biomes: BiomeParameters[]): void {
+    biomes.forEach((b) => {
+      b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity;
+      this._biomesParams.push(b);
+    });
+    this.dataEventEndpoint.emit('biomeAdd', { value: biomes[biomes.length - 1] });
+  }
+
+  public addBiomesFromData(data: any[]): void {
+    data.forEach((params) => {
+      const newBiome = new BiomeParameters(
+        { endpointRef: this.dataEventEndpoint, context: 'biomes' },
+        {
+          temperatureMin: params._tempMin ?? 0,
+          temperatureMax: params._tempMax ?? 1,
+          humidityMin: params._humiMin ?? 0,
+          humidityMax: params._humiMax ?? 1,
+        },
+        new Color(params._color ?? 0xffffff),
+        params._smoothness ?? 0.2,
+        params._emissiveOverride ?? false,
+        params._emissiveIntensity ?? 0,
+        params._id ?? undefined,
+      );
+      newBiome.parentEmissiveIntensity = this._planetGroundEmissiveIntensity;
+      this._biomesParams.push(newBiome);
+      this.dataEventEndpoint.emit('biomeAdd', { value: newBiome });
+    });
   }
 
   public moveBiomeUp(biome: BiomeParameters): void {
@@ -980,8 +1025,19 @@ export default class PlanetData {
     this.dataEventEndpoint.emit('biomeRemove', { value: biome });
   }
 
-  public addRing(): RingParameters {
-    const newRing = new RingParameters({ endpointRef: this.dataEventEndpoint }, 1.5, 1.75);
+  public clearBiomes(): void {
+    this._biomesParams.splice(0);
+    this.dataEventEndpoint.emit('biomesClear', { value: undefined });
+  }
+
+  public addRing(existingData?: any): RingParameters {
+    const newRing = new RingParameters(
+      { endpointRef: this.dataEventEndpoint, context: 'ring' },
+      existingData?._innerRadius ?? 1.5,
+      existingData?._outerRadius ?? 1.75,
+      existingData?._colorRamp?._steps ?? undefined,
+      existingData?._id ?? undefined,
+    );
     this._ringsParams.push(newRing);
     this.dataEventEndpoint.emit('ringAdd', { instanceId: newRing.id, value: newRing });
     return newRing;
@@ -995,6 +1051,12 @@ export default class PlanetData {
     this._ringsParams.splice(ringParamsIdx, 1);
     this.dataEventEndpoint.emit('ringRemove', { instanceId: ring.id, value: ring });
     return ring.id;
+  }
+
+  public clearRings(): void {
+    const ringIds = this._ringsParams.map((r) => r.id);
+    this._ringsParams.splice(0);
+    this.dataEventEndpoint.emit('ringsClear', { value: ringIds });
   }
 
   // --------------------------------------------------

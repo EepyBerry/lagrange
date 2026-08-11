@@ -19,7 +19,7 @@
           id="s-bumpoff"
           v-model="EDITOR_STATE.planetData.planetSurfaceBumpOffset"
           :step="0.0005"
-          :min="0.0001"
+          :min="0.001"
           :max="0.01"
         >
           {{ $t('editor.controls.surface.bumpmap_offset') }}
