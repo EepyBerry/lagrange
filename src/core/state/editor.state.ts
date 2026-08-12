@@ -24,6 +24,7 @@ export type EditorState = {
 
 // ----------------------------------------------------------------------------
 
+// @ts-expect-error borked typedefs
 export const EDITOR_STATE: Ref<EditorState> = ref({
   planetData: new PlanetData(),
   renderPipelineData: new RenderPipelineData(),
