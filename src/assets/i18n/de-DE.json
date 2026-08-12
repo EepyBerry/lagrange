@@ -306,7 +306,8 @@
       "colorramp_rgba": "Farbe & Transparenz",
       "colorramp_opacity": "Transparenz",
       "color": "Farbe",
-      "color_opacity": "Farbe & Transparenz"
+      "color_opacity": "Farbe & Transparenz",
+      "emissive_intensity": "Emissionsintensität"
     },
     "controls": {
       "basic_data": {
@@ -360,7 +361,8 @@
           "noise_limiter": "Limiter-Rauschen",
           "noise_color": "Farbrauschen",
           "distance_to_edge": "Randabstand",
-          "detail_noise_strength": "Detailrauschen Einfluss"
+          "detail_noise_strength": "Detailrauschen Einfluss",
+          "underwater_strength": "Unterwasser Intensität"
         },
         "biomes": {
           "$title": "Biomen",
@@ -380,9 +382,7 @@
           "temperature_max": "Max. Temperatur",
           "humidity_min": "Min. Feuchtigkeit",
           "humidity_max": "Max. Feuchtigkeit",
-          "smoothness": "Glättungsfaktor",
-          "emissive_override": "Emissionsgrad überschreiben",
-          "emissive_intensity": "Emissionsintensität"
+          "smoothness": "Glättungsfaktor"
         }
       },
 

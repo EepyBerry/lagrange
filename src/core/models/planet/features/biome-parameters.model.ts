@@ -29,19 +29,13 @@ export class BiomeParameters {
 
   private _color: Color;
   private _smoothness: number = 0.2;
-
-  private _emissiveOverride: boolean = false;
   private _emissiveIntensity: number = 0;
-
-  // Parent values
-  private _parentEmissiveIntensity: number = 0;
 
   constructor(
     eventEmitOpts: DataEventEmitOptions,
     dims: BiomeDimensions,
     color: Color,
     smoothness: number,
-    emissiveOverride?: boolean,
     emissiveIntensity?: number,
     oldId?: string,
   ) {
@@ -53,7 +47,6 @@ export class BiomeParameters {
     this._humiMax = dims.humidityMax;
     this._color = new Color(color);
     this._smoothness = smoothness;
-    this._emissiveOverride = emissiveOverride ?? false;
     this._emissiveIntensity = emissiveIntensity ?? 0;
   }
 
@@ -125,15 +118,6 @@ export class BiomeParameters {
     });
   }
 
-  public get emissiveOverride(): boolean {
-    return this._emissiveOverride;
-  }
-  public set emissiveOverride(value: boolean) {
-    this._emissiveOverride = value;
-    this._eventEmitOpts.endpointRef.emit('biomeParametersUpdate', {
-      value: null,
-    });
-  }
   public get emissiveIntensity(): number {
     return this._emissiveIntensity;
   }
@@ -142,13 +126,6 @@ export class BiomeParameters {
     this._eventEmitOpts.endpointRef.emit('biomeParametersUpdate', {
       value: null,
     });
-  }
-
-  public get parentEmissiveIntensity(): number {
-    return this._parentEmissiveIntensity;
-  }
-  public set parentEmissiveIntensity(value: number) {
-    this._parentEmissiveIntensity = value;
   }
 
   public randomize() {
@@ -160,7 +137,6 @@ export class BiomeParameters {
     this._humiMax = clampedPRNG(minHumi, 1);
     this._color.set(clampedPRNG(0, 1) * 0xffffff);
     this._smoothness = clampedPRNG(0, 1);
-    this._emissiveOverride = clampedPRNG(0, 1) >= 0.5;
     this._emissiveIntensity = clampedPRNG(0, 10);
     this._eventEmitOpts.endpointRef.emit('biomeParametersUpdate', {
       value: null,
@@ -182,7 +158,6 @@ export class BiomeParameters {
       },
       new Color(clampedPRNG(0, 1) * 0xffffff),
       clampedPRNG(0, 1),
-      clampedPRNG(0, 1) >= 0.5,
       clampedPRNG(0, 10),
     );
   }

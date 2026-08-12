@@ -53,9 +53,11 @@ export async function bootstrapEditor(sceneRoot: HTMLElement, w: number, h: numb
   initEditorEventSystem();
   EDITOR_STATE.value.status = EditorStatusCode.Edition;
 
-  /*editorSceneData
-    .renderer!.debug.getShaderAsync(editorSceneData.scene, editorSceneData.camera, editorSceneData.planet.mesh!)
-    .then((data) => console.log(data.fragmentShader));*/
+  /*EDITOR_SCENE_DATA.renderer!.debug.getShaderAsync(
+    EDITOR_SCENE_DATA.scene!,
+    EDITOR_SCENE_DATA.camera!,
+    EDITOR_SCENE_DATA.planet!.mesh!,
+  ).then((data) => console.log(data.fragmentShader));*/
 }
 
 async function initEditorSceneAndRendering(
@@ -206,7 +208,6 @@ function initEditorEventSystem(): void {
         return r.tslMaterial.dataEventEndpoint;
       }),
     );
-    console.log(EDITOR_STATE.value.planetData.dataEventEndpoint);
   }
   EDITOR_STATE.value.renderPipelineData.dataEventEndpoint.addListeners([
     dataEventEndpoint,
@@ -350,17 +351,14 @@ async function processBakingWorkerMessage(
   switch (event.data.type) {
     case 'progress':
       progressDialog.setProgress(event.data.progress);
-      /*if (event.data.texture) {
-        saveAs(event.data.texture!, 'tex.png');
-      }*/
       break;
     case 'error':
       progressDialog.setError(event.data.error);
       EDITOR_STATE.value.status = EditorStatusCode.Edition;
       break;
     case 'done':
-      progressDialog.setDone();
       await exportBakedTexturesAsMesh(event.data.data, bakingResolution);
+      progressDialog.setDone();
       EDITOR_STATE.value.status = EditorStatusCode.Edition;
       break;
   }

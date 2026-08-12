@@ -55,9 +55,7 @@ export interface SerializedBiomeParameters {
   humiMax: number;
   color: SerializedColor;
   smoothness: number;
-  emissiveOverride: boolean;
   emissiveIntensity: number;
-  parentEmissiveIntensity: number;
 }
 
 export interface SerializedRingParameters {
@@ -109,8 +107,10 @@ export interface SerializedPlanetData {
   biomesHumidityNoise: SerializedFbmNoiseParameters;
   biomesParams: SerializedBiomeParameters[];
   cracksEnabled: boolean;
-  cracksEmissiveIntensity: number;
   cracksDistanceToEdge: number;
+  cracksEmissiveIntensity: number;
+  cracksUnderwaterStrength: number;
+  cracksDetailNoiseStrength: number;
   cracksBaseNoise: SerializedVoronoiNoiseParameters;
   cracksDetailNoise: SerializedFbmNoiseParameters;
   cracksLimiterNoise: SerializedFbmNoiseParameters;

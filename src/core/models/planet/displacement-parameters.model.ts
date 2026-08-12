@@ -136,5 +136,9 @@ export class DisplacementParameters {
     this._amplitude = clampedPRNG(0.25, 1.25);
     this._lacunarity = clampedPRNG(1.5, 2.5);
     this._octaves = Math.round(clampedPRNG(4, 8));
+    this._eventEmitOpts.endpointRef.emit('displacementParametersUpdate', {
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
   }
 }

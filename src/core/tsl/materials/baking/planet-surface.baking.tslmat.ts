@@ -18,6 +18,9 @@ import {
   uniform,
   uniformArray,
   texture,
+  struct,
+  Fn,
+  If,
 } from 'three/tsl';
 import {
   MeshBasicNodeMaterial,
@@ -27,6 +30,7 @@ import {
   UniformNode,
   Vector3,
   Vector4,
+  Node,
 } from 'three/webgpu';
 
 type BakingPlanetSurfaceUniforms = {
@@ -50,7 +54,8 @@ type BakingPlanetSurfaceUniforms = {
   features: {
     cracks: {
       distanceToEdge: UniformNode<'float', number>;
-      emissiveIntensity: UniformNode<'float', number>;
+      underwaterStrength: UniformNode<'float', number>;
+      detailNoiseStrength: UniformNode<'float', number>;
       baseNoise: UniformNode<'vec3', Vector3>;
       detailNoise: UniformNode<'vec4', Vector4>;
       limiterNoise: UniformNode<'vec4', Vector4>;
@@ -70,6 +75,11 @@ type BakingPlanetSurfaceUniforms = {
   };
 };
 export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMaterial, BakingPlanetSurfaceUniforms> {
+  // Pre-defined common shader structs
+  private readonly ShaderOutput = struct({
+    color: 'vec4',
+  });
+
   constructor(initData: SerializedPlanetData, initTextures: Texture[]) {
     super();
     this.uniforms = this.initUniforms(initData, initTextures);
@@ -130,7 +140,8 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
       features: {
         cracks: {
           distanceToEdge: uniform(data.cracksDistanceToEdge),
-          emissiveIntensity: uniform(data.cracksEmissiveIntensity),
+          underwaterStrength: uniform(data.cracksUnderwaterStrength),
+          detailNoiseStrength: uniform(data.cracksDetailNoiseStrength),
           baseNoise: uniform(
             new Vector3(data.cracksBaseNoise.scale, data.cracksBaseNoise.jitter, data.cracksBaseNoise.mode),
           ),
@@ -189,6 +200,17 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
   }
 
   buildMaterial(): MeshBasicNodeMaterial {
+    const shaderOutput = this.runShader();
+    const material = new MeshBasicNodeMaterial();
+    material.vertexNode = flattenUV(uv());
+    material.colorNode = <Node<'vec4'>>shaderOutput.get('color');
+    return material;
+  }
+
+  private readonly runShader = Fn(() => {
+    // define output variables
+    const shaderOutput = this.ShaderOutput(vec4(0));
+
     // XYZ Warping + displacement
     const vPos = applyXYZTransformations(
       positionLocal,
@@ -213,40 +235,55 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
     let colour = vec3(this.uniforms.textures.surface.sample(texCoord).xyz).setName('colour');
 
     // Render biomes
-    const biomeTexCoord = calculateBiomeTextureCoordinates(
-      vPos,
-      heightLimit,
-      this.uniforms.features.biomes.temperatureMode,
-      this.uniforms.features.biomes.temperatureNoise,
-      this.uniforms.features.biomes.humidityMode,
-      this.uniforms.features.biomes.humidityNoise,
-      FLAG_BIOMES_ENABLED,
-    ).toVar('biomeTexCoord');
-    colour = renderBiomes(colour, this.uniforms.textures.biomes, biomeTexCoord, FLAG_BIOMES_ENABLED).toVec3();
+    const biomeTexCoord = vec2(0).toVar('biomeTexCoord');
+    If(FLAG_BIOMES_ENABLED.equal(1), () => {
+      biomeTexCoord.assign(
+        calculateBiomeTextureCoordinates(
+          vPos,
+          heightLimit,
+          this.uniforms.features.biomes.temperatureMode,
+          this.uniforms.features.biomes.temperatureNoise,
+          this.uniforms.features.biomes.humidityMode,
+          this.uniforms.features.biomes.humidityNoise,
+        ),
+      );
+      colour.assign(renderBiomes(colour, this.uniforms.textures.biomes, biomeTexCoord, FLAG_BIOMES_ENABLED));
+    });
 
     // Render cracks
-    const cracksExtents = calculateCracksExtents(
-      vPos,
-      this.uniforms.features.cracks.distanceToEdge,
-      this.uniforms.features.cracks.baseNoise,
-      this.uniforms.features.cracks.detailNoise,
-      this.uniforms.features.cracks.limiterNoise,
-    ).toVar('cracksExtents');
-    const cracksColour = renderCracks(
-      height,
-      cracksExtents,
-      colour,
-      vPos,
-      this.uniforms.features.cracks.colorNoise,
-      this.uniforms.textures.cracks,
-      FLAG_SURFACE_TYPE,
-    );
-    colour = mix(colour, cracksColour, FLAG_CRACKS_ENABLED).toVec3();
+    const cracksExtents = vec2(0).toVar('cracksExtents');
+    const cracksColor = vec3(0).toVar('cracksColour');
+    const cracksTextureColor = vec3(0).toVar('cracksTextureColor');
+    If(FLAG_CRACKS_ENABLED.equal(1), () => {
+      cracksExtents.assign(
+        calculateCracksExtents(
+          vPos,
+          this.uniforms.features.cracks.distanceToEdge,
+          this.uniforms.features.cracks.detailNoiseStrength,
+          this.uniforms.features.cracks.baseNoise,
+          this.uniforms.features.cracks.detailNoise,
+          this.uniforms.features.cracks.limiterNoise,
+        ),
+      );
+      const cracksData = renderCracks(
+        height,
+        cracksExtents,
+        colour,
+        vPos,
+        this.uniforms.features.cracks.colorNoise,
+        this.uniforms.textures.cracks,
+        this.uniforms.features.cracks.underwaterStrength,
+        FLAG_SURFACE_TYPE,
+        FLAG_CRACKS_ENABLED,
+      );
+      cracksColor.assign(cracksData.get('fragmentColor'));
+      cracksTextureColor.assign(cracksData.get('textureColor'));
 
-    // Init material & set outputs
-    const material = new MeshBasicNodeMaterial();
-    material.vertexNode = flattenUV(uv());
-    material.colorNode = vec4(colour, 1);
-    return material;
-  }
+      colour.assign(mix(colour, cracksColor, FLAG_CRACKS_ENABLED));
+    });
+
+    // Return shader output
+    shaderOutput.get('color').assign(vec4(colour, 1));
+    return shaderOutput;
+  });
 }

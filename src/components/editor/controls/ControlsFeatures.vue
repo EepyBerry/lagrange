@@ -31,15 +31,16 @@
             >
               {{ $t('editor.general.noise_voronoi_jitter') }}
             </ParameterSlider>
-            <ParameterDivider />
+            <ParameterDivider bordered />
             <ParameterSlider
               id="c-dfreq"
               v-model="EDITOR_STATE.planetData.cracksDetailNoiseStrength"
               :step="0.01"
-              :max="0.95"
+              :max="1"
             >
               {{ $t('editor.controls.features.cracks.detail_noise_strength') }}
             </ParameterSlider>
+            <ParameterDivider />
             <ParameterSlider
               id="c-dfreq"
               v-model="EDITOR_STATE.planetData.cracksDetailNoise.frequency"
@@ -81,7 +82,7 @@
           <template #title>{{ $t('editor.controls.features.cracks.noise_limiter') }}</template>
           <template #content>
             <ParameterSlider
-              id="b-tfreq"
+              id="c-lfreq"
               v-model="EDITOR_STATE.planetData.cracksLimiterNoise.frequency"
               :step="0.01"
               :max="10"
@@ -89,7 +90,7 @@
               {{ $t('editor.general.noise_fbm_frequency') }}
             </ParameterSlider>
             <ParameterSlider
-              id="b-tamp"
+              id="c-lamp"
               v-model="EDITOR_STATE.planetData.cracksLimiterNoise.amplitude"
               :step="0.01"
               :min="0"
@@ -98,7 +99,7 @@
               {{ $t('editor.general.noise_fbm_amplitude') }}
             </ParameterSlider>
             <ParameterSlider
-              id="b-tlac"
+              id="c-llac"
               v-model="EDITOR_STATE.planetData.cracksLimiterNoise.lacunarity"
               :step="0.01"
               :min="1"
@@ -107,7 +108,7 @@
               {{ $t('editor.general.noise_fbm_lacunarity') }}
             </ParameterSlider>
             <ParameterSlider
-              id="b-toct"
+              id="c-loct"
               v-model="EDITOR_STATE.planetData.cracksLimiterNoise.octaves"
               :step="1"
               :min="1"
@@ -121,7 +122,7 @@
           <template #title>{{ $t('editor.controls.features.cracks.noise_color') }}</template>
           <template #content>
             <ParameterSlider
-              id="b-tfreq"
+              id="c-cfreq"
               v-model="EDITOR_STATE.planetData.cracksColorNoise.frequency"
               :step="0.01"
               :max="30"
@@ -129,7 +130,7 @@
               {{ $t('editor.general.noise_fbm_frequency') }}
             </ParameterSlider>
             <ParameterSlider
-              id="b-tamp"
+              id="c-camp"
               v-model="EDITOR_STATE.planetData.cracksColorNoise.amplitude"
               :step="0.01"
               :min="0"
@@ -138,7 +139,7 @@
               {{ $t('editor.general.noise_fbm_amplitude') }}
             </ParameterSlider>
             <ParameterSlider
-              id="b-tlac"
+              id="c-clac"
               v-model="EDITOR_STATE.planetData.cracksColorNoise.lacunarity"
               :step="0.01"
               :min="1"
@@ -147,7 +148,7 @@
               {{ $t('editor.general.noise_fbm_lacunarity') }}
             </ParameterSlider>
             <ParameterSlider
-              id="b-toct"
+              id="c-coct"
               v-model="EDITOR_STATE.planetData.cracksColorNoise.octaves"
               :step="1"
               :min="1"
@@ -163,6 +164,28 @@
             >
               {{ $t('editor.general.colorramp_rgb') }}
             </ParameterColorRamp>
+          </template>
+        </ParameterGroup>
+        <ParameterGroup :toggleable="true">
+          <template #title>{{ $t('editor.controls.planet_rendering.emissivity') }}</template>
+          <template #content>
+            <ParameterSlider
+              id="c-emi"
+              v-model="EDITOR_STATE.planetData.cracksEmissiveIntensity"
+              :disabled="!EDITOR_STATE.planetData.planetShowEmissive"
+              :step="0.01"
+              :max="10"
+            >
+              {{ $t('editor.general.emissive_intensity') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="c-uwstr"
+              v-model="EDITOR_STATE.planetData.cracksUnderwaterStrength"
+              :step="0.01"
+              :max="1"
+            >
+              {{ $t('editor.controls.features.cracks.underwater_strength') }}
+            </ParameterSlider>
           </template>
         </ParameterGroup>
       </template>

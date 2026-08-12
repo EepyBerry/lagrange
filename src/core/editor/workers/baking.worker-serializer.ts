@@ -59,8 +59,10 @@ export function serializeBakingWorkerData(planetData: PlanetData): SerializedPla
     biomesHumidityNoise: serializeFbmNoise(planetData.biomesHumidityNoise),
     biomesParams: planetData.biomesParams.map(serializeBiome),
     cracksEnabled: planetData.cracksEnabled,
-    cracksEmissiveIntensity: planetData.cracksEmissiveIntensity,
     cracksDistanceToEdge: planetData.cracksDistanceToEdge,
+    cracksEmissiveIntensity: planetData.cracksEmissiveIntensity,
+    cracksUnderwaterStrength: planetData.cracksUnderwaterStrength,
+    cracksDetailNoiseStrength: planetData.cracksDetailNoiseStrength,
     cracksBaseNoise: serializeVoronoi(planetData.cracksBaseNoise),
     cracksDetailNoise: serializeFbmNoise(planetData.cracksDetailNoise),
     cracksLimiterNoise: serializeFbmNoise(planetData.cracksLimiterNoise),
@@ -147,9 +149,7 @@ function serializeBiome(biome: BiomeParameters): SerializedBiomeParameters {
     humiMax: biome.humiMax,
     color: { r: biome.color.r, g: biome.color.g, b: biome.color.b },
     smoothness: biome.smoothness,
-    emissiveOverride: biome.emissiveOverride,
     emissiveIntensity: biome.emissiveIntensity,
-    parentEmissiveIntensity: biome.parentEmissiveIntensity,
   };
 }
 

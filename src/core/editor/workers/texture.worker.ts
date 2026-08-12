@@ -124,7 +124,7 @@ function drawBiomeEmissivityLayer(biome: SerializedBiomeParameters): void {
   // Modulate emissivity value by biome intensity (10 = max value)
   // Note: only using green channel, which the human eye is more sensitive to
   const texColor = new Color('#000000');
-  texColor.g = (biome.emissiveOverride ? biome.emissiveIntensity : biome.parentEmissiveIntensity) / 10;
+  texColor.g = biome.emissiveIntensity / 10;
   // Early return if smoothness is zero
   if (biome.smoothness <= 1e-4) {
     ctx.fillStyle = `#${texColor.getHexString()}`;

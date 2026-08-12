@@ -90,6 +90,7 @@ export type DataEventPayloadTypeMap = {
   cracksDistanceToEdge: DataEventPayload<number>;
   cracksEmissiveIntensity: DataEventPayload<number>;
   cracksDetailNoiseStrength: DataEventPayload<number>;
+  cracksUnderwaterStrength: DataEventPayload<number>;
   // clouds
   cloudsEnabled: DataEventPayload<boolean>;
   cloudsRotation: DataEventPayload<{ clouds: number; surface: number }>;

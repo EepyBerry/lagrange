@@ -68,21 +68,21 @@ export default class PlanetData {
   }
   public set lensFlareEnabled(value: boolean) {
     this._lensFlareEnabled = value;
-    this.dataEventEndpoint.emit('lensFlareEnabled', { value });
+    this.dataEventEndpoint.emit('lensFlareEnabled', { value: this.lensFlareEnabled });
   }
   public get lensFlarePointsIntensity(): number {
     return this._lensFlarePointsIntensity;
   }
   public set lensFlarePointsIntensity(value: number) {
     this._lensFlarePointsIntensity = clamp(value, 0, 1);
-    this.dataEventEndpoint.emit('lensFlarePointsIntensity', { value });
+    this.dataEventEndpoint.emit('lensFlarePointsIntensity', { value: this.lensFlarePointsIntensity });
   }
   public get lensFlareGlareIntensity(): number {
     return this._lensFlareGlareIntensity;
   }
   public set lensFlareGlareIntensity(value: number) {
     this._lensFlareGlareIntensity = clamp(value, 0, 1);
-    this.dataEventEndpoint.emit('lensFlareGlareIntensity', { value });
+    this.dataEventEndpoint.emit('lensFlareGlareIntensity', { value: this.lensFlareGlareIntensity });
   }
 
   public get sunLightAngle(): number {
@@ -90,7 +90,7 @@ export default class PlanetData {
   }
   public set sunLightAngle(value: number) {
     this._sunLightAngle = clamp(value, -180, 180);
-    this.dataEventEndpoint.emit('sunlightAngle', { value });
+    this.dataEventEndpoint.emit('sunlightAngle', { value: this.sunLightAngle });
   }
   public get sunLightColor(): Color {
     return this._sunLightColor;
@@ -98,7 +98,7 @@ export default class PlanetData {
 
   public set sunLightColor(value: Color) {
     this._sunLightColor.set(value);
-    this.dataEventEndpoint.emit('sunlightColor', { value });
+    this.dataEventEndpoint.emit('sunlightColor', { value: this.sunLightColor });
   }
 
   public get sunLightIntensity(): number {
@@ -107,7 +107,7 @@ export default class PlanetData {
 
   public set sunLightIntensity(value: number) {
     this._sunLightIntensity = value;
-    this.dataEventEndpoint.emit('sunlightIntensity', { value });
+    this.dataEventEndpoint.emit('sunlightIntensity', { value: this.sunLightIntensity });
   }
 
   public get ambLightColor(): Color {
@@ -116,7 +116,7 @@ export default class PlanetData {
 
   public set ambLightColor(value: Color) {
     this._ambLightColor.set(value);
-    this.dataEventEndpoint.emit('ambientLightColor', { value });
+    this.dataEventEndpoint.emit('ambientLightColor', { value: this.ambLightColor });
   }
 
   public get ambLightIntensity(): number {
@@ -125,7 +125,7 @@ export default class PlanetData {
 
   public set ambLightIntensity(value: number) {
     this._ambLightIntensity = value;
-    this.dataEventEndpoint.emit('ambientLightIntensity', { value });
+    this.dataEventEndpoint.emit('ambientLightIntensity', { value: this.ambLightIntensity });
   }
 
   // --------------------------------------------------
@@ -158,7 +158,7 @@ export default class PlanetData {
 
   public set planetType(value: PlanetType) {
     this._planetType = value;
-    this.dataEventEndpoint.emit('planetType', { value });
+    this.dataEventEndpoint.emit('planetType', { value: this.planetType });
   }
 
   public get planetClass(): PlanetClass {
@@ -167,7 +167,7 @@ export default class PlanetData {
 
   public set planetClass(value: PlanetClass) {
     this._planetClass = value;
-    this.dataEventEndpoint.emit('planetClass', { value });
+    this.dataEventEndpoint.emit('planetClass', { value: this.planetClass });
   }
 
   public get planetMeshQuality() {
@@ -176,7 +176,7 @@ export default class PlanetData {
 
   public set planetMeshQuality(value: number) {
     this._planetMeshQuality = isNumeric(value) ? clamp(value, 0, 48) : 48;
-    this.dataEventEndpoint.emit('meshQuality', { value });
+    this.dataEventEndpoint.emit('meshQuality', { value: this.planetMeshQuality });
   }
 
   public get planetRadius() {
@@ -184,9 +184,11 @@ export default class PlanetData {
   }
 
   public set planetRadius(value: number) {
-    this._planetRadius = value;
-    this.dataEventEndpoint.emit('radius', { value: { surface: value, atmosphere: value + this.atmosphereHeight } });
-    this.dataEventEndpoint.emit('atmosphereHeight', { value: value + this.atmosphereHeight });
+    this._planetRadius = clamp(value, 0.5, 1);
+    this.dataEventEndpoint.emit('radius', {
+      value: { surface: this._planetRadius, atmosphere: this.planetRadius + this.atmosphereHeight },
+    });
+    this.dataEventEndpoint.emit('atmosphereHeight', { value: this.planetRadius + this.atmosphereHeight });
   }
 
   public get planetAxialTilt() {
@@ -195,7 +197,7 @@ export default class PlanetData {
 
   public set planetAxialTilt(value: number) {
     this._planetAxialTilt = isNumeric(value) ? clamp(value, -180, 180) : 0;
-    this.dataEventEndpoint.emit('axialTilt', { value });
+    this.dataEventEndpoint.emit('axialTilt', { value: this.planetAxialTilt });
   }
 
   public get planetRotation() {
@@ -204,7 +206,7 @@ export default class PlanetData {
 
   public set planetRotation(value: number) {
     this._planetRotation = isNumeric(value) ? clamp(value, 0, 360) : 0;
-    this.dataEventEndpoint.emit('rotation', { value: { surface: value, clouds: this.cloudsRotation } });
+    this.dataEventEndpoint.emit('rotation', { value: { surface: this.planetRotation, clouds: this.cloudsRotation } });
   }
 
   public get planetWaterMetalness(): number {
@@ -215,7 +217,7 @@ export default class PlanetData {
     this._planetWaterMetalness = clamp(value, 0, 1);
     this.dataEventEndpoint.emit('pbr', {
       value: {
-        waterMetalness: value,
+        waterMetalness: this.planetWaterMetalness,
         waterRoughness: this.planetWaterRoughness,
         groundMetalness: this.planetGroundMetalness,
         groundRoughness: this.planetGroundRoughness,
@@ -232,7 +234,7 @@ export default class PlanetData {
     this.dataEventEndpoint.emit('pbr', {
       value: {
         waterMetalness: this.planetWaterMetalness,
-        waterRoughness: value,
+        waterRoughness: this.planetWaterRoughness,
         groundMetalness: this.planetGroundMetalness,
         groundRoughness: this.planetGroundRoughness,
       },
@@ -249,7 +251,7 @@ export default class PlanetData {
       value: {
         waterMetalness: this.planetWaterMetalness,
         waterRoughness: this.planetWaterRoughness,
-        groundMetalness: value,
+        groundMetalness: this.planetGroundMetalness,
         groundRoughness: this.planetGroundRoughness,
       },
     });
@@ -266,7 +268,7 @@ export default class PlanetData {
         waterMetalness: this.planetWaterMetalness,
         waterRoughness: this.planetWaterRoughness,
         groundMetalness: this.planetGroundMetalness,
-        groundRoughness: value,
+        groundRoughness: this.planetGroundRoughness,
       },
     });
   }
@@ -277,7 +279,7 @@ export default class PlanetData {
 
   public set planetWaterLevel(value: number) {
     this._planetWaterLevel = clamp(value, 0, 1);
-    this.dataEventEndpoint.emit('waterLevel', { value });
+    this.dataEventEndpoint.emit('waterLevel', { value: this.planetWaterLevel });
   }
 
   public get planetShowEmissive(): boolean {
@@ -286,7 +288,7 @@ export default class PlanetData {
 
   public set planetShowEmissive(value: boolean) {
     this._planetShowEmissive = value;
-    this.dataEventEndpoint.emit('showEmissive', { value });
+    this.dataEventEndpoint.emit('showEmissive', { value: this.planetShowEmissive });
   }
 
   public get planetWaterEmissiveIntensity(): number {
@@ -296,7 +298,7 @@ export default class PlanetData {
   public set planetWaterEmissiveIntensity(value: number) {
     this._planetWaterEmissiveIntensity = clamp(value, 0, 10);
     this.dataEventEndpoint.emit('emissiveIntensity', {
-      value: { water: value, ground: this.planetGroundEmissiveIntensity },
+      value: { water: this.planetWaterEmissiveIntensity, ground: this.planetGroundEmissiveIntensity },
     });
   }
 
@@ -305,11 +307,9 @@ export default class PlanetData {
   }
 
   public set planetGroundEmissiveIntensity(value: number) {
-    const v = clamp(value, 0, 10);
-    this._planetGroundEmissiveIntensity = v;
-    this._biomesParams.forEach((b) => (b.parentEmissiveIntensity = v));
+    this._planetGroundEmissiveIntensity = clamp(value, 0, 10);
     this.dataEventEndpoint.emit('emissiveIntensity', {
-      value: { water: this.planetWaterEmissiveIntensity, ground: value },
+      value: { water: this.planetWaterEmissiveIntensity, ground: this.planetGroundEmissiveIntensity },
     });
   }
 
@@ -334,7 +334,7 @@ export default class PlanetData {
 
   public set planetSurfaceShowBumps(value: boolean) {
     this._planetSurfaceShowBumps = value;
-    this.dataEventEndpoint.emit('showBumps', { value });
+    this.dataEventEndpoint.emit('showBumps', { value: this.planetSurfaceShowBumps });
   }
 
   public get planetSurfaceBumpOffset(): number {
@@ -343,7 +343,7 @@ export default class PlanetData {
 
   public set planetSurfaceBumpOffset(value: number) {
     this._planetSurfaceBumpOffset = clamp(value, 0.001, 0.01);
-    this.dataEventEndpoint.emit('bumpOffset', { value });
+    this.dataEventEndpoint.emit('bumpOffset', { value: this.planetSurfaceBumpOffset });
   }
 
   public get planetSurfaceBumpStrength(): number {
@@ -352,7 +352,7 @@ export default class PlanetData {
 
   public set planetSurfaceBumpStrength(value: number) {
     this._planetSurfaceBumpStrength = value;
-    this.dataEventEndpoint.emit('bumpStrength', { value });
+    this.dataEventEndpoint.emit('bumpStrength', { value: this.planetSurfaceBumpStrength });
   }
 
   public get planetSurfaceShowWarping(): boolean {
@@ -361,7 +361,7 @@ export default class PlanetData {
 
   public set planetSurfaceShowWarping(value: boolean) {
     this._planetSurfaceShowWarping = value;
-    this.dataEventEndpoint.emit('showWarping', { value });
+    this.dataEventEndpoint.emit('showWarping', { value: this.planetSurfaceShowWarping });
   }
 
   public get planetSurfaceShowDisplacement(): boolean {
@@ -370,7 +370,7 @@ export default class PlanetData {
 
   public set planetSurfaceShowDisplacement(value: boolean) {
     this._planetSurfaceShowDisplacement = value;
-    this.dataEventEndpoint.emit('showDisplacement', { value });
+    this.dataEventEndpoint.emit('showDisplacement', { value: this.planetSurfaceShowDisplacement });
   }
 
   public get planetSurfaceDisplacement(): DisplacementParameters {
@@ -404,7 +404,7 @@ export default class PlanetData {
 
   public set biomesEnabled(value: boolean) {
     this._biomesEnabled = value;
-    this.dataEventEndpoint.emit('showBiomes', { value });
+    this.dataEventEndpoint.emit('showBiomes', { value: this.biomesEnabled });
   }
 
   public get biomesTemperatureMode(): GradientMode {
@@ -413,7 +413,7 @@ export default class PlanetData {
 
   public set biomesTemperatureMode(value: GradientMode) {
     this._biomesTemperatureMode = value;
-    this.dataEventEndpoint.emit('biomesTemperatureMode', { value });
+    this.dataEventEndpoint.emit('biomesTemperatureMode', { value: this.biomesTemperatureMode });
   }
 
   public get biomesTemperatureNoise(): FbmNoiseParameters {
@@ -426,7 +426,7 @@ export default class PlanetData {
 
   public set biomesHumidityMode(value: GradientMode) {
     this._biomesHumidityMode = value;
-    this.dataEventEndpoint.emit('biomesHumidityMode', { value });
+    this.dataEventEndpoint.emit('biomesHumidityMode', { value: this.biomesHumidityMode });
   }
 
   public get biomesHumidityNoise(): FbmNoiseParameters {
@@ -444,6 +444,7 @@ export default class PlanetData {
   private _cracksEnabled: boolean;
   private _cracksDistanceToEdge: number = 0.01;
   private _cracksEmissiveIntensity: number = 3;
+  private _cracksUnderwaterStrength: number = 0.025;
   private _cracksDetailNoiseStrength: number = 0.25;
   private readonly _cracksBaseNoise: VoronoiNoiseParameters;
   private readonly _cracksDetailNoise: FbmNoiseParameters;
@@ -459,7 +460,7 @@ export default class PlanetData {
 
   public set cracksEnabled(value: boolean) {
     this._cracksEnabled = value;
-    this.dataEventEndpoint.emit('showCracks', { value });
+    this.dataEventEndpoint.emit('showCracks', { value: this.cracksEnabled });
   }
 
   public get cracksDistanceToEdge(): number {
@@ -468,7 +469,7 @@ export default class PlanetData {
 
   public set cracksDistanceToEdge(value: number) {
     this._cracksDistanceToEdge = clamp(value, 0.001, 0.02);
-    this.dataEventEndpoint.emit('cracksDistanceToEdge', { value });
+    this.dataEventEndpoint.emit('cracksDistanceToEdge', { value: this.cracksDistanceToEdge });
   }
 
   public get cracksEmissiveIntensity(): number {
@@ -477,7 +478,16 @@ export default class PlanetData {
 
   public set cracksEmissiveIntensity(value: number) {
     this._cracksEmissiveIntensity = value;
-    this.dataEventEndpoint.emit('cracksEmissiveIntensity', { value });
+    this.dataEventEndpoint.emit('cracksEmissiveIntensity', { value: this.cracksEmissiveIntensity });
+  }
+
+  public get cracksUnderwaterStrength(): number {
+    return this._cracksUnderwaterStrength;
+  }
+
+  public set cracksUnderwaterStrength(value: number) {
+    this._cracksUnderwaterStrength = clamp(value, 0, 1);
+    this.dataEventEndpoint.emit('cracksUnderwaterStrength', { value: this.cracksUnderwaterStrength });
   }
 
   public get cracksDetailNoiseStrength() {
@@ -485,8 +495,8 @@ export default class PlanetData {
   }
 
   public set cracksDetailNoiseStrength(value: number) {
-    this._cracksEmissiveIntensity = clamp(value, 0, 0.95);
-    this.dataEventEndpoint.emit('cracksDetailNoiseStrength', { value });
+    this._cracksDetailNoiseStrength = clamp(value, 0, 1);
+    this.dataEventEndpoint.emit('cracksDetailNoiseStrength', { value: this.cracksDetailNoiseStrength });
   }
 
   public get cracksBaseNoise(): VoronoiNoiseParameters {
@@ -531,7 +541,7 @@ export default class PlanetData {
 
   public set cloudsEnabled(value: boolean) {
     this._cloudsEnabled = value;
-    this.dataEventEndpoint.emit('cloudsEnabled', { value });
+    this.dataEventEndpoint.emit('cloudsEnabled', { value: this.cloudsEnabled });
   }
 
   public get cloudsRotation() {
@@ -540,7 +550,12 @@ export default class PlanetData {
 
   public set cloudsRotation(value: number) {
     this._cloudsRotation = isNumeric(value) ? clamp(value, 0, 360) : 0;
-    this.dataEventEndpoint.emit('cloudsRotation', { value: { clouds: value, surface: this.planetRotation } });
+    this.dataEventEndpoint.emit('cloudsRotation', {
+      value: {
+        clouds: this.cloudsRotation,
+        surface: this.planetRotation,
+      },
+    });
   }
 
   public get cloudsHeight() {
@@ -553,7 +568,7 @@ export default class PlanetData {
 
   public set cloudsShowWarping(value: boolean) {
     this._cloudsShowWarping = value;
-    this.dataEventEndpoint.emit('cloudsShowWarping', { value });
+    this.dataEventEndpoint.emit('cloudsShowWarping', { value: this.cloudsShowWarping });
   }
 
   public get cloudsShowDisplacement(): boolean {
@@ -562,7 +577,7 @@ export default class PlanetData {
 
   public set cloudsShowDisplacement(value: boolean) {
     this._cloudsShowDisplacement = value;
-    this.dataEventEndpoint.emit('cloudsShowDisplacement', { value });
+    this.dataEventEndpoint.emit('cloudsShowDisplacement', { value: this.cloudsShowDisplacement });
   }
 
   public get cloudsDisplacement(): DisplacementParameters {
@@ -579,7 +594,7 @@ export default class PlanetData {
 
   public set cloudsColor(value: Color) {
     this._cloudsColor.set(value);
-    this.dataEventEndpoint.emit('cloudsColor', { value });
+    this.dataEventEndpoint.emit('cloudsColor', { value: this.cloudsColor });
   }
 
   public get cloudsColorRamp(): ColorRamp {
@@ -611,7 +626,7 @@ export default class PlanetData {
 
   public set atmosphereEnabled(value: boolean) {
     this._atmosphereEnabled = value;
-    this.dataEventEndpoint.emit('atmosphereEnabled', { value });
+    this.dataEventEndpoint.emit('atmosphereEnabled', { value: this.atmosphereEnabled });
   }
 
   public get atmosphereHeight(): number {
@@ -620,7 +635,7 @@ export default class PlanetData {
 
   public set atmosphereHeight(value: number) {
     this._atmosphereHeight = clamp(value, 0.0075, 0.025);
-    this.dataEventEndpoint.emit('atmosphereHeight', { value: this.planetRadius + value });
+    this.dataEventEndpoint.emit('atmosphereHeight', { value: this.planetRadius + this.atmosphereHeight });
   }
 
   public get atmosphereDensityScale(): number {
@@ -629,7 +644,7 @@ export default class PlanetData {
 
   public set atmosphereDensityScale(value: number) {
     this._atmosphereDensityScale = clamp(value, 0.25, 20);
-    this.dataEventEndpoint.emit('atmosphereDensityScale', { value });
+    this.dataEventEndpoint.emit('atmosphereDensityScale', { value: this.atmosphereDensityScale });
   }
 
   public get atmosphereIntensity(): number {
@@ -638,7 +653,7 @@ export default class PlanetData {
 
   public set atmosphereIntensity(value: number) {
     this._atmosphereIntensity = clamp(value, 0, 5);
-    this.dataEventEndpoint.emit('atmosphereIntensity', { value });
+    this.dataEventEndpoint.emit('atmosphereIntensity', { value: this.atmosphereIntensity });
   }
 
   public get atmosphereColorMode(): number {
@@ -647,7 +662,7 @@ export default class PlanetData {
 
   public set atmosphereColorMode(value: number) {
     this._atmosphereColorMode = value;
-    this.dataEventEndpoint.emit('atmosphereColorMode', { value });
+    this.dataEventEndpoint.emit('atmosphereColorMode', { value: this.atmosphereColorMode });
   }
 
   public get atmosphereHue(): number {
@@ -656,7 +671,7 @@ export default class PlanetData {
 
   public set atmosphereHue(value: number) {
     this._atmosphereHue = clamp(value, 0, 2);
-    this.dataEventEndpoint.emit('atmosphereHue', { value });
+    this.dataEventEndpoint.emit('atmosphereHue', { value: this.atmosphereHue });
   }
 
   public get atmosphereTint(): Color {
@@ -665,7 +680,7 @@ export default class PlanetData {
 
   public set atmosphereTint(value: Color) {
     this._atmosphereTint.set(value);
-    this.dataEventEndpoint.emit('atmosphereTint', { value });
+    this.dataEventEndpoint.emit('atmosphereTint', { value: this.atmosphereTint });
   }
 
   public get atmosphereMieScatteringConstant(): number {
@@ -674,7 +689,7 @@ export default class PlanetData {
 
   public set atmosphereMieScatteringConstant(value: number) {
     this._atmosphereMieScatteringConstant = clamp(value, -0.999, 0);
-    this.dataEventEndpoint.emit('atmosphereMieScatteringConstant', { value });
+    this.dataEventEndpoint.emit('atmosphereMieScatteringConstant', { value: this.atmosphereMieScatteringConstant });
   }
 
   public get atmosphereRayleighDensityRatio(): number {
@@ -683,7 +698,7 @@ export default class PlanetData {
 
   public set atmosphereRayleighDensityRatio(value: number) {
     this._atmosphereRayleighDensityRatio = clamp(value, 0, 1);
-    this.dataEventEndpoint.emit('atmosphereRayleighDensityRatio', { value });
+    this.dataEventEndpoint.emit('atmosphereRayleighDensityRatio', { value: this.atmosphereRayleighDensityRatio });
   }
 
   public get atmosphereMieDensityRatio(): number {
@@ -692,7 +707,7 @@ export default class PlanetData {
 
   public set atmosphereMieDensityRatio(value: number) {
     this._atmosphereMieDensityRatio = clamp(value, 0, 1);
-    this.dataEventEndpoint.emit('atmosphereMieDensityRatio', { value });
+    this.dataEventEndpoint.emit('atmosphereMieDensityRatio', { value: this.atmosphereMieDensityRatio });
   }
 
   public get atmosphereOpticalDensityRatio(): number {
@@ -701,7 +716,7 @@ export default class PlanetData {
 
   public set atmosphereOpticalDensityRatio(value: number) {
     this._atmosphereOpticalDensityRatio = clamp(value, 0, 1);
-    this.dataEventEndpoint.emit('atmosphereOpticalDensityRatio', { value });
+    this.dataEventEndpoint.emit('atmosphereOpticalDensityRatio', { value: this.atmosphereOpticalDensityRatio });
   }
 
   // --------------------------------------------------
@@ -719,7 +734,7 @@ export default class PlanetData {
 
   public set ringsEnabled(value: boolean) {
     this._ringsEnabled = value;
-    this.dataEventEndpoint.emit('ringsEnabled', { value });
+    this.dataEventEndpoint.emit('ringsEnabled', { value: this.ringsEnabled });
   }
 
   public get ringsParams() {
@@ -846,7 +861,6 @@ export default class PlanetData {
         0.25,
       ),
     ];
-    this._biomesParams.forEach((b) => (b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity));
 
     this._cracksEnabled = false;
     this._cracksDistanceToEdge = 0.01;
@@ -854,29 +868,29 @@ export default class PlanetData {
     this._cracksDetailNoiseStrength = 0.5;
     this._cracksBaseNoise = new VoronoiNoiseParameters(
       { context: 'cracksBaseNoise', endpointRef: this.dataEventEndpoint },
-      4,
+      3.97,
       1,
       VoronoiMode.DistanceToEdge,
     );
     this._cracksDetailNoise = new FbmNoiseParameters(
       { context: 'cracksDetailNoise', endpointRef: this.dataEventEndpoint },
-      6,
+      0.6,
       1,
-      2.5,
-      6,
+      3,
+      8,
     );
     this._cracksLimiterNoise = new FbmNoiseParameters(
       { context: 'cracksLimiterNoise', endpointRef: this.dataEventEndpoint },
-      2.07,
-      0.6,
+      6.96,
+      0.49,
       2.5,
       4,
     );
     this._cracksColorNoise = new FbmNoiseParameters(
       { context: 'cracksColorNoise', endpointRef: this.dataEventEndpoint },
-      2.5,
-      1.25,
-      1.75,
+      25,
+      0.8,
+      3,
       4,
     );
     this._cracksColorRamp = new ColorRamp({ context: 'cracks', endpointRef: this.dataEventEndpoint }, [
@@ -948,21 +962,16 @@ export default class PlanetData {
       },
       new Color(existingData?._color ?? 0xffffff),
       existingData?._smoothness ?? 0.2,
-      existingData?._emissiveOverride ?? false,
       existingData?._emissiveIntensity ?? 0,
       existingData?._id ?? undefined,
     );
-    newBiome.parentEmissiveIntensity = this._planetGroundEmissiveIntensity;
     this._biomesParams.push(newBiome);
     this.dataEventEndpoint.emit('biomeAdd', { value: newBiome });
     return newBiome;
   }
 
   public addBiomes(biomes: BiomeParameters[]): void {
-    biomes.forEach((b) => {
-      b.parentEmissiveIntensity = this._planetGroundEmissiveIntensity;
-      this._biomesParams.push(b);
-    });
+    this._biomesParams.push(...biomes);
     this.dataEventEndpoint.emit('biomeAdd', { value: biomes[biomes.length - 1] });
   }
 
@@ -978,11 +987,9 @@ export default class PlanetData {
         },
         new Color(params._color ?? 0xffffff),
         params._smoothness ?? 0.2,
-        params._emissiveOverride ?? false,
         params._emissiveIntensity ?? 0,
         params._id ?? undefined,
       );
-      newBiome.parentEmissiveIntensity = this._planetGroundEmissiveIntensity;
       this._biomesParams.push(newBiome);
       this.dataEventEndpoint.emit('biomeAdd', { value: newBiome });
     });

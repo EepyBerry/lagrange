@@ -11,9 +11,8 @@ export abstract class TSLMaterial<MatType extends NodeMaterial, UniformType exte
   abstract initUniforms(...initData: unknown[]): UniformType;
   abstract buildMaterial(): MatType;
 
-  initTextures(_initData: unknown): void {
-    // no-op by default
-  }
+  // no-op by default
+  initTextures(_initData: unknown): void {}
   dispose(): void {
     this.dataEventEndpoint.dispose();
   }

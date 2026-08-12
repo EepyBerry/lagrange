@@ -33,7 +33,6 @@ export class BakingWorkerInterface {
         }
         this._worker.postMessage(<BakingWorkerTextureResponse>{
           type: 'texture-response',
-          step: event.data[0].step,
           textures,
         });
       } else {

@@ -31,9 +31,7 @@ export function serializeTextureWorkerData(
         humiMax: biome.humiMax,
         color: { r: biome.color.r, g: biome.color.g, b: biome.color.b },
         smoothness: biome.smoothness,
-        emissiveOverride: biome.emissiveOverride,
         emissiveIntensity: biome.emissiveIntensity,
-        parentEmissiveIntensity: biome.parentEmissiveIntensity,
       }),
     );
   }

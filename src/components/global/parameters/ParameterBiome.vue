@@ -61,26 +61,16 @@
       >
         {{ $t('editor.controls.features.biomes.smoothness') }}
       </ParameterSlider>
-      <ParameterCheckbox
-        :id="lgParam!.id + '-b-emioverride'"
-        v-model="lgParam!.emissiveOverride"
-        :true-value="true"
-        :false-value="false"
+      <ParameterSlider
+        :id="lgParam!.id + '-b-emiintensity'"
+        v-model="lgParam!.emissiveIntensity"
+        :disabled="!EDITOR_STATE.planetData.planetShowEmissive"
+        :step="0.005"
+        :min="0"
+        :max="10"
       >
-        {{ $t('editor.controls.features.biomes.emissive_override') }}
-      </ParameterCheckbox>
-      <template v-if="lgParam!.emissiveOverride">
-        <ParameterSlider
-          :id="lgParam!.id + '-b-emiintensity'"
-          v-model="lgParam!.emissiveIntensity"
-          :disabled="!lgParam!.emissiveOverride"
-          :step="0.005"
-          :min="0"
-          :max="10"
-        >
-          {{ $t('editor.controls.features.biomes.emissive_intensity') }}
-        </ParameterSlider>
-      </template>
+        {{ $t('editor.general.emissive_intensity') }}
+      </ParameterSlider>
       <ParameterDivider />
       <ParameterColor v-model="lgParam!.color">
         {{ $t('editor.general.noise_color') }}
@@ -91,6 +81,7 @@
 <script setup lang="ts">
 import type { BiomeParameters } from '@core/models/planet/features/biome-parameters.model.js';
 import ParameterSlider from '@components/global/parameters/ParameterSlider.vue';
+import { EDITOR_STATE } from '@core/editor/state/editor.state.ts';
 import { onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import LgvButton from '@/_lib/components/LgvButton.vue';

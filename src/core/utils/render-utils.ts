@@ -29,7 +29,7 @@ export function renderToCanvas(renderer: WebGPURenderer, buf: TypedArray, w: num
  * @param h height of the resulting image
  * @returns the flipped buffer
  */
-export function flipBufferY(buffer: Uint8Array, w: number, h: number): Uint8Array {
+export function flipBufferY(buffer: Uint8Array, w: number, h: number): Uint8Array<ArrayBuffer> {
   const length = w * h * 4;
   const row = w * 4;
   const end = (h - 1) * row;
@@ -74,6 +74,10 @@ export function alphaToGrayscale(alpha: number, full = false): string {
   return full ? `#${hex + hex + hex}` : hex;
 }
 
+/**
+ * Converts a {@link Blob} instance to a data URL
+ * @param blob the blob to convert
+ */
 export async function blobToDataURL(blob: Blob): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -83,7 +87,13 @@ export async function blobToDataURL(blob: Blob): Promise<string> {
   });
 }
 
-export function toDataTexture(buffer: Uint8ClampedArray, width: number, height: number) {
+/**
+ * Creates an instance of {@link DataTexture} from the given parameters
+ * @param buffer the buffer to store in the texture
+ * @param width texture width
+ * @param height texture height
+ */
+export function toDataTexture(buffer: Uint8Array, width: number, height: number) {
   const dt = new DataTexture(buffer, width, height);
   dt.needsUpdate = true;
   return dt;

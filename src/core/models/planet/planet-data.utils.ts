@@ -143,7 +143,7 @@ export function randomizePlanetData(target: PlanetData): void {
   target.dataEventEndpoint.emit('sunlightColor', { value: target.sunLightColor });
   target.sunLightIntensity = clampedPRNG(10, 35);
   target.ambLightColor.set(clampedPRNG(0.5, 1) * 0xffffff);
-  target.dataEventEndpoint.emit('ambientLightColor', { value: target.sunLightColor });
+  target.dataEventEndpoint.emit('ambientLightColor', { value: target.ambLightColor });
   target.ambLightIntensity = clampedPRNG(0, 0.25);
 
   // Planet & Rendering
@@ -177,17 +177,13 @@ export function randomizePlanetData(target: PlanetData): void {
   target.biomesTemperatureNoise.randomize();
   target.biomesHumidityMode = Math.round(clampedPRNG(0, 2)) as GradientMode;
   target.biomesHumidityNoise.randomize();
+  target.clearBiomes();
   const biomesCount = Math.round(clampedPRNG(0, 8));
-  while (target.biomesParams.length > biomesCount) {
-    target.removeBiome(target.biomesParams[target.biomesParams.length - 1]);
-  }
   for (let i = 0; i < biomesCount; i++) {
     if (i < target.biomesParams.length) {
       target.biomesParams[i].randomize();
-      target.biomesParams[i].parentEmissiveIntensity = target.planetGroundEmissiveIntensity;
     } else {
       const b = BiomeParameters.createRandom(target.dataEventEndpoint);
-      b.parentEmissiveIntensity = target.planetGroundEmissiveIntensity;
       target.biomesParams.push(b);
       target.dataEventEndpoint.emit('biomeAdd', { value: b });
     }
@@ -195,10 +191,15 @@ export function randomizePlanetData(target: PlanetData): void {
 
   // Cracks
   target.cracksEnabled = randomBoolean();
+  target.cracksDistanceToEdge = clampedPRNG(0.001, 0.02);
   target.cracksEmissiveIntensity = clampedPRNG(0, 10);
+  target.cracksUnderwaterStrength = clampedPRNG(0, 1);
+  target.cracksDetailNoiseStrength = clampedPRNG(0, 1);
   target.cracksBaseNoise.randomize();
-  target.cracksColorRamp.randomize(4);
+  target.cracksDetailNoise.randomize();
   target.cracksLimiterNoise.randomize();
+  target.cracksColorNoise.randomize();
+  target.cracksColorRamp.randomize(4);
 
   // Clouds
   target.cloudsEnabled = randomBoolean();
@@ -231,10 +232,8 @@ export function randomizePlanetData(target: PlanetData): void {
 
   // Ring
   target.ringsEnabled = randomBoolean();
+  target.clearRings();
   const ringIntervals = randomIntervals(1.25, 4.75, 2 * Math.round(clampedPRNG(2, 16) / 2));
-  while (target.ringsParams.length > ringIntervals.length) {
-    target.removeRing(target.ringsParams[target.ringsParams.length - 1]);
-  }
   for (let i = 0; i < ringIntervals.length; i++) {
     const interval = ringIntervals[i];
     if (i < target.ringsParams.length) {
@@ -346,17 +345,18 @@ export function resetPlanetData(target: PlanetData): void {
 
   target.cracksEnabled = false;
   target.cracksDistanceToEdge = 0.01;
-  target.cracksBaseNoise.reset(4, 1);
-  target.cracksDetailNoise.reset(6, 1, 2.5, 6, 1, 1);
-  target.cracksLimiterNoise.reset(2.07, 0.6, 2.5, 4, 1, 1);
-  target.cracksColorNoise.reset(2.5, 1.25, 1.75, 4, 1, 1);
+  target.cracksEmissiveIntensity = 2.5;
+  target.cracksDetailNoiseStrength = 0.5;
+  target.cracksBaseNoise.reset(3.97, 1);
+  target.cracksDetailNoise.reset(0.6, 1, 3, 8, 1, 1);
+  target.cracksLimiterNoise.reset(6.96, 0.49, 2.5, 4, 1, 1);
+  target.cracksColorNoise.reset(25, 0.8, 3, 4, 1, 1);
   target.cracksColorRamp.loadFromSteps([
     new ColorRampStep(0x2e221b, 0, true),
     new ColorRampStep(0xad5a11, 0.55),
     new ColorRampStep(0xe6962e, 0.8),
     new ColorRampStep(0xffdc73, 1, true),
   ]);
-  target.cracksEmissiveIntensity = 2.5;
 
   // Clouds
   target.cloudsEnabled = true;

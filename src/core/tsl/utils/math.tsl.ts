@@ -33,7 +33,7 @@ export const stretchedExp = /*@__PURE__*/ Fn(([i_x, i_a, i_b]: Node<'float'>[]) 
   const exponent = negate(pow(div(i_x, i_a), i_b));
   return float(1).sub(exp(exponent));
 }).setLayout({
-  name: 'LG_MATH_sigmoid',
+  name: 'LG_MATH_stretchedExp',
   type: 'float',
   inputs: [
     { name: 'i_x', type: 'float' },
