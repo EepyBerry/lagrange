@@ -25,7 +25,7 @@ jobs:
       - name: Approve build scripts
         run: pnpm approve-builds @parcel/watcher vue-demi
       - name: Build application
-        run: pnpm run build --if-present
+        run: pnpm run build
       - name: Get current NPM package version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1

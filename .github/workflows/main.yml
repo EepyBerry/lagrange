@@ -18,7 +18,7 @@ jobs:
       - name: Approve build scripts
         run: pnpm approve-builds @parcel/watcher vue-demi
       - name: Build application
-        run: pnpm run build --if-present
+        run: pnpm run build
       - name: Create release
         uses: thedoctor0/zip-release@0.7.5
         with:
