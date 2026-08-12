@@ -15,22 +15,13 @@ jobs:
         uses: actions/checkout@v7
       - name: Setup pnpm
         uses: pnpm/setup@v2
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: 24.x
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm ci
-      - name: Approve build scripts
-        run: pnpm approve-builds @parcel/watcher vue-demi
       - name: Build application
         run: pnpm run build
       - name: Get current NPM package version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lagrange-${{ steps.package-version.outputs.current-version}}-SNAPSHOT-${{ github.sha }}
           path: dist
