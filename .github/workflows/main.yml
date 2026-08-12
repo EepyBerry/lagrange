@@ -21,7 +21,7 @@ jobs:
           node-version: 24.x
           cache: 'pnpm'
       - name: Install dependencies
-        run: pnpm ci
+        run: pnpm ci --ignore-scripts
       - name: Approve build scripts
         run: pnpm approve-builds @parcel/watcher vue-demi
       - name: Build application
