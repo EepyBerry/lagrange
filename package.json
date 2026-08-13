@@ -1,6 +1,6 @@
 {
   "name": "lagrange",
-  "version": "0.5.2b",
+  "version": "0.6.0-SNAPSHOT",
   "private": true,
   "keywords": [
     "threejs",
