@@ -72,5 +72,13 @@
     "typescript-eslint": "^8.57.1",
     "vite": "^8.2.1",
     "vue-tsc": "^3.2.6"
-  }
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^24.0.0",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@11.21.0"
 }
