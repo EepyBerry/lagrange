@@ -1,21 +1,21 @@
 <template>
   <ParameterGrid>
     <ParameterGroup toggleable>
-      <template #title>{{ $t('editor.controls.planet_rendering.transform') }}</template>
+      <template #title>{{ $t('editor.planet_rendering.transform') }}</template>
       <template #content>
         <ParameterSlider id="p-tilt" v-model="EDITOR_STATE.planetData.planetRadius" :step="0.01" :min="0.5" :max="1">
-          {{ $t('editor.controls.planet_rendering.transform_radius') }}
+          {{ $t('editor.planet_rendering.transform_radius') }}
         </ParameterSlider>
         <ParameterSlider id="p-tilt" v-model="EDITOR_STATE.planetData.planetAxialTilt" :step="1" :min="-180" :max="180">
-          {{ $t('editor.controls.planet_rendering.transform_axialtilt') }} <sup>(°)</sup>
+          {{ $t('editor.planet_rendering.transform_axialtilt') }} <sup>(°)</sup>
         </ParameterSlider>
         <ParameterSlider id="p-rot" v-model="EDITOR_STATE.planetData.planetRotation" :step="1" :min="0" :max="360">
-          {{ $t('editor.controls.planet_rendering.transform_rotation') }} <sup>(°)</sup>
+          {{ $t('editor.planet_rendering.transform_rotation') }} <sup>(°)</sup>
         </ParameterSlider>
       </template>
     </ParameterGroup>
     <ParameterGroup toggleable>
-      <template #title>{{ $t('editor.controls.planet_rendering.metallicroughness') }}</template>
+      <template #title>{{ $t('editor.planet_rendering.metallicroughness') }}</template>
       <template #content>
         <ParameterSlider
           id="p-wlevel"
@@ -24,7 +24,7 @@
           :min="0"
           :max="1"
         >
-          {{ $t('editor.controls.planet_rendering.waterlevel') }}
+          {{ $t('editor.planet_rendering.waterlevel') }}
         </ParameterSlider>
         <ParameterDivider />
         <ParameterSlider
@@ -34,7 +34,7 @@
           :min="0"
           :max="1"
         >
-          {{ $t('editor.controls.planet_rendering.metallicroughness_waterroughness') }}
+          {{ $t('editor.planet_rendering.metallicroughness_waterroughness') }}
         </ParameterSlider>
         <ParameterSlider
           id="p-wmetal"
@@ -43,7 +43,7 @@
           :min="0"
           :max="1"
         >
-          {{ $t('editor.controls.planet_rendering.metallicroughness_watermetalness') }}
+          {{ $t('editor.planet_rendering.metallicroughness_watermetalness') }}
         </ParameterSlider>
         <ParameterDivider />
         <ParameterSlider
@@ -53,7 +53,7 @@
           :min="0"
           :max="1"
         >
-          {{ $t('editor.controls.planet_rendering.metallicroughness_groundroughness') }}
+          {{ $t('editor.planet_rendering.metallicroughness_groundroughness') }}
         </ParameterSlider>
         <ParameterSlider
           id="p-gmetal"
@@ -62,7 +62,7 @@
           :min="0"
           :max="1"
         >
-          {{ $t('editor.controls.planet_rendering.metallicroughness_groundmetalness') }}
+          {{ $t('editor.planet_rendering.metallicroughness_groundmetalness') }}
         </ParameterSlider>
       </template>
     </ParameterGroup>
@@ -70,7 +70,7 @@
       v-model="EDITOR_STATE.planetData.planetShowEmissive"
       :toggleable="EDITOR_STATE.planetData.planetShowEmissive"
     >
-      <template #title>{{ $t('editor.controls.planet_rendering.emissivity') }}</template>
+      <template #title>{{ $t('editor.planet_rendering.emissivity') }}</template>
       <template #content>
         <ParameterSlider
           id="e-wemissive"
@@ -79,7 +79,7 @@
           :min="0"
           :max="10"
         >
-          {{ $t('editor.controls.planet_rendering.emissivity_waterintensity') }}
+          {{ $t('editor.planet_rendering.emissivity_waterintensity') }}
         </ParameterSlider>
         <ParameterSlider
           id="e-gemissive"
@@ -88,7 +88,7 @@
           :min="0"
           :max="10"
         >
-          {{ $t('editor.controls.planet_rendering.emissivity_groundintensity') }}
+          {{ $t('editor.planet_rendering.emissivity_groundintensity') }}
         </ParameterSlider>
       </template>
     </ParameterGroup>

@@ -13,19 +13,19 @@
   >
     <template #title>
       <iconify-icon icon="mingcute:warning-line" width="2rem" aria-hidden="true" />
-      <span>{{ $t('dialog.editorerror.$title') }}</span>
+      <span>{{ $t('dialog.editor_error.$title') }}</span>
     </template>
     <template #content>
       <div class="error-info">
-        <p>{{ $t('dialog.editorerror.brief') }}</p>
+        <p>{{ $t('dialog.editor_error.brief') }}</p>
         <p>
-          <b>{{ $t('dialog.editorerror.reporting') }}</b>
+          <b>{{ $t('dialog.editor_error.reporting') }}</b>
         </p>
       </div>
       <hr class="error-divider" />
       <p class="error-container">{{ _error }}</p>
       <CollapsibleSection v-show="_stack.length > 0" class="warn code">
-        <template #title>{{ $t('main.error.stacktrace') }}</template>
+        <template #title>{{ $t('common.error.stacktrace') }}</template>
         <template #content>
           <div class="code-block">
             <pre v-for="(line, i) of _stack" :key="i">{{ line }}</pre>
@@ -35,7 +35,7 @@
     </template>
     <template #actions>
       <LgvButton v-if="allowRendererFallback" class="warn" icon="tabler:reload" @click="closeWithFallback">
-        {{ $t('dialog.editorerror.$action_reload_fallback_renderer') }}
+        {{ $t('dialog.editor_error.$action_reload_fallback_renderer') }}
       </LgvButton>
     </template>
   </DialogElement>

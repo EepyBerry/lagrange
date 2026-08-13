@@ -16,13 +16,13 @@
       <LgvButton
         variant="icon"
         :icon="editMode ? 'mingcute:check-line' : 'mingcute:edit-2-line'"
-        :a11y-label="$t(editMode ? 'a11y.topbar_rename_confirm' : 'a11y.topbar_rename')"
+        :a11y-label="$t(editMode ? 'main.header.rename_confirm' : 'main.header.rename')"
         icon-width="1.25rem"
         @click="toggleEditMode"
       />
     </div>
     <hr />
-    <LgvButton variant="dark" icon="tabler:reload" :a11y-label="$t('a11y.topbar_reset')" @click="resetDialog?.open()" />
+    <LgvButton variant="dark" icon="tabler:reload" :a11y-label="$t('main.header.reset')" @click="resetDialog?.open()" />
 
     <!------ BEGIN floating menus ------>
     <!-- Randomization menu -->
@@ -32,7 +32,7 @@
       variant="dark"
       icon="mingcute:shuffle-2-fill"
       :class="{ active: isRandomMenuOpen }"
-      :a11y-label="$t('a11y.topbar_menu_random')"
+      :a11y-label="$t('main.header.menu_random')"
     />
     <div id="randomizer-menu" ref="randomMenu" class="floating" :style="randomFloating.floatingStyles.value">
       <div class="floating-content">
@@ -56,7 +56,7 @@
       variant="dark"
       :icon="isSaveMenuOpen ? 'mdi:content-save-minus-outline' : 'mdi:content-save-plus-outline'"
       :class="{ active: isSaveMenuOpen }"
-      :a11y-label="$t('a11y.topbar_menu_save')"
+      :a11y-label="$t('main.header.menu_save')"
     />
     <div ref="saveMenu" class="floating" :style="saveFloating.floatingStyles.value">
       <LgvButton
@@ -65,7 +65,7 @@
         icon="mingcute:save-2-line"
         @click="closeSaveMenuAndEmit('save')"
       >
-        {{ $t('tooltip.topbar_save') }}
+        {{ $t('main.header.save') }}
       </LgvButton>
       <LgvButton
         v-if="!$route.path.endsWith('/new')"
@@ -74,7 +74,14 @@
         icon="mingcute:copy-2-line"
         @click="closeSaveMenuAndEmit('copy')"
       >
-        {{ $t('tooltip.topbar_copy') }}
+        {{ $t('main.header.copy') }} </LgvButton
+      ><LgvButton
+        variant="dark"
+        class="save-menu-button flush"
+        icon="material-symbols:texture"
+        @click="closeSaveMenuAndEmit('extract-textures')"
+      >
+        {{ $t('main.header.extract_textures') }}
       </LgvButton>
       <LgvButton
         variant="dark"
@@ -82,7 +89,7 @@
         icon="simple-icons:gltf"
         @click="closeSaveMenuAndEmit('gltf')"
       >
-        {{ $t('tooltip.topbar_gltf') }}
+        {{ $t('main.header.gltf') }}
       </LgvButton>
     </div>
     <!------ END floating menus ------>
@@ -98,11 +105,6 @@ import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
 import { ref, useTemplateRef, watch, type Ref } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
 import AppResetConfirmDialog from '../dialogs/ResetConfirmDialog.vue';
-
-const editMode: Ref<boolean> = ref(false);
-
-const planetNameInput: Ref<HTMLInputElement | null> = ref(null);
-const resetDialog: Ref<{ open: () => void } | null> = ref(null);
 
 // floating-ui start
 const isRandomMenuOpen: Ref<boolean> = ref(false);
@@ -124,11 +126,15 @@ const saveFloating = useFloating(saveMenuTrigger, saveMenu, {
 });
 // floating-ui end
 
+const editMode: Ref<boolean> = ref(false);
+const planetNameInput: Ref<HTMLInputElement | null> = ref(null);
+const resetDialog: Ref<{ open: () => void } | null> = ref(null);
+
 watch(
   () => UIEventBus.clickEvent.value,
   (evt) => onWindowClick(evt!),
 );
-const $emit = defineEmits(['rename', 'reset', 'save', 'copy', 'gltf', 'random']);
+const $emit = defineEmits(['rename', 'reset', 'save', 'copy', 'extract-textures', 'gltf', 'random']);
 
 function onWindowClick(evt: MouseEvent) {
   if ((evt.target as HTMLElement).id === randomMenuTrigger.value!.$el.id) {
@@ -144,7 +150,7 @@ function onWindowClick(evt: MouseEvent) {
   }
 }
 
-function closeSaveMenuAndEmit(evt: 'rename' | 'reset' | 'save' | 'copy' | 'gltf' | 'random') {
+function closeSaveMenuAndEmit(evt: 'rename' | 'reset' | 'save' | 'copy' | 'extract-textures' | 'gltf' | 'random') {
   toggleSaveMenu(false);
   $emit(evt);
 }

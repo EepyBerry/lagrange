@@ -27,7 +27,7 @@
     <div v-show="_expanded" class="biome-content">
       <hr class="info-divider" />
       <div class="biome-type">
-        <strong>{{ $t('editor.controls.features.biomes.biome_type') }}:</strong>
+        <strong>{{ $t('editor.features.biomes.biome_type') }}:</strong>
         <div>
           <iconify-icon icon="mingcute:high-temperature-line" height="1.25rem" />
           <span>{{ getBiomeTemperatureType() }},</span>
@@ -39,17 +39,17 @@
       </div>
       <ParameterDivider />
       <ParameterSlider :id="lgParam!.id + '-b-tmin'" v-model="lgParam!.tempMin" :step="0.005" :min="0" :max="1">
-        {{ $t('editor.controls.features.biomes.temperature_min') }}
+        {{ $t('editor.features.biomes.temperature_min') }}
       </ParameterSlider>
       <ParameterSlider :id="lgParam!.id + '-b-tmax'" v-model="lgParam!.tempMax" :step="0.005" :min="0" :max="1">
-        {{ $t('editor.controls.features.biomes.temperature_max') }}
+        {{ $t('editor.features.biomes.temperature_max') }}
       </ParameterSlider>
       <ParameterDivider />
       <ParameterSlider :id="lgParam!.id + '-b-hmin'" v-model="lgParam!.humiMin" :step="0.005" :min="0" :max="1">
-        {{ $t('editor.controls.features.biomes.humidity_min') }}
+        {{ $t('editor.features.biomes.humidity_min') }}
       </ParameterSlider>
       <ParameterSlider :id="lgParam!.id + '-b-hmax'" v-model="lgParam!.humiMax" :step="0.005" :min="0" :max="1">
-        {{ $t('editor.controls.features.biomes.humidity_max') }}
+        {{ $t('editor.features.biomes.humidity_max') }}
       </ParameterSlider>
       <ParameterDivider />
       <ParameterSlider
@@ -59,7 +59,7 @@
         :min="0"
         :max="0.5"
       >
-        {{ $t('editor.controls.features.biomes.smoothness') }}
+        {{ $t('editor.features.biomes.smoothness') }}
       </ParameterSlider>
       <ParameterSlider
         :id="lgParam!.id + '-b-emiintensity'"
@@ -95,18 +95,18 @@ const _expanded: Ref<boolean> = ref(true);
 
 type BiomeType = { min: number; max: number; label: string };
 const temperatureTypeTable: BiomeType[] = [
-  { min: 0, max: 0.15, label: i18n.t('main.planet_data.biome_type_arctic') },
-  { min: 0.15, max: 0.3, label: i18n.t('main.planet_data.biome_type_tundra') },
-  { min: 0.3, max: 0.5, label: i18n.t('main.planet_data.biome_type_temperate') },
-  { min: 0.5, max: 0.6, label: i18n.t('main.planet_data.biome_type_subtropical') },
-  { min: 0.6, max: 0.8, label: i18n.t('main.planet_data.biome_type_tropical') },
-  { min: 0.8, max: 1, label: i18n.t('main.planet_data.biome_type_volcanic') },
+  { min: 0, max: 0.15, label: i18n.t('common.planet_data.biome_type_arctic') },
+  { min: 0.15, max: 0.3, label: i18n.t('common.planet_data.biome_type_tundra') },
+  { min: 0.3, max: 0.5, label: i18n.t('common.planet_data.biome_type_temperate') },
+  { min: 0.5, max: 0.6, label: i18n.t('common.planet_data.biome_type_subtropical') },
+  { min: 0.6, max: 0.8, label: i18n.t('common.planet_data.biome_type_tropical') },
+  { min: 0.8, max: 1, label: i18n.t('common.planet_data.biome_type_volcanic') },
 ];
 const humidityTypeTable: BiomeType[] = [
-  { min: 0, max: 0.25, label: i18n.t('main.planet_data.biome_type_arid') },
-  { min: 0.25, max: 0.5, label: i18n.t('main.planet_data.biome_type_dry') },
-  { min: 0.5, max: 0.75, label: i18n.t('main.planet_data.biome_type_semihumid') },
-  { min: 0.75, max: 1, label: i18n.t('main.planet_data.biome_type_humid') },
+  { min: 0, max: 0.25, label: i18n.t('common.planet_data.biome_type_arid') },
+  { min: 0.25, max: 0.5, label: i18n.t('common.planet_data.biome_type_dry') },
+  { min: 0.5, max: 0.75, label: i18n.t('common.planet_data.biome_type_semihumid') },
+  { min: 0.75, max: 1, label: i18n.t('common.planet_data.biome_type_humid') },
 ];
 
 defineEmits(['moveup', 'movedown', 'delete']);
@@ -123,7 +123,7 @@ function getBiomeTemperatureType(): string {
   if (minTypeIdx >= 0 && minTypeIdx === maxTypeIdx) {
     return temperatureTypeTable[minTypeIdx].label;
   } else {
-    return i18n.t('main.planet_data.biome_type_various');
+    return i18n.t('common.planet_data.biome_type_various');
   }
 }
 
@@ -133,7 +133,7 @@ function getBiomeHumidityType(): string {
   if (minTypeIdx === maxTypeIdx) {
     return humidityTypeTable[minTypeIdx].label;
   } else {
-    return i18n.t('main.planet_data.biome_type_various');
+    return i18n.t('common.planet_data.biome_type_various');
   }
 }
 

@@ -9,22 +9,22 @@
   >
     <template #title>
       <iconify-icon icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
-      {{ $t('dialog.clear_data.$title') }}
+      {{ $t('dialog.confirm_clear_data.$title') }}
     </template>
     <template #content>
       <div class="clear-data-text">
-        <p>{{ $t('dialog.clear_data.message') }}</p>
+        <p>{{ $t('dialog.confirm_clear_data.message') }}</p>
         <p>
-          <strong>{{ $t('dialog.clear_data.warning') }}</strong>
+          <strong>{{ $t('dialog.confirm_clear_data.warning') }}</strong>
         </p>
       </div>
     </template>
     <template #actions>
       <LgvButton icon="mingcute:close-line" @click="close(false)">
-        {{ $t('dialog.clear_data.$action_cancel') }}
+        {{ $t('dialog.confirm_clear_data.$action_cancel') }}
       </LgvButton>
       <LgvButton class="warn" icon="mingcute:delete-2-line" @click="close(true)">
-        {{ $t('dialog.clear_data.$action_confirm') }}
+        {{ $t('dialog.confirm_clear_data.$action_confirm') }}
       </LgvButton>
     </template>
   </DialogElement>

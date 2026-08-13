@@ -82,11 +82,11 @@
               <ul class="controls">
                 <li>
                   <iconify-icon icon="mingcute:upload-line" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_import') }}
+                  {{ $t('main.header.import') }}
                 </li>
                 <li>
                   <iconify-icon icon="mingcute:folder-zip-line" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_export_all') }}
+                  {{ $t('main.header.export_all') }}
                 </li>
               </ul>
             </div>
@@ -99,27 +99,31 @@
               <ul class="controls">
                 <li>
                   <iconify-icon icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_rename') }}
+                  {{ $t('main.header.rename') }}
                 </li>
                 <li>
                   <iconify-icon icon="tabler:reload" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_reset') }}
+                  {{ $t('main.header.reset') }}
                 </li>
                 <li>
                   <iconify-icon icon="mingcute:shuffle-2-fill" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_random') }}
+                  {{ $t('main.header.menu_random') }}
                 </li>
                 <li>
                   <iconify-icon icon="mingcute:save-2-line" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_save') }}
+                  {{ $t('main.header.save') }}
                 </li>
                 <li>
                   <iconify-icon icon="mingcute:copy-2-line" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_copy') }}
+                  {{ $t('main.header.copy') }}
+                </li>
+                <li>
+                  <iconify-icon icon="material-symbols:texture" width="1.25rem" aria-hidden="true" />
+                  {{ $t('main.header.extract_textures') }}
                 </li>
                 <li>
                   <iconify-icon icon="simple-icons:gltf" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_gltf') }}
+                  {{ $t('main.header.gltf') }}
                 </li>
               </ul>
             </div>
@@ -132,15 +136,15 @@
             <ul class="controls-container controls">
               <li>
                 <iconify-icon icon="mingcute:information-line" width="1.25rem" aria-hidden="true" />
-                {{ $t('dialog.init.footer_about') }}
+                {{ $t('main.footer.about') }}
               </li>
               <li>
                 <iconify-icon icon="mingcute:settings-6-line" width="1.25rem" aria-hidden="true" />
-                {{ $t('dialog.init.footer_settings') }}
+                {{ $t('main.footer.settings') }}
               </li>
               <li>
                 <iconify-icon icon="mingcute:github-line" width="1.25rem" aria-hidden="true" />
-                {{ $t('dialog.init.footer_github') }}
+                {{ $t('main.footer.github') }}
               </li>
             </ul>
           </template>

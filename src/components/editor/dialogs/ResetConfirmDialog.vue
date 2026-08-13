@@ -9,22 +9,22 @@
   >
     <template #title>
       <iconify-icon icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
-      {{ $t('dialog.reset.$title') }}
+      {{ $t('dialog.confirm_reset.$title') }}
     </template>
     <template #content>
       <div class="reset-text">
-        <p>{{ $t('dialog.reset.message') }}</p>
+        <p>{{ $t('dialog.confirm_reset.message') }}</p>
         <p>
-          <b>{{ $t('dialog.reset.warning') }}</b>
+          <b>{{ $t('dialog.confirm_reset.warning') }}</b>
         </p>
       </div>
     </template>
     <template #actions>
       <LgvButton icon="mingcute:close-line" @click="dialogRef?.close()">
-        {{ $t('dialog.reset.$action_cancel') }}
+        {{ $t('dialog.confirm_reset.$action_cancel') }}
       </LgvButton>
       <LgvButton class="warn" icon="tabler:reload" @click="confirmAndClose">
-        {{ $t('dialog.reset.$action_confirm') }}
+        {{ $t('dialog.confirm_reset.$action_confirm') }}
       </LgvButton>
     </template>
   </DialogElement>

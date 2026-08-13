@@ -5,11 +5,11 @@
     :show-title="true"
     :show-actions="false"
     :closeable="true"
-    :aria-label="$t('a11y.dialog_planetinfo')"
+    :aria-label="$t('a11y.dialog_planet_info')"
   >
     <template #title>
       <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
-      {{ $t('dialog.planetinfo.$title') }}
+      {{ $t('dialog.planet_info.$title') }}
     </template>
     <template #content>
       <div class="info-grid" role="grid">
@@ -22,7 +22,7 @@
         </section>
 
         <!-- Planet preview image -->
-        <section id="planet-preview" :class="{ 'extra-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
+        <section id="planet-preview" :class="{ 'extra-hologram': EXTRAS_HOLOGRAM_EFFECT }">
           <svg viewBox="0 0 256 256" role="presentation">
             <path
               :d="makeSVGCircleArc(128, 128, getPlanetCircleRadius() + 8, 30, 150)"
@@ -57,21 +57,21 @@
             :alt="planet?.data.planetName"
           />
           <iconify-icon v-else icon="ph:planet-thin" width="auto" aria-hidden="true" />
-          <span v-if="!!EXTRAS_CRT_EFFECT" class="effect-crt"></span>
+          <span v-if="EXTRAS_CRT_EFFECT" class="effect-crt"></span>
         </section>
 
         <!-- Basic planet data -->
         <section id="planet-basic-data">
           <GenericBoxElement
             id="planet-basic-data-type"
-            :value-label="$t('dialog.planetinfo.basic.type')"
+            :value-label="$t('dialog.planet_info.basic.type')"
             role="gridcell"
           >
             {{ $t(getI18nPlanetType(planet?.data.planetType)) }}
           </GenericBoxElement>
           <GenericBoxElement
             id="planet-basic-data-class"
-            :value-label="$t('dialog.planetinfo.basic.class')"
+            :value-label="$t('dialog.planet_info.basic.class')"
             :background-color="getPlanetClassStyle()[0]"
             :text-color="getPlanetClassStyle()[1]"
             role="gridcell"
@@ -82,18 +82,18 @@
           <MeasurementBoxElement
             :str-value="planet?.data.planetRadius.toFixed(2)"
             icon="lucide:radius"
-            :value-label="$t('dialog.planetinfo.basic.radius')"
+            :value-label="$t('dialog.planet_info.basic.radius')"
             role="gridcell"
           />
           <MeasurementBoxElement
             :str-value="planet?.data.planetAxialTilt.toFixed(2)"
             unit="°"
             icon="tabler:angle"
-            :value-label="$t('dialog.planetinfo.basic.axialtilt')"
+            :value-label="$t('dialog.planet_info.basic.axialtilt')"
             role="gridcell"
           />
           <div id="planet-basic-data-features" role="gridcell">
-            <p id="label__planet-basic-data-features">{{ $t('dialog.planetinfo.basic.features') }}:</p>
+            <p id="label__planet-basic-data-features">{{ $t('dialog.planet_info.basic.features') }}:</p>
             <ul>
               <li>
                 <PlanetCardFeatureBoxElement
@@ -102,15 +102,15 @@
                   :aria-label="
                     $t(
                       planet?.data.biomesEnabled
-                        ? 'dialog.planetinfo.basic.has_biomes'
-                        : 'dialog.planetinfo.basic.no_biomes',
+                        ? 'dialog.planet_info.basic.has_biomes'
+                        : 'dialog.planet_info.basic.no_biomes',
                     ).toLocaleLowerCase() + ','
                   "
                   :title="
                     $t(
                       planet?.data.biomesEnabled
-                        ? 'dialog.planetinfo.basic.has_biomes'
-                        : 'dialog.planetinfo.basic.no_biomes',
+                        ? 'dialog.planet_info.basic.has_biomes'
+                        : 'dialog.planet_info.basic.no_biomes',
                     )
                   "
                   role="gridcell"
@@ -123,15 +123,15 @@
                   :aria-label="
                     $t(
                       planet?.data.cloudsEnabled
-                        ? 'dialog.planetinfo.basic.has_clouds'
-                        : 'dialog.planetinfo.basic.no_clouds',
+                        ? 'dialog.planet_info.basic.has_clouds'
+                        : 'dialog.planet_info.basic.no_clouds',
                     ).toLocaleLowerCase() + ','
                   "
                   :title="
                     $t(
                       planet?.data.cloudsEnabled
-                        ? 'dialog.planetinfo.basic.has_clouds'
-                        : 'dialog.planetinfo.basic.no_clouds',
+                        ? 'dialog.planet_info.basic.has_clouds'
+                        : 'dialog.planet_info.basic.no_clouds',
                     )
                   "
                   role="gridcell"
@@ -144,15 +144,15 @@
                   :aria-label="
                     $t(
                       planet?.data.atmosphereEnabled
-                        ? 'dialog.planetinfo.basic.has_atmosphere'
-                        : 'dialog.planetinfo.basic.no_atmosphere',
+                        ? 'dialog.planet_info.basic.has_atmosphere'
+                        : 'dialog.planet_info.basic.no_atmosphere',
                     ).toLocaleLowerCase() + ','
                   "
                   :title="
                     $t(
                       planet?.data.atmosphereEnabled
-                        ? 'dialog.planetinfo.basic.has_atmosphere'
-                        : 'dialog.planetinfo.basic.no_atmosphere',
+                        ? 'dialog.planet_info.basic.has_atmosphere'
+                        : 'dialog.planet_info.basic.no_atmosphere',
                     )
                   "
                   role="gridcell"
@@ -165,15 +165,15 @@
                   :aria-label="
                     $t(
                       planet?.data.ringsEnabled
-                        ? 'dialog.planetinfo.basic.has_rings'
-                        : 'dialog.planetinfo.basic.no_rings',
+                        ? 'dialog.planet_info.basic.has_rings'
+                        : 'dialog.planet_info.basic.no_rings',
                     ).toLocaleLowerCase()
                   "
                   :title="
                     $t(
                       planet?.data.ringsEnabled
-                        ? 'dialog.planetinfo.basic.has_rings'
-                        : 'dialog.planetinfo.basic.no_rings',
+                        ? 'dialog.planet_info.basic.has_rings'
+                        : 'dialog.planet_info.basic.no_rings',
                     )
                   "
                   role="gridcell"
@@ -190,7 +190,7 @@
         >
           <SeparatorGreebleDeco class="flip-x" />
           <span class="deco-polygon"></span>
-          <h3 id="planet-details-biomes-title">{{ $t('dialog.planetinfo.biomes') }}</h3>
+          <h3 id="planet-details-biomes-title">{{ $t('dialog.planet_info.biomes') }}</h3>
           <SVGBiomeGraph :key="planet.data.biomesParams[0].id" :biomes="planet.data.biomesParams" />
         </section>
 
@@ -198,7 +198,7 @@
         <section v-if="planet?.data.ringsEnabled && planet?.data.ringsParams.length > 0" class="planet-details rings">
           <SeparatorGreebleDeco />
           <span class="deco-polygon"></span>
-          <h3 id="planet-details-rings-title">{{ $t('dialog.planetinfo.rings') }}</h3>
+          <h3 id="planet-details-rings-title">{{ $t('dialog.planet_info.rings') }}</h3>
           <SVGRingsGraph
             :key="planet.data.ringsParams[0].id"
             :planet-radius="planet.data.planetRadius"

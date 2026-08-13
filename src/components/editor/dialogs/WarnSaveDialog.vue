@@ -10,25 +10,25 @@
   >
     <template #title>
       <iconify-icon icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
-      {{ $t('dialog.warnsave.$title') }}
+      {{ $t('dialog.confirm_warnsave.$title') }}
     </template>
     <template #content>
       <div class="warn-text">
-        <p>{{ $t('dialog.warnsave.message') }}</p>
+        <p>{{ $t('dialog.confirm_warnsave.message') }}</p>
         <p>
-          <b>{{ $t('dialog.warnsave.warning') }}</b>
+          <b>{{ $t('dialog.confirm_warnsave.warning') }}</b>
         </p>
       </div>
     </template>
     <template #actions>
       <LgvButton icon="mingcute:close-line" @click="dialogRef?.close()">
-        {{ $t('dialog.warnsave.$action_cancel') }}
+        {{ $t('dialog.confirm_warnsave.$action_cancel') }}
       </LgvButton>
       <LgvButton class="success" icon="mingcute:save-2-line" @click="saveConfirmClose">
-        {{ $t('dialog.warnsave.$action_saveconfirm') }}
+        {{ $t('dialog.confirm_warnsave.$action_saveconfirm') }}
       </LgvButton>
       <LgvButton class="warn" icon="mingcute:exit-line" @click="confirmAndClose">
-        {{ $t('dialog.warnsave.$action_confirm') }}
+        {{ $t('dialog.confirm_warnsave.$action_confirm') }}
       </LgvButton>
     </template>
   </DialogElement>

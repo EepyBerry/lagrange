@@ -5,9 +5,9 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :button-aria-label="$t('editor.controls.basic_data.$title')"
+    :button-aria-label="$t('editor.basic_data.$title')"
   >
-    <template #title>{{ $t('editor.controls.basic_data.$title') }}</template>
+    <template #title>{{ $t('editor.basic_data.$title') }}</template>
     <template #content>
       <ControlsBasicData />
     </template>
@@ -19,9 +19,9 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :button-aria-label="$t('editor.controls.lighting.$title')"
+    :button-aria-label="$t('editor.lighting.$title')"
   >
-    <template #title>{{ $t('editor.controls.lighting.$title') }}</template>
+    <template #title>{{ $t('editor.lighting.$title') }}</template>
     <template #content>
       <ControlsLighting />
     </template>
@@ -33,9 +33,9 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :button-aria-label="$t('editor.controls.planet_rendering.$title')"
+    :button-aria-label="$t('editor.planet_rendering.$title')"
   >
-    <template #title>{{ $t('editor.controls.planet_rendering.$title') }}</template>
+    <template #title>{{ $t('editor.planet_rendering.$title') }}</template>
     <template #content>
       <ControlsRendering />
     </template>
@@ -47,9 +47,9 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :button-aria-label="$t('editor.controls.surface.$title')"
+    :button-aria-label="$t('editor.surface.$title')"
   >
-    <template #title>{{ $t('editor.controls.surface.$title') }}</template>
+    <template #title>{{ $t('editor.surface.$title') }}</template>
     <template #content>
       <ControlsSurface />
     </template>
@@ -61,9 +61,9 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :button-aria-label="$t('editor.controls.features.$title')"
+    :button-aria-label="$t('editor.features.$title')"
   >
-    <template #title>{{ $t('editor.controls.features.$title') }}</template>
+    <template #title>{{ $t('editor.features.$title') }}</template>
     <template #content>
       <ControlsFeatures />
     </template>
@@ -75,9 +75,9 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :button-aria-label="$t('editor.controls.clouds.$title')"
+    :button-aria-label="$t('editor.clouds.$title')"
   >
-    <template #title>{{ $t('editor.controls.clouds.$title') }}</template>
+    <template #title>{{ $t('editor.clouds.$title') }}</template>
     <template #content>
       <ControlsClouds />
     </template>
@@ -89,9 +89,9 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :button-aria-label="$t('editor.controls.atmosphere.$title')"
+    :button-aria-label="$t('editor.atmosphere.$title')"
   >
-    <template #title>{{ $t('editor.controls.atmosphere.$title') }}</template>
+    <template #title>{{ $t('editor.atmosphere.$title') }}</template>
     <template #content>
       <ControlsAtmosphere />
     </template>
@@ -103,9 +103,9 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :button-aria-label="$t('editor.controls.atmosphere.$title')"
+    :button-aria-label="$t('editor.ring.$title')"
   >
-    <template #title>{{ $t('editor.controls.ring.$title') }}</template>
+    <template #title>{{ $t('editor.ring.$title') }}</template>
     <template #content>
       <ControlsRing />
     </template>
@@ -117,9 +117,9 @@
     :expand="false"
     :compact-mode="compactMode"
     :allow-icon-mode="true"
-    :button-aria-label="$t('editor.controls.postprocessing.$title')"
+    :button-aria-label="$t('editor.post_processing.$title')"
   >
-    <template #title>{{ $t('editor.controls.postprocessing.$title') }}</template>
+    <template #title>{{ $t('editor.post_processing.$title') }}</template>
     <template #content>
       <ControlsPostProcessing />
     </template>

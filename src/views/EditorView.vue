@@ -150,7 +150,7 @@ function handleInitThreeError(error: unknown) {
   } else if (typeof error === 'string') {
     editorErrorDialogRef.value!.open(error);
   } else {
-    editorErrorDialogRef.value!.open(i18n.t('main.error.default_unknown'));
+    editorErrorDialogRef.value!.open(i18n.t('common.error.default_unknown'));
   }
 }
 
