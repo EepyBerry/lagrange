@@ -15,6 +15,15 @@
         >
           {{ $t('editor.controls.surface.bumpmap_strength') }}
         </ParameterSlider>
+        <ParameterSlider
+          id="s-bumpoff"
+          v-model="EDITOR_STATE.planetData.planetSurfaceBumpOffset"
+          :step="0.0005"
+          :min="0.001"
+          :max="0.01"
+        >
+          {{ $t('editor.controls.surface.bumpmap_offset') }}
+        </ParameterSlider>
       </template>
     </ParameterGroup>
     <ParameterGroup
@@ -172,12 +181,12 @@
           v-model="EDITOR_STATE.planetData.planetSurfaceColorRamp"
           mode="rgb"
         >
-          {{ $t('editor.general.noise_rgbramp') }}
+          {{ $t('editor.general.colorramp_rgb') }}
         </ParameterColorRamp>
       </template>
     </ParameterGroup>
   </ParameterGrid>
 </template>
 <script setup lang="ts">
-import { EDITOR_STATE } from '@/core/state/editor.state';
+import { EDITOR_STATE } from '@core/editor/state/editor.state';
 </script>

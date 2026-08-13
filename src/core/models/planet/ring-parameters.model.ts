@@ -1,31 +1,31 @@
+import type { DataEventEndpoint } from '@core/editor/event/data-event-endpoint.ts';
+import type { DataEventEmitOptions, DataEventPayloadTypeMap } from '@core/editor/event/data-event.types.ts';
 import { ColorRamp, ColorRampStep } from '@core/models/planet/color-ramp.model.ts';
 import { clampedPRNG } from '@core/utils/math-utils.ts';
-import { ObservableRelay, type ObservableNotifyFunction } from '@core/utils/observable-utils.ts';
 import { nanoid } from 'nanoid';
 
-export class RingParameters extends ObservableRelay {
+export class RingParameters {
+  private readonly _eventEmitOpts: DataEventEmitOptions;
   private _id: string;
   private _innerRadius: number;
   private _outerRadius: number;
   private readonly _colorRamp: ColorRamp;
 
   constructor(
-    keyPrefix: string,
-    notifyFunc: ObservableNotifyFunction,
+    eventEmitOpts: DataEventEmitOptions,
     innerRadius: number,
     outerRadius: number,
     colorRampSteps?: ColorRampStep[],
     oldId?: string,
   ) {
-    super(keyPrefix, notifyFunc);
     this._id = oldId ?? nanoid();
+    this._eventEmitOpts = eventEmitOpts;
     this._innerRadius = innerRadius;
     this._outerRadius = outerRadius;
-    this._colorRamp = new ColorRamp(`${keyPrefix}._colorRamp`, notifyFunc, [
-      new ColorRampStep(0x856f4e, 0, true),
-      new ColorRampStep(0x000000, 0.5),
-      new ColorRampStep(0xbf9a5e, 1, true),
-    ]);
+    this._colorRamp = new ColorRamp(
+      { endpointRef: this._eventEmitOpts.endpointRef, instanceId: this._id, context: 'ring' },
+      [new ColorRampStep(0x483c2a, 0, true), new ColorRampStep(0xbf9a5e, 1, true)],
+    );
     if (colorRampSteps) {
       this._colorRamp.loadFromSteps(colorRampSteps);
     }
@@ -46,7 +46,7 @@ export class RingParameters extends ObservableRelay {
     if (this.outerRadius < this._innerRadius) {
       this.outerRadius = value; // Call setter to trigger change
     }
-    this.relayNotify({ key: `${this.keyPrefix}._innerRadius`, data: { ring: this } });
+    this._eventEmitOpts.endpointRef.emit('ringParametersUpdate', { instanceId: this.id, value: this });
   }
 
   public get outerRadius(): number {
@@ -57,20 +57,21 @@ export class RingParameters extends ObservableRelay {
     if (this.innerRadius > this._outerRadius) {
       this.innerRadius = value; // Call setter to trigger change
     }
-    this.relayNotify({ key: `${this.keyPrefix}._outerRadius`, data: { ring: this } });
+    this._eventEmitOpts.endpointRef.emit('ringParametersUpdate', { instanceId: this.id, value: this });
   }
 
   public get colorRamp(): ColorRamp {
     return this._colorRamp;
   }
 
-  public loadColorRampSteps(steps: ColorRampStep[]) {
-    this._colorRamp.loadFromSteps(steps);
+  public randomize() {
+    this._colorRamp.randomize(3);
+    this._eventEmitOpts.endpointRef.emit('ringParametersUpdate', { instanceId: this.id, value: this });
   }
 
-  public static createRandom(keyPrefix: string, notifyFunc: ObservableNotifyFunction) {
+  public static createRandom(parentEventEmitterRef: DataEventEndpoint<keyof DataEventPayloadTypeMap>): RingParameters {
     const innerRadius = clampedPRNG(1.25, 4.75);
-    const params = new RingParameters(keyPrefix, notifyFunc, innerRadius, clampedPRNG(innerRadius, 5));
+    const params = new RingParameters({ endpointRef: parentEventEmitterRef }, innerRadius, clampedPRNG(innerRadius, 5));
     params._colorRamp.randomize(3);
     return params;
   }

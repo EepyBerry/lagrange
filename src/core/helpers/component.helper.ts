@@ -3,12 +3,8 @@ import { degToRad } from "three/src/math/MathUtils.js";
 import * as TextureHelper from "./texture.helper";
 import type PlanetData from "@core/models/planet/planet-data.model.ts";
 import {
-  type PlanetMeshData,
-  type AtmosphereMeshData,
-  type CloudsMeshData,
-  type RingMeshData,
-  EditorSceneCreationMode,
-  type TEditorSceneCreationMode
+  type EditorBackendType,
+  EditorSceneCreationMode, type EditorSceneObjects, type MeshData,
 } from "../types";
 import { LensFlareEffect } from "../effects/lens-flare.effect";
 import * as Globals from "@core/globals";
@@ -33,35 +29,23 @@ import {
   WebGPURenderer,
   type ColorRepresentation,
 } from "three/webgpu";
-import { PlanetTSLMaterial } from "@core/tsl/materials/planet.tslmat";
-import { AtmosphereTSLMaterial } from "@core/tsl/materials/atmosphere.tslmat";
-import { CloudsTSLMaterial } from "@core/tsl/materials/clouds.tslmat";
-import { RingTSLMaterial } from "@core/tsl/materials/ring.tslmat";
+import { PlanetTSLMaterial } from "@tsl/materials/planet.tslmat";
+import { AtmosphereTSLMaterial } from "@tsl/materials/atmosphere.tslmat";
+import { CloudsTSLMaterial } from "@tsl/materials/clouds.tslmat";
+import { RingTSLMaterial } from "@tsl/materials/ring.tslmat";
 import { idb } from "@/dexie.config";
-import { LayeredDataTexture } from "@core/utils/texture/layered-data-texture";
-import type { BiomeParameters } from "@core/models/planet/biome-parameters.model.ts";
-import { PlanetDataConverter } from "@core/models/converters/planet-data.converter";
-import { CloudsDataConverter } from "@core/models/converters/clouds-data.converter";
-import { RingDataConverter } from "@core/models/converters/ring-data.converter";
-import { AtmosphereDataConverter } from "../models/converters/atmosphere-data.converter";
 import type { RingParameters } from "@core/models/planet/ring-parameters.model.ts";
-import TSLRenderPipeline from "@core/tsl/rendering/render-pipeline.ts";
+import TSLRenderPipeline from "@tsl/rendering/render-pipeline.ts";
 import type RenderPipelineData from "@core/models/renderpipeline/render-pipeline-data.model.ts";
-import { RenderPipelineDataConverter } from "@core/models/converters/render-pipeline-data.converter.ts";
 
 // ----------------------------------------------------------------------------------------------------------------------
 // LAGRANGE COMPONENTS
-type EditorSceneObjects = {
-  scene: Scene;
-  renderer: WebGPURenderer;
-  camera: PerspectiveCamera;
-};
 export async function createScene(
   data: PlanetData,
   width: number,
   height: number,
   pixelRatio: number,
-  creationMode: TEditorSceneCreationMode,
+  creationMode: EditorSceneCreationMode,
 ): Promise<EditorSceneObjects> {
   const idbSettings = await idb.settings.limit(1).first();
   const scene = new Scene();
@@ -77,7 +61,7 @@ export async function createScene(
       : new Spherical(data.initCamDistance, Math.PI / 2, degToRad(data.initCamAngle));
 
   // setup scene (renderer, cam, lighting)
-  const renderer = await createRenderer(width, height, pixelRatio);
+  const renderer = await createRenderer(idbSettings!.renderingBackend, width, height, pixelRatio);
   const camera = createPerspectiveCamera(idbSettings!.cameraFOV, width / height, 0.1, 1e6, spherical);
   return { scene, renderer, camera };
 }
@@ -110,150 +94,83 @@ export function createLensFlare(data: PlanetData, pos: Vector3, color: Color) {
   });
 }
 
-export function createPlanet(data: PlanetData, surfaceTexBuf: Uint8Array): PlanetMeshData {
+export function createPlanet(data: PlanetData): MeshData<PlanetTSLMaterial> {
   const geometry = createSphereGeometryComponent(data.planetMeshQuality);
   geometry.computeTangents();
-  const surfaceTex = TextureHelper.createRampTexture(
-    surfaceTexBuf,
-    Globals.TEXTURE_SIZES.SURFACE,
-    data.planetSurfaceColorRamp.steps,
-  );
-  const biomeLayersTex = new LayeredDataTexture<BiomeParameters>(
-    Globals.TEXTURE_SIZES.BIOME,
-    Globals.TEXTURE_SIZES.BIOME,
-    data.biomesParams,
-    TextureHelper.fillBiomeLayer,
-  );
-  const biomeEmissivityLayersTex = new LayeredDataTexture<BiomeParameters>(
-    Globals.TEXTURE_SIZES.BIOME,
-    Globals.TEXTURE_SIZES.BIOME,
-    data.biomesParams,
-    TextureHelper.fillBiomeEmissivityLayer,
-  );
-  //setTimeout(() => biomeEmissivityLayersTex.debugSaveTexture(), 10000)
+  //setTimeout(() => saveAs(new Blob([cracksTex.image.data]), 'tex.raw'), 1000)
 
-  const dataConverter = new PlanetDataConverter(data)
-    .withSurfaceTexture(surfaceTex)
-    .withBiomesTexture(biomeLayersTex.texture)
-    .withBiomesEmissiveTexture(biomeEmissivityLayersTex.texture);
-  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert());
+  const tslMaterial = new PlanetTSLMaterial(data);
   const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   mesh.name = Globals.MESH_NAME_PLANET;
 
-  return {
-    mesh,
-    uniforms: tslMaterial.uniforms,
-    surfaceBuffer: surfaceTexBuf,
-    surfaceTexture: surfaceTex,
-    biomeLayersTexture: biomeLayersTex,
-    biomeEmissiveLayersTexture: biomeEmissivityLayersTex,
-  };
+  return { mesh, tslMaterial };
 }
 
-export function createClouds(data: PlanetData, textureBuffer: Uint8Array): CloudsMeshData {
+export function createClouds(data: PlanetData): MeshData<CloudsTSLMaterial> {
   const geometry = createSphereGeometryComponent(data.planetMeshQuality, data.cloudsHeight);
-  const texture = TextureHelper.createRampTexture(
-    textureBuffer,
-    Globals.TEXTURE_SIZES.CLOUDS,
-    data.cloudsColorRamp.steps,
-  );
-
-  const dataConverter = new CloudsDataConverter(data, texture);
-  const tslMaterial = new CloudsTSLMaterial(dataConverter.convert());
+  const tslMaterial = new CloudsTSLMaterial(data);
   const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   mesh.name = Globals.MESH_NAME_CLOUDS;
 
-  return {
-    mesh,
-    uniforms: tslMaterial.uniforms,
-    buffer: textureBuffer,
-    texture,
-  };
+  return { mesh, tslMaterial };
 }
 
-export function createAtmosphere(data: PlanetData, sunPos: Vector3): AtmosphereMeshData {
+export function createAtmosphere(data: PlanetData, sunLight: DirectionalLight): MeshData<AtmosphereTSLMaterial> {
   // note: geometry is scaled via the planetGroup: always set to [1 + height]
   const geometry = createSphereGeometryComponent(data.planetMeshQuality, 1 + data.atmosphereHeight);
-  const dataConverter = new AtmosphereDataConverter(data, sunPos);
-  const tslMaterial = new AtmosphereTSLMaterial(dataConverter.convert());
+  const tslMaterial = new AtmosphereTSLMaterial(data, { sunlightPosition: sunLight.position, sunlightIntensity: sunLight.intensity });
   const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.userData.lens = "no-occlusion";
   mesh.name = Globals.MESH_NAME_ATMOSPHERE;
   mesh.castShadow = false;
 
-  return {
-    mesh,
-    uniforms: tslMaterial.uniforms,
-  };
+  return { mesh, tslMaterial };
 }
 
-export function createRing(data: PlanetData, ringParams: RingParameters): RingMeshData {
-  const textureBuffer = new Uint8Array(Globals.TEXTURE_SIZES.RING * 4);
+export function createRing(data: PlanetData, ringParams: RingParameters): MeshData<RingTSLMaterial> {
   const geometry = createRingGeometryComponent(data.planetMeshQuality, ringParams.innerRadius, ringParams.outerRadius);
-  const ringTex = TextureHelper.createRampTexture(
-    textureBuffer,
-    Globals.TEXTURE_SIZES.RING,
-    ringParams.colorRamp.steps,
-  );
-
-  const dataConverter = new RingDataConverter(ringParams, ringTex);
-  const tslMaterial = new RingTSLMaterial(dataConverter.convert());
-
+  const tslMaterial = new RingTSLMaterial(ringParams);
   const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.name = ringParams.id;
   mesh.receiveShadow = true;
   mesh.castShadow = true;
-  return {
-    mesh,
-    uniforms: tslMaterial.uniforms,
-    buffer: textureBuffer,
-    texture: ringTex,
-  };
+  return { mesh, tslMaterial };
 }
-export function disposeRing(ringAnchor: Group, ringsMeshData: RingMeshData[], ringParams: RingParameters): void {
+export function disposeRing(ringAnchor: Group, meshDataArr: MeshData<RingTSLMaterial>[], ringId: string): void {
   // get ring data + mesh
-  const ringMeshData = ringsMeshData.find((r) => r.mesh!.name === ringParams.id);
-  if (!ringMeshData) {
-    throw new Error("Cannot delete non-existent ring of ID: " + ringParams.id);
+  const meshDataIdx = meshDataArr.findIndex((r) => r.tslMaterial.ringInstanceId === ringId);
+  if (meshDataIdx < 0) {
+    throw new Error("Cannot delete non-existent ring of ID: " + ringId);
   }
+  const meshData = meshDataArr[meshDataIdx];
   // delete ring
-  ringAnchor.remove(ringMeshData.mesh!);
-  (ringMeshData.mesh!.material as NodeMaterial).dispose();
-  ringMeshData.mesh!.geometry.dispose();
-  ringMeshData.texture!.dispose();
-  ringMeshData.buffer = null;
-}
-
-export function disposeAllRings(ringAnchor: Group, ringsMeshData: RingMeshData[]): void {
-  ringAnchor.clear();
-  ringsMeshData.forEach((rmd) => {
-    (rmd.mesh!.material as NodeMaterial).dispose();
-    rmd.mesh!.geometry.dispose();
-    rmd.texture!.dispose();
-    rmd.buffer = null;
-  });
+  ringAnchor.remove(meshData.mesh!);
+  (meshData.mesh!.material as NodeMaterial).dispose();
+  meshData.mesh!.geometry.dispose();
+  meshData.tslMaterial.dispose();
+  meshDataArr.splice(meshDataIdx, 1);
 }
 
 // ----------------------------------------------------------------------------------------------------------------------
 // NATIVE COMPONENTS
 
 /**
- * Creates a WebGPURenderer isntance
+ * Creates a WebGPURenderer instance
+ * @param renderingBackend type of rendering backend, WebGL or WebGPU
  * @param width canvas width
  * @param height canvas height
  * @param pixelRatio device pixel ratio
  * @returns the renderer
  */
-export async function createRenderer(width: number, height: number, pixelRatio?: number): Promise<WebGPURenderer> {
-  const idbSettings = await idb.settings.limit(1).first();
+export async function createRenderer(renderingBackend: EditorBackendType, width: number, height: number, pixelRatio?: number): Promise<WebGPURenderer> {
   const renderer = new WebGPURenderer({
     antialias: true,
     alpha: true,
-    forceWebGL: idbSettings!.renderingBackend == "webgl",
+    forceWebGL: renderingBackend == "webgl",
   });
   if (pixelRatio) {
     renderer.setPixelRatio(pixelRatio);
@@ -265,14 +182,13 @@ export async function createRenderer(width: number, height: number, pixelRatio?:
   renderer.shadowMap.type = PCFSoftShadowMap;
   renderer.outputColorSpace = SRGBColorSpace;
   console.debug(
-    `<Lagrange> Initialised renderer using ${idbSettings!.renderingBackend == "webgl" ? "WebGL" : "WebGPU"} backend.`,
+    `<Lagrange> Initialised renderer using ${renderingBackend == "webgl" ? "WebGL" : "WebGPU"} backend.`,
   );
   return renderer;
 }
 
 export function createRenderPipeline(data: RenderPipelineData, renderer: WebGPURenderer, scene: Scene, camera: Camera): TSLRenderPipeline {
-  const dataConverter = new RenderPipelineDataConverter(data);
-  return new TSLRenderPipeline(dataConverter.convert(), renderer, scene, camera);
+  return new TSLRenderPipeline(data, renderer, scene, camera);
 }
 
 /**

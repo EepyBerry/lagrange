@@ -27,7 +27,7 @@
         {{ $t('editor.controls.ring.transform_radius_outer') }}
       </ParameterSlider>
       <ParameterColorRamp :key="lgParam!.id" v-model="lgParam!.colorRamp" mode="rgba">
-        {{ $t('editor.general.noise_rgbaramp') }}
+        {{ $t('editor.general.colorramp_rgba') }}
       </ParameterColorRamp>
     </div>
   </div>

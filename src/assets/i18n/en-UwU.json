@@ -226,11 +226,12 @@
       "step_1": "Pwepawing",
       "step_2": "Baking suwface textuwe",
       "step_3": "Baking suwface PBR",
-      "step_4": "Baking suwface n-nowmals",
-      "step_5": "Baking cwouds textuwe",
-      "step_6": "Baking wing systyem textuwes",
-      "step_7": "F-finawizing",
-      "step_8": "Done!!! :3",
+      "step_4": "Baking suwface emissivity",
+      "step_5": "Baking suwface n-nowmals",
+      "step_6": "Baking cwouds textuwe",
+      "step_7": "Baking wing systyem textuwes",
+      "step_8": "F-finawizing",
+      "step_9": "Done!!! :3",
       "step_failed": "faiwed :c"
     },
     "reset": {
@@ -299,8 +300,14 @@
       "noise_fbm_lacunarity": "Wacunawity",
       "noise_fbm_octaves": "Octaves",
       "noise_color": "Cowow",
-      "noise_rgbramp": "Cowow wamp",
-      "noise_rgbaramp": "Cowow/awpha wamp"
+      "noise_voronoi_scale": "Scawe",
+      "noise_voronoi_jitter": "Jittew",
+      "colorramp_rgb": "Cowow wamp",
+      "colorramp_rgba": "Cowow/awpha wamp",
+      "colorramp_opacity": "Opacity wamp",
+      "color": "Cowow",
+      "color_opacity": "Cowow & opacity",
+      "emissive_intensity": "Emissive intensity"
     },
     "controls": {
       "basic_data": {
@@ -344,29 +351,40 @@
         "$title": "Suwface",
         "bumpmap": "Bump map",
         "bumpmap_show": "Show bumps :3",
-        "bumpmap_strength": "Bump stwength"
+        "bumpmap_strength": "Stwength",
+        "bumpmap_offset": "Offset"
       },
-      "biomes": {
-        "$title": "Biomes",
-        "biomes_show": "Show biomes :3",
-        "texture_resolution": "Wesowution",
-        "temperature": "Tempewatuwe gwadient",
-        "humidity": "Humidity gwadient",
-        "gradient_mode": "Gwadient mode",
-        "gradient_mode_realistic": "Weawistic",
-        "gradient_mode_poletopole": "Powe-to-powe",
-        "gradient_mode_fullnoise": "Fuww nyoise",
-        "biome_list": "Biomes",
-        "biome_type": "Type",
-        "height_min": "Min. height",
-        "height_max": "Max. height",
-        "temperature_min": "Min. tempewatuwe",
-        "temperature_max": "Max. tempewatuwe",
-        "humidity_min": "Min. humidity",
-        "humidity_max": "Max. humidity",
-        "smoothness": "Smoothnyess",
-        "emissive_override": "Ovewwide emissivity",
-        "emissive_intensity": "Emissive intensity"
+      "features": {
+        "$title": "Featuwes",
+        "cracks": {
+          "$title": "Cwacks",
+          "noise_base_detail": "Base & detaiw nyoise",
+          "noise_limiter": "Wimitew nyoise",
+          "noise_color": "Cowow nyoise",
+          "distance_to_edge": "Distyance to edge",
+          "detail_noise_strength": "Detaiw noise stwength",
+          "underwater_strength": "Undewwatew stwength"
+        },
+        "biomes": {
+          "$title": "Biomes",
+          "biomes_show": "Show biomes :3",
+          "texture_resolution": "Wesowution",
+          "temperature": "Tempewatuwe gwadient",
+          "humidity": "Humidity gwadient",
+          "gradient_mode": "Gwadient mode",
+          "gradient_mode_realistic": "Weawistic",
+          "gradient_mode_poletopole": "Powe-to-powe",
+          "gradient_mode_fullnoise": "Nyoise",
+          "biome_list": "Biomes",
+          "biome_type": "Type",
+          "height_min": "Min. height",
+          "height_max": "Max. height",
+          "temperature_min": "Min. tempewatuwe",
+          "temperature_max": "Max. tempewatuwe",
+          "humidity_min": "Min. humidity",
+          "humidity_max": "Max. humidity",
+          "smoothness": "Smoothnyess"
+        }
       },
       "clouds": {
         "$title": "Cwouds",
@@ -402,10 +420,7 @@
         "ring_list": "Wings",
         "transform": "Twansfowm",
         "transform_radius_inner": "Innyew wadius",
-        "transform_radius_outer": "Outew wadius",
-        "rgba": "Cowow & opacity",
-        "rgba_opacity": "Opacity",
-        "rgba_colorramp": "Cowow wamp (RGBA)"
+        "transform_radius_outer": "Outew wadius"
       },
       "postprocessing": {
         "$title": "Post-pwocessing",

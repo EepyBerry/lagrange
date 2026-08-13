@@ -226,11 +226,12 @@
       "step_1": "Vorbereitung",
       "step_2": "Oberfläche Baking",
       "step_3": "Rendering-Daten Baking",
-      "step_4": "Normale Baking",
-      "step_5": "Wolken Baking",
-      "step_6": "Ringe Baking",
-      "step_7": "Finalisierung",
-      "step_8": "Fertig !",
+      "step_4": "Emissivität Baking",
+      "step_5": "Normale Baking",
+      "step_6": "Wolken Baking",
+      "step_7": "Ringe Baking",
+      "step_8": "Finalisierung",
+      "step_9": "Fertig !",
       "step_failed": "Fehler"
     },
     "reset": {
@@ -298,9 +299,15 @@
       "noise_fbm_amplitude": "Amplitude",
       "noise_fbm_lacunarity": "Lückenhaftigkeit",
       "noise_fbm_octaves": "Oktaven",
+      "noise_voronoi_scale": "Größe",
+      "noise_voronoi_jitter": "Jitter",
       "noise_color": "Farbe",
-      "noise_rgbramp": "Farbverlauf",
-      "noise_rgbaramp": "Farbverlauf (RGBA)"
+      "colorramp_rgb": "Farbverlauf",
+      "colorramp_rgba": "Farbe & Transparenz",
+      "colorramp_opacity": "Transparenz",
+      "color": "Farbe",
+      "color_opacity": "Farbe & Transparenz",
+      "emissive_intensity": "Emissionsintensität"
     },
     "controls": {
       "basic_data": {
@@ -343,30 +350,42 @@
         "$title": "Oberfläche",
         "bumpmap": "Bump mapping",
         "bumpmap_show": "Beulen anzeigen",
-        "bumpmap_strength": "Intensität der Beulen"
+        "bumpmap_strength": "Intensität",
+        "bumpmap_offset": "Versatz"
       },
-      "biomes": {
-        "$title": "Biomen",
-        "biomes_show": "Biomen anzeigen",
-        "texture_resolution": "Auflösung",
-        "temperature": "Temperaturgradient",
-        "humidity": "Feuchtigkeitsgradient",
-        "gradient_mode": "Verlaufsmodus",
-        "gradient_mode_realistic": "Realistisch",
-        "gradient_mode_poletopole": "Von Pol zu Pol",
-        "gradient_mode_fullnoise": "Rausch",
-        "biome_list": "Biome",
-        "biome_type": "Typ",
-        "height_min": "Min. Höhe",
-        "height_max": "Max. Höhe",
-        "temperature_min": "Min. Temperatur",
-        "temperature_max": "Max. Temperatur",
-        "humidity_min": "Min. Feuchtigkeit",
-        "humidity_max": "Max. Feuchtigkeit",
-        "smoothness": "Glättungsfaktor",
-        "emissive_override": "Emissionsgrad überschreiben",
-        "emissive_intensity": "Emissionsintensität"
+      "features": {
+        "$title": "",
+        "cracks": {
+          "$title": "Cracks",
+          "noise_base_detail": "Grund- und Detailrauschen",
+          "noise_limiter": "Limiter-Rauschen",
+          "noise_color": "Farbrauschen",
+          "distance_to_edge": "Randabstand",
+          "detail_noise_strength": "Detailrauschen Einfluss",
+          "underwater_strength": "Unterwasser Intensität"
+        },
+        "biomes": {
+          "$title": "Biomen",
+          "biomes_show": "Biomen anzeigen",
+          "texture_resolution": "Auflösung",
+          "temperature": "Temperaturgradient",
+          "humidity": "Feuchtigkeitsgradient",
+          "gradient_mode": "Verlaufsmodus",
+          "gradient_mode_realistic": "Realistisch",
+          "gradient_mode_poletopole": "Von Pol zu Pol",
+          "gradient_mode_fullnoise": "Rausch",
+          "biome_list": "Biome",
+          "biome_type": "Typ",
+          "height_min": "Min. Höhe",
+          "height_max": "Max. Höhe",
+          "temperature_min": "Min. Temperatur",
+          "temperature_max": "Max. Temperatur",
+          "humidity_min": "Min. Feuchtigkeit",
+          "humidity_max": "Max. Feuchtigkeit",
+          "smoothness": "Glättungsfaktor"
+        }
       },
+
       "clouds": {
         "$title": "Wolken",
         "clouds_show": "Wolken anzeigen",
@@ -402,9 +421,7 @@
         "transform": "Verformung",
         "transform_radius_inner": "Interner Radius",
         "transform_radius_outer": "Externer Radius",
-        "rgba": "Farbe & Transparenz",
-        "rgba_opacity": "Transparenz",
-        "rgba_colorramp": "Farbverlauf (RGBA)"
+        "rgba": "Farbe & Transparenz"
       },
       "postprocessing": {
         "$title": "Postprocessing",

@@ -34,9 +34,9 @@ import DialogElement from '@components/global/elements/DialogElement.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 
 const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
-defineExpose<ExportProgressDialogExposes>({ open, setProgress, setError });
+defineExpose<ExportProgressDialogExposes>({ open, setProgress, setDone, setError });
 
-const bakingSteps = 8;
+const bakingSteps = 9;
 const _progressStep: Ref<number> = ref(1);
 const _progressError: Ref<unknown> = ref(undefined);
 
@@ -45,14 +45,21 @@ function open() {
   _progressError.value = undefined;
   setProgress(1);
 }
+
 function setProgress(value: number) {
   if (_progressError.value) return;
-
   _progressStep.value = value;
-  if (value === bakingSteps) {
-    setTimeout(dialogRef.value!.close, 1000);
+  if (value >= bakingSteps) {
+    setDone();
   }
 }
+
+function setDone() {
+  if (_progressError.value) return;
+  _progressStep.value = bakingSteps;
+  setTimeout(dialogRef.value!.close, 1000);
+}
+
 function setError(value: unknown) {
   if (value instanceof Error) {
     _progressError.value = value + '\n';

@@ -91,12 +91,12 @@
 </template>
 
 <script setup lang="ts">
-import { EventBus } from '@core/event-bus';
+import { EDITOR_STATE } from '@core/editor/state/editor.state';
+import { UIEventBus } from '@core/ui-event-bus.ts';
 import * as MathUtils from '@core/utils/math-utils';
 import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
 import { ref, useTemplateRef, watch, type Ref } from 'vue';
 import LgvButton from '@/_lib/components/LgvButton.vue';
-import { EDITOR_STATE } from '@/core/state/editor.state';
 import AppResetConfirmDialog from '../dialogs/ResetConfirmDialog.vue';
 
 const editMode: Ref<boolean> = ref(false);
@@ -125,7 +125,7 @@ const saveFloating = useFloating(saveMenuTrigger, saveMenu, {
 // floating-ui end
 
 watch(
-  () => EventBus.clickEvent.value,
+  () => UIEventBus.clickEvent.value,
   (evt) => onWindowClick(evt!),
 );
 const $emit = defineEmits(['rename', 'reset', 'save', 'copy', 'gltf', 'random']);
@@ -152,10 +152,10 @@ function closeSaveMenuAndEmit(evt: 'rename' | 'reset' | 'save' | 'copy' | 'gltf'
 function toggleEditMode() {
   editMode.value = !editMode.value;
   if (editMode.value) {
-    EventBus.disableWindowEventListener('keydown');
+    UIEventBus.disableWindowEventListener('keydown');
     setTimeout(() => planetNameInput.value?.focus());
   } else {
-    EventBus.enableWindowEventListener('keydown');
+    UIEventBus.enableWindowEventListener('keydown');
     $emit('rename');
   }
 }

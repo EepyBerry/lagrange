@@ -65,6 +65,7 @@ defineProps<{ compactMode: boolean }>();
   #controls:not(.compact) {
     .sidebar {
       padding: 0.5rem;
+      width: auto;
 
       & > section {
         min-width: 0;

@@ -1,10 +1,12 @@
+import type { DataEventPayloadTypeMap } from '@core/editor/event/data-event.types.ts';
 import type { Color, Vector3 } from 'three';
+import { DataEventEndpoint } from '@core/editor/event/data-event-endpoint.ts';
 import { float, Fn, If, Loop, positionGeometry, pow, uniform, uv, vec2, vec3, vec4 } from 'three/tsl';
 import { AdditiveBlending, Node, NodeMaterial, UniformNode, Vector2 } from 'three/webgpu';
 import { circle, lensFlare, rndf } from '../features/lens-flare';
 import { TSLMaterial } from './tsl-material';
 
-export type LensFlareData = {
+export type LensFlareInitData = {
   lensPosition: Vector3;
   colorGain: Color;
   starPoints: number;
@@ -30,8 +32,19 @@ export type LensFlareUniforms = {
   additionalStreaks: UniformNode<'float', number>;
   streaksScale: UniformNode<'float', number>;
 };
-export class LensFlareTSLMaterial extends TSLMaterial<NodeMaterial, LensFlareData, LensFlareUniforms> {
-  uniformize(data: LensFlareData): LensFlareUniforms {
+export class LensFlareTSLMaterial extends TSLMaterial<NodeMaterial, LensFlareUniforms> {
+  public readonly dataEventEndpoint = new DataEventEndpoint<keyof DataEventPayloadTypeMap>('endpoint-lensflare');
+
+  constructor(initData: LensFlareInitData) {
+    super();
+    this.uniforms = this.initUniforms(initData);
+    this.dataEventEndpoint
+      .on('lensFlarePointsIntensity', (payload) => (this.uniforms.starPointsIntensity.value = payload.value))
+      .on('lensFlareGlareIntensity', (payload) => (this.uniforms.glareIntensity.value = payload.value))
+      .on('sunlightColor', (payload) => (this.uniforms.colorGain.value = payload.value));
+  }
+
+  initUniforms(data: LensFlareInitData): LensFlareUniforms {
     return {
       resolution: uniform(new Vector2(window.innerWidth, window.innerHeight)).setName('uResolution'),
       opacity: uniform(1).setName('uOpacity'),
@@ -72,7 +85,7 @@ export class LensFlareTSLMaterial extends TSLMaterial<NodeMaterial, LensFlareDat
 
       If(this.uniforms.additionalStreaks.greaterThan(0), () => {
         const circColor = vec3(0.9, 0.2, 0.1).toVar('circColor');
-        Loop({ start: 0, end: 10, condition: '<' }, ({ i }) => {
+        Loop({ start: 0, end: 10, condition: '<' }, ({ i }: { i: Node<'int'> }) => {
           finalColor.addAssign(
             circle(
               localUv,
@@ -84,7 +97,7 @@ export class LensFlareTSLMaterial extends TSLMaterial<NodeMaterial, LensFlareDat
                 .add(0.2 - 0.5),
               this.uniforms.lensPosition.xy,
               this.uniforms.streaksScale,
-              this.uniforms.colorGain,
+              this.uniforms.colorGain.rgb,
             ),
           );
         });

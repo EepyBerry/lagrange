@@ -9,7 +9,7 @@ export const rand = /*@__PURE__*/ Fn(([i_n]: [Node<'float'>]) => {
   inputs: [{ name: 'n', type: 'float' }],
 });
 
-export const noise1 = /*@__PURE__*/ Fn(([i_p]: [Node<'vec3'>]) => {
+export const noise1 = /*@__PURE__*/ Fn(([i_p]: [Node<'float'>]) => {
   const fl = float(floor(i_p)).toVar();
   const fc = float(fract(i_p)).toVar();
   return mix(rand(fl), rand(fl.add(1)), fc);

@@ -24,7 +24,7 @@
             <iconify-icon mode="svg" icon="logos:threejs" width="3rem" style="fill: var(--lg-text)" />
             <div>
               <p>{{ $t('dialog.about.prefix_engine') }} <span class="highlight">three.js</span></p>
-              <LgvChip class="contrast">r183</LgvChip>
+              <LgvChip class="contrast">r184</LgvChip>
             </div>
           </div>
         </div>

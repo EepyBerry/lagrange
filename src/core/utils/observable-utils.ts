@@ -1,5 +1,5 @@
 /**
- * Utility type for events
+ * Utility type for event
  */
 export type ObservableSource = Observable | ObservableRelay;
 export type ObservableNotifyFunction = (eventOpts?: ObservableEventOptions) => void;
@@ -28,7 +28,7 @@ export abstract class Observable {
 }
 
 /**
- * Used for children of observables to relay events to the parent's subscribers.
+ * Used for children of observables to relay event to the parent's subscribers.
  */
 export abstract class ObservableRelay {
   public readonly keyPrefix: string;

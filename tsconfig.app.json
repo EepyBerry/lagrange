@@ -11,6 +11,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@core/*": ["./src/core/*"],
+      "@tsl/*": ["./src/core/tsl/*"],
       "@assets/*": ["./src/assets/*"],
       "@components/*": ["./src/components/*"]
     },

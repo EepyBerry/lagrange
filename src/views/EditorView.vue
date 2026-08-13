@@ -25,11 +25,24 @@
 import type { EditorInitErrorDialogExposes } from '@components/editor/dialogs/EditorInitErrorDialog.types.ts';
 import type { ExportProgressDialogExposes } from '@components/editor/dialogs/ExportProgressDialog.types.ts';
 import type { WarnSaveDialogExposes } from '@components/editor/dialogs/WarnSaveDialog.types.ts';
-import { EventBus } from '@core/event-bus';
+import {
+  bootstrapEditor,
+  dollyCamera,
+  exportPlanetPreview,
+  exportPlanetToGLTF,
+  randomizePlanet,
+  resetPlanet,
+  takePlanetScreenshot,
+  unloadEditor,
+  updateCameraRendering,
+} from '@core/editor/editor.service.ts';
+import { EDITOR_STATE, EditorStatusCode } from '@core/editor/state/editor.state';
 import * as Globals from '@core/globals';
 import { COMPACT_CONTROLS_HEIGHT } from '@core/globals';
 import PlanetData from '@core/models/planet/planet-data.model.ts';
+import { resetPlanetData } from '@core/models/planet/planet-data.utils.ts';
 import * as DexieService from '@core/services/dexie.service';
+import { UIEventBus } from '@core/ui-event-bus.ts';
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
 import { sleep } from '@core/utils/utils';
 import { useHead } from '@unhead/vue';
@@ -43,18 +56,6 @@ import EditorErrorDialog from '@/components/editor/dialogs/EditorInitErrorDialog
 import ViewHeader from '@/components/global/ViewHeader.vue';
 import WebGL from '@/core/capabilities/WebGL';
 import WebGPU from '@/core/capabilities/WebGPU';
-import {
-  bootstrapEditor,
-  dollyCamera,
-  exportPlanetPreview,
-  exportPlanetToGLTF,
-  randomizePlanet,
-  resetPlanet,
-  takePlanetScreenshot,
-  unloadEditor,
-  updateCameraRendering,
-} from '@/core/services/editor.service';
-import { EDITOR_STATE, EditorStatusCode } from '@/core/state/editor.state';
 import { idb, type IDBPlanet, KeyBindingAction } from '@/dexie.config';
 
 const WarnSaveDialog = defineAsyncComponent(() => import('@components/editor/dialogs/WarnSaveDialog.vue'));
@@ -93,10 +94,10 @@ onUnmounted(() => {
   if (loadedCorrectly) {
     unloadEditor();
   }
-  EventBus.deregisterWindowEventListener('click', onWindowClick);
-  EventBus.deregisterWindowEventListener('keydown', onWindowKeydown);
-  EventBus.deregisterWindowEventListener('resize', computeViewRendering);
-  EventBus.deregisterWindowEventListener('deviceorientation', computeViewRenderingDeferred);
+  UIEventBus.deregisterWindowEventListener('click', onWindowClick);
+  UIEventBus.deregisterWindowEventListener('keydown', onWindowKeydown);
+  UIEventBus.deregisterWindowEventListener('resize', computeViewRendering);
+  UIEventBus.deregisterWindowEventListener('deviceorientation', computeViewRenderingDeferred);
 });
 onBeforeRouteLeave(() => {
   if (EDITOR_STATE.value.planetEditedFlag) {
@@ -180,7 +181,7 @@ async function initData() {
     const idbPlanetData = await idb.planets.filter((p) => p.id === route.params.id).first();
     if (!idbPlanetData) {
       console.warn(`<Lagrange> Cannot find planet with ID: ${route.params.id}`);
-      EDITOR_STATE.value.planetData.reset();
+      resetPlanetData(EDITOR_STATE.value.planetData);
       throw new Error(`Planet with ID [${route.params.id}] doesn't exist.`);
     }
     $planetEntityId.value = idbPlanetData.id;
@@ -201,16 +202,16 @@ async function initCanvas() {
 
   // Bootstrap editor service
   await bootstrapEditor(sceneRoot.value!, canvasSize.width, canvasSize.height, globalThis.devicePixelRatio);
-  EventBus.registerWindowEventListener('click', onWindowClick);
-  EventBus.registerWindowEventListener('keydown', onWindowKeydown);
-  EventBus.registerWindowEventListener('resize', computeViewRendering);
-  EventBus.registerWindowEventListener('deviceorientation', computeViewRenderingDeferred);
+  UIEventBus.registerWindowEventListener('click', onWindowClick);
+  UIEventBus.registerWindowEventListener('keydown', onWindowKeydown);
+  UIEventBus.registerWindowEventListener('resize', computeViewRendering);
+  UIEventBus.registerWindowEventListener('deviceorientation', computeViewRenderingDeferred);
 }
 
 // ------------------------------------------------------------------------------------------------
 
 async function onWindowClick(event: MouseEvent) {
-  EventBus.sendClickEvent(event);
+  UIEventBus.sendClickEvent(event);
 }
 async function onWindowKeydown(event: KeyboardEvent) {
   const keyBinds = await idb.keyBindings.toArray();
@@ -310,16 +311,16 @@ async function savePlanet(asCopy: boolean = false) {
   showSpinner.value = false;
   router.replace(`/planet-editor/${idbData.id}`);
   if (previewDataString.length > 0) {
-    EventBus.sendToastEvent('success', 'toast.save_success', 3000);
+    UIEventBus.sendToastEvent('success', 'toast.save_success', 3000);
   } else {
-    EventBus.sendToastEvent('warn', 'toast.save_partial_no_preview', 3000);
+    UIEventBus.sendToastEvent('warn', 'toast.save_partial_no_preview', 3000);
   }
 }
 
 function exportPlanet() {
   exportProgressDialogRef.value!.open();
   exportProgressDialogRef.value!.setProgress(1);
-  setTimeout(() => exportPlanetToGLTF(exportProgressDialogRef.value!), 0);
+  exportPlanetToGLTF(exportProgressDialogRef.value!);
 }
 </script>
 

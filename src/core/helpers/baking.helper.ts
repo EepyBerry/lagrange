@@ -1,10 +1,6 @@
 import * as Globals from "@core/globals";
 import * as ComponentHelper from "@core/helpers/component.helper";
-
-import type PlanetData from "@core/models/planet/planet-data.model.ts";
-import { renderToCanvas } from "@core/utils/render-utils";
 import {
-  CanvasTexture,
   DataTexture,
   Mesh,
   OrthographicCamera,
@@ -13,125 +9,114 @@ import {
   SRGBColorSpace,
   Texture,
   Vector2,
-  type WebGPURenderer,
+  WebGPURenderer,
 } from "three/webgpu";
-import { PlanetTSLMaterial } from "../tsl/materials/planet.tslmat";
-import { PlanetDataConverter } from "../models/converters/planet-data.converter";
-import { CloudsTSLMaterial } from "../tsl/materials/clouds.tslmat";
-import { RingTSLMaterial } from "../tsl/materials/ring.tslmat";
-import { CloudsDataConverter } from "../models/converters/clouds-data.converter";
-import { RingDataConverter } from "../models/converters/ring-data.converter";
+import { BakingPlanetSurfaceTSLMaterial } from "@tsl/materials/baking/planet-surface.baking.tslmat.ts";
+import type { BakingSceneObjects, EditorBackendType } from "@core/types.ts";
+import type { SerializedPlanetData } from "@core/editor/workers/worker-serializer.types.ts";
+import {
+  BakingPlanetMetallicRoughnessTSLMaterial
+} from "@tsl/materials/baking/planet-metallic-roughness.baking.tslmat.ts";
+import { BakingPlanetEmissivityTSLMaterial } from "@tsl/materials/baking/planet-emissivity.baking.tslmat.ts";
+import { BakingPlanetHeightMapTSLMaterial } from "@tsl/materials/baking/planet-heightmap.baking.tslmat.ts";
+import { BakingPlanetNormalMapTSLMaterial } from "@tsl/materials/baking/planet-normalmap.baking.tslmat.ts";
+import { BakingCloudsTSLMaterial } from "@tsl/materials/baking/clouds.baking.tslmat.ts";
+import { BakingRingTSLMaterial } from "@tsl/materials/baking/ring.baking.tslmat.ts";
 
-export function createBakingPlanet(data: PlanetData, surfaceTex: DataTexture, biomeTex: DataTexture): Mesh {
+export function createBakingPlanet(data: SerializedPlanetData, textures: Texture[]): Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality);
   geometry.computeTangents();
-
-  const dataConverter = new PlanetDataConverter(data).withSurfaceTexture(surfaceTex).withBiomesTexture(biomeTex);
-  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert());
-  const mesh = new Mesh(geometry, tslMaterial.buildSurfaceBakeMaterial());
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
+  const tslMaterial = new BakingPlanetSurfaceTSLMaterial(data, textures);
+  const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.name = Globals.MESH_NAME_PLANET;
   return mesh;
 }
 
-export function createBakingMetallicRoughnessMap(data: PlanetData): Mesh {
+export function createBakingMetallicRoughnessMap(data: SerializedPlanetData): Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality);
   geometry.computeTangents();
-
-  const dataConverter = new PlanetDataConverter(data);
-  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert());
-  const mesh = new Mesh(geometry, tslMaterial.buildMetallicRoughnessBakeMaterial());
+  const tslMaterial = new BakingPlanetMetallicRoughnessTSLMaterial(data);
+  const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.name = Globals.MESH_NAME_METALLICROUGHNESSMAP;
   return mesh;
 }
 
-export function createBakingEmissivityMap(
-  data: PlanetData,
-  surfaceTex: DataTexture,
-  biomesTex: DataTexture,
-  biomeEmissiveTex: DataTexture,
-): Mesh {
+export function createBakingEmissivityMap(data: SerializedPlanetData, textures: Texture[]): Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality);
   geometry.computeTangents();
 
-  const dataConverter = new PlanetDataConverter(data)
-    .withSurfaceTexture(surfaceTex)
-    .withBiomesTexture(biomesTex)
-    .withBiomesEmissiveTexture(biomeEmissiveTex);
-  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert());
-  const mesh = new Mesh(geometry, tslMaterial.buildEmissivityBakeMaterial());
+  const tslMaterial = new BakingPlanetEmissivityTSLMaterial(data, textures);
+  const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.name = Globals.MESH_NAME_EMISSIVITYMAP;
   return mesh;
 }
 
-export function createBakingHeightMap(data: PlanetData): Mesh {
+export function createBakingHeightMap(data: SerializedPlanetData): Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality);
   geometry.computeTangents();
 
-  const dataConverter = new PlanetDataConverter(data);
-  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert());
-  const mesh = new Mesh(geometry, tslMaterial.buildHeightMapBakeMaterial());
+  const tslMaterial = new BakingPlanetHeightMapTSLMaterial(data);
+  const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.name = Globals.MESH_NAME_HEIGHTMAP;
   return mesh;
 }
 
-export function createBakingNormalMap(data: PlanetData, heightMapTex: Texture): Mesh {
-  const dataConverter = new PlanetDataConverter(data).withBakingSurfaceHeightMapTexture(heightMapTex);
-  const tslMaterial = new PlanetTSLMaterial(dataConverter.convert());
-  const mesh = new Mesh(new PlaneGeometry(), tslMaterial.buildNormalMapBakeMaterial());
+export async function createBakingNormalMap(data: SerializedPlanetData, textures: Texture[]): Promise<Mesh> {
+  const tslMaterial = new BakingPlanetNormalMapTSLMaterial(data, textures);
+  const mesh = new Mesh(new PlaneGeometry(), tslMaterial.buildMaterial());
   mesh.name = Globals.MESH_NAME_NORMALMAP;
   return mesh;
 }
 
-export function createBakingClouds(data: PlanetData, texture: Texture): Mesh {
+export function createBakingClouds(data: SerializedPlanetData, textures: Texture[]): Mesh {
   const cloudHeight = data.cloudsHeight;
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality, cloudHeight);
 
-  const dataConverter = new CloudsDataConverter(data, texture);
-  const tslMaterial = new CloudsTSLMaterial(dataConverter.convert());
-  const mesh = new Mesh(geometry, tslMaterial.buildBakeMaterial());
+  const tslMaterial = new BakingCloudsTSLMaterial(data, textures);
+  const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.name = Globals.MESH_NAME_CLOUDS;
   return mesh;
 }
 
-export function createBakingRing(data: PlanetData, texture: Texture, paramsIndex: number): Mesh {
+export function createBakingRing(data: SerializedPlanetData, textures: Texture[], paramsIndex: number): Mesh {
   const ringParams = data.ringsParams[paramsIndex];
   const geometry = ComponentHelper.createRingGeometryComponent(
     data.planetMeshQuality,
     ringParams.innerRadius,
     ringParams.outerRadius,
   );
-  const dataConverter = new RingDataConverter(ringParams, texture);
-  const material = new RingTSLMaterial(dataConverter.convert());
-  const mesh = new Mesh(geometry, material.buildBakeMaterial());
+  const material = new BakingRingTSLMaterial(ringParams, textures);
+  const mesh = new Mesh(geometry, material.buildMaterial());
   mesh.name = ringParams.id;
   return mesh;
 }
 
 // ------------------------------------------------------------------------------------------------
-type BakingObjects = {
-  renderer: WebGPURenderer;
-  camera: OrthographicCamera;
-  renderTarget: RenderTarget;
-};
 /**
  * Creates the main baking objects, as well as a base RenderTarget
+ * @param renderingBackend the rendering backend, WebGL or WebGPU
  * @param width device width in pixels
  * @param height device height in pixels
  * @param pixelRatio device pixel ratio
  * @returns Scene, WebGPURenderer, OrthographicCamera, and RenderTarget root objects
  */
-export async function createBakingObjects(width: number, height: number, pixelRatio: number): Promise<BakingObjects> {
+export function createBakingObjects(renderingBackend: EditorBackendType, width: number, height: number, pixelRatio: number): BakingSceneObjects {
+  const renderer = new WebGPURenderer({
+    antialias: true,
+    alpha: true,
+    forceWebGL: renderingBackend == "webgl",
+    canvas: new OffscreenCanvas(width, height),
+  });
+  renderer.setPixelRatio(pixelRatio);
   return {
-    renderer: await ComponentHelper.createRenderer(width, height, pixelRatio),
+    renderer,
     camera: ComponentHelper.createOrthographicCamera(width, height, 0, 1),
     renderTarget: new RenderTarget(width, height, { colorSpace: SRGBColorSpace }),
   };
 }
 
 /**
- * Asynchronously bakes a model's Material/CustomShaderMaterial into a texture
+ * Asynchronously bakes a model's material(s) into a texture
  * @remarks Uses TextureLoader
  * @param renderer WebGPURenderer
  * @param camera orthographic camera
@@ -144,7 +129,7 @@ export async function bakeMesh(
   camera: OrthographicCamera,
   renderTarget: RenderTarget,
   mesh: Mesh,
-): Promise<CanvasTexture<OffscreenCanvas>> {
+): Promise<DataTexture> {
   const size = new Vector2();
   renderer.getSize(size);
 
@@ -155,14 +140,10 @@ export async function bakeMesh(
   renderer.setRenderTarget(renderTarget);
   renderer.render(mesh, camera);
 
-  /* await renderer!.debug.getShaderAsync(
-    new THREE.Scene(),
-    camera,
-    mesh,
-  ).then((data) => console.log(data.fragmentShader)) */
-
   rawBuffer.set(await renderer.readRenderTargetPixelsAsync(renderTarget, 0, 0, size.x, size.y));
   renderer.setRenderTarget(null);
 
-  return new CanvasTexture(renderToCanvas(renderer, rawBuffer, size.x, size.y));
+  const dt = new DataTexture(rawBuffer, size.x, size.y);
+  dt.needsUpdate = true;
+  return dt;
 }

@@ -1,5 +1,5 @@
+import type { DataEventEmitOptions } from '@core/editor/event/data-event.types.ts';
 import { clampedPRNG } from '@core/utils/math-utils.ts';
-import { ObservableRelay, type ObservableNotifyFunction } from '@core/utils/observable-utils.ts';
 import { sha1 } from 'crypto-hash';
 import { nanoid } from 'nanoid';
 import { Color, type ColorRepresentation } from 'three';
@@ -62,20 +62,15 @@ export class ColorRampStep {
   }
 }
 
-export class ColorRamp extends ObservableRelay {
+export class ColorRamp {
+  private readonly _eventEmitOpts: DataEventEmitOptions;
   private _hash: string = ''; // internal hash for tracking changes
-  private _maxSize: number = 16;
+  private readonly _maxSize: number = 16;
   private _lockedSize: boolean = true;
   readonly _steps: ColorRampStep[] = [];
 
-  constructor(
-    keyPrefix: string,
-    notifyFunc: ObservableNotifyFunction,
-    steps: ColorRampStep[],
-    maxSize: number = 16,
-    lockedSize = false,
-  ) {
-    super(keyPrefix, notifyFunc);
+  constructor(eventEmitOpts: DataEventEmitOptions, steps: ColorRampStep[], maxSize: number = 16, lockedSize = false) {
+    this._eventEmitOpts = eventEmitOpts;
     this._maxSize = maxSize;
     this._steps = steps;
     this._lockedSize = lockedSize;
@@ -89,25 +84,19 @@ export class ColorRamp extends ObservableRelay {
     return this._steps;
   }
 
-  public get maxSize() {
-    return this._maxSize;
-  }
-  public get lockedSize(): boolean {
-    return this._lockedSize;
-  }
-  public set lockedSize(value: boolean) {
-    this._lockedSize = value;
-  }
-
   // Utility functions
 
   private async generateHash() {
-    this._hash = await sha1(JSON.stringify(this, (k, v) => (k === '_changedProps' ? undefined : v)));
+    this._hash = await sha1(JSON.stringify(this));
   }
 
-  public sortSteps(markChange: boolean = true) {
+  public sortSteps() {
     this._steps.sort((a, b) => a.factor - b.factor);
-    if (markChange) this.relayNotify({ key: this.keyPrefix, data: { ramp: this } });
+    this._eventEmitOpts.endpointRef.emit('colorRampUpdate', {
+      instanceId: this._eventEmitOpts.instanceId,
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
     this.generateHash();
   }
 
@@ -116,8 +105,12 @@ export class ColorRamp extends ObservableRelay {
       throw new Error('(ColorRamp) Maximum size reached');
     }
     this._steps.push(new ColorRampStep('black', this._steps.at(-2)!.factor));
-    this.sortSteps();
-    this.relayNotify({ key: this.keyPrefix, data: { ramp: this } });
+    this._steps.sort((a, b) => a.factor - b.factor);
+    this._eventEmitOpts.endpointRef.emit('colorRampUpdate', {
+      instanceId: this._eventEmitOpts.instanceId,
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
     this.generateHash();
   }
 
@@ -138,7 +131,11 @@ export class ColorRamp extends ObservableRelay {
     this._steps[index].color.set(options.color ? options.color : this._steps[index].color);
     this._steps[index].alpha = options.alpha ?? this._steps[index].alpha;
     this._steps[index].factor = options.factor ?? this._steps[index].factor;
-    this.relayNotify({ key: this.keyPrefix, data: { ramp: this } });
+    this._eventEmitOpts.endpointRef.emit('colorRampUpdate', {
+      instanceId: this._eventEmitOpts.instanceId,
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
     this.generateHash();
   }
 
@@ -152,7 +149,11 @@ export class ColorRamp extends ObservableRelay {
       throw new Error('Cannot find step with ID ' + stepId);
     }
     this._steps.splice(index, 1);
-    this.relayNotify({ key: this.keyPrefix });
+    this._eventEmitOpts.endpointRef.emit('colorRampUpdate', {
+      instanceId: this._eventEmitOpts.instanceId,
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
     this.generateHash();
   }
 
@@ -166,8 +167,12 @@ export class ColorRamp extends ObservableRelay {
       return;
     }
     this._steps.splice(0);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this._steps.push(...data.map((s: any) => ColorRampStep.newWithAlpha(s._color, s._alpha, s._factor, s._isBound)));
+    this._steps.push(...data.map((s) => ColorRampStep.newWithAlpha(s._color, s._alpha, s._factor, s._isBound)));
+    this._eventEmitOpts.endpointRef.emit('colorRampUpdate', {
+      instanceId: this._eventEmitOpts.instanceId,
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
     this.generateHash();
   }
 
@@ -180,7 +185,12 @@ export class ColorRamp extends ObservableRelay {
         ColorRampStep.newWithAlpha(clampedPRNG(0, 1) * 0xffffff, clampedPRNG(0, 1), factor, i === 0 || i === max - 1),
       );
     }
-    this.sortSteps(false);
+    this._steps.sort((a, b) => a.factor - b.factor);
+    this._eventEmitOpts.endpointRef.emit('colorRampUpdate', {
+      instanceId: this._eventEmitOpts.instanceId,
+      context: this._eventEmitOpts.context,
+      value: this,
+    });
     this.generateHash();
   }
 }

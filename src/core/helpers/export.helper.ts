@@ -1,25 +1,21 @@
-import saveAs from 'file-saver'
-import { type Mesh } from 'three'
-import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js'
-import { setObjectValue } from '../utils/utils'
-
-const GLTF_EXPORTER = new GLTFExporter()
+import { type Mesh } from 'three';
+import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+import { setObjectValue } from '../utils/utils';
 
 /**
  * Exports a list of meshes to a glTF file, which is then automatically downloaded to the user's device
+ * @param exporter instance of GLTFExporter
  * @param meshes meshes to export, usually the full planet w/o atmosphere
- * @param filename name of the glTF file (without .gltf extension)
  */
-export function exportMeshesToGLTF(meshes: Mesh[], filename: string): void {
-  GLTF_EXPORTER.parse(
-    meshes,
-    (data) => {
-      console.info('<Lagrange> Exported meshes to GLTF successfully!')
-      const gltfString = JSON.stringify(patchGLTFProperties(data as Record<string, unknown>))
-      saveAs(new Blob([gltfString]), `${filename}.gltf`)
-    },
-    (err) => console.error(err),
-  )
+export async function exportMeshesToGLTF(exporter: GLTFExporter, meshes: Mesh[]): Promise<string> {
+  try {
+    const gltf = await exporter.parseAsync(meshes, { embedImages: true });
+    const gltfString = JSON.stringify(patchGLTFProperties(gltf as Record<string, unknown>));
+    return URL.createObjectURL(new Blob([gltfString]));
+  } catch (err) {
+    console.error(err);
+    return '';
+  }
 }
 
 /**
@@ -28,6 +24,6 @@ export function exportMeshesToGLTF(meshes: Mesh[], filename: string): void {
  * @returns the patched object
  */
 function patchGLTFProperties(gltf: Record<string, unknown>): Record<string, unknown> {
-  setObjectValue(gltf, 'materials[0].emissiveFactor', [1,1,1]) // emissiveFactor; isn't set when emissiveMap and/or emissiveNode are already set
-  return gltf
+  setObjectValue(gltf, 'materials[0].emissiveFactor', [1,1,1]); // emissiveFactor; isn't set when emissiveMap and/or emissiveNode are already set
+  return gltf;
 }

@@ -226,11 +226,12 @@
       "step_1": "Preparing",
       "step_2": "Baking surface texture",
       "step_3": "Baking surface PBR",
-      "step_4": "Baking surface normals",
-      "step_5": "Baking clouds texture",
-      "step_6": "Baking ring system textures",
-      "step_7": "Finalizing",
-      "step_8": "Done!",
+      "step_4": "Baking surface emissivity",
+      "step_5": "Baking surface normals",
+      "step_6": "Baking clouds texture",
+      "step_7": "Baking ring system textures",
+      "step_8": "Finalizing",
+      "step_9": "Done!",
       "step_failed": "failed!"
     },
     "reset": {
@@ -298,9 +299,15 @@
       "noise_fbm_amplitude": "Amplitude",
       "noise_fbm_lacunarity": "Lacunarity",
       "noise_fbm_octaves": "Octaves",
+      "noise_voronoi_scale": "Scale",
+      "noise_voronoi_jitter": "Jitter",
       "noise_color": "Color",
-      "noise_rgbramp": "Color ramp",
-      "noise_rgbaramp": "Color/alpha ramp"
+      "colorramp_rgb": "Color ramp",
+      "colorramp_rgba": "Color/alpha ramp",
+      "colorramp_opacity": "Opacity ramp",
+      "color": "Color",
+      "color_opacity": "Color & opacity",
+      "emissive_intensity": "Emissive intensity"
     },
     "controls": {
       "basic_data": {
@@ -343,29 +350,40 @@
         "$title": "Surface",
         "bumpmap": "Bump map",
         "bumpmap_show": "Show bumps",
-        "bumpmap_strength": "Bump strength"
+        "bumpmap_strength": "Strength",
+        "bumpmap_offset": "Offset"
       },
-      "biomes": {
-        "$title": "Biomes",
-        "biomes_show": "Show biomes",
-        "texture_resolution": "Resolution",
-        "temperature": "Temperature gradient",
-        "humidity": "Humidity gradient",
-        "gradient_mode": "Gradient mode",
-        "gradient_mode_realistic": "Realistic",
-        "gradient_mode_poletopole": "Pole-to-pole",
-        "gradient_mode_fullnoise": "Full noise",
-        "biome_list": "Biomes",
-        "biome_type": "Type",
-        "height_min": "Min. height",
-        "height_max": "Max. height",
-        "temperature_min": "Min. temperature",
-        "temperature_max": "Max. temperature",
-        "humidity_min": "Min. humidity",
-        "humidity_max": "Max. humidity",
-        "smoothness": "Smoothness",
-        "emissive_override": "Override emissivity",
-        "emissive_intensity": "Emissive intensity"
+      "features": {
+        "$title": "Features",
+        "cracks": {
+          "$title": "Cracks",
+          "noise_base_detail": "Base & detail noise",
+          "noise_limiter": "Limiter noise",
+          "noise_color": "Color noise",
+          "distance_to_edge": "Distance to edge",
+          "detail_noise_strength": "Detail noise strength",
+          "underwater_strength": "Underwater strength"
+        },
+        "biomes": {
+          "$title": "Biomes",
+          "biomes_show": "Show biomes",
+          "texture_resolution": "Resolution",
+          "temperature": "Temperature gradient",
+          "humidity": "Humidity gradient",
+          "gradient_mode": "Gradient mode",
+          "gradient_mode_realistic": "Realistic",
+          "gradient_mode_poletopole": "Pole-to-pole",
+          "gradient_mode_fullnoise": "Noise",
+          "biome_list": "Biomes",
+          "biome_type": "Type",
+          "height_min": "Min. height",
+          "height_max": "Max. height",
+          "temperature_min": "Min. temperature",
+          "temperature_max": "Max. temperature",
+          "humidity_min": "Min. humidity",
+          "humidity_max": "Max. humidity",
+          "smoothness": "Smoothness"
+        }
       },
       "clouds": {
         "$title": "Clouds",
@@ -401,10 +419,7 @@
         "ring_list": "Rings",
         "transform": "Transform",
         "transform_radius_inner": "Inner radius",
-        "transform_radius_outer": "Outer radius",
-        "rgba": "Color & opacity",
-        "rgba_opacity": "Opacity",
-        "rgba_colorramp": "Color ramp (RGBA)"
+        "transform_radius_outer": "Outer radius"
       },
       "postprocessing": {
         "$title": "Post-processing",

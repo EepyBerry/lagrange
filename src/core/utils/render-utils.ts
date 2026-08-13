@@ -1,8 +1,7 @@
 import type { ColorRamp } from '@core/models/planet/color-ramp.model.ts';
+import type { EditorBackendType } from '@core/types.ts';
 import type { WebGPURenderer } from 'three/webgpu';
-import { type TypedArray } from 'three';
-
-type EditorBackendType = 'webgl' | 'webgpu';
+import { DataTexture, type TypedArray } from 'three';
 
 /**
  * Renders a buffer onto an OffscreenCanvas
@@ -30,7 +29,7 @@ export function renderToCanvas(renderer: WebGPURenderer, buf: TypedArray, w: num
  * @param h height of the resulting image
  * @returns the flipped buffer
  */
-export function flipBufferY(buffer: Uint8Array, w: number, h: number): Uint8Array {
+export function flipBufferY(buffer: Uint8Array, w: number, h: number): Uint8Array<ArrayBuffer> {
   const length = w * h * 4;
   const row = w * 4;
   const end = (h - 1) * row;
@@ -75,6 +74,10 @@ export function alphaToGrayscale(alpha: number, full = false): string {
   return full ? `#${hex + hex + hex}` : hex;
 }
 
+/**
+ * Converts a {@link Blob} instance to a data URL
+ * @param blob the blob to convert
+ */
 export async function blobToDataURL(blob: Blob): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -82,4 +85,16 @@ export async function blobToDataURL(blob: Blob): Promise<string> {
     reader.onerror = reject;
     reader.readAsDataURL(blob);
   });
+}
+
+/**
+ * Creates an instance of {@link DataTexture} from the given parameters
+ * @param buffer the buffer to store in the texture
+ * @param width texture width
+ * @param height texture height
+ */
+export function toDataTexture(buffer: Uint8Array, width: number, height: number) {
+  const dt = new DataTexture(buffer, width, height);
+  dt.needsUpdate = true;
+  return dt;
 }
