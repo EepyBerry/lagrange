@@ -5,6 +5,7 @@
       @save="savePlanet"
       @copy="savePlanet(true)"
       @reset="resetPlanet"
+      @extract-textures="exportPlanetTextures"
       @gltf="exportPlanet"
       @random="randPlanet"
     />
@@ -30,6 +31,7 @@ import {
   dollyCamera,
   exportPlanetPreview,
   exportPlanetToGLTF,
+  extractPlanetTextures,
   randomizePlanet,
   resetPlanet,
   takePlanetScreenshot,
@@ -315,6 +317,10 @@ async function savePlanet(asCopy: boolean = false) {
   } else {
     UIEventBus.sendToastEvent('warn', 'toast.save_partial_no_preview', 3000);
   }
+}
+
+function exportPlanetTextures() {
+  extractPlanetTextures();
 }
 
 function exportPlanet() {

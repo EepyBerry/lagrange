@@ -10,6 +10,7 @@ import { clamp } from 'three/src/math/MathUtils.js';
 
 export type TextureWorkerOperation = 'raw' | 'color-ramp' | 'biomes' | 'biomes-emissive';
 export type TextureWorkerInput<OperationData> = {
+  type: 'texture-update';
   id: string;
   width: number;
   height: number;
@@ -31,8 +32,18 @@ ctx.imageSmoothingEnabled = false;
 const layerCtx: OffscreenCanvasRenderingContext2D = layerCanvas.getContext('2d', { willReadFrequently: true })!;
 layerCtx.imageSmoothingEnabled = false;
 
-self.onmessage = (msg) => execTextureUpdate(msg.data);
+self.onmessage = (msg: MessageEvent<TextureWorkerInput<unknown>>) => {
+  if (msg.data && msg.data.type === 'texture-update') {
+    execTextureUpdate(msg.data);
+  }
+};
 function execTextureUpdate(data: TextureWorkerInput<unknown>): void {
+  if (!data.width || !data.height || data.width <= 0 || data.height <= 0) {
+    // TODO use a dedicated export dialog
+    console.error(`Invalid texture resolution: ${data.width} / ${data.height}`);
+    return;
+  }
+
   canvas.width = data.width;
   canvas.height = data.height;
   layerCanvas.width = data.width;
