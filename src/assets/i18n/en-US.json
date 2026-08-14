@@ -232,7 +232,8 @@
       "license": "ISTSL-NR 1.0 License"
     },
     "export_progress": {
-      "$title": "Exporting planet",
+      "$title_textures": "Extracting textures",
+      "$title_gltf": "Exporting planet",
       "step_1": "Preparing",
       "step_2": "Baking surface texture",
       "step_3": "Baking surface PBR",

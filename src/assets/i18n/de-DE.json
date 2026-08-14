@@ -232,7 +232,8 @@
       "license": "Lizenz ISTSL-NR 1.0"
     },
     "export_progress": {
-      "$title": "Export im Gange",
+      "$title_textures": "Textur-Export im Gange",
+      "$title_gltf": "Planet-Export im Gange",
       "step_1": "Vorbereitung",
       "step_2": "Oberfläche Baking",
       "step_3": "Rendering-Daten Baking",

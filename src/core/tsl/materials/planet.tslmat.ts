@@ -510,7 +510,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord');
-    let colour = vec3(this.uniforms.arrayTexture.depth(int(0)).sample(texCoord).xyz);
+    const colour = vec3(this.uniforms.arrayTexture.depth(int(0)).sample(texCoord).xyz);
 
     // Render biomes
     const biomeTexCoord = vec2(0).toVar('biomeTexCoord');

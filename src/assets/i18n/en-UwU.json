@@ -232,7 +232,8 @@
       "license": "ISTSL-NR 1.0 Wicense"
     },
     "export_progress": {
-      "$title": "Expowting pwanyet!!!",
+      "$title_textures": "Extwacting textuwes!!!",
+      "$title_gltf": "Expowting pwanyet!!!",
       "step_1": "Pwepawing",
       "step_2": "Baking suwface textuwe",
       "step_3": "Baking suwface PBR",

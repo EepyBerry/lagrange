@@ -951,6 +951,8 @@ export default class PlanetData {
   // |            Data handling functions             |
   // --------------------------------------------------
 
+  // TODO replace any with Serialized* classes, needs a data loading refactor first
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public addBiome(existingData?: any): BiomeParameters {
     const newBiome = new BiomeParameters(
       { endpointRef: this.dataEventEndpoint, context: 'biomes' },
@@ -975,6 +977,8 @@ export default class PlanetData {
     this.dataEventEndpoint.emit('biomeAdd', { value: biomes[biomes.length - 1] });
   }
 
+  // TODO replace any with Serialized* classes, needs a data loading refactor first
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public addBiomesFromData(data: any[]): void {
     data.forEach((params) => {
       const newBiome = new BiomeParameters(
@@ -1037,6 +1041,8 @@ export default class PlanetData {
     this.dataEventEndpoint.emit('biomesClear', { value: undefined });
   }
 
+  // TODO replace any with Serialized* classes, needs a data loading refactor first
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public addRing(existingData?: any): RingParameters {
     const newRing = new RingParameters(
       { endpointRef: this.dataEventEndpoint, context: 'ring' },

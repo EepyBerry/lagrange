@@ -320,11 +320,13 @@ async function savePlanet(asCopy: boolean = false) {
 }
 
 function exportPlanetTextures() {
-  extractPlanetTextures();
+  exportProgressDialogRef.value!.open('textures');
+  exportProgressDialogRef.value!.setProgress(1);
+  extractPlanetTextures(exportProgressDialogRef.value!);
 }
 
 function exportPlanet() {
-  exportProgressDialogRef.value!.open();
+  exportProgressDialogRef.value!.open('gltf');
   exportProgressDialogRef.value!.setProgress(1);
   exportPlanetToGLTF(exportProgressDialogRef.value!);
 }

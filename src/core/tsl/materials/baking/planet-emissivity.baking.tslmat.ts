@@ -242,7 +242,7 @@ export class BakingPlanetEmissivityTSLMaterial extends TSLMaterial<
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord');
-    let colour = vec3(this.uniforms.textures.surface.sample(texCoord).xyz).toVar('colour');
+    const colour = vec3(this.uniforms.textures.surface.sample(texCoord).xyz).toVar('colour');
 
     // Calculate biomes data
     const biomeTexCoord = vec2(0).toVar('biomeTexCoord');

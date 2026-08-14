@@ -330,28 +330,41 @@ export async function exportPlanetPreview(): Promise<string> {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-export async function extractPlanetTextures(): Promise<void> {
+export async function extractPlanetTextures(progressDialog: ExportProgressDialogExposes): Promise<void> {
   EDITOR_STATE.value.status = EditorStatusCode.TextureExtraction;
   const settings = await idb.settings.limit(1).first();
-  EDITOR_WORKERS.baking!.run(
-    EDITOR_WORKERS.texture!,
-    {
-      type: 'baking',
-      planetData: EDITOR_STATE.value.planetData,
-      bakingPixelize: settings!.bakingPixelize ?? false,
-      bakingResolution: settings!.bakingResolution ?? 2048,
-      renderingBackend: settings!.renderingBackend,
-    },
-    (message) => processExtractionMessage(message, settings!.bakingResolution ?? 2048),
-  );
+  try {
+    EDITOR_WORKERS.baking!.run(
+      EDITOR_WORKERS.texture!,
+      {
+        type: 'baking',
+        planetData: EDITOR_STATE.value.planetData,
+        bakingPixelize: settings!.bakingPixelize ?? false,
+        bakingResolution: settings!.bakingResolution ?? 2048,
+        renderingBackend: settings!.renderingBackend,
+      },
+      (message) => processExtractionMessage(message, progressDialog, settings!.bakingResolution ?? 2048),
+    );
+  } catch (error) {
+    EDITOR_STATE.value.status = EditorStatusCode.Edition;
+    throw error;
+  }
 }
-async function processExtractionMessage(event: MessageEvent<BakingWorkerOutput>, bakingResolution: number) {
+async function processExtractionMessage(
+  event: MessageEvent<BakingWorkerOutput>,
+  progressDialog: ExportProgressDialogExposes,
+  bakingResolution: number,
+) {
   switch (event.data.type) {
+    case 'progress':
+      progressDialog.setProgress(event.data.progress);
+      break;
     case 'error':
       EDITOR_STATE.value.status = EditorStatusCode.Edition;
       break;
     case 'done':
       await exportBakedTextures(event.data.data, bakingResolution);
+      progressDialog.setDone();
       EDITOR_STATE.value.status = EditorStatusCode.Edition;
       break;
   }
@@ -419,17 +432,22 @@ async function exportBakedTextures(data: BakingWorkerOutputData, bakingResolutio
 export async function exportPlanetToGLTF(progressDialog: ExportProgressDialogExposes) {
   EDITOR_STATE.value.status = EditorStatusCode.Export;
   const settings = await idb.settings.limit(1).first();
-  EDITOR_WORKERS.baking!.run(
-    EDITOR_WORKERS.texture!,
-    {
-      type: 'baking',
-      planetData: EDITOR_STATE.value.planetData,
-      bakingPixelize: settings!.bakingPixelize ?? false,
-      bakingResolution: settings!.bakingResolution ?? 2048,
-      renderingBackend: settings!.renderingBackend,
-    },
-    (message) => processBakingMessage(message, progressDialog, settings!.bakingResolution ?? 2048),
-  );
+  try {
+    EDITOR_WORKERS.baking!.run(
+      EDITOR_WORKERS.texture!,
+      {
+        type: 'baking',
+        planetData: EDITOR_STATE.value.planetData,
+        bakingPixelize: settings!.bakingPixelize ?? false,
+        bakingResolution: settings!.bakingResolution ?? 2048,
+        renderingBackend: settings!.renderingBackend,
+      },
+      (message) => processBakingMessage(message, progressDialog, settings!.bakingResolution ?? 2048),
+    );
+  } catch (error) {
+    progressDialog.setError(error);
+    EDITOR_STATE.value.status = EditorStatusCode.Edition;
+  }
 }
 async function processBakingMessage(
   event: MessageEvent<BakingWorkerOutput>,
