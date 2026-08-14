@@ -9,22 +9,22 @@
   >
     <template #title>
       <iconify-icon icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
-      {{ $t('dialog.delete.$title', { planet: planet?.data.planetName ?? 'PLANET_NAME' }) }}
+      {{ $t('dialog.confirm_delete.$title', { planet: planet?.data.planetName ?? 'PLANET_NAME' }) }}
     </template>
     <template #content>
       <div class="delete-text">
-        <p>{{ $t('dialog.delete.message') }}</p>
+        <p>{{ $t('dialog.confirm_delete.message') }}</p>
         <p>
-          <strong>{{ $t('dialog.delete.warning') }}</strong>
+          <strong>{{ $t('dialog.confirm_delete.warning') }}</strong>
         </p>
       </div>
     </template>
     <template #actions>
       <LgvButton icon="mingcute:close-line" @click="close(false)">
-        {{ $t('dialog.delete.$action_cancel') }}
+        {{ $t('dialog.confirm_delete.$action_cancel') }}
       </LgvButton>
       <LgvButton class="warn" icon="mingcute:delete-2-line" @click="close(true)">
-        {{ $t('dialog.delete.$action_confirm') }}
+        {{ $t('dialog.confirm_delete.$action_confirm') }}
       </LgvButton>
     </template>
   </DialogElement>

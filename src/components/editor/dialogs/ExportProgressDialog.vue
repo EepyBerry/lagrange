@@ -4,13 +4,15 @@
     ref="dialogRef"
     :show-title="true"
     :closeable="!!_progressError"
+    :is-warn="!!_progressError"
     :prevent-click-close="true"
     :aria-label="$t('a11y.dialog_export_progress')"
-    :class="{ failure: !!_progressError }"
+    :class="{ warn: !!_progressError }"
   >
     <template #title>
       <iconify-icon icon="mingcute:sandglass-line" width="2rem" aria-hidden="true" />
-      <span>{{ $t('dialog.export_progress.$title') }}</span>
+      <span v-if="_dialogMode === 'textures'">{{ $t('dialog.export_progress.$title_textures') }}</span>
+      <span v-else-if="_dialogMode === 'gltf'">{{ $t('dialog.export_progress.$title_gltf') }}</span>
     </template>
     <template #content>
       <div class="progress-text">
@@ -37,11 +39,13 @@ const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
 defineExpose<ExportProgressDialogExposes>({ open, setProgress, setDone, setError });
 
 const bakingSteps = 9;
+const _dialogMode: Ref<'textures' | 'gltf'> = ref('textures');
 const _progressStep: Ref<number> = ref(1);
 const _progressError: Ref<unknown> = ref(undefined);
 
-function open() {
+function open(mode: 'textures' | 'gltf') {
   dialogRef.value?.open();
+  _dialogMode.value = mode;
   _progressError.value = undefined;
   setProgress(1);
 }
@@ -93,9 +97,7 @@ function setError(value: unknown) {
     }
   }
 }
-#dialog-exportprogress.failure {
-  border: 1px solid var(--lg-warn);
-  background: var(--lg-warn-panel);
+#dialog-exportprogress.warn {
   .progress-bar {
     border: 1px solid var(--lg-warn-active);
     border-radius: 2px;

@@ -37,10 +37,13 @@ export class TextureWorkerInterface {
     operation: TextureWorkerOperation,
     data: OperationData,
   ): Promise<Uint8ClampedArray> {
+    if (!width || !height || width <= 0 || height <= 0) {
+      return Promise.reject(new Error(`Invalid dimensions for texture worker: ${width}x${height}`));
+    }
     return new Promise((resolve) => {
       const id: string = nanoid();
       this._callbacks.set(id, async (output) => resolve(output.data));
-      const input: TextureWorkerInput<OperationData> = { id, width, height, operation, data };
+      const input: TextureWorkerInput<OperationData> = { type: 'texture-update', id, width, height, operation, data };
       this._worker.postMessage(input);
     });
   }

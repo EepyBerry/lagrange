@@ -14,6 +14,7 @@ export const EditorStatusCode = {
   Reset: 'RESET',
   PreviewGeneration: 'PREVIEW_GENERATION',
   SceneDisposal: 'SCENE_DISPOSAL',
+  TextureExtraction: 'TEXTURE_EXTRACTION',
   Export: 'EXPORT',
   Error: 'ERROR',
   Unloaded: 'UNLOADED',

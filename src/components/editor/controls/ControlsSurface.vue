@@ -4,7 +4,7 @@
       v-model="EDITOR_STATE.planetData.planetSurfaceShowBumps"
       :toggleable="EDITOR_STATE.planetData.planetSurfaceShowBumps"
     >
-      <template #title>{{ $t('editor.controls.surface.bumpmap') }}</template>
+      <template #title>{{ $t('editor.surface.bumpmap') }}</template>
       <template #content>
         <ParameterSlider
           id="s-bumpstr"
@@ -13,7 +13,7 @@
           :min="0.02"
           :max="0.2"
         >
-          {{ $t('editor.controls.surface.bumpmap_strength') }}
+          {{ $t('editor.surface.bumpmap_strength') }}
         </ParameterSlider>
         <ParameterSlider
           id="s-bumpoff"
@@ -22,7 +22,7 @@
           :min="0.001"
           :max="0.01"
         >
-          {{ $t('editor.controls.surface.bumpmap_offset') }}
+          {{ $t('editor.surface.bumpmap_offset') }}
         </ParameterSlider>
       </template>
     </ParameterGroup>

@@ -1,18 +1,43 @@
 {
+  "404": {
+    "$title": "Page Not Found",
+    "text_01": "Nyothing uvw hewe, sowwyyyy...",
+    "text_02": "\"This sectow is c-compwetewy empty, Captain! :O\"",
+    "text_03": "Oh nyooo ;;w;; Took a wwong tuwn sumwhewe...",
+    "text_04": "PAGE IS MISSING! STATUS IS 404!! SPACE IS EMPTY!!! x3",
+    "subtext": "The wequested page c-couwd nyot be found :c",
+    "link": "Back to codex!!!"
+  },
   "main": {
     "$title": "Wagwange",
-    "locale": "en-UwU",
-    "language": "Uwuish",
-    "more_coming_soon": "Mowe coming s-soon!",
-    "test_message": "pancake hehe :3",
-    "unit": "unit",
-    "units": "units",
-    "unknown_value": "[UNKNOWN]",
+    "header": {
+      "rename": "Wenyame pwanyet",
+      "rename_confirm": "Confiwm pwanyet nyame",
+      "reset": "Weset t-to defauwts",
+      "menu_random": "Wandomization o-options",
+      "menu_save": "S-save options",
+      "save": "S-save",
+      "copy": "S-save as copy",
+      "extract_textures": "Extwact textuwes as .zip!!!",
+      "gltf": "Expowt as glTF",
+      "import": "Impowt pwanyet fiwe",
+      "export_all": "Expowt aww pwanyets as .zip!!!"
+    },
     "nav": {
-      "menu": "Menyu",
       "codex": "Codex",
       "editor": "Editow"
     },
+    "footer": {
+      "about": "About @:main.$title",
+      "settings": "Settings",
+      "github": "GitHub wepositowy!!! (opens in nyew tab OwO)"
+    }
+  },
+  "common": {
+    "unit": "unit",
+    "units": "units",
+    "unknown_value": "[UNKNOWN]",
+    "more_coming_soon": "Mowe coming s-soon!",
     "planet_data": {
       "class_planet_telluric": "Tewwuwic",
       "class_planet_ice": "Gwaciaw",
@@ -61,31 +86,18 @@
       "keybinds_atmosphere": "@:dialog.settings.keybinds_atmosphere",
       "keybinds_screenshot": "@:dialog.settings.keybinds_screenshot",
       "topbar": "Top baw - Nyaming & data",
-      "topbar_rename": "Wenyame pwanyet",
-      "topbar_reset": "Weset t-to defauwts",
-      "topbar_reseed": "Genyewate s-seed",
-      "topbar_random": "Wandomize pwanyet",
-      "topbar_save": "Save pwanyet",
-      "topbar_copy": "Save pwanyet a-as copy",
-      "topbar_import": "Impowt pwanyet",
-      "topbar_export": "Expowt pwanyet",
-      "topbar_export_all": "Expowt fuww codex",
-      "topbar_gltf": "Expowt as glTF",
       "footer": "Footew - Miscewwanyeous",
-      "footer_github": "GitHub p-p-page",
-      "footer_settings": "App settings :3",
-      "footer_about": "About @:main.$title",
       "show_next_time": "Show this intwoduction nyext time?",
       "enable_persistence": "Enabwe bwowsew stowage p-pewsistence fow this app? :3",
       "$action_confirm": "Get s-stawted!"
     },
-    "editorerror": {
+    "editor_error": {
       "$title": "Faiwed to stawt the Pwanyet Editow!!! ;;w;;",
       "brief": "Encountewed an ewwow during in-initiawisation... (；′⌒`) See bewow for m-moar detaiws :c",
       "reporting": "If you can, p-pwease check youw bwowsew c-consowe and open an issue on GitHub!!! (^-^)",
       "$action_reload_fallback_renderer": "Wewoad with WebGL2"
     },
-    "planetinfo": {
+    "planet_info": {
       "$title": "Pwanyet infowmation :3",
       "basic": {
         "name": "Name",
@@ -109,8 +121,6 @@
       "biomes": "Biome composition",
       "biomes_temp": "Tempewature",
       "biomes_humi": "Humidity",
-      "biomes_mode": "mode",
-      "biomes_none": "T-this pwanyet has nyo defined biomes... （＞人＜；）",
       "rings": "Wing System",
       "rings_center": "centew",
       "rings_surface": "suwface"
@@ -182,8 +192,8 @@
       "description": "A pwoceduwaw pwanyet-buiwding appwication!!! >w<",
       "motivation": "Made as a p-pet pwoject *blushes* t-to matewiawize my fascinyation with space & pwanyets!",
       "tech": "Main toows & libwawies behind this p-pwoject x3",
-      "prefix_engine": "3D u-using",
       "prefix_framework": "Powewed by",
+      "prefix_engine": "3D u-using",
       "changelogs": {
         "$title": "Main featuwe changewogs",
         "02_title": "Update 0.2 - Wowwd Cowwectow",
@@ -222,7 +232,8 @@
       "license": "ISTSL-NR 1.0 Wicense"
     },
     "export_progress": {
-      "$title": "Expowting pwanyet!!!",
+      "$title_textures": "Extwacting textuwes!!!",
+      "$title_gltf": "Expowting pwanyet!!!",
       "step_1": "Pwepawing",
       "step_2": "Baking suwface textuwe",
       "step_3": "Baking suwface PBR",
@@ -234,34 +245,34 @@
       "step_9": "Done!!! :3",
       "step_failed": "faiwed :c"
     },
-    "reset": {
-      "$title": "Confiwm weset",
-      "message": "Discawd the cuwwent p-pwanyet? :O",
-      "warning": "Aww unsaved data wiww be wost!",
-      "$action_cancel": "Cancew",
-      "$action_confirm": "Confiwm"
+    "confirm_reset": {
+      "$title": "Confirm reset",
+      "message": "Discard the current planet?",
+      "warning": "All unsaved data will be lost!",
+      "$action_cancel": "Cancel",
+      "$action_confirm": "Confirm"
     },
-    "delete": {
+    "confirm_delete": {
       "$title": "Delete [{planet}]",
-      "message": "A-awe you suwe you want to dewete this pwanyet? :O",
-      "warning": "This action cannyot be undyone!!!",
-      "$action_cancel": "Cancew",
-      "$action_confirm": "Confiwm"
+      "message": "Are you sure you want to delete this planet?",
+      "warning": "This action cannot be undone!",
+      "$action_cancel": "Cancel",
+      "$action_confirm": "Confirm"
     },
-    "warnsave": {
-      "$title": "Unsaved pwanyet wawning",
-      "message": "The c-cuwwent pwanyet has not been s-saved yet... Weave the Editow anyway? ⊙﹏⊙∥",
-      "warning": "Aww unsaved data wiww be wost!",
-      "$action_cancel": "Cancew",
-      "$action_saveconfirm": "Save and confiwm",
-      "$action_confirm": "Confiwm"
+    "confirm_warnsave": {
+      "$title": "Unsaved planet warning",
+      "message": "The current planet has not been saved yet. Leave the Editor anyway?",
+      "warning": "All unsaved data will be lost!",
+      "$action_cancel": "Cancel",
+      "$action_saveconfirm": "Save and confirm",
+      "$action_confirm": "Confirm"
     },
-    "clear_data": {
-      "$title": "Cweaw Wagwange data",
-      "message": "A-are you suwe you want to c-cweaw aww appwication data? (っ- ‸ - ς)",
-      "warning": "This action cannyot be undyone!!!",
-      "$action_cancel": "Cancew",
-      "$action_confirm": "Confiwm"
+    "confirm_clear_data": {
+      "$title": "Clear Lagrange data",
+      "message": "Are you sure you want to clear all application data?",
+      "warning": "This action cannot be undone!",
+      "$action_cancel": "Cancel",
+      "$action_confirm": "Confirm"
     }
   },
   "codex": {
@@ -271,9 +282,7 @@
     "$action_info": "About {planet} :3",
     "$action_export": "Expowt {planet} :O",
     "$action_delete": "Dewete {planet} ;w;",
-    "no_planets": "No pwanyets found... (っ- ‸ - ς). Y-you can cweate one at the top !!! x3",
-    "topbar_import": "Import planet from file",
-    "topbar_export": "Export all planets"
+    "no_planets": "No pwanyets found... (っ- ‸ - ς). Y-you can cweate one at the top !!! x3"
   },
   "editor": {
     "$title": "Pwanyet Editow",
@@ -284,12 +293,10 @@
     "$action_random": "Wandomize!!!",
     "general": {
       "displacement": "Dispwacement",
-      "displacement_show": "Show dispwacement :3",
       "displacement_factor": "Factow",
       "displacement_epsilon": "Epsiwon",
       "displacement_multiplier": "Muwtipliew",
       "warping": "Wawping",
-      "warping_show": "Show wawping :3",
       "warping_x": "X wawping",
       "warping_y": "Y wawping",
       "warping_z": "Z wawping",
@@ -299,9 +306,9 @@
       "noise_fbm_amplitude": "Ampwitude",
       "noise_fbm_lacunarity": "Wacunawity",
       "noise_fbm_octaves": "Octaves",
-      "noise_color": "Cowow",
       "noise_voronoi_scale": "Scawe",
       "noise_voronoi_jitter": "Jittew",
+      "noise_color": "Cowow",
       "colorramp_rgb": "Cowow wamp",
       "colorramp_rgba": "Cowow/awpha wamp",
       "colorramp_opacity": "Opacity wamp",
@@ -309,163 +316,142 @@
       "color_opacity": "Cowow & opacity",
       "emissive_intensity": "Emissive intensity"
     },
-    "controls": {
-      "basic_data": {
-        "$title": "Basic Data",
-        "classification": "Cwassification",
-        "classification_type": "Objyect type",
-        "classification_class": "Objyect cwass"
+    "basic_data": {
+      "$title": "Basic Data",
+      "classification": "Cwassification",
+      "classification_type": "Objyect type",
+      "classification_class": "Objyect cwass"
+    },
+    "lighting": {
+      "$title": "Wighting",
+      "lensflare": "Wens Fwawe",
+      "lensflare_points_intensity": "Points intensity",
+      "lensflare_glare_intensity": "Gwawe intensity",
+      "sunlight": "Sunwight",
+      "sunlight_angle": "Angwe",
+      "sunlight_intensity": "Intensity",
+      "sunlight_color": "Cowow",
+      "amblight": "Ambient wight",
+      "amblight_intensity": "Intensity",
+      "amblight_color": "Cowow"
+    },
+    "planet_rendering": {
+      "$title": "Pwanyet & Wendewing",
+      "transform": "Twansfowm",
+      "transform_radius": "Wadius",
+      "transform_axialtilt": "Axiaw tiwt",
+      "transform_rotation": "Wotation",
+      "waterlevel": "Watew wevew",
+      "metallicroughness": "Metawwic Woughnyess",
+      "metallicroughness_waterroughness": "Watew woughnyess",
+      "metallicroughness_watermetalness": "Watew metawnyess",
+      "metallicroughness_groundroughness": "Gwound woughnyess",
+      "metallicroughness_groundmetalness": "Gwound metawnyess",
+      "emissivity": "Emissivity",
+      "emissivity_waterintensity": "Watew intensity",
+      "emissivity_groundintensity": "Gwound intensity"
+    },
+    "surface": {
+      "$title": "Suwface",
+      "bumpmap": "Bump map",
+      "bumpmap_strength": "Stwength",
+      "bumpmap_offset": "Offset"
+    },
+    "features": {
+      "$title": "Featuwes",
+      "cracks": {
+        "$title": "Cwacks",
+        "noise_base_detail": "Base & detaiw nyoise",
+        "noise_limiter": "Wimitew nyoise",
+        "noise_color": "Cowow nyoise",
+        "distance_to_edge": "Distyance to edge",
+        "detail_noise_strength": "Detaiw noise stwength",
+        "underwater_strength": "Undewwatew stwength"
       },
-      "lighting": {
-        "$title": "Wighting",
-        "lensflare": "Wens Fwawe",
-        "lensflare_show": "Show wens fwawe :3",
-        "lensflare_points_intensity": "Points intensity",
-        "lensflare_glare_intensity": "Gwawe intensity",
-        "sunlight": "Sunwight",
-        "sunlight_angle": "Angwe",
-        "sunlight_intensity": "Intensity",
-        "sunlight_color": "Cowow",
-        "amblight": "Ambient wight",
-        "amblight_intensity": "Intensity",
-        "amblight_color": "Cowow"
-      },
-      "planet_rendering": {
-        "$title": "Pwanyet & Wendewing",
-        "transform": "Twansfowm",
-        "transform_radius": "Wadius",
-        "transform_axialtilt": "Axiaw tiwt",
-        "transform_rotation": "Wotation",
-        "pbr": "PBR p-pawametews",
-        "waterlevel": "Watew wevew",
-        "metallicroughness": "Metawwic Woughnyess",
-        "metallicroughness_waterroughness": "Watew woughnyess",
-        "metallicroughness_watermetalness": "Watew metawnyess",
-        "metallicroughness_groundroughness": "Gwound woughnyess",
-        "metallicroughness_groundmetalness": "Gwound metawnyess",
-        "emissivity": "Emissivity",
-        "emissivity_waterintensity": "Watew intensity",
-        "emissivity_groundintensity": "Gwound intensity"
-      },
-      "surface": {
-        "$title": "Suwface",
-        "bumpmap": "Bump map",
-        "bumpmap_show": "Show bumps :3",
-        "bumpmap_strength": "Stwength",
-        "bumpmap_offset": "Offset"
-      },
-      "features": {
-        "$title": "Featuwes",
-        "cracks": {
-          "$title": "Cwacks",
-          "noise_base_detail": "Base & detaiw nyoise",
-          "noise_limiter": "Wimitew nyoise",
-          "noise_color": "Cowow nyoise",
-          "distance_to_edge": "Distyance to edge",
-          "detail_noise_strength": "Detaiw noise stwength",
-          "underwater_strength": "Undewwatew stwength"
-        },
-        "biomes": {
-          "$title": "Biomes",
-          "biomes_show": "Show biomes :3",
-          "texture_resolution": "Wesowution",
-          "temperature": "Tempewatuwe gwadient",
-          "humidity": "Humidity gwadient",
-          "gradient_mode": "Gwadient mode",
-          "gradient_mode_realistic": "Weawistic",
-          "gradient_mode_poletopole": "Powe-to-powe",
-          "gradient_mode_fullnoise": "Nyoise",
-          "biome_list": "Biomes",
-          "biome_type": "Type",
-          "height_min": "Min. height",
-          "height_max": "Max. height",
-          "temperature_min": "Min. tempewatuwe",
-          "temperature_max": "Max. tempewatuwe",
-          "humidity_min": "Min. humidity",
-          "humidity_max": "Max. humidity",
-          "smoothness": "Smoothnyess"
-        }
-      },
-      "clouds": {
-        "$title": "Cwouds",
-        "clouds_show": "Show cwouds :3",
-        "transform": "Twansfowm",
-        "transform_rotation": "Wotation",
-        "rgba": "Cowow & opacity",
-        "rgba_opacityramp": "Opacity wamp"
-      },
-      "atmosphere": {
-        "$title": "Atmosphewe",
-        "atmosphere_show": "Show atmosphewe :3",
-        "transform": "Twansfowm",
-        "transform_height": "Height",
-        "transform_density": "Density",
-        "rgba": "Cowow  & intensity",
-        "rgba_intensity": "Intensity",
-        "rgba_mode": "Cowow mode",
-        "rgba_mode_realistic": "Weawistic",
-        "rgba_mode_direct": "Diwect",
-        "rgba_mode_mixed": "Mixed",
-        "rgba_hue": "Hue",
-        "rgba_tint": "Tint",
-        "advanced": "Advanced",
-        "advanced_scattering_constant": "Scattewing constant (g)",
-        "advanced_rayleigh_density_ratio": "Wayweigh density watio",
-        "advanced_mie_density_ratio": "Mie density watio",
-        "advanced_optical_density_ratio": "Opticaw density watio"
-      },
-      "ring": {
-        "$title": "Wing Systyem",
-        "ring_show": "Show wing systyem",
-        "ring_list": "Wings",
-        "transform": "Twansfowm",
-        "transform_radius_inner": "Innyew wadius",
-        "transform_radius_outer": "Outew wadius"
-      },
-      "postprocessing": {
-        "$title": "Post-pwocessing",
-        "basepipeline": "Base wendew pipewine",
-        "basepipeline_select": "Sewect pipewine",
-        "basepipeline_none": "(none)",
-        "basepipeline_pixelation": "Pixewation",
-        "basepipeline_pixelation_pixelsize": "Pixew size",
-        "basepipeline_pixelation_normaledgeintensity": "Nowmaw edge intensity",
-        "basepipeline_pixelation_depthedgeintensity": "Depth edge intensity",
-        "basepipeline_retro": "Wetwo",
-        "basepipeline_retro_colordepthsteps": "Cowow depth",
-        "basepipeline_retro_colorbleeding": "Cowow bweeding",
-        "basepipeline_retro_scanlineintensity": "Scanwines",
-        "basepipeline_retro_scanlinedensity": "Scanwine density",
-        "basepipeline_retro_scanlinespeed": "Scanwine speed",
-        "basepipeline_retro_curvature": "Cuwvatuwe",
-        "rgbshift": "RGB Shift",
-        "rgbshift_angle": "Angle",
-        "rgbshift_amount": "Amount",
-        "chromaticaberration": "Chromatic Aberration",
-        "chromaticaberration_strength": "Strength",
-        "chromaticaberration_scale": "Scale",
-        "bloom": "Bwoom",
-        "bloom_threshold": "Thweshowd",
-        "bloom_strength": "Stwength",
-        "bloom_radius": "Wadius",
-        "vignette": "Vignette",
-        "vignette_intensity": "Intensity",
-        "vignette_smoothness": "Smoothnyess",
-        "antialiasing": "Anti-awiasing",
-        "antialiasing_mode": "Mode",
-        "antialiasing_mode_fxaa": "FXAA",
-        "antialiasing_mode_smaa": "SMAA"
+      "biomes": {
+        "$title": "Biomes",
+        "temperature": "Tempewatuwe gwadient",
+        "humidity": "Humidity gwadient",
+        "gradient_mode": "Gwadient mode",
+        "gradient_mode_realistic": "Weawistic",
+        "gradient_mode_poletopole": "Powe-to-powe",
+        "gradient_mode_fullnoise": "Nyoise",
+        "biome_list": "Biomes",
+        "biome_type": "Type",
+        "temperature_min": "Min. tempewatuwe",
+        "temperature_max": "Max. tempewatuwe",
+        "humidity_min": "Min. humidity",
+        "humidity_max": "Max. humidity",
+        "smoothness": "Smoothnyess"
       }
+    },
+    "clouds": {
+      "$title": "Cwouds",
+      "clouds_show": "Show cwouds :3",
+      "transform": "Twansfowm",
+      "transform_rotation": "Wotation"
+    },
+    "atmosphere": {
+      "$title": "Atmosphewe",
+      "atmosphere_show": "Show atmosphewe :3",
+      "transform": "Twansfowm",
+      "transform_height": "Height",
+      "transform_density": "Density",
+      "rgba": "Cowow  & intensity",
+      "rgba_intensity": "Intensity",
+      "rgba_mode": "Cowow mode",
+      "rgba_mode_realistic": "Weawistic",
+      "rgba_mode_direct": "Diwect",
+      "rgba_mode_mixed": "Mixed",
+      "rgba_hue": "Hue",
+      "rgba_tint": "Tint",
+      "advanced": "Advanced",
+      "advanced_scattering_constant": "Scattewing constant (g)",
+      "advanced_rayleigh_density_ratio": "Wayweigh density watio",
+      "advanced_mie_density_ratio": "Mie density watio",
+      "advanced_optical_density_ratio": "Opticaw density watio"
+    },
+    "ring": {
+      "$title": "Wing Systyem",
+      "ring_show": "Show wing systyem",
+      "ring_list": "Wings",
+      "transform_radius_inner": "Innyew wadius",
+      "transform_radius_outer": "Outew wadius"
+    },
+    "post_processing": {
+      "$title": "Post-pwocessing",
+      "basepipeline": "Base wendew pipewine",
+      "basepipeline_select": "Sewect pipewine",
+      "basepipeline_none": "(none)",
+      "basepipeline_pixelation": "Pixewation",
+      "basepipeline_pixelation_pixelsize": "Pixew size",
+      "basepipeline_pixelation_normaledgeintensity": "Nowmaw edge intensity",
+      "basepipeline_pixelation_depthedgeintensity": "Depth edge intensity",
+      "basepipeline_retro": "Wetwo",
+      "basepipeline_retro_colordepthsteps": "Cowow depth",
+      "basepipeline_retro_colorbleeding": "Cowow bweeding",
+      "basepipeline_retro_scanlineintensity": "Scanwines",
+      "basepipeline_retro_scanlinedensity": "Scanwine density",
+      "basepipeline_retro_scanlinespeed": "Scanwine speed",
+      "basepipeline_retro_curvature": "Cuwvatuwe",
+      "rgbshift": "RGB Shift",
+      "rgbshift_angle": "Angle",
+      "rgbshift_amount": "Amount",
+      "chromaticaberration": "Chromatic Aberration",
+      "chromaticaberration_strength": "Strength",
+      "chromaticaberration_scale": "Scale",
+      "bloom": "Bwoom",
+      "bloom_threshold": "Thweshowd",
+      "bloom_strength": "Stwength",
+      "bloom_radius": "Wadius",
+      "vignette": "Vignette",
+      "vignette_intensity": "Intensity",
+      "vignette_smoothness": "Smoothnyess",
+      "antialiasing": "Anti-awiasing",
+      "antialiasing_mode": "Mode",
+      "antialiasing_mode_fxaa": "FXAA",
+      "antialiasing_mode_smaa": "SMAA"
     }
-  },
-  "404": {
-    "$title": "Page Not Found",
-    "text_01": "Nyothing uvw hewe, sowwyyyy...",
-    "text_02": "\"This sectow is c-compwetewy empty, Captain! :O\"",
-    "text_03": "Oh nyooo ;;w;; Took a wwong tuwn sumwhewe...",
-    "text_04": "PAGE\u00A0IS\u00A0MISSING! STATUS\u00A0IS\u00A0404!! SPACE\u00A0IS\u00A0EMPTY!!! x3",
-    "subtext": "The wequested page c-couwd nyot be found :c",
-    "link": "Back to codex!!!"
   },
   "toast": {
     "storage_success": "Pewsistent stowage enyabwed!",
@@ -484,26 +470,12 @@
     "extras_obliterate_failure": "Couwd not destwoy pwanyet (；′⌒`)"
   },
   "tooltip": {
-    "topbar_rename": "Wenyame pwanyet",
-    "topbar_rename_confirm": "Confiwm pwanyet nyame",
-    "topbar_reset": "Weset t-to defauwts",
-    "topbar_menu_random": "Wandomization o-options",
-    "topbar_menu_save": "S-save options",
-    "topbar_save": "S-save",
-    "topbar_copy": "S-save as copy",
-    "topbar_gltf": "Expowt as glTF",
-    "topbar_import": "Impowt pwanyet fiwe",
-    "topbar_export": "Expowt pwanyet fiwe",
-    "topbar_export_all": "Expowt aww pwanyets as .zip!!!",
     "gradient_mode_realistic": "W-wowew vawues on powes, highew vawues awong the e-equatow!!!",
     "gradient_mode_poletopole": "W-wowew vawues on nowth p-powe, highew vawues on south powe!!!",
     "gradient_mode_fullnoise": "Fuwwy noisy vawues, l-liek suwface nyoise!!!",
     "rgba_mode_realistic": "Waw Waweigh & Mie scattewing cawcuwashons with hue s-shifting",
     "rgba_mode_direct": "Appwies a singwe cowow o-on top of cawcuwashons",
-    "rgba_mode_mixed": "Appwies diwect mode cowow as a t-tint on top of the s-sewected hue",
-    "footer_github": "GitHub wepositowy!!! (opens in nyew tab OwO)",
-    "footer_settings": "Settings",
-    "footer_about": "About @:main.$title"
+    "rgba_mode_mixed": "Appwies diwect mode cowow as a t-tint on top of the s-sewected hue"
   },
   "a11y": {
     "logo": "Wagwange wogo",
@@ -511,7 +483,7 @@
     "logo_update_codex": "Update wogo!",
     "dialog_editor_error": "Editow ewwow diawog",
     "dialog_init": "Intwoduction diawog",
-    "dialog_planetinfo": "Pwanyet info diawog",
+    "dialog_planet_info": "Planet info dialog",
     "dialog_settings": "Settings diawog",
     "dialog_about": "About @:main.$title diawog",
     "dialog_export_progress": "Planet expowt diawog",
@@ -519,21 +491,6 @@
     "dialog_delete": "Confiwm dewete diawog",
     "dialog_warn_save": "Unsaved data wawning diawog",
     "dialog_clear_data": "Confiwm data cweaw diawog",
-    "topbar_rename": "@:tooltip.topbar_rename",
-    "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
-    "topbar_reset": "@:tooltip.topbar_reset",
-    "topbar_menu_random": "@:tooltip.topbar_menu_random",
-    "topbar_menu_save": "@:tooltip.topbar_menu_save",
-    "topbar_save": "@:tooltip.topbar_save",
-    "topbar_copy": "@:tooltip.topbar_copy",
-    "topbar_gltf": "@:tooltip.topbar_gltf",
-    "topbar_random": "@:tooltip.topbar_random",
-    "topbar_import": "@:tooltip.topbar_import",
-    "topbar_export": "@:tooltip.topbar_export",
-    "topbar_export_all": "@:tooltip.topbar_export_all",
-    "footer_github": "@:tooltip.footer_github",
-    "footer_settings": "@:tooltip.footer_settings",
-    "footer_about": "@:tooltip.footer_about",
     "general_theme_default": "Set Comet theme (bwue)",
     "general_theme_supernova": "Set Supewnyova theme (puwple)",
     "general_theme_voyager": "Set Voyagew theme (owange)",
@@ -558,8 +515,6 @@
     "action_close_toast": "Cwose message"
   },
   "extras": {
-    "toast_explode_success": "OBWITEWATED pwanyet successfuwwy! ÒwÓ",
-    "toast_explode_failure": "Couwd nyot destwoy pwanyet ;;w;;",
     "day_newyear": "Happy Nyew Yeaw!!! (≧∇≦)ﾉ",
     "day_valentines": "Happy Vawentine's Day!!! ❤️",
     "day_strawberry": "Happy Stwawbewwy Day!!! 🍓",

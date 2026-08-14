@@ -232,7 +232,7 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
 
     // render noise as color
     const texCoord = vec2(min(height, heightLimit), 0.5).setName('texCoord');
-    let colour = vec3(this.uniforms.textures.surface.sample(texCoord).xyz).setName('colour');
+    const colour = vec3(this.uniforms.textures.surface.sample(texCoord).xyz).setName('colour');
 
     // Render biomes
     const biomeTexCoord = vec2(0).toVar('biomeTexCoord');

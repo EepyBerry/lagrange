@@ -1,7 +1,7 @@
 import type { ColorRamp } from '@core/models/planet/color-ramp.model.ts';
 import type { EditorBackendType } from '@core/types.ts';
 import type { WebGPURenderer } from 'three/webgpu';
-import { DataTexture, type TypedArray } from 'three';
+import { CanvasTexture, DataTexture, type TypedArray } from 'three';
 
 /**
  * Renders a buffer onto an OffscreenCanvas
@@ -88,13 +88,25 @@ export async function blobToDataURL(blob: Blob): Promise<string> {
 }
 
 /**
- * Creates an instance of {@link DataTexture} from the given parameters
+ * Creates an instance of {@link DataTexture} from the given texture data
  * @param buffer the buffer to store in the texture
  * @param width texture width
  * @param height texture height
  */
-export function toDataTexture(buffer: Uint8Array, width: number, height: number) {
+export function bufferToDataTexture(buffer: Uint8Array, width: number, height: number) {
   const dt = new DataTexture(buffer, width, height);
   dt.needsUpdate = true;
   return dt;
+}
+
+/**
+ * Creates an instance of {@link Blob} from the given texture data
+ * @param renderer current renderer
+ * @param buf the buffer to write in the blob
+ * @param w texture width
+ * @param h texture height
+ */
+export async function bufferToImageBlob(renderer: WebGPURenderer, buf: TypedArray, w: number, h: number) {
+  const tex = new CanvasTexture(renderToCanvas(renderer, buf, w, h));
+  return await tex.image.convertToBlob();
 }

@@ -1,14 +1,14 @@
 <template>
   <ParameterGrid>
     <ParameterGroup toggleable>
-      <template #title>{{ $t('editor.controls.postprocessing.basepipeline') }}</template>
+      <template #title>{{ $t('editor.post_processing.basepipeline') }}</template>
       <template #content>
         <ParameterSelect id="rb-base" v-model="EDITOR_STATE.renderPipelineData.basePipelineIdentifier">
-          {{ $t('editor.controls.postprocessing.basepipeline_select') }}
+          {{ $t('editor.post_processing.basepipeline_select') }}
           <template #options>
-            <option value="none">{{ $t('editor.controls.postprocessing.basepipeline_none') }}</option>
-            <option value="pixelation">{{ $t('editor.controls.postprocessing.basepipeline_pixelation') }}</option>
-            <option value="retro">{{ $t('editor.controls.postprocessing.basepipeline_retro') }}</option>
+            <option value="none">{{ $t('editor.post_processing.basepipeline_none') }}</option>
+            <option value="pixelation">{{ $t('editor.post_processing.basepipeline_pixelation') }}</option>
+            <option value="retro">{{ $t('editor.post_processing.basepipeline_retro') }}</option>
           </template>
         </ParameterSelect>
         <template v-if="EDITOR_STATE.renderPipelineData.basePipelineIdentifier === 'pixelation'">
@@ -19,7 +19,7 @@
             :min="1"
             :max="16"
           >
-            {{ $t('editor.controls.postprocessing.basepipeline_pixelation_pixelsize') }}
+            {{ $t('editor.post_processing.basepipeline_pixelation_pixelsize') }}
           </ParameterSlider>
           <ParameterSlider
             id="rp-pixelation-intensity"
@@ -28,7 +28,7 @@
             :min="0.05"
             :max="2"
           >
-            {{ $t('editor.controls.postprocessing.basepipeline_pixelation_normaledgeintensity') }}
+            {{ $t('editor.post_processing.basepipeline_pixelation_normaledgeintensity') }}
           </ParameterSlider>
           <ParameterSlider
             id="rp-pixelation-radius"
@@ -37,7 +37,7 @@
             :min="0.05"
             :max="1"
           >
-            {{ $t('editor.controls.postprocessing.basepipeline_pixelation_depthedgeintensity') }}
+            {{ $t('editor.post_processing.basepipeline_pixelation_depthedgeintensity') }}
           </ParameterSlider>
         </template>
         <template v-if="EDITOR_STATE.renderPipelineData.basePipelineIdentifier === 'retro'">
@@ -48,7 +48,7 @@
             :min="1"
             :max="32"
           >
-            {{ $t('editor.controls.postprocessing.basepipeline_retro_colordepthsteps') }}
+            {{ $t('editor.post_processing.basepipeline_retro_colordepthsteps') }}
           </ParameterSlider>
           <ParameterSlider
             id="rp-retro-colorbleeding"
@@ -57,7 +57,7 @@
             :min="0"
             :max="0.005"
           >
-            {{ $t('editor.controls.postprocessing.basepipeline_retro_colorbleeding') }}
+            {{ $t('editor.post_processing.basepipeline_retro_colorbleeding') }}
           </ParameterSlider>
           <ParameterDivider bordered />
           <ParameterSlider
@@ -67,7 +67,7 @@
             :min="0.01"
             :max="1"
           >
-            {{ $t('editor.controls.postprocessing.basepipeline_retro_scanlineintensity') }}
+            {{ $t('editor.post_processing.basepipeline_retro_scanlineintensity') }}
           </ParameterSlider>
           <ParameterSlider
             id="rp-retro-scanlinedensity"
@@ -76,7 +76,7 @@
             :min="0.02"
             :max="1"
           >
-            {{ $t('editor.controls.postprocessing.basepipeline_retro_scanlinedensity') }}
+            {{ $t('editor.post_processing.basepipeline_retro_scanlinedensity') }}
           </ParameterSlider>
           <ParameterSlider
             id="rp-retro-scanlinespeed"
@@ -85,7 +85,7 @@
             :min="0.01"
             :max="0.1"
           >
-            {{ $t('editor.controls.postprocessing.basepipeline_retro_scanlinespeed') }}
+            {{ $t('editor.post_processing.basepipeline_retro_scanlinespeed') }}
           </ParameterSlider>
           <ParameterDivider bordered />
           <ParameterSlider
@@ -95,7 +95,7 @@
             :min="0.01"
             :max="0.2"
           >
-            {{ $t('editor.controls.postprocessing.basepipeline_retro_curvature') }}
+            {{ $t('editor.post_processing.basepipeline_retro_curvature') }}
           </ParameterSlider>
         </template>
       </template>
@@ -104,7 +104,7 @@
       v-model="EDITOR_STATE.renderPipelineData.rgbShiftEnabled"
       :toggleable="EDITOR_STATE.renderPipelineData.rgbShiftEnabled"
     >
-      <template #title>{{ $t('editor.controls.postprocessing.rgbshift') }}</template>
+      <template #title>{{ $t('editor.post_processing.rgbshift') }}</template>
       <template #content>
         <ParameterSlider
           id="rp-rgbshift-angle"
@@ -113,7 +113,7 @@
           :min="0"
           :max="360"
         >
-          {{ $t('editor.controls.postprocessing.rgbshift_angle') }}
+          {{ $t('editor.post_processing.rgbshift_angle') }}
         </ParameterSlider>
         <ParameterSlider
           id="rp-rgbshift-amount"
@@ -122,7 +122,7 @@
           :min="0.001"
           :max="0.01"
         >
-          {{ $t('editor.controls.postprocessing.rgbshift_amount') }}
+          {{ $t('editor.post_processing.rgbshift_amount') }}
         </ParameterSlider>
       </template>
     </ParameterGroup>
@@ -130,7 +130,7 @@
       v-model="EDITOR_STATE.renderPipelineData.chromaticAberrationEnabled"
       :toggleable="EDITOR_STATE.renderPipelineData.chromaticAberrationEnabled"
     >
-      <template #title>{{ $t('editor.controls.postprocessing.chromaticaberration') }}</template>
+      <template #title>{{ $t('editor.post_processing.chromaticaberration') }}</template>
       <template #content>
         <ParameterSlider
           id="rp-chromaticaberration-strength"
@@ -139,7 +139,7 @@
           :min="0.01"
           :max="1"
         >
-          {{ $t('editor.controls.postprocessing.chromaticaberration_strength') }}
+          {{ $t('editor.post_processing.chromaticaberration_strength') }}
         </ParameterSlider>
         <ParameterSlider
           id="rp-chromaticaberration-scale"
@@ -148,7 +148,7 @@
           :min="0.01"
           :max="2"
         >
-          {{ $t('editor.controls.postprocessing.chromaticaberration_scale') }}
+          {{ $t('editor.post_processing.chromaticaberration_scale') }}
         </ParameterSlider>
       </template>
     </ParameterGroup>
@@ -156,7 +156,7 @@
       v-model="EDITOR_STATE.renderPipelineData.bloomEnabled"
       :toggleable="EDITOR_STATE.renderPipelineData.bloomEnabled"
     >
-      <template #title>{{ $t('editor.controls.postprocessing.bloom') }}</template>
+      <template #title>{{ $t('editor.post_processing.bloom') }}</template>
       <template #content>
         <ParameterSlider
           id="rp-bloom-intensity"
@@ -165,7 +165,7 @@
           :min="0.01"
           :max="3"
         >
-          {{ $t('editor.controls.postprocessing.bloom_strength') }}
+          {{ $t('editor.post_processing.bloom_strength') }}
         </ParameterSlider>
         <ParameterSlider
           id="rp-bloom-threshold"
@@ -174,7 +174,7 @@
           :min="0.01"
           :max="1"
         >
-          {{ $t('editor.controls.postprocessing.bloom_threshold') }}
+          {{ $t('editor.post_processing.bloom_threshold') }}
         </ParameterSlider>
         <ParameterSlider
           id="rp-bloom-radius"
@@ -183,7 +183,7 @@
           :min="0.01"
           :max="1"
         >
-          {{ $t('editor.controls.postprocessing.bloom_radius') }}
+          {{ $t('editor.post_processing.bloom_radius') }}
         </ParameterSlider>
       </template>
     </ParameterGroup>
@@ -191,7 +191,7 @@
       v-model="EDITOR_STATE.renderPipelineData.vignetteEnabled"
       :toggleable="EDITOR_STATE.renderPipelineData.vignetteEnabled"
     >
-      <template #title>{{ $t('editor.controls.postprocessing.vignette') }}</template>
+      <template #title>{{ $t('editor.post_processing.vignette') }}</template>
       <template #content>
         <ParameterSlider
           id="rp-vignette-intensity"
@@ -200,7 +200,7 @@
           :min="0.01"
           :max="2"
         >
-          {{ $t('editor.controls.postprocessing.vignette_intensity') }}
+          {{ $t('editor.post_processing.vignette_intensity') }}
         </ParameterSlider>
         <ParameterSlider
           id="rp-vignette-smoothness"
@@ -209,7 +209,7 @@
           :min="0.05"
           :max="1"
         >
-          {{ $t('editor.controls.postprocessing.vignette_smoothness') }}
+          {{ $t('editor.post_processing.vignette_smoothness') }}
         </ParameterSlider>
       </template>
     </ParameterGroup>
@@ -217,30 +217,30 @@
       v-model="EDITOR_STATE.renderPipelineData.antiAliasingEnabled"
       :toggleable="EDITOR_STATE.renderPipelineData.antiAliasingEnabled"
     >
-      <template #title>{{ $t('editor.controls.postprocessing.antialiasing') }}</template>
+      <template #title>{{ $t('editor.post_processing.antialiasing') }}</template>
       <template #content>
         <ParameterRadio>
-          <template #title> {{ $t('editor.controls.postprocessing.antialiasing_mode') }}: </template>
+          <template #title> {{ $t('editor.post_processing.antialiasing_mode') }}: </template>
           <template #options>
             <ParameterRadioOption
               :id="'0'"
               v-model="EDITOR_STATE.renderPipelineData.antiAliasingMode"
               name="antialiasing-mode"
               :value="AntiAliasingMode.FXAA"
-              :button-aria-label="$t('editor.controls.postprocessing.antialiasing_mode_fxaa')"
-              :title="$t('editor.controls.postprocessing.antialiasing_mode_fxaa')"
+              :button-aria-label="$t('editor.post_processing.antialiasing_mode_fxaa')"
+              :title="$t('editor.post_processing.antialiasing_mode_fxaa')"
             >
-              {{ $t('editor.controls.postprocessing.antialiasing_mode_fxaa') }}
+              {{ $t('editor.post_processing.antialiasing_mode_fxaa') }}
             </ParameterRadioOption>
             <ParameterRadioOption
               :id="'1'"
               v-model="EDITOR_STATE.renderPipelineData.antiAliasingMode"
               name="antialiasing-mode"
               :value="AntiAliasingMode.SMAA"
-              :button-aria-label="$t('editor.controls.postprocessing.antialiasing_mode_smaa')"
-              :title="$t('editor.controls.postprocessing.antialiasing_mode_smaa')"
+              :button-aria-label="$t('editor.post_processing.antialiasing_mode_smaa')"
+              :title="$t('editor.post_processing.antialiasing_mode_smaa')"
             >
-              {{ $t('editor.controls.postprocessing.antialiasing_mode_smaa') }}
+              {{ $t('editor.post_processing.antialiasing_mode_smaa') }}
             </ParameterRadioOption>
           </template>
         </ParameterRadio>

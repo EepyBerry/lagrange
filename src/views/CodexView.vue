@@ -6,7 +6,7 @@
     <LgvButton
       variant="dark"
       icon="mingcute:upload-line"
-      :a11y-label="$t('a11y.topbar_import')"
+      :a11y-label="$t('main.header.import')"
       @click="openFileDialog"
     />
 
@@ -26,7 +26,7 @@
     <LgvButton
       variant="dark"
       icon="mingcute:folder-zip-line"
-      :aria-label="$t('a11y.topbar_export_all')"
+      :aria-label="$t('main.header.export_all')"
       @click="exportPlanets"
     />
   </ViewHeader>

@@ -6,11 +6,11 @@
       :true-value="true"
       :false-value="false"
     >
-      {{ $t('editor.controls.ring.ring_show') }}
+      {{ $t('editor.ring.ring_show') }}
     </ParameterCheckbox>
     <template v-if="EDITOR_STATE.planetData.ringsEnabled">
       <ParameterGroup :toggleable="true">
-        <template #title>{{ $t('editor.controls.ring.ring_list') }}</template>
+        <template #title>{{ $t('editor.ring.ring_list') }}</template>
         <template #content>
           <template v-for="(r, index) in EDITOR_STATE.planetData.ringsParams" :key="r.id">
             <!-- prettier-ignore-attribute -->

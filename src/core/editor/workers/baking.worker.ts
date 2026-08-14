@@ -194,8 +194,13 @@ function initBakingObjects(bakingResolution: number, renderingBackend: EditorBac
  * @param renderingBackend backend to render meshes on (WebGL or WebGPU)
  */
 function adjustBakingObjects(bakingResolution: number, renderingBackend: EditorBackendType): void {
+  if (!bakingResolution || bakingResolution <= 0 || !Number.isFinite(bakingResolution)) {
+    self.postMessage({ type: 'error', error: new Error(`Invalid baking resolution: ${bakingResolution}`) });
+    return;
+  }
   if (!bakingObjects) {
     self.postMessage({ type: 'error', error: new Error('Baking objects not initialized before updating') });
+    return;
   }
 
   bakingObjects.renderer.dispose();

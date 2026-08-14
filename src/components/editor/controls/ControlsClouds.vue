@@ -6,14 +6,14 @@
       :true-value="true"
       :false-value="false"
     >
-      {{ $t('editor.controls.clouds.clouds_show') }}
+      {{ $t('editor.clouds.clouds_show') }}
     </ParameterCheckbox>
     <template v-if="EDITOR_STATE.planetData.cloudsEnabled">
       <ParameterGroup :toggleable="true">
-        <template #title>{{ $t('editor.controls.clouds.transform') }}</template>
+        <template #title>{{ $t('editor.clouds.transform') }}</template>
         <template #content>
           <ParameterSlider id="c-rot" v-model="EDITOR_STATE.planetData.cloudsRotation" :step="1" :min="0" :max="360">
-            {{ $t('editor.controls.clouds.transform_rotation') }} <sup>(°)</sup>
+            {{ $t('editor.clouds.transform_rotation') }} <sup>(°)</sup>
           </ParameterSlider>
         </template>
       </ParameterGroup>

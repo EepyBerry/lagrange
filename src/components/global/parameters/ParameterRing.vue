@@ -21,10 +21,10 @@
     <div v-show="_expanded" class="ring-content">
       <hr class="info-divider" />
       <ParameterSlider :id="lgParam!.id + '-r-inner'" v-model="lgParam!.innerRadius" :step="0.01" :min="1.25" :max="5">
-        {{ $t('editor.controls.ring.transform_radius_inner') }}
+        {{ $t('editor.ring.transform_radius_inner') }}
       </ParameterSlider>
       <ParameterSlider :id="lgParam!.id + '-r-outer'" v-model="lgParam!.outerRadius" :step="0.01" :min="1.25" :max="5">
-        {{ $t('editor.controls.ring.transform_radius_outer') }}
+        {{ $t('editor.ring.transform_radius_outer') }}
       </ParameterSlider>
       <ParameterColorRamp :key="lgParam!.id" v-model="lgParam!.colorRamp" mode="rgba">
         {{ $t('editor.general.colorramp_rgba') }}

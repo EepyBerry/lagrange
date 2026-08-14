@@ -5,6 +5,7 @@
       @save="savePlanet"
       @copy="savePlanet(true)"
       @reset="resetPlanet"
+      @extract-textures="exportPlanetTextures"
       @gltf="exportPlanet"
       @random="randPlanet"
     />
@@ -30,6 +31,7 @@ import {
   dollyCamera,
   exportPlanetPreview,
   exportPlanetToGLTF,
+  extractPlanetTextures,
   randomizePlanet,
   resetPlanet,
   takePlanetScreenshot,
@@ -150,7 +152,7 @@ function handleInitThreeError(error: unknown) {
   } else if (typeof error === 'string') {
     editorErrorDialogRef.value!.open(error);
   } else {
-    editorErrorDialogRef.value!.open(i18n.t('main.error.default_unknown'));
+    editorErrorDialogRef.value!.open(i18n.t('common.error.default_unknown'));
   }
 }
 
@@ -317,8 +319,14 @@ async function savePlanet(asCopy: boolean = false) {
   }
 }
 
+function exportPlanetTextures() {
+  exportProgressDialogRef.value!.open('textures');
+  exportProgressDialogRef.value!.setProgress(1);
+  extractPlanetTextures(exportProgressDialogRef.value!);
+}
+
 function exportPlanet() {
-  exportProgressDialogRef.value!.open();
+  exportProgressDialogRef.value!.open('gltf');
   exportProgressDialogRef.value!.setProgress(1);
   exportPlanetToGLTF(exportProgressDialogRef.value!);
 }

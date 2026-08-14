@@ -1,10 +1,10 @@
 <template>
   <ParameterGrid>
     <ParameterGroup v-model="EDITOR_STATE.planetData.cracksEnabled" :toggleable="EDITOR_STATE.planetData.cracksEnabled">
-      <template #title>{{ $t('editor.controls.features.cracks.$title') }}</template>
+      <template #title>{{ $t('editor.features.cracks.$title') }}</template>
       <template #content>
         <ParameterGroup :toggleable="true">
-          <template #title>{{ $t('editor.controls.features.cracks.noise_base_detail') }}</template>
+          <template #title>{{ $t('editor.features.cracks.noise_base_detail') }}</template>
           <template #content>
             <ParameterSlider
               id="c-distedge"
@@ -12,7 +12,7 @@
               :step="0.001"
               :max="0.02"
             >
-              {{ $t('editor.controls.features.cracks.distance_to_edge') }}
+              {{ $t('editor.features.cracks.distance_to_edge') }}
             </ParameterSlider>
             <ParameterSlider
               id="c-bscale"
@@ -38,7 +38,7 @@
               :step="0.01"
               :max="1"
             >
-              {{ $t('editor.controls.features.cracks.detail_noise_strength') }}
+              {{ $t('editor.features.cracks.detail_noise_strength') }}
             </ParameterSlider>
             <ParameterDivider />
             <ParameterSlider
@@ -79,7 +79,7 @@
           </template>
         </ParameterGroup>
         <ParameterGroup :toggleable="true">
-          <template #title>{{ $t('editor.controls.features.cracks.noise_limiter') }}</template>
+          <template #title>{{ $t('editor.features.cracks.noise_limiter') }}</template>
           <template #content>
             <ParameterSlider
               id="c-lfreq"
@@ -119,7 +119,7 @@
           </template>
         </ParameterGroup>
         <ParameterGroup :toggleable="true">
-          <template #title>{{ $t('editor.controls.features.cracks.noise_color') }}</template>
+          <template #title>{{ $t('editor.features.cracks.noise_color') }}</template>
           <template #content>
             <ParameterSlider
               id="c-cfreq"
@@ -167,7 +167,7 @@
           </template>
         </ParameterGroup>
         <ParameterGroup :toggleable="true">
-          <template #title>{{ $t('editor.controls.planet_rendering.emissivity') }}</template>
+          <template #title>{{ $t('editor.planet_rendering.emissivity') }}</template>
           <template #content>
             <ParameterSlider
               id="c-emi"
@@ -184,20 +184,20 @@
               :step="0.01"
               :max="1"
             >
-              {{ $t('editor.controls.features.cracks.underwater_strength') }}
+              {{ $t('editor.features.cracks.underwater_strength') }}
             </ParameterSlider>
           </template>
         </ParameterGroup>
       </template>
     </ParameterGroup>
     <ParameterGroup v-model="EDITOR_STATE.planetData.biomesEnabled" :toggleable="EDITOR_STATE.planetData.biomesEnabled">
-      <template #title>{{ $t('editor.controls.features.biomes.$title') }}</template>
+      <template #title>{{ $t('editor.features.biomes.$title') }}</template>
       <template #content>
         <ParameterGroup :toggleable="true">
-          <template #title>{{ $t('editor.controls.features.biomes.temperature') }}</template>
+          <template #title>{{ $t('editor.features.biomes.temperature') }}</template>
           <template #content>
             <ParameterRadio>
-              <template #title> {{ $t('editor.controls.features.biomes.gradient_mode') }}: </template>
+              <template #title> {{ $t('editor.features.biomes.gradient_mode') }}: </template>
               <template #options>
                 <ParameterRadioOption
                   :id="'0'"
@@ -205,10 +205,10 @@
                   icon="mingcute:photo-album-line"
                   name="temp-mode"
                   :value="GradientMode.REALISTIC"
-                  :button-aria-label="$t('editor.controls.features.biomes.gradient_mode_realistic')"
+                  :button-aria-label="$t('editor.features.biomes.gradient_mode_realistic')"
                   :title="$t('tooltip.gradient_mode_realistic')"
                 >
-                  {{ $t('editor.controls.features.biomes.gradient_mode_realistic') }}
+                  {{ $t('editor.features.biomes.gradient_mode_realistic') }}
                 </ParameterRadioOption>
                 <ParameterRadioOption
                   :id="'1'"
@@ -216,10 +216,10 @@
                   icon="material-symbols:gradient-outline"
                   name="temp-mode"
                   :value="GradientMode.POLE_TO_POLE"
-                  :button-aria-label="$t('editor.controls.features.biomes.gradient_mode_poletopole')"
+                  :button-aria-label="$t('editor.features.biomes.gradient_mode_poletopole')"
                   :title="$t('tooltip.gradient_mode_poletopole')"
                 >
-                  {{ $t('editor.controls.features.biomes.gradient_mode_poletopole') }}
+                  {{ $t('editor.features.biomes.gradient_mode_poletopole') }}
                 </ParameterRadioOption>
                 <ParameterRadioOption
                   :id="'2'"
@@ -227,10 +227,10 @@
                   icon="tabler:ease-in-out-control-points"
                   name="temp-mode"
                   :value="GradientMode.FULLNOISE"
-                  :button-aria-label="$t('editor.controls.features.biomes.gradient_mode_fullnoise')"
+                  :button-aria-label="$t('editor.features.biomes.gradient_mode_fullnoise')"
                   :title="$t('tooltip.gradient_mode_fullnoise')"
                 >
-                  {{ $t('editor.controls.features.biomes.gradient_mode_fullnoise') }}
+                  {{ $t('editor.features.biomes.gradient_mode_fullnoise') }}
                 </ParameterRadioOption>
               </template>
             </ParameterRadio>
@@ -272,10 +272,10 @@
           </template>
         </ParameterGroup>
         <ParameterGroup :toggleable="true">
-          <template #title>{{ $t('editor.controls.features.biomes.humidity') }}</template>
+          <template #title>{{ $t('editor.features.biomes.humidity') }}</template>
           <template #content>
             <ParameterRadio>
-              <template #title> {{ $t('editor.controls.features.biomes.gradient_mode') }}: </template>
+              <template #title> {{ $t('editor.features.biomes.gradient_mode') }}: </template>
               <template #options>
                 <ParameterRadioOption
                   :id="'0'"
@@ -283,10 +283,10 @@
                   icon="mingcute:photo-album-line"
                   name="humi-mode"
                   :value="GradientMode.REALISTIC"
-                  :button-aria-label="$t('editor.controls.features.biomes.gradient_mode_realistic')"
+                  :button-aria-label="$t('editor.features.biomes.gradient_mode_realistic')"
                   :title="$t('tooltip.gradient_mode_realistic')"
                 >
-                  {{ $t('editor.controls.features.biomes.gradient_mode_realistic') }}
+                  {{ $t('editor.features.biomes.gradient_mode_realistic') }}
                 </ParameterRadioOption>
                 <ParameterRadioOption
                   :id="'1'"
@@ -294,10 +294,10 @@
                   icon="material-symbols:gradient-outline"
                   name="humi-mode"
                   :value="GradientMode.POLE_TO_POLE"
-                  :button-aria-label="$t('editor.controls.features.biomes.gradient_mode_poletopole')"
+                  :button-aria-label="$t('editor.features.biomes.gradient_mode_poletopole')"
                   :title="$t('tooltip.gradient_mode_poletopole')"
                 >
-                  {{ $t('editor.controls.features.biomes.gradient_mode_poletopole') }}
+                  {{ $t('editor.features.biomes.gradient_mode_poletopole') }}
                 </ParameterRadioOption>
                 <ParameterRadioOption
                   :id="'2'"
@@ -305,10 +305,10 @@
                   icon="tabler:ease-in-out-control-points"
                   name="humi-mode"
                   :value="GradientMode.FULLNOISE"
-                  :button-aria-label="$t('editor.controls.features.biomes.gradient_mode_fullnoise')"
+                  :button-aria-label="$t('editor.features.biomes.gradient_mode_fullnoise')"
                   :title="$t('tooltip.gradient_mode_fullnoise')"
                 >
-                  {{ $t('editor.controls.features.biomes.gradient_mode_fullnoise') }}
+                  {{ $t('editor.features.biomes.gradient_mode_fullnoise') }}
                 </ParameterRadioOption>
               </template>
             </ParameterRadio>
@@ -350,7 +350,7 @@
           </template>
         </ParameterGroup>
         <ParameterGroup :toggleable="true">
-          <template #title>{{ $t('editor.controls.features.biomes.biome_list') }}</template>
+          <template #title>{{ $t('editor.features.biomes.biome_list') }}</template>
           <template #content>
             <template v-for="(b, index) in EDITOR_STATE.planetData.biomesParams" :key="b.id">
               <!-- prettier-ignore-attribute -->

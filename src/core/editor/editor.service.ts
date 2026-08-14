@@ -17,9 +17,10 @@ import { randomizePlanetData, resetPlanetData } from '@core/models/planet/planet
 import { EditorSceneCreationMode, type EditorSceneData } from '@core/types.ts';
 import { UIEventBus } from '@core/ui-event-bus.ts';
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils.ts';
-import { toDataTexture } from '@core/utils/render-utils.ts';
+import { bufferToDataTexture, bufferToImageBlob } from '@core/utils/render-utils.ts';
 import { sleep } from '@core/utils/utils.ts';
 import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
 import { DoubleSide, Group, MOUSE, Vector2 } from 'three';
 import { GLTFExporter } from 'three/addons';
 import { clamp, degToRad } from 'three/src/math/MathUtils.js';
@@ -327,23 +328,128 @@ export async function exportPlanetPreview(): Promise<string> {
   return dataURL;
 }
 
-export async function exportPlanetToGLTF(progressDialog: ExportProgressDialogExposes) {
-  EDITOR_STATE.value.status = EditorStatusCode.Export;
+// --------------------------------------------------------------------------------------------------------------------
+
+export async function extractPlanetTextures(progressDialog: ExportProgressDialogExposes): Promise<void> {
+  EDITOR_STATE.value.status = EditorStatusCode.TextureExtraction;
   const settings = await idb.settings.limit(1).first();
-  EDITOR_WORKERS.baking!.run(
-    EDITOR_WORKERS.texture!,
-    {
-      type: 'baking',
-      planetData: EDITOR_STATE.value.planetData,
-      bakingPixelize: settings!.bakingPixelize ?? false,
-      bakingResolution: settings!.bakingResolution ?? 2048,
-      renderingBackend: settings!.renderingBackend,
-    },
-    (message) => processBakingWorkerMessage(message, progressDialog, settings!.bakingResolution ?? 2048),
+  try {
+    EDITOR_WORKERS.baking!.run(
+      EDITOR_WORKERS.texture!,
+      {
+        type: 'baking',
+        planetData: EDITOR_STATE.value.planetData,
+        bakingPixelize: settings!.bakingPixelize ?? false,
+        bakingResolution: settings!.bakingResolution ?? 2048,
+        renderingBackend: settings!.renderingBackend,
+      },
+      (message) => processExtractionMessage(message, progressDialog, settings!.bakingResolution ?? 2048),
+    );
+  } catch (error) {
+    EDITOR_STATE.value.status = EditorStatusCode.Edition;
+    throw error;
+  }
+}
+async function processExtractionMessage(
+  event: MessageEvent<BakingWorkerOutput>,
+  progressDialog: ExportProgressDialogExposes,
+  bakingResolution: number,
+) {
+  switch (event.data.type) {
+    case 'progress':
+      progressDialog.setProgress(event.data.progress);
+      break;
+    case 'error':
+      EDITOR_STATE.value.status = EditorStatusCode.Edition;
+      break;
+    case 'done':
+      await exportBakedTextures(event.data.data, bakingResolution);
+      progressDialog.setDone();
+      EDITOR_STATE.value.status = EditorStatusCode.Edition;
+      break;
+  }
+}
+
+async function exportBakedTextures(data: BakingWorkerOutputData, bakingResolution: number) {
+  const textures = {
+    planetMap: await bufferToImageBlob(
+      EDITOR_SCENE_DATA.renderer!,
+      data.planetMap!,
+      bakingResolution,
+      bakingResolution,
+    ),
+    planetMetallicRoughnessMap: await bufferToImageBlob(
+      EDITOR_SCENE_DATA.renderer!,
+      data.planetMetallicRoughnessMap!,
+      bakingResolution,
+      bakingResolution,
+    ),
+    planetEmissiveMap: await bufferToImageBlob(
+      EDITOR_SCENE_DATA.renderer!,
+      data.planetEmissiveMap!,
+      bakingResolution,
+      bakingResolution,
+    ),
+    planetNormalMap: await bufferToImageBlob(
+      EDITOR_SCENE_DATA.renderer!,
+      data.planetNormalMap!,
+      bakingResolution,
+      bakingResolution,
+    ),
+    clouds: data.clouds
+      ? await bufferToImageBlob(EDITOR_SCENE_DATA.renderer!, data.clouds!, bakingResolution, bakingResolution)
+      : undefined,
+    rings: data.rings
+      ? data.rings.map(
+          async (rb) => await bufferToImageBlob(EDITOR_SCENE_DATA.renderer!, rb, bakingResolution, bakingResolution),
+        )
+      : undefined,
+  };
+
+  const texZip = new JSZip();
+  texZip.file('main.png', textures.planetMap);
+  texZip.file('metallic_roughness.png', textures.planetMetallicRoughnessMap);
+  texZip.file('emissive.png', textures.planetEmissiveMap);
+  texZip.file('normal.png', textures.planetNormalMap);
+  if (textures.clouds) {
+    texZip.file('clouds.png', textures.clouds);
+  }
+  if (textures.rings) {
+    for (let i = 0; i < textures.rings.length; i++) {
+      const ringLetter = String.fromCharCode(i + 65).toLowerCase();
+      texZip.file(`ring_${ringLetter}.png`, textures.rings[i]);
+    }
+  }
+  const generatedTexZip = await texZip.generateAsync({ type: 'blob' });
+  saveAs(
+    generatedTexZip,
+    `${EDITOR_STATE.value.planetData.planetName.replaceAll(' ', '_')}_${bakingResolution}_textures.zip`,
   );
 }
 
-async function processBakingWorkerMessage(
+// --------------------------------------------------------------------------------------------------------------------
+
+export async function exportPlanetToGLTF(progressDialog: ExportProgressDialogExposes) {
+  EDITOR_STATE.value.status = EditorStatusCode.Export;
+  const settings = await idb.settings.limit(1).first();
+  try {
+    EDITOR_WORKERS.baking!.run(
+      EDITOR_WORKERS.texture!,
+      {
+        type: 'baking',
+        planetData: EDITOR_STATE.value.planetData,
+        bakingPixelize: settings!.bakingPixelize ?? false,
+        bakingResolution: settings!.bakingResolution ?? 2048,
+        renderingBackend: settings!.renderingBackend,
+      },
+      (message) => processBakingMessage(message, progressDialog, settings!.bakingResolution ?? 2048),
+    );
+  } catch (error) {
+    progressDialog.setError(error);
+    EDITOR_STATE.value.status = EditorStatusCode.Edition;
+  }
+}
+async function processBakingMessage(
   event: MessageEvent<BakingWorkerOutput>,
   progressDialog: ExportProgressDialogExposes,
   bakingResolution: number,
@@ -366,12 +472,16 @@ async function processBakingWorkerMessage(
 
 async function exportBakedTexturesAsMesh(data: BakingWorkerOutputData, bakingResolution: number) {
   const textures = {
-    planetMap: toDataTexture(data.planetMap!, bakingResolution, bakingResolution),
-    planetMetallicRoughnessMap: toDataTexture(data.planetMetallicRoughnessMap!, bakingResolution, bakingResolution),
-    planetEmissiveMap: toDataTexture(data.planetEmissiveMap!, bakingResolution, bakingResolution),
-    planetNormalMap: toDataTexture(data.planetNormalMap!, bakingResolution, bakingResolution),
-    clouds: data.clouds ? toDataTexture(data.clouds!, bakingResolution, bakingResolution) : undefined,
-    rings: data.rings ? data.rings.map((r) => toDataTexture(r, bakingResolution, bakingResolution)) : undefined,
+    planetMap: bufferToDataTexture(data.planetMap!, bakingResolution, bakingResolution),
+    planetMetallicRoughnessMap: bufferToDataTexture(
+      data.planetMetallicRoughnessMap!,
+      bakingResolution,
+      bakingResolution,
+    ),
+    planetEmissiveMap: bufferToDataTexture(data.planetEmissiveMap!, bakingResolution, bakingResolution),
+    planetNormalMap: bufferToDataTexture(data.planetNormalMap!, bakingResolution, bakingResolution),
+    clouds: data.clouds ? bufferToDataTexture(data.clouds!, bakingResolution, bakingResolution) : undefined,
+    rings: data.rings ? data.rings.map((r) => bufferToDataTexture(r, bakingResolution, bakingResolution)) : undefined,
   };
 
   const planetData = EDITOR_STATE.value.planetData;

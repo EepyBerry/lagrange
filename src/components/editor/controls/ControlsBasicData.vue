@@ -1,10 +1,10 @@
 <template>
   <ParameterGrid>
     <ParameterGroup toggleable>
-      <template #title>{{ $t('editor.controls.basic_data.classification') }}</template>
+      <template #title>{{ $t('editor.basic_data.classification') }}</template>
       <template #content>
         <ParameterSelect id="b-type" v-model="EDITOR_STATE.planetData.planetType" @change="resetPlanetClass">
-          {{ $t('editor.controls.basic_data.classification_type') }}:
+          {{ $t('editor.basic_data.classification_type') }}:
           <template #options>
             <option v-for="opt in listPlanetTypeValues()" :key="opt" :value="opt">
               {{ $t(getI18nPlanetType(opt)) }}
@@ -12,7 +12,7 @@
           </template>
         </ParameterSelect>
         <ParameterSelect id="b-class" v-model="EDITOR_STATE.planetData.planetClass">
-          {{ $t('editor.controls.basic_data.classification_class') }}:
+          {{ $t('editor.basic_data.classification_class') }}:
           <template #options>
             <option v-for="opt in listPlanetClassValues()" :key="opt" :value="opt">
               {{ $t(getI18nPlanetClass(opt)) }}

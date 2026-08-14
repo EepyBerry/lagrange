@@ -5,13 +5,13 @@
     <LgvButton
       variant="dark"
       icon="mingcute:information-line"
-      :a11y-label="$t('a11y.footer_about')"
+      :a11y-label="$t('main.footer.about')"
       @click="infoDialog!.open()"
     />
     <LgvButton
       variant="dark"
       icon="mingcute:settings-6-line"
-      :a11y-label="$t('a11y.footer_settings')"
+      :a11y-label="$t('main.footer.settings')"
       @click="settingsDialog!.open()"
     />
     <LgvLink

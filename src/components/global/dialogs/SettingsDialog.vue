@@ -31,7 +31,7 @@
                   <option value="en-US">English [en-US]</option>
                   <option value="fr-FR">Français [fr-FR]</option>
                   <option value="de-DE">Deutsch [de-DE]</option>
-                  <option value="_" disabled>{{ $t('main.more_coming_soon') }}</option>
+                  <option value="_" disabled>{{ $t('common.more_coming_soon') }}</option>
                 </template>
               </ParameterSelect>
               <ParameterSelect id="settings-font" v-model="appSettings.font">

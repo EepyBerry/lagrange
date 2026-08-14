@@ -49,10 +49,10 @@
           s
         </text>
         <text x="100%" y="8" text-anchor="end" font-size="10" fill="white">
-          c = {{ $t('dialog.planetinfo.rings_center') }}
+          c = {{ $t('dialog.planet_info.rings_center') }}
         </text>
         <text x="100%" y="20" text-anchor="end" font-size="10" fill="white">
-          s = {{ $t('dialog.planetinfo.rings_surface') }}
+          s = {{ $t('dialog.planet_info.rings_surface') }}
         </text>
       </g>
       <g id="svggraph-biomes-data">
