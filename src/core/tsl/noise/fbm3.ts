@@ -30,17 +30,20 @@ export const noise3 = /*@__PURE__*/ Fn(([i_point]: [Node<'vec3'>]) => {
 });
 
 export const fbm3 = /*@__PURE__*/ Fn(([i_point, i_noise]: [Node<'vec3'>, Node<'vec4'>]) => {
+  const point = vec3(i_point).toVar('x');
+
   const freq = float(i_noise.x).toVar('freq');
   const amp = float(i_noise.y).toVar('amp');
   const lac = float(i_noise.z).toVar('lac');
   const octaves = float(i_noise.w).toInt().toVar('octaves');
-  const point = vec3(i_point).toVar('x');
   const val = float(0).toVar('val');
+
   Loop({ start: int(0), end: octaves, condition: '<' }, () => {
     val.addAssign(amp.mul(noise3(point.mul(freq))));
     freq.mulAssign(lac);
     amp.mulAssign(0.5);
   });
+
   return val;
 }).setLayout({
   name: 'LG_NOISE_fbm3',

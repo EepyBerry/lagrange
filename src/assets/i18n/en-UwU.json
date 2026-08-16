@@ -302,6 +302,7 @@
       "warping_z": "Z wawping",
       "noise": "Nyoise p-pawametews",
       "noise_layers": "Wayews",
+      "noise_base_detail": "Base & detaiw nyoise",
       "noise_fbm_frequency": "Fwequency",
       "noise_fbm_amplitude": "Ampwitude",
       "noise_fbm_lacunarity": "Wacunawity",
@@ -361,12 +362,15 @@
       "$title": "Featuwes",
       "cracks": {
         "$title": "Cwacks",
-        "noise_base_detail": "Base & detaiw nyoise",
         "noise_limiter": "Wimitew nyoise",
         "noise_color": "Cowow nyoise",
         "distance_to_edge": "Distyance to edge",
         "detail_noise_strength": "Detaiw noise stwength",
         "underwater_strength": "Undewwatew stwength"
+      },
+      "craters": {
+        "$title": "Cwatews",
+        "curve": "Cuwve"
       },
       "biomes": {
         "$title": "Biomes",

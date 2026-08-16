@@ -30,6 +30,9 @@ export type DataEventContext =
   | 'cracksDetailNoise'
   | 'cracksLimiterNoise'
   | 'cracksColorNoise'
+  | 'craters'
+  | 'cratersBaseNoise'
+  | 'cratersDetailNoise'
   | 'clouds'
   | 'atmosphere'
   | 'ring'
@@ -91,6 +94,8 @@ export type DataEventPayloadTypeMap = {
   cracksEmissiveIntensity: DataEventPayload<number>;
   cracksDetailNoiseStrength: DataEventPayload<number>;
   cracksUnderwaterStrength: DataEventPayload<number>;
+  // craters
+  showCraters: DataEventPayload<boolean>;
   // clouds
   cloudsEnabled: DataEventPayload<boolean>;
   cloudsRotation: DataEventPayload<{ clouds: number; surface: number }>;

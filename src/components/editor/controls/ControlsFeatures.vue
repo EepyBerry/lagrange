@@ -4,7 +4,7 @@
       <template #title>{{ $t('editor.features.cracks.$title') }}</template>
       <template #content>
         <ParameterGroup :toggleable="true">
-          <template #title>{{ $t('editor.features.cracks.noise_base_detail') }}</template>
+          <template #title>{{ $t('editor.general.noise_base_detail') }}</template>
           <template #content>
             <ParameterSlider
               id="c-distedge"
@@ -186,6 +186,84 @@
             >
               {{ $t('editor.features.cracks.underwater_strength') }}
             </ParameterSlider>
+          </template>
+        </ParameterGroup>
+      </template>
+    </ParameterGroup>
+    <ParameterGroup
+      v-model="EDITOR_STATE.planetData.cratersEnabled"
+      :toggleable="EDITOR_STATE.planetData.cratersEnabled"
+    >
+      <template #title>{{ $t('editor.features.craters.$title') }}</template>
+      <template #content>
+        <ParameterGroup :toggleable="true">
+          <template #title>{{ $t('editor.general.noise_base_detail') }}</template>
+          <template #content>
+            <ParameterSlider
+              id="ct-bscale"
+              v-model="EDITOR_STATE.planetData.cratersBaseNoise.scale"
+              :step="0.01"
+              :max="20"
+            >
+              {{ $t('editor.general.noise_voronoi_scale') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="ct-bjitt"
+              v-model="EDITOR_STATE.planetData.cratersBaseNoise.jitter"
+              :step="0.01"
+              :min="0"
+              :max="1"
+            >
+              {{ $t('editor.general.noise_voronoi_jitter') }}
+            </ParameterSlider>
+            <ParameterDivider />
+            <ParameterSlider
+              id="ct-dfreq"
+              v-model="EDITOR_STATE.planetData.cratersDetailNoise.frequency"
+              :step="0.01"
+              :max="5"
+            >
+              {{ $t('editor.general.noise_fbm_frequency') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="ct-damp"
+              v-model="EDITOR_STATE.planetData.cratersDetailNoise.amplitude"
+              :step="0.01"
+              :min="0"
+              :max="2"
+            >
+              {{ $t('editor.general.noise_fbm_amplitude') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="ct-dlac"
+              v-model="EDITOR_STATE.planetData.cratersDetailNoise.lacunarity"
+              :step="0.01"
+              :min="1"
+              :max="3"
+            >
+              {{ $t('editor.general.noise_fbm_lacunarity') }}
+            </ParameterSlider>
+            <ParameterSlider
+              id="ct-doct"
+              v-model="EDITOR_STATE.planetData.cratersDetailNoise.octaves"
+              :step="1"
+              :min="1"
+              :max="8"
+            >
+              {{ $t('editor.general.noise_fbm_octaves') }}
+            </ParameterSlider>
+          </template>
+        </ParameterGroup>
+        <ParameterGroup :toggleable="true">
+          <template #title>{{ $t('editor.features.craters.curve') }}</template>
+          <template #content>
+            <ParameterColorRamp
+              :key="EDITOR_STATE.planetData.planetName"
+              v-model="EDITOR_STATE.planetData.cratersColorRamp"
+              mode="opacity"
+            >
+              {{ $t('editor.general.colorramp_opacity') }}
+            </ParameterColorRamp>
           </template>
         </ParameterGroup>
       </template>

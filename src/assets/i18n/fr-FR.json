@@ -302,6 +302,7 @@
       "warping_z": "Déformation Z",
       "noise": "Paramètres de bruit",
       "noise_layers": "Nb. de couches",
+      "noise_base_detail": "Bruit de base & détail",
       "noise_fbm_frequency": "Fréquence",
       "noise_fbm_amplitude": "Amplitude",
       "noise_fbm_lacunarity": "Lacunarité",
@@ -361,12 +362,15 @@
       "$title": "",
       "cracks": {
         "$title": "Craquelures",
-        "noise_base_detail": "Bruit de base & détail",
         "noise_limiter": "Bruit limiteur",
         "noise_color": "Bruit de couleur",
         "distance_to_edge": "Distance des bords",
         "detail_noise_strength": "Intensité des détails",
         "underwater_strength": "Intensité sous-marine"
+      },
+      "craters": {
+        "$title": "Cratères",
+        "curve": "Courbe"
       },
       "biomes": {
         "$title": "Biomes",

@@ -201,6 +201,12 @@ export function randomizePlanetData(target: PlanetData): void {
   target.cracksColorNoise.randomize();
   target.cracksColorRamp.randomize(4);
 
+  // Craters
+  target.cratersEnabled = randomBoolean();
+  target.cratersBaseNoise.randomize();
+  target.cratersDetailNoise.randomize();
+  //target.cratersColorRamp.randomize(4);
+
   // Clouds
   target.cloudsEnabled = randomBoolean();
   target.cloudsRotation = clampedPRNG(0, 360);
@@ -348,14 +354,26 @@ export function resetPlanetData(target: PlanetData): void {
   target.cracksEmissiveIntensity = 2.5;
   target.cracksDetailNoiseStrength = 0.5;
   target.cracksBaseNoise.reset(3.97, 1);
-  target.cracksDetailNoise.reset(0.6, 1, 3, 8, 1, 1);
-  target.cracksLimiterNoise.reset(6.96, 0.49, 2.5, 4, 1, 1);
-  target.cracksColorNoise.reset(25, 0.8, 3, 4, 1, 1);
+  target.cracksDetailNoise.reset(0.6, 1, 3, 8);
+  target.cracksLimiterNoise.reset(6.96, 0.49, 2.5, 4);
+  target.cracksColorNoise.reset(25, 0.8, 3, 4, 1);
   target.cracksColorRamp.loadFromSteps([
     new ColorRampStep(0x2e221b, 0, true),
     new ColorRampStep(0xad5a11, 0.55),
     new ColorRampStep(0xe6962e, 0.8),
     new ColorRampStep(0xffdc73, 1, true),
+  ]);
+
+  // Craters
+  target.cratersEnabled = false;
+  target.cratersBaseNoise.reset(10, 1);
+  target.cratersDetailNoise.reset(6, 1, 1.75, 6);
+  target.cratersColorRamp.loadFromSteps([
+    new ColorRampStep(0x000000, 0, true),
+    new ColorRampStep(0x000000, 0.27),
+    new ColorRampStep(0x8f8f8f, 0.34),
+    new ColorRampStep(0x7f7f7f, 0.4),
+    new ColorRampStep(0x7f7f7f, 1, true),
   ]);
 
   // Clouds

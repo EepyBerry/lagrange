@@ -11,13 +11,13 @@ export const calculateCracksExtents = /*@__PURE__*/ Fn(
     Node<'vec3'>,
     Node<'float'>,
     Node<'float'>,
-    Node<'vec3'>,
+    Node<'vec2'>,
     Node<'vec4'>,
     Node<'vec4'>,
   ]) => {
     const detail = mix(vPos, vPos.mul(fbm3(vPos, detailNoise)), detailNoiseStrength).toVar('detailPos');
     const limiter = stretchedExp(fbm3(vPos, limiterNoise), 0.5, 20).toVar('limitedPos');
-    const cellCenterDistance = voronoi3(detail.mul(baseNoise.x), baseNoise.y).toVar('cellCenterDist');
+    const cellCenterDistance = voronoi3(detail.mul(baseNoise.x), baseNoise.y, 1).toVar('cellCenterDist');
 
     const extent = remapClamp(cellCenterDistance, 0, distanceToEdge.mul(baseNoise.x), 1, 0).toVar('extent');
     return vec2(extent, limiter);

@@ -302,6 +302,7 @@
       "warping_z": "Z warping",
       "noise": "Noise parameters",
       "noise_layers": "Layers",
+      "noise_base_detail": "Base & detail noise",
       "noise_fbm_frequency": "Frequency",
       "noise_fbm_amplitude": "Amplitude",
       "noise_fbm_lacunarity": "Lacunarity",
@@ -361,12 +362,15 @@
       "$title": "Features",
       "cracks": {
         "$title": "Cracks",
-        "noise_base_detail": "Base & detail noise",
         "noise_limiter": "Limiter noise",
         "noise_color": "Color noise",
         "distance_to_edge": "Distance to edge",
         "detail_noise_strength": "Detail noise strength",
         "underwater_strength": "Underwater strength"
+      },
+      "craters": {
+        "$title": "Craters",
+        "curve": "Curve"
       },
       "biomes": {
         "$title": "Biomes",
