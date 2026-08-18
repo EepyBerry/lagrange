@@ -1,6 +1,6 @@
 import type { SerializedPlanetData } from '@core/editor/workers/worker-serializer.types.ts';
-import { calculateBiomeTextureCoordinates } from '@tsl/features/biomes.ts';
-import { calculateCracksExtents, renderCracks } from '@tsl/features/cracks.ts';
+import { BiomesInput, calculateBiomeTextureCoordinates } from '@tsl/features/biomes.ts';
+import { calculateCracksExtents, CracksInput, renderCracks } from '@tsl/features/cracks.ts';
 import { applyBaseEmissive, applyBiomesEmissive, applyCracksEmissive } from '@tsl/features/emissive.ts';
 import { applyXYZTransformations, layer } from '@tsl/features/lwd.ts';
 import { TSLMaterial } from '@tsl/materials/tsl-material.ts';
@@ -56,7 +56,7 @@ type BakingPlanetEmissivityUniforms = {
       emissiveIntensity: UniformNode<'float', number>;
       underwaterStrength: UniformNode<'float', number>;
       detailNoiseStrength: UniformNode<'float', number>;
-      baseNoise: UniformNode<'vec3', Vector3>;
+      baseNoise: UniformNode<'vec2', Vector2>;
       detailNoise: UniformNode<'vec4', Vector4>;
       limiterNoise: UniformNode<'vec4', Vector4>;
       colorNoise: UniformNode<'vec4', Vector4>;
@@ -150,9 +150,7 @@ export class BakingPlanetEmissivityTSLMaterial extends TSLMaterial<
           emissiveIntensity: uniform(data.cracksEmissiveIntensity),
           underwaterStrength: uniform(data.cracksUnderwaterStrength),
           detailNoiseStrength: uniform(data.cracksDetailNoiseStrength),
-          baseNoise: uniform(
-            new Vector3(data.cracksBaseNoise.scale, data.cracksBaseNoise.jitter, data.cracksBaseNoise.mode),
-          ),
+          baseNoise: uniform(new Vector2(data.cracksBaseNoise.scale, data.cracksBaseNoise.jitter)),
           detailNoise: uniform(
             new Vector4(
               data.cracksDetailNoise.frequency,
@@ -251,10 +249,12 @@ export class BakingPlanetEmissivityTSLMaterial extends TSLMaterial<
         calculateBiomeTextureCoordinates(
           vPos,
           heightLimit,
-          this.uniforms.features.biomes.temperatureMode,
-          this.uniforms.features.biomes.temperatureNoise,
-          this.uniforms.features.biomes.humidityMode,
-          this.uniforms.features.biomes.humidityNoise,
+          BiomesInput(
+            this.uniforms.features.biomes.temperatureMode,
+            this.uniforms.features.biomes.temperatureNoise,
+            this.uniforms.features.biomes.humidityMode,
+            this.uniforms.features.biomes.humidityNoise,
+          ),
         ),
       );
     });
@@ -267,11 +267,13 @@ export class BakingPlanetEmissivityTSLMaterial extends TSLMaterial<
       cracksExtents.assign(
         calculateCracksExtents(
           vPos,
-          this.uniforms.features.cracks.distanceToEdge,
-          this.uniforms.features.cracks.detailNoiseStrength,
-          this.uniforms.features.cracks.baseNoise,
-          this.uniforms.features.cracks.detailNoise,
-          this.uniforms.features.cracks.limiterNoise,
+          CracksInput(
+            this.uniforms.features.cracks.distanceToEdge,
+            this.uniforms.features.cracks.detailNoiseStrength,
+            this.uniforms.features.cracks.baseNoise,
+            this.uniforms.features.cracks.detailNoise,
+            this.uniforms.features.cracks.limiterNoise,
+          ),
         ),
       );
       const cracksData = renderCracks(

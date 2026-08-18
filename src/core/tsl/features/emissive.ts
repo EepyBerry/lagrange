@@ -9,15 +9,16 @@ export const applyBaseEmissive = /*@__PURE__*/ Fn(
 
     return color.mul(mix(emissiveParams.x, emissiveParams.y, flagSurfaceType));
   },
-).setLayout({
-  name: 'LG_EMISSIVE_applyBaseEmissive',
-  type: 'vec3',
-  inputs: [
-    { name: 'i_color', type: 'vec3' },
-    { name: 'i_emissiveParams', type: 'vec2' },
-    { name: 'i_FLAG_SURFACE_TYPE', type: 'float' },
-  ],
-});
+  {
+    name: 'LG_EMISSIVE_applyBaseEmissive',
+    type: 'vec3',
+    inputs: [
+      { name: 'i_color', type: 'vec3' },
+      { name: 'i_emissiveParams', type: 'vec2' },
+      { name: 'i_FLAG_SURFACE_TYPE', type: 'float' },
+    ],
+  },
+);
 
 export const applyBiomesEmissive = /*@__PURE__*/ Fn(
   ([i_color, i_emissiveParams, biomeTex, biomeEmissiveTex, i_biomeTexCoord, i_FLAG_SURFACE_TYPE]: [
@@ -78,15 +79,16 @@ export const applyCracksEmissive = /*@__PURE__*/ Fn(
     });
     return result;
   },
-).setLayout({
-  name: 'LG_EMISSIVE_applyCracksEmissive',
-  type: 'vec3',
-  inputs: [
-    { name: 'i_color', type: 'vec3' },
-    { name: 'i_cracksColor', type: 'vec3' },
-    { name: 'i_cracksExtents', type: 'vec2' },
-    { name: 'i_emissiveIntensity', type: 'float' },
-    { name: 'i_underwaterStrength', type: 'float' },
-    { name: 'i_FLAG_SURFACE_TYPE', type: 'float' },
-  ],
-});
+  {
+    name: 'LG_EMISSIVE_applyCracksEmissive',
+    type: 'vec3',
+    inputs: [
+      { name: 'i_color', type: 'vec3' },
+      { name: 'i_cracksColor', type: 'vec3' },
+      { name: 'i_cracksExtents', type: 'vec2' },
+      { name: 'i_emissiveIntensity', type: 'float' },
+      { name: 'i_underwaterStrength', type: 'float' },
+      { name: 'i_FLAG_SURFACE_TYPE', type: 'float' },
+    ],
+  },
+);

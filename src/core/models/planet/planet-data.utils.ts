@@ -90,6 +90,20 @@ export function loadPlanetData(target: PlanetData, data?: PrefixedWith<PlanetDat
     ],
   );
 
+  // Craters
+  target.cratersEnabled = data?._cratersEnabled ?? false;
+  target.cratersBaseNoise.loadData(data?._cratersBaseNoise);
+  target.cratersDetailNoise.loadData(data?._cratersDetailNoise);
+  target.cratersColorRamp.loadFromSteps(
+    data?._cratersColorRamp?._steps ?? [
+      new ColorRampStep(0x000000, 0, true),
+      new ColorRampStep(0x000000, 0.27),
+      new ColorRampStep(0x8f8f8f, 0.34),
+      new ColorRampStep(0x7f7f7f, 0.4),
+      new ColorRampStep(0x7f7f7f, 1, true),
+    ],
+  );
+
   // Clouds
   target.cloudsEnabled = data?._cloudsEnabled ?? true;
   target.cloudsRotation = data?._cloudsRotation ?? 0;
@@ -366,8 +380,8 @@ export function resetPlanetData(target: PlanetData): void {
 
   // Craters
   target.cratersEnabled = false;
-  target.cratersBaseNoise.reset(10, 1);
-  target.cratersDetailNoise.reset(6, 1, 1.75, 6);
+  target.cratersBaseNoise.reset(7.25, 1);
+  target.cratersDetailNoise.reset(3.8, 1, 2.6, 6);
   target.cratersColorRamp.loadFromSteps([
     new ColorRampStep(0x000000, 0, true),
     new ColorRampStep(0x000000, 0.27),

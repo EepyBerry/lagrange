@@ -931,14 +931,14 @@ export default class PlanetData {
     this._cratersEnabled = false;
     this._cratersBaseNoise = new VoronoiNoiseParameters(
       { context: 'cratersBaseNoise', endpointRef: this.dataEventEndpoint },
-      10,
+      7.25,
       1,
     );
     this._cratersDetailNoise = new FbmNoiseParameters(
       { context: 'cratersDetailNoise', endpointRef: this.dataEventEndpoint },
-      6,
+      3.8,
       1,
-      1.75,
+      2.6,
       6,
     );
     this._cratersColorRamp = new ColorRamp({ context: 'craters', endpointRef: this.dataEventEndpoint }, [
