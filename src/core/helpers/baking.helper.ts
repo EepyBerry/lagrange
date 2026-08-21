@@ -51,11 +51,11 @@ export function createBakingEmissivityMap(data: SerializedPlanetData, textures: 
   return mesh;
 }
 
-export function createBakingHeightMap(data: SerializedPlanetData): Mesh {
+export function createBakingHeightMap(data: SerializedPlanetData, textures: Texture[]): Mesh {
   const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality);
   geometry.computeTangents();
 
-  const tslMaterial = new BakingPlanetHeightMapTSLMaterial(data);
+  const tslMaterial = new BakingPlanetHeightMapTSLMaterial(data, textures);
   const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
   mesh.name = Globals.MESH_NAME_HEIGHTMAP;
   return mesh;

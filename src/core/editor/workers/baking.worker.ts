@@ -33,6 +33,7 @@ type BakingWorkerInitTextures = {
   biomes?: DataTexture;
   biomesEmissive?: DataTexture;
   cracks?: DataTexture;
+  craters?: DataTexture;
   clouds?: DataTexture;
   rings?: DataTexture[];
 };
@@ -64,6 +65,7 @@ stepHandlers
       initTextures.surface!,
       initTextures.biomes!,
       initTextures.cracks!,
+      initTextures.craters!,
     ]);
   })
   .set(3, async () => {
@@ -81,7 +83,7 @@ stepHandlers
   })
   .set(5, async () => {
     self.postMessage({ type: 'progress', progress: 5 });
-    outputData.planetNormalMap = await bakePlanetNormalMap(currentBakingInput);
+    outputData.planetNormalMap = await bakePlanetNormalMap(currentBakingInput, [initTextures.craters!]);
   })
   .set(6, async () => {
     self.postMessage({ type: 'progress', progress: 6 });
@@ -118,8 +120,9 @@ self.onmessage = async (event: MessageEvent<BakingWorkerInput | BakingWorkerText
     initTextures.biomes = dataTextures[1];
     initTextures.biomesEmissive = dataTextures[2];
     initTextures.cracks = dataTextures[3];
-    initTextures.clouds = dataTextures[4];
-    initTextures.rings = dataTextures.slice(5);
+    initTextures.craters = dataTextures[4];
+    initTextures.clouds = dataTextures[5];
+    initTextures.rings = dataTextures.slice(6);
 
     for (let i = 1; i <= 8; i++) {
       await stepHandlers.get(i)!();
@@ -161,6 +164,13 @@ function requestTextures() {
       height: currentBakingInput.bakingResolution,
       operation: 'color-ramp',
       data: currentBakingInput.planetData.cracksColorRamp.steps,
+    },
+    {
+      type: 'texture-request',
+      width: currentBakingInput.bakingResolution,
+      height: currentBakingInput.bakingResolution,
+      operation: 'color-ramp',
+      data: currentBakingInput.planetData.cratersColorRamp.steps,
     },
     {
       type: 'texture-request',
@@ -308,9 +318,10 @@ async function bakePlanetEmissivityMap(data: BakingWorkerInput, textures: DataTe
 /**
  * Baking step 5: bake planet height map and derive its normal map from that
  * @param data received message data
+ * @param textures curve-texture for the crater profile
  */
-async function bakePlanetNormalMap(data: BakingWorkerInput): Promise<Uint8Array> {
-  const heightMapMesh = BakingHelper.createBakingHeightMap(data.planetData);
+async function bakePlanetNormalMap(data: BakingWorkerInput, textures: DataTexture[]): Promise<Uint8Array> {
+  const heightMapMesh = BakingHelper.createBakingHeightMap(data.planetData, textures);
   const heightMapTex = await BakingHelper.bakeMesh(
     bakingObjects.renderer,
     bakingObjects.camera,
@@ -405,6 +416,7 @@ async function sendOutputAndDisposeTextures(): Promise<void> {
   initTextures.biomes?.dispose();
   initTextures.biomesEmissive?.dispose();
   initTextures.cracks?.dispose();
+  initTextures.craters?.dispose();
   initTextures.clouds?.dispose();
   initTextures.rings?.forEach((tex) => tex.dispose());
   self.postMessage(<BakingWorkerOutput>{

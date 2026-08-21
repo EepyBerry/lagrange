@@ -1,5 +1,5 @@
 import type { TextureNode, Node, StructNode } from 'three/webgpu';
-import { float, step, abs, mix, smoothstep, Fn, vec2, vec4, vec3, min, struct } from 'three/tsl';
+import { float, step, abs, mix, smoothstep, Fn, vec2, vec4, vec3, min, struct, EPSILON } from 'three/tsl';
 import { fbm3 } from '../noise/fbm3';
 
 export const BiomesInput = struct(
@@ -13,13 +13,13 @@ export const BiomesInput = struct(
 );
 
 export const calculateBiomeTextureCoordinates = /*@__PURE__*/ Fn(
-  ([i_position, i_heightLimit, i_biomesInput]: [Node<'vec3'>, Node<'float'>, StructNode]) => {
+  ([i_position, i_biomesInput]: [Node<'vec3'>, StructNode]) => {
     const vPos = vec3(i_position).toVar('vPos');
-    const heightLimit = float(i_heightLimit).toVar('heightLimit');
     const temperatureMode = float(<Node<'float'>>i_biomesInput.get('temperatureMode')).toVar('temperatureMode');
     const temperatureNoise = vec4(<Node<'vec4'>>i_biomesInput.get('temperatureNoise')).toVar('temperatureNoise');
     const humidityMode = float(<Node<'float'>>i_biomesInput.get('humidityMode')).toVar('humidityMode');
     const humidityNoise = vec4(<Node<'vec4'>>i_biomesInput.get('humidityNoise')).toVar('humidityNoise');
+    const heightLimit = float(1).sub(EPSILON).toVar('heightLimit');
 
     const temp = float(computeTemperature(vPos, temperatureNoise, temperatureMode));
     const humi = float(computeHumidity(vPos, humidityNoise, humidityMode));
@@ -30,7 +30,6 @@ export const calculateBiomeTextureCoordinates = /*@__PURE__*/ Fn(
     type: 'vec2',
     inputs: [
       { name: 'i_position', type: 'vec3' },
-      { name: 'i_heightLimit', type: 'float' },
       { name: 'i_biomesInput', type: 'BiomesInput' },
     ],
   },

@@ -1,8 +1,9 @@
 import type { SerializedPlanetData } from '@core/editor/workers/worker-serializer.types.ts';
 import { BiomesInput, calculateBiomeTextureCoordinates, renderBiomes } from '@tsl/features/biomes.ts';
-import { calculateCracksExtents, calculateCracksHeight, CracksInput, renderCracks } from '@tsl/features/cracks.ts';
-import { calculateCratersHeight, CratersInput } from '@tsl/features/craters.ts';
-import { applyXYZTransformations, layer } from '@tsl/features/lwd.ts';
+import { calculateCracksHeight, CracksInput, renderCracks } from '@tsl/features/cracks.ts';
+import { CratersInput } from '@tsl/features/craters.ts';
+import { calculateTotalHeight } from '@tsl/features/height.ts';
+import { applyXYZTransformations } from '@tsl/features/lwd.ts';
 import { TSLMaterial } from '@tsl/materials/tsl-material.ts';
 import { flattenUV } from '@tsl/utils/vertex.tsl.ts';
 import {
@@ -33,7 +34,6 @@ import {
   Vector4,
   Node,
   Vector2,
-  StructNode,
 } from 'three/webgpu';
 
 type BakingPlanetSurfaceUniforms = {
@@ -79,8 +79,10 @@ type BakingPlanetSurfaceUniforms = {
     surface: TextureNode;
     biomes: TextureNode;
     cracks: TextureNode;
+    craters: TextureNode;
   };
 };
+
 export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMaterial, BakingPlanetSurfaceUniforms> {
   constructor(initData: SerializedPlanetData, initTextures: Texture[]) {
     super();
@@ -207,6 +209,7 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
         surface: texture(textures[0]),
         biomes: texture(textures[1]),
         cracks: texture(textures[2]),
+        craters: texture(textures[3]),
       },
     };
   }
@@ -250,13 +253,13 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
     );
 
     // heightmap & features
-    const FLAG_CRATERS_ENABLED = float(this.uniforms.flags.element(5)).toVar('FLAG_CRATERS_ENABLED');
     const FLAG_CRACKS_ENABLED = float(this.uniforms.flags.element(4)).toVar('FLAG_CRACKS_ENABLED');
-    const surfaceData = this.computeHeight(
+    const FLAG_CRATERS_ENABLED = float(this.uniforms.flags.element(5)).toVar('FLAG_CRATERS_ENABLED');
+    const surfaceData = calculateTotalHeight(
       vPos,
       this.uniforms.surface.noise,
       this.uniforms.surface.warping.x,
-      this.uniforms.textures.surface,
+      this.uniforms.textures.craters,
       CratersInput(this.uniforms.features.craters.baseNoise, this.uniforms.features.craters.detailNoise),
       CracksInput(
         this.uniforms.features.cracks.distanceToEdge,
@@ -269,12 +272,12 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
       FLAG_CRACKS_ENABLED,
     );
 
-    const heightLimit = float(1).sub(EPSILON).toVar('heightLimit');
     const height = float(<Node<'float'>>surfaceData.get('height')).toVar('height');
+    const heightBeforeCracks = float(<Node<'float'>>surfaceData.get('heightBeforeCracks')).toVar('heightBeforeCracks');
     const cracksExtents = vec2(<Node<'vec2'>>surfaceData.get('cracksExtents')).toVar('cracksExtents');
 
     // flags
-    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, height).toVar('FLAG_SURFACE_TYPE');
+    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, heightBeforeCracks).toVar('FLAG_SURFACE_TYPE');
     const FLAG_BIOMES_ENABLED = FLAG_SURFACE_TYPE.mul(float(this.uniforms.flags.element(3))).toVar(
       'FLAG_BIOMES_ENABLED',
     );
@@ -284,16 +287,15 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
     // ------------------------------------------ //
 
     // render noise as color
-    const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord');
+    const texCoord = vec2(min(height, float(1).sub(EPSILON)), 0.5).toVar('texCoord');
     const colour = vec3(this.uniforms.textures.surface.sample(texCoord).xyz).toVar('colour');
 
     // calculate biomes
     const biomeTexCoord = vec2(0).toVar('biomeTexCoord');
-    If(FLAG_BIOMES_ENABLED.equal(1), () => {
+    If(FLAG_BIOMES_ENABLED.greaterThan(0.5), () => {
       biomeTexCoord.assign(
         calculateBiomeTextureCoordinates(
           vPos,
-          heightLimit,
           BiomesInput(
             this.uniforms.features.biomes.temperatureMode,
             this.uniforms.features.biomes.temperatureNoise,
@@ -308,7 +310,7 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
     // calculate cracks
     const cracksColor = vec3(0).toVar('cracksColour');
     const cracksTextureColor = vec3(0).toVar('cracksTextureColor');
-    If(FLAG_CRACKS_ENABLED.equal(1), () => {
+    If(FLAG_CRACKS_ENABLED.greaterThan(0.5), () => {
       const cracksData = renderCracks(
         cracksExtents,
         colour,
@@ -329,55 +331,4 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
     shaderOutput.get('color').assign(vec4(colour, 1));
     return shaderOutput;
   });
-
-  private readonly computeHeight = Fn(
-    ([
-      i_p,
-      i_surfaceNoise,
-      i_layers,
-      i_cratersTex,
-      i_cratersInput,
-      i_cracksInput,
-      FLAG_CRATERS_ENABLED,
-      FLAG_CRACKS_ENABLED,
-    ]: [
-      Node<'vec3'>,
-      Node<'vec4'>,
-      Node<'float'>,
-      TextureNode,
-      StructNode,
-      StructNode,
-      Node<'float'>,
-      Node<'float'>,
-    ]) => {
-      const totalHeight = layer(i_p, i_surfaceNoise, i_layers);
-      If(FLAG_CRATERS_ENABLED.equal(1), () => {
-        totalHeight.assign(
-          calculateCratersHeight(
-            i_p,
-            totalHeight,
-            i_cratersTex,
-            <Node<'vec2'>>i_cratersInput.get('baseNoise'),
-            <Node<'vec4'>>i_cratersInput.get('detailNoise'),
-          ),
-        );
-      });
-
-      const cracksExtents = vec2(0);
-      If(FLAG_CRACKS_ENABLED.equal(1), () => {
-        cracksExtents.assign(calculateCracksExtents(i_p, i_cracksInput));
-        totalHeight.assign(calculateCracksHeight(totalHeight, cracksExtents, FLAG_CRACKS_ENABLED));
-      });
-
-      return this.HeightData(totalHeight, cracksExtents);
-    },
-  ); /*.setLayout({
-    name: 'LG_PLANET_computeHeight',
-    type: 'HeightData',
-    inputs: [
-      { name: 'i_p', type: 'vec3' },
-      { name: 'FLAG_CRATERS_ENABLED', type: 'float' },
-      { name: 'FLAG_CRACKS_ENABLED', type: 'float' },
-    ],
-  })*/
 }

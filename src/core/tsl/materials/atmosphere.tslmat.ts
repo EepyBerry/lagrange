@@ -150,7 +150,7 @@ export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereU
       If(this.uniforms.render.colorMode.equal(0), () => {
         colorNode.assign(IShifted.mul(this.uniforms.render.intensity));
       });
-      If(this.uniforms.render.colorMode.equal(1), () => {
+      If(this.uniforms.render.colorMode.greaterThan(0.5), () => {
         colorNode.assign(whitescale(I).mul(tintToMatrix(tint)).mul(this.uniforms.render.intensity));
       });
       If(this.uniforms.render.colorMode.equal(2), () => {

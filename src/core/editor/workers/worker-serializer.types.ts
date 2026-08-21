@@ -118,6 +118,7 @@ export interface SerializedPlanetData {
   cratersEnabled: boolean;
   cratersBaseNoise: SerializedVoronoiNoiseParameters;
   cratersDetailNoise: SerializedFbmNoiseParameters;
+  cratersColorRamp: SerializedColorRamp;
   cloudsEnabled: boolean;
   cloudsRotation: number;
   cloudsHeight: number;

@@ -83,7 +83,7 @@ export const renderCracks = /*@__PURE__*/ Fn(
     // if underwater, set the strength of the cracks' color by the given value
     // if on land, just display the cracks as-is
     const cracksColor = vec3(0).toVar('cracksColor');
-    If(FLAG_SURFACE_TYPE.equal(1), () => {
+    If(FLAG_SURFACE_TYPE.greaterThan(0.5), () => {
       cracksColor.assign(mix(color, cracksColorNoiseColor, cracksExtents.x));
     }).Else(() => {
       cracksColor.assign(mix(color, mix(color, cracksColorNoiseColor, cracksExtents.x), underwaterStrength));

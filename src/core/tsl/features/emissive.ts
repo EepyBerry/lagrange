@@ -34,7 +34,7 @@ export const applyBiomesEmissive = /*@__PURE__*/ Fn(
     const flippedBiomeTexCoord = vec2(i_biomeTexCoord.y, i_biomeTexCoord.x).setName('flippedBiomeTexCoord');
     const flagSurfaceType = float(i_FLAG_SURFACE_TYPE).toVar('flagSurfaceType');
 
-    If(flagSurfaceType.equal(1), () => {
+    If(flagSurfaceType.greaterThan(0.5), () => {
       // calculate emissive
       // note: X/Y axes are flipped on texture, so we must also flip coords when sampling
       const biomeEmissiveTexel = vec4(biomeEmissiveTex.sample(flippedBiomeTexCoord)).toVar('biomeEmissiveTexel');
@@ -71,7 +71,7 @@ export const applyCracksEmissive = /*@__PURE__*/ Fn(
 
     // override color to cracks value if we're on a biome
     const result = vec3(0).toVar('result');
-    If(FLAG_SURFACE_TYPE.equal(1), () => {
+    If(FLAG_SURFACE_TYPE.greaterThan(0.5), () => {
       result.assign(mix(emissiveColor, cracksColor.mul(cracksEmissiveIntensity), extents.x.mul(extents.y)));
     }).Else(() => {
       const emissiveValue = mix(emissiveColor, cracksColor.mul(cracksEmissiveIntensity), extents.x.mul(extents.y));

@@ -1,10 +1,11 @@
 import type { SerializedPlanetData } from '@core/editor/workers/worker-serializer.types.ts';
-import { calculateCracksExtents, calculateCracksHeight, CracksInput } from '@tsl/features/cracks.ts';
-import { calculateCratersHeight } from '@tsl/features/craters.ts';
-import { applyXYZTransformations, layer } from '@tsl/features/lwd.ts';
+import { CracksInput } from '@tsl/features/cracks.ts';
+import { CratersInput } from '@tsl/features/craters.ts';
+import { calculateTotalHeight } from '@tsl/features/height.ts';
+import { applyXYZTransformations } from '@tsl/features/lwd.ts';
 import { TSLMaterial } from '@tsl/materials/tsl-material.ts';
 import { flattenUV } from '@tsl/utils/vertex.tsl.ts';
-import { step, vec4, uv, positionLocal, uniform, uniformArray, vec3, mix, float, If, vec2, texture } from 'three/tsl';
+import { vec4, uv, positionLocal, uniform, uniformArray, vec3, mix, float, texture, step } from 'three/tsl';
 import {
   MeshBasicNodeMaterial,
   Texture,
@@ -14,6 +15,7 @@ import {
   Vector2,
   Vector3,
   Vector4,
+  Node,
 } from 'three/webgpu';
 
 type BakingPlanetHeightMapUniforms = {
@@ -154,41 +156,29 @@ export class BakingPlanetHeightMapTSLMaterial extends TSLMaterial<
       this.uniforms.flags.element(1),
     );
 
-    // Heightmap & global flags
-    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar();
-    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, height).toVar();
-    const FLAG_CRATERS_ENABLED = float(this.uniforms.flags.element(3)).toVar('FLAG_CRATERS_ENABLED');
+    // heightmap & features
     const FLAG_CRACKS_ENABLED = float(this.uniforms.flags.element(2)).toVar('FLAG_CRACKS_ENABLED');
+    const FLAG_CRATERS_ENABLED = float(this.uniforms.flags.element(3)).toVar('FLAG_CRATERS_ENABLED');
+    const surfaceData = calculateTotalHeight(
+      vPos,
+      this.uniforms.surface.noise,
+      this.uniforms.surface.warping.x,
+      this.uniforms.textures.craters,
+      CratersInput(this.uniforms.features.craters.baseNoise, this.uniforms.features.craters.detailNoise),
+      CracksInput(
+        this.uniforms.features.cracks.distanceToEdge,
+        this.uniforms.features.cracks.detailNoiseStrength,
+        this.uniforms.features.cracks.baseNoise,
+        this.uniforms.features.cracks.detailNoise,
+        this.uniforms.features.cracks.limiterNoise,
+      ),
+      FLAG_CRATERS_ENABLED,
+      FLAG_CRACKS_ENABLED,
+    );
 
-    // apply cracks and craters calculations
-    If(FLAG_CRATERS_ENABLED.equal(1), () => {
-      height.assign(
-        calculateCratersHeight(
-          vPos,
-          height,
-          this.uniforms.textures.craters,
-          this.uniforms.features.craters.baseNoise,
-          this.uniforms.features.craters.detailNoise,
-        ),
-      );
-    });
-
-    const cracksExtents = vec2(0);
-    If(FLAG_CRACKS_ENABLED.equal(1), () => {
-      cracksExtents.assign(
-        calculateCracksExtents(
-          vPos,
-          CracksInput(
-            this.uniforms.features.cracks.distanceToEdge,
-            this.uniforms.features.cracks.detailNoiseStrength,
-            this.uniforms.features.cracks.baseNoise,
-            this.uniforms.features.cracks.detailNoise,
-            this.uniforms.features.cracks.limiterNoise,
-          ),
-        ),
-      );
-      height.assign(calculateCracksHeight(height, cracksExtents, FLAG_CRACKS_ENABLED));
-    });
+    const height = float(<Node<'float'>>surfaceData.get('height')).toVar('height');
+    const heightBeforeCracks = float(<Node<'float'>>surfaceData.get('heightBeforeCracks')).toVar('heightBeforeCracks');
+    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, heightBeforeCracks).toVar('FLAG_SURFACE_TYPE');
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial();

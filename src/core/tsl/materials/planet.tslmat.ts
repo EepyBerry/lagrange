@@ -6,8 +6,8 @@ import { DataEventEndpoint } from '@core/editor/event/data-event-endpoint.ts';
 import { EDITOR_WORKERS } from '@core/editor/state/editor.state.ts';
 import { TEXTURE_SIZES } from '@core/globals.ts';
 import { WorkerBoundDataArrayTexture } from '@core/utils/texture/worker-bound-data-array-texture.ts';
-import { calculateCracksExtents, renderCracks, calculateCracksHeight, CracksInput } from '@tsl/features/cracks.ts';
-import { calculateCratersHeight, CratersInput } from '@tsl/features/craters.ts';
+import { renderCracks, CracksInput } from '@tsl/features/cracks.ts';
+import { CratersInput } from '@tsl/features/craters.ts';
 import { applyBaseEmissive, applyBiomesEmissive, applyCracksEmissive } from '@tsl/features/emissive.ts';
 import {
   bitangentLocal,
@@ -34,7 +34,6 @@ import {
 import {
   MeshStandardNodeMaterial,
   Node,
-  StructNode,
   TextureNode,
   UniformArrayNode,
   UniformNode,
@@ -44,7 +43,8 @@ import {
 } from 'three/webgpu';
 import { BiomesInput, calculateBiomeTextureCoordinates, renderBiomes } from '../features/biomes';
 import { applyBumpMapping } from '../features/bump';
-import { applyXYZTransformations, layer } from '../features/lwd';
+import { calculateTotalHeight } from '../features/height';
+import { applyXYZTransformations } from '../features/lwd';
 import { TSLMaterial } from './tsl-material';
 
 export type PlanetUniforms = {
@@ -516,13 +516,6 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     },
     'ShaderOutput',
   );
-  private readonly HeightData = struct(
-    {
-      height: 'float',
-      cracksExtents: 'vec2',
-    },
-    'HeightData',
-  );
 
   buildMaterial(): MeshStandardNodeMaterial {
     const shaderOutput = this.runShader();
@@ -557,9 +550,9 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     );
 
     // heightmap & features
-    const FLAG_CRATERS_ENABLED = float(this.uniforms.flags.element(5)).toVar('FLAG_CRATERS_ENABLED');
     const FLAG_CRACKS_ENABLED = float(this.uniforms.flags.element(4)).toVar('FLAG_CRACKS_ENABLED');
-    const surfaceData = this.computeHeight(
+    const FLAG_CRATERS_ENABLED = float(this.uniforms.flags.element(5)).toVar('FLAG_CRATERS_ENABLED');
+    const surfaceData = calculateTotalHeight(
       vPos,
       this.uniforms.surface.noise,
       this.uniforms.surface.warping.x,
@@ -576,12 +569,12 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
       FLAG_CRACKS_ENABLED,
     );
 
-    const heightLimit = float(1).sub(EPSILON).toVar('heightLimit');
+    const heightBeforeCracks = float(<Node<'float'>>surfaceData.get('heightBeforeCracks')).toVar('heightBeforeCracks');
     const height = float(<Node<'float'>>surfaceData.get('height')).toVar('height');
     const cracksExtents = vec2(<Node<'vec2'>>surfaceData.get('cracksExtents')).toVar('cracksExtents');
 
     // flags
-    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, height).toVar('FLAG_SURFACE_TYPE');
+    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, heightBeforeCracks).toVar('FLAG_SURFACE_TYPE');
     const FLAG_BUMPS_ENABLED = float(this.uniforms.flags.element(2)).toVar('FLAG_BUMPS_ENABLED');
     const FLAG_BIOMES_ENABLED = FLAG_SURFACE_TYPE.mul(float(this.uniforms.flags.element(3))).toVar(
       'FLAG_BIOMES_ENABLED',
@@ -593,16 +586,15 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     // ------------------------------------------ //
 
     // render noise as color
-    const texCoord = vec2(min(height, heightLimit), 0.5).toVar('texCoord');
+    const texCoord = vec2(min(height, float(1).sub(EPSILON)), 0.5).toVar('texCoord');
     const colour = vec3(this.uniforms.arrayTexture.depth(int(0)).sample(texCoord).xyz).toVar('colour');
 
     // calculate biomes
     const biomeTexCoord = vec2(0).toVar('biomeTexCoord');
-    If(FLAG_BIOMES_ENABLED.equal(1), () => {
+    If(FLAG_BIOMES_ENABLED.greaterThan(0.5), () => {
       biomeTexCoord.assign(
         calculateBiomeTextureCoordinates(
           vPos,
-          heightLimit,
           BiomesInput(
             this.uniforms.features.biomes.temperatureMode,
             this.uniforms.features.biomes.temperatureNoise,
@@ -617,7 +609,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     // calculate cracks
     const cracksColor = vec3(0).toVar('cracksColour');
     const cracksTextureColor = vec3(0).toVar('cracksTextureColor');
-    If(FLAG_CRACKS_ENABLED.equal(1), () => {
+    If(FLAG_CRACKS_ENABLED.greaterThan(0.5), () => {
       const cracksData = renderCracks(
         cracksExtents,
         colour,
@@ -637,13 +629,13 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     // ------------------------------------------ //
 
     const bump = vec3(normalLocal).toVar('bump');
-    If(FLAG_SURFACE_TYPE.mul(FLAG_BUMPS_ENABLED).equal(1), () => {
+    If(FLAG_SURFACE_TYPE.mul(FLAG_BUMPS_ENABLED).greaterThan(0.5), () => {
       const bitangent = <Node<'vec3'>>(<unknown>bitangentLocal); // required cuz typedefs are borked...
       const bumpOffset = float(this.uniforms.bump.offset).toVar('bumpOffset');
       const dx = vec3(tangentLocal.xyz.mul(this.uniforms.surface.warping.yzw).mul(bumpOffset)).toVar('dx');
       const dy = vec3(bitangent.mul(this.uniforms.surface.warping.yzw).mul(bumpOffset)).toVar('dy');
       const dxHeight = float(
-        this.computeHeight(
+        calculateTotalHeight(
           vPos.add(dx),
           this.uniforms.surface.noise,
           this.uniforms.surface.warping.x,
@@ -661,7 +653,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
         ).get('height') as Node<'float'>,
       ).toVar('dxHeight');
       const dyHeight = float(
-        this.computeHeight(
+        calculateTotalHeight(
           vPos.add(dy),
           this.uniforms.surface.noise,
           this.uniforms.surface.warping.x,
@@ -698,7 +690,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     // ------------------------------------------ //
 
     const emissiveColour = vec3(0).toVar('emissiveColour');
-    If(FLAG_EMISSIVE_ENABLED.equal(1), () => {
+    If(FLAG_EMISSIVE_ENABLED.greaterThan(0.5), () => {
       emissiveColour.assign(applyBaseEmissive(colour, this.uniforms.pbr.emissive, FLAG_SURFACE_TYPE));
       emissiveColour.assign(
         mix(
@@ -748,47 +740,4 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     shaderOutput.get('emissive').assign(vec4(mix(vec3(0), emissiveColour, FLAG_EMISSIVE_ENABLED), 1));
     return shaderOutput;
   });
-
-  private readonly computeHeight = Fn(
-    ([
-      i_p,
-      i_surfaceNoise,
-      i_layers,
-      i_cratersTex,
-      i_cratersInput,
-      i_cracksInput,
-      FLAG_CRATERS_ENABLED,
-      FLAG_CRACKS_ENABLED,
-    ]: [
-      Node<'vec3'>,
-      Node<'vec4'>,
-      Node<'float'>,
-      TextureNode,
-      StructNode,
-      StructNode,
-      Node<'float'>,
-      Node<'float'>,
-    ]) => {
-      const totalHeight = layer(i_p, i_surfaceNoise, i_layers);
-      If(FLAG_CRATERS_ENABLED.equal(1), () => {
-        totalHeight.assign(
-          calculateCratersHeight(
-            i_p,
-            totalHeight,
-            i_cratersTex,
-            <Node<'vec2'>>i_cratersInput.get('baseNoise'),
-            <Node<'vec4'>>i_cratersInput.get('detailNoise'),
-          ),
-        );
-      });
-
-      const cracksExtents = vec2(0);
-      If(FLAG_CRACKS_ENABLED.equal(1), () => {
-        cracksExtents.assign(calculateCracksExtents(i_p, i_cracksInput));
-        totalHeight.assign(calculateCracksHeight(totalHeight, cracksExtents, FLAG_CRACKS_ENABLED));
-      });
-
-      return this.HeightData(totalHeight, cracksExtents);
-    },
-  );
 }
