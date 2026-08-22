@@ -100,12 +100,7 @@
     <tr v-if="['rgb', 'rgba'].includes(mode ?? 'rgb')">
       <td colspan="4">
         <div class="add-step">
-          <LgvButton
-            class="sm"
-            icon="mingcute:add-line"
-            :a11y-label="$t('a11y.action_add_colorstep')"
-            @click="addStep()"
-          >
+          <LgvButton class="sm" icon="ph:plus" :a11y-label="$t('a11y.action_add_colorstep')" @click="addStep()">
             {{ $t('editor.$action_add') }}
           </LgvButton>
           <iconify-icon class="icon" icon="ph:dot-outline-fill" width="1.25rem" aria-hidden="true" />
@@ -127,9 +122,9 @@
 import InputSliderElement from '@components/global/elements/InputSliderElement.vue';
 import { ColorRamp, type ColorRampStep } from '@core/models/planet/color-ramp.model.ts';
 import { alphaToGrayscale, colorRampToStyle } from '@core/utils/render-utils';
+import LgvButton from '@lib/components/base/LgvButton.vue';
 import { onMounted, ref, watch, type Ref } from 'vue';
 import { ColorPicker } from 'vue-accessible-color-picker';
-import LgvButton from '@/_lib/components/LgvButton.vue';
 
 const lgColorRamp = defineModel<ColorRamp>();
 

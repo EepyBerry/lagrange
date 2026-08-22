@@ -1,29 +1,30 @@
 <template>
-  <DialogElement
+  <LgvDialog
     id="dialog-editorerror"
     ref="dialogRef"
-    class="warn"
-    show-title
+    :is-warn="true"
+    :closeable="true"
+    :prevent-click-close="true"
+    :show-title="true"
     :show-actions="allowRendererFallback"
-    closeable
-    prevent-click-close
-    is-warn
     :aria-label="$t('a11y.dialog_editor_error')"
     @close="$emit('close', _wantsFallback)"
   >
     <template #title>
-      <iconify-icon icon="mingcute:warning-line" width="2rem" aria-hidden="true" />
+      <iconify-icon class="warn" icon="mingcute:warning-line" width="2rem" aria-hidden="true" />
       <span>{{ $t('dialog.editor_error.$title') }}</span>
     </template>
     <template #content>
-      <div class="error-info">
-        <p>{{ $t('dialog.editor_error.brief') }}</p>
-        <p>
-          <b>{{ $t('dialog.editor_error.reporting') }}</b>
-        </p>
+      <div id="editor-error-message">
+        <div class="error-info">
+          <p>{{ $t('dialog.editor_error.brief') }}</p>
+          <p>
+            <b>{{ $t('dialog.editor_error.reporting') }}</b>
+          </p>
+        </div>
+        <hr class="error-divider" />
+        <p class="error-container">{{ _error }}</p>
       </div>
-      <hr class="error-divider" />
-      <p class="error-container">{{ _error }}</p>
       <CollapsibleSection v-show="_stack.length > 0" class="warn code">
         <template #title>{{ $t('common.error.stacktrace') }}</template>
         <template #content>
@@ -38,17 +39,17 @@
         {{ $t('dialog.editor_error.$action_reload_fallback_renderer') }}
       </LgvButton>
     </template>
-  </DialogElement>
+  </LgvDialog>
 </template>
 <script setup lang="ts">
 import type { EditorInitErrorDialogExposes } from '@components/editor/dialogs/EditorInitErrorDialog.types.ts';
-import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
+import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
-import DialogElement from '@components/global/elements/DialogElement.vue';
+import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
-import LgvButton from '@/_lib/components/LgvButton.vue';
 
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
 defineExpose<EditorInitErrorDialogExposes>({ open: openWithError });
 
 const _error: Ref<string> = ref('');
@@ -80,19 +81,19 @@ async function closeWithFallback() {
   z-index: 10;
   max-width: 48rem;
 
+  #editor-error-message {
+    padding: 1rem 0.5rem;
+  }
   hr.error-divider {
-    border: 1px solid var(--lg-text);
-    margin-top: 1rem;
-    opacity: 0.5;
+    border: 1px solid var(--lg-warn);
+    margin: 1rem 0;
   }
   .error-info {
     text-align: center;
   }
   .error-container {
-    min-height: 2rem;
     text-align: center;
     font-family: monospace;
-    padding: 1rem;
   }
 }
 </style>

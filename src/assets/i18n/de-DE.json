@@ -34,6 +34,8 @@
     }
   },
   "common": {
+    "yes": "Ja",
+    "no": "Nein",
     "unit": "Einheit",
     "units": "Einheiten",
     "unknown_value": "[UNBEKANNT]",
@@ -73,10 +75,11 @@
   },
   "dialog": {
     "init": {
-      "$title": "Willkommen in @:main.$title",
+      "$title": "Einführung",
+      "welcome": "Willkommen bei @:main.$title",
       "introduction": "Lagrange ist ein vollständig prozedurales Tool zur Planetenerstellung, perfekt für Ihre Erzählbedürfnisse rund um Planeten, Sonnensysteme oder sogar ganze Galaxien!",
-      "update_title": "Update 0.4 - Jovian Expansion !",
-      "update_brief": "Fügt zusätzliche Einstellungen hinzu, um Ihre Welten zu diversifizieren, wie XYZ-Verformung, Oberflächenstörungen und Ringe! Sie können jetzt Gasriesen nach Ihren Wünschen (neu) erschaffen!",
+      "update_title": "Update 0.6 - Cosmic Collapse",
+      "update_brief": "Führt Risse, Krater, Texturexporte und eine aktualisierte Benutzeroberfläche ein! Bringen Sie noch mehr Vielfalt zu Ihren Welten, indem Sie diese dem Zorn des Universums stellen!",
       "$tmp_wip": "In Entwicklung. Neue Funktionen in zukünftigen Versionen!",
       "keybinds": "@:dialog.settings.keybinds",
       "keybinds_note": "Tastaturkürzel können in den Einstellungen geändert werden!",
@@ -98,25 +101,33 @@
       "$action_reload_fallback_renderer": "Webseite mit WebGL2 aktualisieren"
     },
     "planet_info": {
-      "$title": "Planeteninformationen",
+      "$title": "Kodex-Eintrag",
+      "tabs": {
+        "overview": "Übersicht",
+        "topography": "Topografie",
+        "biomes": "Biomen",
+        "rings": "Ringe"
+      },
       "basic": {
         "name": "Name",
         "radius": "Radius",
         "axialtilt": "Neigung",
+        "waterlevel": "Meeresspiegel",
+        "ambient_light": "Umgebungslicht",
+        "emissive_water": "Merresemissivität",
+        "emissive_surface": "Oberflächenemissivität",
         "type": "Typ",
         "type_moon": "Mond",
         "type_planet": "Planet",
         "type_gasgiant": "Gasplanet",
         "class": "Klasse",
         "features": "Besonderheiten",
-        "has_biomes": "Präsenz von Biomen",
-        "has_clouds": "Präsenz von Wolken",
-        "has_atmosphere": "Präsenz von Atmosphäre",
-        "has_rings": "Präsenz von Ringen",
-        "no_biomes": "Keine Biome",
-        "no_clouds": "Keine Wolken",
-        "no_atmosphere": "Keine Atmosphäre",
-        "no_rings": "Keine Ringe"
+        "has_biomes": "Biomen",
+        "has_cracks": "Risse",
+        "has_craters": "Krater",
+        "has_clouds": "Wolken",
+        "has_atmosphere": "Atmosphäre",
+        "has_rings": "Ringe"
       },
       "biomes": "Zusammensetzung von Biomen",
       "biomes_temp": "Temperatur",
@@ -189,13 +200,17 @@
       "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {
+      "$title": "Über @:main.$title",
+      "tabs": {
+        "changelog": "Änderungsprotokoll",
+        "credits": "Erwähnungen und Dank"
+      },
       "description": "Eine prozedurale App zur Planetenerstellung.",
       "motivation": "Projekt mit dem Ziel, mein Wunder über den Weltraum und die Planeten zu verwirklichen!",
       "tech": "Die wichtigsten Tools und Bibliotheken hinter diesem Projekt",
       "prefix_framework": "Framework: ",
       "prefix_engine": "3D-Engine: ",
       "changelogs": {
-        "$title": "Änderungsprotokoll",
         "02_title": "Update 0.2 - World Collector",
         "02_codex": "Fügt den Kodex hinzu: Listen, importieren und exportieren Sie Ihre Planeten über Ihren Browser!",
         "02_ui": "Fügt Dialogfelder, Benachrichtigungen, ein Einstellungsmenü sowie neue Variablen im Editor hinzu (Radius, Atmosphäre).",
@@ -219,14 +234,19 @@
         "051_ui": "(0.5.1) Update der Benutzeroberfläche des Codexs, der Modalen, usw. Beinhaltet eine robustere Fehlerbehandlung des Editors am Start.",
         "052_postprocessing": "(0.5.2) Introduziert eine neue Post-Processing Pipeline, mit lauter Effeken!",
         "052_skyboxes": "(0.5.2) Neue Editor Skyboxen für mehr Vielfalt in Ihren Screenshots. Beinthaltet einen Chroma Key Hintergrund!",
-        "052_controls": "(0.5.2) Zusätzliche Kontrollen/Einstellungen und Tastaturkürzel für die Kamera (Dolly, FOV, Rotation)"
+        "052_controls": "(0.5.2) Zusätzliche Kontrollen/Einstellungen und Tastaturkürzel für die Kamera (Dolly, FOV, Rotation)",
+        "06_title": "Update 0.6 - Cosmic Collapse",
+        "06_crackscraters": "Ermöglicht das erschaffen von Rissen und Kratern auf der Planetenoberfläche !",
+        "06_texture": "Neuer Texturexport im Editor! Sie können jetzt Ihre Texturen erhalten, ohne den ganzen Planeten zu baken.",
+        "06_ui": "Frühlingsputz der Benutzeroberfläche für zukünftige Funktionen."
       },
       "credits": {
-        "$title": "Erwähnungen und Dank",
-        "libs": "(vor-0.5) Hauptabhängigkeiten: <a class=\"lgv\" href=\"https://www.farazzshaikh.com/\" target=\"_blank\"><b>Faraz Shaikh</b></a> (THREE-CustomShaderMaterial)",
-        "glsl_main": "Haupt-GLSL-Code: <a class=\"lgv\" href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a class=\"lgv\" href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a class=\"lgv\" href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
-        "glsl_misc": "Verschiedener GLSL-Code: <a class=\"lgv\" href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
-        "contributors": "<b>Ein großes Dankeschön an alle Mitwirkenden an diesem Projekt ❤️</b>"
+        "libs_tcsm": "(pre-0.5) THREE-CustomShaderMaterial",
+        "glsl_noise": "(GLSL) Voronoi + fBm",
+        "glsl_atmosphere": "(GLSL) Atmosphäre",
+        "glsl_lensflare": "(GLSL) Lens flare",
+        "glsl_bumpmap": "(GLSL) Bump mapping",
+        "contributors": "Ein großes Dankeschön an alle Mitwirkenden an diesem Projekt"
       },
       "built_with_love": "Erstellt mit 🏳️‍🌈 & ❤️",
       "license": "Lizenz ISTSL-NR 1.0"
@@ -319,7 +339,7 @@
       "detail_noise_strength": "Detailrauschen Einfluss"
     },
     "basic_data": {
-      "$title": "Basic Data",
+      "$title": "Grunddaten",
       "classification": "Klassifikation",
       "classification_type": "Objekt Typ",
       "classification_class": "Objekt Klasse"
@@ -362,7 +382,7 @@
     "features": {
       "$title": "",
       "cracks": {
-        "$title": "Cracks",
+        "$title": "Risse",
         "noise_limiter": "Limiter-Rauschen",
         "noise_color": "Farbrauschen",
         "distance_to_edge": "Randabstand",

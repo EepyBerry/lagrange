@@ -53,7 +53,7 @@ defineProps<{ compactMode: boolean }>();
   height: 20rem;
   padding: 0.5rem;
   overflow-y: auto;
-  border-top: 2px solid var(--lg-logo);
+  border-top: 2px solid var(--lg-accent);
 
   display: flex;
   flex-direction: column;

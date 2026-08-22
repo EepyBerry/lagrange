@@ -34,6 +34,8 @@
     }
   },
   "common": {
+    "yes": "Yes",
+    "no": "No",
     "unit": "unit",
     "units": "units",
     "unknown_value": "[UNKNOWN]",
@@ -73,10 +75,11 @@
   },
   "dialog": {
     "init": {
-      "$title": "Welcome to @:main.$title",
+      "$title": "Introduction",
+      "welcome": "Welcome to @:main.$title",
       "introduction": "Lagrange is a fully procedural planet builder, perfect for worldbuilding and tying your lore to a proper planet, solar system or even an entire galaxy!",
-      "update_title": "Update 0.5 - Core Overhaul!",
-      "update_brief": "Introduces WebGPU support; fully compatible with existing features! You can now select your preferred rendering engine in the app settings!",
+      "update_title": "Update 0.6 - Cosmic Collapse",
+      "update_brief": "Introduces cracks, craters, texture exports and an updated UI! Bring even more variety to your worlds by exposing them to the wrath of the universe!",
       "$tmp_wip": "Currently work-in-progress. More features are planned for the next versions!",
       "keybinds": "@:dialog.settings.keybinds",
       "keybinds_note": "Key bindings can be reassigned in the app settings!",
@@ -98,25 +101,33 @@
       "$action_reload_fallback_renderer": "Reload with WebGL2"
     },
     "planet_info": {
-      "$title": "Planet information",
+      "$title": "Codex Entry",
+      "tabs": {
+        "overview": "Overview",
+        "topography": "Topography",
+        "biomes": "Biomes",
+        "rings": "Rings"
+      },
       "basic": {
         "name": "Name",
         "radius": "Radius",
         "axialtilt": "Axial tilt",
+        "waterlevel": "Water level",
+        "ambient_light": "Ambient lighting",
+        "emissive_water": "Water emission",
+        "emissive_surface": "Max. surface emission",
         "type": "Type",
         "type_moon": "Moon",
         "type_planet": "Planet",
         "type_gasgiant": "Gas Giant",
         "class": "Class",
         "features": "Features",
-        "has_biomes": "Has biomes",
-        "has_clouds": "Has clouds",
-        "has_atmosphere": "Has atmosphere",
-        "has_rings": "Has ring system",
-        "no_biomes": "No biomes",
-        "no_clouds": "No clouds",
-        "no_atmosphere": "No atmosphere",
-        "no_rings": "No ring system"
+        "has_biomes": "Biomes",
+        "has_cracks": "Cracks",
+        "has_craters": "Craters",
+        "has_clouds": "Clouds",
+        "has_atmosphere": "Atmosphere",
+        "has_rings": "Ring system"
       },
       "biomes": "Biome composition",
       "biomes_temp": "Temperature",
@@ -189,13 +200,17 @@
       "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {
+      "$title": "About @:main.$title",
+      "tabs": {
+        "changelog": "Version changelogs",
+        "credits": "Credits & attribution"
+      },
       "description": "A procedural planet-building application.",
       "motivation": "Made as a pet project to materialize my fascination with space & planets!",
       "tech": "Main tools & libraries behind this project",
       "prefix_framework": "Powered by",
       "prefix_engine": "3D using",
       "changelogs": {
-        "$title": "Main feature changelogs",
         "02_title": "Update 0.2 - World Collector",
         "02_codex": "Introduces the Codex: list, import and export planets easily and entirely within your browser!",
         "02_ui": "New dialog boxes, toasts & settings, and new editor parameters (radius, atmosphere)",
@@ -219,14 +234,19 @@
         "051_ui": "(0.5.1) UI refresh on the Codex, dialogs, and others. Includes better error handling on editor initialization",
         "052_postprocessing": "(0.5.2) Introduces a new post-processing pipeline with many effects!",
         "052_skyboxes": "(0.5.2) New editor skyboxes for more variety in your screenshots. Includes a Chroma Key background!",
-        "052_controls": "(0.5.2) Additional controls and shortcuts for the camera (dolly, FOV, rotation)"
+        "052_controls": "(0.5.2) Additional controls and shortcuts for the camera (dolly, FOV, rotation)",
+        "06_title": "Update 0.6 - Cosmic Collapse",
+        "06_crackscraters": "Adds the ability to put cracks and craters on the surface!",
+        "06_texture": "New texture exporting option in the Editor! You can now get your textures without having to bake the entire planet.",
+        "06_ui": "Freshens up the UI to better integrate upcoming features"
       },
       "credits": {
-        "$title": "Credits & attribution",
-        "libs": "(pre-0.5) Main libraries: <a class=\"lgv\" href=\"https://www.farazzshaikh.com/\" target=\"_blank\"><b>Faraz Shaikh</b></a> (THREE-CustomShaderMaterial)",
-        "glsl_main": "Main GLSL snippets: <a class=\"lgv\" href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a class=\"lgv\" href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a class=\"lgv\" href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
-        "glsl_misc": "Miscellaneous GLSL snippets: <a class=\"lgv\" href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
-        "contributors": "<b>Special thanks to all contributors of this project ❤️</b>"
+        "libs_tcsm": "(pre-0.5) THREE-CustomShaderMaterial",
+        "glsl_noise": "(GLSL) Voronoi + fBm",
+        "glsl_atmosphere": "(GLSL) Atmosphere",
+        "glsl_lensflare": "(GLSL) Lens flare",
+        "glsl_bumpmap": "(GLSL) Bump mapping",
+        "contributors": "Special thanks to all contributors of this project"
       },
       "built_with_love": "Built with 🏳️‍🌈 & ❤️",
       "license": "ISTSL-NR 1.0 License"

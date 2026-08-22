@@ -4,7 +4,7 @@
     <div class="text">
       <h1 class="title" :class="{ ultra: msgVariant === 4 }">{{ loadMessage() }}</h1>
       <h2 class="subtitle">{{ $t('404.subtext') }}</h2>
-      <LgvLink variant="button" icon="mingcute:book-2-line" href="/">
+      <LgvLink id="codex-link" variant="button" icon="mingcute:book-2-line" href="/">
         {{ $t('404.link') }}
       </LgvLink>
     </div>
@@ -13,10 +13,10 @@
 
 <script setup lang="ts">
 import AppLogo from '@components/global/elements/AppLogo.vue';
+import LgvLink from '@lib/components/base/LgvLink.vue';
 import { useHead } from '@unhead/vue';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import LgvLink from '@/_lib/components/LgvLink.vue';
 
 const i18n = useI18n();
 useHead({
@@ -47,12 +47,16 @@ function loadMessage(): string {
   gap: 2rem;
   padding: 1rem;
 
-  #app-logo,
-  #app-logo-uwu {
-    max-width: unset;
-    width: clamp(200px, 37.5vw, 300px);
+  #app-logo-wrapper {
     align-self: center;
     justify-self: center;
+    transform: scale(1.15);
+  }
+
+  #codex-link {
+    $height: 10px;
+    padding: 0.5rem 1.5rem;
+    clip-path: polygon($height 0, 100% 0, 100% calc(100% - $height), calc(100% - $height) 100%, 0 100%, 0 $height);
   }
 
   .text {
@@ -78,6 +82,12 @@ function loadMessage(): string {
       VCR OSD Mono,
       Jetbrains Mono,
       monospace;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #pagenotfound-container #app-logo-wrapper {
+    transform: scale(1);
   }
 }
 </style>

@@ -92,6 +92,7 @@ export function loadPlanetData(target: PlanetData, data?: PrefixedWith<PlanetDat
 
   // Craters
   target.cratersEnabled = data?._cratersEnabled ?? false;
+  target.cratersDetailNoiseStrength = data?._cratersDetailNoiseStrength ?? 0.5;
   target.cratersBaseNoise.loadData(data?._cratersBaseNoise);
   target.cratersDetailNoise.loadData(data?._cratersDetailNoise);
   target.cratersColorRamp.loadFromSteps(
@@ -217,6 +218,7 @@ export function randomizePlanetData(target: PlanetData): void {
 
   // Craters
   target.cratersEnabled = randomBoolean();
+  target.cratersDetailNoiseStrength = clampedPRNG(0, 1);
   target.cratersBaseNoise.randomize();
   target.cratersDetailNoise.randomize();
   //target.cratersColorRamp.randomize(4);

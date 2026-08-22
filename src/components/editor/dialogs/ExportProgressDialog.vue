@@ -1,5 +1,5 @@
 <template>
-  <DialogElement
+  <LgvDialog
     id="dialog-exportprogress"
     ref="dialogRef"
     :show-title="true"
@@ -10,32 +10,39 @@
     :class="{ warn: !!_progressError }"
   >
     <template #title>
-      <iconify-icon icon="mingcute:sandglass-line" width="2rem" aria-hidden="true" />
+      <iconify-icon
+        :class="_progressError ? 'warn' : 'contrast'"
+        icon="mingcute:sandglass-line"
+        width="2rem"
+        aria-hidden="true"
+      />
       <span v-if="_dialogMode === 'textures'">{{ $t('dialog.export_progress.$title_textures') }}</span>
       <span v-else-if="_dialogMode === 'gltf'">{{ $t('dialog.export_progress.$title_gltf') }}</span>
     </template>
     <template #content>
-      <div class="progress-text">
-        <p>{{ $t('dialog.export_progress.step_' + _progressStep) }}</p>
-        <p v-if="!!_progressError">{{ $t('dialog.export_progress.step_failed') }}</p>
-        <p v-else>{{ _progressStep }}/{{ bakingSteps }}</p>
-      </div>
-      <div class="progress-bar">
-        <span class="progress" :style="{ width: `${(_progressStep * 100) / bakingSteps}%` }"></span>
-      </div>
-      <div v-if="_progressError" class="progress-error">
-        <p>{{ _progressError }}</p>
+      <div id="export-text">
+        <div id="progress-text">
+          <p>{{ $t('dialog.export_progress.step_' + _progressStep) }}</p>
+          <p v-if="!!_progressError">{{ $t('dialog.export_progress.step_failed') }}</p>
+          <p v-else>{{ _progressStep }}/{{ bakingSteps }}</p>
+        </div>
+        <div id="progress-bar">
+          <span id="progress" :style="{ width: `${(_progressStep * 100) / bakingSteps}%` }"></span>
+        </div>
+        <div v-if="_progressError" id="progress-error">
+          <p>{{ _progressError }}</p>
+        </div>
       </div>
     </template>
-  </DialogElement>
+  </LgvDialog>
 </template>
 <script setup lang="ts">
 import type { ExportProgressDialogExposes } from '@components/editor/dialogs/ExportProgressDialog.types.ts';
-import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
-import DialogElement from '@components/global/elements/DialogElement.vue';
+import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
+import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
 defineExpose<ExportProgressDialogExposes>({ open, setProgress, setDone, setError });
 
 const bakingSteps = 9;
@@ -77,19 +84,23 @@ function setError(value: unknown) {
   z-index: 100;
   min-width: 24rem;
 
-  .progress-text {
+  #export-text {
+    padding: 1rem;
+    max-width: 600px;
+  }
+  #progress-text {
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-  .progress-bar {
+  #progress-bar {
     position: relative;
     width: 100%;
     height: 1rem;
     border: 1px solid var(--lg-accent);
     border-radius: 2px;
 
-    .progress {
+    #progress {
       position: absolute;
       left: 0;
       height: 100%;
@@ -98,10 +109,10 @@ function setError(value: unknown) {
   }
 }
 #dialog-exportprogress.warn {
-  .progress-bar {
+  #progress-bar {
     border: 1px solid var(--lg-warn-active);
     border-radius: 2px;
-    .progress {
+    #progress {
       background: var(--lg-warn);
     }
   }

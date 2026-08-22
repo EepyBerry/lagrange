@@ -1,11 +1,22 @@
 <template>
   <span id="codex-background"></span>
-  <ViewHeader id="codex-header">
+  <h1 class="a11y--visually-hidden">{{ $t('main.nav.codex') }}</h1>
+  <LgvHeader id="codex-header">
     <!-- file input -->
-    <input ref="fileInput" type="file" accept=".lagrange" multiple hidden @change="importPlanetFile" />
+    <label for="codex-header-controls-import" class="a11y--visually-hidden">{{ $t('main.header.import') }}</label>
+    <input
+      id="codex-header-controls-import"
+      ref="fileInput"
+      type="file"
+      accept=".lagrange"
+      multiple
+      hidden
+      @change="importPlanetFile"
+    />
     <LgvButton
-      variant="dark"
-      icon="mingcute:upload-line"
+      variant="icon"
+      icon="ph:upload"
+      icon-width="1.75rem"
       :a11y-label="$t('main.header.import')"
       @click="openFileDialog"
     />
@@ -16,7 +27,7 @@
       variant="dark"
       link-type="internal"
       class="contrast"
-      icon="mingcute:add-line"
+      icon="ph:plus"
       :href="uwuifyPath('/planet-editor/new')"
     >
       {{ $t('codex.$action_add') }}
@@ -24,33 +35,34 @@
 
     <!-- export planets -->
     <LgvButton
-      variant="dark"
-      icon="mingcute:folder-zip-line"
+      variant="icon"
+      icon="octicon:file-zip-24"
+      icon-width="1.75rem"
       :aria-label="$t('main.header.export_all')"
       @click="exportPlanets"
     />
-  </ViewHeader>
+  </LgvHeader>
 
-  <div v-if="planets.length > 0" id="codex-grid">
-    <!-- prettier-ignore-attribute -->
-    <PlanetCardElement
-      v-for="planet of planets"
-      :key="planet.id"
-      ref="planetCardRef"
-      :planet="(planet as IDBPlanet)"
-      @info="openPlanetInfoDialog(planet as IDBPlanet)"
-      @export="exportPlanet(planet as IDBPlanet)"
-      @delete="openDeleteConfirmDialog(planet as IDBPlanet)"
-    />
-    <NewCardElement />
-  </div>
-  <div v-else id="codex-grid" class="empty">
-    <iconify-icon icon="ph:planet-thin" width="16rem" />
-    <span>{{ $t('codex.no_planets') }}</span>
-  </div>
-  <div v-if="showInlineFooter" id="codex-footer">
-    <InlineFooter />
-  </div>
+  <template v-if="ready">
+    <div v-if="planets.length > 0" id="codex-grid">
+      <!-- prettier-ignore-attribute -->
+      <PlanetCardElement
+        v-for="planet of planets"
+        :key="planet.id"
+        ref="planetCardRef"
+        :planet="(planet as IDBPlanet)"
+        @info="openPlanetInfoDialog(planet as IDBPlanet)"
+        @export="exportPlanet(planet as IDBPlanet)"
+        @delete="openDeleteConfirmDialog(planet as IDBPlanet)"
+      />
+      <NewCardElement />
+    </div>
+    <div v-else id="codex-grid" class="empty">
+      <iconify-icon icon="ph:planet-thin" width="16rem" />
+      <span>{{ $t('codex.no_planets') }}</span>
+    </div>
+  </template>
+  <OverlaySpinner v-else :load="!ready" />
   <AppPlanetInfoDialog ref="planetInfoDialogRef" />
   <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="(id) => deleteTargetedPlanet(id)" />
 </template>
@@ -58,12 +70,14 @@
 <script setup lang="ts">
 import type { DeleteConfirmDialogExposes } from '@components/codex/dialogs/DeleteConfirmDialog.types.ts';
 import type { PlanetInfoDialogExposes } from '@components/codex/dialogs/PlanetInfoDialog.types.ts';
-import InlineFooter from '@components/global/InlineFooter.vue';
+import OverlaySpinner from '@components/global/elements/OverlaySpinner.vue';
 import { EXTRAS_METAL_SLUG_MODE, uwuifyPath } from '@core/extras';
-import { SM_WIDTH_THRESHOLD } from '@core/globals';
 import { readFileData } from '@core/helpers/import.helper';
 import PlanetData from '@core/models/planet/planet-data.model.ts';
 import { UIEventBus } from '@core/ui-event-bus.ts';
+import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvLink from '@lib/components/base/LgvLink.vue';
+import LgvHeader from '@lib/components/main/LgvHeader.vue';
 import { useHead } from '@unhead/vue';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
@@ -71,11 +85,8 @@ import { nanoid } from 'nanoid';
 import pako from 'pako';
 import { defineAsyncComponent, onMounted, onUnmounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import LgvButton from '@/_lib/components/LgvButton.vue';
-import LgvLink from '@/_lib/components/LgvLink.vue';
 import NewCardElement from '@/components/codex/elements/NewCardElement.vue';
 import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue';
-import ViewHeader from '@/components/global/ViewHeader.vue';
 import { idb, type IDBPlanet } from '@/dexie.config';
 
 const AppPlanetInfoDialog = defineAsyncComponent(() => import('@components/codex/dialogs/PlanetInfoDialog.vue'));
@@ -83,13 +94,12 @@ const AppDeleteConfirmDialog = defineAsyncComponent(() => import('@components/co
 
 const deleteDialogRef = useTemplateRef<DeleteConfirmDialogExposes>('deleteDialogRef');
 const planetInfoDialogRef = useTemplateRef<PlanetInfoDialogExposes>('planetInfoDialogRef');
-
-const planets: Ref<IDBPlanet[]> = ref([]);
-const i18n = useI18n();
 const fileInput = useTemplateRef('fileInput');
 const planetCardRefs = useTemplateRef('planetCardRef');
 
-const showInlineFooter: Ref<boolean> = ref(false);
+const ready: Ref<boolean> = ref(false);
+const planets: Ref<IDBPlanet[]> = ref([]);
+const i18n = useI18n();
 
 useHead({
   title: i18n.t('codex.$title') + ' · ' + i18n.t('main.$title'),
@@ -97,14 +107,11 @@ useHead({
 });
 
 onMounted(async () => {
-  computeResponsiveness();
   await loadPlanets();
   UIEventBus.registerWindowEventListener('click', onWindowClick);
-  UIEventBus.registerWindowEventListener('resize', onWindowResize);
 });
 onUnmounted(() => {
   UIEventBus.deregisterWindowEventListener('click', onWindowClick);
-  UIEventBus.deregisterWindowEventListener('resize', onWindowResize);
 });
 
 watch(
@@ -113,22 +120,17 @@ watch(
 );
 
 async function loadPlanets() {
+  ready.value = false;
   const idbPlanets = await idb.planets.orderBy('data._planetName').toArray();
   planets.value.splice(0);
   planets.value.push(...idbPlanets.map((pl) => ({ ...pl, data: PlanetData.createFrom(pl.data) })));
+  ready.value = true;
 }
 
 // ------------------------------------------------------------------------------------------------
 
 async function onWindowClick(event: MouseEvent) {
   UIEventBus.sendClickEvent(event);
-}
-function onWindowResize() {
-  computeResponsiveness();
-}
-
-function computeResponsiveness() {
-  showInlineFooter.value = window.innerWidth < SM_WIDTH_THRESHOLD;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -255,6 +257,7 @@ async function deleteTargetedPlanet(id: string) {
   position: fixed;
 
   #codex-header-controls-newplanet {
+    margin: 0 0.25rem;
     font-size: 0.875rem;
   }
 }
@@ -277,8 +280,7 @@ async function deleteTargetedPlanet(id: string) {
     flex-grow: 1;
 
     span {
-      padding: 0 1rem;
-      padding-bottom: 4.75rem;
+      padding: 0 1rem 4.75rem;
     }
   }
 }

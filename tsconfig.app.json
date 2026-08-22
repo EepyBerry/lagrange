@@ -10,6 +10,7 @@
     "noUncheckedIndexedAccess": false,
     "paths": {
       "@/*": ["./src/*"],
+      "@lib/*": ["./src/lib/*"],
       "@core/*": ["./src/core/*"],
       "@tsl/*": ["./src/core/tsl/*"],
       "@assets/*": ["./src/assets/*"],

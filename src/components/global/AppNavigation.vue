@@ -28,7 +28,7 @@
       :class="{ 'router-link-active': !!$route.params.id }"
       :href="uwuifyPath('/planet-editor/new')"
       :a11y-label="$t('a11y.action_nav_editor')"
-      icon="mingcute:planet-line"
+      icon="ph:planet"
     >
       {{ $t('main.nav.editor') }}
     </LgvLink>
@@ -40,9 +40,9 @@ import { uwuifyPath } from '@core/extras';
 import * as Globals from '@core/globals';
 import { UIEventBus } from '@core/ui-event-bus.ts';
 import { useFloating, autoUpdate, offset, type Placement } from '@floating-ui/vue';
+import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvLink from '@lib/components/base/LgvLink.vue';
 import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
-import LgvButton from '@/_lib/components/LgvButton.vue';
-import LgvLink from '@/_lib/components/LgvLink.vue';
 
 const navMenuTrigger = useTemplateRef('navMenuTrigger');
 const navMenu = useTemplateRef('navMenu');

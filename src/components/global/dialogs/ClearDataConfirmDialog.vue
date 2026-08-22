@@ -1,18 +1,19 @@
 <template>
-  <DialogElement
+  <LgvDialog
     id="dialog-clear-data-confirm"
     ref="dialogRef"
+    :is-warn="true"
     :show-title="true"
     :show-actions="true"
     :closeable="true"
     :aria-label="$t('a11y.dialog_clear_data')"
   >
     <template #title>
-      <iconify-icon icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
+      <iconify-icon class="warn" icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
       {{ $t('dialog.confirm_clear_data.$title') }}
     </template>
     <template #content>
-      <div class="clear-data-text">
+      <div id="clear-data-text">
         <p>{{ $t('dialog.confirm_clear_data.message') }}</p>
         <p>
           <strong>{{ $t('dialog.confirm_clear_data.warning') }}</strong>
@@ -27,16 +28,16 @@
         {{ $t('dialog.confirm_clear_data.$action_confirm') }}
       </LgvButton>
     </template>
-  </DialogElement>
+  </LgvDialog>
 </template>
 <script setup lang="ts">
 import type { ClearDataConfirmDialogExposes } from '@components/global/dialogs/ClearDataConfirmDialog.types.ts';
-import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
-import DialogElement from '@components/global/elements/DialogElement.vue';
+import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
+import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import { useTemplateRef } from 'vue';
-import LgvButton from '@/_lib/components/LgvButton.vue';
 
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
 defineExpose<ClearDataConfirmDialogExposes>({ open: () => dialogRef.value?.open() });
 
 const $emit = defineEmits(['confirm']);
@@ -53,9 +54,9 @@ function close(confirm: boolean) {
 #dialog-clear-data-confirm {
   z-index: 20;
   min-width: 24rem;
-  .clear-data-text {
+  #clear-data-text {
+    padding: 1rem 0.5rem;
     text-align: center;
-    font-size: 1rem;
   }
 }
 @media screen and (max-width: 567px) {

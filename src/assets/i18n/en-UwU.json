@@ -34,6 +34,8 @@
     }
   },
   "common": {
+    "yes": "Yes :3",
+    "no": "Nyo >:c",
     "unit": "unit",
     "units": "units",
     "unknown_value": "[UNKNOWN]",
@@ -73,10 +75,11 @@
   },
   "dialog": {
     "init": {
-      "$title": "Wewcome :3 t-to @:main.$title",
+      "$title": "Intwoduction",
+      "welcome": "Wewcome to @:main.$title",
       "introduction": "Wagwange is a fuwwy pwoceduwaw pwanyet buiwdew, pewfect fow wowwdbuiwding and tying youw wowe t-to a pwopew pwanyet, sowaw system o-ow even an entiwe gawaxy! (・`ω´・)",
-      "update_title": "Update 0.5 - Cowe Ovewhauw!",
-      "update_brief": "Intwoduces WebGPU suppowt!!! F-FUWWY COMPATIBWE with existing features!!! You can n-now sewect your pwefewwed w-wendewing engine in the app settings!!! (✿ﾟ▽ﾟ)",
+      "update_title": "Update 0.6 - Cosmic Collapse",
+      "update_brief": "Intwoduces CWACKS, CWATEWS, t-textuwe EXPOWTS and an UPDATED UI!!! Bwing EVEN MOWE vawiety to youw wowwds by exposing them to the WWATH OF DA UNIVEWSE!!! o(≧口≦)o",
       "$tmp_wip": "Cuwwentwy wowk-in-pwogwess. M-Mowe featuwes awe pwanned fow the nyext vewsions! x3",
       "keybinds": "@:dialog.settings.keybinds",
       "keybinds_note": "Key bindings c-can be weassignyed in the app s-settings!",
@@ -98,25 +101,33 @@
       "$action_reload_fallback_renderer": "Wewoad with WebGL2"
     },
     "planet_info": {
-      "$title": "Pwanyet infowmation :3",
+      "$title": "Codex Entwy",
+      "tabs": {
+        "overview": "Ovewview",
+        "topography": "Topogwaphy",
+        "biomes": "Biomes",
+        "rings": "Wings"
+      },
       "basic": {
         "name": "Name",
         "radius": "Wadius",
         "axialtilt": "Axiaw tiwt",
+        "waterlevel": "Watew wevew",
+        "ambient_light": "Ambient wighting",
+        "emissive_water": "Watew emission",
+        "emissive_surface": "Max. suwface emission",
         "type": "Type",
         "type_moon": "Moon",
         "type_planet": "Pwanyet",
         "type_gasgiant": "Gas Giant",
         "class": "Cwass",
         "features": "Featuwes",
-        "has_biomes": "Has biomes",
-        "has_clouds": "Has cwouds",
-        "has_atmosphere": "Has atmosphewe",
-        "has_rings": "Has wing systyem",
-        "no_biomes": "No biomes",
-        "no_clouds": "No cwouds",
-        "no_atmosphere": "No atmosphewe",
-        "no_rings": "No wing systyem"
+        "has_biomes": "Biomes",
+        "has_cracks": "Cwacks",
+        "has_craters": "Cwatews",
+        "has_clouds": "Cwouds",
+        "has_atmosphere": "Atmosphewe",
+        "has_rings": "Wing systyem"
       },
       "biomes": "Biome composition",
       "biomes_temp": "Tempewature",
@@ -189,13 +200,17 @@
       "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {
+      "$title": "About @:main.$title",
+      "tabs": {
+        "changelog": "Vewsion changewogs",
+        "credits": "Cwedits & attwibushon"
+      },
       "description": "A pwoceduwaw pwanyet-buiwding appwication!!! >w<",
       "motivation": "Made as a p-pet pwoject *blushes* t-to matewiawize my fascinyation with space & pwanyets!",
       "tech": "Main toows & libwawies behind this p-pwoject x3",
       "prefix_framework": "Powewed by",
       "prefix_engine": "3D u-using",
       "changelogs": {
-        "$title": "Main featuwe changewogs",
         "02_title": "Update 0.2 - Wowwd Cowwectow",
         "02_codex": "I-intwoduces the Codex: wist, impowt and expowt pwanyets easiwy a-and entiwewy within youw bwowsew!!!",
         "02_ui": "New diawog boxes, toasts & settings, a-and new editow pawametews (wadius, a-atmosphewe)!!!",
@@ -219,14 +234,19 @@
         "051_ui": "(0.5.1) UI wefwesh on the Codex, diawogs, and others!!! Incwudes bettew ewwow handwing on editow initiawization",
         "052_postprocessing": "(0.5.2) Intwoduces a new post-pwocessing p-pipewine wiff MANY EFFECTS!!!",
         "052_skyboxes": "(0.5.2) N-new editow skyboxes for MOAR vawiety in youw scweenshots!!! Includes a Chwoma Key backgwound!!!",
-        "052_controls": "(0.5.2) Additionaw contwows a-and showtcuts for the camewa (dowwy, FOV, wotation, nya) !!!"
+        "052_controls": "(0.5.2) Additionaw contwows a-and showtcuts for the camewa (dowwy, FOV, wotation, nya) !!!",
+        "06_title": "Update 0.6 - Cosmic Cowwapse",
+        "06_crackscraters": "Adds the a-abiwity to put CWACKS and CWATEWS on the suwface!!!",
+        "06_texture": "New textuwe expowting opshon in the Editow!!! You can now get youw t-textuwes without having to bake the entiwe pwanyet!!!",
+        "06_ui": "F-fweshens up the UI to bettew integwate upcoming ff-eatuwes!!!"
       },
       "credits": {
-        "$title": "Cwedits & attwibushon",
-        "libs": "(pwe-0.5) Main wibrawies: <a class=\"lgv\" href=\"https://www.farazzshaikh.com/\" target=\"_blank\"><b>Faraz Shaikh</b></a> (THREE-CustomShaderMaterial)",
-        "glsl_main": "M-Main GLSL snippets: <a class=\"lgv\" href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Vowonoi + fBm), <a class=\"lgv\" href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphewe), <a class=\"lgv\" href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (wens fware)",
-        "glsl_misc": "Miscewwanyeous GLSL snippets: <a class=\"lgv\" href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
-        "contributors": "<b>Speciaw thanks to a-aww contwibutows of this pwoject !!! (✿ﾟ▽ﾟ) ❤️</b>"
+        "libs_tcsm": "(pre-0.5) THREE-CustomShaderMaterial",
+        "glsl_noise": "(GLSL) Voronoi + fBm",
+        "glsl_atmosphere": "(GLSL) Atmosphewre",
+        "glsl_lensflare": "(GLSL) Wens fware",
+        "glsl_bumpmap": "(GLSL) Bump mapping",
+        "contributors": "Speciaw thanks to a-aww contwibutows of this pwoject !!! (✿ﾟ▽ﾟ)"
       },
       "built_with_love": "Buiwt with 🏳️‍🌈 & ❤️",
       "license": "ISTSL-NR 1.0 Wicense"

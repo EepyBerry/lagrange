@@ -1,47 +1,28 @@
 <template>
   <button ref="btnRef" type="button" class="lgv">
     <span v-if="a11yLabel" class="a11y--visually-hidden">{{ a11yLabel }}</span>
-    <iconify-icon v-if="icon" :icon="icon" :width="iconWidth ?? getDefaultIconWidth()" aria-hidden="true" />
-    <span class="lgv--text"><slot></slot></span>
+    <iconify-icon v-if="icon" :icon="icon" :width="iconWidth ?? '1.5rem'" aria-hidden="true" />
+    <span v-if="!!$slots.default" class="__text"><slot></slot></span>
   </button>
 </template>
 
 <script setup lang="ts">
-import { onMounted, useTemplateRef } from 'vue';
-
-const btnRef = useTemplateRef('btnRef');
-defineProps<{ icon?: string; iconWidth?: string; a11yLabel?: string }>();
-onMounted(adjustPadding);
-
-function adjustPadding() {
-  const textLeaf = btnRef.value!.querySelector('.lgv--text') as HTMLSpanElement;
-  if (!textLeaf || !textLeaf.textContent) {
-    textLeaf.style.display = 'none';
-    return;
-  }
-  if (textLeaf.textContent.length > 0) {
-    btnRef.value?.classList.add('outer-pad');
-  } else {
-    textLeaf.style.display = 'none';
-  }
-}
-
-function getDefaultIconWidth() {
-  return btnRef.value?.classList.contains('sm') ? '1.25rem' : '1.5rem';
-}
+withDefaults(defineProps<{ showText?: boolean; icon?: string; iconWidth?: string; a11yLabel?: string }>(), {
+  showText: true,
+});
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 // standard button
 button.lgv {
   position: relative;
-  padding: 0;
+  padding: 0 0.375rem;
   min-width: 2.5rem;
   min-height: 2.5rem;
 
   background: var(--lg-button);
+  box-shadow: inset 0 -8px 8px var(--lg-shadow);
   border: none;
-  border-radius: 2px;
   color: var(--lg-text);
   font-family: inherit;
   cursor: pointer;
@@ -51,7 +32,8 @@ button.lgv {
   justify-content: center;
   gap: 0.25rem;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     cursor: pointer;
     background: var(--lg-button-hover);
   }
@@ -65,14 +47,17 @@ button.lgv {
     color: var(--lg-text-disabled);
   }
 
+  .__text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
   iconify-icon,
   iconify-icon * {
     pointer-events: none;
   }
 
-  &.outer-pad {
-    padding: 0 0.75rem;
-  }
   &.sm {
     min-width: 2rem;
     min-height: 2rem;
@@ -81,7 +66,8 @@ button.lgv {
   &.contrast {
     background: var(--lg-contrast);
   }
-  &.contrast:not(:disabled):hover {
+  &.contrast:not(:disabled):hover,
+  &.contrast:not(:disabled):focus-visible {
     background: var(--lg-contrast-hover);
   }
   &.contrast:not(:disabled):active {
@@ -91,7 +77,8 @@ button.lgv {
   &.success {
     background: var(--lg-success);
   }
-  &.success:not(:disabled):hover {
+  &.success:not(:disabled):hover,
+  &.success:not(:disabled):focus-visible {
     background: var(--lg-success-hover);
   }
   &.success:not(:disabled):active {
@@ -101,7 +88,8 @@ button.lgv {
   &.info {
     background: var(--lg-info);
   }
-  &.info:not(:disabled):hover {
+  &.info:not(:disabled):hover,
+  &.info:not(:disabled):focus-visible {
     background: var(--lg-info-hover);
   }
   &.info:not(:disabled):active {
@@ -111,17 +99,12 @@ button.lgv {
   &.warn {
     background: var(--lg-warn);
   }
-  &.warn:not(:disabled):hover {
+  &.warn:not(:disabled):hover,
+  &.warn:not(:disabled):focus-visible {
     background: var(--lg-warn-hover);
   }
   &.warn:not(:disabled):active {
     background: var(--lg-warn-active);
-  }
-
-  .lgv--text {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
   }
 }
 
@@ -130,27 +113,25 @@ button.lgv[variant='dark'] {
   min-width: 2.5rem;
   min-height: 2.5rem;
   overflow: hidden;
+  box-shadow: none;
 
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
 
-  &:hover {
+  &:not(:disabled):hover,
+  &:not(:disabled):focus-visible {
     background: var(--lg-button-dark-hover);
   }
-  &:active {
+  &:not(:disabled):active {
     background: var(--lg-button-dark-active);
-  }
-
-  &.flush {
-    border-width: 0;
-    border-radius: 0;
   }
 
   &.contrast {
     background: var(--lg-button-dark-contrast);
     border-color: var(--lg-contrast);
   }
-  &.contrast:not(:disabled):hover {
+  &.contrast:not(:disabled):hover,
+  &.contrast:not(:disabled):focus-visible {
     background: var(--lg-button-dark-contrast-hover);
   }
   &.contrast:not(:disabled):active {
@@ -162,17 +143,40 @@ button.lgv[variant='dark'] {
 button.lgv[variant='icon'] {
   border: none;
   background: transparent;
+  box-shadow: none;
 
-  &:hover {
-    filter: brightness(80%);
+  &:not(:disabled):hover,
+  &:not(:disabled):focus-visible {
+    color: var(--lg-button-icon-hover);
     transform: scale(1.05);
   }
-  &:active {
-    filter: brightness(60%);
+  &:not(:disabled):active {
+    color: var(--lg-button-icon-active);
     transform: scale(0.95);
   }
   &:disabled {
     filter: brightness(40%) grayscale(100%);
+  }
+}
+
+// blank button
+button.lgv[variant='blank'] {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  box-shadow: none;
+  border-radius: 0;
+
+  &:not(:disabled):hover,
+  &:not(:disabled):focus-visible {
+    background: none;
+  }
+  &:not(:disabled):active {
+    background: none;
+  }
+  &:disabled {
+    filter: grayscale(100%);
+    background: none;
   }
 }
 </style>

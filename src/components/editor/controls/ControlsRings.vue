@@ -23,7 +23,7 @@
           <LgvButton
             v-show="EDITOR_STATE.planetData.ringsParams.length < 8"
             class="sm action-add"
-            icon="mingcute:add-line"
+            icon="ph:plus"
             @click="EDITOR_STATE.planetData.addRing()"
           >
             {{ $t('editor.$action_add') }}
@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import ParameterRing from '@components/global/parameters/ParameterRing.vue';
 import { EDITOR_STATE } from '@core/editor/state/editor.state';
-import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvButton from '@lib/components/base/LgvButton.vue';
 </script>
 <style scoped lang="scss">
 .action-add {
