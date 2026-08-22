@@ -1,7 +1,9 @@
 import type { SerializedPlanetData } from '@core/editor/workers/worker-serializer.types.ts';
-import { calculateBiomeTextureCoordinates, renderBiomes } from '@tsl/features/biomes.ts';
-import { calculateCracksExtents, renderCracks } from '@tsl/features/cracks.ts';
-import { applyXYZTransformations, layer } from '@tsl/features/lwd.ts';
+import { BiomesInput, calculateBiomeTextureCoordinates, renderBiomes } from '@tsl/features/biomes.ts';
+import { calculateCracksHeight, CracksInput, renderCracks } from '@tsl/features/cracks.ts';
+import { CratersInput } from '@tsl/features/craters.ts';
+import { calculateTotalHeight } from '@tsl/features/height.ts';
+import { applyXYZTransformations } from '@tsl/features/lwd.ts';
 import { TSLMaterial } from '@tsl/materials/tsl-material.ts';
 import { flattenUV } from '@tsl/utils/vertex.tsl.ts';
 import {
@@ -31,6 +33,7 @@ import {
   Vector3,
   Vector4,
   Node,
+  Vector2,
 } from 'three/webgpu';
 
 type BakingPlanetSurfaceUniforms = {
@@ -56,10 +59,15 @@ type BakingPlanetSurfaceUniforms = {
       distanceToEdge: UniformNode<'float', number>;
       underwaterStrength: UniformNode<'float', number>;
       detailNoiseStrength: UniformNode<'float', number>;
-      baseNoise: UniformNode<'vec3', Vector3>;
+      baseNoise: UniformNode<'vec2', Vector2>;
       detailNoise: UniformNode<'vec4', Vector4>;
       limiterNoise: UniformNode<'vec4', Vector4>;
       colorNoise: UniformNode<'vec4', Vector4>;
+    };
+    craters: {
+      detailNoiseStrength: UniformNode<'float', number>;
+      baseNoise: UniformNode<'vec2', Vector2>;
+      detailNoise: UniformNode<'vec4', Vector4>;
     };
     biomes: {
       temperatureMode: UniformNode<'float', number>;
@@ -72,14 +80,11 @@ type BakingPlanetSurfaceUniforms = {
     surface: TextureNode;
     biomes: TextureNode;
     cracks: TextureNode;
+    craters: TextureNode;
   };
 };
-export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMaterial, BakingPlanetSurfaceUniforms> {
-  // Pre-defined common shader structs
-  private readonly ShaderOutput = struct({
-    color: 'vec4',
-  });
 
+export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMaterial, BakingPlanetSurfaceUniforms> {
   constructor(initData: SerializedPlanetData, initTextures: Texture[]) {
     super();
     this.uniforms = this.initUniforms(initData, initTextures);
@@ -98,6 +103,7 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
         +data.planetSurfaceShowBumps,
         +data.biomesEnabled,
         +data.cracksEnabled,
+        +data.cratersEnabled,
       ]),
       pbr: {
         waterLevel: uniform(data.planetWaterLevel),
@@ -142,9 +148,7 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
           distanceToEdge: uniform(data.cracksDistanceToEdge),
           underwaterStrength: uniform(data.cracksUnderwaterStrength),
           detailNoiseStrength: uniform(data.cracksDetailNoiseStrength),
-          baseNoise: uniform(
-            new Vector3(data.cracksBaseNoise.scale, data.cracksBaseNoise.jitter, data.cracksBaseNoise.mode),
-          ),
+          baseNoise: uniform(new Vector2(data.cracksBaseNoise.scale, data.cracksBaseNoise.jitter)),
           detailNoise: uniform(
             new Vector4(
               data.cracksDetailNoise.frequency,
@@ -167,6 +171,18 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
               data.cracksColorNoise.amplitude,
               data.cracksColorNoise.lacunarity,
               data.cracksColorNoise.octaves,
+            ),
+          ),
+        },
+        craters: {
+          detailNoiseStrength: uniform(data.cratersDetailNoiseStrength),
+          baseNoise: uniform(new Vector2(data.cratersBaseNoise.scale, data.cratersBaseNoise.jitter)),
+          detailNoise: uniform(
+            new Vector4(
+              data.cratersDetailNoise.frequency,
+              data.cratersDetailNoise.amplitude,
+              data.cratersDetailNoise.lacunarity,
+              data.cratersDetailNoise.octaves,
             ),
           ),
         },
@@ -195,9 +211,26 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
         surface: texture(textures[0]),
         biomes: texture(textures[1]),
         cracks: texture(textures[2]),
+        craters: texture(textures[3]),
       },
     };
   }
+
+  // --------------------------------------------------
+  // |               Shading functions                |
+  // --------------------------------------------------
+
+  // Pre-defined common shader structs
+  private readonly ShaderOutput = struct({
+    color: 'vec4',
+  });
+  private readonly HeightData = struct(
+    {
+      height: 'float',
+      cracksExtents: 'vec2',
+    },
+    'HeightData',
+  );
 
   buildMaterial(): MeshBasicNodeMaterial {
     const shaderOutput = this.runShader();
@@ -221,52 +254,70 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
       this.uniforms.flags.element(1),
     );
 
-    // Heightmap & global flags
-    const heightLimit = float(1).sub(EPSILON);
-    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).setName('height');
-    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, height).setName('FLAG_SURFACE_TYPE');
-    const FLAG_BIOMES_ENABLED = FLAG_SURFACE_TYPE.mul(float(this.uniforms.flags.element(3))).setName(
+    // heightmap & features
+    const FLAG_CRACKS_ENABLED = float(this.uniforms.flags.element(4)).toVar('FLAG_CRACKS_ENABLED');
+    const FLAG_CRATERS_ENABLED = float(this.uniforms.flags.element(5)).toVar('FLAG_CRATERS_ENABLED');
+    const surfaceData = calculateTotalHeight(
+      vPos,
+      this.uniforms.surface.noise,
+      this.uniforms.surface.warping.x,
+      this.uniforms.textures.craters,
+      CratersInput(
+        this.uniforms.features.craters.detailNoiseStrength,
+        this.uniforms.features.craters.baseNoise,
+        this.uniforms.features.craters.detailNoise,
+      ),
+      CracksInput(
+        this.uniforms.features.cracks.distanceToEdge,
+        this.uniforms.features.cracks.detailNoiseStrength,
+        this.uniforms.features.cracks.baseNoise,
+        this.uniforms.features.cracks.detailNoise,
+        this.uniforms.features.cracks.limiterNoise,
+      ),
+      FLAG_CRATERS_ENABLED,
+      FLAG_CRACKS_ENABLED,
+    );
+
+    const height = float(<Node<'float'>>surfaceData.get('height')).toVar('height');
+    const heightBeforeCracks = float(<Node<'float'>>surfaceData.get('heightBeforeCracks')).toVar('heightBeforeCracks');
+    const cracksExtents = vec2(<Node<'vec2'>>surfaceData.get('cracksExtents')).toVar('cracksExtents');
+
+    // flags
+    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, heightBeforeCracks).toVar('FLAG_SURFACE_TYPE');
+    const FLAG_BIOMES_ENABLED = FLAG_SURFACE_TYPE.mul(float(this.uniforms.flags.element(3))).toVar(
       'FLAG_BIOMES_ENABLED',
     );
-    const FLAG_CRACKS_ENABLED = float(this.uniforms.flags.element(4)).setName('FLAG_CRACKS_ENABLED');
+
+    // ------------------------------------------ //
+    //              STEP 2: rendering             //
+    // ------------------------------------------ //
 
     // render noise as color
-    const texCoord = vec2(min(height, heightLimit), 0.5).setName('texCoord');
-    const colour = vec3(this.uniforms.textures.surface.sample(texCoord).xyz).setName('colour');
+    const texCoord = vec2(min(height, float(1).sub(EPSILON)), 0.5).toVar('texCoord');
+    const colour = vec3(this.uniforms.textures.surface.sample(texCoord).xyz).toVar('colour');
 
-    // Render biomes
+    // calculate biomes
     const biomeTexCoord = vec2(0).toVar('biomeTexCoord');
-    If(FLAG_BIOMES_ENABLED.equal(1), () => {
+    If(FLAG_BIOMES_ENABLED.greaterThan(0.5), () => {
       biomeTexCoord.assign(
         calculateBiomeTextureCoordinates(
           vPos,
-          heightLimit,
-          this.uniforms.features.biomes.temperatureMode,
-          this.uniforms.features.biomes.temperatureNoise,
-          this.uniforms.features.biomes.humidityMode,
-          this.uniforms.features.biomes.humidityNoise,
+          BiomesInput(
+            this.uniforms.features.biomes.temperatureMode,
+            this.uniforms.features.biomes.temperatureNoise,
+            this.uniforms.features.biomes.humidityMode,
+            this.uniforms.features.biomes.humidityNoise,
+          ),
         ),
       );
-      colour.assign(renderBiomes(colour, this.uniforms.textures.biomes, biomeTexCoord, FLAG_BIOMES_ENABLED));
+      colour.assign(renderBiomes(colour, this.uniforms.textures.biomes, biomeTexCoord));
     });
 
-    // Render cracks
-    const cracksExtents = vec2(0).toVar('cracksExtents');
+    // calculate cracks
     const cracksColor = vec3(0).toVar('cracksColour');
     const cracksTextureColor = vec3(0).toVar('cracksTextureColor');
-    If(FLAG_CRACKS_ENABLED.equal(1), () => {
-      cracksExtents.assign(
-        calculateCracksExtents(
-          vPos,
-          this.uniforms.features.cracks.distanceToEdge,
-          this.uniforms.features.cracks.detailNoiseStrength,
-          this.uniforms.features.cracks.baseNoise,
-          this.uniforms.features.cracks.detailNoise,
-          this.uniforms.features.cracks.limiterNoise,
-        ),
-      );
+    If(FLAG_CRACKS_ENABLED.greaterThan(0.5), () => {
       const cracksData = renderCracks(
-        height,
         cracksExtents,
         colour,
         vPos,
@@ -274,11 +325,11 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
         this.uniforms.textures.cracks,
         this.uniforms.features.cracks.underwaterStrength,
         FLAG_SURFACE_TYPE,
-        FLAG_CRACKS_ENABLED,
       );
       cracksColor.assign(cracksData.get('fragmentColor'));
       cracksTextureColor.assign(cracksData.get('textureColor'));
 
+      height.assign(calculateCracksHeight(height, cracksExtents, FLAG_CRACKS_ENABLED));
       colour.assign(mix(colour, cracksColor, FLAG_CRACKS_ENABLED));
     });
 

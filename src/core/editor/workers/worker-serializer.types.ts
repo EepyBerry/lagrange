@@ -32,7 +32,6 @@ export interface SerializedDisplacementParameters {
 export interface SerializedVoronoiNoiseParameters {
   scale: number;
   jitter: number;
-  mode: number;
 }
 
 export interface SerializedColorRampStep {
@@ -116,6 +115,11 @@ export interface SerializedPlanetData {
   cracksLimiterNoise: SerializedFbmNoiseParameters;
   cracksColorNoise: SerializedFbmNoiseParameters;
   cracksColorRamp: SerializedColorRamp;
+  cratersEnabled: boolean;
+  cratersDetailNoiseStrength: number;
+  cratersBaseNoise: SerializedVoronoiNoiseParameters;
+  cratersDetailNoise: SerializedFbmNoiseParameters;
+  cratersColorRamp: SerializedColorRamp;
   cloudsEnabled: boolean;
   cloudsRotation: number;
   cloudsHeight: number;

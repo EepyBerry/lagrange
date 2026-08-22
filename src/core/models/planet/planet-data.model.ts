@@ -4,7 +4,7 @@ import { ColorRamp, ColorRampStep } from '@core/models/planet/color-ramp.model.t
 import { DisplacementParameters } from '@core/models/planet/displacement-parameters.model.ts';
 import { BiomeParameters } from '@core/models/planet/features/biome-parameters.model.ts';
 import { FbmNoiseParameters } from '@core/models/planet/noise/fbm-noise-parameters.model.ts';
-import { VoronoiMode, VoronoiNoiseParameters } from '@core/models/planet/noise/voronoi-noise-parameters.model.ts';
+import { VoronoiNoiseParameters } from '@core/models/planet/noise/voronoi-noise-parameters.model.ts';
 import { loadPlanetData } from '@core/models/planet/planet-data.utils.ts';
 import { RingParameters } from '@core/models/planet/ring-parameters.model.ts';
 import { ColorMode, GradientMode, PlanetClass, PlanetType } from '@core/types.ts';
@@ -520,6 +520,43 @@ export default class PlanetData {
   }
 
   // --------------------------------------------------
+  // |               Craters settings                 |
+  // --------------------------------------------------
+
+  private _cratersEnabled: boolean;
+  private _cratersDetailNoiseStrength: number = 0.25;
+  private _cratersBaseNoise: VoronoiNoiseParameters;
+  private _cratersDetailNoise: FbmNoiseParameters;
+  private _cratersColorRamp: ColorRamp;
+
+  public get cratersEnabled(): boolean {
+    return this._cratersEnabled;
+  }
+  public set cratersEnabled(value: boolean) {
+    this._cratersEnabled = value;
+    this.dataEventEndpoint.emit('showCraters', { value: this.cratersEnabled });
+  }
+
+  public get cratersDetailNoiseStrength() {
+    return this._cratersDetailNoiseStrength;
+  }
+
+  public set cratersDetailNoiseStrength(value: number) {
+    this._cratersDetailNoiseStrength = clamp(value, 0, 1);
+    this.dataEventEndpoint.emit('cratersDetailNoiseStrength', { value: this.cratersDetailNoiseStrength });
+  }
+
+  public get cratersBaseNoise(): VoronoiNoiseParameters {
+    return this._cratersBaseNoise;
+  }
+  public get cratersDetailNoise(): FbmNoiseParameters {
+    return this._cratersDetailNoise;
+  }
+  public get cratersColorRamp(): ColorRamp {
+    return this._cratersColorRamp;
+  }
+
+  // --------------------------------------------------
   // |                Clouds settings                 |
   // --------------------------------------------------
 
@@ -870,7 +907,6 @@ export default class PlanetData {
       { context: 'cracksBaseNoise', endpointRef: this.dataEventEndpoint },
       3.97,
       1,
-      VoronoiMode.DistanceToEdge,
     );
     this._cracksDetailNoise = new FbmNoiseParameters(
       { context: 'cracksDetailNoise', endpointRef: this.dataEventEndpoint },
@@ -899,6 +935,30 @@ export default class PlanetData {
       new ColorRampStep(0xe6962e, 0.8),
       new ColorRampStep(0xffdc73, 1, true),
     ]);
+
+    // Craters
+
+    this._cratersEnabled = false;
+    this._cratersBaseNoise = new VoronoiNoiseParameters(
+      { context: 'cratersBaseNoise', endpointRef: this.dataEventEndpoint },
+      7.25,
+      1,
+    );
+    this._cratersDetailNoise = new FbmNoiseParameters(
+      { context: 'cratersDetailNoise', endpointRef: this.dataEventEndpoint },
+      3.8,
+      1,
+      2.6,
+      6,
+    );
+    this._cratersColorRamp = new ColorRamp({ context: 'craters', endpointRef: this.dataEventEndpoint }, [
+      new ColorRampStep(0x000000, 0, true),
+      new ColorRampStep(0x000000, 0.27),
+      new ColorRampStep(0x8f8f8f, 0.34),
+      new ColorRampStep(0x7f7f7f, 0.4),
+      new ColorRampStep(0x7f7f7f, 1, true),
+    ]);
+
     // Clouds
 
     this._cloudsEnabled = true;

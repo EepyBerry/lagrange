@@ -302,6 +302,7 @@
       "warping_z": "Z Verformung",
       "noise": "Rausch Parameter",
       "noise_layers": "Anzahl der Schichten",
+      "noise_base_detail": "Grund- und Detailrauschen",
       "noise_fbm_frequency": "Frequenz",
       "noise_fbm_amplitude": "Amplitude",
       "noise_fbm_lacunarity": "Lückenhaftigkeit",
@@ -314,7 +315,8 @@
       "colorramp_opacity": "Transparenz",
       "color": "Farbe",
       "color_opacity": "Farbe & Transparenz",
-      "emissive_intensity": "Emissionsintensität"
+      "emissive_intensity": "Emissionsintensität",
+      "detail_noise_strength": "Detailrauschen Einfluss"
     },
     "basic_data": {
       "$title": "Basic Data",
@@ -361,12 +363,14 @@
       "$title": "",
       "cracks": {
         "$title": "Cracks",
-        "noise_base_detail": "Grund- und Detailrauschen",
         "noise_limiter": "Limiter-Rauschen",
         "noise_color": "Farbrauschen",
         "distance_to_edge": "Randabstand",
-        "detail_noise_strength": "Detailrauschen Einfluss",
         "underwater_strength": "Unterwasser Intensität"
+      },
+      "craters": {
+        "$title": "Krater",
+        "curve": "Kurve"
       },
       "biomes": {
         "$title": "Biomen",

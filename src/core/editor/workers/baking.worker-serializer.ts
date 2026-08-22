@@ -63,11 +63,16 @@ export function serializeBakingWorkerData(planetData: PlanetData): SerializedPla
     cracksEmissiveIntensity: planetData.cracksEmissiveIntensity,
     cracksUnderwaterStrength: planetData.cracksUnderwaterStrength,
     cracksDetailNoiseStrength: planetData.cracksDetailNoiseStrength,
-    cracksBaseNoise: serializeVoronoi(planetData.cracksBaseNoise),
+    cracksBaseNoise: serializeVoronoiNoise(planetData.cracksBaseNoise),
     cracksDetailNoise: serializeFbmNoise(planetData.cracksDetailNoise),
     cracksLimiterNoise: serializeFbmNoise(planetData.cracksLimiterNoise),
     cracksColorNoise: serializeFbmNoise(planetData.cracksColorNoise),
     cracksColorRamp: serializeColorRamp(planetData.cracksColorRamp),
+    cratersEnabled: planetData.cratersEnabled,
+    cratersDetailNoiseStrength: planetData.cratersDetailNoiseStrength,
+    cratersBaseNoise: serializeVoronoiNoise(planetData.cratersBaseNoise),
+    cratersDetailNoise: serializeFbmNoise(planetData.cratersDetailNoise),
+    cratersColorRamp: serializeColorRamp(planetData.cratersColorRamp),
     cloudsEnabled: planetData.cloudsEnabled,
     cloudsRotation: planetData.cloudsRotation,
     cloudsHeight: planetData.cloudsHeight,
@@ -104,6 +109,13 @@ function serializeFbmNoise(noise: FbmNoiseParameters): SerializedFbmNoiseParamet
   };
 }
 
+function serializeVoronoiNoise(noise: VoronoiNoiseParameters): SerializedVoronoiNoiseParameters {
+  return {
+    scale: noise.scale,
+    jitter: noise.jitter,
+  };
+}
+
 function serializeDisplacement(disp: DisplacementParameters): SerializedDisplacementParameters {
   return {
     epsilon: disp.epsilon,
@@ -113,14 +125,6 @@ function serializeDisplacement(disp: DisplacementParameters): SerializedDisplace
     amplitude: disp.amplitude,
     lacunarity: disp.lacunarity,
     octaves: disp.octaves,
-  };
-}
-
-function serializeVoronoi(noise: VoronoiNoiseParameters): SerializedVoronoiNoiseParameters {
-  return {
-    scale: noise.scale,
-    jitter: noise.jitter,
-    mode: noise.mode,
   };
 }
 

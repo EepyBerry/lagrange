@@ -1,9 +1,22 @@
 import type { SerializedPlanetData } from '@core/editor/workers/worker-serializer.types.ts';
-import { applyXYZTransformations, layer } from '@tsl/features/lwd.ts';
+import { CracksInput } from '@tsl/features/cracks.ts';
+import { CratersInput } from '@tsl/features/craters.ts';
+import { calculateTotalHeight } from '@tsl/features/height.ts';
+import { applyXYZTransformations } from '@tsl/features/lwd.ts';
 import { TSLMaterial } from '@tsl/materials/tsl-material.ts';
 import { flattenUV } from '@tsl/utils/vertex.tsl.ts';
-import { step, vec4, uv, positionLocal, uniform, uniformArray, vec3, mix } from 'three/tsl';
-import { MeshBasicNodeMaterial, UniformArrayNode, UniformNode, Vector3, Vector4 } from 'three/webgpu';
+import { vec4, uv, positionLocal, uniform, uniformArray, vec3, mix, float, texture, step } from 'three/tsl';
+import {
+  MeshBasicNodeMaterial,
+  Texture,
+  TextureNode,
+  UniformArrayNode,
+  UniformNode,
+  Vector2,
+  Vector3,
+  Vector4,
+  Node,
+} from 'three/webgpu';
 
 type BakingPlanetHeightMapUniforms = {
   flags: UniformArrayNode<'int'>;
@@ -21,25 +34,39 @@ type BakingPlanetHeightMapUniforms = {
   features: {
     cracks: {
       distanceToEdge: UniformNode<'float', number>;
+      detailNoiseStrength: UniformNode<'float', number>;
       emissiveIntensity: UniformNode<'float', number>;
-      baseNoise: UniformNode<'vec3', Vector3>;
+      baseNoise: UniformNode<'vec2', Vector2>;
       detailNoise: UniformNode<'vec4', Vector4>;
       limiterNoise: UniformNode<'vec4', Vector4>;
     };
+    craters: {
+      detailNoiseStrength: UniformNode<'float', number>;
+      baseNoise: UniformNode<'vec2', Vector2>;
+      detailNoise: UniformNode<'vec4', Vector4>;
+    };
+  };
+  textures: {
+    craters: TextureNode;
   };
 };
 export class BakingPlanetHeightMapTSLMaterial extends TSLMaterial<
   MeshBasicNodeMaterial,
   BakingPlanetHeightMapUniforms
 > {
-  constructor(initData: SerializedPlanetData) {
+  constructor(initData: SerializedPlanetData, initTextures: Texture[]) {
     super();
-    this.uniforms = this.initUniforms(initData);
+    this.uniforms = this.initUniforms(initData, initTextures);
   }
 
-  initUniforms(data: SerializedPlanetData): BakingPlanetHeightMapUniforms {
+  initUniforms(data: SerializedPlanetData, initTextures: Texture[]): BakingPlanetHeightMapUniforms {
     return {
-      flags: uniformArray([+data.planetSurfaceShowWarping, +data.planetSurfaceShowDisplacement]),
+      flags: uniformArray([
+        +data.planetSurfaceShowWarping,
+        +data.planetSurfaceShowDisplacement,
+        +data.cracksEnabled,
+        +data.cratersEnabled,
+      ]),
       pbr: {
         waterLevel: uniform(data.planetWaterLevel),
       },
@@ -81,10 +108,9 @@ export class BakingPlanetHeightMapTSLMaterial extends TSLMaterial<
       features: {
         cracks: {
           distanceToEdge: uniform(data.cracksDistanceToEdge),
+          detailNoiseStrength: uniform(data.cracksDetailNoiseStrength),
           emissiveIntensity: uniform(data.cracksEmissiveIntensity),
-          baseNoise: uniform(
-            new Vector3(data.cracksBaseNoise.scale, data.cracksBaseNoise.jitter, data.cracksBaseNoise.mode),
-          ),
+          baseNoise: uniform(new Vector2(data.cracksBaseNoise.scale, data.cracksBaseNoise.jitter)),
           detailNoise: uniform(
             new Vector4(
               data.cracksDetailNoise.frequency,
@@ -102,6 +128,21 @@ export class BakingPlanetHeightMapTSLMaterial extends TSLMaterial<
             ),
           ),
         },
+        craters: {
+          detailNoiseStrength: uniform(data.cratersDetailNoiseStrength),
+          baseNoise: uniform(new Vector2(data.cratersBaseNoise.scale, data.cratersBaseNoise.jitter)),
+          detailNoise: uniform(
+            new Vector4(
+              data.cratersDetailNoise.frequency,
+              data.cratersDetailNoise.amplitude,
+              data.cratersDetailNoise.lacunarity,
+              data.cratersDetailNoise.octaves,
+            ),
+          ),
+        },
+      },
+      textures: {
+        craters: texture(initTextures[0]),
       },
     };
   }
@@ -117,9 +158,33 @@ export class BakingPlanetHeightMapTSLMaterial extends TSLMaterial<
       this.uniforms.flags.element(1),
     );
 
-    // Heightmap & global flags
-    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar();
-    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, height).toVar();
+    // heightmap & features
+    const FLAG_CRACKS_ENABLED = float(this.uniforms.flags.element(2)).toVar('FLAG_CRACKS_ENABLED');
+    const FLAG_CRATERS_ENABLED = float(this.uniforms.flags.element(3)).toVar('FLAG_CRATERS_ENABLED');
+    const surfaceData = calculateTotalHeight(
+      vPos,
+      this.uniforms.surface.noise,
+      this.uniforms.surface.warping.x,
+      this.uniforms.textures.craters,
+      CratersInput(
+        this.uniforms.features.craters.detailNoiseStrength,
+        this.uniforms.features.craters.baseNoise,
+        this.uniforms.features.craters.detailNoise,
+      ),
+      CracksInput(
+        this.uniforms.features.cracks.distanceToEdge,
+        this.uniforms.features.cracks.detailNoiseStrength,
+        this.uniforms.features.cracks.baseNoise,
+        this.uniforms.features.cracks.detailNoise,
+        this.uniforms.features.cracks.limiterNoise,
+      ),
+      FLAG_CRATERS_ENABLED,
+      FLAG_CRACKS_ENABLED,
+    );
+
+    const height = float(<Node<'float'>>surfaceData.get('height')).toVar('height');
+    const heightBeforeCracks = float(<Node<'float'>>surfaceData.get('heightBeforeCracks')).toVar('heightBeforeCracks');
+    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, heightBeforeCracks).toVar('FLAG_SURFACE_TYPE');
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial();

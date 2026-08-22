@@ -9,15 +9,16 @@ export const applyBaseEmissive = /*@__PURE__*/ Fn(
 
     return color.mul(mix(emissiveParams.x, emissiveParams.y, flagSurfaceType));
   },
-).setLayout({
-  name: 'LG_EMISSIVE_applyBaseEmissive',
-  type: 'vec3',
-  inputs: [
-    { name: 'i_color', type: 'vec3' },
-    { name: 'i_emissiveParams', type: 'vec2' },
-    { name: 'i_FLAG_SURFACE_TYPE', type: 'float' },
-  ],
-});
+  {
+    name: 'LG_EMISSIVE_applyBaseEmissive',
+    type: 'vec3',
+    inputs: [
+      { name: 'i_color', type: 'vec3' },
+      { name: 'i_emissiveParams', type: 'vec2' },
+      { name: 'i_FLAG_SURFACE_TYPE', type: 'float' },
+    ],
+  },
+);
 
 export const applyBiomesEmissive = /*@__PURE__*/ Fn(
   ([i_color, i_emissiveParams, biomeTex, biomeEmissiveTex, i_biomeTexCoord, i_FLAG_SURFACE_TYPE]: [
@@ -33,7 +34,7 @@ export const applyBiomesEmissive = /*@__PURE__*/ Fn(
     const flippedBiomeTexCoord = vec2(i_biomeTexCoord.y, i_biomeTexCoord.x).setName('flippedBiomeTexCoord');
     const flagSurfaceType = float(i_FLAG_SURFACE_TYPE).toVar('flagSurfaceType');
 
-    If(flagSurfaceType.equal(1), () => {
+    If(flagSurfaceType.greaterThan(0.5), () => {
       // calculate emissive
       // note: X/Y axes are flipped on texture, so we must also flip coords when sampling
       const biomeEmissiveTexel = vec4(biomeEmissiveTex.sample(flippedBiomeTexCoord)).toVar('biomeEmissiveTexel');
@@ -70,7 +71,7 @@ export const applyCracksEmissive = /*@__PURE__*/ Fn(
 
     // override color to cracks value if we're on a biome
     const result = vec3(0).toVar('result');
-    If(FLAG_SURFACE_TYPE.equal(1), () => {
+    If(FLAG_SURFACE_TYPE.greaterThan(0.5), () => {
       result.assign(mix(emissiveColor, cracksColor.mul(cracksEmissiveIntensity), extents.x.mul(extents.y)));
     }).Else(() => {
       const emissiveValue = mix(emissiveColor, cracksColor.mul(cracksEmissiveIntensity), extents.x.mul(extents.y));
@@ -78,15 +79,16 @@ export const applyCracksEmissive = /*@__PURE__*/ Fn(
     });
     return result;
   },
-).setLayout({
-  name: 'LG_EMISSIVE_applyCracksEmissive',
-  type: 'vec3',
-  inputs: [
-    { name: 'i_color', type: 'vec3' },
-    { name: 'i_cracksColor', type: 'vec3' },
-    { name: 'i_cracksExtents', type: 'vec2' },
-    { name: 'i_emissiveIntensity', type: 'float' },
-    { name: 'i_underwaterStrength', type: 'float' },
-    { name: 'i_FLAG_SURFACE_TYPE', type: 'float' },
-  ],
-});
+  {
+    name: 'LG_EMISSIVE_applyCracksEmissive',
+    type: 'vec3',
+    inputs: [
+      { name: 'i_color', type: 'vec3' },
+      { name: 'i_cracksColor', type: 'vec3' },
+      { name: 'i_cracksExtents', type: 'vec2' },
+      { name: 'i_emissiveIntensity', type: 'float' },
+      { name: 'i_underwaterStrength', type: 'float' },
+      { name: 'i_FLAG_SURFACE_TYPE', type: 'float' },
+    ],
+  },
+);

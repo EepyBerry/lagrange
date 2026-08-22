@@ -1,9 +1,22 @@
 import type { SerializedPlanetData } from '@core/editor/workers/worker-serializer.types.ts';
-import { applyXYZTransformations, layer } from '@tsl/features/lwd.ts';
+import { NullCracksInput } from '@tsl/features/cracks.ts';
+import { applyXYZTransformations } from '@tsl/features/lwd.ts';
 import { TSLMaterial } from '@tsl/materials/tsl-material.ts';
 import { flattenUV } from '@tsl/utils/vertex.tsl.ts';
-import { step, vec4, mix, uv, positionLocal, uniform, uniformArray } from 'three/tsl';
-import { MeshBasicNodeMaterial, UniformArrayNode, UniformNode, Vector3, Vector4 } from 'three/webgpu';
+import { step, vec4, mix, uv, positionLocal, uniform, uniformArray, texture, float } from 'three/tsl';
+import {
+  MeshBasicNodeMaterial,
+  Texture,
+  TextureNode,
+  UniformArrayNode,
+  UniformNode,
+  Vector2,
+  Vector3,
+  Vector4,
+  Node,
+} from 'three/webgpu';
+import { CratersInput } from '../../features/craters';
+import { calculateTotalHeight } from '../../features/height';
 
 type BakingPlanetMetallicRoughnessUniforms = {
   flags: UniformArrayNode<'int'>;
@@ -19,19 +32,34 @@ type BakingPlanetMetallicRoughnessUniforms = {
       noise: UniformNode<'vec4', Vector4>;
     };
   };
+  features: {
+    craters: {
+      detailNoiseStrength: UniformNode<'float', number>;
+      baseNoise: UniformNode<'vec2', Vector2>;
+      detailNoise: UniformNode<'vec4', Vector4>;
+    };
+  };
+  textures: {
+    craters: TextureNode;
+  };
 };
 export class BakingPlanetMetallicRoughnessTSLMaterial extends TSLMaterial<
   MeshBasicNodeMaterial,
   BakingPlanetMetallicRoughnessUniforms
 > {
-  constructor(initData: SerializedPlanetData) {
+  constructor(initData: SerializedPlanetData, initTextures: Texture[]) {
     super();
-    this.uniforms = this.initUniforms(initData);
+    this.uniforms = this.initUniforms(initData, initTextures);
   }
 
-  initUniforms(data: SerializedPlanetData): BakingPlanetMetallicRoughnessUniforms {
+  initUniforms(data: SerializedPlanetData, initTextures: Texture[]): BakingPlanetMetallicRoughnessUniforms {
     return {
-      flags: uniformArray([+data.planetSurfaceShowWarping, +data.planetSurfaceShowDisplacement]),
+      flags: uniformArray([
+        +data.planetSurfaceShowWarping,
+        +data.planetSurfaceShowDisplacement,
+        +data.cracksEnabled,
+        +data.cratersEnabled,
+      ]),
       pbr: {
         waterLevel: uniform(data.planetWaterLevel),
         metallicRoughness: uniform(
@@ -78,6 +106,23 @@ export class BakingPlanetMetallicRoughnessTSLMaterial extends TSLMaterial<
           ),
         },
       },
+      features: {
+        craters: {
+          detailNoiseStrength: uniform(data.cratersDetailNoiseStrength),
+          baseNoise: uniform(new Vector2(data.cratersBaseNoise.scale, data.cratersBaseNoise.jitter)),
+          detailNoise: uniform(
+            new Vector4(
+              data.cratersDetailNoise.frequency,
+              data.cratersDetailNoise.amplitude,
+              data.cratersDetailNoise.lacunarity,
+              data.cratersDetailNoise.octaves,
+            ),
+          ),
+        },
+      },
+      textures: {
+        craters: texture(initTextures[0]),
+      },
     };
   }
 
@@ -92,13 +137,38 @@ export class BakingPlanetMetallicRoughnessTSLMaterial extends TSLMaterial<
       this.uniforms.flags.element(1),
     );
 
-    // Heightmap & global flags
-    const height = layer(vPos, this.uniforms.surface.noise, this.uniforms.surface.warping.x).toVar();
-    const FLAG_LAND = step(this.uniforms.pbr.waterLevel, height).toVar();
+    // heightmap & features
+    const FLAG_CRACKS_ENABLED = float(this.uniforms.flags.element(2)).toVar('FLAG_CRACKS_ENABLED');
+    const FLAG_CRATERS_ENABLED = float(this.uniforms.flags.element(3)).toVar('FLAG_CRATERS_ENABLED');
+    const surfaceData = calculateTotalHeight(
+      vPos,
+      this.uniforms.surface.noise,
+      this.uniforms.surface.warping.x,
+      this.uniforms.textures.craters,
+      CratersInput(
+        this.uniforms.features.craters.detailNoiseStrength,
+        this.uniforms.features.craters.baseNoise,
+        this.uniforms.features.craters.detailNoise,
+      ),
+      NullCracksInput,
+      FLAG_CRATERS_ENABLED,
+      FLAG_CRACKS_ENABLED,
+    );
+
+    const heightBeforeCracks = float(<Node<'float'>>surfaceData.get('heightBeforeCracks')).toVar('heightBeforeCracks');
+    const FLAG_SURFACE_TYPE = step(this.uniforms.pbr.waterLevel, heightBeforeCracks).toVar('FLAG_SURFACE_TYPE');
 
     // render PBR as green/blue mask
-    const outRoughness = mix(this.uniforms.pbr.metallicRoughness.x, this.uniforms.pbr.metallicRoughness.z, FLAG_LAND);
-    const outMetalness = mix(this.uniforms.pbr.metallicRoughness.y, this.uniforms.pbr.metallicRoughness.w, FLAG_LAND);
+    const outRoughness = mix(
+      this.uniforms.pbr.metallicRoughness.x,
+      this.uniforms.pbr.metallicRoughness.z,
+      FLAG_SURFACE_TYPE,
+    );
+    const outMetalness = mix(
+      this.uniforms.pbr.metallicRoughness.y,
+      this.uniforms.pbr.metallicRoughness.w,
+      FLAG_SURFACE_TYPE,
+    );
 
     // Init material & set outputs
     const material = new MeshBasicNodeMaterial();
