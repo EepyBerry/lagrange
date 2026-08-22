@@ -22,14 +22,14 @@
       />
     </div>
     <hr />
-    <LgvButton variant="dark" icon="tabler:reload" :a11y-label="$t('main.header.reset')" @click="resetDialog?.open()" />
+    <LgvButton variant="icon" icon="tabler:reload" :a11y-label="$t('main.header.reset')" @click="resetDialog?.open()" />
 
     <!------ BEGIN floating menus ------>
     <!-- Randomization menu -->
     <LgvButton
       id="planet-info__randomize-menu-trigger"
       ref="randomMenuTrigger"
-      variant="dark"
+      variant="icon"
       icon="mingcute:shuffle-2-fill"
       :class="{ active: isRandomMenuOpen }"
       :a11y-label="$t('main.header.menu_random')"
@@ -53,7 +53,7 @@
     <LgvButton
       id="planet-info__save-menu-trigger"
       ref="saveMenuTrigger"
-      variant="dark"
+      variant="icon"
       :icon="isSaveMenuOpen ? 'mdi:content-save-minus-outline' : 'mdi:content-save-plus-outline'"
       :class="{ active: isSaveMenuOpen }"
       :a11y-label="$t('main.header.menu_save')"
@@ -103,7 +103,7 @@ import { UIEventBus } from '@core/ui-event-bus.ts';
 import * as MathUtils from '@core/utils/math-utils';
 import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
 import { ref, useTemplateRef, watch, type Ref } from 'vue';
-import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvButton from '@/lib/components/base/LgvButton.vue';
 import AppResetConfirmDialog from '../dialogs/ResetConfirmDialog.vue';
 
 // floating-ui start
@@ -193,15 +193,14 @@ function toggleSaveMenu(override?: boolean) {
   justify-content: center;
   align-items: center;
   align-self: center;
-  gap: 0.5rem;
 
   hr {
-    height: 1.5rem;
+    height: 2.25rem;
+    margin-right: 0.25rem;
     border-color: var(--lg-accent);
   }
   .name-wrapper {
     background: var(--lg-primary);
-    border: 1px solid var(--lg-accent);
     border-radius: 2px;
     height: 2.5rem;
     padding: 0 0.25rem 0 0.75rem;

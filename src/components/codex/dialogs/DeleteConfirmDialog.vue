@@ -35,7 +35,7 @@ import type { DialogElementExposes } from '@components/global/elements/DialogEle
 import DialogElement from '@components/global/elements/DialogElement.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 import type { IDBPlanet } from '@/dexie.config';
-import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvButton from '@/lib/components/base/LgvButton.vue';
 
 const planet: Ref<IDBPlanet | null> = ref(null);
 const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');

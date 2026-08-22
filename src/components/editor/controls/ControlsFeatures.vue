@@ -470,7 +470,7 @@ import ParameterDivider from '@components/global/parameters/ParameterDivider.vue
 import ParameterGroup from '@components/global/parameters/ParameterGroup.vue';
 import { EDITOR_STATE } from '@core/editor/state/editor.state';
 import { GradientMode } from '@core/types';
-import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvButton from '@/lib/components/base/LgvButton.vue';
 </script>
 <style scoped lang="scss">
 .action-add {

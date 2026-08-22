@@ -127,7 +127,7 @@ import AppLogo from '@components/global/elements/AppLogo.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
 import { useTemplateRef } from 'vue';
-import LgvChip from '@/_lib/components/LgvChip.vue';
+import LgvChip from '@/lib/components/base/LgvChip.vue';
 
 const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
 defineExpose<AboutDialogExposes>({ open: () => dialogRef.value?.open!(), close: () => dialogRef.value?.close!() });

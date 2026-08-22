@@ -6,22 +6,22 @@
     <span class="footer-corner r" />
     <div id="app-footer-nav">
       <LgvButton
-        variant="dark"
+        variant="icon"
         icon="mingcute:information-line"
         :a11y-label="$t('main.footer.about')"
         @click="infoDialog!.open()"
       />
       <LgvButton
-        variant="dark"
+        variant="icon"
         icon="mingcute:settings-6-line"
         :a11y-label="$t('main.footer.settings')"
         @click="settingsDialog!.open()"
       />
       <LgvLink
-        variant="dark"
+        variant="icon"
         link-type="external"
         href="https://github.com/EepyBerry/lagrange"
-        icon="mingcute:github-line"
+        icon="meteor-icons:github"
       />
       <ExtraSpecialDayElement />
     </div>
@@ -33,8 +33,8 @@
 <script setup lang="ts">
 import ExtraSpecialDayElement from '@components/global/extras/ExtraSpecialDayElement.vue';
 import { defineAsyncComponent, ref, type Ref } from 'vue';
-import LgvButton from '@/_lib/components/LgvButton.vue';
-import LgvLink from '@/_lib/components/LgvLink.vue';
+import LgvButton from '@/lib/components/base/LgvButton.vue';
+import LgvLink from '@/lib/components/base/LgvLink.vue';
 
 const AppAboutDialog = defineAsyncComponent(() => import('@components/global/dialogs/AboutDialog.vue'));
 const AppSettingsDialog = defineAsyncComponent(() => import('@components/global/dialogs/SettingsDialog.vue'));
@@ -47,7 +47,7 @@ const settingsDialog: Ref<{ open: () => void; close: () => void } | null> = ref(
 #app-footer {
   position: fixed;
   bottom: 0;
-  padding: 0.5rem;
+  padding: 0.25rem;
   display: flex;
   align-items: center;
   align-self: center;
@@ -66,9 +66,9 @@ const settingsDialog: Ref<{ open: () => void; close: () => void } | null> = ref(
     border-style: solid;
 
     $corner-width: 1.5rem;
-    $corner-height: 3.5rem;
+    $corner-height: 3rem;
     $corner-border-width: calc(1.5rem + 1px);
-    $corner-border-height: calc(3.5rem + 1px);
+    $corner-border-height: calc(3rem + 1px);
 
     &.lb {
       left: calc(0px - $corner-border-width);
@@ -96,7 +96,6 @@ const settingsDialog: Ref<{ open: () => void; close: () => void } | null> = ref(
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
 
     hr {
       height: 1.5rem;

@@ -4,7 +4,7 @@
     <!-- file input -->
     <input ref="fileInput" type="file" accept=".lagrange" multiple hidden @change="importPlanetFile" />
     <LgvButton
-      variant="dark"
+      variant="icon"
       icon="mingcute:upload-line"
       :a11y-label="$t('main.header.import')"
       @click="openFileDialog"
@@ -24,7 +24,7 @@
 
     <!-- export planets -->
     <LgvButton
-      variant="dark"
+      variant="icon"
       icon="mingcute:folder-zip-line"
       :aria-label="$t('main.header.export_all')"
       @click="exportPlanets"
@@ -71,12 +71,12 @@ import { nanoid } from 'nanoid';
 import pako from 'pako';
 import { defineAsyncComponent, onMounted, onUnmounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import LgvButton from '@/_lib/components/LgvButton.vue';
-import LgvLink from '@/_lib/components/LgvLink.vue';
 import NewCardElement from '@/components/codex/elements/NewCardElement.vue';
 import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue';
 import ViewHeader from '@/components/global/ViewHeader.vue';
 import { idb, type IDBPlanet } from '@/dexie.config';
+import LgvButton from '@/lib/components/base/LgvButton.vue';
+import LgvLink from '@/lib/components/base/LgvLink.vue';
 
 const AppPlanetInfoDialog = defineAsyncComponent(() => import('@components/codex/dialogs/PlanetInfoDialog.vue'));
 const AppDeleteConfirmDialog = defineAsyncComponent(() => import('@components/codex/dialogs/DeleteConfirmDialog.vue'));

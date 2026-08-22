@@ -33,7 +33,7 @@
 import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import { UIEventBus } from '@core/ui-event-bus.ts';
 import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
-import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvButton from '@/lib/components/base/LgvButton.vue';
 import CornerDeco from '../decoration/CornerDeco.vue';
 
 const dialog = useTemplateRef('dialog');
@@ -103,7 +103,7 @@ dialog[open] {
   border-radius: 2px;
   margin: auto;
   color: var(--lg-text);
-  clip-path: polygon(0 23px, 23px 0, 100% 0, 100% calc(100% - 23px), calc(100% - 23px) 100%, 0 100%);
+  clip-path: polygon(0 14px, 14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%);
 
   display: flex;
   flex-direction: column;

@@ -46,7 +46,7 @@ import type { DialogElementExposes } from '@components/global/elements/DialogEle
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
-import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvButton from '@/lib/components/base/LgvButton.vue';
 
 const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
 defineExpose<EditorInitErrorDialogExposes>({ open: openWithError });

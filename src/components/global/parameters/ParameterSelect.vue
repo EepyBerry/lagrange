@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import LgvSelect from '@/_lib/components/LgvSelect.vue';
+import LgvSelect from '@/lib/components/base/LgvSelect.vue';
 
 type AcceptedType = string | number | boolean;
 const lgParam = defineModel<AcceptedType>();

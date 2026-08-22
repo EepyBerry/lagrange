@@ -129,7 +129,7 @@ import { ColorRamp, type ColorRampStep } from '@core/models/planet/color-ramp.mo
 import { alphaToGrayscale, colorRampToStyle } from '@core/utils/render-utils';
 import { onMounted, ref, watch, type Ref } from 'vue';
 import { ColorPicker } from 'vue-accessible-color-picker';
-import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvButton from '@/lib/components/base/LgvButton.vue';
 
 const lgColorRamp = defineModel<ColorRamp>();
 

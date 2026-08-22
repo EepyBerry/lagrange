@@ -4,14 +4,14 @@
 <style lang="scss">
 .deco.corner {
   position: absolute;
-  width: 0px;
-  height: 0px;
+  width: 0;
+  height: 0;
   border-style: solid;
 
   &.tl {
     top: 0;
     left: 0;
-    border-width: 25px 25px 0 0;
+    border-width: 16px 16px 0 0;
     border-color: var(--lg-accent) transparent transparent transparent;
   }
   &.tl.warn {
@@ -21,7 +21,7 @@
   &.tr {
     top: 0;
     right: 0;
-    border-width: 0 25px 25px 0;
+    border-width: 0 16px 16px 0;
     border-color: transparent var(--lg-accent) transparent transparent;
   }
   &.tr.warn {
@@ -31,7 +31,7 @@
   &.bl {
     bottom: 0;
     left: 0;
-    border-width: 25px 0 0 25px;
+    border-width: 16px 0 0 16px;
     border-color: transparent transparent transparent var(--lg-accent);
   }
   &.bl.warn {
@@ -41,7 +41,7 @@
   &.br {
     bottom: 0;
     right: 0;
-    border-width: 0 0 25px 25px;
+    border-width: 0 0 16px 16px;
     border-color: transparent transparent var(--lg-accent) transparent;
   }
   &.br.warn {

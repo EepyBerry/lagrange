@@ -34,7 +34,7 @@ import type { ClearDataConfirmDialogExposes } from '@components/global/dialogs/C
 import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import DialogElement from '@components/global/elements/DialogElement.vue';
 import { useTemplateRef } from 'vue';
-import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvButton from '@/lib/components/base/LgvButton.vue';
 
 const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
 defineExpose<ClearDataConfirmDialogExposes>({ open: () => dialogRef.value?.open() });

@@ -35,7 +35,7 @@ import AppNavigation from './AppNavigation.vue';
   }
   .view-header-controls {
     position: relative;
-    padding: 0.5rem;
+    padding: 0.25rem;
     background: var(--lg-panel);
     border-bottom: 1px solid var(--lg-accent);
     pointer-events: all;
@@ -55,9 +55,9 @@ import AppNavigation from './AppNavigation.vue';
   border-style: solid;
 
   $corner-width: 1.5rem;
-  $corner-height: 3.5rem;
+  $corner-height: 3rem;
   $corner-border-width: calc(1.5rem + 1px);
-  $corner-border-height: calc(3.5rem + 1px);
+  $corner-border-height: calc(3rem + 1px);
 
   &.lb {
     left: calc(0px - $corner-border-width);

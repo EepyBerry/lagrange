@@ -24,11 +24,13 @@
   --lg-button-hover: #274350;
   --lg-button-active: var(--lg-accent);
   --lg-button-disabled: #535353;
-  --lg-button-dark-hover: var(--lg-button-active);
-  --lg-button-dark-active: var(--lg-button-hover);
+  --lg-button-dark-hover: var(--lg-button-hover);
+  --lg-button-dark-active: var(--lg-button-active);
   --lg-button-dark-contrast: #0b201f;
   --lg-button-dark-contrast-hover: var(--lg-contrast-hover);
   --lg-button-dark-contrast-active: var(--lg-contrast);
+  --lg-button-icon-hover: #a5d2ea;
+  --lg-button-icon-active: #95b9d2;
 
   --lg-link: var(--lg-input-contrast-focus);
   --lg-link-visited: var(--lg-input-contrast-focus);
@@ -44,8 +46,8 @@
   --lg-success-hover: #06533c;
   --lg-success-active: #043d2c;
   --lg-success-panel: #0b644944;
-  --lg-info: #10388d;
-  --lg-info-hover: #092e7e;
+  --lg-info: #113c98;
+  --lg-info-hover: #0a3184;
   --lg-info-active: #072568;
   --lg-info-panel: #11349444;
   --lg-warn: #b63f1a;
@@ -111,8 +113,8 @@
   --lg-success-hover: #06533c;
   --lg-success-active: #043d2c;
   --lg-success-panel: #0b644944;
-  --lg-info: #0b5a64;
-  --lg-info-hover: #064e53;
+  --lg-info: #0c6b76;
+  --lg-info-hover: #06595f;
   --lg-info-active: #04393d;
   --lg-info-panel: #0b576444;
   --lg-warn: #b61a4e;
@@ -153,8 +155,8 @@
   --lg-success-hover: #1f4227;
   --lg-success-active: #18311d;
   --lg-success-panel: #22492d44;
-  --lg-info: #384a64;
-  --lg-info-hover: #26344e;
+  --lg-info: #405674;
+  --lg-info-hover: #2e4160;
   --lg-info-active: #1c2636;
   --lg-info-panel: #30456144;
   --lg-warn: #a81f1f;

@@ -26,7 +26,7 @@
                 {{ $t('dialog.init.update_brief') }}
               </template>
             </CollapsibleSection>
-            <LgvNotification id="tmp-notification" type="wip">
+            <LgvNotification id="tmp-notification" type="warn">
               {{ $t('dialog.init.$tmp_wip') }}
             </LgvNotification>
           </div>
@@ -178,8 +178,8 @@ import CollapsibleSection from '@components/global/elements/CollapsibleSection.v
 import DialogElement from '@components/global/elements/DialogElement.vue';
 import { ref, useTemplateRef } from 'vue';
 import type { IDBKeyBinding } from '@/dexie.config';
-import LgvButton from '@/_lib/components/LgvButton.vue';
-import LgvNotification from '@/_lib/components/LgvNotification.vue';
+import LgvButton from '@/lib/components/base/LgvButton.vue';
+import LgvNotification from '@/lib/components/custom/LgvNotification.vue';
 
 const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
 defineExpose<InitDialogExposes>({ open: () => dialogRef.value?.open!() });

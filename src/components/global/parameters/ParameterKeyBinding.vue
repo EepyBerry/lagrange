@@ -22,7 +22,7 @@
 </template>
 <script setup lang="ts">
 import type { IDBKeyBinding } from '@/dexie.config';
-import LgvButton from '@/_lib/components/LgvButton.vue';
+import LgvButton from '@/lib/components/base/LgvButton.vue';
 
 const $emit = defineEmits(['toggle']);
 defineProps<{ keyBind?: IDBKeyBinding; selected: boolean; icon: string }>();

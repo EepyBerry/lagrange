@@ -41,7 +41,6 @@ button.lgv {
 
   background: var(--lg-button);
   border: none;
-  border-radius: 2px;
   color: var(--lg-text);
   font-family: inherit;
   cursor: pointer;
@@ -164,11 +163,11 @@ button.lgv[variant='icon'] {
   background: transparent;
 
   &:hover {
-    filter: brightness(80%);
+    color: var(--lg-button-icon-hover);
     transform: scale(1.05);
   }
   &:active {
-    filter: brightness(60%);
+    color: var(--lg-button-icon-active);
     transform: scale(0.95);
   }
   &:disabled {

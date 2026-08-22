@@ -49,6 +49,19 @@ a.lgv {
     color: var(--lg-link-visited);
   }
 }
+a.lgv.external::before {
+  z-index: 1;
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0.5rem 0.5rem 0;
+  border-color: transparent white transparent transparent;
+}
 
 // button link
 a.lgv[variant='button'] {
@@ -114,19 +127,6 @@ a.lgv[variant='button'] {
     background: var(--lg-warn-active);
   }
 }
-a.lgv[variant='button'].external::before {
-  z-index: 1;
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 0.5rem 0.5rem 0;
-  border-color: transparent white transparent transparent;
-}
 
 a.lgv[variant='dark'] {
   min-width: 2.5rem;
@@ -161,18 +161,42 @@ a.lgv[variant='dark'] {
     background: var(--lg-button-dark-contrast-active);
   }
 }
-a.lgv[variant='dark'].external::before {
-  z-index: 1;
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
 
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 0.5rem 0.5rem 0;
-  border-color: transparent white transparent transparent;
+a.lgv[variant='icon'] {
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  padding: 0 0.75rem;
+
+  color: var(--lg-text);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: var(--lg-button-icon-hover);
+    transform: scale(1.05);
+    &.external::before {
+      border-right-color: var(--lg-button-icon-hover);
+    }
+  }
+  &:active {
+    color: var(--lg-button-icon-active);
+    transform: scale(0.95);
+    &.external::before {
+      border-right-color: var(--lg-button-icon-active);
+    }
+  }
+  &:disabled {
+    filter: brightness(40%) grayscale(100%);
+    &.external::before {
+      border-right-color: var(--lg-button-icon-disabled);
+    }
+  }
+}
+a.lgv[variant='icon'].external::before {
+  top: 4px;
+  right: 4px;
 }
 
 // router states

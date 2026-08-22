@@ -29,8 +29,8 @@
 <script setup lang="ts">
 import ExtraSpecialDayElement from '@components/global/extras/ExtraSpecialDayElement.vue';
 import { defineAsyncComponent, ref, type Ref } from 'vue';
-import LgvButton from '@/_lib/components/LgvButton.vue';
-import LgvLink from '@/_lib/components/LgvLink.vue';
+import LgvButton from '@/lib/components/base/LgvButton.vue';
+import LgvLink from '@/lib/components/base/LgvLink.vue';
 
 const AppAboutDialog = defineAsyncComponent(() => import('@components/global/dialogs/AboutDialog.vue'));
 const AppSettingsDialog = defineAsyncComponent(() => import('@components/global/dialogs/SettingsDialog.vue'));

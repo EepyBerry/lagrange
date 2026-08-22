@@ -165,7 +165,7 @@
                     </ParameterRadioOption>
                   </template>
                 </ParameterRadio>
-                <LgvNotification :type="appSettings.renderingBackend === 'webgl' ? 'info' : 'wip'">
+                <LgvNotification :type="appSettings.renderingBackend === 'webgl' ? 'info' : 'warn'">
                   {{
                     appSettings.renderingBackend === 'webgl'
                       ? $t('dialog.settings.editor_rendering_backend_webgl_notification')
@@ -481,8 +481,6 @@ import { mapLocale } from '@core/utils/utils';
 import { saveAs } from 'file-saver';
 import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import LgvButton from '@/_lib/components/LgvButton.vue';
-import LgvNotification from '@/_lib/components/LgvNotification.vue';
 import WebGPU from '@/core/capabilities/WebGPU';
 import * as DexieService from '@/core/services/dexie.service';
 import {
@@ -493,6 +491,8 @@ import {
   KeyBindingAction,
   type SkyboxName,
 } from '@/dexie.config';
+import LgvButton from '@/lib/components/base/LgvButton.vue';
+import LgvNotification from '@/lib/components/custom/LgvNotification.vue';
 
 const AppClearDataConfirmDialog = defineAsyncComponent(
   () => import('@components/global/dialogs/ClearDataConfirmDialog.vue'),

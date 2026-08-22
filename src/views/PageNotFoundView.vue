@@ -16,7 +16,7 @@ import AppLogo from '@components/global/elements/AppLogo.vue';
 import { useHead } from '@unhead/vue';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import LgvLink from '@/_lib/components/LgvLink.vue';
+import LgvLink from '@/lib/components/base/LgvLink.vue';
 
 const i18n = useI18n();
 useHead({
