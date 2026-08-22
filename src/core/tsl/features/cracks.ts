@@ -16,6 +16,8 @@ export const CracksInput = struct(
 );
 export const CracksOutput = struct({ fragmentColor: 'vec3', textureColor: 'vec3' });
 
+export const NullCracksInput = CracksInput(float(0), float(0), vec2(0), vec4(0), vec4(0));
+
 export const calculateCracksExtents = /*@__PURE__*/ Fn(
   ([vPos, cracksInput]: [Node<'vec3'>, StructNode]) => {
     const distanceToEdge = float(<Node<'float'>>cracksInput.get('distanceToEdge')).toVar('distanceToEdge');
