@@ -315,7 +315,8 @@
       "colorramp_opacity": "Opacity wamp",
       "color": "Cowow",
       "color_opacity": "Cowow & opacity",
-      "emissive_intensity": "Emissive intensity"
+      "emissive_intensity": "Emissive intensity",
+      "detail_noise_strength": "Detaiw noise stwength"
     },
     "basic_data": {
       "$title": "Basic Data",
@@ -365,7 +366,6 @@
         "noise_limiter": "Wimitew nyoise",
         "noise_color": "Cowow nyoise",
         "distance_to_edge": "Distyance to edge",
-        "detail_noise_strength": "Detaiw noise stwength",
         "underwater_strength": "Undewwatew stwength"
       },
       "craters": {

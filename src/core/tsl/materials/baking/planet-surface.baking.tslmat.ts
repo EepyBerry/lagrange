@@ -65,6 +65,7 @@ type BakingPlanetSurfaceUniforms = {
       colorNoise: UniformNode<'vec4', Vector4>;
     };
     craters: {
+      detailNoiseStrength: UniformNode<'float', number>;
       baseNoise: UniformNode<'vec2', Vector2>;
       detailNoise: UniformNode<'vec4', Vector4>;
     };
@@ -174,6 +175,7 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
           ),
         },
         craters: {
+          detailNoiseStrength: uniform(data.cratersDetailNoiseStrength),
           baseNoise: uniform(new Vector2(data.cratersBaseNoise.scale, data.cratersBaseNoise.jitter)),
           detailNoise: uniform(
             new Vector4(
@@ -260,7 +262,11 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
       this.uniforms.surface.noise,
       this.uniforms.surface.warping.x,
       this.uniforms.textures.craters,
-      CratersInput(this.uniforms.features.craters.baseNoise, this.uniforms.features.craters.detailNoise),
+      CratersInput(
+        this.uniforms.features.craters.detailNoiseStrength,
+        this.uniforms.features.craters.baseNoise,
+        this.uniforms.features.craters.detailNoise,
+      ),
       CracksInput(
         this.uniforms.features.cracks.distanceToEdge,
         this.uniforms.features.cracks.detailNoiseStrength,

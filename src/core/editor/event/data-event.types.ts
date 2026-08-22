@@ -96,6 +96,7 @@ export type DataEventPayloadTypeMap = {
   cracksUnderwaterStrength: DataEventPayload<number>;
   // craters
   showCraters: DataEventPayload<boolean>;
+  cratersDetailNoiseStrength: DataEventPayload<number>;
   // clouds
   cloudsEnabled: DataEventPayload<boolean>;
   cloudsRotation: DataEventPayload<{ clouds: number; surface: number }>;

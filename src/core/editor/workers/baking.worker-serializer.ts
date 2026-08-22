@@ -69,6 +69,7 @@ export function serializeBakingWorkerData(planetData: PlanetData): SerializedPla
     cracksColorNoise: serializeFbmNoise(planetData.cracksColorNoise),
     cracksColorRamp: serializeColorRamp(planetData.cracksColorRamp),
     cratersEnabled: planetData.cratersEnabled,
+    cratersDetailNoiseStrength: planetData.cratersDetailNoiseStrength,
     cratersBaseNoise: serializeVoronoiNoise(planetData.cratersBaseNoise),
     cratersDetailNoise: serializeFbmNoise(planetData.cratersDetailNoise),
     cratersColorRamp: serializeColorRamp(planetData.cratersColorRamp),

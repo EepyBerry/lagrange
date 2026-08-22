@@ -315,7 +315,8 @@
       "colorramp_opacity": "Opacity wamp",
       "color": "Couleur",
       "color_opacity": "Couleur & transparence",
-      "emissive_intensity": "Intensité de l'émission"
+      "emissive_intensity": "Intensité de l'émission",
+      "detail_noise_strength": "Intensité des détails"
     },
     "basic_data": {
       "$title": "Données de base",
@@ -365,7 +366,6 @@
         "noise_limiter": "Bruit limiteur",
         "noise_color": "Bruit de couleur",
         "distance_to_edge": "Distance des bords",
-        "detail_noise_strength": "Intensité des détails",
         "underwater_strength": "Intensité sous-marine"
       },
       "craters": {

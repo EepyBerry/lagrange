@@ -315,7 +315,8 @@
       "colorramp_opacity": "Opacity ramp",
       "color": "Color",
       "color_opacity": "Color & opacity",
-      "emissive_intensity": "Emissive intensity"
+      "emissive_intensity": "Emissive intensity",
+      "detail_noise_strength": "Detail noise strength"
     },
     "basic_data": {
       "$title": "Basic Data",
@@ -365,7 +366,6 @@
         "noise_limiter": "Limiter noise",
         "noise_color": "Color noise",
         "distance_to_edge": "Distance to edge",
-        "detail_noise_strength": "Detail noise strength",
         "underwater_strength": "Underwater strength"
       },
       "craters": {

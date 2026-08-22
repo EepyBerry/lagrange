@@ -36,15 +36,7 @@ export const calculateTotalHeight = /*@__PURE__*/ Fn(
   ]) => {
     const totalHeight = layer(i_p, i_surfaceNoise, i_layers);
     If(FLAG_CRATERS_ENABLED.greaterThan(0.5), () => {
-      totalHeight.assign(
-        calculateCratersHeight(
-          i_p,
-          totalHeight,
-          i_cratersTex,
-          <Node<'vec2'>>i_cratersInput.get('baseNoise'),
-          <Node<'vec4'>>i_cratersInput.get('detailNoise'),
-        ),
-      );
+      totalHeight.assign(calculateCratersHeight(i_p, totalHeight, i_cratersTex, i_cratersInput));
     });
 
     const heightBeforeCracks = float(totalHeight).toVar();

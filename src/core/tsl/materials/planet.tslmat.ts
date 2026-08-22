@@ -80,6 +80,7 @@ export type PlanetUniforms = {
       colorNoise: UniformNode<'vec4', Vector4>;
     };
     craters: {
+      detailNoiseStrength: UniformNode<'float', number>;
       baseNoise: UniformNode<'vec2', Vector2>;
       detailNoise: UniformNode<'vec4', Vector4>;
     };
@@ -170,6 +171,10 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
       .on(
         'cracksDetailNoiseStrength',
         (payload) => (this.uniforms.features.cracks.detailNoiseStrength.value = payload.value),
+      )
+      .on(
+        'cratersDetailNoiseStrength',
+        (payload) => (this.uniforms.features.craters.detailNoiseStrength.value = payload.value),
       )
       // noise
       .on('displacementParametersUpdate', (payload) => {
@@ -432,6 +437,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
           ),
         },
         craters: {
+          detailNoiseStrength: uniform(data.cratersDetailNoiseStrength),
           baseNoise: uniform(new Vector2(data.cratersBaseNoise.scale, data.cratersBaseNoise.jitter)),
           detailNoise: uniform(
             new Vector4(
@@ -557,7 +563,11 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
       this.uniforms.surface.noise,
       this.uniforms.surface.warping.x,
       this.uniforms.arrayTexture.depth(int(4)),
-      CratersInput(this.uniforms.features.craters.baseNoise, this.uniforms.features.craters.detailNoise),
+      CratersInput(
+        this.uniforms.features.craters.detailNoiseStrength,
+        this.uniforms.features.craters.baseNoise,
+        this.uniforms.features.craters.detailNoise,
+      ),
       CracksInput(
         this.uniforms.features.cracks.distanceToEdge,
         this.uniforms.features.cracks.detailNoiseStrength,
@@ -640,7 +650,11 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
           this.uniforms.surface.noise,
           this.uniforms.surface.warping.x,
           this.uniforms.arrayTexture.depth(int(4)),
-          CratersInput(this.uniforms.features.craters.baseNoise, this.uniforms.features.craters.detailNoise),
+          CratersInput(
+            this.uniforms.features.craters.detailNoiseStrength,
+            this.uniforms.features.craters.baseNoise,
+            this.uniforms.features.craters.detailNoise,
+          ),
           CracksInput(
             this.uniforms.features.cracks.distanceToEdge,
             this.uniforms.features.cracks.detailNoiseStrength,
@@ -658,7 +672,11 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
           this.uniforms.surface.noise,
           this.uniforms.surface.warping.x,
           this.uniforms.arrayTexture.depth(int(4)),
-          CratersInput(this.uniforms.features.craters.baseNoise, this.uniforms.features.craters.detailNoise),
+          CratersInput(
+            this.uniforms.features.craters.detailNoiseStrength,
+            this.uniforms.features.craters.baseNoise,
+            this.uniforms.features.craters.detailNoise,
+          ),
           CracksInput(
             this.uniforms.features.cracks.distanceToEdge,
             this.uniforms.features.cracks.detailNoiseStrength,

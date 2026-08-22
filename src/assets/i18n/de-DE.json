@@ -315,7 +315,8 @@
       "colorramp_opacity": "Transparenz",
       "color": "Farbe",
       "color_opacity": "Farbe & Transparenz",
-      "emissive_intensity": "Emissionsintensität"
+      "emissive_intensity": "Emissionsintensität",
+      "detail_noise_strength": "Detailrauschen Einfluss"
     },
     "basic_data": {
       "$title": "Basic Data",
@@ -365,7 +366,6 @@
         "noise_limiter": "Limiter-Rauschen",
         "noise_color": "Farbrauschen",
         "distance_to_edge": "Randabstand",
-        "detail_noise_strength": "Detailrauschen Einfluss",
         "underwater_strength": "Unterwasser Intensität"
       },
       "craters": {

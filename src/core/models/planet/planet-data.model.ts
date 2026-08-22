@@ -524,6 +524,7 @@ export default class PlanetData {
   // --------------------------------------------------
 
   private _cratersEnabled: boolean;
+  private _cratersDetailNoiseStrength: number = 0.25;
   private _cratersBaseNoise: VoronoiNoiseParameters;
   private _cratersDetailNoise: FbmNoiseParameters;
   private _cratersColorRamp: ColorRamp;
@@ -534,6 +535,15 @@ export default class PlanetData {
   public set cratersEnabled(value: boolean) {
     this._cratersEnabled = value;
     this.dataEventEndpoint.emit('showCraters', { value: this.cratersEnabled });
+  }
+
+  public get cratersDetailNoiseStrength() {
+    return this._cratersDetailNoiseStrength;
+  }
+
+  public set cratersDetailNoiseStrength(value: number) {
+    this._cratersDetailNoiseStrength = clamp(value, 0, 1);
+    this.dataEventEndpoint.emit('cratersDetailNoiseStrength', { value: this.cratersDetailNoiseStrength });
   }
 
   public get cratersBaseNoise(): VoronoiNoiseParameters {
