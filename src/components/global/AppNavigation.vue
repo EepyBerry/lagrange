@@ -40,9 +40,9 @@ import { uwuifyPath } from '@core/extras';
 import * as Globals from '@core/globals';
 import { UIEventBus } from '@core/ui-event-bus.ts';
 import { useFloating, autoUpdate, offset, type Placement } from '@floating-ui/vue';
+import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvLink from '@lib/components/base/LgvLink.vue';
 import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
-import LgvButton from '@/lib/components/base/LgvButton.vue';
-import LgvLink from '@/lib/components/base/LgvLink.vue';
 
 const navMenuTrigger = useTemplateRef('navMenuTrigger');
 const navMenu = useTemplateRef('navMenu');

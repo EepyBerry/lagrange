@@ -1,5 +1,5 @@
 <template>
-  <div id="planet-info">
+  <LgvHeader>
     <div class="name-wrapper">
       <input
         v-if="editMode"
@@ -22,10 +22,7 @@
       />
     </div>
     <hr />
-    <LgvButton variant="icon" icon="tabler:reload" :a11y-label="$t('main.header.reset')" @click="resetDialog?.open()" />
-
-    <!------ BEGIN floating menus ------>
-    <!-- Randomization menu -->
+    <LgvButton variant="icon" icon="tabler:reload" :a11y-label="$t('main.header.reset')" @click="resetDialog!.open()" />
     <LgvButton
       id="planet-info__randomize-menu-trigger"
       ref="randomMenuTrigger"
@@ -34,22 +31,6 @@
       :class="{ active: isRandomMenuOpen }"
       :a11y-label="$t('main.header.menu_random')"
     />
-    <div id="randomizer-menu" ref="randomMenu" class="floating" :style="randomFloating.floatingStyles.value">
-      <div class="floating-content">
-        <label for="random-seed">Seed</label>
-        <input id="random-seed" v-model="MathUtils.PRNG_SEED.value" type="text" />
-      </div>
-      <div class="floating-actions">
-        <LgvButton class="sm" icon="tabler:seeding" @click="MathUtils.regenerateSeed()">
-          {{ $t('editor.$action_reseed') }}
-        </LgvButton>
-        <LgvButton class="sm success" icon="mingcute:shuffle-2-fill" @click="$emit('random')">
-          {{ $t('editor.$action_random') }}
-        </LgvButton>
-      </div>
-    </div>
-
-    <!-- Save menu -->
     <LgvButton
       id="planet-info__save-menu-trigger"
       ref="saveMenuTrigger"
@@ -58,43 +39,61 @@
       :class="{ active: isSaveMenuOpen }"
       :a11y-label="$t('main.header.menu_save')"
     />
-    <div ref="saveMenu" class="floating" :style="saveFloating.floatingStyles.value">
-      <LgvButton
-        variant="dark"
-        class="save-menu-button flush"
-        icon="mingcute:save-2-line"
-        @click="closeSaveMenuAndEmit('save')"
-      >
-        {{ $t('main.header.save') }}
+  </LgvHeader>
+
+  <!------ BEGIN floating menus ------>
+  <div id="randomizer-menu" ref="randomMenu" class="floating" :style="randomFloating.floatingStyles.value">
+    <div class="floating-content">
+      <label for="random-seed">Seed</label>
+      <input id="random-seed" v-model="MathUtils.PRNG_SEED.value" type="text" />
+    </div>
+    <div class="floating-actions">
+      <LgvButton class="sm" icon="tabler:seeding" @click="MathUtils.regenerateSeed()">
+        {{ $t('editor.$action_reseed') }}
       </LgvButton>
-      <LgvButton
-        v-if="!$route.path.endsWith('/new')"
-        variant="dark"
-        class="save-menu-button flush"
-        icon="mingcute:copy-2-line"
-        @click="closeSaveMenuAndEmit('copy')"
-      >
-        {{ $t('main.header.copy') }} </LgvButton
-      ><LgvButton
-        variant="dark"
-        class="save-menu-button flush"
-        icon="material-symbols:texture"
-        @click="closeSaveMenuAndEmit('extract-textures')"
-      >
-        {{ $t('main.header.extract_textures') }}
-      </LgvButton>
-      <LgvButton
-        variant="dark"
-        class="save-menu-button flush"
-        icon="simple-icons:gltf"
-        @click="closeSaveMenuAndEmit('gltf')"
-      >
-        {{ $t('main.header.gltf') }}
+      <LgvButton class="sm success" icon="mingcute:shuffle-2-fill" @click="$emit('random')">
+        {{ $t('editor.$action_random') }}
       </LgvButton>
     </div>
-    <!------ END floating menus ------>
-    <AppResetConfirmDialog ref="resetDialog" @confirm="$emit('reset')" />
   </div>
+
+  <div id="save-menu" ref="saveMenu" class="floating" :style="saveFloating.floatingStyles.value">
+    <LgvButton
+      variant="dark"
+      class="save-menu-button flush"
+      icon="mingcute:save-2-line"
+      @click="closeSaveMenuAndEmit('save')"
+    >
+      {{ $t('main.header.save') }}
+    </LgvButton>
+    <LgvButton
+      v-if="!$route.path.endsWith('/new')"
+      variant="dark"
+      class="save-menu-button flush"
+      icon="mingcute:copy-2-line"
+      @click="closeSaveMenuAndEmit('copy')"
+    >
+      {{ $t('main.header.copy') }} </LgvButton
+    ><LgvButton
+      variant="dark"
+      class="save-menu-button flush"
+      icon="material-symbols:texture"
+      @click="closeSaveMenuAndEmit('extract-textures')"
+    >
+      {{ $t('main.header.extract_textures') }}
+    </LgvButton>
+    <LgvButton
+      variant="dark"
+      class="save-menu-button flush"
+      icon="simple-icons:gltf"
+      @click="closeSaveMenuAndEmit('gltf')"
+    >
+      {{ $t('main.header.gltf') }}
+    </LgvButton>
+  </div>
+
+  <!------ END floating menus ------>
+  <AppResetConfirmDialog ref="resetDialog" @confirm="$emit('reset')" />
 </template>
 
 <script setup lang="ts">
@@ -103,8 +102,9 @@ import { UIEventBus } from '@core/ui-event-bus.ts';
 import * as MathUtils from '@core/utils/math-utils';
 import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
 import { ref, useTemplateRef, watch, type Ref } from 'vue';
-import LgvButton from '@/lib/components/base/LgvButton.vue';
-import AppResetConfirmDialog from '../dialogs/ResetConfirmDialog.vue';
+import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvHeader from '@lib/components/main/LgvHeader.vue';
+import AppResetConfirmDialog from './dialogs/ResetConfirmDialog.vue';
 
 // floating-ui start
 const isRandomMenuOpen: Ref<boolean> = ref(false);
@@ -188,76 +188,62 @@ function toggleSaveMenu(override?: boolean) {
 </script>
 
 <style scoped lang="scss">
-#planet-info {
+.name-wrapper {
+  background: var(--lg-primary);
+  border-radius: 2px;
+  height: 2.5rem;
+  margin-left: 1rem;
+
   display: flex;
-  justify-content: center;
   align-items: center;
-  align-self: center;
+  gap: 0.5rem;
 
-  hr {
-    height: 2.25rem;
-    margin-right: 0.25rem;
-    border-color: var(--lg-accent);
+  input {
+    width: 24ch;
+    height: 2rem;
+    font-size: 0.875rem;
+    font-family: Poppins, Inter, sans-serif;
   }
-  .name-wrapper {
-    background: var(--lg-primary);
-    border-radius: 2px;
-    height: 2.5rem;
-    padding: 0 0.25rem 0 0.75rem;
-
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    input {
-      width: 24ch;
-      height: 2rem;
-      font-size: 0.875rem;
-      font-family: Poppins, Inter, sans-serif;
-    }
-    p {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 24ch;
-    }
+  p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 24ch;
   }
-  button.save-menu-button {
-    justify-content: flex-start;
-  }
-
-  #randomizer-menu {
-    padding: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.5rem;
-  }
+}
+#randomizer-menu {
+  z-index: 10;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+}
+#save-menu {
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 @media screen and (max-width: 767px) {
-  #planet-info {
-    width: 100%;
-    height: unset;
+  .name-wrapper {
     flex: 1;
+    height: 2.75rem;
+    font-size: 1em;
+    justify-content: space-between;
+    width: 0;
 
-    .name-wrapper {
-      flex: 1;
-      height: 2.75rem;
-      font-size: 1em;
-      justify-content: space-between;
-      width: 0;
-    }
-    .name-wrapper > p {
-      max-width: 100%;
-    }
-    .name-wrapper > input {
+    input {
       width: 100%;
     }
-    button {
-      width: 2.75rem;
-      height: 2.75rem;
+    p {
+      max-width: 100%;
     }
+  }
+  button {
+    width: 2.75rem;
+    height: 2.75rem;
   }
 }
 </style>

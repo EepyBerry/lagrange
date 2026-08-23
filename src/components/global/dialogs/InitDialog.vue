@@ -176,10 +176,10 @@ import type { DialogElementExposes } from '@components/global/elements/DialogEle
 import AppLogo from '@components/global/elements/AppLogo.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import DialogElement from '@components/global/elements/DialogElement.vue';
+import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvNotification from '@lib/components/custom/LgvNotification.vue';
 import { ref, useTemplateRef } from 'vue';
 import type { IDBKeyBinding } from '@/dexie.config';
-import LgvButton from '@/lib/components/base/LgvButton.vue';
-import LgvNotification from '@/lib/components/custom/LgvNotification.vue';
 
 const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
 defineExpose<InitDialogExposes>({ open: () => dialogRef.value?.open!() });

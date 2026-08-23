@@ -478,6 +478,8 @@ import {
 import { readFileSettings } from '@core/helpers/import.helper';
 import { UIEventBus } from '@core/ui-event-bus.ts';
 import { mapLocale } from '@core/utils/utils';
+import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvNotification from '@lib/components/custom/LgvNotification.vue';
 import { saveAs } from 'file-saver';
 import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -491,8 +493,6 @@ import {
   KeyBindingAction,
   type SkyboxName,
 } from '@/dexie.config';
-import LgvButton from '@/lib/components/base/LgvButton.vue';
-import LgvNotification from '@/lib/components/custom/LgvNotification.vue';
 
 const AppClearDataConfirmDialog = defineAsyncComponent(
   () => import('@components/global/dialogs/ClearDataConfirmDialog.vue'),

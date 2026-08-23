@@ -31,10 +31,10 @@
 </template>
 
 <script setup lang="ts">
+import LgvButton from '@lib/components/base/LgvButton.vue';
 import { Color } from 'three';
 import { onMounted, ref } from 'vue';
 import { ColorPicker } from 'vue-accessible-color-picker';
-import LgvButton from '@/lib/components/base/LgvButton.vue';
 
 const lgColor = defineModel<Color>();
 const pickerInitColor = ref('');

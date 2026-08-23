@@ -1,11 +1,12 @@
 <template>
   <span id="codex-background"></span>
-  <ViewHeader id="codex-header">
+  <LgvHeader id="codex-header">
     <!-- file input -->
     <input ref="fileInput" type="file" accept=".lagrange" multiple hidden @change="importPlanetFile" />
     <LgvButton
       variant="icon"
-      icon="mingcute:upload-line"
+      icon="uis:upload-alt"
+      icon-width="1.75rem"
       :a11y-label="$t('main.header.import')"
       @click="openFileDialog"
     />
@@ -25,11 +26,12 @@
     <!-- export planets -->
     <LgvButton
       variant="icon"
-      icon="mingcute:folder-zip-line"
+      icon="octicon:file-zip-24"
+      icon-width="1.75rem"
       :aria-label="$t('main.header.export_all')"
       @click="exportPlanets"
     />
-  </ViewHeader>
+  </LgvHeader>
 
   <div v-if="planets.length > 0" id="codex-grid">
     <!-- prettier-ignore-attribute -->
@@ -64,6 +66,9 @@ import { SM_WIDTH_THRESHOLD } from '@core/globals';
 import { readFileData } from '@core/helpers/import.helper';
 import PlanetData from '@core/models/planet/planet-data.model.ts';
 import { UIEventBus } from '@core/ui-event-bus.ts';
+import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvLink from '@lib/components/base/LgvLink.vue';
+import LgvHeader from '@lib/components/main/LgvHeader.vue';
 import { useHead } from '@unhead/vue';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
@@ -73,10 +78,7 @@ import { defineAsyncComponent, onMounted, onUnmounted, ref, useTemplateRef, watc
 import { useI18n } from 'vue-i18n';
 import NewCardElement from '@/components/codex/elements/NewCardElement.vue';
 import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue';
-import ViewHeader from '@/components/global/ViewHeader.vue';
 import { idb, type IDBPlanet } from '@/dexie.config';
-import LgvButton from '@/lib/components/base/LgvButton.vue';
-import LgvLink from '@/lib/components/base/LgvLink.vue';
 
 const AppPlanetInfoDialog = defineAsyncComponent(() => import('@components/codex/dialogs/PlanetInfoDialog.vue'));
 const AppDeleteConfirmDialog = defineAsyncComponent(() => import('@components/codex/dialogs/DeleteConfirmDialog.vue'));
@@ -255,6 +257,7 @@ async function deleteTargetedPlanet(id: string) {
   position: fixed;
 
   #codex-header-controls-newplanet {
+    margin: 0 0.25rem;
     font-size: 0.875rem;
   }
 }

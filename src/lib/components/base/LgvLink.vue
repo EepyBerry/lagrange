@@ -195,8 +195,8 @@ a.lgv[variant='icon'] {
   }
 }
 a.lgv[variant='icon'].external::before {
-  top: 4px;
-  right: 4px;
+  top: 3px;
+  right: 3px;
 }
 
 // router states

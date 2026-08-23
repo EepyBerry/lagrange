@@ -1,16 +1,13 @@
 <template>
-  <ViewHeader id="editor-header" class="xs-fullwidth">
-    <EditorHeaderControls
-      @rename="patchMetaHead"
-      @save="savePlanet"
-      @copy="savePlanet(true)"
-      @reset="resetPlanet"
-      @extract-textures="exportPlanetTextures"
-      @gltf="exportPlanet"
-      @random="randPlanet"
-    />
-    <span class="filler"></span>
-  </ViewHeader>
+  <EditorHeader
+    @rename="patchMetaHead"
+    @save="savePlanet"
+    @copy="savePlanet(true)"
+    @reset="resetPlanet"
+    @extract-textures="exportPlanetTextures"
+    @gltf="exportPlanet"
+    @random="randPlanet"
+  />
 
   <div id="scene-root" ref="sceneRoot" :class="{ compact: showCompactControls }">
     <OverlaySpinner :load="showSpinner" />
@@ -26,6 +23,7 @@
 import type { EditorInitErrorDialogExposes } from '@components/editor/dialogs/EditorInitErrorDialog.types.ts';
 import type { ExportProgressDialogExposes } from '@components/editor/dialogs/ExportProgressDialog.types.ts';
 import type { WarnSaveDialogExposes } from '@components/editor/dialogs/WarnSaveDialog.types.ts';
+import EditorHeader from '@components/editor/EditorHeader.vue';
 import {
   bootstrapEditor,
   dollyCamera,
@@ -52,10 +50,8 @@ import { nanoid } from 'nanoid';
 import { defineAsyncComponent, onMounted, onUnmounted, ref, type Ref, toRaw, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
-import EditorHeaderControls from '@/components/editor/controls/EditorHeaderControls.vue';
 import EditorSidebarControls from '@/components/editor/controls/EditorSidebarControls.vue';
 import EditorErrorDialog from '@/components/editor/dialogs/EditorInitErrorDialog.vue';
-import ViewHeader from '@/components/global/ViewHeader.vue';
 import WebGL from '@/core/capabilities/WebGL';
 import WebGPU from '@/core/capabilities/WebGPU';
 import { idb, type IDBPlanet, KeyBindingAction } from '@/dexie.config';

@@ -33,9 +33,9 @@
 import type { DeleteConfirmDialogExposes } from '@components/codex/dialogs/DeleteConfirmDialog.types.ts';
 import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import DialogElement from '@components/global/elements/DialogElement.vue';
+import LgvButton from '@lib/components/base/LgvButton.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 import type { IDBPlanet } from '@/dexie.config';
-import LgvButton from '@/lib/components/base/LgvButton.vue';
 
 const planet: Ref<IDBPlanet | null> = ref(null);
 const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');

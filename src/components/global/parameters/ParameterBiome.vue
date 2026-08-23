@@ -82,9 +82,9 @@
 import type { BiomeParameters } from '@core/models/planet/features/biome-parameters.model.js';
 import ParameterSlider from '@components/global/parameters/ParameterSlider.vue';
 import { EDITOR_STATE } from '@core/editor/state/editor.state.ts';
+import LgvButton from '@lib/components/base/LgvButton.vue';
 import { onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import LgvButton from '@/lib/components/base/LgvButton.vue';
 import ParameterColor from './ParameterColor.vue';
 import ParameterDivider from './ParameterDivider.vue';
 

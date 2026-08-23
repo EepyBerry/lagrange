@@ -124,12 +124,12 @@
 
 <script setup lang="ts">
 import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, uwuifyPath } from '@core/extras';
+import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvLink from '@lib/components/base/LgvLink.vue';
 import { onMounted, ref, useTemplateRef } from 'vue';
 import ExtraMetalSlugPlanetExplosion from '@/components/global/extras/ExtraMetalSlugPlanetExplosion.vue';
 import { makeSVGCircleArc } from '@/core/utils/svg-utils';
 import { type IDBPlanet } from '@/dexie.config';
-import LgvButton from '@/lib/components/base/LgvButton.vue';
-import LgvLink from '@/lib/components/base/LgvLink.vue';
 
 const cardRoot = useTemplateRef('cardRoot');
 const extraPlanetExplosionRef = useTemplateRef('extraPlanetExplosionRef');

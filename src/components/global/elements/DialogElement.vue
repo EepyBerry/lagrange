@@ -32,8 +32,8 @@
 <script setup lang="ts">
 import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import { UIEventBus } from '@core/ui-event-bus.ts';
+import LgvButton from '@lib/components/base/LgvButton.vue';
 import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
-import LgvButton from '@/lib/components/base/LgvButton.vue';
 import CornerDeco from '../decoration/CornerDeco.vue';
 
 const dialog = useTemplateRef('dialog');

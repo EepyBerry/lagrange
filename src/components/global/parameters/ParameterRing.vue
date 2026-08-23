@@ -36,8 +36,8 @@
 <script setup lang="ts">
 import type { RingParameters } from '@core/models/planet/ring-parameters.model.ts';
 import { colorRampToStyle } from '@core/utils/render-utils';
+import LgvButton from '@lib/components/base/LgvButton.vue';
 import { onMounted, ref, type Ref } from 'vue';
-import LgvButton from '@/lib/components/base/LgvButton.vue';
 
 const lgParam = defineModel<RingParameters>();
 

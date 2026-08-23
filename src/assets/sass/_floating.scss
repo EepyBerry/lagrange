@@ -1,4 +1,5 @@
 .floating {
+  position: absolute;
   visibility: hidden; // will be overridden
   background: var(--lg-panel);
   border: 1px solid var(--lg-accent);
