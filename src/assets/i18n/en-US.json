@@ -189,6 +189,7 @@
       "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {
+      "$title": "About @:main.$title",
       "description": "A procedural planet-building application.",
       "motivation": "Made as a pet project to materialize my fascination with space & planets!",
       "tech": "Main tools & libraries behind this project",

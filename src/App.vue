@@ -25,7 +25,9 @@
       href="https://github.com/EepyBerry/lagrange"
       icon="mynaui:github"
       icon-width="1.75rem"
-    />
+    >
+      <span class="a11y--visually-hidden">{{ $t('main.footer.github') }}</span>
+    </LgvLink>
     <ExtraSpecialDayElement />
   </LgvFooter>
   <AppInitDialog

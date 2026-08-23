@@ -16,7 +16,7 @@
         <!-- planet name -->
         <section id="planet-name">
           <div class="banner" role="presentation">
-            <h3>{{ planet?.data.planetName }}</h3>
+            <h3>{{ planet?.data.planetName ?? 'PLANET_NAME' }}</h3>
           </div>
           <SeparatorGreebleDeco />
         </section>
@@ -211,7 +211,7 @@
 </template>
 <script setup lang="ts">
 import type { PlanetInfoDialogExposes } from '@components/codex/dialogs/PlanetInfoDialog.types.ts';
-import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
+import type { LgvDialogExposes } from '@lib/components/custom/LgvDialog.types.ts';
 import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT } from '@core/extras';
 import LgvDialog from '@lib/components/custom/LgvDialog.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
@@ -226,7 +226,7 @@ import PlanetCardFeatureBoxElement from '../elements/PlanetCardFeatureBoxElement
 import SVGBiomeGraph from '../svg/SVGBiomeGraph.vue';
 import SVGRingsGraph from '../svg/SVGRingsGraph.vue';
 
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
 defineExpose<PlanetInfoDialogExposes>({ open });
 
 const planet: Ref<IDBPlanet | null> = ref(null);

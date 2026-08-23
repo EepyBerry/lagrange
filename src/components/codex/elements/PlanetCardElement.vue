@@ -58,13 +58,7 @@
 
       <!-- preview -->
       <div v-show="!obliterationHidePlanetImage" class="planet-preview-inner">
-        <img
-          v-if="planet.preview"
-          class="planet-image"
-          :src="planet.preview"
-          :aria-label="planet.data.planetName"
-          :alt="planet.data.planetName"
-        />
+        <img v-if="planet.preview" class="planet-image" :src="planet.preview" :alt="planet.data.planetName" />
         <iconify-icon
           v-else
           class="planet-image-fallback"

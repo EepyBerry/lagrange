@@ -9,7 +9,7 @@
     <div>
       <header class="dialog-header">
         <h2 v-if="showTitle" class="dialog-title">
-          <slot name="title"></slot>
+          <slot name="title">DIALOG_TITLE</slot>
         </h2>
         <span v-else class="filler" />
         <LgvButton
@@ -24,17 +24,17 @@
         />
       </header>
       <div ref="dialogActions" class="dialog-content" tabindex="-1">
-        <slot name="content"></slot>
+        <slot name="content">DIALOG_CONTENT</slot>
       </div>
       <footer v-if="showActions" class="dialog-actions">
-        <slot name="actions"></slot>
+        <slot name="actions">DIALOG_ACTIONS</slot>
       </footer>
     </div>
   </dialog>
 </template>
 
 <script setup lang="ts">
-import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
+import type { LgvDialogExposes } from '@lib/components/custom/LgvDialog.types.ts';
 import { UIEventBus } from '@core/ui-event-bus.ts';
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
@@ -57,7 +57,7 @@ const handleClick = (evt: Event) => {
 };
 
 const $emit = defineEmits(['open', 'close']);
-defineExpose<DialogElementExposes>({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open ?? false });
+defineExpose<LgvDialogExposes>({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open ?? false });
 
 const $props = defineProps<{
   showTitle?: boolean;

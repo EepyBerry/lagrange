@@ -1,4 +1,4 @@
-export type DialogElementExposes = {
+export type LgvDialogExposes = {
   open: () => void;
   close: () => void;
   isOpen: boolean;

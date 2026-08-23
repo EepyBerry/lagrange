@@ -1,15 +1,19 @@
 <template>
-  <input
-    :id="`${name}-${id}`"
-    ref="htmlRadio"
-    v-model="lgParam"
-    class="lg"
-    type="radio"
-    :name="name"
-    :value="value"
-    :checked="value === lgParam"
-    :disabled="disabled"
-  />
+  <div class="inner-input" aria-hidden="true">
+    <label :for="`${name}-${id}`" class="a11y--visually-hidden">INNER_INPUT</label>
+    <input
+      :id="`${name}-${id}`"
+      ref="htmlRadio"
+      v-model="lgParam"
+      class="lg"
+      type="radio"
+      :name="name"
+      :value="value"
+      :checked="value === lgParam"
+      :disabled="disabled"
+      hidden=""
+    />
+  </div>
 
   <LgvButton
     class="sm radio-button"
@@ -56,6 +60,9 @@ function select() {
   }
 }
 
+div.inner-input {
+  display: none;
+}
 input[type='radio'] {
   display: none;
 }

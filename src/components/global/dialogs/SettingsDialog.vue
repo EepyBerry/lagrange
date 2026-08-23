@@ -401,7 +401,11 @@
                   <LgvButton class="sm" icon="mingcute:upload-line" @click="fileInput?.click()">
                     {{ $t('dialog.settings.advanced_import') }}
                   </LgvButton>
+                  <label for="actions-input-import" class="a11y--visually-hidden">{{
+                    $t('dialog.settings.advanced_import')
+                  }}</label>
                   <input
+                    id="actions-input-import"
                     ref="fileInput"
                     type="file"
                     accept=".json"
@@ -455,7 +459,7 @@
 <script setup lang="ts">
 import type { ClearDataConfirmDialogExposes } from '@components/global/dialogs/ClearDataConfirmDialog.types.ts';
 import type { SettingsDialogExposes } from '@components/global/dialogs/SettingsDialog.types.ts';
-import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
+import type { LgvDialogExposes } from '@lib/components/custom/LgvDialog.types.ts';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import ParameterCategory from '@components/global/parameters/ParameterCategory.vue';
 import ParameterCheckbox from '@components/global/parameters/ParameterCheckbox.vue';
@@ -501,7 +505,7 @@ const AppClearDataConfirmDialog = defineAsyncComponent(
 const i18n = useI18n();
 const catModeOverride = ref('en-UwU');
 
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
 const confirmDialogRef = useTemplateRef<ClearDataConfirmDialogExposes>('confirmDialogRef');
 defineExpose<SettingsDialogExposes>({ open });
 

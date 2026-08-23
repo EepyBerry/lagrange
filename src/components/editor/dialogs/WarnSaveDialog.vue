@@ -36,12 +36,12 @@
 </template>
 <script setup lang="ts">
 import type { WarnSaveDialogExposes } from '@components/editor/dialogs/WarnSaveDialog.types.ts';
-import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
+import type { LgvDialogExposes } from '@lib/components/custom/LgvDialog.types.ts';
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import LgvDialog from '@lib/components/custom/LgvDialog.vue';
 import { useTemplateRef } from 'vue';
 
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
 defineExpose<WarnSaveDialogExposes>({ open: () => dialogRef.value?.open() });
 const $emit = defineEmits(['save-confirm', 'confirm']);
 

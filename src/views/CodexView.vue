@@ -1,8 +1,18 @@
 <template>
   <span id="codex-background"></span>
+  <h1 class="a11y--visually-hidden">{{ $t('main.nav.codex') }}</h1>
   <LgvHeader id="codex-header">
     <!-- file input -->
-    <input ref="fileInput" type="file" accept=".lagrange" multiple hidden @change="importPlanetFile" />
+    <label for="codex-header-controls-import" class="a11y--visually-hidden">{{ $t('main.header.import') }}</label>
+    <input
+      id="codex-header-controls-import"
+      ref="fileInput"
+      type="file"
+      accept=".lagrange"
+      multiple
+      hidden
+      @change="importPlanetFile"
+    />
     <LgvButton
       variant="icon"
       icon="ph:upload"

@@ -172,7 +172,7 @@
 
 <script setup lang="ts">
 import type { InitDialogExposes } from '@components/global/dialogs/InitDialog.types.ts';
-import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
+import type { LgvDialogExposes } from '@lib/components/custom/LgvDialog.types.ts';
 import AppLogo from '@components/global/elements/AppLogo.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import LgvButton from '@lib/components/base/LgvButton.vue';
@@ -181,7 +181,7 @@ import LgvNotification from '@lib/components/custom/LgvNotification.vue';
 import { ref, useTemplateRef } from 'vue';
 import type { IDBKeyBinding } from '@/dexie.config';
 
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
 defineExpose<InitDialogExposes>({ open: () => dialogRef.value?.open!() });
 
 const shouldShowOnNextVisits = ref(true);

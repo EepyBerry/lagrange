@@ -1,4 +1,5 @@
 <template>
+  <h1 class="a11y--visually-hidden">{{ $t('main.nav.editor') }}</h1>
   <EditorHeader
     @rename="patchMetaHead"
     @save="savePlanet"

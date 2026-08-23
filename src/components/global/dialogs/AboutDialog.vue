@@ -1,6 +1,9 @@
 <template>
   <LgvDialog id="dialog-about" ref="dialogRef" show-title :closeable="true" :aria-label="$t('a11y.dialog_about')">
-    <template #title>&nbsp;</template>
+    <template #title>
+      <iconify-icon icon="ph:info" width="1.5rem" aria-hidden="true" />
+      {{ $t('dialog.about.$title') }}
+    </template>
     <template #content>
       <div class="about-grid">
         <div class="about-logo">
@@ -122,14 +125,14 @@
 
 <script setup lang="ts">
 import type { AboutDialogExposes } from '@components/global/dialogs/AboutDialog.types.ts';
-import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
+import type { LgvDialogExposes } from '@lib/components/custom/LgvDialog.types.ts';
 import AppLogo from '@components/global/elements/AppLogo.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import LgvChip from '@lib/components/base/LgvChip.vue';
 import LgvDialog from '@lib/components/custom/LgvDialog.vue';
 import { useTemplateRef } from 'vue';
 
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
 defineExpose<AboutDialogExposes>({ open: () => dialogRef.value?.open!(), close: () => dialogRef.value?.close!() });
 
 const appVersion = import.meta.env.APP_VERSION;

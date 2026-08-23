@@ -31,11 +31,11 @@
 </template>
 <script setup lang="ts">
 import type { ExportProgressDialogExposes } from '@components/editor/dialogs/ExportProgressDialog.types.ts';
-import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
+import type { LgvDialogExposes } from '@lib/components/custom/LgvDialog.types.ts';
 import LgvDialog from '@lib/components/custom/LgvDialog.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
 defineExpose<ExportProgressDialogExposes>({ open, setProgress, setDone, setError });
 
 const bakingSteps = 9;

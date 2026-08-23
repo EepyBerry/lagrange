@@ -189,6 +189,7 @@
       "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {
+      "$title": "À propos de @:main.$title",
       "description": "Une application de création de planètes procédurales.",
       "motivation": "Projet ayant pour objectif de matérialiser mon émerveillement concernant l'espace et les planètes !",
       "tech": "Outils et librairies principales derrière ce projet",

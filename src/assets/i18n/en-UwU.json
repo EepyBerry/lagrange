@@ -189,6 +189,7 @@
       "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {
+      "$title": "About @:main.$title",
       "description": "A pwoceduwaw pwanyet-buiwding appwication!!! >w<",
       "motivation": "Made as a p-pet pwoject *blushes* t-to matewiawize my fascinyation with space & pwanyets!",
       "tech": "Main toows & libwawies behind this p-pwoject x3",

@@ -189,6 +189,7 @@
       "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {
+      "$title": "Über @:main.$title",
       "description": "Eine prozedurale App zur Planetenerstellung.",
       "motivation": "Projekt mit dem Ziel, mein Wunder über den Weltraum und die Planeten zu verwirklichen!",
       "tech": "Die wichtigsten Tools und Bibliotheken hinter diesem Projekt",
