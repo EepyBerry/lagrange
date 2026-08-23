@@ -453,7 +453,7 @@
             <LgvButton
               v-show="EDITOR_STATE.planetData.biomesParams.length < 16"
               class="sm action-add"
-              icon="mingcute:add-line"
+              icon="ph:plus"
               @click="EDITOR_STATE.planetData.addBiome()"
             >
               {{ $t('editor.$action_add') }}

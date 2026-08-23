@@ -1,5 +1,5 @@
 <template>
-  <DialogElement
+  <LgvDialog
     id="dialog-settings"
     ref="dialogRef"
     :show-title="true"
@@ -91,7 +91,7 @@
           </template>
         </CollapsibleSection>
 
-        <CollapsibleSection icon="mingcute:planet-line" class="section-editor">
+        <CollapsibleSection icon="ph:planet" class="section-editor">
           <template #title>
             {{ $t('dialog.settings.editor') }}
           </template>
@@ -448,7 +448,7 @@
         </CollapsibleSection>
       </div>
     </template>
-  </DialogElement>
+  </LgvDialog>
   <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
 </template>
 
@@ -457,7 +457,6 @@ import type { ClearDataConfirmDialogExposes } from '@components/global/dialogs/C
 import type { SettingsDialogExposes } from '@components/global/dialogs/SettingsDialog.types.ts';
 import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
-import DialogElement from '@components/global/elements/DialogElement.vue';
 import ParameterCategory from '@components/global/parameters/ParameterCategory.vue';
 import ParameterCheckbox from '@components/global/parameters/ParameterCheckbox.vue';
 import ParameterDivider from '@components/global/parameters/ParameterDivider.vue';
@@ -479,6 +478,7 @@ import { readFileSettings } from '@core/helpers/import.helper';
 import { UIEventBus } from '@core/ui-event-bus.ts';
 import { mapLocale } from '@core/utils/utils';
 import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvDialog from '@lib/components/custom/LgvDialog.vue';
 import LgvNotification from '@lib/components/custom/LgvNotification.vue';
 import { saveAs } from 'file-saver';
 import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';

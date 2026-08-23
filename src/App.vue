@@ -7,14 +7,14 @@
   <LgvFooter>
     <LgvButton
       variant="icon"
-      icon="mdi-light:information"
+      icon="ph:info"
       icon-width="1.75rem"
       :a11y-label="$t('main.footer.about')"
       @click="infoDialog!.open()"
     />
     <LgvButton
       variant="icon"
-      icon="mdi-light:settings"
+      icon="ph:sliders"
       icon-width="1.75rem"
       :a11y-label="$t('main.footer.settings')"
       @click="settingsDialog!.open()"

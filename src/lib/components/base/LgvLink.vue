@@ -30,7 +30,7 @@ withDefaults(defineProps<{ linkType?: LinkType; href?: string; icon?: string; ic
 const linkRef: Ref<HTMLLinkElement | null> = ref(null);
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 // standard link
 a.lgv {
   display: inline;
@@ -40,7 +40,6 @@ a.lgv {
   min-height: 0;
   background: none;
   border: none;
-  border-radius: 2px;
   position: relative;
   color: var(--lg-link);
   cursor: pointer;
@@ -71,7 +70,6 @@ a.lgv[variant='button'] {
 
   color: var(--lg-text);
   background: var(--lg-button);
-  border-radius: 2px;
   text-decoration: none;
   cursor: pointer;
 

@@ -88,7 +88,7 @@
     >
       <LgvButton
         class="contrast"
-        icon="mingcute:information-line"
+        icon="ph:info"
         :a11y-label="$t('codex.$action_info', { planet: planet.data.planetName })"
         :title="$t('codex.$action_info', { planet: planet.data.planetName })"
         :aria-disabled="obliterationDisableControls"
@@ -98,13 +98,13 @@
         variant="button"
         link-type="internal"
         :href="uwuifyPath('/planet-editor/' + planet.id)"
-        icon="mingcute:edit-2-line"
+        icon="ph:note-pencil"
         :a11y-label="$t('codex.$action_edit', { planet: planet.data.planetName })"
         :title="$t('codex.$action_edit', { planet: planet.data.planetName })"
         :aria-disabled="obliterationDisableControls"
       />
       <LgvButton
-        icon="mingcute:download-line"
+        icon="ph:download"
         :a11y-label="$t('codex.$action_export', { planet: planet.data.planetName })"
         :title="$t('codex.$action_export', { planet: planet.data.planetName })"
         :aria-disabled="obliterationDisableControls"
@@ -112,7 +112,7 @@
       />
       <LgvButton
         class="warn"
-        icon="mingcute:delete-2-line"
+        icon="ph:trash"
         :a11y-label="$t('codex.$action_delete', { planet: planet.data.planetName })"
         :title="$t('codex.$action_delete', { planet: planet.data.planetName })"
         :aria-disabled="obliterationDisableControls"
@@ -238,7 +238,7 @@ function getPlanetCircleRadius() {
   .planet-card-actions {
     display: flex;
     align-items: center;
-    gap: 0.375rem;
+    gap: 0.25rem;
     opacity: 0.5;
 
     :is(button, a):first-child {

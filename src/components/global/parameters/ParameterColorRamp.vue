@@ -100,12 +100,7 @@
     <tr v-if="['rgb', 'rgba'].includes(mode ?? 'rgb')">
       <td colspan="4">
         <div class="add-step">
-          <LgvButton
-            class="sm"
-            icon="mingcute:add-line"
-            :a11y-label="$t('a11y.action_add_colorstep')"
-            @click="addStep()"
-          >
+          <LgvButton class="sm" icon="ph:plus" :a11y-label="$t('a11y.action_add_colorstep')" @click="addStep()">
             {{ $t('editor.$action_add') }}
           </LgvButton>
           <iconify-icon class="icon" icon="ph:dot-outline-fill" width="1.25rem" aria-hidden="true" />

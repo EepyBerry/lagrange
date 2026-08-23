@@ -1,5 +1,5 @@
 <template>
-  <DialogElement
+  <LgvDialog
     id="dialog-editor-init"
     ref="dialogRef"
     :show-actions="true"
@@ -14,7 +14,7 @@
           </div>
           <div>
             <h2>
-              <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
+              <iconify-icon icon="ph:planet" width="1.5rem" aria-hidden="true" />
               {{ $t('dialog.init.$title') }}!
             </h2>
             <p class="intro-text">
@@ -93,7 +93,7 @@
 
             <div class="controls-container" style="margin-top: 0.25rem">
               <p class="controls-group-name">
-                <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
+                <iconify-icon icon="ph:planet" width="1.5rem" aria-hidden="true" />
                 {{ $t('main.nav.editor') }}
               </p>
               <ul class="controls">
@@ -167,7 +167,7 @@
         {{ $t('dialog.init.$action_confirm') }}
       </LgvButton>
     </template>
-  </DialogElement>
+  </LgvDialog>
 </template>
 
 <script setup lang="ts">
@@ -175,8 +175,8 @@ import type { InitDialogExposes } from '@components/global/dialogs/InitDialog.ty
 import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import AppLogo from '@components/global/elements/AppLogo.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
-import DialogElement from '@components/global/elements/DialogElement.vue';
 import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvDialog from '@lib/components/custom/LgvDialog.vue';
 import LgvNotification from '@lib/components/custom/LgvNotification.vue';
 import { ref, useTemplateRef } from 'vue';
 import type { IDBKeyBinding } from '@/dexie.config';

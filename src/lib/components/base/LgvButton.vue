@@ -31,7 +31,7 @@ function getDefaultIconWidth() {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 // standard button
 button.lgv {
   position: relative;

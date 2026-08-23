@@ -5,7 +5,7 @@
     <input ref="fileInput" type="file" accept=".lagrange" multiple hidden @change="importPlanetFile" />
     <LgvButton
       variant="icon"
-      icon="uis:upload-alt"
+      icon="ph:upload"
       icon-width="1.75rem"
       :a11y-label="$t('main.header.import')"
       @click="openFileDialog"
@@ -17,7 +17,7 @@
       variant="dark"
       link-type="internal"
       class="contrast"
-      icon="mingcute:add-line"
+      icon="ph:plus"
       :href="uwuifyPath('/planet-editor/new')"
     >
       {{ $t('codex.$action_add') }}

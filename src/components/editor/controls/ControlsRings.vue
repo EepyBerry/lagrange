@@ -23,7 +23,7 @@
           <LgvButton
             v-show="EDITOR_STATE.planetData.ringsParams.length < 8"
             class="sm action-add"
-            icon="mingcute:add-line"
+            icon="ph:plus"
             @click="EDITOR_STATE.planetData.addRing()"
           >
             {{ $t('editor.$action_add') }}

@@ -1,5 +1,5 @@
 <template>
-  <DialogElement
+  <LgvDialog
     id="dialog-planet-info"
     ref="dialogRef"
     :show-title="true"
@@ -8,7 +8,7 @@
     :aria-label="$t('a11y.dialog_planet_info')"
   >
     <template #title>
-      <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
+      <iconify-icon icon="ph:planet" width="1.5rem" aria-hidden="true" />
       {{ $t('dialog.planet_info.$title') }}
     </template>
     <template #content>
@@ -207,13 +207,13 @@
         </section>
       </div>
     </template>
-  </DialogElement>
+  </LgvDialog>
 </template>
 <script setup lang="ts">
 import type { PlanetInfoDialogExposes } from '@components/codex/dialogs/PlanetInfoDialog.types.ts';
 import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
-import DialogElement from '@components/global/elements/DialogElement.vue';
 import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT } from '@core/extras';
+import LgvDialog from '@lib/components/custom/LgvDialog.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 import type { IDBPlanet } from '@/dexie.config';
 import SeparatorGreebleDeco from '@/components/global/decoration/SeparatorGreebleDeco.vue';

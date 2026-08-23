@@ -1,7 +1,8 @@
 <template>
-  <DialogElement
+  <LgvDialog
     id="dialog-delete-confirm"
     ref="dialogRef"
+    :is-warn="true"
     :show-title="true"
     :show-actions="true"
     :closeable="true"
@@ -27,13 +28,13 @@
         {{ $t('dialog.confirm_delete.$action_confirm') }}
       </LgvButton>
     </template>
-  </DialogElement>
+  </LgvDialog>
 </template>
 <script setup lang="ts">
 import type { DeleteConfirmDialogExposes } from '@components/codex/dialogs/DeleteConfirmDialog.types.ts';
 import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
-import DialogElement from '@components/global/elements/DialogElement.vue';
 import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvDialog from '@lib/components/custom/LgvDialog.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 import type { IDBPlanet } from '@/dexie.config';
 

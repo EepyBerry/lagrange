@@ -1,5 +1,5 @@
 <template>
-  <DialogElement
+  <LgvDialog
     id="dialog-exportprogress"
     ref="dialogRef"
     :show-title="true"
@@ -27,12 +27,12 @@
         <p>{{ _progressError }}</p>
       </div>
     </template>
-  </DialogElement>
+  </LgvDialog>
 </template>
 <script setup lang="ts">
 import type { ExportProgressDialogExposes } from '@components/editor/dialogs/ExportProgressDialog.types.ts';
 import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
-import DialogElement from '@components/global/elements/DialogElement.vue';
+import LgvDialog from '@lib/components/custom/LgvDialog.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 
 const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');

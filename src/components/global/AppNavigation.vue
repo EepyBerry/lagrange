@@ -28,7 +28,7 @@
       :class="{ 'router-link-active': !!$route.params.id }"
       :href="uwuifyPath('/planet-editor/new')"
       :a11y-label="$t('a11y.action_nav_editor')"
-      icon="mingcute:planet-line"
+      icon="ph:planet"
     >
       {{ $t('main.nav.editor') }}
     </LgvLink>

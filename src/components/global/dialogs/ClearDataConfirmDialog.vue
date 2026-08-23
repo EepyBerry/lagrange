@@ -1,5 +1,5 @@
 <template>
-  <DialogElement
+  <LgvDialog
     id="dialog-clear-data-confirm"
     ref="dialogRef"
     :show-title="true"
@@ -27,13 +27,13 @@
         {{ $t('dialog.confirm_clear_data.$action_confirm') }}
       </LgvButton>
     </template>
-  </DialogElement>
+  </LgvDialog>
 </template>
 <script setup lang="ts">
 import type { ClearDataConfirmDialogExposes } from '@components/global/dialogs/ClearDataConfirmDialog.types.ts';
 import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
-import DialogElement from '@components/global/elements/DialogElement.vue';
 import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvDialog from '@lib/components/custom/LgvDialog.vue';
 import { useTemplateRef } from 'vue';
 
 const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');

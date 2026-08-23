@@ -1,9 +1,9 @@
 <template>
   <div class="notification" :class="type">
-    <span class="deco" />
-    <span class="deco" />
-    <span class="deco" />
-    <span class="deco" />
+    <span class="deco" aria-hidden="true" />
+    <span class="deco" aria-hidden="true" />
+    <span class="deco" aria-hidden="true" />
+    <span class="deco" aria-hidden="true" />
     <div class="notification-icon">
       <iconify-icon v-if="type === 'info'" icon="material-symbols:info-outline" width="1.375rem" aria-hidden="true" />
       <iconify-icon v-if="type === 'warn'" icon="material-symbols:warning" width="1.375rem" aria-hidden="true" />

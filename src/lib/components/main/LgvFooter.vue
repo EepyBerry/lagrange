@@ -6,7 +6,7 @@
   </footer>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 footer {
   z-index: 10;
   position: fixed;
@@ -30,6 +30,7 @@ footer {
     align-self: center;
     align-items: center;
     justify-content: center;
+    gap: 0.25rem;
   }
 }
 

@@ -1,7 +1,8 @@
 <template>
-  <DialogElement
+  <LgvDialog
     id="dialog-reset-confirm"
     ref="dialogRef"
+    :is-warn="true"
     :show-title="true"
     :show-actions="true"
     :closeable="true"
@@ -27,13 +28,13 @@
         {{ $t('dialog.confirm_reset.$action_confirm') }}
       </LgvButton>
     </template>
-  </DialogElement>
+  </LgvDialog>
 </template>
 <script setup lang="ts">
 import type { ResetConfirmDialogExposes } from '@components/editor/dialogs/ResetConfirmDialog.types.ts';
 import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
-import DialogElement from '@components/global/elements/DialogElement.vue';
 import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvDialog from '@lib/components/custom/LgvDialog.vue';
 import { useTemplateRef } from 'vue';
 
 const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');

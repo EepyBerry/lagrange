@@ -1,5 +1,5 @@
 <template>
-  <DialogElement id="dialog-about" ref="dialogRef" show-title :closeable="true" :aria-label="$t('a11y.dialog_about')">
+  <LgvDialog id="dialog-about" ref="dialogRef" show-title :closeable="true" :aria-label="$t('a11y.dialog_about')">
     <template #title>&nbsp;</template>
     <template #content>
       <div class="about-grid">
@@ -28,7 +28,7 @@
             </div>
           </div>
         </div>
-        <CollapsibleSection class="about-updates" icon="mingcute:news-line">
+        <CollapsibleSection class="about-updates" icon="ph:newspaper">
           <template #title>{{ $t('dialog.about.changelogs.$title') }}</template>
           <template #content>
             <CollapsibleSection class="about-update-inner" icon="mingcute:world-2-line">
@@ -41,7 +41,7 @@
                 </ul>
               </template>
             </CollapsibleSection>
-            <CollapsibleSection class="about-update-inner" icon="mingcute:mountain-2-line">
+            <CollapsibleSection class="about-update-inner" icon="ph:mountains">
               <template #title>{{ $t('dialog.about.changelogs.03_title') }}</template>
               <template #content>
                 <ul style="list-style-type: disc; margin-left: 1rem">
@@ -51,7 +51,7 @@
                 </ul>
               </template>
             </CollapsibleSection>
-            <CollapsibleSection class="about-update-inner" icon="mingcute:planet-line">
+            <CollapsibleSection class="about-update-inner" icon="ph:planet">
               <template #title>{{ $t('dialog.about.changelogs.04_title') }}</template>
               <template #content>
                 <ul style="list-style-type: disc; margin-left: 1rem">
@@ -66,7 +66,7 @@
             </CollapsibleSection>
             <CollapsibleSection
               class="about-update-inner"
-              icon="mingcute:lightning-line"
+              icon="ph:lightning"
               style="background: var(--lg-update-05-background)"
             >
               <template #title>{{ $t('dialog.about.changelogs.05_title') }}</template>
@@ -85,7 +85,7 @@
             </CollapsibleSection>
           </template>
         </CollapsibleSection>
-        <CollapsibleSection class="about-credits" icon="mingcute:bling-line">
+        <CollapsibleSection class="about-credits" icon="ph:sparkle">
           <template #title>{{ $t('dialog.about.credits.$title') }}</template>
           <template #content>
             <ul style="list-style-type: disc; margin-left: 1rem">
@@ -117,7 +117,7 @@
       </div>
       <span id="app-version">{{ appVersion }}</span>
     </template>
-  </DialogElement>
+  </LgvDialog>
 </template>
 
 <script setup lang="ts">
@@ -125,8 +125,8 @@ import type { AboutDialogExposes } from '@components/global/dialogs/AboutDialog.
 import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
 import AppLogo from '@components/global/elements/AppLogo.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
-import DialogElement from '@components/global/elements/DialogElement.vue';
 import LgvChip from '@lib/components/base/LgvChip.vue';
+import LgvDialog from '@lib/components/custom/LgvDialog.vue';
 import { useTemplateRef } from 'vue';
 
 const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
