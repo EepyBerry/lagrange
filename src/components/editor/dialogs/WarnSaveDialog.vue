@@ -10,7 +10,7 @@
     :aria-label="$t('a11y.dialog_warn_save')"
   >
     <template #title>
-      <iconify-icon icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
+      <iconify-icon class="warn" icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
       {{ $t('dialog.confirm_warnsave.$title') }}
     </template>
     <template #content>

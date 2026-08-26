@@ -10,7 +10,12 @@
     :class="{ warn: !!_progressError }"
   >
     <template #title>
-      <iconify-icon icon="mingcute:sandglass-line" width="2rem" aria-hidden="true" />
+      <iconify-icon
+        :class="_progressError ? 'warn' : 'contrast'"
+        icon="mingcute:sandglass-line"
+        width="2rem"
+        aria-hidden="true"
+      />
       <span v-if="_dialogMode === 'textures'">{{ $t('dialog.export_progress.$title_textures') }}</span>
       <span v-else-if="_dialogMode === 'gltf'">{{ $t('dialog.export_progress.$title_gltf') }}</span>
     </template>

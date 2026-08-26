@@ -3,32 +3,30 @@
     <span class="deco" aria-hidden="true" />
     <span class="deco" aria-hidden="true" />
     <span class="deco" aria-hidden="true" />
-    <span class="deco-text" aria-hidden="true">
-      ▏▎█ ██ ███ {{ isWarn ? 'W A R N I N G' : 'I N F O R M A T I O N' }} ▏▎████
-    </span>
     <div>
-      <header class="dialog-header">
+      <section class="dialog-header">
         <h2 v-if="showTitle" class="dialog-title">
           <slot name="title">DIALOG_TITLE</slot>
         </h2>
         <span v-else class="filler" />
-        <LgvButton
-          v-if="closeable"
-          tabindex="0"
-          variant="icon"
-          class="dialog-close"
-          icon="material-symbols:close"
-          icon-width="1.75rem"
-          :a11y-label="$t('a11y.action_close_dialog')"
-          @click="close"
-        />
-      </header>
-      <div ref="dialogActions" class="dialog-content" tabindex="-1">
+        <div v-if="closeable" class="dialog-close-anchor">
+          <LgvButton
+            tabindex="0"
+            variant="icon"
+            class="dialog-close"
+            icon="material-symbols:close"
+            icon-width="1.75rem"
+            :a11y-label="$t('a11y.action_close_dialog')"
+            @click="close"
+          />
+        </div>
+      </section>
+      <section ref="dialogActions" class="dialog-content" tabindex="-1">
         <slot name="content">DIALOG_CONTENT</slot>
-      </div>
-      <footer v-if="showActions" class="dialog-actions">
+      </section>
+      <section v-if="showActions" class="dialog-actions">
         <slot name="actions">DIALOG_ACTIONS</slot>
-      </footer>
+      </section>
     </div>
   </dialog>
 </template>
@@ -99,17 +97,48 @@ dialog[open]:host {
 dialog[open] {
   position: fixed;
   overflow: hidden;
-  border: none;
-  padding: 5px 1px 1px;
+  padding: 1.5px;
   margin: auto;
 
+  border: none;
   color: var(--lg-text);
   background: var(--lg-accent);
   clip-path: polygon(0 18px, 18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
 
+  display: flex;
+  flex-direction: column;
+
   .deco {
     background: var(--lg-accent);
   }
+
+  .dialog-close-anchor {
+    z-index: 1;
+    position: absolute;
+    inset: 0 0 auto auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 4rem;
+    background: var(--lg-accent);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 2rem 100%);
+
+    button.dialog-close {
+      min-width: 0;
+      min-height: 0;
+      width: 2rem;
+      height: 2rem;
+      filter: drop-shadow(0 1px 1px var(--lg-accent));
+    }
+    button.dialog-close:hover,
+    button.dialog-close:focus {
+      iconify-icon {
+        transform: scale(1.125);
+      }
+    }
+  }
+
   & > div {
     height: 100%;
     background: var(--lg-primary-static);
@@ -121,47 +150,33 @@ dialog[open] {
     gap: 0;
 
     .dialog-header {
-      padding: 1rem 1rem 0.5rem;
-      margin: 1px 1px 0;
+      padding: 1rem 4rem 1rem 1rem;
       display: flex;
-      justify-content: space-between;
 
       .dialog-title {
+        color: var(--lg-text);
         font-weight: 600;
-      }
-
-      button.dialog-close {
-        z-index: 1;
-        min-width: 1.75rem;
-        min-height: 1.75rem;
-      }
-      button.dialog-close:hover,
-      button.dialog-close:focus {
-        iconify-icon {
-          transform: scale(1.125);
-        }
       }
     }
 
     .dialog-content {
-      padding: 0.5rem 1rem;
-      margin: 0 1px 1px;
       flex: 1;
       overflow-y: auto;
 
       background: var(--lg-primary);
       font-size: 0.875rem;
     }
+
     .dialog-actions {
-      padding: 0.5rem 1rem 1rem;
+      padding: 1rem 4px 4px;
       display: flex;
       justify-content: center;
-      gap: 0.5rem;
+      gap: 4px;
       & > * {
         flex-grow: 1;
       }
       & > *:last-child {
-        clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
+        clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%);
       }
     }
   }
@@ -176,8 +191,11 @@ dialog[open].warn {
   .deco {
     background: var(--lg-warn);
   }
-  .deco-text {
-    color: var(--lg-warn);
+  .dialog-close-anchor {
+    background: var(--lg-warn);
+    button.dialog-close {
+      filter: drop-shadow(0 1px 1px var(--lg-warn-panel));
+    }
   }
   & > div {
     background: var(--lg-warn-panel);
@@ -190,11 +208,11 @@ dialog[open].warn {
   }
 }
 
-.deco {
+dialog[open] > .deco {
   z-index: 1;
-  $height: 7px;
+  $height: 4px;
   position: absolute;
-  top: 4px;
+  top: 1px;
   left: 0;
   height: $height;
   width: 2.5rem;
@@ -225,19 +243,6 @@ dialog[open].warn {
       0 calc(100% - $height)
     );
   }
-}
-.deco-text {
-  z-index: 1;
-  position: absolute;
-  top: 4px;
-  right: 0;
-  font-size: 6px;
-  font-family:
-    JetBrains Mono,
-    monospace;
-  font-weight: 800;
-  color: var(--lg-accent);
-  user-select: none;
 }
 
 @media screen and (max-width: 567px) {

@@ -11,7 +11,7 @@ footer {
   z-index: 10;
   position: fixed;
   bottom: -1px;
-  padding: 1.5px 1.5px 0;
+  padding: 2px 2px 0;
 
   background: var(--lg-accent);
   clip-path: polygon(1.5rem 0, calc(100% - 1.5rem) 0, 100% 100%, 0 100%);

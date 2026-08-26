@@ -14,6 +14,9 @@ importers:
       '@unhead/vue':
         specifier: ^2.1.13
         version: 2.1.13(vue@3.5.32(typescript@5.9.3))
+      color.js:
+        specifier: ^1.2.0
+        version: 1.2.0
       crypto-hash:
         specifier: ^4.0.1
         version: 4.0.1
@@ -962,6 +965,9 @@ packages:
   cliui@9.0.1:
     resolution: {integrity: sha512-k7ndgKhwoQveBL+/1tqGJYNz097I7WOvwbmmU2AR5+magtbjPWQTS1C5vzGkBC8Ym8UWRzfKUzUUqFLypY4Q+w==}
     engines: {node: '>=20'}
+
+  color.js@1.2.0:
+    resolution: {integrity: sha512-0ajlNgWWOR7EK9N6l2h0YKsZPzMCLQG5bheCoTGpGfhkR8tB5eQNItdua1oFHDTeq9JKgSzQJqo+Gp3V/xW+Lw==}
 
   confbox@0.1.8:
     resolution: {integrity: sha512-RMtmw0iFkeR4YV+fUOSucriAQNb9g8zFR52MWCtl+cCZOFRNL6zeB395vPzFhEjjn4fMxXudmELnl/KF/WrK6w==}
@@ -2678,6 +2684,8 @@ snapshots:
       string-width: 7.2.0
       strip-ansi: 7.2.0
       wrap-ansi: 9.0.2
+
+  color.js@1.2.0: {}
 
   confbox@0.1.8: {}
 

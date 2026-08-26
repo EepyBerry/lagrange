@@ -55,7 +55,7 @@
           s = {{ $t('dialog.planet_info.rings_surface') }}
         </text>
       </g>
-      <g id="svggraph-biomes-data">
+      <g id="svggraph-rings-data">
         <g v-for="(r, i) of ringData" :key="r.id">
           <path
             :d="makeSVGRingArc((r.center * 460.0) / 5.0)"
@@ -88,7 +88,7 @@ import { makeSVGLinearPath } from '@/core/utils/svg-utils';
 const width = 480,
   height = 200;
 const svgRect = new Rect(0, 0, width, height);
-const graphRect = new Rect(10, 10, width - 20, height - 20);
+const graphRect = new Rect(10, 10, width - 20, height);
 
 const props = defineProps<{ planetRadius: number; rings: RingParameters[] }>();
 const ringData: Ref<{ id: string; center: number; width: number }[]> = ref([]);
@@ -111,7 +111,6 @@ function makeSVGRingArc(radius: number) {
 </script>
 <style scoped lang="scss">
 #svggraph-rings {
-  margin-top: 0.5rem;
   max-width: 600px;
 }
 </style>

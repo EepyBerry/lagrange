@@ -2,13 +2,14 @@
   <LgvDialog
     id="dialog-clear-data-confirm"
     ref="dialogRef"
+    :is-warn="true"
     :show-title="true"
     :show-actions="true"
     :closeable="true"
     :aria-label="$t('a11y.dialog_clear_data')"
   >
     <template #title>
-      <iconify-icon icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
+      <iconify-icon class="warn" icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
       {{ $t('dialog.confirm_clear_data.$title') }}
     </template>
     <template #content>

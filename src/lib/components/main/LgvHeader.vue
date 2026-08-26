@@ -11,7 +11,7 @@ header {
   z-index: 10;
   position: absolute;
   top: -1px;
-  padding: 0 1.5px 1.5px;
+  padding: 0 2px 2px;
 
   background: var(--lg-accent);
   clip-path: polygon(0 0, 100% 0, calc(100% - 1.5rem) 100%, 1.5rem 100%);

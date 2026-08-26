@@ -1,7 +1,13 @@
 <template>
-  <LgvDialog id="dialog-about" ref="dialogRef" show-title :closeable="true" :aria-label="$t('a11y.dialog_about')">
+  <LgvDialog
+    id="dialog-about"
+    ref="dialogRef"
+    :show-title="true"
+    :closeable="true"
+    :aria-label="$t('a11y.dialog_about')"
+  >
     <template #title>
-      <iconify-icon icon="ph:info" width="1.5rem" aria-hidden="true" />
+      <iconify-icon class="contrast" icon="ph:info" width="1.5rem" aria-hidden="true" />
       {{ $t('dialog.about.$title') }}
     </template>
     <template #content>
@@ -94,6 +100,8 @@
             <ul style="list-style-type: disc; margin-left: 1rem">
               <!-- eslint-disable-next-line vue/no-v-html -->
               <li v-html="$t('dialog.about.credits.libs')"></li>
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <li v-html="$t('dialog.about.credits.icons')"></li>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <li v-html="$t('dialog.about.credits.glsl_main')"></li>
               <!-- eslint-disable-next-line vue/no-v-html -->

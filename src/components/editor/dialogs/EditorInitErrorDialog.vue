@@ -11,7 +11,7 @@
     @close="$emit('close', _wantsFallback)"
   >
     <template #title>
-      <iconify-icon icon="mingcute:warning-line" width="2rem" aria-hidden="true" />
+      <iconify-icon class="warn" icon="mingcute:warning-line" width="2rem" aria-hidden="true" />
       <span>{{ $t('dialog.editor_error.$title') }}</span>
     </template>
     <template #content>

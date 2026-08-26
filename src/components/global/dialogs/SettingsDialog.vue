@@ -8,7 +8,7 @@
     @close="handleClose()"
   >
     <template #title>
-      <iconify-icon icon="mingcute:settings-3-line" width="1.5rem" aria-hidden="true" />
+      <iconify-icon class="contrast" icon="mingcute:settings-3-line" width="1.5rem" aria-hidden="true" />
       {{ $t('dialog.settings.$title') }}
     </template>
     <template #content>
@@ -675,7 +675,6 @@ function getKeyBind(action: string) {
   .settings-grid {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
 
     .settings-general,
     .settings-editor,

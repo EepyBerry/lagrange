@@ -133,10 +133,10 @@ button.lgv[variant='dark'] {
   background: var(--lg-primary);
   border: 1px solid var(--lg-accent);
 
-  &:hover {
+  &:not(:disabled):hover {
     background: var(--lg-button-dark-hover);
   }
-  &:active {
+  &:not(:disabled):active {
     background: var(--lg-button-dark-active);
   }
 
@@ -162,11 +162,11 @@ button.lgv[variant='icon'] {
   border: none;
   background: transparent;
 
-  &:hover {
+  &:not(:disabled):hover {
     color: var(--lg-button-icon-hover);
     transform: scale(1.05);
   }
-  &:active {
+  &:not(:disabled):active {
     color: var(--lg-button-icon-active);
     transform: scale(0.95);
   }

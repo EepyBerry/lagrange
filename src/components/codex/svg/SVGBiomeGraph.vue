@@ -49,7 +49,7 @@
       </g>
       <g id="svggraph-biomes-axes">
         <path
-          :d="makeSVGLinearPath([-1, graphRect.h], [graphRect.w, graphRect.h], 3)"
+          :d="makeSVGLinearPath([-1, graphRect.h], [graphRect.w - 3, graphRect.h], 3)"
           fill="none"
           stroke="white"
           stroke-width="2"
@@ -60,7 +60,7 @@
           {{ $t('dialog.planet_info.biomes_humi') }} (%)
         </text>
         <path
-          :d="makeSVGLinearPath([0, graphRect.h], [0, 0], 3)"
+          :d="makeSVGLinearPath([0, graphRect.h], [0, 3], 3)"
           fill="none"
           stroke="white"
           stroke-width="2"
@@ -134,23 +134,22 @@ function toggleGraphBiome(index: number) {
 </script>
 <style scoped lang="scss">
 #svggraph-biomes {
-  margin-top: 0.5rem;
   max-width: 600px;
 }
 #svggraph-biomes-order {
+  rect {
+    stroke: white;
+    stroke-width: 0.5;
+  }
   rect:hover {
     cursor: pointer;
     filter: brightness(75%);
-  }
-  rect:not(.active) {
-    stroke-width: 0;
   }
   rect.active {
     width: 14px;
     height: 14px;
     transform: translate(1px, 1px);
     fill: transparent;
-    stroke-width: 2;
   }
 }
 #svggraph-biomes-axes {

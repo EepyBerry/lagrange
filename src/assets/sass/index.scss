@@ -2,7 +2,8 @@
 @use './themes';
 @use './vacp';
 @use './floating';
-@use './native';
 @use './fonts';
 @use './effects';
+@use './native';
+@use './custom';
 @import url('vue-accessible-color-picker/styles');

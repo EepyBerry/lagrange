@@ -9,7 +9,7 @@
     :aria-label="$t('a11y.dialog_reset')"
   >
     <template #title>
-      <iconify-icon icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
+      <iconify-icon class="warn" icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
       {{ $t('dialog.confirm_reset.$title') }}
     </template>
     <template #content>
