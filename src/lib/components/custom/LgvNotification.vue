@@ -64,6 +64,8 @@ defineProps<{ type: EditorMessageLevel }>();
   }
 }
 .notification {
+  $corner-length: 10px;
+  flex: 0;
   position: relative;
   height: 100%;
   display: flex;
@@ -73,7 +75,14 @@ defineProps<{ type: EditorMessageLevel }>();
 
   border: none;
   border-top: 1px solid;
-  clip-path: polygon(0 0, 0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+  clip-path: polygon(
+    0 $corner-length,
+    $corner-length 0,
+    100% 0,
+    100% calc(100% - $corner-length),
+    calc(100% - $corner-length) 100%,
+    0 100%
+  );
 
   &.success {
     border-color: var(--lg-success);

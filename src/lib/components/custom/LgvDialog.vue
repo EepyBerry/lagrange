@@ -95,15 +95,24 @@ dialog[open]:host {
   scroll-behavior: unset;
 }
 dialog[open] {
+  $outer-corner-length: 18px;
+  $inner-corner-length: 21px;
   position: fixed;
   overflow: hidden;
-  padding: 1.5px;
+  padding: 2px;
   margin: auto;
 
   border: none;
   color: var(--lg-text);
   background: var(--lg-accent);
-  clip-path: polygon(0 18px, 18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
+  clip-path: polygon(
+    0 $outer-corner-length,
+    $outer-corner-length 0,
+    100% 0,
+    100% calc(100% - $outer-corner-length),
+    calc(100% - $outer-corner-length) 100%,
+    0 100%
+  );
 
   display: flex;
   flex-direction: column;
@@ -141,8 +150,15 @@ dialog[open] {
 
   & > div {
     height: 100%;
-    background: var(--lg-primary-static);
-    clip-path: polygon(0 18px, 18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
+    background: var(--lg-primary);
+    clip-path: polygon(
+      0 $inner-corner-length,
+      $inner-corner-length 0,
+      100% 0,
+      100% calc(100% - $outer-corner-length),
+      calc(100% - $outer-corner-length) 100%,
+      0 100%
+    );
 
     overflow-y: auto;
     display: flex;
@@ -165,6 +181,9 @@ dialog[open] {
 
       background: var(--lg-primary);
       font-size: 0.875rem;
+
+      display: flex;
+      flex-direction: column;
     }
 
     .dialog-actions {

@@ -1,34 +1,15 @@
 <template>
   <button ref="btnRef" type="button" class="lgv">
     <span v-if="a11yLabel" class="a11y--visually-hidden">{{ a11yLabel }}</span>
-    <iconify-icon v-if="icon" :icon="icon" :width="iconWidth ?? getDefaultIconWidth()" aria-hidden="true" />
-    <span class="lgv--text"><slot></slot></span>
+    <iconify-icon v-if="icon" :icon="icon" :width="iconWidth ?? '1.5rem'" aria-hidden="true" />
+    <span v-if="!!$slots.default" class="__text"><slot></slot></span>
   </button>
 </template>
 
 <script setup lang="ts">
-import { onMounted, useTemplateRef } from 'vue';
-
-const btnRef = useTemplateRef('btnRef');
-defineProps<{ icon?: string; iconWidth?: string; a11yLabel?: string }>();
-onMounted(adjustPadding);
-
-function adjustPadding() {
-  const textLeaf = btnRef.value!.querySelector('.lgv--text') as HTMLSpanElement;
-  if (!textLeaf || !textLeaf.textContent) {
-    textLeaf.style.display = 'none';
-    return;
-  }
-  if (textLeaf.textContent.length > 0) {
-    btnRef.value?.classList.add('outer-pad');
-  } else {
-    textLeaf.style.display = 'none';
-  }
-}
-
-function getDefaultIconWidth() {
-  return btnRef.value?.classList.contains('sm') ? '1.25rem' : '1.5rem';
-}
+withDefaults(defineProps<{ showText?: boolean; icon?: string; iconWidth?: string; a11yLabel?: string }>(), {
+  showText: true,
+});
 </script>
 
 <style scoped lang="scss">
@@ -69,9 +50,6 @@ button.lgv {
     pointer-events: none;
   }
 
-  &.outer-pad {
-    padding: 0 0.75rem;
-  }
   &.sm {
     min-width: 2rem;
     min-height: 2rem;
@@ -115,12 +93,6 @@ button.lgv {
   }
   &.warn:not(:disabled):active {
     background: var(--lg-warn-active);
-  }
-
-  .lgv--text {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
   }
 }
 

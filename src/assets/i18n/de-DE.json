@@ -98,7 +98,14 @@
       "$action_reload_fallback_renderer": "Webseite mit WebGL2 aktualisieren"
     },
     "planet_info": {
-      "$title": "Planeteninformationen",
+      "$title": "Kodex-Eintrag",
+      "tabs": {
+        "basic": "Grunddaten",
+        "biomes": "Biomen",
+        "cracks": "Cracks",
+        "craters": "Krater",
+        "rings": "Ringe"
+      },
       "basic": {
         "name": "Name",
         "radius": "Radius",
@@ -320,7 +327,7 @@
       "detail_noise_strength": "Detailrauschen Einfluss"
     },
     "basic_data": {
-      "$title": "Basic Data",
+      "$title": "Grunddaten",
       "classification": "Klassifikation",
       "classification_type": "Objekt Typ",
       "classification_class": "Objekt Klasse"

@@ -98,9 +98,9 @@
       "$action_reload_fallback_renderer": "Reload with WebGL2"
     },
     "planet_info": {
-      "$title": "Planet information",
+      "$title": "Codex Entry",
       "tabs": {
-        "base": "Base data",
+        "basic": "Base data",
         "biomes": "Biomes",
         "cracks": "Cracks",
         "craters": "Craters",

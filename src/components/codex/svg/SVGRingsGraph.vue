@@ -109,8 +109,4 @@ function makeSVGRingArc(radius: number) {
   return `M${radius.toFixed(2)},90 a${radius.toFixed(2)},${radius.toFixed(2)} 0 0 1 ${-radius.toFixed(2)},${radius.toFixed(2)}`;
 }
 </script>
-<style scoped lang="scss">
-#svggraph-rings {
-  max-width: 600px;
-}
-</style>
+<style scoped lang="scss"></style>

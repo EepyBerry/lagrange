@@ -98,7 +98,14 @@
       "$action_reload_fallback_renderer": "Wewoad with WebGL2"
     },
     "planet_info": {
-      "$title": "Pwanyet infowmation :3",
+      "$title": "Codex Entwy",
+      "tabs": {
+        "basic": "Basic data",
+        "biomes": "Biomes",
+        "cracks": "Cwacks",
+        "craters": "Cwatews",
+        "rings": "Wings"
+      },
       "basic": {
         "name": "Name",
         "radius": "Wadius",

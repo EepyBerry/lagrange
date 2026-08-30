@@ -23,22 +23,14 @@ footer {
 
   & > div {
     padding: 0.25rem 1.5rem;
-    background: var(--lg-panel);
-    clip-path: polygon(1.5rem 0, calc(100% - 1.5rem) 0, 100% 100%, 0 100%);
+    background: var(--lg-primary);
+    clip-path: inherit;
 
     display: flex;
     align-self: center;
     align-items: center;
     justify-content: center;
     gap: 0.25rem;
-  }
-}
-
-@media screen and (max-width: 1199px) {
-  footer {
-    align-self: flex-end;
-    border-top-right-radius: 0;
-    border-right: 0;
   }
 }
 

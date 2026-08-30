@@ -98,7 +98,14 @@
       "$action_reload_fallback_renderer": "Recharger avec WebGL2"
     },
     "planet_info": {
-      "$title": "Informations sur la planète",
+      "$title": "Entrée du Codex",
+      "tabs": {
+        "basic": "Données de base",
+        "biomes": "Biomes",
+        "cracks": "Craquelures",
+        "craters": "Cratères",
+        "rings": "Anneaux"
+      },
       "basic": {
         "name": "Nom",
         "radius": "Rayon",

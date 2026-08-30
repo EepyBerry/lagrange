@@ -1,5 +1,10 @@
 <template>
-  <svg id="svggraph-biomes" :viewBox="`${svgRect.x} ${svgRect.y} ${svgRect.w} ${svgRect.h}`" role="figure">
+  <svg
+    id="svggraph-biomes"
+    :viewBox="`${svgRect.x} ${svgRect.y} ${svgRect.w} ${svgRect.h}`"
+    role="figure"
+    preserveAspectRatio="none"
+  >
     <defs>
       <pattern id="grid" :width="graphRect.w / 10" :height="graphRect.h / 10" patternUnits="userSpaceOnUse">
         <path d="M 0 0 L 45 0 45 45" fill="none" stroke="var(--lg-accent)" stroke-width="2" />
@@ -133,9 +138,6 @@ function toggleGraphBiome(index: number) {
 }
 </script>
 <style scoped lang="scss">
-#svggraph-biomes {
-  max-width: 600px;
-}
 #svggraph-biomes-order {
   rect {
     stroke: white;

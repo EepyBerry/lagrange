@@ -12,105 +12,95 @@
       {{ $t('dialog.planet_info.$title') }}
     </template>
     <template #content v-if="planet">
-      <div id="planet-info-container">
-        <aside id="planet-info-tabs">
-          <LgvButton
-            tabindex="0"
-            variant="icon"
-            icon="pepicons-pencil:planet"
-            icon-width="1.5rem"
-            :class="{ active: selectedTab === 'base' }"
-            :title="$t('dialog.planet_info.tabs.base')"
-            @click="selectedTab = 'base'"
-          />
-          <LgvButton
-            tabindex="0"
-            variant="icon"
-            icon="material-symbols-light:nest-eco-leaf-outline"
-            icon-width="2rem"
-            :class="{ active: selectedTab === 'biomes' }"
-            :title="$t('dialog.planet_info.tabs.biomes')"
-            :disabled="!planet.data.biomesEnabled"
-            @click="selectedTab = 'biomes'"
-          />
-          <LgvButton
-            tabindex="0"
-            variant="icon"
-            icon="material-symbols-light:explosion-outline"
-            icon-width="1.75rem"
-            :class="{ active: selectedTab === 'cracks' }"
-            :title="$t('dialog.planet_info.tabs.cracks')"
-            :disabled="!planet.data.cracksEnabled"
-            @click="selectedTab = 'cracks'"
-          />
-          <LgvButton
-            tabindex="0"
-            variant="icon"
-            icon="hugeicons:moon-01"
-            :class="{ active: selectedTab === 'craters' }"
-            :title="$t('dialog.planet_info.tabs.craters')"
-            :disabled="!planet.data.cratersEnabled"
-            @click="selectedTab = 'craters'"
-          />
-          <LgvButton
-            tabindex="0"
-            variant="icon"
-            icon="pepicons-pencil:planet-ring"
-            icon-width="1.75rem"
-            :class="{ active: selectedTab === 'rings' }"
-            :title="$t('dialog.planet_info.tabs.rings')"
-            :disabled="!planet.data.ringsEnabled"
-            @click="selectedTab = 'rings'"
-          />
-        </aside>
-        <div id="planet-info-content">
-          <!-- BASE TAB -->
-          <section v-if="selectedTab === 'base'" id="tab-base">
-            <section id="planet-hero" :style="{ background: cssPlanetGradient }">
-              <div :class="{ 'extra-hologram': EXTRAS_HOLOGRAM_EFFECT }">
-                <img
-                  v-if="planet.preview"
-                  id="planet-image"
-                  :src="planet.preview"
-                  :aria-label="planet?.data.planetName"
-                  :alt="planet.data.planetName"
-                />
-                <iconify-icon v-else icon="ph:planet-thin" width="auto" aria-hidden="true" />
-                <span v-if="EXTRAS_CRT_EFFECT" class="effect-crt"></span>
-              </div>
-              <iconify-icon id="planet-star" icon="ph:star-four-fill" width="1.25rem" aria-hidden="true" />
-              <article>
-                <h3>{{ planet.data.planetName }}</h3>
-                <p id="planet-type-class">
-                  <span>{{ $t(getI18nPlanetType(planet.data.planetType)) }}</span>
-                  <span>·</span>
-                  <span>{{ $t(getI18nPlanetClass(planet.data.planetClass)) }}</span>
-                </p>
-              </article>
-            </section>
-          </section>
-
-          <!-- BIOMES TAB -->
-          <section v-if="selectedTab === 'biomes'" id="tab-biomes">
-            <h3>{{ $t('dialog.planet_info.biomes') }}</h3>
-            <div class="graph-container">
-              <SVGBiomeGraph :key="planet.data.biomesParams[0].id" :biomes="planet.data.biomesParams" />
-            </div>
-          </section>
-
-          <section v-if="selectedTab === 'cracks'" id="tab-cracks">test</section>
-
-          <!-- RINGS TAB -->
-          <section v-if="selectedTab === 'rings'" id="tab-rings">
-            <h3>{{ $t('dialog.planet_info.rings') }}</h3>
-            <div class="graph-container">
-              <SVGRingsGraph
-                :key="planet.data.ringsParams[0].id"
-                :planet-radius="planet.data.planetRadius"
-                :rings="planet.data.ringsParams"
+      <div class="__layout">
+        <span class="__spacing" />
+        <div class="__main">
+          <section id="planet-hero" :style="{ background: cssPlanetGradient }">
+            <div :class="{ 'extra-hologram': EXTRAS_HOLOGRAM_EFFECT }">
+              <img
+                v-if="planet.preview"
+                ref="planetImage"
+                id="planet-image"
+                :src="planet.preview"
+                :aria-label="planet?.data.planetName"
+                :alt="planet.data.planetName"
               />
+              <iconify-icon v-else icon="ph:planet-thin" width="auto" aria-hidden="true" />
+              <span v-if="EXTRAS_CRT_EFFECT" class="effect-crt"></span>
             </div>
+            <iconify-icon id="planet-star" icon="ph:star-four-fill" width="1.25rem" aria-hidden="true" />
+            <article>
+              <h3>{{ planet.data.planetName }}</h3>
+              <p id="planet-type-class">
+                <span>{{ $t(getI18nPlanetType(planet.data.planetType)) }}</span>
+                <span>·</span>
+                <span>{{ $t(getI18nPlanetClass(planet.data.planetClass)) }}</span>
+              </p>
+            </article>
           </section>
+          <LgvTabGroup ref="sidebarRef" :tabs="sidebarTabs">
+            <!-- BASE TAB -->
+            <template #tab-0 id="tab-base"> </template>
+
+            <!-- BIOMES TAB -->
+            <template #tab-1>
+              <div id="tab-biomes">
+                <LgvNotification type="info"
+                  >Each biome is represented on the graph below as an area. Its bounds are defined by the biome's
+                  min/max temperature and humidity values: a high-humidity biome will be more on the right, a
+                  high-temperature biome will be more to the top, and vice versa.
+                </LgvNotification>
+                <div id="biomes__container">
+                  <ul id="biomes__list" class="data-list">
+                    <li
+                      v-for="biome in planet.data.biomesParams"
+                      :key="biome.id"
+                      :style="{
+                        borderColor: biome.color.getStyle(),
+                        background:
+                          cssHoveredBiomeArea === biome.id
+                            ? `linear-gradient(
+                                 to right,
+                                 #${biome.color.getHexString()}7f 0%,
+                                 transparent 40%,
+                                 transparent 60%,
+                                 #${biome.color.getHexString()}7f 100%
+                               )`
+                            : '',
+                      }"
+                    >
+                      <p class="biome__id">{{ biome.id }}</p>
+                      <p class="biome__coords">
+                        <span class="data-value"
+                          >X&nbsp;=&nbsp;{{ (biome.humiMin * 100).toFixed(1) }} -
+                          {{ (biome.humiMax * 100).toFixed(1) }}</span
+                        >
+                        <span class="data-value"
+                          >Y&nbsp;=&nbsp;{{ (biome.tempMin * 100).toFixed(1) }} -
+                          {{ (biome.tempMax * 100).toFixed(1) }}</span
+                        >
+                      </p>
+                    </li>
+                  </ul>
+                  <BiomeGraph
+                    id="biomes__graph"
+                    :areas="planetBiomeAreas"
+                    @area-hover="cssHoveredBiomeArea = $event"
+                    @area-leave="cssHoveredBiomeArea = null"
+                  />
+                </div>
+              </div>
+            </template>
+
+            <!-- CRACKS TAB -->
+            <template #tab-2> </template>
+
+            <!-- CRATERS TAB -->
+            <template #tab-3> </template>
+
+            <!-- RINGS TAB -->
+            <template #tab-4> </template>
+          </LgvTabGroup>
         </div>
       </div>
     </template>
@@ -119,108 +109,111 @@
 <script setup lang="ts">
 import type { PlanetInfoDialogExposes } from '@components/codex/dialogs/PlanetInfoDialog.types.ts';
 import type { LgvDialogExposes } from '@lib/components/custom/LgvDialog.types.ts';
+import type { LgvTabGroupExposes, LvgTabGroupTab } from '@lib/components/layout/LgvTabGroup.types.ts';
+import BiomeGraph, { type BiomeArea } from '@components/codex/graphs/BiomeGraph.vue';
 import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT } from '@core/extras';
 import { getI18nPlanetClass, getI18nPlanetType } from '@core/utils/i18n-utils.ts';
-import LgvButton from '@lib/components/base/LgvButton.vue';
+import Rect from '@core/utils/math/rect.ts';
 import LgvDialog from '@lib/components/custom/LgvDialog.vue';
+import LgvNotification from '@lib/components/custom/LgvNotification.vue';
+import LgvTabGroup from '@lib/components/layout/LgvTabGroup.vue';
 import { prominent } from 'color.js';
-import { ref, type Ref, useTemplateRef } from 'vue';
+import { computed, type ComputedRef, ref, type Ref, useTemplateRef } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { IDBPlanet } from '@/dexie.config';
-import SVGBiomeGraph from '../svg/SVGBiomeGraph.vue';
-import SVGRingsGraph from '../svg/SVGRingsGraph.vue';
 
-const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
 defineExpose<PlanetInfoDialogExposes>({ open });
 
+const i18n = useI18n();
+const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
+const sidebarRef = useTemplateRef<LgvTabGroupExposes>('sidebarRef');
+
 const planet: Ref<IDBPlanet | null> = ref(null);
-const selectedTab: Ref<'base' | 'biomes' | 'cracks' | 'craters' | 'rings'> = ref('base');
+const sidebarTabs: ComputedRef<LvgTabGroupTab[]> = computed(() => [
+  { icon: 'pepicons-pencil:planet', iconWidth: '1.5rem', title: i18n.t('dialog.planet_info.tabs.basic') },
+  {
+    icon: 'material-symbols-light:nest-eco-leaf-outline',
+    iconWidth: '2rem',
+    title: i18n.t('dialog.planet_info.tabs.biomes'),
+    disabled: !planet.value?.data.biomesEnabled,
+  },
+  {
+    icon: 'material-symbols-light:explosion-outline',
+    iconWidth: '1.75rem',
+    title: i18n.t('dialog.planet_info.tabs.cracks'),
+    disabled: !planet.value?.data.cracksEnabled,
+  },
+  {
+    icon: 'hugeicons:moon-01',
+    iconWidth: '1.5rem',
+    title: i18n.t('dialog.planet_info.tabs.craters'),
+    disabled: !planet.value?.data.cratersEnabled,
+  },
+  {
+    icon: 'pepicons-pencil:planet-ring',
+    iconWidth: '1.75rem',
+    title: i18n.t('dialog.planet_info.tabs.rings'),
+    disabled: !planet.value?.data.ringsEnabled,
+  },
+]);
+
+const cssHoveredBiomeArea: Ref<string | null> = ref(null);
 const cssPlanetRadius: Ref<string> = ref('100%');
 const cssPlanetGradient: Ref<string> = ref('');
 const cssStarColor: Ref<string> = ref('');
 
-function open(p: IDBPlanet) {
+const planetImageScale: ComputedRef<number> = computed(() => 0.9 / (planet.value?.data.planetRadius ?? 0.75));
+const planetBiomeAreas: ComputedRef<BiomeArea[]> = computed(
+  () =>
+    planet.value?.data.biomesParams.map((b) => ({
+      id: b.id,
+      color: b.color,
+      rect: new Rect(b.humiMin, b.tempMin, b.humiMax - b.humiMin, b.tempMax - b.tempMin),
+    })) ?? [],
+);
+
+async function open(p: IDBPlanet) {
   planet.value = p;
-  cssStarColor.value = p.data.sunLightColor.getStyle();
-  cssPlanetRadius.value = p.data.planetRadius * 100 + '%';
-  selectedTab.value = 'base';
-  calculatePlanetGradient().then(() => dialogRef.value?.open());
+  await updateCssProperties(p);
+  sidebarRef.value!.reset();
+  dialogRef.value?.open();
 }
 
-async function calculatePlanetGradient() {
-  const dominantColor = await prominent(planet.value!.preview!, { amount: 2, format: 'hex', sample: 8, group: 20 });
-  cssPlanetGradient.value = `linear-gradient(90deg, ${dominantColor[1] + '7f'} 0%, var(--lg-panel) 100%)`;
+async function updateCssProperties(planet: IDBPlanet) {
+  cssStarColor.value = planet.data.sunLightColor.getStyle();
+  cssPlanetRadius.value = planet.data.planetRadius * 100 + '%';
+  const dominantColor = await prominent(planet.preview!, { amount: 2, format: 'hex', sample: 8, group: 20 });
+  cssPlanetGradient.value = `linear-gradient(90deg, ${dominantColor[1] + '60'} 0%, var(--lg-panel) 100%)`;
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 #dialog-planet-info {
-  width: 800px;
+  width: 840px;
 
-  .dialog-header {
-    border-bottom: 1px solid var(--lg-accent);
-  }
-
-  #planet-info-container {
-    position: relative;
+  .__layout {
     overflow: hidden;
-    min-height: calc(5 * 2.75rem);
-    height: 100%;
+    border-top: 2px solid var(--lg-accent);
 
     display: grid;
-    grid-auto-columns: auto 1fr;
+    grid-template-columns: auto 1fr;
 
-    #planet-info-tabs {
-      grid-column: 1;
-      margin-top: 1px;
-      overflow: hidden;
-      border-right: 1px solid var(--lg-accent);
-
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-
-      button {
-        width: 2.75rem;
-        height: 2.75rem;
-
-        &.active {
-          color: var(--lg-contrast);
-          pointer-events: none;
-        }
-      }
-      button.active::after {
-        content: '';
-        position: absolute;
-        inset: 0 -1px 0 auto;
-        background: var(--lg-contrast);
-        width: 5px;
-        clip-path: polygon(0 4px, 100% 0, 100% 100%, 0 calc(100% - 4px));
-      }
+    & > .__spacing {
+      width: 24px;
+      border-right: 2px solid var(--lg-accent);
     }
-    #planet-info-content {
-      grid-column: 2;
-      margin-top: 1px;
+
+    & > .__main {
       overflow-y: auto;
-      height: 100%;
       display: flex;
       flex-direction: column;
-      align-items: center;
     }
   }
-}
-#tab-base {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+
   #planet-hero {
     position: relative;
     width: 100%;
     padding: 0.5rem;
-    background: var(--lg-panel);
-    border-bottom: 1px solid var(--lg-accent);
 
     display: flex;
     align-items: center;
@@ -242,6 +235,8 @@ async function calculatePlanetGradient() {
       img#planet-image {
         width: $img-size;
         height: $img-size;
+        transform: scale(v-bind(planetImageScale));
+        filter: drop-shadow(0 0 4px #0008);
       }
     }
     h3 {
@@ -264,14 +259,77 @@ async function calculatePlanetGradient() {
     }
   }
 }
-#tab-biomes {
-  height: 100%;
+
+#tab-base {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#tab-biomes {
+  width: 100%;
+  padding: 0.5rem;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  gap: 0.5rem;
+
+  #biomes__container {
+    width: 100%;
+    max-height: 300px;
+    overflow: hidden;
+
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.5rem;
+
+    #biomes__list {
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+
+      li {
+        width: 100%;
+
+        border-width: 4px;
+        border-style: solid;
+        border-top: none;
+        border-bottom: none;
+        background: var(--lg-panel);
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 4px;
+
+        .biome__id {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 16ch;
+        }
+        .biome__coords {
+          font-size: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+      }
+    }
+  }
 }
 #tab-rings {
   height: 100%;
@@ -283,21 +341,45 @@ async function calculatePlanetGradient() {
   justify-content: flex-start;
 }
 
-.graph-container {
-  padding: 1px;
-  background: var(--lg-input);
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%);
-
-  svg {
-    width: 600px;
-    padding: 0.5rem;
-    background: var(--lg-panel);
-    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%);
-  }
+.data-value {
+  padding: 0.25rem 0.5rem;
+  background: var(--lg-panel);
+  border: 1px solid var(--lg-input);
 }
 
 @media screen and (max-width: 767px) {
+  #tab-biomes {
+    #biomes__container {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
 }
+
 @media screen and (max-width: 567px) {
+  #dialog-planet-info {
+    .__layout {
+      grid-template-columns: 1fr;
+    }
+    .__spacing {
+      display: none;
+    }
+  }
+  #planet-hero {
+    flex-direction: column;
+    & > article {
+      align-items: center;
+    }
+  }
+  #tab-biomes {
+    .notification {
+      display: none;
+    }
+    #biomes__container {
+      grid-template-columns: 1fr;
+      #biomes__graph {
+        display: none;
+      }
+    }
+  }
 }
 </style>
