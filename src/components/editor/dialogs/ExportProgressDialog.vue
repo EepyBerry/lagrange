@@ -36,8 +36,8 @@
 </template>
 <script setup lang="ts">
 import type { ExportProgressDialogExposes } from '@components/editor/dialogs/ExportProgressDialog.types.ts';
-import type { LgvDialogExposes } from '@lib/components/custom/LgvDialog.types.ts';
-import LgvDialog from '@lib/components/custom/LgvDialog.vue';
+import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
+import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 
 const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');

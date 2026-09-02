@@ -32,9 +32,9 @@
 </template>
 <script setup lang="ts">
 import type { DeleteConfirmDialogExposes } from '@components/codex/dialogs/DeleteConfirmDialog.types.ts';
-import type { LgvDialogExposes } from '@lib/components/custom/LgvDialog.types.ts';
+import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import LgvButton from '@lib/components/base/LgvButton.vue';
-import LgvDialog from '@lib/components/custom/LgvDialog.vue';
+import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 import type { IDBPlanet } from '@/dexie.config';
 

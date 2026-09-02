@@ -34,6 +34,8 @@
     }
   },
   "common": {
+    "yes": "Yes :3",
+    "no": "Nyo >:c",
     "unit": "unit",
     "units": "units",
     "unknown_value": "[UNKNOWN]",
@@ -100,7 +102,7 @@
     "planet_info": {
       "$title": "Codex Entwy",
       "tabs": {
-        "basic": "Basic data",
+        "overview": "Ovewview",
         "biomes": "Biomes",
         "cracks": "Cwacks",
         "craters": "Cwatews",
@@ -116,14 +118,12 @@
         "type_gasgiant": "Gas Giant",
         "class": "Cwass",
         "features": "Featuwes",
-        "has_biomes": "Has biomes",
-        "has_clouds": "Has cwouds",
-        "has_atmosphere": "Has atmosphewe",
-        "has_rings": "Has wing systyem",
-        "no_biomes": "No biomes",
-        "no_clouds": "No cwouds",
-        "no_atmosphere": "No atmosphewe",
-        "no_rings": "No wing systyem"
+        "has_biomes": "Biomes",
+        "has_cracks": "Cwacks",
+        "has_craters": "Cwatews",
+        "has_clouds": "Cwouds",
+        "has_atmosphere": "Atmosphewe",
+        "has_rings": "Wing systyem"
       },
       "biomes": "Biome composition",
       "biomes_temp": "Tempewature",

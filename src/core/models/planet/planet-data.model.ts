@@ -1144,6 +1144,12 @@ export default class PlanetData {
     return this._ringsParams.findIndex((b) => b.id === id);
   }
 
+  public getMaxGroundEmissiveIntensity(): number {
+    if (!this.planetShowEmissive) return 0;
+    const maxEmissiveBiome = Math.max(...this.biomesParams.map((b) => b.emissiveIntensity));
+    return Math.max(maxEmissiveBiome, this.planetGroundEmissiveIntensity);
+  }
+
   public getPlanetClassesFromType(t: PlanetType) {
     switch (t) {
       case PlanetType.PLANET:

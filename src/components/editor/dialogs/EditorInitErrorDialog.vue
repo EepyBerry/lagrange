@@ -41,10 +41,10 @@
 </template>
 <script setup lang="ts">
 import type { EditorInitErrorDialogExposes } from '@components/editor/dialogs/EditorInitErrorDialog.types.ts';
-import type { LgvDialogExposes } from '@lib/components/custom/LgvDialog.types.ts';
+import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import LgvButton from '@lib/components/base/LgvButton.vue';
-import LgvDialog from '@lib/components/custom/LgvDialog.vue';
+import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 
 const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');

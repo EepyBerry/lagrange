@@ -172,11 +172,11 @@
 
 <script setup lang="ts">
 import type { InitDialogExposes } from '@components/global/dialogs/InitDialog.types.ts';
-import type { LgvDialogExposes } from '@lib/components/custom/LgvDialog.types.ts';
+import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import AppLogo from '@components/global/elements/AppLogo.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import LgvButton from '@lib/components/base/LgvButton.vue';
-import LgvDialog from '@lib/components/custom/LgvDialog.vue';
+import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import LgvNotification from '@lib/components/custom/LgvNotification.vue';
 import { ref, useTemplateRef } from 'vue';
 import type { IDBKeyBinding } from '@/dexie.config';

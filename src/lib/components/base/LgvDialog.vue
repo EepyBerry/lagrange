@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import type { LgvDialogExposes } from '@lib/components/custom/LgvDialog.types.ts';
+import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import { UIEventBus } from '@core/ui-event-bus.ts';
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';

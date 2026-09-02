@@ -60,7 +60,7 @@
   <div id="save-menu" ref="saveMenu" class="floating" :style="saveFloating.floatingStyles.value">
     <LgvButton
       variant="dark"
-      class="save-menu-button flush"
+      class="save-menu-button"
       icon="mingcute:save-2-line"
       @click="closeSaveMenuAndEmit('save')"
     >
@@ -69,25 +69,20 @@
     <LgvButton
       v-if="!$route.path.endsWith('/new')"
       variant="dark"
-      class="save-menu-button flush"
+      class="save-menu-button"
       icon="mingcute:copy-2-line"
       @click="closeSaveMenuAndEmit('copy')"
     >
       {{ $t('main.header.copy') }} </LgvButton
     ><LgvButton
       variant="dark"
-      class="save-menu-button flush"
+      class="save-menu-button"
       icon="material-symbols:texture"
       @click="closeSaveMenuAndEmit('extract-textures')"
     >
       {{ $t('main.header.extract_textures') }}
     </LgvButton>
-    <LgvButton
-      variant="dark"
-      class="save-menu-button flush"
-      icon="simple-icons:gltf"
-      @click="closeSaveMenuAndEmit('gltf')"
-    >
+    <LgvButton variant="dark" class="save-menu-button" icon="simple-icons:gltf" @click="closeSaveMenuAndEmit('gltf')">
       {{ $t('main.header.gltf') }}
     </LgvButton>
   </div>
@@ -101,9 +96,9 @@ import { EDITOR_STATE } from '@core/editor/state/editor.state';
 import { UIEventBus } from '@core/ui-event-bus.ts';
 import * as MathUtils from '@core/utils/math-utils';
 import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
-import { ref, useTemplateRef, watch, type Ref } from 'vue';
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import LgvHeader from '@lib/components/main/LgvHeader.vue';
+import { ref, useTemplateRef, watch, type Ref } from 'vue';
 import AppResetConfirmDialog from './dialogs/ResetConfirmDialog.vue';
 
 // floating-ui start

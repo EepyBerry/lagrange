@@ -112,11 +112,6 @@ button.lgv[variant='dark'] {
     background: var(--lg-button-dark-active);
   }
 
-  &.flush {
-    border-width: 0;
-    border-radius: 0;
-  }
-
   &.contrast {
     background: var(--lg-button-dark-contrast);
     border-color: var(--lg-contrast);

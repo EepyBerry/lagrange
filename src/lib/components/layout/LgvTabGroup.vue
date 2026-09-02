@@ -27,11 +27,11 @@
     <div class="tabgroup-content">
       <section
         class="tabgroup-content__tab"
-        v-for="(_, i) in $props.tabs"
+        v-for="(tab, i) in $props.tabs"
         :class="`tab-${i}`"
         v-show="selectedTab === i"
       >
-        <slot :name="`tab-${i}`">TABGROUP_TAB_CONTENT</slot>
+        <slot :name="`tab-${tab.name}`">TABGROUP_TAB_CONTENT</slot>
       </section>
     </div>
   </div>
@@ -106,7 +106,14 @@ const selectedTab: Ref<number> = ref(0);
         &.active {
           pointer-events: none;
           color: var(--lg-contrast);
-          border-bottom: none;
+          border-bottom-color: transparent;
+        }
+
+        & > * {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 16ch;
         }
       }
     }

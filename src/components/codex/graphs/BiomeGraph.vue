@@ -45,8 +45,7 @@ defineEmits(['area-hover', 'area-leave']);
   background: var(--lg-input);
 
   clip-path: polygon(
-    0 $corner-length,
-    $corner-length 0,
+    0 0,
     calc(100% - $corner-length) 0,
     100% $corner-length,
     100% calc(100% - $corner-length),

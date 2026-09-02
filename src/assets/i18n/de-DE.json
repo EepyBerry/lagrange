@@ -34,6 +34,8 @@
     }
   },
   "common": {
+    "yes": "Ja",
+    "no": "Nein",
     "unit": "Einheit",
     "units": "Einheiten",
     "unknown_value": "[UNBEKANNT]",
@@ -102,7 +104,7 @@
       "tabs": {
         "basic": "Grunddaten",
         "biomes": "Biomen",
-        "cracks": "Cracks",
+        "cracks": "Risse",
         "craters": "Krater",
         "rings": "Ringe"
       },
@@ -116,14 +118,10 @@
         "type_gasgiant": "Gasplanet",
         "class": "Klasse",
         "features": "Besonderheiten",
-        "has_biomes": "Präsenz von Biomen",
-        "has_clouds": "Präsenz von Wolken",
-        "has_atmosphere": "Präsenz von Atmosphäre",
-        "has_rings": "Präsenz von Ringen",
-        "no_biomes": "Keine Biome",
-        "no_clouds": "Keine Wolken",
-        "no_atmosphere": "Keine Atmosphäre",
-        "no_rings": "Keine Ringe"
+        "has_biomes": "Biomen",
+        "has_clouds": "Wolken",
+        "has_atmosphere": "Atmosphäre",
+        "has_rings": "Ringen"
       },
       "biomes": "Zusammensetzung von Biomen",
       "biomes_temp": "Temperatur",
@@ -370,7 +368,7 @@
     "features": {
       "$title": "",
       "cracks": {
-        "$title": "Cracks",
+        "$title": "Risse",
         "noise_limiter": "Limiter-Rauschen",
         "noise_color": "Farbrauschen",
         "distance_to_edge": "Randabstand",

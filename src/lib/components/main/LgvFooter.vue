@@ -22,7 +22,7 @@ footer {
   justify-content: center;
 
   & > div {
-    padding: 0.25rem 1.5rem;
+    padding: 0.125rem 1.5rem;
     background: var(--lg-primary);
     clip-path: inherit;
 

@@ -459,7 +459,7 @@
 <script setup lang="ts">
 import type { ClearDataConfirmDialogExposes } from '@components/global/dialogs/ClearDataConfirmDialog.types.ts';
 import type { SettingsDialogExposes } from '@components/global/dialogs/SettingsDialog.types.ts';
-import type { LgvDialogExposes } from '@lib/components/custom/LgvDialog.types.ts';
+import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import ParameterCategory from '@components/global/parameters/ParameterCategory.vue';
 import ParameterCheckbox from '@components/global/parameters/ParameterCheckbox.vue';
@@ -482,7 +482,7 @@ import { readFileSettings } from '@core/helpers/import.helper';
 import { UIEventBus } from '@core/ui-event-bus.ts';
 import { mapLocale } from '@core/utils/utils';
 import LgvButton from '@lib/components/base/LgvButton.vue';
-import LgvDialog from '@lib/components/custom/LgvDialog.vue';
+import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import LgvNotification from '@lib/components/custom/LgvNotification.vue';
 import { saveAs } from 'file-saver';
 import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
