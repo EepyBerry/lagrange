@@ -10,7 +10,7 @@
         }"
       >
         <LgvButton
-          :tabindex="i"
+          :tabindex="getTabIndex(tab.name)"
           variant="dark"
           class="tab-link"
           :icon="tab.icon"
@@ -40,12 +40,19 @@
 <script setup lang="ts">
 import type { LgvTabGroupExposes, LgvTabGroupProps } from '@lib/components/layout/LgvTabGroup.types.ts';
 import LgvButton from '@lib/components/base/LgvButton.vue';
-import { ref, type Ref } from 'vue';
+import { computed, ref, type Ref } from 'vue';
 
 const $props = defineProps<LgvTabGroupProps>();
 defineExpose<LgvTabGroupExposes>({ reset: () => (selectedTab.value = 0) });
 
 const selectedTab: Ref<number> = ref(0);
+const tabIndexes = computed(() =>
+  $props.tabs.filter((t) => !t.disabled).map((b, i) => ({ tab: b.name, tabindex: i + 1 })),
+);
+
+function getTabIndex(tabName: string): number {
+  return tabIndexes.value.find((t) => t.tab === tabName)?.tabindex ?? -1;
+}
 </script>
 
 <style scoped lang="scss">
@@ -56,7 +63,7 @@ const selectedTab: Ref<number> = ref(0);
 
   overflow: hidden;
   height: 100%;
-  border-top: 2px solid var(--lg-accent);
+  border-top: var(--lg-var-border-width) solid var(--lg-accent);
 
   display: grid;
   grid-template-rows: auto 1fr;
@@ -74,7 +81,7 @@ const selectedTab: Ref<number> = ref(0);
       flex: 1;
       overflow: visible;
 
-      padding-right: 2px;
+      padding-right: var(--lg-var-border-width);
       background: var(--lg-accent);
       clip-path: polygon(
         -$button-corner-length 0,
@@ -90,7 +97,8 @@ const selectedTab: Ref<number> = ref(0);
         width: 100%;
         overflow: visible;
         border: none;
-        border-bottom: 2px solid var(--lg-accent);
+        border-bottom: var(--lg-var-border-width) solid var(--lg-accent);
+        box-shadow: inset 0 -12px 12px var(--lg-shadow-dark);
         clip-path: polygon(0 0, calc(100% - $button-corner-length) 0, 100% $button-corner-length, 100% 100%, 0 100%);
         user-select: none;
 
@@ -105,8 +113,9 @@ const selectedTab: Ref<number> = ref(0);
 
         &.active {
           pointer-events: none;
+          box-shadow: none;
           color: var(--lg-contrast);
-          border-bottom-color: transparent;
+          border-bottom-color: var(--lg-primary-static);
         }
 
         & > * {

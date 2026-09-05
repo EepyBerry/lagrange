@@ -101,8 +101,6 @@
               <!-- eslint-disable-next-line vue/no-v-html -->
               <li v-html="$t('dialog.about.credits.libs')"></li>
               <!-- eslint-disable-next-line vue/no-v-html -->
-              <li v-html="$t('dialog.about.credits.icons')"></li>
-              <!-- eslint-disable-next-line vue/no-v-html -->
               <li v-html="$t('dialog.about.credits.glsl_main')"></li>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <li v-html="$t('dialog.about.credits.glsl_misc')"></li>

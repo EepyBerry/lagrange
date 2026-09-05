@@ -102,16 +102,19 @@
     "planet_info": {
       "$title": "Entrée du Codex",
       "tabs": {
-        "basic": "Données de base",
+        "overview": "Aperçu",
+        "topography": "Topographie",
         "biomes": "Biomes",
-        "cracks": "Craquelures",
-        "craters": "Cratères",
         "rings": "Anneaux"
       },
       "basic": {
         "name": "Nom",
         "radius": "Rayon",
         "axialtilt": "Inclinaison",
+        "waterlevel": "Niveau de mer",
+        "ambient_light": "Luminosité ambiante",
+        "emissive_water": "Émissivité de l'eau",
+        "emissive_surface": "Émissivité en surface",
         "type": "Type",
         "type_moon": "Lune",
         "type_planet": "Planète",
@@ -341,7 +344,7 @@
       "sunlight_angle": "Angle",
       "sunlight_intensity": "Intensité",
       "sunlight_color": "Couleur",
-      "amblight": "Lumière ambiante",
+      "amblight": "Luminosité ambiante",
       "amblight_intensity": "Intensité",
       "amblight_color": "Couleur"
     },

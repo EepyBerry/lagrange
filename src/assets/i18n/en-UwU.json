@@ -103,15 +103,18 @@
       "$title": "Codex Entwy",
       "tabs": {
         "overview": "Ovewview",
+        "topography": "Topogwaphy",
         "biomes": "Biomes",
-        "cracks": "Cwacks",
-        "craters": "Cwatews",
         "rings": "Wings"
       },
       "basic": {
         "name": "Name",
         "radius": "Wadius",
         "axialtilt": "Axiaw tiwt",
+        "waterlevel": "Watew wevew",
+        "ambient_light": "Ambient wighting",
+        "emissive_water": "Watew emission",
+        "emissive_surface": "Max. suwface emission",
         "type": "Type",
         "type_moon": "Moon",
         "type_planet": "Pwanyet",

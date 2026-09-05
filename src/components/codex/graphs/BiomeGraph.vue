@@ -9,6 +9,7 @@
         <span class="axis-y grads" />
         <div
           class="rect"
+          :class="{ hover: hoveredBiome === area.id }"
           v-for="(area, index) in areas.toReversed()"
           :key="index"
           :style="{
@@ -17,10 +18,10 @@
             width: `${100 * area.rect.w}%`,
             height: `${100 * area.rect.h}%`,
             borderColor: '#' + area.color.getHexString(),
-            background: '#' + area.color.getHexString() + 'cf',
+            background: '#' + area.color.getHexString() + (hoveredBiome === area.id ? '' : 'aa'),
           }"
-          @mouseover="$emit('area-hover', area.id)"
-          @mouseleave="$emit('area-leave')"
+          @mouseover="setHover(area.id)"
+          @mouseleave="resetHover"
         />
       </div>
     </figure>
@@ -32,8 +33,18 @@ import type Rect from '@core/utils/math/rect.ts';
 import type { Color } from 'three/webgpu';
 
 export type BiomeArea = { id: string; color: Color; rect: Rect };
+const hoveredBiome = defineModel<string | null>();
 defineProps<{ areas: BiomeArea[] }>();
-defineEmits(['area-hover', 'area-leave']);
+const $emit = defineEmits(['area-hover', 'area-leave']);
+
+function setHover(id: string) {
+  hoveredBiome.value = id;
+  $emit('area-hover', id);
+}
+function resetHover() {
+  hoveredBiome.value = null;
+  $emit('area-leave');
+}
 </script>
 
 <style scoped lang="scss">
@@ -42,7 +53,7 @@ defineEmits(['area-hover', 'area-leave']);
   padding: 1px;
   width: 100%;
   height: 100%;
-  background: var(--lg-input);
+  background: var(--lg-accent);
 
   clip-path: polygon(
     0 0,
@@ -100,13 +111,12 @@ defineEmits(['area-hover', 'area-leave']);
 
     .rect {
       position: absolute;
-      background: var(--lg-accent);
       border: 2px solid;
       border-radius: 1px;
 
-      transition: filter 0.1s linear;
-      &:hover {
-        filter: brightness(1.2);
+      transition: background 0.1s linear;
+      &.hover {
+        filter: brightness(1.25);
       }
     }
     .axis-x.label {

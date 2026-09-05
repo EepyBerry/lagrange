@@ -17,11 +17,11 @@ defineProps<{ value: boolean; icon?: string; iconWidth?: string; a11yLabel?: str
   width: 100%;
   height: 2.25rem;
   padding: 0.5rem;
-  background: var(--lg-panel);
 
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
 
   .__label {
     grid-column: 1;
@@ -29,6 +29,13 @@ defineProps<{ value: boolean; icon?: string; iconWidth?: string; a11yLabel?: str
     align-items: center;
     justify-content: center;
     gap: 8px;
+
+    span {
+      max-width: 16ch;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
   .__icon {
     grid-column: 1;

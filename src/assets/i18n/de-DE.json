@@ -102,16 +102,19 @@
     "planet_info": {
       "$title": "Kodex-Eintrag",
       "tabs": {
-        "basic": "Grunddaten",
+        "overview": "Übersicht",
+        "topography": "Topografie",
         "biomes": "Biomen",
-        "cracks": "Risse",
-        "craters": "Krater",
         "rings": "Ringe"
       },
       "basic": {
         "name": "Name",
         "radius": "Radius",
         "axialtilt": "Neigung",
+        "waterlevel": "Meeresspiegel",
+        "ambient_light": "Umgebungslicht",
+        "emissive_water": "Merresemissivität",
+        "emissive_surface": "Oberflächenemissivität",
         "type": "Typ",
         "type_moon": "Mond",
         "type_planet": "Planet",
@@ -119,9 +122,11 @@
         "class": "Klasse",
         "features": "Besonderheiten",
         "has_biomes": "Biomen",
+        "has_cracks": "Risse",
+        "has_craters": "Krater",
         "has_clouds": "Wolken",
         "has_atmosphere": "Atmosphäre",
-        "has_rings": "Ringen"
+        "has_rings": "Ringe"
       },
       "biomes": "Zusammensetzung von Biomen",
       "biomes_temp": "Temperatur",

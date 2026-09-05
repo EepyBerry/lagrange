@@ -22,7 +22,12 @@
         </div>
       </section>
       <section ref="dialogActions" class="dialog-content" tabindex="-1">
-        <slot name="content">DIALOG_CONTENT</slot>
+        <div class="dialog-content__layout">
+          <span class="dialog-content__spacing" v-if="showSpacing" />
+          <div class="dialog-content__main" :style="{ gridColumn: showSpacing ? '2' : 'span 2' }">
+            <slot name="content">DIALOG_CONTENT</slot>
+          </div>
+        </div>
       </section>
       <section v-if="showActions" class="dialog-actions">
         <slot name="actions">DIALOG_ACTIONS</slot>
@@ -58,6 +63,7 @@ const $emit = defineEmits(['open', 'close']);
 defineExpose<LgvDialogExposes>({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open ?? false });
 
 const $props = defineProps<{
+  showSpacing?: boolean;
   showTitle?: boolean;
   showActions?: boolean;
   closeable?: boolean;
@@ -99,7 +105,7 @@ dialog[open] {
   $inner-corner-length: 21px;
   position: fixed;
   overflow: hidden;
-  padding: 2px;
+  padding: var(--lg-var-border-width);
   margin: auto;
 
   border: none;
@@ -184,10 +190,31 @@ dialog[open] {
 
       display: flex;
       flex-direction: column;
+
+      & > .dialog-content__layout {
+        overflow: hidden;
+        border-top: var(--lg-var-border-width) solid var(--lg-accent);
+
+        display: grid;
+        grid-template-columns: auto 1fr;
+
+        & > .dialog-content__spacing {
+          width: 20px;
+          border-right: var(--lg-var-border-width) solid var(--lg-accent);
+        }
+
+        & > .dialog-content__main {
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+        }
+      }
     }
 
     .dialog-actions {
-      padding: 1rem 4px 4px;
+      padding: 4px;
+      border-top: var(--lg-var-border-width) solid var(--lg-accent);
+
       display: flex;
       justify-content: center;
       gap: 4px;
@@ -223,6 +250,13 @@ dialog[open].warn {
     .dialog-actions {
       background: var(--lg-warn-panel);
       scrollbar-color: var(--lg-warn) var(--code-background);
+      border-color: var(--lg-warn);
+    }
+    .dialog-content > .dialog-content__layout {
+      border-top: var(--lg-var-border-width) solid var(--lg-warn);
+      & > .dialog-content__spacing {
+        border-color: var(--lg-warn);
+      }
     }
   }
 }

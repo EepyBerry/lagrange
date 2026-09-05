@@ -2,6 +2,9 @@
   --black: #000;
   --code-background: #050505;
 
+  --lg-shadow: #0003;
+  --lg-shadow-dark: #0008;
+
   --lg-text: #f7f7f7;
   --lg-text-alt: #dadada;
   --lg-text-dark: #111111;
@@ -96,13 +99,14 @@
   --lg-input-disabled: #181818;
   --lg-overlay: #2f333e44;
 
-  --lg-button-dark-contrast: #0b140f;
-  --lg-button-dark-contrast-hover: #214232;
-
   --lg-button: #3f2757;
   --lg-button-hover: #3b2453;
   --lg-button-active: var(--lg-accent);
   --lg-button-disabled: #3b3b3b;
+  --lg-button-dark-contrast: #0b140f;
+  --lg-button-dark-contrast-hover: #214232;
+  --lg-button-icon-hover: #abf3bf;
+  --lg-button-icon-active: #8cc49e;
 
   --lg-link: var(--lg-input-contrast-focus);
   --lg-link-visited: var(--lg-input-contrast-focus);
@@ -137,14 +141,15 @@
   --lg-input-disabled: #141414;
   --lg-overlay: #3e392f44;
 
-  --lg-button-dark-disabled: #3b3b3b;
-  --lg-button-dark-contrast: #201900;
-  --lg-button-dark-contrast-hover: #493800;
-
   --lg-button: #573d12;
   --lg-button-hover: #4e3609;
   --lg-button-active: var(--lg-accent);
   --lg-button-disabled: #333333;
+  --lg-button-dark-disabled: #3b3b3b;
+  --lg-button-dark-contrast: #201900;
+  --lg-button-dark-contrast-hover: #493800;
+  --lg-button-icon-hover: #f3daab;
+  --lg-button-icon-active: #c4b08c;
 
   --lg-link: var(--lg-input-contrast-focus);
   --lg-link-visited: var(--lg-contrast);

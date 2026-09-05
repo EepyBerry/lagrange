@@ -70,6 +70,7 @@ a.lgv[variant='button'] {
 
   color: var(--lg-text);
   background: var(--lg-button);
+  box-shadow: inset 0 -8px 8px var(--lg-shadow);
   text-decoration: none;
   cursor: pointer;
 
