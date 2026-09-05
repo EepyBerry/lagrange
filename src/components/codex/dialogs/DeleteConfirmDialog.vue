@@ -62,6 +62,7 @@ function close(confirm: boolean) {
 #dialog-delete-confirm {
   min-width: 24rem;
   .delete-text {
+    padding: 1rem 0.5rem;
     text-align: center;
     font-size: 1rem;
   }

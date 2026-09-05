@@ -8,13 +8,14 @@
 
 <style scoped lang="scss">
 footer {
+  $flat-angle: 1.25rem;
   z-index: 10;
   position: fixed;
   bottom: -1px;
-  padding: 2px 2px 0;
+  padding: var(--lg-var-border-width) var(--lg-var-border-width) 0;
 
   background: var(--lg-accent);
-  clip-path: polygon(1.5rem 0, calc(100% - 1.5rem) 0, 100% 100%, 0 100%);
+  clip-path: polygon($flat-angle 0, calc(100% - $flat-angle) 0, 100% 100%, 0 100%);
 
   display: flex;
   align-self: center;
@@ -22,7 +23,7 @@ footer {
   justify-content: center;
 
   & > div {
-    padding: 0.125rem 1.5rem;
+    padding: 0.125rem $flat-angle;
     background: var(--lg-primary);
     clip-path: inherit;
 

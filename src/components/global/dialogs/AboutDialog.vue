@@ -26,14 +26,14 @@
             <iconify-icon mode="svg" icon="simple-icons:vuedotjs" width="3rem" style="fill: var(--lg-text)" />
             <div>
               <p>{{ $t('dialog.about.prefix_framework') }} <span class="highlight nowrap">Vue + Vite</span></p>
-              <LgvChip class="contrast">3.5.32</LgvChip> <LgvChip class="contrast">8.0.7</LgvChip>
+              <LgvBadge class="contrast">3.5.32</LgvBadge> <LgvBadge class="contrast">8.0.7</LgvBadge>
             </div>
           </div>
           <div class="tech-block">
             <iconify-icon mode="svg" icon="logos:threejs" width="3rem" style="fill: var(--lg-text)" />
             <div>
               <p>{{ $t('dialog.about.prefix_engine') }} <span class="highlight">three.js</span></p>
-              <LgvChip class="contrast">r184</LgvChip>
+              <LgvBadge class="contrast">r184</LgvBadge>
             </div>
           </div>
         </div>
@@ -101,8 +101,6 @@
               <!-- eslint-disable-next-line vue/no-v-html -->
               <li v-html="$t('dialog.about.credits.libs')"></li>
               <!-- eslint-disable-next-line vue/no-v-html -->
-              <li v-html="$t('dialog.about.credits.icons')"></li>
-              <!-- eslint-disable-next-line vue/no-v-html -->
               <li v-html="$t('dialog.about.credits.glsl_main')"></li>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <li v-html="$t('dialog.about.credits.glsl_misc')"></li>
@@ -136,8 +134,8 @@ import type { AboutDialogExposes } from '@components/global/dialogs/AboutDialog.
 import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import AppLogo from '@components/global/elements/AppLogo.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
-import LgvChip from '@lib/components/base/LgvChip.vue';
 import LgvDialog from '@lib/components/base/LgvDialog.vue';
+import LgvBadge from '@lib/components/custom/LgvBadge.vue';
 import { useTemplateRef } from 'vue';
 
 const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');

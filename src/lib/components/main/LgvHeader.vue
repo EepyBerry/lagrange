@@ -8,13 +8,14 @@
 
 <style scoped lang="scss">
 header {
+  $flat-angle: 1.25rem;
   z-index: 10;
   position: absolute;
   top: -1px;
-  padding: 0 2px 2px;
+  padding: 0 var(--lg-var-border-width) var(--lg-var-border-width);
 
   background: var(--lg-accent);
-  clip-path: polygon(0 0, 100% 0, calc(100% - 1.5rem) 100%, 1.5rem 100%);
+  clip-path: polygon(0 0, 100% 0, calc(100% - $flat-angle) 100%, $flat-angle 100%);
 
   display: flex;
   align-self: center;
@@ -23,7 +24,7 @@ header {
 
   & > div {
     position: relative;
-    padding: 0.125rem 1.5rem;
+    padding: 0.125rem $flat-angle;
     background: var(--lg-primary);
     clip-path: inherit;
 

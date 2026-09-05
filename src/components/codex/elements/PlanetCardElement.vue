@@ -3,7 +3,7 @@
     <!-- effects -->
     <ExtraMetalSlugPlanetExplosion ref="extraPlanetExplosionRef" @obliteration="obliterationHidePlanetImage = true" />
 
-    <div class="planet-preview" :class="{ 'effect-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
+    <div class="planet-preview" :class="{ 'effect-hologram': EXTRAS_HOLOGRAM_EFFECT }">
       <!-- decoration -->
       <svg viewBox="0 0 256 256" role="presentation">
         <g v-show="!obliterationHidePlanetImage" class="planet-preview-gizmo">
@@ -68,7 +68,7 @@
       </div>
 
       <!-- effects -->
-      <span v-if="!!EXTRAS_CRT_EFFECT" class="effect-crt"></span>
+      <span v-if="EXTRAS_CRT_EFFECT" class="effect-crt"></span>
     </div>
     <p class="planet-name">
       <span>
