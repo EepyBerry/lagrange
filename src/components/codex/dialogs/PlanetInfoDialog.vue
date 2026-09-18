@@ -76,70 +76,120 @@
 
         <!-- TOPOGRAPHY TAB -->
         <template #tab-topography>
-          <div id="tab-topography"></div>
+          <div id="tab-topography">
+            <LgvNotification type="wip">WIP</LgvNotification>
+          </div>
         </template>
 
         <!-- BIOMES TAB -->
         <template #tab-biomes>
           <div id="tab-biomes">
-            <div id="biomes__container">
-              <ul id="biomes__list" class="data-list">
-                <li v-for="biome in planet.data.biomesParams" :key="biome.id">
-                  <LgvButton
-                    variant="blank"
-                    :style="{
-                      background:
-                        cssHoveredBiome === biome.id
-                          ? `linear-gradient(
+            <ul id="biomes__list" class="data-list">
+              <li v-for="biome in planet.data.biomesParams" :key="biome.id">
+                <LgvButton
+                  variant="blank"
+                  :style="{
+                    background:
+                      cssHoveredBiome === biome.id
+                        ? `linear-gradient(
                              to right,
                              #${biome.color.getHexString()}7f 0%,
                              transparent 40%,
                              transparent 60%,
                              #${biome.color.getHexString()}7f 100%
                            )`
-                          : '',
-                    }"
-                    @focusin="cssHoveredBiome = biome.id"
-                    @focusout="cssHoveredBiome = null"
-                    @mouseover="cssHoveredBiome = biome.id"
-                    @mouseleave="cssHoveredBiome = null"
-                  >
-                    <div class="button__container">
-                      <span
-                        class="biome__background"
-                        :style="{
-                          borderLeftColor: biome.color.getStyle(),
-                          borderRightColor: biome.color.getStyle(),
-                        }"
-                      />
-                      <p class="biome__id">{{ biome.id }}</p>
-                      <p class="biome__coords">
-                        <span class="data-value"
-                          >X&nbsp;=&nbsp;{{ (biome.humiMin * 100).toFixed(1) }} -
-                          {{ (biome.humiMax * 100).toFixed(1) }}</span
-                        >
-                        <span class="data-value"
-                          >Y&nbsp;=&nbsp;{{ (biome.tempMin * 100).toFixed(1) }} -
-                          {{ (biome.tempMax * 100).toFixed(1) }}</span
-                        >
-                      </p>
-                    </div>
-                  </LgvButton>
-                </li>
-              </ul>
-              <BiomeGraph
-                id="biomes__graph"
-                v-model="cssHoveredBiome"
-                :areas="planetBiomeAreas"
-                @area-hover="cssHoveredBiome = $event"
-                @area-leave="cssHoveredBiome = null"
-              />
-            </div>
+                        : '',
+                  }"
+                  @focusin="cssHoveredBiome = biome.id"
+                  @focusout="cssHoveredBiome = null"
+                  @mouseover="cssHoveredBiome = biome.id"
+                  @mouseleave="cssHoveredBiome = null"
+                >
+                  <div class="button__container">
+                    <span
+                      class="biome__background"
+                      :style="{
+                        borderLeftColor: biome.color.getStyle(),
+                        borderRightColor: biome.color.getStyle(),
+                      }"
+                    />
+                    <p class="biome__id">{{ biome.id }}</p>
+                    <p class="biome__coords">
+                      <span class="data-value"
+                        >X&nbsp;=&nbsp;{{ (biome.humiMin * 100).toFixed(1) }} -
+                        {{ (biome.humiMax * 100).toFixed(1) }}</span
+                      >
+                      <span class="data-value"
+                        >Y&nbsp;=&nbsp;{{ (biome.tempMin * 100).toFixed(1) }} -
+                        {{ (biome.tempMax * 100).toFixed(1) }}</span
+                      >
+                    </p>
+                  </div>
+                </LgvButton>
+              </li>
+            </ul>
+            <BiomeGraph
+              id="biomes__graph"
+              v-model="cssHoveredBiome"
+              :areas="planetBiomeAreas"
+              @ring-hover="cssHoveredBiome = $event"
+              @ring-leave="cssHoveredBiome = null"
+            />
           </div>
         </template>
 
         <!-- RINGS TAB -->
-        <template #tab-4> </template>
+        <template #tab-rings>
+          <div id="tab-rings">
+            <ul id="rings__list" class="data-list">
+              <li v-for="(ring, i) in planet.data.ringsParams" :key="ring.id">
+                <LgvButton
+                  variant="blank"
+                  :style="{
+                    background:
+                      cssHoveredRing === ring.id
+                        ? `linear-gradient(
+                             to top,
+                             var(--lg-contrast-hover) 0%,
+                             transparent 75%
+                           )`
+                        : '',
+                  }"
+                  @focusin="cssHoveredRing = ring.id"
+                  @focusout="cssHoveredRing = null"
+                  @mouseover="cssHoveredRing = ring.id"
+                  @mouseleave="cssHoveredRing = null"
+                >
+                  <div class="button__container">
+                    <span class="ring__background" />
+                    <p class="ring__id">{{ String.fromCharCode(i + 65) }}</p>
+                    <p class="ring__data">
+                      <span class="data-value">
+                        <span class="mathsymbol">r<sub>min</sub></span>
+                        <span>&nbsp;=&nbsp;</span>
+                        <span>{{ ring.innerRadius }}&nbsp;u</span>
+                      </span>
+                      <span class="data-value">
+                        <span class="mathsymbol">r<sub>max</sub></span>
+                        <span>&nbsp;=&nbsp;</span>
+                        <span>{{ ring.outerRadius }}&nbsp;u</span>
+                      </span>
+                    </p>
+                  </div>
+                </LgvButton>
+              </li>
+            </ul>
+            <RingsGraph
+              id="rings__graph"
+              v-model="cssHoveredRing"
+              :planet-preview="planet.preview"
+              :planet-radius="planet.data.planetRadius"
+              :rings="planetRings"
+              @area-hover="cssHoveredRing = $event"
+              @area-leave="cssHoveredRing = null"
+            />
+          </div>
+        </template>
       </LgvTabGroup>
     </template>
   </LgvDialog>
@@ -150,12 +200,14 @@ import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import type { LgvTabGroupExposes, LvgTabGroupTab } from '@lib/components/layout/LgvTabGroup.types.ts';
 import BiomeGraph, { type BiomeArea } from '@components/codex/graphs/BiomeGraph.vue';
 import PlanetOutlineGraph from '@components/codex/graphs/PlanetOutlineGraph.vue';
+import RingsGraph, { type Ring } from '@components/codex/graphs/RingsGraph.vue';
 import Rect from '@core/utils/math/rect.ts';
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import LgvDescriptionElement from '@lib/components/base/LgvDescriptionElement.vue';
 import LgvDescriptionList from '@lib/components/base/LgvDescriptionList.vue';
 import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import LgvBadge from '@lib/components/custom/LgvBadge.vue';
+import LgvNotification from '@lib/components/custom/LgvNotification.vue';
 import LgvPlanetHero from '@lib/components/custom/LgvPlanetHero.vue';
 import LgvTabGroup from '@lib/components/layout/LgvTabGroup.vue';
 import { computed, type ComputedRef, ref, type Ref, useTemplateRef } from 'vue';
@@ -172,7 +224,7 @@ const planet: Ref<IDBPlanet | undefined> = ref(undefined);
 const sidebarTabs: ComputedRef<LvgTabGroupTab[]> = computed(() => [
   {
     name: 'overview',
-    icon: 'material-symbols:data-table-outline',
+    icon: 'material-symbols:overview-outline',
     iconWidth: '1.5rem',
     title: i18n.t('dialog.planet_info.tabs.overview'),
   },
@@ -209,6 +261,17 @@ const planetBiomeAreas: ComputedRef<BiomeArea[]> = computed(
     })) ?? [],
 );
 
+const cssHoveredRing: Ref<string | null> = ref(null);
+const planetRings: ComputedRef<Ring[]> = computed(
+  () =>
+    planet.value?.data.ringsParams.map((r) => ({
+      id: r.id,
+      colorRamp: r.colorRamp,
+      innerRadius: r.innerRadius,
+      outerRadius: r.outerRadius,
+    })) ?? [],
+);
+
 async function open(p: IDBPlanet) {
   planet.value = p;
   sidebarRef.value?.reset();
@@ -222,7 +285,6 @@ async function open(p: IDBPlanet) {
 }
 
 #tab-overview {
-  margin: 0.5rem;
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -237,19 +299,11 @@ async function open(p: IDBPlanet) {
   }
   & > #tab-overview-features {
     flex-grow: 0;
-    height: stretch;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
-    & > .static-indicator {
-      flex: 1;
-    }
-    & > .static-value:not(:last-child),
-    .static-indicator:not(:last-child) {
-      border-bottom: 1px solid var(--lg-accent);
-    }
   }
 }
 
@@ -258,90 +312,67 @@ async function open(p: IDBPlanet) {
 
 #tab-biomes {
   width: 100%;
-  padding: 0.5rem;
+  max-height: 300px;
+  overflow: hidden;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  align-items: flex-start;
+  justify-content: center;
   gap: 0.5rem;
 
-  #biomes__container {
-    width: 100%;
-    max-height: 300px;
-    overflow: hidden;
+  #biomes__list {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
 
-    display: grid;
-    grid-template-columns: 300px 1fr;
+    display: flex;
+    flex-direction: column;
     align-items: flex-start;
-    justify-content: center;
-    gap: 0.5rem;
 
-    #biomes__list {
-      height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
+    li {
+      position: relative;
+      padding: 0;
+      width: 100%;
+      border-bottom: 1px solid var(--lg-accent);
 
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-
-      li {
-        position: relative;
-        padding: 0;
+      button {
         width: 100%;
-        border-bottom: 1px solid var(--lg-accent);
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 4px;
-
-        button {
-          width: 100%;
-          height: stretch;
-          padding: 0.25rem;
-          .button__container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-          }
-        }
-
-        .biome__background {
-          position: absolute;
-          inset: 4px 0;
-          border-style: solid;
-          border-width: 4px;
-          border-top-color: transparent;
-          border-bottom-color: transparent;
-        }
-        .biome__id {
-          z-index: 1;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: 16ch;
-        }
-        .biome__coords {
-          z-index: 1;
-          font-size: 12px;
+        padding: 0.25rem;
+        .button__container {
           display: flex;
+          flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 0.5rem;
-        }
-        .data-value {
-          padding: 0.125rem 0.25rem;
-          background: var(--lg-panel);
-          border: 1px solid var(--lg-input);
         }
       }
-      li:last-child {
-        border-bottom: none;
+
+      .biome__background {
+        position: absolute;
+        inset: 4px 0;
+        border-style: solid;
+        border-width: 4px;
+        border-top-color: transparent;
+        border-bottom-color: transparent;
       }
+      .biome__id {
+        z-index: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 16ch;
+      }
+      .biome__coords {
+        z-index: 1;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+    }
+    li:last-child {
+      border-bottom: none;
     }
   }
 }
@@ -350,10 +381,66 @@ async function open(p: IDBPlanet) {
   height: 100%;
   width: 100%;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-items: flex-start;
+  gap: 0.5rem;
+
+  #rings__list {
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    li {
+      position: relative;
+      padding: 0;
+      height: 100%;
+      list-style-type: none;
+
+      button {
+        width: 100%;
+        padding: 0.25rem;
+        .button__container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+      }
+
+      .ring__background {
+        position: absolute;
+        inset: 0;
+        border-width: 3px;
+        border-style: solid;
+        border-color: transparent;
+        border-bottom-color: var(--lg-contrast);
+      }
+      .ring__id {
+        z-index: 1;
+        font-size: 20px;
+        margin-left: 6px;
+      }
+      .ring__data {
+        z-index: 1;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+    }
+  }
+}
+
+.data-value {
+  padding: 0.125rem 0.25rem;
+  background: var(--lg-panel);
+  border: 1px solid var(--lg-input);
 }
 
 @media screen and (max-width: 767px) {

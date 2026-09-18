@@ -111,7 +111,7 @@ defineProps<{ planet: PlanetData }>();
   );
 
   .graph {
-    height: stretch;
+    height: 100%;
     padding: 0.5rem;
     display: grid;
     grid-template-columns: auto 1fr auto;

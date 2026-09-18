@@ -1,11 +1,10 @@
 <template>
-  <select :id="id" v-model="model" class="lgv">
+  <select v-model="model" class="lgv">
     <slot name="options"></slot>
   </select>
 </template>
 
 <script setup lang="ts">
-defineProps<{ id: string }>();
 const model = defineModel<unknown>();
 </script>
 

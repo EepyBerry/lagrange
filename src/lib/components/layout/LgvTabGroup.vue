@@ -139,9 +139,8 @@ function getTabIndex(tabName: string): number {
   }
   & > .tabgroup-content {
     grid-row: 2;
-    margin-top: 1px;
+    margin: calc(0.5rem + 1px) 0.5rem 0.5rem;
     overflow-y: auto;
-    height: 100%;
 
     display: flex;
     flex-direction: column;

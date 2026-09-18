@@ -1,3 +1,4 @@
+<script setup lang="ts"></script>
 <template>
   <dl class="lgv">
     <slot></slot>
@@ -7,7 +8,6 @@
 <style scoped lang="scss">
 dl.lgv {
   flex-grow: 0;
-  height: stretch;
   display: flex;
   flex-direction: column;
   align-items: center;

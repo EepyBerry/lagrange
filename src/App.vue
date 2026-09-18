@@ -33,6 +33,7 @@
   <AppInitDialog
     ref="initDialog"
     :keybinds="keybinds"
+    @mounted="openInitDialog"
     @disable-init-dialog="disableInitDialog"
     @enable-persistence="enablePersistence"
   />
@@ -41,6 +42,7 @@
 </template>
 
 <script setup lang="ts">
+import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import AppToastBar from '@components/global/AppToastBar.vue';
 import ExtraSpecialDayElement from '@components/global/extras/ExtraSpecialDayElement.vue';
 import { UIEventBus } from '@core/ui-event-bus.ts';
@@ -48,7 +50,7 @@ import LgvButton from '@lib/components/base/LgvButton.vue';
 import LgvLink from '@lib/components/base/LgvLink.vue';
 import LgvFooter from '@lib/components/main/LgvFooter.vue';
 import { useHead } from '@unhead/vue';
-import { defineAsyncComponent, onMounted, ref, type Ref } from 'vue';
+import { defineAsyncComponent, onMounted, ref, useTemplateRef, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import * as DexieService from '@/core/services/dexie.service';
 import { idb, type IDBKeyBinding, type IDBSettings } from '@/dexie.config';
@@ -71,7 +73,7 @@ useHead({
   meta: [{ name: 'description', content: 'A procedural planet-building application!' }],
 });
 
-const initDialog: Ref<{ open: () => void; close: () => void } | null> = ref(null);
+const initDialog = useTemplateRef<LgvDialogExposes>('initDialog');
 const infoDialog: Ref<{ open: () => void; close: () => void } | null> = ref(null);
 const settingsDialog: Ref<{ open: () => void; close: () => void } | null> = ref(null);
 
@@ -103,12 +105,14 @@ onMounted(async () => {
   EXTRAS_HOLOGRAM_EFFECT.value = settings.value!.extrasHologramEffect ?? false;
   EXTRAS_METAL_SLUG_MODE.value = settings.value!.extrasMetalSlugMode ?? false;
   EXTRAS_SPECIAL_DAYS.value = settings.value!.extrasShowSpecialDays ?? true;
+});
 
-  // Open init dialog if necessary
+function openInitDialog() {
   if (settings.value?.showInitDialog) {
+    console.log(initDialog.value);
     initDialog.value?.open();
   }
-});
+}
 
 async function initDexie() {
   settings.value = await DexieService.initSettings();

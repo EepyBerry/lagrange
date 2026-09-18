@@ -3,6 +3,7 @@
     id="dialog-warn-save"
     ref="dialogRef"
     :is-warn="true"
+    :pad-content="true"
     :show-title="true"
     :show-actions="true"
     :closeable="true"
@@ -14,7 +15,7 @@
       {{ $t('dialog.confirm_warnsave.$title') }}
     </template>
     <template #content>
-      <div class="warn-text">
+      <div id="warn-text">
         <p>{{ $t('dialog.confirm_warnsave.message') }}</p>
         <p>
           <b>{{ $t('dialog.confirm_warnsave.warning') }}</b>
@@ -22,13 +23,23 @@
       </div>
     </template>
     <template #actions>
-      <LgvButton icon="mingcute:close-line" @click="dialogRef?.close()">
+      <LgvButton :tabindex="dialogRef?.isOpen ? 0 : undefined" icon="mingcute:close-line" @click="dialogRef?.close()">
         {{ $t('dialog.confirm_warnsave.$action_cancel') }}
       </LgvButton>
-      <LgvButton class="success" icon="mingcute:save-2-line" @click="saveConfirmClose">
+      <LgvButton
+        :tabindex="dialogRef?.isOpen ? 1 : undefined"
+        class="success"
+        icon="mingcute:save-2-line"
+        @click="saveConfirmClose"
+      >
         {{ $t('dialog.confirm_warnsave.$action_saveconfirm') }}
       </LgvButton>
-      <LgvButton class="warn" icon="mingcute:exit-line" @click="confirmAndClose">
+      <LgvButton
+        :tabindex="dialogRef?.isOpen ? 2 : undefined"
+        class="warn"
+        icon="mingcute:exit-line"
+        @click="confirmAndClose"
+      >
         {{ $t('dialog.confirm_warnsave.$action_confirm') }}
       </LgvButton>
     </template>
@@ -59,9 +70,9 @@ function confirmAndClose() {
 <style scoped lang="scss">
 #dialog-warn-save {
   min-width: 24rem;
-  .warn-text {
+  #warn-text {
+    padding: 1rem 0.5rem;
     text-align: center;
-    font-size: 1rem;
   }
 }
 @media screen and (max-width: 567px) {

@@ -178,7 +178,7 @@ import CollapsibleSection from '@components/global/elements/CollapsibleSection.v
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import LgvNotification from '@lib/components/custom/LgvNotification.vue';
-import { ref, useTemplateRef } from 'vue';
+import { onMounted, ref, useTemplateRef } from 'vue';
 import type { IDBKeyBinding } from '@/dexie.config';
 
 const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
@@ -187,8 +187,10 @@ defineExpose<InitDialogExposes>({ open: () => dialogRef.value?.open!() });
 const shouldShowOnNextVisits = ref(true);
 const shouldEnableStoragePersistence = ref(true);
 
-const $emit = defineEmits(['disableInitDialog', 'enablePersistence']);
+const $emit = defineEmits(['mounted', 'disableInitDialog', 'enablePersistence']);
 defineProps<{ keybinds: IDBKeyBinding[] }>();
+
+onMounted(() => $emit('mounted'));
 
 function doClose() {
   if (!shouldShowOnNextVisits.value) {

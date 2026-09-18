@@ -13,7 +13,7 @@
       {{ $t('dialog.confirm_delete.$title', { planet: planet?.data.planetName ?? 'PLANET_NAME' }) }}
     </template>
     <template #content>
-      <div class="delete-text">
+      <div id="delete-text">
         <p>{{ $t('dialog.confirm_delete.message') }}</p>
         <p>
           <strong>{{ $t('dialog.confirm_delete.warning') }}</strong>
@@ -61,10 +61,9 @@ function close(confirm: boolean) {
 <style scoped lang="scss">
 #dialog-delete-confirm {
   min-width: 24rem;
-  .delete-text {
+  #delete-text {
     padding: 1rem 0.5rem;
     text-align: center;
-    font-size: 1rem;
   }
 }
 @media screen and (max-width: 567px) {

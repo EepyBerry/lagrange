@@ -9,9 +9,9 @@
         <span class="axis-y grads" />
         <div
           class="rect"
-          :class="{ hover: hoveredBiome === area.id }"
           v-for="(area, index) in areas.toReversed()"
           :key="index"
+          :class="{ hover: hoveredBiome === area.id }"
           :style="{
             left: `${100 * area.rect.x}%`,
             bottom: `${100 * area.rect.y}%`,
@@ -53,6 +53,7 @@ function resetHover() {
   padding: 1px;
   width: 100%;
   height: 100%;
+  min-height: 240px;
   background: var(--lg-accent);
 
   clip-path: polygon(
@@ -72,8 +73,7 @@ function resetHover() {
   $background-color: var(--lg-panel);
   $border-color: var(--lg-input);
 
-  min-height: 240px;
-  height: stretch;
+  height: 100%;
   padding: 1.5rem;
   display: flex;
   background: $background-color;

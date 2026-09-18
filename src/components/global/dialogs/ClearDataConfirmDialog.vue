@@ -13,7 +13,7 @@
       {{ $t('dialog.confirm_clear_data.$title') }}
     </template>
     <template #content>
-      <div class="clear-data-text">
+      <div id="clear-data-text">
         <p>{{ $t('dialog.confirm_clear_data.message') }}</p>
         <p>
           <strong>{{ $t('dialog.confirm_clear_data.warning') }}</strong>
@@ -54,9 +54,9 @@ function close(confirm: boolean) {
 #dialog-clear-data-confirm {
   z-index: 20;
   min-width: 24rem;
-  .clear-data-text {
+  #clear-data-text {
+    padding: 1rem 0.5rem;
     text-align: center;
-    font-size: 1rem;
   }
 }
 @media screen and (max-width: 567px) {

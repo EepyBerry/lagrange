@@ -59,7 +59,7 @@ const handleClick = (evt: Event) => {
   }
 };
 
-const $emit = defineEmits(['open', 'close']);
+const $emit = defineEmits(['mounted', 'open', 'close']);
 defineExpose<LgvDialogExposes>({ open, close, ignoreNativeEvents, isOpen: dialog.value?.open ?? false });
 
 const $props = defineProps<{
@@ -73,6 +73,7 @@ const $props = defineProps<{
 onMounted(() => {
   dialog.value?.addEventListener('click', handleClick);
   dialog.value?.addEventListener('cancel', handleCancel);
+  $emit('mounted');
 });
 onBeforeUnmount(() => {
   dialog.value?.removeEventListener('click', handleClick);
@@ -172,12 +173,14 @@ dialog[open] {
     gap: 0;
 
     .dialog-header {
-      padding: 1rem 4rem 1rem 1rem;
+      padding: 0.875rem 4rem 0.75rem 0.75rem;
+      font-weight: 600;
+      color: var(--lg-text);
+
       display: flex;
 
       .dialog-title {
-        color: var(--lg-text);
-        font-weight: 600;
+        font-size: 1.25rem;
       }
     }
 
@@ -186,7 +189,7 @@ dialog[open] {
       overflow-y: auto;
 
       background: var(--lg-primary);
-      font-size: 0.875rem;
+      font-size: 0.9375rem;
 
       display: flex;
       flex-direction: column;
@@ -246,16 +249,21 @@ dialog[open].warn {
   & > div {
     background: var(--lg-warn-panel);
     .dialog-header,
-    .dialog-content,
     .dialog-actions {
       background: var(--lg-warn-panel);
       scrollbar-color: var(--lg-warn) var(--code-background);
       border-color: var(--lg-warn);
     }
-    .dialog-content > .dialog-content__layout {
-      border-top: var(--lg-var-border-width) solid var(--lg-warn);
-      & > .dialog-content__spacing {
-        border-color: var(--lg-warn);
+    .dialog-content {
+      background: var(--lg-warn-dark);
+      scrollbar-color: var(--lg-warn) var(--code-background);
+      border-color: var(--lg-warn);
+
+      & > .dialog-content__layout {
+        border-top: var(--lg-var-border-width) solid var(--lg-warn);
+        & > .dialog-content__spacing {
+          border-color: var(--lg-warn);
+        }
       }
     }
   }
@@ -298,6 +306,14 @@ dialog[open] > .deco {
   }
 }
 
+@media screen and (max-width: 767px) {
+  dialog[open] > div > .dialog-header > .dialog-title {
+    font-size: 1.5rem;
+  }
+  dialog[open] > div > .dialog-content {
+    font-size: 1rem;
+  }
+}
 @media screen and (max-width: 567px) {
   dialog[open] {
     width: 100%;

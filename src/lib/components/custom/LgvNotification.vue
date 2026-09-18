@@ -7,6 +7,7 @@
     <div class="notification-icon">
       <iconify-icon v-if="type === 'info'" icon="material-symbols:info-outline" width="1.375rem" aria-hidden="true" />
       <iconify-icon v-if="type === 'warn'" icon="material-symbols:warning" width="1.375rem" aria-hidden="true" />
+      <iconify-icon v-if="type === 'wip'" icon="ph:traffic-cone-fill" width="1.375rem" aria-hidden="true" />
     </div>
     <div class="notification-content">
       <slot></slot>
@@ -67,8 +68,9 @@ defineProps<{ type: EditorMessageLevel }>();
   $corner-length: 10px;
   flex: 0;
   position: relative;
-  height: 100%;
-  display: flex;
+  min-height: 2.25rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
   align-items: center;
   font-size: 0.875rem;
   text-wrap: wrap;
@@ -111,7 +113,8 @@ defineProps<{ type: EditorMessageLevel }>();
       }
     }
   }
-  &.warn {
+  &.warn,
+  &.wip {
     border-color: var(--lg-warn);
     background: var(--lg-warn-panel);
     .deco {
@@ -124,16 +127,17 @@ defineProps<{ type: EditorMessageLevel }>();
       }
     }
   }
-}
-.notification-content {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-}
-.notification-icon {
-  padding: 0 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+
+  .notification-content {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+  }
+  .notification-icon {
+    height: 100%;
+    padding: 0 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 </style>

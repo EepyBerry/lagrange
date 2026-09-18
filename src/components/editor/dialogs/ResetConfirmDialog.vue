@@ -13,7 +13,7 @@
       {{ $t('dialog.confirm_reset.$title') }}
     </template>
     <template #content>
-      <div class="reset-text">
+      <div id="reset-text">
         <p>{{ $t('dialog.confirm_reset.message') }}</p>
         <p>
           <b>{{ $t('dialog.confirm_reset.warning') }}</b>
@@ -50,9 +50,9 @@ function confirmAndClose() {
 <style scoped lang="scss">
 #dialog-reset-confirm {
   min-width: 24rem;
-  .reset-text {
+  #reset-text {
+    padding: 1rem 0.5rem;
     text-align: center;
-    font-size: 1rem;
   }
 }
 @media screen and (max-width: 567px) {
