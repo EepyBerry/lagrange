@@ -70,7 +70,6 @@ export interface SerializedPlanetData {
   initCamDistance: number;
   initCamAngle: number;
   lensFlareEnabled: boolean;
-  lensFlarePointsIntensity: number;
   lensFlareGlareIntensity: number;
   sunLightAngle: number;
   sunLightColor: SerializedColor;

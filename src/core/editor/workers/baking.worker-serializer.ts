@@ -23,7 +23,6 @@ export function serializeBakingWorkerData(planetData: PlanetData): SerializedPla
     initCamDistance: planetData.initCamDistance,
     initCamAngle: planetData.initCamAngle,
     lensFlareEnabled: planetData.lensFlareEnabled,
-    lensFlarePointsIntensity: planetData.lensFlarePointsIntensity,
     lensFlareGlareIntensity: planetData.lensFlareGlareIntensity,
     sunLightAngle: planetData.sunLightAngle,
     sunLightColor: { r: planetData.sunLightColor.r, g: planetData.sunLightColor.g, b: planetData.sunLightColor.b },

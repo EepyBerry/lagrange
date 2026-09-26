@@ -1,33 +1,5 @@
 <template>
   <ParameterGrid>
-    <ParameterGroup
-      v-model="EDITOR_STATE.planetData.lensFlareEnabled"
-      :toggleable="EDITOR_STATE.planetData.lensFlareEnabled"
-    >
-      <template #title>{{ $t('editor.lighting.lensflare') }}</template>
-      <template #content>
-        <template v-if="EDITOR_STATE.planetData.lensFlareEnabled">
-          <ParameterSlider
-            id="f-pointsint"
-            v-model="EDITOR_STATE.planetData.lensFlarePointsIntensity"
-            :step="0.01"
-            :min="0"
-            :max="1"
-          >
-            {{ $t('editor.lighting.lensflare_points_intensity') }}
-          </ParameterSlider>
-          <ParameterSlider
-            id="f-glareint"
-            v-model="EDITOR_STATE.planetData.lensFlareGlareIntensity"
-            :step="0.01"
-            :min="0"
-            :max="1"
-          >
-            {{ $t('editor.lighting.lensflare_glare_intensity') }}
-          </ParameterSlider>
-        </template>
-      </template>
-    </ParameterGroup>
     <ParameterGroup :toggleable="true">
       <template #title>{{ $t('editor.lighting.sunlight') }}</template>
       <template #content>
@@ -51,6 +23,51 @@
         <ParameterColor v-model="EDITOR_STATE.planetData.ambLightColor">
           {{ $t('editor.lighting.amblight_color') }}
         </ParameterColor>
+      </template>
+    </ParameterGroup>
+    <ParameterGroup
+      v-model="EDITOR_STATE.planetData.lensFlareEnabled"
+      :toggleable="EDITOR_STATE.planetData.lensFlareEnabled"
+    >
+      <template #title>{{ $t('editor.lighting.lensflare') }}</template>
+      <template #content>
+        <template v-if="EDITOR_STATE.planetData.lensFlareEnabled">
+          <ParameterSlider
+            id="f-glareint"
+            v-model="EDITOR_STATE.planetData.lensFlareGlareIntensity"
+            :step="0.01"
+            :min="0"
+            :max="1"
+          >
+            {{ $t('editor.lighting.lensflare_glare_intensity') }}
+          </ParameterSlider>
+        </template>
+      </template>
+    </ParameterGroup>
+    <ParameterGroup
+      v-model="EDITOR_STATE.planetData.planetShowEmissive"
+      :toggleable="EDITOR_STATE.planetData.planetShowEmissive"
+    >
+      <template #title>{{ $t('editor.planet_rendering.emissivity') }}</template>
+      <template #content>
+        <ParameterSlider
+          id="e-wemissive"
+          v-model="EDITOR_STATE.planetData.planetWaterEmissiveIntensity"
+          :step="0.01"
+          :min="0"
+          :max="10"
+        >
+          {{ $t('editor.planet_rendering.emissivity_waterintensity') }}
+        </ParameterSlider>
+        <ParameterSlider
+          id="e-gemissive"
+          v-model="EDITOR_STATE.planetData.planetGroundEmissiveIntensity"
+          :step="0.01"
+          :min="0"
+          :max="10"
+        >
+          {{ $t('editor.planet_rendering.emissivity_groundintensity') }}
+        </ParameterSlider>
       </template>
     </ParameterGroup>
   </ParameterGrid>

@@ -8,11 +8,15 @@
     target="_blank"
     rel="noopener noreferrer nofollow"
   >
-    <iconify-icon v-if="icon" :icon="icon" :width="iconWidth" aria-hidden="true" />
+    <span class="__icon">
+      <iconify-icon v-if="icon" :icon="icon" :width="iconWidth" aria-hidden="true" />
+    </span>
     <slot></slot>
   </a>
   <RouterLink v-else class="lgv" :to="href ?? '/'">
-    <iconify-icon v-if="icon" :icon="icon" :width="iconWidth" aria-hidden="true" />
+    <span class="__icon">
+      <iconify-icon v-if="icon" :icon="icon" :width="iconWidth" aria-hidden="true" />
+    </span>
     <slot></slot>
   </RouterLink>
 </template>
@@ -43,6 +47,13 @@ a.lgv {
   position: relative;
   color: var(--lg-link);
   cursor: pointer;
+
+  .__icon {
+    position: relative;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+  }
 
   &:visited {
     color: var(--lg-link-visited);
@@ -159,12 +170,12 @@ a.lgv[variant='icon'] {
   align-items: center;
   justify-content: center;
 
-  &.external::before {
+  &.external > .__icon::before {
     z-index: 1;
     content: '';
     position: absolute;
-    top: 0;
-    right: 0;
+    top: -0.125rem;
+    right: -0.125rem;
 
     width: 0;
     height: 0;
@@ -173,14 +184,14 @@ a.lgv[variant='icon'] {
     border-color: transparent white transparent transparent;
   }
 
-  &:hover {
+  &:hover > .__icon {
     color: var(--lg-button-icon-hover);
     transform: scale(1.05);
-    &.external::before {
+    &::before {
       border-right-color: var(--lg-button-icon-hover);
     }
   }
-  &:active {
+  &:active > .__icon {
     color: var(--lg-button-icon-active);
     transform: scale(0.95);
     &.external::before {
@@ -193,10 +204,6 @@ a.lgv[variant='icon'] {
       border-right-color: var(--lg-button-icon-disabled);
     }
   }
-}
-a.lgv[variant='icon'].external::before {
-  top: 3px;
-  right: 3px;
 }
 
 // router states

@@ -1,6 +1,15 @@
 <template>
-  <LgvHeader>
-    <div class="name-wrapper">
+  <div id="editor-header">
+    <div id="editor-header-nav">
+      <LgvLink
+        id="editor-header-link-codex"
+        variant="icon"
+        link-type="internal"
+        icon="material-symbols:home-outline"
+        iconWidth="1.5rem"
+      />
+    </div>
+    <div id="editor-header-naming">
       <input
         v-if="editMode"
         ref="planetNameInput"
@@ -21,25 +30,31 @@
         @click="toggleEditMode"
       />
     </div>
-    <hr />
-    <LgvButton variant="icon" icon="tabler:reload" :a11y-label="$t('main.header.reset')" @click="resetDialog!.open()" />
-    <LgvButton
-      id="planet-info__randomize-menu-trigger"
-      ref="randomMenuTrigger"
-      variant="icon"
-      icon="mingcute:shuffle-2-fill"
-      :class="{ active: isRandomMenuOpen }"
-      :a11y-label="$t('main.header.menu_random')"
-    />
-    <LgvButton
-      id="planet-info__save-menu-trigger"
-      ref="saveMenuTrigger"
-      variant="icon"
-      :icon="isSaveMenuOpen ? 'mdi:content-save-minus-outline' : 'mdi:content-save-plus-outline'"
-      :class="{ active: isSaveMenuOpen }"
-      :a11y-label="$t('main.header.menu_save')"
-    />
-  </LgvHeader>
+    <div id="editor-header-actions">
+      <LgvButton
+        variant="icon"
+        icon="tabler:reload"
+        :a11y-label="$t('main.header.reset')"
+        @click="resetDialog!.open()"
+      />
+      <LgvButton
+        id="planet-info__randomize-menu-trigger"
+        ref="randomMenuTrigger"
+        variant="icon"
+        icon="mingcute:shuffle-2-fill"
+        :class="{ active: isRandomMenuOpen }"
+        :a11y-label="$t('main.header.menu_random')"
+      />
+      <LgvButton
+        id="planet-info__save-menu-trigger"
+        ref="saveMenuTrigger"
+        variant="icon"
+        :icon="isSaveMenuOpen ? 'mdi:content-save-minus-outline' : 'mdi:content-save-plus-outline'"
+        :class="{ active: isSaveMenuOpen }"
+        :a11y-label="$t('main.header.menu_save')"
+      />
+    </div>
+  </div>
 
   <!------ BEGIN floating menus ------>
   <div id="randomizer-menu" ref="randomMenu" class="floating" :style="randomFloating.floatingStyles.value">
@@ -97,8 +112,9 @@ import { UIEventBus } from '@core/ui-event-bus.ts';
 import * as MathUtils from '@core/utils/math-utils';
 import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
 import LgvButton from '@lib/components/base/LgvButton.vue';
-import LgvHeader from '@lib/components/main/LgvHeader.vue';
-import { ref, useTemplateRef, watch, type Ref } from 'vue';
+import LgvLink from '@lib/components/base/LgvLink.vue';
+import { useEventListener } from '@vueuse/core';
+import { ref, useTemplateRef, type Ref } from 'vue';
 import AppResetConfirmDialog from './dialogs/ResetConfirmDialog.vue';
 
 // floating-ui start
@@ -125,10 +141,8 @@ const editMode: Ref<boolean> = ref(false);
 const planetNameInput: Ref<HTMLInputElement | null> = ref(null);
 const resetDialog: Ref<{ open: () => void } | null> = ref(null);
 
-watch(
-  () => UIEventBus.clickEvent.value,
-  (evt) => onWindowClick(evt!),
-);
+useEventListener(window, 'click', onWindowClick);
+
 const $emit = defineEmits(['rename', 'reset', 'save', 'copy', 'extract-textures', 'gltf', 'random']);
 
 function onWindowClick(evt: MouseEvent) {
@@ -183,27 +197,50 @@ function toggleSaveMenu(override?: boolean) {
 </script>
 
 <style scoped lang="scss">
-.name-wrapper {
+#editor-header {
+  z-index: 1;
+  position: relative;
+  height: 2.75rem;
   background: var(--lg-primary);
-  border-radius: 2px;
-  height: 2.5rem;
-  margin-left: 1rem;
+  border-bottom: var(--lg-var-border-width) solid var(--lg-accent);
 
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: space-between;
 
-  input {
-    width: 24ch;
-    height: 2rem;
-    font-size: 0.875rem;
-    font-family: Poppins, Inter, sans-serif;
+  #editor-header-link-codex {
+    border-right: var(--lg-var-border-width) solid var(--lg-accent);
   }
-  p {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 24ch;
+  #editor-header-naming {
+    width: 100%;
+    border-radius: 2px;
+    height: 2.5rem;
+    padding: 0 0.5rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+
+    input {
+      width: 24ch;
+      height: 2rem;
+      font-size: 0.875rem;
+      font-family: Poppins, Inter, sans-serif;
+    }
+    p {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 24ch;
+    }
+  }
+  #editor-header-actions {
+    padding: 0 0.5rem;
+    display: flex;
+    border-left: var(--lg-var-border-width) solid var(--lg-accent);
+    justify-self: flex-end;
   }
 }
 #randomizer-menu {
@@ -222,23 +259,14 @@ function toggleSaveMenu(override?: boolean) {
 }
 
 @media screen and (max-width: 767px) {
-  .name-wrapper {
-    flex: 1;
-    height: 2.75rem;
-    font-size: 1em;
-    justify-content: space-between;
-    width: 0;
+  #editor-header {
+    #editor-header-naming {
+      min-width: 0;
 
-    input {
-      width: 100%;
+      input {
+        min-width: 0;
+      }
     }
-    p {
-      max-width: 100%;
-    }
-  }
-  button {
-    width: 2.75rem;
-    height: 2.75rem;
   }
 }
 </style>

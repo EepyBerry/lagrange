@@ -1,15 +1,14 @@
-import { CanvasTexture, Group, LinearSRGBColorSpace, RenderTarget } from 'three';
-import * as Globals from '@core/globals'
+import { CanvasTexture, Group, LinearSRGBColorSpace, RenderTarget, Spherical } from 'three';
 import * as SceneHelper from './scene.helper'
 import type PlanetData from '@core/models/planet/planet-data.model.ts';
-import { degToRad } from 'three/src/math/MathUtils.js';
 import { EditorSceneCreationMode, type EditorSceneData } from '../types';
 import { blobToDataURL, renderToCanvas } from '../utils/render-utils';
 import { RenderPipeline } from 'three/webgpu';
 import { pass } from 'three/tsl';
 import { sleep } from "@core/utils/utils.ts";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-export async function generatePlanetPreview(data: PlanetData): Promise<string> {
+export async function generatePlanetPreview(data: PlanetData, orbitControls: OrbitControls): Promise<string> {
   try {
     const w = 384, h = 384;
     const previewRenderTarget = new RenderTarget(w, h, { colorSpace: LinearSRGBColorSpace });
@@ -21,7 +20,14 @@ export async function generatePlanetPreview(data: PlanetData): Promise<string> {
 
     // ------------------------- Initialize scene & components --------------------------
     await SceneHelper.buildEditorScene(data, previewSceneData, w, h, w/h, EditorSceneCreationMode.Preview);
-    previewSceneData.camera!.setRotationFromAxisAngle(Globals.AXIS_Y, degToRad(data.initCamAngle));
+    const orbit = new Spherical(
+      data.initCamDistance - 1.5,
+      orbitControls.getPolarAngle(),
+      orbitControls.getAzimuthalAngle()
+    );
+    orbit.makeSafe();
+    previewSceneData.camera!.position.setFromSpherical(orbit);
+    previewSceneData.camera!.lookAt(orbitControls.target);
     previewSceneData.camera!.updateProjectionMatrix();
     previewSceneData.lensFlare!.mesh.visible = false;
 

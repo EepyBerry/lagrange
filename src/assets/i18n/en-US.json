@@ -338,6 +338,24 @@
       "emissive_intensity": "Emissive intensity",
       "detail_noise_strength": "Detail noise strength"
     },
+    "inspector": {
+      "features": {
+        "$title": "Features",
+        "data": "Object data",
+        "transform": "Transform",
+        "rendering": "Rendering",
+        "lighting": "Lighting",
+        "surface": "Surface",
+        "biomes": "Biomes",
+        "cracks": "Cracks",
+        "craters": "Craters",
+        "clouds": "Clouds",
+        "atmosphere": "Atmosphere",
+        "rings": "Rings",
+        "postprocessing": "Post-processing"
+      },
+      "controls": {}
+    },
     "basic_data": {
       "$title": "Basic Data",
       "classification": "Classification",
@@ -536,7 +554,9 @@
     "action_add_colorstep": "Add color step",
     "action_sort_colorsteps": "Sort color steps",
     "action_close_dialog": "Close dialog",
-    "action_close_toast": "Close message"
+    "action_close_toast": "Close message",
+    "action_resize_horizontal": "Resize horizontally (arrow keys)",
+    "action_resize_vertical": "Resize vertically (arrow keys)"
   },
   "extras": {
     "day_newyear": "Happy New Year!",

@@ -47,10 +47,10 @@ watch(
 //                                           BOOTSTRAPPING                                          //
 // ------------------------------------------------------------------------------------------------ //
 
-export async function bootstrapEditor(sceneRoot: HTMLElement, w: number, h: number, pixelRatio: number) {
+export async function bootstrapEditor(canvasElement: HTMLCanvasElement, w: number, h: number, pixelRatio: number) {
   EDITOR_STATE.value.status = EditorStatusCode.Initialization;
   initEditorWorkers();
-  await initEditorSceneAndRendering(sceneRoot, w, h, pixelRatio);
+  await initEditorSceneAndRendering(canvasElement, w, h, pixelRatio);
   initEditorEventSystem();
   EDITOR_STATE.value.status = EditorStatusCode.Edition;
 
@@ -62,7 +62,7 @@ export async function bootstrapEditor(sceneRoot: HTMLElement, w: number, h: numb
 }
 
 async function initEditorSceneAndRendering(
-  sceneRoot: HTMLElement,
+  canvasElement: HTMLCanvasElement,
   w: number,
   h: number,
   pixelRatio: number,
@@ -74,6 +74,7 @@ async function initEditorSceneAndRendering(
     h,
     pixelRatio,
     EditorSceneCreationMode.Editor,
+    canvasElement,
   );
   EDITOR_SCENE_DATA.orbitControls = await ComponentHelper.createOrbitControls(
     EDITOR_SCENE_DATA.camera!,
@@ -87,7 +88,6 @@ async function initEditorSceneAndRendering(
   EDITOR_SCENE_DATA.renderer!.setSize(w, h);
   await EDITOR_SCENE_DATA.renderer!.setAnimationLoop(() => renderFrame());
   EDITOR_SCENE_DATA.renderer!.domElement.ariaLabel = '3D planet viewer';
-  sceneRoot.appendChild(EDITOR_SCENE_DATA.renderer!.domElement);
 
   // Connect renderPipeline
   EDITOR_SCENE_DATA.renderPipeline = ComponentHelper.createRenderPipeline(
@@ -239,20 +239,16 @@ export function unloadEditor() {
 
 function renderFrame() {
   EDITOR_SCENE_DATA.timer!.update();
-  EDITOR_SCENE_DATA.lensFlare!.update(
-    EDITOR_SCENE_DATA.renderer!,
-    EDITOR_SCENE_DATA.scene!,
-    EDITOR_SCENE_DATA.camera!,
-    EDITOR_SCENE_DATA.timer!,
-  );
+  EDITOR_SCENE_DATA.lensFlare!.update(EDITOR_SCENE_DATA.renderer!, EDITOR_SCENE_DATA.scene!, EDITOR_SCENE_DATA.camera!);
   //editorSceneData.renderer.render(editorSceneData.scene, editorSceneData.camera);
   EDITOR_SCENE_DATA.renderPipeline?.pipeline.render();
 }
 
 export function updateCameraRendering(w: number, h: number) {
+  EDITOR_SCENE_DATA.renderer!.setSize(w, h);
   EDITOR_SCENE_DATA.camera!.aspect = w / h;
   EDITOR_SCENE_DATA.camera!.updateProjectionMatrix();
-  EDITOR_SCENE_DATA.renderer!.setSize(w, h);
+  EDITOR_SCENE_DATA.renderPipeline?.pipeline.render();
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -322,7 +318,10 @@ export async function exportPlanetPreview(): Promise<string> {
   EDITOR_STATE.value.status = EditorStatusCode.PreviewGeneration;
   await sleep(50);
   EDITOR_SCENE_DATA.lensFlare!.mesh.visible = false;
-  const dataURL = await PreviewHelper.generatePlanetPreview(EDITOR_STATE.value.planetData);
+  const dataURL = await PreviewHelper.generatePlanetPreview(
+    EDITOR_STATE.value.planetData,
+    EDITOR_SCENE_DATA.orbitControls!,
+  );
   EDITOR_SCENE_DATA.lensFlare!.mesh.visible = EDITOR_STATE.value.planetData.lensFlareEnabled;
   EDITOR_STATE.value.status = EditorStatusCode.Edition;
   return dataURL;

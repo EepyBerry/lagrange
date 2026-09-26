@@ -79,7 +79,7 @@
       "welcome": "Bienvenue dans @:main.$title",
       "introduction": "Lagrange est un outils de création de planètes entièrement procédural, parfait pour vos besoins narratifs autour de planètes, systèmes solaires, ou même de galaxies entières !",
       "update_title": "Mise à jour 0.6 - Cosmic Collapse",
-      "update_brief": "Ajoute craquelures, cratères, l'export de textures et une interface améliorée ! Rendez vos mondes encore plus variés en les exposant à la colère de l'univers !",
+      "update_brief": "Ajoute failles, cratères, l'export de textures et une interface améliorée ! Rendez vos mondes encore plus variés en les exposant à la colère de l'univers !",
       "$tmp_wip": "En cours de développement. Nouvelles fonctionnalités à venir dans les prochaines versions !",
       "keybinds": "@:dialog.settings.keybinds",
       "keybinds_note": "Les raccourcis sont modifiables dans les paramètres !",
@@ -123,7 +123,7 @@
         "class": "Class",
         "features": "Features",
         "has_biomes": "Biomes",
-        "has_cracks": "Craquelures",
+        "has_cracks": "Failles",
         "has_craters": "Cratères",
         "has_clouds": "Nuages",
         "has_atmosphere": "Atmosphère",
@@ -236,7 +236,7 @@
         "052_skyboxes": "(0.5.2) Nouvelles skyboxes dans l'éditeur pour plus de variété dans vos captures d'écran. Inclut un fond Chroma Key!",
         "052_controls": "(0.5.2) Ajout de contrôles et raccourcis pour la caméra (dolly, champ de vision, rotation)",
         "06_title": "Mise à jour 0.6 - Cosmic Collapse",
-        "06_crackscraters": "Ajoute la possibilité de placer des craquelures et cratères sur la surface!",
+        "06_crackscraters": "Ajoute la possibilité de placer des failles et cratères sur la surface!",
         "06_texture": "Nouvelle option d'export de textures dans l'Éditeur ! Vous pouvez maintenant les récupérer sans avoir à exporter la planète entière.",
         "06_ui": "Remet l'interface au goût du jour pour mieux intégrer les prochaines fonctionnalités"
       },
@@ -338,6 +338,24 @@
       "emissive_intensity": "Intensité de l'émission",
       "detail_noise_strength": "Intensité des détails"
     },
+    "inspector": {
+      "features": {
+        "$title": "Fonctionnalités",
+        "data": "Données d'objet",
+        "transform": "Transformation",
+        "rendering": "Rendu",
+        "lighting": "Éclairage",
+        "surface": "Surface",
+        "biomes": "Biomes",
+        "cracks": "Failles",
+        "craters": "Cratères",
+        "clouds": "Nuages",
+        "atmosphere": "Atmosphère",
+        "rings": "Anneaux",
+        "postprocessing": "Post-processing"
+      },
+      "controls": {}
+    },
     "basic_data": {
       "$title": "Données de base",
       "classification": "Classification",
@@ -382,7 +400,7 @@
     "features": {
       "$title": "",
       "cracks": {
-        "$title": "Craquelures",
+        "$title": "Failles",
         "noise_limiter": "Bruit limiteur",
         "noise_color": "Bruit de couleur",
         "distance_to_edge": "Distance des bords",
@@ -536,7 +554,9 @@
     "action_add_colorstep": "Ajouter un point",
     "action_sort_colorsteps": "Trier les points",
     "action_close_dialog": "Fermer la boîte de dialogue",
-    "action_close_toast": "Fermer la notification"
+    "action_close_toast": "Fermer la notification",
+    "action_resize_horizontal": "Redimensionner horizontalement (flèches directionnelles)",
+    "action_resize_vertical": "Redimensionner verticalement (flèches directionnelles)"
   },
   "extras": {
     "day_newyear": "Bonne année!",

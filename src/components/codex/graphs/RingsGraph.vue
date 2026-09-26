@@ -88,8 +88,9 @@
 
 <script setup lang="ts">
 import type { ColorRamp } from '@core/models/planet/color-ramp.model.ts';
+import { useResizeObserver } from '@vueuse/core';
 import { MathUtils } from 'three';
-import { computed, onMounted, ref, useTemplateRef, type ComputedRef, type Ref } from 'vue';
+import { computed, ref, useTemplateRef, type ComputedRef, type Ref } from 'vue';
 
 const RING_MAX_RADIUS = 5;
 export type Ring = {
@@ -107,11 +108,10 @@ const cssPlanetRadius: ComputedRef<number> = computed(() => (props.planetRadius 
 
 const graphArea = useTemplateRef<HTMLDivElement>('graphArea');
 const graphAreaWidth: Ref<number> = ref(0);
-const graphResizeObserver = new ResizeObserver((entries) => {
+
+useResizeObserver(graphArea, (entries) => {
   graphAreaWidth.value = entries[0].contentRect.width;
 });
-
-onMounted(() => graphResizeObserver.observe(graphArea.value!));
 
 function setHover(id: string) {
   hoveredRing.value = id;
@@ -265,7 +265,7 @@ function colorRampToRadialGradient(ring: Ring): string {
     bottom: 50%;
     opacity: 0.25;
     transform: translateY(50%) scale($scaled-image);
-    width: calc(var(--planet-radius-pct) * 2 + 3%);
+    width: calc(var(--planet-radius-pct) * 2 + 3.5%);
     aspect-ratio: 1;
   }
   .planet-center {

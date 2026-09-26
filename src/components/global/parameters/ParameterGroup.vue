@@ -15,13 +15,13 @@
           :class="{ 'no-model': _toggleParam === undefined }"
           @click="handleCheckboxClick"
         />
-        <h4><slot name="title">GROUP_TITLE</slot></h4>
+        <span><slot name="title">GROUP_TITLE</slot></span>
       </span>
       <iconify-icon v-if="toggleable" class="indicator" icon="mingcute:right-fill" width="1rem" aria-hidden="true" />
     </button>
     <div v-show="_expanded" class="parameter-group-content">
       <slot name="content">
-        <span class="default">Nothing here yet, sorry :c</span>
+        <span class="default">┐(´∀｀)┌</span>
       </slot>
     </div>
   </section>
@@ -53,9 +53,11 @@ function toggleExpand() {
 <style scoped lang="scss">
 .parameter-group {
   grid-column: span 2;
+  margin: 0 -0.5rem;
 
   background: var(--lg-panel);
-  border: 1px solid var(--lg-accent);
+  border-top: var(--lg-var-border-width) solid var(--lg-accent);
+  border-bottom: var(--lg-var-border-width) solid var(--lg-accent);
   border-radius: 2px;
 
   display: flex;
@@ -69,8 +71,8 @@ function toggleExpand() {
 
   .parameter-group-title {
     min-height: 2.25rem;
-    font-size: 1rem;
-    font-weight: 600;
+    font-family: inherit;
+    font-size: 0.875rem;
     padding: 0 0.5rem;
 
     background: none;
@@ -114,9 +116,9 @@ function toggleExpand() {
     overflow-x: auto;
 
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto 1fr;
     align-items: center;
-    gap: 8px 0;
+    gap: 8px 0.25rem;
   }
   .parameter-group-content {
     .default {

@@ -83,7 +83,7 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import { nanoid } from 'nanoid';
 import pako from 'pako';
-import { defineAsyncComponent, onMounted, onUnmounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import NewCardElement from '@/components/codex/elements/NewCardElement.vue';
 import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue';
@@ -106,14 +106,7 @@ useHead({
   meta: [{ name: 'description', content: 'Planet editor' }],
 });
 
-onMounted(async () => {
-  await loadPlanets();
-  UIEventBus.registerWindowEventListener('click', onWindowClick);
-});
-onUnmounted(() => {
-  UIEventBus.deregisterWindowEventListener('click', onWindowClick);
-});
-
+onMounted(async () => await loadPlanets());
 watch(
   () => UIEventBus.clearEvent.value,
   async () => await loadPlanets(),
@@ -125,12 +118,6 @@ async function loadPlanets() {
   planets.value.splice(0);
   planets.value.push(...idbPlanets.map((pl) => ({ ...pl, data: PlanetData.createFrom(pl.data) })));
   ready.value = true;
-}
-
-// ------------------------------------------------------------------------------------------------
-
-async function onWindowClick(event: MouseEvent) {
-  UIEventBus.sendClickEvent(event);
 }
 
 // ------------------------------------------------------------------------------------------------

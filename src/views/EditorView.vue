@@ -10,12 +10,19 @@
     @random="randPlanet"
   />
 
-  <div id="scene-root" ref="sceneRoot" :class="{ compact: showCompactControls }">
+  <LgvResizableHContainer id="editor-root" startingLeftWidth="20rem" maxLeftWidth="30rem">
+    <template #left>
+      <EditorInspector />
+    </template>
+    <template #right>
+      <div ref="threeCanvasWrapper" id="scene-canvas__wrapper">
+        <canvas ref="threeCanvas" id="scene-canvas" />
+      </div>
+    </template>
     <OverlaySpinner :load="showSpinner" />
-  </div>
-  <EditorSidebarControls :compact-mode="showCompactControls" />
+  </LgvResizableHContainer>
 
-  <EditorErrorDialog ref="editorErrorDialogRef" @close="handleEditorInitError" />
+  <EditorInitErrorDialog ref="editorErrorDialogRef" @close="handleEditorInitError" />
   <WarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
   <ExportProgressDialog ref="exportProgressDialogRef" />
 </template>
@@ -25,6 +32,7 @@ import type { EditorInitErrorDialogExposes } from '@components/editor/dialogs/Ed
 import type { ExportProgressDialogExposes } from '@components/editor/dialogs/ExportProgressDialog.types.ts';
 import type { WarnSaveDialogExposes } from '@components/editor/dialogs/WarnSaveDialog.types.ts';
 import EditorHeader from '@components/editor/EditorHeader.vue';
+import EditorInspector from '@components/editor/inspector/EditorInspector.vue';
 import {
   bootstrapEditor,
   dollyCamera,
@@ -38,25 +46,26 @@ import {
   updateCameraRendering,
 } from '@core/editor/editor.service.ts';
 import { EDITOR_STATE, EditorStatusCode } from '@core/editor/state/editor.state';
-import * as Globals from '@core/globals';
-import { COMPACT_CONTROLS_HEIGHT } from '@core/globals';
 import PlanetData from '@core/models/planet/planet-data.model.ts';
 import { resetPlanetData } from '@core/models/planet/planet-data.utils.ts';
 import * as DexieService from '@core/services/dexie.service';
 import { UIEventBus } from '@core/ui-event-bus.ts';
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
 import { sleep } from '@core/utils/utils';
+import LgvResizableHContainer from '@lib/components/layout/LgvResizableHContainer.vue';
 import { useHead } from '@unhead/vue';
+import { useElementSize, useEventListener, useResizeObserver } from '@vueuse/core';
 import { nanoid } from 'nanoid';
 import { defineAsyncComponent, onMounted, onUnmounted, ref, type Ref, toRaw, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
-import EditorSidebarControls from '@/components/editor/controls/EditorSidebarControls.vue';
-import EditorErrorDialog from '@/components/editor/dialogs/EditorInitErrorDialog.vue';
 import WebGL from '@/core/capabilities/WebGL';
 import WebGPU from '@/core/capabilities/WebGPU';
 import { idb, type IDBPlanet, KeyBindingAction } from '@/dexie.config';
 
+const EditorInitErrorDialog = defineAsyncComponent(
+  () => import('@components/editor/dialogs/EditorInitErrorDialog.vue'),
+);
 const WarnSaveDialog = defineAsyncComponent(() => import('@components/editor/dialogs/WarnSaveDialog.vue'));
 const ExportProgressDialog = defineAsyncComponent(() => import('@components/editor/dialogs/ExportProgressDialog.vue'));
 
@@ -78,31 +87,30 @@ let loadedCorrectly = false;
 const $planetEntityId: Ref<string> = ref('');
 const $planetEntityPreviewDataURL: Ref<string | undefined> = ref('');
 
-// Responsiveness
-const showCompactControls: Ref<boolean> = ref(false);
-
 // THREE canvas/scene root
-const sceneRoot = useTemplateRef('sceneRoot');
+const threeCanvasWrapper = useTemplateRef('threeCanvasWrapper');
+const threeCanvas = useTemplateRef('threeCanvas');
+const threeCanvasSize = useElementSize(threeCanvasWrapper);
 const showSpinner: Ref<boolean> = ref(true);
+
+useResizeObserver(threeCanvasWrapper, (entries) => {
+  if (!loadedCorrectly) return;
+  updateCameraRendering(entries[0].contentRect.width, entries[0].contentRect.height);
+});
+useEventListener(window, 'keydown', onWindowKeydown);
 
 onMounted(async () => {
   await sleep(50);
   await initThree();
 });
 onUnmounted(() => {
-  if (loadedCorrectly) {
-    unloadEditor();
-  }
-  UIEventBus.deregisterWindowEventListener('click', onWindowClick);
-  UIEventBus.deregisterWindowEventListener('keydown', onWindowKeydown);
-  UIEventBus.deregisterWindowEventListener('resize', computeViewRendering);
-  UIEventBus.deregisterWindowEventListener('deviceorientation', computeViewRenderingDeferred);
+  if (!loadedCorrectly) return;
+  unloadEditor();
 });
 onBeforeRouteLeave(() => {
-  if (EDITOR_STATE.value.planetEditedFlag) {
-    warnSaveDialogRef.value?.open();
-    return false;
-  }
+  if (!EDITOR_STATE.value.planetEditedFlag) return true;
+  warnSaveDialogRef.value?.open();
+  return false;
 });
 
 async function initThree() {
@@ -196,22 +204,17 @@ async function initData() {
 }
 
 async function initCanvas() {
-  computeResponsiveness();
-  const canvasSize = computeCanvasSize();
-
-  // Bootstrap editor service
-  await bootstrapEditor(sceneRoot.value!, canvasSize.width, canvasSize.height, globalThis.devicePixelRatio);
-  UIEventBus.registerWindowEventListener('click', onWindowClick);
+  await bootstrapEditor(
+    threeCanvas.value!,
+    threeCanvasSize.width.value,
+    threeCanvasSize.height.value,
+    globalThis.devicePixelRatio,
+  );
   UIEventBus.registerWindowEventListener('keydown', onWindowKeydown);
-  UIEventBus.registerWindowEventListener('resize', computeViewRendering);
-  UIEventBus.registerWindowEventListener('deviceorientation', computeViewRenderingDeferred);
 }
 
 // ------------------------------------------------------------------------------------------------
 
-async function onWindowClick(event: MouseEvent) {
-  UIEventBus.sendClickEvent(event);
-}
 async function onWindowKeydown(event: KeyboardEvent) {
   const keyBinds = await idb.keyBindings.toArray();
   const kb = keyBinds.find((k) => k.key === event.key.toUpperCase());
@@ -256,27 +259,6 @@ async function onWindowKeydown(event: KeyboardEvent) {
 
 function patchMetaHead() {
   head!.patch({ title: `[${EDITOR_STATE.value.planetData.planetName}]` + ' · ' + i18n.t('main.$title') });
-}
-
-// ------------------------------------------------------------------------------------------------
-
-function computeViewRendering() {
-  computeResponsiveness();
-  const canvasSize = computeCanvasSize();
-  updateCameraRendering(canvasSize.width, canvasSize.height);
-}
-function computeViewRenderingDeferred() {
-  setTimeout(() => computeViewRendering(), 50);
-}
-function computeResponsiveness() {
-  showCompactControls.value = window.innerWidth <= Globals.SM_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth;
-}
-function computeCanvasSize() {
-  if (showCompactControls.value) {
-    return { width: globalThis.innerWidth, height: globalThis.innerHeight - COMPACT_CONTROLS_HEIGHT };
-  } else {
-    return { width: globalThis.innerWidth, height: globalThis.innerHeight };
-  }
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -337,19 +319,25 @@ function exportPlanet() {
   }
 }
 
-#scene-root {
+#editor-root {
   flex: 1;
-  position: relative;
-  box-shadow: black 5px 10px 10px;
-  & > canvas {
-    background: transparent;
-    width: 100dvw;
-  }
-}
-#scene-root.compact {
-  height: calc(100dvh - 320px);
-  & > canvas {
-    height: calc(100dvh - 320px);
+  overflow: hidden;
+
+  #scene-canvas__wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+
+    #scene-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+    }
   }
 }
 </style>

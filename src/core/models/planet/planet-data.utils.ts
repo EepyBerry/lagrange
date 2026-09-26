@@ -18,7 +18,6 @@ export function loadPlanetData(target: PlanetData, data?: PrefixedWith<PlanetDat
 
   // Lighting
   target.lensFlareEnabled = data?._lensFlareEnabled ?? true;
-  target.lensFlarePointsIntensity = data?._lensFlarePointsIntensity ?? 0.25;
   target.lensFlareGlareIntensity = data?._lensFlareGlareIntensity ?? 0.4;
   target.sunLightAngle = data?._sunLightAngle ?? -30;
   target.sunLightColor.set(data?._sunLightColor ?? 0xfff6e8);
@@ -151,7 +150,6 @@ export function loadPlanetData(target: PlanetData, data?: PrefixedWith<PlanetDat
 export function randomizePlanetData(target: PlanetData): void {
   // Lighting
   target.lensFlareEnabled = randomBoolean();
-  target.lensFlarePointsIntensity = clampedPRNG(0, 1);
   target.lensFlareGlareIntensity = clampedPRNG(0, 1);
   target.sunLightAngle = clampedPRNG(-90, 90);
   target.sunLightColor.set(clampedPRNG(0.5, 1) * 0xffffff);
@@ -281,7 +279,6 @@ export function resetPlanetData(target: PlanetData): void {
 
   // Lighting
   target.lensFlareEnabled = true;
-  target.lensFlarePointsIntensity = 0.25;
   target.lensFlareGlareIntensity = 0.4;
   target.sunLightAngle = -30;
   target.sunLightColor = new Color(0xfff6e8);

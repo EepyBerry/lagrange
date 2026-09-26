@@ -155,11 +155,14 @@ function getPartialId() {
   padding: 0.5rem;
 
   .biome-header {
+    font-size: 0.8125rem;
     grid-column: span 2;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
+
     .biome-index {
       font-weight: 400;
     }

@@ -39,7 +39,6 @@ export class LensFlareTSLMaterial extends TSLMaterial<NodeMaterial, LensFlareUni
     super();
     this.uniforms = this.initUniforms(initData);
     this.dataEventEndpoint
-      .on('lensFlarePointsIntensity', (payload) => (this.uniforms.starPointsIntensity.value = payload.value))
       .on('lensFlareGlareIntensity', (payload) => (this.uniforms.glareIntensity.value = payload.value))
       .on('sunlightColor', (payload) => (this.uniforms.colorGain.value = payload.value));
   }
@@ -51,7 +50,7 @@ export class LensFlareTSLMaterial extends TSLMaterial<NodeMaterial, LensFlareUni
       lensPosition: uniform(data.lensPosition.clone()).setName('uPosition'),
       colorGain: uniform(data.colorGain).setName('uColorGain'),
       starPoints: uniform(2).setName('uStarPoints'),
-      starPointsIntensity: uniform(data.starPointsIntensity, 'float').setName('uStarPointsIntensity'),
+      starPointsIntensity: uniform(data.starPointsIntensity).setName('uStarPointsIntensity'),
       glareSize: uniform(0.025).setName('uGlareSize'),
       glareIntensity: uniform(data.glareIntensity).setName('uGlareIntensity'),
       flareShape: uniform(data.flareShape).setName('uFlareShape'),

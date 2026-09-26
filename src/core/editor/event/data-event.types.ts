@@ -46,7 +46,6 @@ export type DataEventPayloadTypeMap = {
   // ---- planet data object ----
   // lens flare
   lensFlareEnabled: DataEventPayload<boolean>;
-  lensFlarePointsIntensity: DataEventPayload<number>;
   lensFlareGlareIntensity: DataEventPayload<number>;
   // lighting
   sunlightAngle: DataEventPayload<number>;

@@ -338,6 +338,24 @@
       "emissive_intensity": "Emissive intensity",
       "detail_noise_strength": "Detaiw noise stwength"
     },
+    "inspector": {
+      "features": {
+        "$title": "Featuwes",
+        "data": "Objyect data",
+        "transform": "Twansfowm",
+        "rendering": "Wendewing",
+        "lighting": "Wighting",
+        "surface": "Suwface",
+        "biomes": "Biomes",
+        "cracks": "Cwacks",
+        "craters": "Cwatews",
+        "clouds": "Cwouds",
+        "atmosphere": "Atmosphewe",
+        "rings": "Wings",
+        "postprocessing": "Post-pwocessing"
+      },
+      "controls": {}
+    },
     "basic_data": {
       "$title": "Basic Data",
       "classification": "Cwassification",
@@ -536,7 +554,9 @@
     "action_add_colorstep": "Add cowow step",
     "action_sort_colorsteps": "Sort cowow steps",
     "action_close_dialog": "Cwose diawog",
-    "action_close_toast": "Cwose message"
+    "action_close_toast": "Cwose message",
+    "action_resize_horizontal": "Wesize howizontawwy (awwow keys)",
+    "action_resize_vertical": "Wesize vewticawwy (awwow keys)"
   },
   "extras": {
     "day_newyear": "Happy Nyew Yeaw!!! (≧∇≦)ﾉ",

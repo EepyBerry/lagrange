@@ -53,7 +53,6 @@ export default class PlanetData {
   // --------------------------------------------------
 
   private _lensFlareEnabled: boolean;
-  private _lensFlarePointsIntensity: number;
   private _lensFlareGlareIntensity: number;
   private _sunLightAngle: number;
   private readonly _sunLightColor: Color;
@@ -69,13 +68,6 @@ export default class PlanetData {
   public set lensFlareEnabled(value: boolean) {
     this._lensFlareEnabled = value;
     this.dataEventEndpoint.emit('lensFlareEnabled', { value: this.lensFlareEnabled });
-  }
-  public get lensFlarePointsIntensity(): number {
-    return this._lensFlarePointsIntensity;
-  }
-  public set lensFlarePointsIntensity(value: number) {
-    this._lensFlarePointsIntensity = clamp(value, 0, 1);
-    this.dataEventEndpoint.emit('lensFlarePointsIntensity', { value: this.lensFlarePointsIntensity });
   }
   public get lensFlareGlareIntensity(): number {
     return this._lensFlareGlareIntensity;
@@ -788,7 +780,6 @@ export default class PlanetData {
 
     // Lighting
     this._lensFlareEnabled = true;
-    this._lensFlarePointsIntensity = 0.25;
     this._lensFlareGlareIntensity = 0.4;
     this._sunLightAngle = -30;
     this._sunLightColor = new Color(0xfff6e8);
