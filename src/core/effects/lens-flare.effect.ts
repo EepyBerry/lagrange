@@ -1,12 +1,10 @@
 import { LensFlareTSLMaterial, type LensFlareInitData } from '@tsl/materials/lens-flare.tslmat';
-import { damp } from 'three/src/math/MathUtils.js';
 import {
   Camera,
   Mesh,
   PlaneGeometry,
   Raycaster,
   Scene,
-  Timer,
   Vector2,
   Vector3,
   Vector4,
@@ -61,9 +59,7 @@ export class LensFlareEffect {
     }
   }
 
-  public update(renderer: WebGPURenderer, scene: Scene, camera: Camera, timer: Timer) {
-    const dt = timer.getDelta();
-
+  public update(renderer: WebGPURenderer, scene: Scene, camera: Camera) {
     renderer.getViewport(this._viewport);
     this.mesh.lookAt(camera.position);
     this.tslMaterial.uniforms.resolution.value.x = this._viewport.z;
@@ -86,12 +82,7 @@ export class LensFlareEffect {
       const intersects = this._raycaster.intersectObjects([planet, ...rings], false);
       this.checkTransparency(intersects);
     }
-    this.tslMaterial.uniforms.opacity.value = damp(
-      this.tslMaterial.uniforms.opacity.value,
-      this._internalOpacity,
-      10,
-      dt,
-    );
+    this.tslMaterial.uniforms.opacity.value = this._internalOpacity;
   }
 
   public updatePosition(lensPosition: Vector3) {

@@ -12,10 +12,11 @@ footer {
   z-index: 10;
   position: fixed;
   bottom: -1px;
-  padding: var(--lg-var-border-width) var(--lg-var-border-width) 0;
+  right: -1px;
+  padding: var(--lg-var-border-width) 0 0 var(--lg-var-border-width);
 
   background: var(--lg-accent);
-  clip-path: polygon($flat-angle 0, calc(100% - $flat-angle) 0, 100% 100%, 0 100%);
+  clip-path: polygon($flat-angle 0, 100% 0, 100% 100%, 0 100%);
 
   display: flex;
   align-self: center;
@@ -23,7 +24,7 @@ footer {
   justify-content: center;
 
   & > div {
-    padding: 0.125rem $flat-angle;
+    padding: 0.125rem 0.75rem 0.125rem $flat-angle;
     background: var(--lg-primary);
     clip-path: inherit;
 

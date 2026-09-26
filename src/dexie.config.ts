@@ -33,6 +33,8 @@ export interface IDBSettings {
   locale: string;
   theme: string;
   font: string;
+  inspectorSide: 'left' | 'right';
+  inspectorOrdering: 'standard' | 'flipped';
   showInitDialog?: boolean;
   renderingBackend: 'webgl' | 'webgpu';
   cameraMouseControlsScheme: CameraMouseControlsScheme;

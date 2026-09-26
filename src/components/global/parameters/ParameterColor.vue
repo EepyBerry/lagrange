@@ -2,63 +2,104 @@
   <p>
     <slot>ParameterName</slot>
   </p>
-  <div class="color-wrapper">
-    <span class="current-color" :style="{ backgroundColor: `#${lgColor?.getHexString()}` }" @click="togglePanel"></span>
+  <div ref="anchorRef" class="color-wrapper">
     <LgvButton
-      class="sm"
-      :class="{ success: pickerOpen }"
-      :aria-label="$t('a11y.action_open_colorpanel')"
-      :icon="pickerOpen ? 'mingcute:check-line' : 'mingcute:edit-2-line'"
+      class="action-edit-color sm"
+      :style="{ backgroundColor: `#${lgColor?.getHexString()}` }"
       @click="togglePanel"
-    />
+    ></LgvButton>
   </div>
-  <ColorPicker
-    v-show="pickerOpen"
-    class="picker"
-    alpha-channel="hide"
-    default-format="hex"
-    :visible-formats="['hex']"
-    :color="pickerInitColor"
-    @color-change="setColor($event.colors.hex)"
-  >
-    <template #hue-range-input-label>
-      <span class="a11y--visually-hidden"></span>
-    </template>
-    <template #alpha-range-input-label>
-      <span class="a11y--visually-hidden"></span>
-    </template>
-  </ColorPicker>
+
+  <!------ floating elements ------>
+  <Teleport to="body">
+    <div v-if="pickerOpen" ref="floatingColorPicker" class="floating color-picker" :style="floatingStyles">
+      <ColorPicker
+        alpha-channel="hide"
+        default-format="hex"
+        :visible-formats="['hex']"
+        :color="pickerInitColor"
+        @color-change="setColor($event)"
+      >
+        <template #hue-range-input-label>
+          <span class="a11y--visually-hidden"></span>
+        </template>
+        <template #alpha-range-input-label>
+          <span class="a11y--visually-hidden"></span>
+        </template>
+      </ColorPicker>
+    </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
+import { autoUpdate, offset, shift, useFloating } from '@floating-ui/vue';
 import LgvButton from '@lib/components/base/LgvButton.vue';
+import { onClickOutside, useEventListener } from '@vueuse/core';
 import { Color } from 'three';
-import { onMounted, ref } from 'vue';
-import { ColorPicker } from 'vue-accessible-color-picker';
+import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
+import { ColorPicker, type ColorChangeDetail } from 'vue-accessible-color-picker';
 
 const lgColor = defineModel<Color>();
 const pickerInitColor = ref('');
 const pickerOpen = ref(false);
 
-onMounted(initPickerColor);
+const floatingColorPicker = useTemplateRef('floatingColorPicker');
+const anchorRef = ref<HTMLElement | null>(null);
 
-function initPickerColor() {
-  pickerInitColor.value = '#' + lgColor.value?.getHexString();
+const { floatingStyles } = useFloating(anchorRef, floatingColorPicker, {
+  whileElementsMounted: autoUpdate,
+  placement: 'right-end',
+  middleware: [offset(8), shift()],
+});
+
+useEventListener(window, 'keydown', onKeydown);
+onClickOutside(floatingColorPicker, () => closePicker(), { ignore: ['.color-wrapper'] });
+
+onMounted(initPickerColor);
+onUnmounted(() => {
+  if (pickerOpen.value) {
+    closePicker();
+  }
+});
+
+function onKeydown(evt: KeyboardEvent) {
+  if (evt.key === 'Escape' && pickerOpen.value) {
+    closePicker();
+  }
 }
 
-function setColor(hex: string): void {
-  lgColor.value = new Color(hex.substring(0, 7)); // Strip alpha
-  pickerInitColor.value = '#' + lgColor.value?.getHexString();
+function initPickerColor() {
+  pickerInitColor.value = '#' + (lgColor.value?.getHexString() ?? 'ffffff');
+}
+
+function setColor(detail: ColorChangeDetail): void {
+  const hex = detail.color.toString({ format: 'hex', collapse: false, alpha: false });
+  lgColor.value = new Color(hex);
 }
 
 function togglePanel(): void {
-  pickerOpen.value = !pickerOpen.value;
+  if (pickerOpen.value) {
+    closePicker();
+  } else {
+    openPicker();
+  }
+}
+
+function openPicker(): void {
+  pickerOpen.value = true;
+  initPickerColor();
+}
+
+function closePicker(): void {
+  if (pickerOpen.value) {
+    pickerOpen.value = false;
+  }
 }
 </script>
 
 <style scoped lang="scss">
-.picker {
-  grid-column: span 2;
+p {
+  font-size: 0.8125rem;
 }
 .color-wrapper {
   display: flex;
@@ -66,17 +107,18 @@ function togglePanel(): void {
   justify-content: flex-end;
   gap: 8px;
   height: 100%;
+
+  .action-edit-color {
+    display: inline-flex;
+    align-self: center;
+    border-radius: 2px;
+    border: 1px solid var(--lg-accent);
+    cursor: pointer;
+  }
 }
-.current-color {
-  display: inline-flex;
-  align-self: center;
-  width: 3rem;
-  height: 2rem;
-  border-radius: 2px;
-  border: 1px solid var(--lg-accent);
-  cursor: pointer;
-}
-.panel {
-  display: none;
+.floating.color-picker {
+  z-index: 10;
+  visibility: visible;
+  padding: 0;
 }
 </style>

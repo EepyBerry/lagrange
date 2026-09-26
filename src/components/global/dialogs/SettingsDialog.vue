@@ -38,6 +38,7 @@
                 {{ $t('dialog.settings.general_font') }}:
                 <template #options>
                   <option value="default">{{ $t('dialog.settings.general_font_default') }}</option>
+                  <option value="retro">{{ $t('dialog.settings.general_font_retro') }}</option>
                   <option value="monospace">{{ $t('dialog.settings.general_font_monospace') }}</option>
                   <option value="lowvision">{{ $t('dialog.settings.general_font_lowvision') }}</option>
                   <option value="dyslexia">{{ $t('dialog.settings.general_font_dyslexia') }}</option>
@@ -513,6 +514,8 @@ const appSettings: Ref<IDBSettings> = ref({
   font: '',
   showInitDialog: true,
   renderingBackend: 'webgl',
+  inspectorSide: 'left',
+  inspectorOrdering: 'standard',
   cameraFOV: 50,
   skybox: 'deepspace',
   cameraMouseControlsScheme: 'standard',
@@ -668,6 +671,10 @@ function getKeyBind(action: string) {
   min-width: 36rem;
   max-width: 36rem;
   height: 80%;
+
+  :deep(.dialog-content) {
+    background: var(--lg-panel);
+  }
 
   #settings-container {
     margin-top: 0.5rem;

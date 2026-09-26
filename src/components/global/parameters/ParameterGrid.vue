@@ -7,9 +7,9 @@
 .param-grid {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 8px 0;
+  gap: 0.5rem 0.75rem;
 }
 @media screen and (max-width: 1023px) {
   .param-grid {

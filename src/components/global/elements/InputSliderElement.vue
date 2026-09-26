@@ -5,12 +5,13 @@
         :id="iid ?? undefined"
         class="lg"
         type="range"
-        :min="min ?? 0"
-        :max="max ?? 100"
-        :step="step ?? 1"
+        :min="min"
+        :max="max"
+        :step="step"
         :value="vModel"
         :disabled="disabled"
         @input="set($event)"
+        :style="{ background: calculateTrackStyle() }"
       />
       <span class="rgb"></span>
     </div>
@@ -20,9 +21,9 @@
       :aria-labelledby="iid"
       class="lg"
       type="number"
-      :min="min ?? 0"
-      :max="max ?? 100"
-      :step="step ?? 1"
+      :min="min"
+      :max="max"
+      :step="step"
       :disabled="disabled"
     />
   </div>
@@ -30,34 +31,38 @@
 
 <script setup lang="ts">
 const vModel = defineModel<number>();
-defineProps<{ iid?: string; step?: number; min?: number; max?: number; disabled?: boolean }>();
+const $props = withDefaults(
+  defineProps<{ iid?: string; step?: number; min?: number; max?: number; disabled?: boolean }>(),
+  {
+    min: 0,
+    max: 100,
+    step: 1,
+  },
+);
 function set(ev: Event) {
   vModel.value = (ev.target as HTMLInputElement).valueAsNumber;
+}
+function calculateTrackStyle() {
+  const clampedValuePct = (((vModel.value ?? 0) - $props.min) / ($props.max - $props.min)) * 100;
+  if ($props.disabled) {
+    return `linear-gradient(to right, var(--lg-button-disabled) 0, var(--lg-button-disabled) ${clampedValuePct}%, var(--lg-input-disabled) ${clampedValuePct}%, var(--lg-input-disabled) 100%)`;
+  } else {
+    return `linear-gradient(to right, var(--lg-input-contrast-focus) 0, var(--lg-input-contrast-focus) ${clampedValuePct}%, var(--lg-input) ${clampedValuePct}%, var(--lg-input) 100%)`;
+  }
 }
 </script>
 
 <style scoped lang="scss">
 .input-wrapper {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.5rem;
+  gap: 0.75rem;
   font-family: monospace;
 
-  &.xs input[type='range'] {
-    width: 4rem;
-  }
-  &.sm input[type='range'] {
-    width: 6rem;
-  }
-  &.md input[type='range'] {
-    width: 7rem;
-  }
-  &.fw input[type='range'] {
-    width: 100%;
-  }
-
   .input-wrapper-slider {
+    min-width: 2rem;
     display: inline-flex;
     position: relative;
   }
@@ -68,7 +73,8 @@ input[type='number'] {
   width: 3rem;
 }
 input[type='range'] {
-  width: 7rem;
+  width: 100%;
+  min-width: 0;
 }
 
 // extras

@@ -53,7 +53,6 @@ export default class PlanetData {
   // --------------------------------------------------
 
   private _lensFlareEnabled: boolean;
-  private _lensFlarePointsIntensity: number;
   private _lensFlareGlareIntensity: number;
   private _sunLightAngle: number;
   private readonly _sunLightColor: Color;
@@ -69,13 +68,6 @@ export default class PlanetData {
   public set lensFlareEnabled(value: boolean) {
     this._lensFlareEnabled = value;
     this.dataEventEndpoint.emit('lensFlareEnabled', { value: this.lensFlareEnabled });
-  }
-  public get lensFlarePointsIntensity(): number {
-    return this._lensFlarePointsIntensity;
-  }
-  public set lensFlarePointsIntensity(value: number) {
-    this._lensFlarePointsIntensity = clamp(value, 0, 1);
-    this.dataEventEndpoint.emit('lensFlarePointsIntensity', { value: this.lensFlarePointsIntensity });
   }
   public get lensFlareGlareIntensity(): number {
     return this._lensFlareGlareIntensity;
@@ -788,7 +780,6 @@ export default class PlanetData {
 
     // Lighting
     this._lensFlareEnabled = true;
-    this._lensFlarePointsIntensity = 0.25;
     this._lensFlareGlareIntensity = 0.4;
     this._sunLightAngle = -30;
     this._sunLightColor = new Color(0xfff6e8);
@@ -835,13 +826,12 @@ export default class PlanetData {
       6,
     );
     this._planetSurfaceColorRamp = new ColorRamp({ context: 'surface', endpointRef: this.dataEventEndpoint }, [
-      new ColorRampStep(0x000000, 0, true),
+      new ColorRampStep(0x000000, 0),
       new ColorRampStep(0x0b1931, 0.4),
       new ColorRampStep(0x2d4265, 0.495),
       new ColorRampStep(0x766f17, 0.5),
       new ColorRampStep(0x446611, 0.505),
       new ColorRampStep(0x223b05, 0.65),
-      new ColorRampStep(0x223b05, 1, true),
     ]);
 
     // Features
@@ -930,10 +920,10 @@ export default class PlanetData {
       4,
     );
     this._cracksColorRamp = new ColorRamp({ context: 'cracks', endpointRef: this.dataEventEndpoint }, [
-      new ColorRampStep(0x2e221b, 0, true),
+      new ColorRampStep(0x2e221b, 0),
       new ColorRampStep(0xad5a11, 0.55),
       new ColorRampStep(0xe6962e, 0.8),
-      new ColorRampStep(0xffdc73, 1, true),
+      new ColorRampStep(0xffdc73, 1),
     ]);
 
     // Craters
@@ -952,11 +942,9 @@ export default class PlanetData {
       6,
     );
     this._cratersColorRamp = new ColorRamp({ context: 'craters', endpointRef: this.dataEventEndpoint }, [
-      new ColorRampStep(0x000000, 0, true),
       new ColorRampStep(0x000000, 0.27),
       new ColorRampStep(0x8f8f8f, 0.34),
       new ColorRampStep(0x7f7f7f, 0.4),
-      new ColorRampStep(0x7f7f7f, 1, true),
     ]);
 
     // Clouds
@@ -982,9 +970,8 @@ export default class PlanetData {
     );
     this._cloudsColor = new Color(0xffffff);
     this._cloudsColorRamp = new ColorRamp({ context: 'clouds', endpointRef: this.dataEventEndpoint }, [
-      new ColorRampStep(0x000000, 0, true),
       new ColorRampStep(0x000000, 0.6),
-      new ColorRampStep(0xffffff, 1, true),
+      new ColorRampStep(0xffffff, 1),
     ]);
 
     // Atmosphere

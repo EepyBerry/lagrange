@@ -7,31 +7,24 @@ import { Color, type ColorRepresentation } from 'three';
 export class ColorRampStep {
   private readonly _id: string; // internal ID for tracking changes
   private readonly _color: Color;
-  private readonly _isBound: boolean;
   private _alpha: number;
   private _factor: number;
 
-  constructor(color: ColorRepresentation, factor: number, isBound: boolean = false) {
+  constructor(color: ColorRepresentation, factor: number) {
     this._id = nanoid();
     this._color = new Color(color);
-    this._isBound = isBound;
     this._alpha = 1;
     this._factor = factor;
   }
 
-  static newWithAlpha(
-    color: ColorRepresentation,
-    alpha: number,
-    factor: number,
-    isBound: boolean = false,
-  ): ColorRampStep {
-    const step = new ColorRampStep(color, factor, isBound);
+  static newWithAlpha(color: ColorRepresentation, alpha: number, factor: number): ColorRampStep {
+    const step = new ColorRampStep(color, factor);
     step.alpha = alpha ?? 1;
     return step;
   }
 
   clone(): ColorRampStep {
-    return ColorRampStep.newWithAlpha(this._color, this._alpha, this._factor, this._isBound);
+    return ColorRampStep.newWithAlpha(this._color, this._alpha, this._factor);
   }
 
   public get id() {
@@ -57,23 +50,18 @@ export class ColorRampStep {
   public set factor(factor: number) {
     this._factor = factor;
   }
-  public get isBound(): boolean {
-    return this._isBound;
-  }
 }
 
 export class ColorRamp {
   private readonly _eventEmitOpts: DataEventEmitOptions;
   private _hash: string = ''; // internal hash for tracking changes
   private readonly _maxSize: number = 16;
-  private _lockedSize: boolean = true;
   readonly _steps: ColorRampStep[] = [];
 
-  constructor(eventEmitOpts: DataEventEmitOptions, steps: ColorRampStep[], maxSize: number = 16, lockedSize = false) {
+  constructor(eventEmitOpts: DataEventEmitOptions, steps: ColorRampStep[], maxSize: number = 16) {
     this._eventEmitOpts = eventEmitOpts;
     this._maxSize = maxSize;
     this._steps = steps;
-    this._lockedSize = lockedSize;
   }
 
   public get hash(): string {
@@ -101,10 +89,11 @@ export class ColorRamp {
   }
 
   public addStep() {
-    if (this._steps.length >= this._maxSize - 1) {
+    if (this._steps.length >= this._maxSize) {
       throw new Error('(ColorRamp) Maximum size reached');
     }
-    this._steps.push(new ColorRampStep('black', this._steps.at(-2)!.factor));
+    const factor = this._steps.length > 0 ? this._steps.at(-1)!.factor : 0;
+    this._steps.push(new ColorRampStep('black', factor));
     this._steps.sort((a, b) => a.factor - b.factor);
     this._eventEmitOpts.endpointRef.emit('colorRampUpdate', {
       instanceId: this._eventEmitOpts.instanceId,
@@ -140,8 +129,8 @@ export class ColorRamp {
   }
 
   public removeStep(stepId: string) {
-    if (this.isBoundStep(stepId)) {
-      console.warn('<Lagrange> (ColorRamp) Cannot delete ramp bounds! (factor=0|1)');
+    if (this._steps.length <= 1) {
+      console.warn('<Lagrange> (ColorRamp) Cannot delete step: a ramp must have at least 1 entry');
       return;
     }
     const index = this._steps.findIndex((s) => s.id === stepId);
@@ -157,17 +146,17 @@ export class ColorRamp {
     this.generateHash();
   }
 
-  public isBoundStep(stepId: string) {
-    return this._steps.find((s) => s.id === stepId)?.isBound;
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public loadFromSteps(data: any[]) {
-    if (!data) {
+    if (!data || data.length === 0) {
       return;
     }
     this._steps.splice(0);
-    this._steps.push(...data.map((s) => ColorRampStep.newWithAlpha(s._color, s._alpha, s._factor, s._isBound)));
+    this._steps.push(
+      ...data.map((s) =>
+        ColorRampStep.newWithAlpha(s._color ?? s.color, s._alpha ?? s.alpha ?? 1, s._factor ?? s.factor ?? 0),
+      ),
+    );
     this._eventEmitOpts.endpointRef.emit('colorRampUpdate', {
       instanceId: this._eventEmitOpts.instanceId,
       context: this._eventEmitOpts.context,
@@ -178,12 +167,9 @@ export class ColorRamp {
 
   public randomize(maxSteps: number = 10) {
     this._steps.splice(0);
-    const max = Math.round(clampedPRNG(2, maxSteps));
+    const max = Math.max(1, Math.round(clampedPRNG(1, maxSteps)));
     for (let i = 0; i < max; i++) {
-      const factor = i === 0 ? 0 : i === max - 1 ? 1 : clampedPRNG(0, 1);
-      this._steps.push(
-        ColorRampStep.newWithAlpha(clampedPRNG(0, 1) * 0xffffff, clampedPRNG(0, 1), factor, i === 0 || i === max - 1),
-      );
+      this._steps.push(ColorRampStep.newWithAlpha(clampedPRNG(0, 1) * 0xffffff, clampedPRNG(0, 1), clampedPRNG(0, 1)));
     }
     this._steps.sort((a, b) => a.factor - b.factor);
     this._eventEmitOpts.endpointRef.emit('colorRampUpdate', {

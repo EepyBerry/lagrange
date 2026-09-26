@@ -14,6 +14,7 @@ export async function buildEditorScene(
   renderHeight: number,
   renderPixelRatio: number,
   creationMode: EditorSceneCreationMode,
+  canvasElement?: HTMLCanvasElement
 ): Promise<void> {
   await buildScene(
     sceneData as EditorSceneData,
@@ -22,6 +23,7 @@ export async function buildEditorScene(
     renderHeight,
     renderPixelRatio,
     creationMode,
+    canvasElement
   );
   buildSceneLighting(sceneData as EditorSceneData, data);
   buildScenePlanet(sceneData as EditorSceneData, data, creationMode);
@@ -68,6 +70,7 @@ async function buildScene(
   renderHeight: number,
   renderPixelRatio: number,
   creationMode: EditorSceneCreationMode,
+  canvasElement?: HTMLCanvasElement
 ): Promise<void> {
   const { scene, renderer, camera } = await ComponentHelper.createScene(
     data,
@@ -75,6 +78,7 @@ async function buildScene(
     renderHeight,
     renderPixelRatio,
     creationMode,
+    canvasElement
   );
   sceneData.scene = scene;
   sceneData.renderer = renderer;

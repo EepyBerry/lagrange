@@ -13,6 +13,8 @@ export async function initSettings(): Promise<IDBSettings> {
     // rendering
     renderingBackend: settings?.renderingBackend ?? 'webgl',
     // editor
+    inspectorSide: settings?.inspectorSide ?? 'left',
+    inspectorOrdering: settings?.inspectorOrdering ?? 'standard',
     cameraMouseControlsScheme: settings?.cameraMouseControlsScheme ?? 'standard',
     cameraFOV: settings?.cameraFOV ?? 50,
     skybox: settings?.skybox ?? 'deepspace',
@@ -84,6 +86,9 @@ export async function clearData(): Promise<void> {
     showInitDialog: true,
     // rendering
     renderingBackend: 'webgl',
+    // editor
+    inspectorSide: 'left',
+    inspectorOrdering: 'standard',
     skybox: 'deepspace',
     // baking
     bakingResolution: 2048,

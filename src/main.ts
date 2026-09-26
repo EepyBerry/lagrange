@@ -1,6 +1,6 @@
 import './assets/sass/index.scss';
 import 'iconify-icon';
-import OverlaySpinner from '@components/global/elements/OverlaySpinner.vue';
+import OverlayLoader from '@components/global/elements/OverlayLoader.vue';
 import ParameterCategory from '@components/global/parameters/ParameterCategory.vue';
 import ParameterCheckbox from '@components/global/parameters/ParameterCheckbox.vue';
 import ParameterColor from '@components/global/parameters/ParameterColor.vue';
@@ -31,5 +31,5 @@ createApp(App)
   .component('ParameterCheckbox', ParameterCheckbox)
   .component('ParameterGroup', ParameterGroup)
   .component('ParameterGrid', ParameterGrid)
-  .component('OverlaySpinner', OverlaySpinner)
+  .component('OverlayLoader', OverlayLoader)
   .mount('#app');

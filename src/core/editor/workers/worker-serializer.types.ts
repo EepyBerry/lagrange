@@ -39,7 +39,6 @@ export interface SerializedColorRampStep {
   color: SerializedColor;
   alpha: number;
   factor: number;
-  isBound: boolean;
 }
 
 export interface SerializedColorRamp {
@@ -70,7 +69,6 @@ export interface SerializedPlanetData {
   initCamDistance: number;
   initCamAngle: number;
   lensFlareEnabled: boolean;
-  lensFlarePointsIntensity: number;
   lensFlareGlareIntensity: number;
   sunLightAngle: number;
   sunLightColor: SerializedColor;

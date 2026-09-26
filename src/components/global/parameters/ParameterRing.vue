@@ -6,16 +6,23 @@
           variant="icon"
           class="sm"
           :icon="_expanded ? 'mingcute:down-fill' : 'mingcute:right-fill'"
+          icon-width="1.25rem"
           @click="toggleExpand()"
           @keydown.enter="toggleExpand()"
         />
-        <div class="current-color" :style="{ background: colorRampToStyle(lgParam!.colorRamp).color }">
-          <div class="alpha-color" :style="{ background: colorRampToStyle(lgParam!.colorRamp).alpha }"></div>
+        <div class="action-edit-color" :style="{ background: colorRampToStyle(lgParam!.colorRamp).color }">
+          <div class="alpha-indicator__color" :style="{ background: colorRampToStyle(lgParam!.colorRamp).alpha }"></div>
         </div>
-        <span class="ring-index">{{ getPartialId() }}</span>
+        <span class="ring-name">{{ getPartialId() }}</span>
       </div>
       <span class="ring-actions">
-        <LgvButton class="sm warn" icon="mingcute:delete-2-line" @click="$emit('delete', lgParam!)" />
+        <LgvButton
+          variant="icon"
+          class="sm warn"
+          icon="mingcute:delete-2-line"
+          icon-width="1.5rem"
+          @click="$emit('delete', lgParam!)"
+        />
       </span>
     </div>
     <div v-show="_expanded" class="ring-content">
@@ -75,8 +82,9 @@ function getPartialId() {
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    .ring-index {
+    .ring-name {
       font-weight: 400;
+      font-size: 0.8125rem;
     }
     .ring-info,
     .ring-actions {
@@ -100,10 +108,10 @@ function getPartialId() {
     height: 1.25rem;
   }
 }
-.current-color {
+.action-edit-color {
   display: inline-flex;
   align-self: center;
-  width: 3rem;
+  width: 2.5rem;
   height: 1.5rem;
   border-radius: 2px;
   border: 1px solid var(--lg-accent);

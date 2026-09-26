@@ -1,50 +1,63 @@
 <template>
-  <div :id="lgParam!.id" class="biome-grid" :class="{ expanded: _expanded }">
+  <div
+    :id="lgParam!.id"
+    class="biome-grid"
+    :class="{ expanded: _expanded }"
+    :style="{ '--biome-color': `#${lgParam?.color?.getHexString()}` }"
+  >
     <div class="biome-header">
       <div class="biome-info">
         <LgvButton
           variant="icon"
           class="sm"
           :icon="_expanded ? 'mingcute:down-fill' : 'mingcute:right-fill'"
+          icon-width="1.25rem"
           @click="toggleExpand()"
           @keydown.enter="toggleExpand()"
         />
-        <span class="current-color" :style="{ backgroundColor: `#${lgParam?.color?.getHexString()}` }"></span>
-        <span class="biome-index">{{ getPartialId() }}</span>
+        <span class="biome-name">{{ getPartialId() }}</span>
       </div>
       <div class="biome-actions">
-        <LgvButton class="sm" icon="mingcute:up-fill" :disabled="index === 0" @click="$emit('moveup', lgParam!.id)" />
         <LgvButton
+          variant="icon"
           class="sm"
-          icon="mingcute:down-fill"
+          icon="material-symbols:keyboard-double-arrow-up"
+          icon-width="1.5rem"
+          :disabled="index === 0"
+          @click="$emit('moveup', lgParam!.id)"
+        />
+        <LgvButton
+          variant="icon"
+          class="sm"
+          icon="material-symbols:keyboard-double-arrow-down"
+          icon-width="1.5rem"
           :disabled="index === maxIndex"
           @click="$emit('movedown', lgParam!.id)"
         />
-        <hr class="action-divider" />
-        <LgvButton class="sm warn" icon="mingcute:delete-2-line" @click="$emit('delete', lgParam!.id)" />
+        <LgvButton
+          variant="icon"
+          class="sm warn"
+          icon="mingcute:delete-2-line"
+          icon-width="1.5rem"
+          @click="$emit('delete', lgParam!.id)"
+        />
       </div>
     </div>
     <div v-show="_expanded" class="biome-content">
-      <hr class="info-divider" />
       <div class="biome-type">
-        <strong>{{ $t('editor.features.biomes.biome_type') }}:</strong>
-        <div>
-          <iconify-icon icon="mingcute:high-temperature-line" height="1.25rem" />
-          <span>{{ getBiomeTemperatureType() }},</span>
-        </div>
-        <div>
-          <iconify-icon icon="material-symbols:humidity-mid" height="1.25rem" />
-          <span>{{ getBiomeHumidityType() }}</span>
-        </div>
+        <iconify-icon icon="mingcute:high-temperature-line" height="1.25rem" />
+        <span>{{ getBiomeTemperatureType() }}</span>
       </div>
-      <ParameterDivider />
       <ParameterSlider :id="lgParam!.id + '-b-tmin'" v-model="lgParam!.tempMin" :step="0.005" :min="0" :max="1">
         {{ $t('editor.features.biomes.temperature_min') }}
       </ParameterSlider>
       <ParameterSlider :id="lgParam!.id + '-b-tmax'" v-model="lgParam!.tempMax" :step="0.005" :min="0" :max="1">
         {{ $t('editor.features.biomes.temperature_max') }}
       </ParameterSlider>
-      <ParameterDivider />
+      <div class="biome-type">
+        <iconify-icon icon="material-symbols:humidity-mid" height="1.25rem" />
+        <span>{{ getBiomeHumidityType() }}</span>
+      </div>
       <ParameterSlider :id="lgParam!.id + '-b-hmin'" v-model="lgParam!.humiMin" :step="0.005" :min="0" :max="1">
         {{ $t('editor.features.biomes.humidity_min') }}
       </ParameterSlider>
@@ -71,7 +84,6 @@
       >
         {{ $t('editor.general.emissive_intensity') }}
       </ParameterSlider>
-      <ParameterDivider />
       <ParameterColor v-model="lgParam!.color">
         {{ $t('editor.general.noise_color') }}
       </ParameterColor>
@@ -138,7 +150,7 @@ function getBiomeHumidityType(): string {
 }
 
 function getPartialId() {
-  return lgParam.value?.id.substring(0, 6);
+  return lgParam.value?.id.substring(0, 12);
 }
 </script>
 <style scoped lang="scss">
@@ -148,6 +160,7 @@ function getPartialId() {
   min-height: 2rem;
   background: var(--lg-panel);
   border: 1px solid var(--lg-accent);
+  border-left: 4px solid var(--biome-color);
   border-radius: 2px;
 
   display: flex;
@@ -155,29 +168,55 @@ function getPartialId() {
   padding: 0.5rem;
 
   .biome-header {
+    font-size: 0.8125rem;
     grid-column: span 2;
+    overflow: hidden;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    .biome-index {
+
+    .biome-name {
       font-weight: 400;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .biome-info,
+    .biome-info {
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      & > button {
+        padding: 0;
+      }
+    }
     .biome-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      & > button {
+        padding: 0;
+      }
     }
   }
   .biome-content {
+    overflow: hidden;
+    margin-top: 0.5rem;
+
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto 1fr;
     align-items: center;
     gap: 0.5rem;
 
     .biome-type {
       grid-column: span 2;
+      font-size: 0.875rem;
+      background: var(--lg-primary);
+      border: 1px solid var(--lg-accent);
+
       display: flex;
       align-items: center;
       justify-content: center;
@@ -197,24 +236,13 @@ function getPartialId() {
     }
   }
   hr.info-divider {
-    border-style: dotted;
     grid-column: span 2;
     margin: 0.5rem 0;
+    border-top: none;
   }
   hr.action-divider {
     height: 1.25rem;
   }
-}
-.current-color {
-  display: inline-flex;
-  align-self: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 2px;
-  border: 1px solid var(--lg-accent);
-}
-strong {
-  font-weight: 550;
 }
 
 @media screen and (max-width: 1023px) {

@@ -9,14 +9,20 @@ div.floating {
   flex-direction: column;
   justify-content: center;
 
-  clip-path: polygon(
+  &.color-picker {
+    z-index: 10;
+    visibility: visible;
+    padding: 0;
+  }
+
+  /*clip-path: polygon(
     0 $corner-length,
     $corner-length 0,
     100% 0,
     100% calc(100% - $corner-length),
     calc(100% - $corner-length) 100%,
     0 100%
-  );
+  );*/
 
   .floating-content {
     display: flex;

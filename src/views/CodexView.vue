@@ -62,7 +62,7 @@
       <span>{{ $t('codex.no_planets') }}</span>
     </div>
   </template>
-  <OverlaySpinner v-else :load="!ready" />
+  <OverlayLoader v-else :load="!ready" />
   <AppPlanetInfoDialog ref="planetInfoDialogRef" />
   <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="(id) => deleteTargetedPlanet(id)" />
 </template>
@@ -70,7 +70,7 @@
 <script setup lang="ts">
 import type { DeleteConfirmDialogExposes } from '@components/codex/dialogs/DeleteConfirmDialog.types.ts';
 import type { PlanetInfoDialogExposes } from '@components/codex/dialogs/PlanetInfoDialog.types.ts';
-import OverlaySpinner from '@components/global/elements/OverlaySpinner.vue';
+import OverlayLoader from '@components/global/elements/OverlayLoader.vue';
 import { EXTRAS_METAL_SLUG_MODE, uwuifyPath } from '@core/extras';
 import { readFileData } from '@core/helpers/import.helper';
 import PlanetData from '@core/models/planet/planet-data.model.ts';
@@ -83,7 +83,7 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import { nanoid } from 'nanoid';
 import pako from 'pako';
-import { defineAsyncComponent, onMounted, onUnmounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import NewCardElement from '@/components/codex/elements/NewCardElement.vue';
 import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue';
@@ -106,14 +106,7 @@ useHead({
   meta: [{ name: 'description', content: 'Planet editor' }],
 });
 
-onMounted(async () => {
-  await loadPlanets();
-  UIEventBus.registerWindowEventListener('click', onWindowClick);
-});
-onUnmounted(() => {
-  UIEventBus.deregisterWindowEventListener('click', onWindowClick);
-});
-
+onMounted(async () => await loadPlanets());
 watch(
   () => UIEventBus.clearEvent.value,
   async () => await loadPlanets(),
@@ -125,12 +118,6 @@ async function loadPlanets() {
   planets.value.splice(0);
   planets.value.push(...idbPlanets.map((pl) => ({ ...pl, data: PlanetData.createFrom(pl.data) })));
   ready.value = true;
-}
-
-// ------------------------------------------------------------------------------------------------
-
-async function onWindowClick(event: MouseEvent) {
-  UIEventBus.sendClickEvent(event);
 }
 
 // ------------------------------------------------------------------------------------------------

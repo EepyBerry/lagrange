@@ -24,7 +24,7 @@ export class RingParameters {
     this._outerRadius = outerRadius;
     this._colorRamp = new ColorRamp(
       { endpointRef: this._eventEmitOpts.endpointRef, instanceId: this._id, context: 'ring' },
-      [new ColorRampStep(0x483c2a, 0, true), new ColorRampStep(0xbf9a5e, 1, true)],
+      [new ColorRampStep(0x483c2a, 0), new ColorRampStep(0xbf9a5e, 1)],
     );
     if (colorRampSteps) {
       this._colorRamp.loadFromSteps(colorRampSteps);

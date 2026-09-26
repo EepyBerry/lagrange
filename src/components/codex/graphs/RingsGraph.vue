@@ -87,9 +87,10 @@
 </template>
 
 <script setup lang="ts">
-import type { ColorRamp } from '@core/models/planet/color-ramp.model.ts';
+import { type ColorRamp, ColorRampStep } from '@core/models/planet/color-ramp.model.ts';
+import { useResizeObserver } from '@vueuse/core';
 import { MathUtils } from 'three';
-import { computed, onMounted, ref, useTemplateRef, type ComputedRef, type Ref } from 'vue';
+import { computed, ref, useTemplateRef, type ComputedRef, type Ref } from 'vue';
 
 const RING_MAX_RADIUS = 5;
 export type Ring = {
@@ -107,11 +108,10 @@ const cssPlanetRadius: ComputedRef<number> = computed(() => (props.planetRadius 
 
 const graphArea = useTemplateRef<HTMLDivElement>('graphArea');
 const graphAreaWidth: Ref<number> = ref(0);
-const graphResizeObserver = new ResizeObserver((entries) => {
+
+useResizeObserver(graphArea, (entries) => {
   graphAreaWidth.value = entries[0].contentRect.width;
 });
-
-onMounted(() => graphResizeObserver.observe(graphArea.value!));
 
 function setHover(id: string) {
   hoveredRing.value = id;
@@ -123,20 +123,35 @@ function resetHover() {
 }
 
 function colorRampToRadialGradient(ring: Ring): string {
-  if (!graphAreaWidth.value) {
+  if (!graphAreaWidth.value || !ring.colorRamp.steps || ring.colorRamp.steps.length === 0) {
     return 'transparent';
   }
   const innerRadiusPx = (ring.innerRadius / RING_MAX_RADIUS) * graphAreaWidth.value;
   const outerRadiusPx = (ring.outerRadius / RING_MAX_RADIUS) * graphAreaWidth.value;
   const gradientStart = (innerRadiusPx * 100) / outerRadiusPx;
+
   const gradient: string[] = [];
-  for (const step of ring.colorRamp.steps) {
-    const remappedFactor = MathUtils.mapLinear(MathUtils.clamp(step.factor, 0, 0.995), 0, 1, gradientStart, 99.95);
-    const rgb = step.color.getHexString();
-    const a = Math.ceil(step.alpha * 255).toString(16);
-    gradient.push(`#${rgb + a.padStart(2, '0')} ${remappedFactor}%`);
+  const sortedSteps = [...ring.colorRamp.steps].sort((a, b) => a.factor - b.factor);
+  const first = sortedSteps[0];
+  const last = sortedSteps[sortedSteps.length - 1];
+
+  if (first.factor > 0) {
+    addGradientStep(gradient, first, 0, gradientStart);
+  }
+  for (const step of sortedSteps) {
+    addGradientStep(gradient, step, step.factor, gradientStart);
+  }
+  if (last.factor < 1) {
+    addGradientStep(gradient, last, 0.995, gradientStart);
   }
   return `radial-gradient(farthest-side at 0 0, ${gradient.join(', ')}, transparent 100%)`;
+}
+
+function addGradientStep(gradient: string[], step: ColorRampStep, factor: number, gradientStart: number) {
+  const rgb = step.color.getHexString();
+  const a = Math.ceil(step.alpha * 255).toString(16);
+  const remappedFactor = MathUtils.mapLinear(MathUtils.clamp(factor, 0, 0.995), 0, 1, gradientStart, 99.95);
+  gradient.push(`#${rgb + a.padStart(2, '0')} ${remappedFactor}%`);
 }
 </script>
 
@@ -265,7 +280,7 @@ function colorRampToRadialGradient(ring: Ring): string {
     bottom: 50%;
     opacity: 0.25;
     transform: translateY(50%) scale($scaled-image);
-    width: calc(var(--planet-radius-pct) * 2 + 3%);
+    width: calc(var(--planet-radius-pct) * 2 + 3.5%);
     aspect-ratio: 1;
   }
   .planet-center {

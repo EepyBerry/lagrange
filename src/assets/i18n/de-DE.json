@@ -146,6 +146,7 @@
       "general_theme_voyager": "Voyager",
       "general_font": "Schriftart auswählen",
       "general_font_default": "Standard - Poppins",
+      "general_font_retro": "Retro - VCR OSD Mono",
       "general_font_monospace": "Fester Breite - JetBrains Mono",
       "general_font_lowvision": "Sehschwäche - Atkinson Hyperlegible",
       "general_font_dyslexia": "Legasthenie - OpenDyslexic",
@@ -242,7 +243,8 @@
       },
       "credits": {
         "libs_tcsm": "(pre-0.5) THREE-CustomShaderMaterial",
-        "glsl_noise": "(GLSL) Voronoi + fBm",
+        "glsl_fbm": "(GLSL) fBm",
+        "glsl_voronoi": "(GLSL) Voronoi",
         "glsl_atmosphere": "(GLSL) Atmosphäre",
         "glsl_lensflare": "(GLSL) Lens flare",
         "glsl_bumpmap": "(GLSL) Bump mapping",
@@ -337,6 +339,24 @@
       "color_opacity": "Farbe & Transparenz",
       "emissive_intensity": "Emissionsintensität",
       "detail_noise_strength": "Detailrauschen Einfluss"
+    },
+    "inspector": {
+      "features": {
+        "$title": "Funktionen",
+        "data": "Objektdaten",
+        "transform": "Verformung",
+        "rendering": "Rendering",
+        "lighting": "Helligkeit",
+        "surface": "Oberfläche",
+        "biomes": "Biome",
+        "cracks": "Risse",
+        "craters": "Krater",
+        "clouds": "Wolken",
+        "atmosphere": "Atmosphäre",
+        "rings": "Ringe",
+        "postprocessing": "Postprocessing"
+      },
+      "controls": {}
     },
     "basic_data": {
       "$title": "Grunddaten",
@@ -518,6 +538,8 @@
     "general_theme_default": "Das Thema Komet (blau) anwenden",
     "general_theme_supernova": "Das Thema Supernova (lila) anwenden",
     "general_theme_voyager": "Das Thema Voyager (orange) anwenden",
+    "editor_inspector_side": "Inspector-Seite wechseln",
+    "editor_inspector_ordering": "Inspector-Anordnung wechseln",
     "editor_baking_resolution_256": "256 x 256 Pixel",
     "editor_baking_resolution_512": "512 x 512 Pixel",
     "editor_baking_resolution_1k": "1024 x 1024 Pixel",
@@ -536,7 +558,9 @@
     "action_add_colorstep": "Einen Punkt hinzu fügen",
     "action_sort_colorsteps": "Punkte sortieren",
     "action_close_dialog": "Dialog schließen",
-    "action_close_toast": "Benachrichtigung schließen"
+    "action_close_toast": "Benachrichtigung schließen",
+    "action_resize_horizontal": "Vertikal anpassen (Pfeiltasten)",
+    "action_resize_vertical": "Horizontal anpassen (Pfeiltasten)"
   },
   "extras": {
     "day_newyear": "Gutes Jahr!",
