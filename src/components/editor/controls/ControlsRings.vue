@@ -1,36 +1,21 @@
 <template>
   <ParameterGrid>
-    <ParameterCheckbox
-      id="r-show"
-      v-model="EDITOR_STATE.planetData.ringsEnabled"
-      :true-value="true"
-      :false-value="false"
-    >
-      {{ $t('editor.ring.ring_show') }}
-    </ParameterCheckbox>
-    <template v-if="EDITOR_STATE.planetData.ringsEnabled">
-      <ParameterGroup :toggleable="true">
-        <template #title>{{ $t('editor.ring.ring_list') }}</template>
-        <template #content>
-          <template v-for="(r, index) in EDITOR_STATE.planetData.ringsParams" :key="r.id">
-            <!-- prettier-ignore-attribute -->
-            <ParameterRing
-              v-model="EDITOR_STATE.planetData.ringsParams[index]"
-              :index="index"
-              @delete="EDITOR_STATE.planetData.removeRing(r)"
-            />
-          </template>
-          <LgvButton
-            v-show="EDITOR_STATE.planetData.ringsParams.length < 8"
-            class="sm action-add"
-            icon="ph:plus"
-            @click="EDITOR_STATE.planetData.addRing()"
-          >
-            {{ $t('editor.$action_add') }}
-          </LgvButton>
-        </template>
-      </ParameterGroup>
+    <template v-for="(r, index) in EDITOR_STATE.planetData.ringsParams" :key="r.id">
+      <!-- prettier-ignore-attribute -->
+      <ParameterRing
+        v-model="EDITOR_STATE.planetData.ringsParams[index]"
+        :index="index"
+        @delete="EDITOR_STATE.planetData.removeRing(r)"
+      />
     </template>
+    <LgvButton
+      v-show="EDITOR_STATE.planetData.ringsParams.length < 8"
+      class="sm action-add"
+      icon="ph:plus"
+      @click="EDITOR_STATE.planetData.addRing()"
+    >
+      {{ $t('editor.$action_add') }}
+    </LgvButton>
   </ParameterGrid>
 </template>
 <script setup lang="ts">

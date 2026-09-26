@@ -233,15 +233,15 @@ const sidebarTabs: ComputedRef<LvgTabGroupTab[]> = computed(() => [
     icon: 'fluent:leaf-two-20-regular',
     iconWidth: '2rem',
     title: i18n.t('dialog.planet_info.tabs.biomes'),
-    disabled: !planet.value?.data.biomesEnabled,
+    disabled: !planet.value?.data.biomesEnabled || (planet.value?.data.biomesParams.length ?? 0) === 0,
   },
-  {
+  /*{
     name: 'topography',
     icon: 'hugeicons:moon-01',
     iconWidth: '1.5rem',
     title: i18n.t('dialog.planet_info.tabs.topography'),
     disabled: !planet.value?.data.cracksEnabled && !planet.value?.data.cratersEnabled,
-  },
+  },*/
   {
     name: 'rings',
     icon: 'ph:planet',
@@ -422,16 +422,20 @@ async function open(p: IDBPlanet) {
       }
       .ring__id {
         z-index: 1;
-        font-size: 20px;
+        font-size: 24px;
         margin-left: 6px;
       }
       .ring__data {
         z-index: 1;
         font-size: 12px;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
+
+        .data-value {
+          width: 100%;
+        }
       }
     }
   }

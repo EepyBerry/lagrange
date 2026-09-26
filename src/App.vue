@@ -28,8 +28,8 @@
     >
       <span class="a11y--visually-hidden">{{ $t('main.footer.github') }}</span>
     </LgvLink>
-    <ExtraSpecialDayElement />
   </LgvFooter>
+  <ExtraSpecialDayElement />
   <AppInitDialog
     ref="initDialog"
     :keybinds="keybinds"

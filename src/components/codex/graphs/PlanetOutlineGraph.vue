@@ -27,7 +27,7 @@
           </label>
           <p id="datapoint__waterlevel" class="datapoint__value">
             <span class="mathsymbol">h<sub>l</sub>&nbsp;=&nbsp;</span>
-            <span>{{ (planet.planetWaterLevel * 100).toFixed(2) }}&nbsp;%</span>
+            <span>{{ planet.planetWaterLevel }}</span>
           </p>
         </li>
       </ol>
@@ -59,7 +59,7 @@
           </label>
           <p id="datapoint__ambientlight" class="datapoint__value">
             <span class="mathsymbol">L<sub>a</sub>&nbsp;=&nbsp;</span>
-            <span>{{ planet.ambLightIntensity.toFixed(2) }}&nbsp;u</span>
+            <span>{{ planet.ambLightIntensity.toFixed(2) }}</span>
           </p>
         </li>
         <li class="filler" />
@@ -69,7 +69,7 @@
           </label>
           <p id="datapoint__wateremissive" class="datapoint__value">
             <span class="mathsymbol">Em<sub>l</sub>&nbsp;=&nbsp;</span>
-            <span>{{ planet.planetWaterEmissiveIntensity.toFixed(2) }}&nbsp;u</span>
+            <span>{{ planet.planetWaterEmissiveIntensity.toFixed(2) }}</span>
           </p>
         </li>
         <li>
@@ -78,7 +78,7 @@
           </label>
           <p id="datapoint__surfaceemissive" class="datapoint__value">
             <span class="mathsymbol">Em<sub>s</sub>&nbsp;=&nbsp;</span>
-            <span>{{ planet.getMaxGroundEmissiveIntensity().toFixed(2) }}&nbsp;u</span>
+            <span>{{ planet.getMaxGroundEmissiveIntensity().toFixed(2) }}</span>
           </p>
         </li>
       </ol>

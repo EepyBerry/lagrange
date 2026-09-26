@@ -14,6 +14,9 @@ importers:
       '@unhead/vue':
         specifier: ^2.1.13
         version: 2.1.13(vue@3.5.32(typescript@5.9.3))
+      '@vueuse/core':
+        specifier: ^15.0.0
+        version: 15.0.0(vue@3.5.32(typescript@5.9.3))
       color.js:
         specifier: ^1.2.0
         version: 1.2.0
@@ -51,8 +54,8 @@ importers:
         specifier: ^3.5.32
         version: 3.5.32(typescript@5.9.3)
       vue-accessible-color-picker:
-        specifier: ^5.3.1
-        version: 5.3.1(vue@3.5.32(typescript@5.9.3))
+        specifier: ^6.0.0
+        version: 6.0.0(colorjs.io@0.6.1)(vue@3.5.32(typescript@5.9.3))
       vue-i18n:
         specifier: ^11.3.1
         version: 11.3.1(vue@3.5.32(typescript@5.9.3))
@@ -737,6 +740,9 @@ packages:
   '@types/three@0.185.4':
     resolution: {integrity: sha512-gAsBIC07NIFrxjbf7tH2t71c38uulFfk/RFoC7FNBSjMRAQ8J1x/RBvusX0N5PJouaYFJawXQqfCQ0RKUx/1nA==}
 
+  '@types/web-bluetooth@0.0.21':
+    resolution: {integrity: sha512-oIQLCGWtcFZy2JW77j9k8nHzAOpqMHLQejDA48XXMWH6tjCQHz5RCFz1bzsmROyL6PUm+LLnUiI4BCn221inxA==}
+
   '@types/webxr@0.5.24':
     resolution: {integrity: sha512-h8fgEd/DpoS9CBrjEQXR+dIDraopAEfu4wYVNY2tEPwk60stPWhvZMf4Foo5FakuQ7HFZoa8WceaWFervK2Ovg==}
 
@@ -900,6 +906,22 @@ packages:
       vue:
         optional: true
 
+  '@vueuse/core@15.0.0':
+    resolution: {integrity: sha512-Zv67h5mrk7YHDJsRObx+DXaCBz6RKBUpxqLesJ+3xZNPG6yuQs7ja7kg3veFrrouYLWAqydQ7CwGEbLVxB43Ng==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      vue: ^3.5.0
+
+  '@vueuse/metadata@15.0.0':
+    resolution: {integrity: sha512-sfWE5LADAKJ0KnjtGliMdSN8Ij/L7uP6rXIZlgPloAI4zvvefbw6H5Lt7KJA6RqQOYgVqWF5Guj50HHMIzygBg==}
+    engines: {node: '>=22'}
+
+  '@vueuse/shared@15.0.0':
+    resolution: {integrity: sha512-vbNXhGrbV53xPOMSyOzMHQRvhMgZf7oNDw2RChUetVxwTIEkInQ1joZ9JbT0G3z2n2AJNjvmCWeM9ySYrnvogA==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      vue: ^3.5.0
+
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
     peerDependencies:
@@ -968,6 +990,9 @@ packages:
 
   color.js@1.2.0:
     resolution: {integrity: sha512-0ajlNgWWOR7EK9N6l2h0YKsZPzMCLQG5bheCoTGpGfhkR8tB5eQNItdua1oFHDTeq9JKgSzQJqo+Gp3V/xW+Lw==}
+
+  colorjs.io@0.6.1:
+    resolution: {integrity: sha512-8lyR2wHzuIykCpqHKgluGsqQi5iDm3/a2IgP2GBZrasn2sBRkE4NOGsglZxWLs/jZQoNkmA/KM/8NV16rLUdBg==}
 
   confbox@0.1.8:
     resolution: {integrity: sha512-RMtmw0iFkeR4YV+fUOSucriAQNb9g8zFR52MWCtl+cCZOFRNL6zeB395vPzFhEjjn4fMxXudmELnl/KF/WrK6w==}
@@ -1898,10 +1923,11 @@ packages:
   vscode-uri@3.1.0:
     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
 
-  vue-accessible-color-picker@5.3.1:
-    resolution: {integrity: sha512-IZHtcnLoOmKIg6JxyPeThUO4ShkjziSTTPP8mf5b9pixSeEClCSzWH0rct6zaANqG5pBmBww5mztBPj1NDkchw==}
+  vue-accessible-color-picker@6.0.0:
+    resolution: {integrity: sha512-shRT7gf64MPplFOccN+fcw1tEfLmSIuOnMFinlvZWKw4q4szGZ+Q/qABRe0WlN0aOdMGfVoP35tNzS7NiPuZHg==}
     peerDependencies:
-      vue: ^3.2.x
+      colorjs.io: ~0.6.0-beta.3
+      vue: ^3.5.x
 
   vue-demi@0.14.10:
     resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
@@ -2398,6 +2424,8 @@ snapshots:
       fflate: 0.8.2
       meshoptimizer: 1.1.1
 
+  '@types/web-bluetooth@0.0.21': {}
+
   '@types/webxr@0.5.24': {}
 
   '@typescript-eslint/eslint-plugin@8.57.1(@typescript-eslint/parser@8.57.1(eslint@10.1.0(jiti@2.6.1))(typescript@5.9.3))(eslint@10.1.0(jiti@2.6.1))(typescript@5.9.3)':
@@ -2624,6 +2652,19 @@ snapshots:
       typescript: 5.9.3
       vue: 3.5.32(typescript@5.9.3)
 
+  '@vueuse/core@15.0.0(vue@3.5.32(typescript@5.9.3))':
+    dependencies:
+      '@types/web-bluetooth': 0.0.21
+      '@vueuse/metadata': 15.0.0
+      '@vueuse/shared': 15.0.0(vue@3.5.32(typescript@5.9.3))
+      vue: 3.5.32(typescript@5.9.3)
+
+  '@vueuse/metadata@15.0.0': {}
+
+  '@vueuse/shared@15.0.0(vue@3.5.32(typescript@5.9.3))':
+    dependencies:
+      vue: 3.5.32(typescript@5.9.3)
+
   acorn-jsx@5.3.2(acorn@8.16.0):
     dependencies:
       acorn: 8.16.0
@@ -2686,6 +2727,8 @@ snapshots:
       wrap-ansi: 9.0.2
 
   color.js@1.2.0: {}
+
+  colorjs.io@0.6.1: {}
 
   confbox@0.1.8: {}
 
@@ -3403,8 +3446,9 @@ snapshots:
 
   vscode-uri@3.1.0: {}
 
-  vue-accessible-color-picker@5.3.1(vue@3.5.32(typescript@5.9.3)):
+  vue-accessible-color-picker@6.0.0(colorjs.io@0.6.1)(vue@3.5.32(typescript@5.9.3)):
     dependencies:
+      colorjs.io: 0.6.1
       vue: 3.5.32(typescript@5.9.3)
 
   vue-demi@0.14.10(vue@3.5.32(typescript@5.9.3)):

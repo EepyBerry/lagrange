@@ -1,17 +1,22 @@
 <template>
-  <div v-if="specialDay && !!EXTRAS_SPECIAL_DAYS" class="special-day-box" :title="$t(specialDay!.translationKey)">
-    <span class="a11y--visually-hidden">{{ $t(specialDay!.translationKey) }}</span>
-    <div
-      class="special-day-emoji"
-      :class="{ multi: specialDay!.emoji.length > 1, ...getSpecialOverlay(specialDay!.overlayMode) }"
-    >
-      <iconify-icon v-for="emoji of specialDay?.emoji" :key="emoji" :icon="emoji" width="1.75rem" aria-hidden="true" />
+  <div v-if="specialDay && EXTRAS_SPECIAL_DAYS" class="special-day-box" :title="$t(specialDay!.translationKey)">
+    <div>
+      <span class="a11y--visually-hidden">{{ $t(specialDay!.translationKey) }}</span>
+      <div id="special-day-emoji" :class="[specialDay!.emoji.length > 1 ? 'multi' : '', specialDay?.cssClass]">
+        <iconify-icon
+          v-for="emoji of specialDay?.emoji"
+          :key="emoji"
+          :icon="emoji"
+          width="1.675rem"
+          aria-hidden="true"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { checkSpecialDay, EXTRAS_SPECIAL_DAYS, getSpecialOverlay, type SpecialDayInfo } from '@core/extras';
+import { checkSpecialDay, EXTRAS_SPECIAL_DAYS, type SpecialDayInfo } from '@core/extras';
 import { ref, type Ref } from 'vue';
 
 const specialDay: Ref<SpecialDayInfo | undefined> = ref(checkSpecialDay());
@@ -19,46 +24,56 @@ const specialDay: Ref<SpecialDayInfo | undefined> = ref(checkSpecialDay());
 
 <style lang="scss">
 .special-day-box {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 2px;
+  $flat-angle: 1.25rem;
+  z-index: 10;
+  position: fixed;
+  bottom: -1px;
+  right: 11rem;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: help;
+  padding: var(--lg-var-border-width) var(--lg-var-border-width) 0;
 
-  .special-day-emoji:not(.multi) {
-    position: relative;
-    width: 100%;
-    height: 100%;
+  background: var(--lg-accent);
+  clip-path: polygon($flat-angle 0, calc(100% - $flat-angle) 0, 100% 100%, 0 100%);
+
+  & > div {
+    padding: 0.125rem calc($flat-angle + 0.25rem) 0.125rem calc($flat-angle + 0.25rem);
+    background: var(--lg-primary);
+    clip-path: inherit;
+
     display: flex;
+    align-self: center;
     align-items: center;
     justify-content: center;
   }
-  .special-day-emoji.multi {
-    position: relative;
-    width: 100%;
-    height: 100%;
+}
+#special-day-emoji {
+  cursor: help;
+  height: 2.5rem;
+  min-width: 2.5rem;
+}
+#special-day-emoji:not(.multi) {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#special-day-emoji.multi {
+  position: relative;
+  width: 100%;
 
-    iconify-icon:first-child {
-      inset: 0 auto auto 0.25rem;
-    }
-    iconify-icon:last-child {
-      inset: auto 0 0 auto;
-      filter: drop-shadow(-1px -1px var(--black));
-    }
-
-    iconify-icon {
-      position: absolute;
-      height: 2rem;
-      display: flex;
-      align-items: center;
-    }
+  iconify-icon:first-child {
+    position: absolute;
+    inset: 0.1875rem auto auto 0.25rem;
   }
-
-  .special-day-emoji.overlay-1 {
-    filter: hue-rotate(330deg) saturate(500%) brightness(25%);
+  iconify-icon:last-child {
+    position: absolute;
+    inset: auto 0 0.1875rem auto;
+    filter: drop-shadow(-1px -1px var(--black));
   }
+}
+
+.special-day-emoji.aprilfools {
+  filter: hue-rotate(330deg) saturate(500%) brightness(25%);
 }
 </style>

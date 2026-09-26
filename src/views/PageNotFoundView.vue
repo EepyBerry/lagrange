@@ -4,7 +4,7 @@
     <div class="text">
       <h1 class="title" :class="{ ultra: msgVariant === 4 }">{{ loadMessage() }}</h1>
       <h2 class="subtitle">{{ $t('404.subtext') }}</h2>
-      <LgvLink id="codex-link" variant="button" icon="mingcute:book-2-line" href="/">
+      <LgvLink id="codex-link" variant="button" icon="mingcute:book-2-line" :href="uwuifyPath('/')">
         {{ $t('404.link') }}
       </LgvLink>
     </div>
@@ -13,6 +13,7 @@
 
 <script setup lang="ts">
 import AppLogo from '@components/global/elements/AppLogo.vue';
+import { uwuifyPath } from '@core/extras.ts';
 import LgvLink from '@lib/components/base/LgvLink.vue';
 import { useHead } from '@unhead/vue';
 import { ref } from 'vue';

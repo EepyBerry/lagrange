@@ -84,8 +84,18 @@ function drawColorRamp(steps: SerializedColorRampStep[]): void {
   if (!steps || steps.length === 0) {
     return;
   }
+  const sortedSteps = [...steps].sort((a, b) => a.factor - b.factor);
   const gradient = ctx.createLinearGradient(0, 0, ctx.canvas.width, 0);
-  steps.forEach((step) => gradient.addColorStop(step.factor, threeColorToCssStyle(step.color, step.alpha)));
+  const first = sortedSteps[0];
+  const last = sortedSteps[sortedSteps.length - 1];
+
+  if (first.factor > 0) {
+    gradient.addColorStop(0, threeColorToCssStyle(first.color, first.alpha));
+  }
+  sortedSteps.forEach((step) => gradient.addColorStop(step.factor, threeColorToCssStyle(step.color, step.alpha)));
+  if (last.factor < 1) {
+    gradient.addColorStop(1, threeColorToCssStyle(last.color, last.alpha));
+  }
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }

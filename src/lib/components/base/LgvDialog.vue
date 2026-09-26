@@ -38,12 +38,11 @@
 
 <script setup lang="ts">
 import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
-import { UIEventBus } from '@core/ui-event-bus.ts';
 import LgvButton from '@lib/components/base/LgvButton.vue';
-import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
+import { useEventListener } from '@vueuse/core';
+import { onMounted, ref, useTemplateRef } from 'vue';
 
 const dialog = useTemplateRef('dialog');
-const dialogActions = useTemplateRef('dialogActions');
 
 const ignoresNativeEvents = ref(false);
 const handleCancel = (evt: Event) => {
@@ -70,23 +69,17 @@ const $props = defineProps<{
   preventClickClose?: boolean;
   isWarn?: boolean;
 }>();
-onMounted(() => {
-  dialog.value?.addEventListener('click', handleClick);
-  dialog.value?.addEventListener('cancel', handleCancel);
-  $emit('mounted');
-});
-onBeforeUnmount(() => {
-  dialog.value?.removeEventListener('click', handleClick);
-  dialog.value?.removeEventListener('cancel', handleCancel);
-});
+
+useEventListener('click', handleClick);
+useEventListener('cancel', handleCancel);
+
+onMounted(() => $emit('mounted'));
 
 function open() {
-  UIEventBus.disableWindowEventListener('keydown');
   dialog.value?.showModal();
   $emit('open');
 }
 function close() {
-  UIEventBus.enableWindowEventListener('keydown');
   dialog.value?.close();
   $emit('close');
 }

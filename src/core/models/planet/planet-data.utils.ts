@@ -18,7 +18,6 @@ export function loadPlanetData(target: PlanetData, data?: PrefixedWith<PlanetDat
 
   // Lighting
   target.lensFlareEnabled = data?._lensFlareEnabled ?? true;
-  target.lensFlarePointsIntensity = data?._lensFlarePointsIntensity ?? 0.25;
   target.lensFlareGlareIntensity = data?._lensFlareGlareIntensity ?? 0.4;
   target.sunLightAngle = data?._sunLightAngle ?? -30;
   target.sunLightColor.set(data?._sunLightColor ?? 0xfff6e8);
@@ -52,13 +51,12 @@ export function loadPlanetData(target: PlanetData, data?: PrefixedWith<PlanetDat
     data?._planetSurfaceColorRamp
       ? data?._planetSurfaceColorRamp._steps
       : [
-          new ColorRampStep(0x000000, 0, true),
+          new ColorRampStep(0x000000, 0),
           new ColorRampStep(0x0b1931, 0.4),
           new ColorRampStep(0x2d4265, 0.495),
           new ColorRampStep(0x2f2e10, 0.5),
           new ColorRampStep(0x446611, 0.525),
           new ColorRampStep(0x223b05, 0.65),
-          new ColorRampStep(0x223b05, 1, true),
         ],
   );
 
@@ -83,10 +81,10 @@ export function loadPlanetData(target: PlanetData, data?: PrefixedWith<PlanetDat
   target.cracksColorNoise.loadData(data?._cracksColorNoise);
   target.cracksColorRamp.loadFromSteps(
     data?._cracksColorRamp?._steps ?? [
-      new ColorRampStep(0x2e221b, 0, true),
+      new ColorRampStep(0x2e221b, 0),
       new ColorRampStep(0xad5a11, 0.55),
       new ColorRampStep(0xe6962e, 0.8),
-      new ColorRampStep(0xffdc73, 1, true),
+      new ColorRampStep(0xffdc73, 1),
     ],
   );
 
@@ -97,11 +95,9 @@ export function loadPlanetData(target: PlanetData, data?: PrefixedWith<PlanetDat
   target.cratersDetailNoise.loadData(data?._cratersDetailNoise);
   target.cratersColorRamp.loadFromSteps(
     data?._cratersColorRamp?._steps ?? [
-      new ColorRampStep(0x000000, 0, true),
       new ColorRampStep(0x000000, 0.27),
       new ColorRampStep(0x8f8f8f, 0.34),
       new ColorRampStep(0x7f7f7f, 0.4),
-      new ColorRampStep(0x7f7f7f, 1, true),
     ],
   );
 
@@ -116,7 +112,7 @@ export function loadPlanetData(target: PlanetData, data?: PrefixedWith<PlanetDat
   target.cloudsColorRamp.loadFromSteps(
     data?._cloudsColorRamp
       ? data?._cloudsColorRamp._steps
-      : [new ColorRampStep(0x000000, 0, true), new ColorRampStep(0x000000, 0.6), new ColorRampStep(0xffffff, 1, true)],
+      : [new ColorRampStep(0x000000, 0.6), new ColorRampStep(0xffffff, 1)],
   );
 
   // Atmosphere
@@ -151,7 +147,6 @@ export function loadPlanetData(target: PlanetData, data?: PrefixedWith<PlanetDat
 export function randomizePlanetData(target: PlanetData): void {
   // Lighting
   target.lensFlareEnabled = randomBoolean();
-  target.lensFlarePointsIntensity = clampedPRNG(0, 1);
   target.lensFlareGlareIntensity = clampedPRNG(0, 1);
   target.sunLightAngle = clampedPRNG(-90, 90);
   target.sunLightColor.set(clampedPRNG(0.5, 1) * 0xffffff);
@@ -233,9 +228,8 @@ export function randomizePlanetData(target: PlanetData): void {
   target.cloudsColor.set(clampedPRNG(0, 1) * 0xffffff);
   target.dataEventEndpoint.emit('cloudsColor', { value: target.cloudsColor });
   target.cloudsColorRamp.loadFromSteps([
-    new ColorRampStep(0x000000, 0, true),
     new ColorRampStep(randomColor(true), clampedPRNG(0.05, 0.95)),
-    new ColorRampStep(randomColor(true), 1, true),
+    new ColorRampStep(randomColor(true), 1),
   ]);
 
   // Atmosphere
@@ -281,7 +275,6 @@ export function resetPlanetData(target: PlanetData): void {
 
   // Lighting
   target.lensFlareEnabled = true;
-  target.lensFlarePointsIntensity = 0.25;
   target.lensFlareGlareIntensity = 0.4;
   target.sunLightAngle = -30;
   target.sunLightColor = new Color(0xfff6e8);
@@ -313,13 +306,11 @@ export function resetPlanetData(target: PlanetData): void {
   target.planetSurfaceDisplacement.reset(2, 0.2, 2, 6, 0.001, 2, 0.05);
   target.planetSurfaceNoise.reset(4.57, 0.49, 2.45, 6, 1, 1);
   target.planetSurfaceColorRamp.loadFromSteps([
-    new ColorRampStep(0x000000, 0, true),
     new ColorRampStep(0x0b1931, 0.4),
     new ColorRampStep(0x2d4265, 0.495),
     new ColorRampStep(0x766f17, 0.5),
     new ColorRampStep(0x446611, 0.505),
     new ColorRampStep(0x223b05, 0.65),
-    new ColorRampStep(0x223b05, 1, true),
   ]);
 
   // Features
@@ -374,10 +365,10 @@ export function resetPlanetData(target: PlanetData): void {
   target.cracksLimiterNoise.reset(6.96, 0.49, 2.5, 4);
   target.cracksColorNoise.reset(25, 0.8, 3, 4, 1);
   target.cracksColorRamp.loadFromSteps([
-    new ColorRampStep(0x2e221b, 0, true),
+    new ColorRampStep(0x2e221b, 0),
     new ColorRampStep(0xad5a11, 0.55),
     new ColorRampStep(0xe6962e, 0.8),
-    new ColorRampStep(0xffdc73, 1, true),
+    new ColorRampStep(0xffdc73, 1),
   ]);
 
   // Craters
@@ -385,11 +376,9 @@ export function resetPlanetData(target: PlanetData): void {
   target.cratersBaseNoise.reset(7.25, 1);
   target.cratersDetailNoise.reset(3.8, 1, 2.6, 6);
   target.cratersColorRamp.loadFromSteps([
-    new ColorRampStep(0x000000, 0, true),
     new ColorRampStep(0x000000, 0.27),
     new ColorRampStep(0x8f8f8f, 0.34),
     new ColorRampStep(0x7f7f7f, 0.4),
-    new ColorRampStep(0x7f7f7f, 1, true),
   ]);
 
   // Clouds
@@ -400,11 +389,7 @@ export function resetPlanetData(target: PlanetData): void {
   target.cloudsDisplacement.reset(2, 0.2, 2, 6, 0.001, 2, 0.05);
   target.cloudsNoise.reset(4, 0.6, 1.75, 6, 1, 1);
   target.cloudsColor = new Color(0xffffff);
-  target.cloudsColorRamp.loadFromSteps([
-    new ColorRampStep(0x000000, 0, true),
-    new ColorRampStep(0x000000, 0.6),
-    new ColorRampStep(0xffffff, 1, true),
-  ]);
+  target.cloudsColorRamp.loadFromSteps([new ColorRampStep(0x000000, 0.6), new ColorRampStep(0xffffff, 1)]);
 
   // Atmosphere
   target.atmosphereEnabled = true;

@@ -1,7 +1,9 @@
 <template>
   <button ref="btnRef" type="button" class="lgv">
     <span v-if="a11yLabel" class="a11y--visually-hidden">{{ a11yLabel }}</span>
-    <iconify-icon v-if="icon" :icon="icon" :width="iconWidth ?? '1.5rem'" aria-hidden="true" />
+    <span class="__icon">
+      <iconify-icon v-if="icon" :icon="icon" :width="iconWidth ?? '1.5rem'" aria-hidden="true" />
+    </span>
     <span v-if="!!$slots.default" class="__text"><slot></slot></span>
   </button>
 </template>
@@ -32,21 +34,11 @@ button.lgv {
   justify-content: center;
   gap: 0.25rem;
 
-  &:hover,
-  &:focus-visible {
-    cursor: pointer;
-    background: var(--lg-button-hover);
+  .__icon {
+    pointer-events: none;
+    display: flex;
+    align-items: center;
   }
-  &:active {
-    cursor: pointer;
-    background: var(--lg-button-active);
-  }
-  &:disabled {
-    cursor: not-allowed;
-    background: var(--lg-button-disabled);
-    color: var(--lg-text-disabled);
-  }
-
   .__text {
     display: flex;
     align-items: center;
@@ -63,6 +55,23 @@ button.lgv {
     min-height: 2rem;
   }
 
+  // interaction styles
+  &:hover,
+  &:focus-visible {
+    cursor: pointer;
+    background: var(--lg-button-hover);
+  }
+  &:active {
+    cursor: pointer;
+    background: var(--lg-button-active);
+  }
+  &:disabled {
+    cursor: not-allowed;
+    background: var(--lg-button-disabled);
+    color: var(--lg-text-disabled);
+  }
+
+  // theming styles
   &.contrast {
     background: var(--lg-contrast);
   }
@@ -110,8 +119,6 @@ button.lgv {
 
 // dark button
 button.lgv[variant='dark'] {
-  min-width: 2.5rem;
-  min-height: 2.5rem;
   overflow: hidden;
   box-shadow: none;
 
@@ -145,17 +152,37 @@ button.lgv[variant='icon'] {
   background: transparent;
   box-shadow: none;
 
-  &:not(:disabled):hover,
-  &:not(:disabled):focus-visible {
+  &:not(:disabled):hover > .__icon,
+  &:not(:disabled):focus-visible > .__icon {
     color: var(--lg-button-icon-hover);
     transform: scale(1.05);
   }
-  &:not(:disabled):active {
+  &:not(:disabled):active > .__icon {
     color: var(--lg-button-icon-active);
     transform: scale(0.95);
   }
   &:disabled {
     filter: brightness(40%) grayscale(100%);
+  }
+
+  &.warn {
+    background: none;
+    &:hover,
+    &:focus-visible,
+    &:active {
+      background: none;
+    }
+    & > .__icon {
+      color: var(--lg-warn);
+    }
+  }
+  &.warn:not(:disabled):hover > .__icon,
+  &.warn:not(:disabled):focus-visible > .__icon {
+    color: var(--lg-warn-hover);
+    transform: scale(1.05);
+  }
+  &.warn:not(:disabled):active > .__icon {
+    color: var(--lg-warn-active);
   }
 }
 

@@ -15,7 +15,6 @@ export function serializeTextureWorkerData(
       (step: ColorRampStep): SerializedColorRampStep => ({
         id: step.id,
         color: { r: step.color.r, g: step.color.g, b: step.color.b },
-        isBound: step.isBound,
         alpha: step.alpha,
         factor: step.factor,
       }),

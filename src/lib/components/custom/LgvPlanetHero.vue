@@ -1,6 +1,6 @@
 <template>
   <section v-if="planet" id="planet-hero" :style="{ background: cssPlanetGradient }">
-    <div :class="{ 'extra-hologram': EXTRAS_HOLOGRAM_EFFECT }">
+    <div>
       <img
         v-if="planet.preview"
         ref="planetImage"
@@ -10,7 +10,6 @@
         :alt="planet.data.planetName"
       />
       <iconify-icon v-else icon="ph:planet-thin" width="auto" aria-hidden="true" />
-      <span v-if="EXTRAS_CRT_EFFECT" class="effect-crt"></span>
     </div>
     <iconify-icon id="planet-star" icon="ph:star-four-fill" width="1.25rem" aria-hidden="true" />
     <article>
@@ -25,7 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT } from '@core/extras.ts';
 import { getI18nPlanetClass, getI18nPlanetType } from '@core/utils/i18n-utils.ts';
 import { prominent } from 'color.js';
 import { computed, ref, watch, type ComputedRef, type Ref } from 'vue';

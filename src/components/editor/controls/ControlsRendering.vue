@@ -1,32 +1,8 @@
 <template>
   <ParameterGrid>
     <ParameterGroup toggleable>
-      <template #title>{{ $t('editor.planet_rendering.transform') }}</template>
-      <template #content>
-        <ParameterSlider id="p-tilt" v-model="EDITOR_STATE.planetData.planetRadius" :step="0.01" :min="0.5" :max="1">
-          {{ $t('editor.planet_rendering.transform_radius') }}
-        </ParameterSlider>
-        <ParameterSlider id="p-tilt" v-model="EDITOR_STATE.planetData.planetAxialTilt" :step="1" :min="-180" :max="180">
-          {{ $t('editor.planet_rendering.transform_axialtilt') }} <sup>(°)</sup>
-        </ParameterSlider>
-        <ParameterSlider id="p-rot" v-model="EDITOR_STATE.planetData.planetRotation" :step="1" :min="0" :max="360">
-          {{ $t('editor.planet_rendering.transform_rotation') }} <sup>(°)</sup>
-        </ParameterSlider>
-      </template>
-    </ParameterGroup>
-    <ParameterGroup toggleable>
       <template #title>{{ $t('editor.planet_rendering.metallicroughness') }}</template>
       <template #content>
-        <ParameterSlider
-          id="p-wlevel"
-          v-model="EDITOR_STATE.planetData.planetWaterLevel"
-          :step="0.01"
-          :min="0"
-          :max="1"
-        >
-          {{ $t('editor.planet_rendering.waterlevel') }}
-        </ParameterSlider>
-        <ParameterDivider />
         <ParameterSlider
           id="p-wrough"
           v-model="EDITOR_STATE.planetData.planetWaterRoughness"
@@ -67,28 +43,28 @@
       </template>
     </ParameterGroup>
     <ParameterGroup
-      v-model="EDITOR_STATE.planetData.planetShowEmissive"
-      :toggleable="EDITOR_STATE.planetData.planetShowEmissive"
+      v-model="EDITOR_STATE.planetData.planetSurfaceShowBumps"
+      :toggleable="EDITOR_STATE.planetData.planetSurfaceShowBumps"
     >
-      <template #title>{{ $t('editor.planet_rendering.emissivity') }}</template>
+      <template #title>{{ $t('editor.surface.bumpmap') }}</template>
       <template #content>
         <ParameterSlider
-          id="e-wemissive"
-          v-model="EDITOR_STATE.planetData.planetWaterEmissiveIntensity"
-          :step="0.01"
-          :min="0"
-          :max="10"
+          id="s-bumpstr"
+          v-model="EDITOR_STATE.planetData.planetSurfaceBumpStrength"
+          :step="0.0005"
+          :min="0.02"
+          :max="0.2"
         >
-          {{ $t('editor.planet_rendering.emissivity_waterintensity') }}
+          {{ $t('editor.surface.bumpmap_strength') }}
         </ParameterSlider>
         <ParameterSlider
-          id="e-gemissive"
-          v-model="EDITOR_STATE.planetData.planetGroundEmissiveIntensity"
-          :step="0.01"
-          :min="0"
-          :max="10"
+          id="s-bumpoff"
+          v-model="EDITOR_STATE.planetData.planetSurfaceBumpOffset"
+          :step="0.0005"
+          :min="0.001"
+          :max="0.01"
         >
-          {{ $t('editor.planet_rendering.emissivity_groundintensity') }}
+          {{ $t('editor.surface.bumpmap_offset') }}
         </ParameterSlider>
       </template>
     </ParameterGroup>

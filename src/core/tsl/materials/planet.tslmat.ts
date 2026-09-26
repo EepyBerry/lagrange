@@ -319,6 +319,34 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
           2,
         );
       })
+      .on('biomeMoveUp', async () => {
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes',
+          initData.biomesParams,
+          1,
+        );
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes-emissive',
+          initData.biomesParams,
+          2,
+        );
+      })
+      .on('biomeMoveDown', async () => {
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes',
+          initData.biomesParams,
+          1,
+        );
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes-emissive',
+          initData.biomesParams,
+          2,
+        );
+      })
       .on('biomesClear', async () => {
         await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
           EDITOR_WORKERS.texture!,

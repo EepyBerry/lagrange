@@ -46,6 +46,7 @@ export async function createScene(
   height: number,
   pixelRatio: number,
   creationMode: EditorSceneCreationMode,
+  canvasElement?: HTMLCanvasElement
 ): Promise<EditorSceneObjects> {
   const idbSettings = await idb.settings.limit(1).first();
   const scene = new Scene();
@@ -61,7 +62,7 @@ export async function createScene(
       : new Spherical(data.initCamDistance, Math.PI / 2, degToRad(data.initCamAngle));
 
   // setup scene (renderer, cam, lighting)
-  const renderer = await createRenderer(idbSettings!.renderingBackend, width, height, pixelRatio);
+  const renderer = await createRenderer(idbSettings!.renderingBackend, width, height, pixelRatio, canvasElement);
   const camera = createPerspectiveCamera(idbSettings!.cameraFOV, width / height, 0.1, 1e6, spherical);
   return { scene, renderer, camera };
 }
@@ -84,7 +85,7 @@ export function createLensFlare(data: PlanetData, pos: Vector3, color: Color) {
     lensPosition: pos ?? new Vector3(0),
     colorGain: color ?? new Color(95, 12, 10),
     starPoints: 2,
-    starPointsIntensity: data.lensFlarePointsIntensity ?? 0.25,
+    starPointsIntensity: 0,
     glareSize: 0.025,
     glareIntensity: data.lensFlareGlareIntensity ?? 0.5,
     flareSize: 0.001,
@@ -164,13 +165,15 @@ export function disposeRing(ringAnchor: Group, meshDataArr: MeshData<RingTSLMate
  * @param width canvas width
  * @param height canvas height
  * @param pixelRatio device pixel ratio
+ * @param canvasElement canvas reference, if relevant
  * @returns the renderer
  */
-export async function createRenderer(renderingBackend: EditorBackendType, width: number, height: number, pixelRatio?: number): Promise<WebGPURenderer> {
+export async function createRenderer(renderingBackend: EditorBackendType, width: number, height: number, pixelRatio?: number, canvasElement?: HTMLCanvasElement): Promise<WebGPURenderer> {
   const renderer = new WebGPURenderer({
     antialias: true,
     alpha: true,
     forceWebGL: renderingBackend == "webgl",
+    canvas: canvasElement
   });
   if (pixelRatio) {
     renderer.setPixelRatio(pixelRatio);

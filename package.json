@@ -31,6 +31,7 @@
   "dependencies": {
     "@floating-ui/vue": "^1.1.11",
     "@unhead/vue": "^2.1.13",
+    "@vueuse/core": "^15.0.0",
     "color.js": "^1.2.0",
     "crypto-hash": "^4.0.1",
     "dexie": "^4.4.2",
@@ -43,7 +44,7 @@
     "seedrandom": "^3.0.5",
     "three": "^0.185.1",
     "vue": "^3.5.32",
-    "vue-accessible-color-picker": "^5.3.1",
+    "vue-accessible-color-picker": "^6.0.0",
     "vue-i18n": "^11.3.1",
     "vue-router": "^5.0.4"
   },

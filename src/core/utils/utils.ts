@@ -21,8 +21,5 @@ export function mapLocale(locale: string): string {
 }
 
 export function prefersReducedMotion() {
-  return (
-    window.matchMedia(`(prefers-reduced-motion: reduce)`).matches ||
-    window.matchMedia(`(prefers-reduced-motion: reduce)`).matches
-  );
+  return window.matchMedia('(prefers-reduced-motion: reduce)');
 }

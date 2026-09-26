@@ -1,6 +1,8 @@
 <template>
   <h1 class="a11y--visually-hidden">{{ $t('main.nav.editor') }}</h1>
   <EditorHeader
+    @inspector-side-change="toggleInspectorSide"
+    @inspector-ordering-change="toggleInspectorOrdering"
     @rename="patchMetaHead"
     @save="savePlanet"
     @copy="savePlanet(true)"
@@ -10,12 +12,24 @@
     @random="randPlanet"
   />
 
-  <div id="scene-root" ref="sceneRoot" :class="{ compact: showCompactControls }">
-    <OverlaySpinner :load="showSpinner" />
-  </div>
-  <EditorSidebarControls :compact-mode="showCompactControls" />
+  <OverlayLoader :load="showSpinner" />
+  <LgvResizableHContainer
+    id="editor-root"
+    startingLeftWidth="20rem"
+    maxLeftWidth="30rem"
+    :flipped="inspectorSide === 'right'"
+  >
+    <template #left>
+      <EditorInspector :inspectorOrdering="inspectorOrdering" />
+    </template>
+    <template #right>
+      <div ref="threeCanvasWrapper" id="scene-canvas__wrapper">
+        <canvas ref="threeCanvas" id="scene-canvas" />
+      </div>
+    </template>
+  </LgvResizableHContainer>
 
-  <EditorErrorDialog ref="editorErrorDialogRef" @close="handleEditorInitError" />
+  <EditorInitErrorDialog ref="editorErrorDialogRef" @close="handleEditorInitError" />
   <WarnSaveDialog ref="warnSaveDialogRef" @save-confirm="saveAndRedirectToCodex" @confirm="redirectToCodex" />
   <ExportProgressDialog ref="exportProgressDialogRef" />
 </template>
@@ -25,6 +39,8 @@ import type { EditorInitErrorDialogExposes } from '@components/editor/dialogs/Ed
 import type { ExportProgressDialogExposes } from '@components/editor/dialogs/ExportProgressDialog.types.ts';
 import type { WarnSaveDialogExposes } from '@components/editor/dialogs/WarnSaveDialog.types.ts';
 import EditorHeader from '@components/editor/EditorHeader.vue';
+import EditorInspector from '@components/editor/inspector/EditorInspector.vue';
+import OverlayLoader from '@components/global/elements/OverlayLoader.vue';
 import {
   bootstrapEditor,
   dollyCamera,
@@ -33,30 +49,33 @@ import {
   extractPlanetTextures,
   randomizePlanet,
   resetPlanet,
+  setInspectorOrdering,
+  setInspectorSide,
   takePlanetScreenshot,
   unloadEditor,
   updateCameraRendering,
 } from '@core/editor/editor.service.ts';
 import { EDITOR_STATE, EditorStatusCode } from '@core/editor/state/editor.state';
-import * as Globals from '@core/globals';
-import { COMPACT_CONTROLS_HEIGHT } from '@core/globals';
 import PlanetData from '@core/models/planet/planet-data.model.ts';
 import { resetPlanetData } from '@core/models/planet/planet-data.utils.ts';
 import * as DexieService from '@core/services/dexie.service';
 import { UIEventBus } from '@core/ui-event-bus.ts';
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils';
 import { sleep } from '@core/utils/utils';
+import LgvResizableHContainer from '@lib/components/layout/LgvResizableHContainer.vue';
 import { useHead } from '@unhead/vue';
+import { useElementSize, useEventListener, useResizeObserver } from '@vueuse/core';
 import { nanoid } from 'nanoid';
 import { defineAsyncComponent, onMounted, onUnmounted, ref, type Ref, toRaw, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
-import EditorSidebarControls from '@/components/editor/controls/EditorSidebarControls.vue';
-import EditorErrorDialog from '@/components/editor/dialogs/EditorInitErrorDialog.vue';
 import WebGL from '@/core/capabilities/WebGL';
 import WebGPU from '@/core/capabilities/WebGPU';
 import { idb, type IDBPlanet, KeyBindingAction } from '@/dexie.config';
 
+const EditorInitErrorDialog = defineAsyncComponent(
+  () => import('@components/editor/dialogs/EditorInitErrorDialog.vue'),
+);
 const WarnSaveDialog = defineAsyncComponent(() => import('@components/editor/dialogs/WarnSaveDialog.vue'));
 const ExportProgressDialog = defineAsyncComponent(() => import('@components/editor/dialogs/ExportProgressDialog.vue'));
 
@@ -73,40 +92,47 @@ const editorErrorDialogRef = useTemplateRef<EditorInitErrorDialogExposes>('edito
 const warnSaveDialogRef = useTemplateRef<WarnSaveDialogExposes>('warnSaveDialogRef');
 const exportProgressDialogRef = useTemplateRef<ExportProgressDialogExposes>('exportProgressDialogRef');
 
+// Layout
+const inspectorSide: Ref<'left' | 'right'> = ref('left');
+const inspectorOrdering: Ref<'standard' | 'flipped'> = ref('standard');
+
 // Data
 let loadedCorrectly = false;
 const $planetEntityId: Ref<string> = ref('');
 const $planetEntityPreviewDataURL: Ref<string | undefined> = ref('');
 
-// Responsiveness
-const showCompactControls: Ref<boolean> = ref(false);
-
 // THREE canvas/scene root
-const sceneRoot = useTemplateRef('sceneRoot');
+const threeCanvasWrapper = useTemplateRef('threeCanvasWrapper');
+const threeCanvas = useTemplateRef('threeCanvas');
+const threeCanvasSize = useElementSize(threeCanvasWrapper);
 const showSpinner: Ref<boolean> = ref(true);
 
+useResizeObserver(threeCanvasWrapper, (entries) => {
+  if (!loadedCorrectly) return;
+  updateCameraRendering(entries[0].contentRect.width, entries[0].contentRect.height);
+});
+useEventListener(window, 'keydown', onWindowKeydown);
+
 onMounted(async () => {
-  await sleep(50);
-  await initThree();
+  await initView();
 });
 onUnmounted(() => {
-  if (loadedCorrectly) {
-    unloadEditor();
-  }
-  UIEventBus.deregisterWindowEventListener('click', onWindowClick);
-  UIEventBus.deregisterWindowEventListener('keydown', onWindowKeydown);
-  UIEventBus.deregisterWindowEventListener('resize', computeViewRendering);
-  UIEventBus.deregisterWindowEventListener('deviceorientation', computeViewRenderingDeferred);
+  if (!loadedCorrectly) return;
+  unloadEditor();
 });
 onBeforeRouteLeave(() => {
-  if (EDITOR_STATE.value.planetEditedFlag) {
-    warnSaveDialogRef.value?.open();
-    return false;
-  }
+  if (!EDITOR_STATE.value.planetEditedFlag) return true;
+  warnSaveDialogRef.value?.open();
+  return false;
 });
 
-async function initThree() {
+async function initView() {
+  await sleep(50);
   const settings = await idb.settings.limit(1).first();
+
+  // Set editor side immediately
+  inspectorSide.value = settings!.inspectorSide;
+  inspectorOrdering.value = settings!.inspectorOrdering;
 
   // Try starting with WebGPU (fallback to WebGL2 in case of failure)
   if (settings!.renderingBackend === 'webgpu') {
@@ -196,35 +222,38 @@ async function initData() {
 }
 
 async function initCanvas() {
-  computeResponsiveness();
-  const canvasSize = computeCanvasSize();
-
-  // Bootstrap editor service
-  await bootstrapEditor(sceneRoot.value!, canvasSize.width, canvasSize.height, globalThis.devicePixelRatio);
-  UIEventBus.registerWindowEventListener('click', onWindowClick);
-  UIEventBus.registerWindowEventListener('keydown', onWindowKeydown);
-  UIEventBus.registerWindowEventListener('resize', computeViewRendering);
-  UIEventBus.registerWindowEventListener('deviceorientation', computeViewRenderingDeferred);
+  await bootstrapEditor(
+    threeCanvas.value!,
+    threeCanvasSize.width.value,
+    threeCanvasSize.height.value,
+    globalThis.devicePixelRatio,
+  );
 }
 
 // ------------------------------------------------------------------------------------------------
 
-async function onWindowClick(event: MouseEvent) {
-  UIEventBus.sendClickEvent(event);
-}
 async function onWindowKeydown(event: KeyboardEvent) {
+  // Interrupt keybinds if a dialog is open,
+  // or if the user has focus on an input or text area
+  if (document.querySelector('dialog:modal')) {
+    return;
+  }
+  const target = event.target as HTMLElement | null;
+  const activeElement = document.activeElement as HTMLElement | null;
+  if (
+    target instanceof HTMLInputElement ||
+    target instanceof HTMLTextAreaElement ||
+    activeElement instanceof HTMLInputElement ||
+    activeElement instanceof HTMLTextAreaElement
+  ) {
+    return;
+  }
   const keyBinds = await idb.keyBindings.toArray();
   const kb = keyBinds.find((k) => k.key === event.key.toUpperCase());
   if (!kb) return;
-  if (event.shiftKey && kb.key !== 'SHIFT') {
-    return;
-  }
-  if (event.ctrlKey && kb.key !== 'CONTROL') {
-    return;
-  }
-  if (event.altKey && kb.key !== 'ALT') {
-    return;
-  }
+  if (event.shiftKey && kb.key !== 'SHIFT') return;
+  if (event.ctrlKey && kb.key !== 'CONTROL') return;
+  if (event.altKey && kb.key !== 'ALT') return;
 
   switch (kb.action) {
     case KeyBindingAction.ToggleLensFlare:
@@ -259,27 +288,14 @@ function patchMetaHead() {
 }
 
 // ------------------------------------------------------------------------------------------------
-
-function computeViewRendering() {
-  computeResponsiveness();
-  const canvasSize = computeCanvasSize();
-  updateCameraRendering(canvasSize.width, canvasSize.height);
+async function toggleInspectorSide(side: 'left' | 'right') {
+  inspectorSide.value = side;
+  await setInspectorSide(side);
 }
-function computeViewRenderingDeferred() {
-  setTimeout(() => computeViewRendering(), 50);
+async function toggleInspectorOrdering(ordering: 'standard' | 'flipped') {
+  inspectorOrdering.value = ordering;
+  await setInspectorOrdering(ordering);
 }
-function computeResponsiveness() {
-  showCompactControls.value = window.innerWidth <= Globals.SM_WIDTH_THRESHOLD && window.innerHeight > window.innerWidth;
-}
-function computeCanvasSize() {
-  if (showCompactControls.value) {
-    return { width: globalThis.innerWidth, height: globalThis.innerHeight - COMPACT_CONTROLS_HEIGHT };
-  } else {
-    return { width: globalThis.innerWidth, height: globalThis.innerHeight };
-  }
-}
-
-// ------------------------------------------------------------------------------------------------
 
 async function randPlanet() {
   showSpinner.value = true;
@@ -337,19 +353,25 @@ function exportPlanet() {
   }
 }
 
-#scene-root {
+#editor-root {
   flex: 1;
-  position: relative;
-  box-shadow: black 5px 10px 10px;
-  & > canvas {
-    background: transparent;
-    width: 100dvw;
-  }
-}
-#scene-root.compact {
-  height: calc(100dvh - 320px);
-  & > canvas {
-    height: calc(100dvh - 320px);
+  overflow: hidden;
+
+  #scene-canvas__wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+
+    #scene-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+    }
   }
 }
 </style>

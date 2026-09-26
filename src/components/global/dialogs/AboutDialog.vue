@@ -45,15 +45,15 @@
               </div>
             </div>
             <hr />
-            <p id="about-copyright">
-              <span>{{ $t('dialog.about.built_with_love') }}</span>
-              <span>
-                © 2024-{{ new Date().getFullYear() }} EepyBerry,
+            <div id="about-copyright">
+              <p>{{ $t('dialog.about.built_with_love') }}</p>
+              <p>
+                <span>© 2024-{{ new Date().getFullYear() }} EepyBerry</span>
                 <LgvLink :href="'https://github.com/EepyBerry/lagrange/blob/main/LICENSE'" icon="" link-type="external">
                   {{ $t('dialog.about.license') }}
                 </LgvLink>
-              </span>
-            </p>
+              </p>
+            </div>
           </div>
         </div>
         <LgvTabGroup :tabs="aboutTabs">
@@ -146,19 +146,25 @@
               <ul>
                 <li>
                   {{ $t('dialog.about.credits.libs_tcsm') }}:
-                  <LgvLink href="https://www.farazzshaikh.com" link-type="external" icon="">
+                  <LgvLink href="https://www.farazzshaikh.com" link-type="external">
                     <b>Faraz Shaikh</b>
                   </LgvLink>
                 </li>
                 <li>
-                  {{ $t('dialog.about.credits.glsl_noise') }}:
-                  <LgvLink href="https://iquilezles.org" link-type="external" icon="">
+                  {{ $t('dialog.about.credits.glsl_voronoi') }}:
+                  <LgvLink href="https://www.blender.org" link-type="external">
+                    <b>Blender</b>
+                  </LgvLink>
+                </li>
+                <li>
+                  {{ $t('dialog.about.credits.glsl_fbm') }}:
+                  <LgvLink href="https://iquilezles.org" link-type="external">
                     <b>Iñigo Quilez</b>
                   </LgvLink>
                 </li>
                 <li>
                   {{ $t('dialog.about.credits.glsl_atmosphere') }}:
-                  <LgvLink href="https://www.shadertoy.com/user/gltracy" link-type="external" icon="">
+                  <LgvLink href="https://www.shadertoy.com/user/gltracy" link-type="external">
                     <b>GLTracy</b>
                   </LgvLink>
                 </li>
@@ -309,6 +315,7 @@ const appVersion = import.meta.env.APP_VERSION;
         justify-content: space-between;
         column-gap: 1rem;
         flex-wrap: wrap;
+        text-align: center;
       }
     }
   }
@@ -372,6 +379,8 @@ const appVersion = import.meta.env.APP_VERSION;
       li {
         list-style-type: none;
         margin-left: 0;
+        display: inline-flex;
+        gap: 0.5rem;
       }
     }
     #special-thanks {
