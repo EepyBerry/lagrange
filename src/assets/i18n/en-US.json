@@ -1,18 +1,45 @@
 {
+  "404": {
+    "$title": "Page Not Found",
+    "text_01": "Nothing over here, sorry!",
+    "text_02": "\"This sector is completely empty, Captain!\"",
+    "text_03": "Huh. Must've taken a wrong turn somewhere...",
+    "text_04": "PAGE IS MISSING. STATUS IS 404. SPACE IS EMPTY.",
+    "subtext": "The requested page could not be found.",
+    "link": "Back to codex"
+  },
   "main": {
     "$title": "Lagrange",
-    "locale": "en-US",
-    "language": "English",
-    "more_coming_soon": "More coming soon!",
-    "test_message": "pancake hehe :3",
-    "unit": "unit",
-    "units": "units",
-    "unknown_value": "[UNKNOWN]",
+    "header": {
+      "rename": "Rename planet",
+      "rename_confirm": "Confirm planet name",
+      "reset": "Reset to defaults",
+      "menu_random": "Randomization options",
+      "menu_save": "Save options",
+      "save": "Save",
+      "copy": "Save as copy",
+      "extract_textures": "Extract textures as .zip",
+      "gltf": "Export as glTF",
+      "import": "Import planet file",
+      "export_all": "Export all planets as .zip"
+    },
     "nav": {
-      "menu": "Menu",
       "codex": "Codex",
       "editor": "Editor"
     },
+    "footer": {
+      "about": "About @:main.$title",
+      "settings": "Settings",
+      "github": "GitHub repository (opens in new tab)"
+    }
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "unit": "unit",
+    "units": "units",
+    "unknown_value": "[UNKNOWN]",
+    "more_coming_soon": "More coming soon!",
     "planet_data": {
       "class_planet_telluric": "Telluric",
       "class_planet_ice": "Glacial",
@@ -48,10 +75,11 @@
   },
   "dialog": {
     "init": {
-      "$title": "Welcome to @:main.$title",
+      "$title": "Introduction",
+      "welcome": "Welcome to @:main.$title",
       "introduction": "Lagrange is a fully procedural planet builder, perfect for worldbuilding and tying your lore to a proper planet, solar system or even an entire galaxy!",
-      "update_title": "Update 0.5 - Core Overhaul!",
-      "update_brief": "Introduces WebGPU support; fully compatible with existing features! You can now select your preferred rendering engine in the app settings!",
+      "update_title": "Update 0.6 - Cosmic Collapse",
+      "update_brief": "Introduces cracks, craters, texture exports and an updated UI! Bring even more variety to your worlds by exposing them to the wrath of the universe!",
       "$tmp_wip": "Currently work-in-progress. More features are planned for the next versions!",
       "keybinds": "@:dialog.settings.keybinds",
       "keybinds_note": "Key bindings can be reassigned in the app settings!",
@@ -61,56 +89,49 @@
       "keybinds_atmosphere": "@:dialog.settings.keybinds_atmosphere",
       "keybinds_screenshot": "@:dialog.settings.keybinds_screenshot",
       "topbar": "Top bar - Naming & data",
-      "topbar_rename": "Rename planet",
-      "topbar_reset": "Reset to defaults",
-      "topbar_reseed": "Generate seed",
-      "topbar_random": "Randomize planet",
-      "topbar_save": "Save planet",
-      "topbar_copy": "Save planet as copy",
-      "topbar_import": "Import planet",
-      "topbar_export": "Export planet",
-      "topbar_export_all": "Export full codex",
-      "topbar_gltf": "Export as glTF",
       "footer": "Footer - Miscellaneous",
-      "footer_github": "GitHub page",
-      "footer_settings": "App settings",
-      "footer_about": "About @:main.$title",
       "show_next_time": "Show this introduction next time?",
       "enable_persistence": "Enable browser storage persistence for this app?",
       "$action_confirm": "Get started!"
     },
-    "editorerror": {
+    "editor_error": {
       "$title": "Failed to start the Planet Editor!",
       "brief": "Encountered an error during initialization. See below for more details.",
       "reporting": "If you can, please check your browser console and open an issue on GitHub!",
       "$action_reload_fallback_renderer": "Reload with WebGL2"
     },
-    "planetinfo": {
-      "$title": "Planet information",
+    "planet_info": {
+      "$title": "Codex Entry",
+      "tabs": {
+        "overview": "Overview",
+        "topography": "Topography",
+        "biomes": "Biomes",
+        "rings": "Rings"
+      },
       "basic": {
         "name": "Name",
         "radius": "Radius",
         "axialtilt": "Axial tilt",
+        "waterlevel": "Water level",
+        "ambient_light": "Ambient lighting",
+        "emissive_water": "Water emission",
+        "emissive_surface": "Max. surface emission",
         "type": "Type",
         "type_moon": "Moon",
         "type_planet": "Planet",
         "type_gasgiant": "Gas Giant",
         "class": "Class",
         "features": "Features",
-        "has_biomes": "Has biomes",
-        "has_clouds": "Has clouds",
-        "has_atmosphere": "Has atmosphere",
-        "has_rings": "Has ring system",
-        "no_biomes": "No biomes",
-        "no_clouds": "No clouds",
-        "no_atmosphere": "No atmosphere",
-        "no_rings": "No ring system"
+        "has_biomes": "Biomes",
+        "has_cracks": "Cracks",
+        "has_craters": "Craters",
+        "has_clouds": "Clouds",
+        "has_atmosphere": "Atmosphere",
+        "has_rings": "Ring system"
       },
       "biomes": "Biome composition",
       "biomes_temp": "Temperature",
       "biomes_humi": "Humidity",
-      "biomes_mode": "mode",
-      "biomes_none": "This planet has no defined biomes",
       "rings": "Ring System",
       "rings_center": "center",
       "rings_surface": "surface"
@@ -125,6 +146,7 @@
       "general_theme_voyager": "Voyager",
       "general_font": "Choose font to use",
       "general_font_default": "Default - Poppins",
+      "general_font_retro": "Retro - VCR OSD Mono",
       "general_font_monospace": "Monospace - JetBrains Mono",
       "general_font_lowvision": "Low-vision - Atkinson Hyperlegible",
       "general_font_dyslexia": "Dyslexia - OpenDyslexic",
@@ -179,13 +201,17 @@
       "shortcuts": "@:dialog.init.shortcuts"
     },
     "about": {
+      "$title": "About @:main.$title",
+      "tabs": {
+        "changelog": "Version changelogs",
+        "credits": "Credits & attribution"
+      },
       "description": "A procedural planet-building application.",
       "motivation": "Made as a pet project to materialize my fascination with space & planets!",
       "tech": "Main tools & libraries behind this project",
       "prefix_framework": "Powered by",
       "prefix_engine": "3D using",
       "changelogs": {
-        "$title": "Main feature changelogs",
         "02_title": "Update 0.2 - World Collector",
         "02_codex": "Introduces the Codex: list, import and export planets easily and entirely within your browser!",
         "02_ui": "New dialog boxes, toasts & settings, and new editor parameters (radius, atmosphere)",
@@ -209,45 +235,53 @@
         "051_ui": "(0.5.1) UI refresh on the Codex, dialogs, and others. Includes better error handling on editor initialization",
         "052_postprocessing": "(0.5.2) Introduces a new post-processing pipeline with many effects!",
         "052_skyboxes": "(0.5.2) New editor skyboxes for more variety in your screenshots. Includes a Chroma Key background!",
-        "052_controls": "(0.5.2) Additional controls and shortcuts for the camera (dolly, FOV, rotation)"
+        "052_controls": "(0.5.2) Additional controls and shortcuts for the camera (dolly, FOV, rotation)",
+        "06_title": "Update 0.6 - Cosmic Collapse",
+        "06_crackscraters": "Adds the ability to put cracks and craters on the surface!",
+        "06_texture": "New texture exporting option in the Editor! You can now get your textures without having to bake the entire planet.",
+        "06_ui": "Freshens up the UI to better integrate upcoming features"
       },
       "credits": {
-        "$title": "Credits & attribution",
-        "libs": "(pre-0.5) Main libraries: <a class=\"lgv\" href=\"https://www.farazzshaikh.com/\" target=\"_blank\"><b>Faraz Shaikh</b></a> (THREE-CustomShaderMaterial)",
-        "glsl_main": "Main GLSL snippets: <a class=\"lgv\" href=\"https://iquilezles.org/\" target=\"_blank\"><b>Iñigo Quilez</b></a> (Voronoi + fBm), <a class=\"lgv\" href=\"https://www.shadertoy.com/user/gltracy\" target=\"_blank\"><b>GLtracy</b></a> (atmosphere), <a class=\"lgv\" href=\"https://andersonmancini.dev/\" target=\"_blank\"><b>Anderson Mancini</b></a> (lens flare)",
-        "glsl_misc": "Miscellaneous GLSL snippets: <a class=\"lgv\" href=\"https://www.dangreenheck.com/\"><b>Daniel Greenheck</b></a> (bump-mapping)",
-        "contributors": "<b>Special thanks to all contributors of this project ❤️</b>"
+        "libs_tcsm": "(pre-0.5) THREE-CustomShaderMaterial",
+        "glsl_fbm": "(GLSL) fBm",
+        "glsl_voronoi": "(GLSL) Voronoi",
+        "glsl_atmosphere": "(GLSL) Atmosphere",
+        "glsl_lensflare": "(GLSL) Lens flare",
+        "glsl_bumpmap": "(GLSL) Bump mapping",
+        "contributors": "Special thanks to all contributors of this project"
       },
       "built_with_love": "Built with 🏳️‍🌈 & ❤️",
       "license": "ISTSL-NR 1.0 License"
     },
     "export_progress": {
-      "$title": "Exporting planet",
+      "$title_textures": "Extracting textures",
+      "$title_gltf": "Exporting planet",
       "step_1": "Preparing",
       "step_2": "Baking surface texture",
       "step_3": "Baking surface PBR",
-      "step_4": "Baking surface normals",
-      "step_5": "Baking clouds texture",
-      "step_6": "Baking ring system textures",
-      "step_7": "Finalizing",
-      "step_8": "Done!",
+      "step_4": "Baking surface emissivity",
+      "step_5": "Baking surface normals",
+      "step_6": "Baking clouds texture",
+      "step_7": "Baking ring system textures",
+      "step_8": "Finalizing",
+      "step_9": "Done!",
       "step_failed": "failed!"
     },
-    "reset": {
+    "confirm_reset": {
       "$title": "Confirm reset",
       "message": "Discard the current planet?",
       "warning": "All unsaved data will be lost!",
       "$action_cancel": "Cancel",
       "$action_confirm": "Confirm"
     },
-    "delete": {
+    "confirm_delete": {
       "$title": "Delete [{planet}]",
       "message": "Are you sure you want to delete this planet?",
       "warning": "This action cannot be undone!",
       "$action_cancel": "Cancel",
       "$action_confirm": "Confirm"
     },
-    "warnsave": {
+    "confirm_warnsave": {
       "$title": "Unsaved planet warning",
       "message": "The current planet has not been saved yet. Leave the Editor anyway?",
       "warning": "All unsaved data will be lost!",
@@ -255,7 +289,7 @@
       "$action_saveconfirm": "Save and confirm",
       "$action_confirm": "Confirm"
     },
-    "clear_data": {
+    "confirm_clear_data": {
       "$title": "Clear Lagrange data",
       "message": "Are you sure you want to clear all application data?",
       "warning": "This action cannot be undone!",
@@ -270,9 +304,7 @@
     "$action_info": "About {planet}",
     "$action_export": "Export {planet}",
     "$action_delete": "Delete {planet}",
-    "no_planets": "No planets found. You can create one at the top!",
-    "topbar_import": "Import planet from file",
-    "topbar_export": "Export all planets"
+    "no_planets": "No planets found. You can create one at the top!"
   },
   "editor": {
     "$title": "Planet Editor",
@@ -283,173 +315,189 @@
     "$action_random": "Randomize",
     "general": {
       "displacement": "Displacement",
-      "displacement_show": "Show displacement",
       "displacement_factor": "Factor",
       "displacement_epsilon": "Epsilon",
       "displacement_multiplier": "Multiplier",
       "warping": "Warping",
-      "warping_show": "Show warping",
       "warping_x": "X warping",
       "warping_y": "Y warping",
       "warping_z": "Z warping",
       "noise": "Noise parameters",
       "noise_layers": "Layers",
+      "noise_base_detail": "Base & detail noise",
       "noise_fbm_frequency": "Frequency",
       "noise_fbm_amplitude": "Amplitude",
       "noise_fbm_lacunarity": "Lacunarity",
       "noise_fbm_octaves": "Octaves",
+      "noise_voronoi_scale": "Scale",
+      "noise_voronoi_jitter": "Jitter",
       "noise_color": "Color",
-      "noise_rgbramp": "Color ramp",
-      "noise_rgbaramp": "Color/alpha ramp"
+      "colorramp_rgb": "Color ramp",
+      "colorramp_rgba": "Color/alpha ramp",
+      "colorramp_opacity": "Opacity ramp",
+      "color": "Color",
+      "color_opacity": "Color & opacity",
+      "emissive_intensity": "Emissive intensity",
+      "detail_noise_strength": "Detail noise strength"
     },
-    "controls": {
-      "basic_data": {
-        "$title": "Basic Data",
-        "classification": "Classification",
-        "classification_type": "Object type",
-        "classification_class": "Object class"
-      },
-      "lighting": {
-        "$title": "Lighting",
-        "lensflare": "Lens Flare",
-        "lensflare_show": "Show lens flare",
-        "lensflare_points_intensity": "Points intensity",
-        "lensflare_glare_intensity": "Glare intensity",
-        "sunlight": "Sunlight",
-        "sunlight_angle": "Angle",
-        "sunlight_intensity": "Intensity",
-        "sunlight_color": "Color",
-        "amblight": "Ambient light",
-        "amblight_intensity": "Intensity",
-        "amblight_color": "Color"
-      },
-      "planet_rendering": {
-        "$title": "Planet & Rendering",
+    "inspector": {
+      "features": {
+        "$title": "Features",
+        "data": "Object data",
         "transform": "Transform",
-        "transform_radius": "Radius",
-        "transform_axialtilt": "Axial tilt",
-        "transform_rotation": "Rotation",
-        "waterlevel": "Water level",
-        "metallicroughness": "Metallic Roughness",
-        "metallicroughness_waterroughness": "Water roughness",
-        "metallicroughness_watermetalness": "Water metalness",
-        "metallicroughness_groundroughness": "Ground roughness",
-        "metallicroughness_groundmetalness": "Ground metalness",
-        "emissivity": "Emissivity",
-        "emissivity_waterintensity": "Water intensity",
-        "emissivity_groundintensity": "Ground intensity"
+        "rendering": "Rendering",
+        "lighting": "Lighting",
+        "surface": "Surface",
+        "biomes": "Biomes",
+        "cracks": "Cracks",
+        "craters": "Craters",
+        "clouds": "Clouds",
+        "atmosphere": "Atmosphere",
+        "rings": "Rings",
+        "postprocessing": "Post-processing"
       },
-      "surface": {
-        "$title": "Surface",
-        "bumpmap": "Bump map",
-        "bumpmap_show": "Show bumps",
-        "bumpmap_strength": "Bump strength"
+      "controls": {}
+    },
+    "basic_data": {
+      "$title": "Basic Data",
+      "classification": "Classification",
+      "classification_type": "Object type",
+      "classification_class": "Object class"
+    },
+    "lighting": {
+      "$title": "Lighting",
+      "lensflare": "Lens Flare",
+      "lensflare_points_intensity": "Points intensity",
+      "lensflare_glare_intensity": "Glare intensity",
+      "sunlight": "Sunlight",
+      "sunlight_angle": "Angle",
+      "sunlight_intensity": "Intensity",
+      "sunlight_color": "Color",
+      "amblight": "Ambient light",
+      "amblight_intensity": "Intensity",
+      "amblight_color": "Color"
+    },
+    "planet_rendering": {
+      "$title": "Planet & Rendering",
+      "transform": "Transform",
+      "transform_radius": "Radius",
+      "transform_axialtilt": "Axial tilt",
+      "transform_rotation": "Rotation",
+      "waterlevel": "Water level",
+      "metallicroughness": "Metallic Roughness",
+      "metallicroughness_waterroughness": "Water roughness",
+      "metallicroughness_watermetalness": "Water metalness",
+      "metallicroughness_groundroughness": "Ground roughness",
+      "metallicroughness_groundmetalness": "Ground metalness",
+      "emissivity": "Emissivity",
+      "emissivity_waterintensity": "Water intensity",
+      "emissivity_groundintensity": "Ground intensity"
+    },
+    "surface": {
+      "$title": "Surface",
+      "bumpmap": "Bump map",
+      "bumpmap_strength": "Strength",
+      "bumpmap_offset": "Offset"
+    },
+    "features": {
+      "$title": "Features",
+      "cracks": {
+        "$title": "Cracks",
+        "noise_limiter": "Limiter noise",
+        "noise_color": "Color noise",
+        "colorramp_surface": "Surface color ramp",
+        "colorramp_underwater": "Underwater color ramp",
+        "distance_to_edge": "Distance to edge",
+        "underwater_strength": "Underwater strength"
+      },
+      "craters": {
+        "$title": "Craters",
+        "curve": "Curve"
       },
       "biomes": {
         "$title": "Biomes",
-        "biomes_show": "Show biomes",
-        "texture_resolution": "Resolution",
         "temperature": "Temperature gradient",
         "humidity": "Humidity gradient",
         "gradient_mode": "Gradient mode",
         "gradient_mode_realistic": "Realistic",
         "gradient_mode_poletopole": "Pole-to-pole",
-        "gradient_mode_fullnoise": "Full noise",
+        "gradient_mode_fullnoise": "Noise",
         "biome_list": "Biomes",
         "biome_type": "Type",
-        "height_min": "Min. height",
-        "height_max": "Max. height",
         "temperature_min": "Min. temperature",
         "temperature_max": "Max. temperature",
         "humidity_min": "Min. humidity",
         "humidity_max": "Max. humidity",
-        "smoothness": "Smoothness",
-        "emissive_override": "Override emissivity",
-        "emissive_intensity": "Emissive intensity"
-      },
-      "clouds": {
-        "$title": "Clouds",
-        "clouds_show": "Show clouds",
-        "transform": "Transform",
-        "transform_rotation": "Rotation",
-        "rgba": "Color & opacity",
-        "rgba_opacityramp": "Opacity ramp"
-      },
-      "atmosphere": {
-        "$title": "Atmosphere",
-        "atmosphere_show": "Show atmosphere",
-        "transform": "Transform",
-        "transform_height": "Height",
-        "transform_density": "Density",
-        "rgba": "Color & intensity",
-        "rgba_intensity": "Intensity",
-        "rgba_mode": "Color mode",
-        "rgba_mode_realistic": "Realistic",
-        "rgba_mode_direct": "Direct",
-        "rgba_mode_mixed": "Mixed",
-        "rgba_hue": "Hue",
-        "rgba_tint": "Tint",
-        "advanced": "Advanced",
-        "advanced_scattering_constant": "Scattering constant (g)",
-        "advanced_rayleigh_density_ratio": "Rayleigh density ratio",
-        "advanced_mie_density_ratio": "Mie density ratio",
-        "advanced_optical_density_ratio": "Optical density ratio"
-      },
-      "ring": {
-        "$title": "Ring System",
-        "ring_show": "Show ring system",
-        "ring_list": "Rings",
-        "transform": "Transform",
-        "transform_radius_inner": "Inner radius",
-        "transform_radius_outer": "Outer radius",
-        "rgba": "Color & opacity",
-        "rgba_opacity": "Opacity",
-        "rgba_colorramp": "Color ramp (RGBA)"
-      },
-      "postprocessing": {
-        "$title": "Post-processing",
-        "basepipeline": "Base render pipeline",
-        "basepipeline_select": "Select pipeline",
-        "basepipeline_none": "(none)",
-        "basepipeline_pixelation": "Pixelation",
-        "basepipeline_pixelation_pixelsize": "Pixel size",
-        "basepipeline_pixelation_normaledgeintensity": "Normal edge intensity",
-        "basepipeline_pixelation_depthedgeintensity": "Depth edge intensity",
-        "basepipeline_retro": "Retro",
-        "basepipeline_retro_colordepthsteps": "Color depth",
-        "basepipeline_retro_colorbleeding": "Color bleeding",
-        "basepipeline_retro_scanlineintensity": "Scanlines",
-        "basepipeline_retro_scanlinedensity": "Scanline density",
-        "basepipeline_retro_scanlinespeed": "Scanline speed",
-        "basepipeline_retro_curvature": "Curvature",
-        "rgbshift": "RGB Shift",
-        "rgbshift_angle": "Angle",
-        "rgbshift_amount": "Amount",
-        "chromaticaberration": "Chromatic Aberration",
-        "chromaticaberration_strength": "Strength",
-        "chromaticaberration_scale": "Scale",
-        "bloom": "Bloom",
-        "bloom_threshold": "Threshold",
-        "bloom_strength": "Strength",
-        "bloom_radius": "Radius",
-        "vignette": "Vignette",
-        "vignette_intensity": "Intensity",
-        "vignette_smoothness": "Smoothness",
-        "antialiasing": "Anti-aliasing",
-        "antialiasing_mode": "Mode",
-        "antialiasing_mode_fxaa": "FXAA",
-        "antialiasing_mode_smaa": "SMAA"
+        "smoothness": "Smoothness"
       }
+    },
+    "clouds": {
+      "$title": "Clouds",
+      "clouds_show": "Show clouds",
+      "transform": "Transform",
+      "transform_rotation": "Rotation"
+    },
+    "atmosphere": {
+      "$title": "Atmosphere",
+      "atmosphere_show": "Show atmosphere",
+      "transform": "Transform",
+      "transform_height": "Height",
+      "transform_density": "Density",
+      "rgba": "Color & intensity",
+      "rgba_intensity": "Intensity",
+      "rgba_mode": "Color mode",
+      "rgba_mode_realistic": "Realistic",
+      "rgba_mode_direct": "Direct",
+      "rgba_mode_mixed": "Mixed",
+      "rgba_hue": "Hue",
+      "rgba_tint": "Tint",
+      "advanced": "Advanced",
+      "advanced_scattering_constant": "Scattering constant (g)",
+      "advanced_rayleigh_density_ratio": "Rayleigh density ratio",
+      "advanced_mie_density_ratio": "Mie density ratio",
+      "advanced_optical_density_ratio": "Optical density ratio"
+    },
+    "ring": {
+      "$title": "Ring System",
+      "ring_show": "Show ring system",
+      "ring_list": "Rings",
+      "transform_radius_inner": "Inner radius",
+      "transform_radius_outer": "Outer radius"
+    },
+    "post_processing": {
+      "$title": "Post-processing",
+      "basepipeline": "Base render pipeline",
+      "basepipeline_select": "Select pipeline",
+      "basepipeline_none": "(none)",
+      "basepipeline_pixelation": "Pixelation",
+      "basepipeline_pixelation_pixelsize": "Pixel size",
+      "basepipeline_pixelation_normaledgeintensity": "Normal edge intensity",
+      "basepipeline_pixelation_depthedgeintensity": "Depth edge intensity",
+      "basepipeline_retro": "Retro",
+      "basepipeline_retro_colordepthsteps": "Color depth",
+      "basepipeline_retro_colorbleeding": "Color bleeding",
+      "basepipeline_retro_scanlineintensity": "Scanlines",
+      "basepipeline_retro_scanlinedensity": "Scanline density",
+      "basepipeline_retro_scanlinespeed": "Scanline speed",
+      "basepipeline_retro_curvature": "Curvature",
+      "rgbshift": "RGB Shift",
+      "rgbshift_angle": "Angle",
+      "rgbshift_amount": "Amount",
+      "chromaticaberration": "Chromatic Aberration",
+      "chromaticaberration_strength": "Strength",
+      "chromaticaberration_scale": "Scale",
+      "bloom": "Bloom",
+      "bloom_threshold": "Threshold",
+      "bloom_strength": "Strength",
+      "bloom_radius": "Radius",
+      "vignette": "Vignette",
+      "vignette_intensity": "Intensity",
+      "vignette_smoothness": "Smoothness",
+      "antialiasing": "Anti-aliasing",
+      "antialiasing_mode": "Mode",
+      "antialiasing_mode_fxaa": "FXAA",
+      "antialiasing_mode_smaa": "SMAA"
     }
-  },
-  "404": {
-    "$title": "Page Not Found",
-    "text_01": "Nothing over here, sorry!",
-    "text_02": "\"This sector is completely empty, Captain!\"",
-    "text_03": "Huh. Must've taken a wrong turn somewhere...",
-    "text_04": "PAGE\u00A0IS\u00A0MISSING. STATUS\u00A0IS\u00A0404. SPACE\u00A0IS\u00A0EMPTY.",
-    "subtext": "The requested page could not be found.",
-    "link": "Back to codex"
   },
   "toast": {
     "storage_success": "Persistent storage enabled!",
@@ -468,26 +516,12 @@
     "extras_obliterate_failure": "Could not destroy planet"
   },
   "tooltip": {
-    "topbar_rename": "Rename planet",
-    "topbar_rename_confirm": "Confirm planet name",
-    "topbar_reset": "Reset to defaults",
-    "topbar_menu_random": "Randomization options",
-    "topbar_menu_save": "Save options",
-    "topbar_save": "Save",
-    "topbar_copy": "Save as copy",
-    "topbar_gltf": "Export as glTF",
-    "topbar_import": "Import planet file",
-    "topbar_export": "Export planet file",
-    "topbar_export_all": "Export all planets as .zip",
     "gradient_mode_realistic": "Lower values on poles, higher values along the equator",
     "gradient_mode_poletopole": "Lower values on north pole, higher values on south pole",
     "gradient_mode_fullnoise": "Fully noisy values, akin to surface noise",
     "rgba_mode_realistic": "Raw Raleigh & Mie scattering calculations with hue shifting",
     "rgba_mode_direct": "Applies a single color on top of calculations",
-    "rgba_mode_mixed": "Applies direct mode color as a tint on top of the selected hue",
-    "footer_github": "GitHub repository (opens in new tab)",
-    "footer_settings": "Settings",
-    "footer_about": "About @:main.$title"
+    "rgba_mode_mixed": "Applies direct mode color as a tint on top of the selected hue"
   },
   "a11y": {
     "logo": "Lagrange logo",
@@ -495,7 +529,7 @@
     "logo_update_codex": "Update logo",
     "dialog_editor_error": "Editor error dialog",
     "dialog_init": "Introduction dialog",
-    "dialog_planetinfo": "Planet info dialog",
+    "dialog_planet_info": "Planet info dialog",
     "dialog_settings": "Settings dialog",
     "dialog_about": "About @:main.$title dialog",
     "dialog_export_progress": "Planet export dialog",
@@ -503,24 +537,11 @@
     "dialog_delete": "Confirm delete dialog",
     "dialog_warn_save": "Unsaved data warning dialog",
     "dialog_clear_data": "Confirm data clear dialog",
-    "topbar_rename": "@:tooltip.topbar_rename",
-    "topbar_rename_confirm": "@:tooltip.topbar_rename_confirm",
-    "topbar_reset": "@:tooltip.topbar_reset",
-    "topbar_menu_random": "@:tooltip.topbar_menu_random",
-    "topbar_menu_save": "@:tooltip.topbar_menu_save",
-    "topbar_save": "@:tooltip.topbar_save",
-    "topbar_copy": "@:tooltip.topbar_copy",
-    "topbar_gltf": "@:tooltip.topbar_gltf",
-    "topbar_random": "@:tooltip.topbar_random",
-    "topbar_import": "@:tooltip.topbar_import",
-    "topbar_export": "@:tooltip.topbar_export",
-    "topbar_export_all": "@:tooltip.topbar_export_all",
-    "footer_github": "@:tooltip.footer_github",
-    "footer_settings": "@:tooltip.footer_settings",
-    "footer_about": "@:tooltip.footer_about",
     "general_theme_default": "Set Comet theme (blue)",
     "general_theme_supernova": "Set Supernova theme (purple)",
     "general_theme_voyager": "Set Voyager theme (orange)",
+    "editor_inspector_side": "Switch inspector side",
+    "editor_inspector_ordering": "Switch inspector ordering",
     "editor_baking_resolution_256": "256 by 256 pixels",
     "editor_baking_resolution_512": "512 by 512 pixels",
     "editor_baking_resolution_1k": "1024 by 1024 pixels",
@@ -539,7 +560,9 @@
     "action_add_colorstep": "Add color step",
     "action_sort_colorsteps": "Sort color steps",
     "action_close_dialog": "Close dialog",
-    "action_close_toast": "Close message"
+    "action_close_toast": "Close message",
+    "action_resize_horizontal": "Resize horizontally (arrow keys)",
+    "action_resize_vertical": "Resize vertically (arrow keys)"
   },
   "extras": {
     "day_newyear": "Happy New Year!",
@@ -566,6 +589,6 @@
     "week_genderfluidvisibility": "Happy Genderfluid Visibility Week!",
     "week_transawareness": "Happy Trans Awareness Week!",
     "month_pride": "Happy Pride Month! 🌈",
-    "overlay1": "i see you"
+    "aprilfools": "i see you"
   }
 }

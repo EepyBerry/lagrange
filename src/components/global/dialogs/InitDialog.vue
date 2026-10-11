@@ -1,34 +1,39 @@
 <template>
-  <DialogElement
+  <LgvDialog
     id="dialog-editor-init"
     ref="dialogRef"
+    :show-title="true"
     :show-actions="true"
     :closeable="true"
     :aria-label="$t('a11y.dialog_init')"
   >
+    <template #title>
+      <iconify-icon class="contrast" icon="ph:info" width="1.5rem" aria-hidden="true" />
+      {{ $t('dialog.init.$title') }}
+    </template>
     <template #content>
-      <div class="init-container">
-        <section class="intro">
-          <div class="logo">
-            <AppLogo :show-update="true" />
+      <div id="init-container">
+        <section id="init-intro">
+          <div id="init-logo">
+            <AppLogo />
           </div>
-          <div>
+          <div id="init-text">
             <h2>
-              <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
-              {{ $t('dialog.init.$title') }}!
+              <iconify-icon icon="ph:planet" width="1.5rem" aria-hidden="true" />
+              {{ $t('dialog.init.welcome') }}!
             </h2>
-            <p class="intro-text">
+            <p id="intro-text">
               {{ $t('dialog.init.introduction') }}
             </p>
-            <CollapsibleSection icon="mingcute:news-line" style="background: var(--lg-update-05-background)">
+            <LgvNotification id="tmp-notification" type="warn">
+              {{ $t('dialog.init.$tmp_wip') }}
+            </LgvNotification>
+            <CollapsibleSection id="init-update-brief" icon="mingcute:news-line">
               <template #title>{{ $t('dialog.init.update_title') }}</template>
               <template #content>
                 {{ $t('dialog.init.update_brief') }}
               </template>
             </CollapsibleSection>
-            <LgvNotification id="tmp-notification" type="wip">
-              {{ $t('dialog.init.$tmp_wip') }}
-            </LgvNotification>
           </div>
         </section>
 
@@ -39,9 +44,9 @@
               {{ $t('dialog.init.keybinds_note') }}
               <span class="nowrap">
                 (<iconify-icon
-                  style="transform: translateY(0.125rem)"
-                  icon="mingcute:settings-6-line"
-                  width="1rem"
+                  style="transform: translateY(0.25rem)"
+                  icon="ph:sliders"
+                  width="1.25rem"
                   aria-hidden="true"
                 />)
               </span>
@@ -82,44 +87,48 @@
               <ul class="controls">
                 <li>
                   <iconify-icon icon="mingcute:upload-line" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_import') }}
+                  {{ $t('main.header.import') }}
                 </li>
                 <li>
                   <iconify-icon icon="mingcute:folder-zip-line" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_export_all') }}
+                  {{ $t('main.header.export_all') }}
                 </li>
               </ul>
             </div>
 
             <div class="controls-container" style="margin-top: 0.25rem">
               <p class="controls-group-name">
-                <iconify-icon icon="mingcute:planet-line" width="1.5rem" aria-hidden="true" />
+                <iconify-icon icon="ph:planet" width="1.5rem" aria-hidden="true" />
                 {{ $t('main.nav.editor') }}
               </p>
               <ul class="controls">
                 <li>
                   <iconify-icon icon="mingcute:edit-2-line" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_rename') }}
+                  {{ $t('main.header.rename') }}
                 </li>
                 <li>
                   <iconify-icon icon="tabler:reload" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_reset') }}
+                  {{ $t('main.header.reset') }}
                 </li>
                 <li>
                   <iconify-icon icon="mingcute:shuffle-2-fill" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_random') }}
+                  {{ $t('main.header.menu_random') }}
                 </li>
                 <li>
                   <iconify-icon icon="mingcute:save-2-line" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_save') }}
+                  {{ $t('main.header.save') }}
                 </li>
                 <li>
                   <iconify-icon icon="mingcute:copy-2-line" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_copy') }}
+                  {{ $t('main.header.copy') }}
+                </li>
+                <li>
+                  <iconify-icon icon="material-symbols:texture" width="1.25rem" aria-hidden="true" />
+                  {{ $t('main.header.extract_textures') }}
                 </li>
                 <li>
                   <iconify-icon icon="simple-icons:gltf" width="1.25rem" aria-hidden="true" />
-                  {{ $t('dialog.init.topbar_gltf') }}
+                  {{ $t('main.header.gltf') }}
                 </li>
               </ul>
             </div>
@@ -132,26 +141,26 @@
             <ul class="controls-container controls">
               <li>
                 <iconify-icon icon="mingcute:information-line" width="1.25rem" aria-hidden="true" />
-                {{ $t('dialog.init.footer_about') }}
+                {{ $t('main.footer.about') }}
               </li>
               <li>
                 <iconify-icon icon="mingcute:settings-6-line" width="1.25rem" aria-hidden="true" />
-                {{ $t('dialog.init.footer_settings') }}
+                {{ $t('main.footer.settings') }}
               </li>
               <li>
                 <iconify-icon icon="mingcute:github-line" width="1.25rem" aria-hidden="true" />
-                {{ $t('dialog.init.footer_github') }}
+                {{ $t('main.footer.github') }}
               </li>
             </ul>
           </template>
         </CollapsibleSection>
 
-        <div class="init-actions">
-          <div class="init-checkbox important">
+        <div id="init-actions">
+          <div class="init-checkbox">
             <label for="enable-persistence">{{ $t('dialog.init.enable_persistence') }}</label>
             <input id="enable-persistence" v-model="shouldEnableStoragePersistence" type="checkbox" />
           </div>
-          <div class="init-checkbox important">
+          <div class="init-checkbox">
             <label for="show-on-next-visits">{{ $t('dialog.init.show_next_time') }}</label>
             <input id="show-on-next-visits" v-model="shouldShowOnNextVisits" type="checkbox" />
           </div>
@@ -163,28 +172,30 @@
         {{ $t('dialog.init.$action_confirm') }}
       </LgvButton>
     </template>
-  </DialogElement>
+  </LgvDialog>
 </template>
 
 <script setup lang="ts">
 import type { InitDialogExposes } from '@components/global/dialogs/InitDialog.types.ts';
-import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
+import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import AppLogo from '@components/global/elements/AppLogo.vue';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
-import DialogElement from '@components/global/elements/DialogElement.vue';
-import { ref, useTemplateRef } from 'vue';
+import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvDialog from '@lib/components/base/LgvDialog.vue';
+import LgvNotification from '@lib/components/custom/LgvNotification.vue';
+import { onMounted, ref, useTemplateRef } from 'vue';
 import type { IDBKeyBinding } from '@/dexie.config';
-import LgvButton from '@/_lib/components/LgvButton.vue';
-import LgvNotification from '@/_lib/components/LgvNotification.vue';
 
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
 defineExpose<InitDialogExposes>({ open: () => dialogRef.value?.open!() });
 
 const shouldShowOnNextVisits = ref(true);
 const shouldEnableStoragePersistence = ref(true);
 
-const $emit = defineEmits(['disableInitDialog', 'enablePersistence']);
+const $emit = defineEmits(['mounted', 'disableInitDialog', 'enablePersistence']);
 defineProps<{ keybinds: IDBKeyBinding[] }>();
+
+onMounted(() => $emit('mounted'));
 
 function doClose() {
   if (!shouldShowOnNextVisits.value) {
@@ -206,19 +217,24 @@ function doClose() {
     justify-content: center;
   }
   #tmp-notification {
-    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
   }
 
-  .init-container {
+  #init-container {
     max-width: 60rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
 
-    .init-actions {
+    #init-update-brief {
+      background: var(--lg-update-06-background);
+      border: none;
+      border-radius: 2px;
+    }
+    #init-actions {
       width: 100%;
-      margin-top: 1rem;
+      padding: 0.5rem;
       display: flex;
       flex-direction: column;
       align-items: flex-end;
@@ -239,21 +255,40 @@ function doClose() {
     }
     .collapsible-section {
       width: 100%;
+      border-left: none;
+      border-right: none;
     }
   }
-  .intro {
-    padding-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 1rem;
+  #init-intro {
     font-size: 0.925rem;
+    border-bottom: var(--lg-var-border-width) solid var(--lg-accent);
 
-    h2 {
-      font-size: 1.75rem;
-      margin-bottom: 1rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+
+    #init-logo {
+      padding: 1rem;
+      background: var(--lg-panel);
+      border-right: var(--lg-var-border-width) solid var(--lg-accent);
     }
-    .intro-text {
+    #init-text {
+      padding: 1rem;
+      height: 100%;
+      background: var(--lg-panel);
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+        justify-content: center;
+        text-align: center;
+      }
+    }
+    #intro-text {
       margin-bottom: 1rem;
     }
     h3 {
@@ -268,15 +303,20 @@ function doClose() {
 
     display: grid;
     grid-template-rows: 1fr;
-    grid-template-columns: 10% 1fr;
+    grid-template-columns: 7rem 1fr;
     align-items: center;
     justify-content: flex-start;
+    flex-wrap: wrap;
+    word-wrap: anywhere;
 
     .controls-group-name {
       grid-column: 1;
       height: 100%;
+      padding: 0.25rem;
       background-color: var(--lg-contrast);
       font-weight: 500;
+      $clip-length: 10px;
+      clip-path: polygon(0 0, calc(100% - $clip-length) 0, 100% $clip-length, 100% 100%, 0 100%);
 
       display: flex;
       align-items: center;
@@ -332,23 +372,30 @@ function doClose() {
     }
   }
 }
+@media screen and (max-width: 1023px) {
+  #dialog-editor-init {
+    #init-logo {
+      #app-logo-wrapper {
+        height: 200px;
+      }
+    }
+  }
+}
 @media screen and (max-width: 767px) {
   #dialog-editor-init {
     min-width: 0;
 
-    .logo {
-      display: none;
-    }
-
-    .init-container {
+    #init-container {
       align-items: center;
       justify-content: center;
       grid-template-rows: auto auto;
 
-      section.intro {
+      #init-logo {
+        display: none;
+      }
+      #init-intro {
         font-size: 0.875rem;
         h2 {
-          justify-content: center;
           font-size: 1.375rem;
         }
         h3.update-title {

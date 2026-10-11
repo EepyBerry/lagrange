@@ -3,7 +3,7 @@
     <!-- effects -->
     <ExtraMetalSlugPlanetExplosion ref="extraPlanetExplosionRef" @obliteration="obliterationHidePlanetImage = true" />
 
-    <div class="planet-preview" :class="{ 'effect-hologram': !!EXTRAS_HOLOGRAM_EFFECT }">
+    <div class="planet-preview" :class="{ 'effect-hologram': EXTRAS_HOLOGRAM_EFFECT }">
       <!-- decoration -->
       <svg viewBox="0 0 256 256" role="presentation">
         <g v-show="!obliterationHidePlanetImage" class="planet-preview-gizmo">
@@ -58,13 +58,7 @@
 
       <!-- preview -->
       <div v-show="!obliterationHidePlanetImage" class="planet-preview-inner">
-        <img
-          v-if="planet.preview"
-          class="planet-image"
-          :src="planet.preview"
-          :aria-label="planet.data.planetName"
-          :alt="planet.data.planetName"
-        />
+        <img v-if="planet.preview" class="planet-image" :src="planet.preview" :alt="planet.data.planetName" />
         <iconify-icon
           v-else
           class="planet-image-fallback"
@@ -74,7 +68,7 @@
       </div>
 
       <!-- effects -->
-      <span v-if="!!EXTRAS_CRT_EFFECT" class="effect-crt"></span>
+      <span v-if="EXTRAS_CRT_EFFECT" class="effect-crt"></span>
     </div>
     <p class="planet-name">
       <span>
@@ -88,7 +82,7 @@
     >
       <LgvButton
         class="contrast"
-        icon="mingcute:information-line"
+        icon="ph:info"
         :a11y-label="$t('codex.$action_info', { planet: planet.data.planetName })"
         :title="$t('codex.$action_info', { planet: planet.data.planetName })"
         :aria-disabled="obliterationDisableControls"
@@ -98,13 +92,13 @@
         variant="button"
         link-type="internal"
         :href="uwuifyPath('/planet-editor/' + planet.id)"
-        icon="mingcute:edit-2-line"
+        icon="ph:note-pencil"
         :a11y-label="$t('codex.$action_edit', { planet: planet.data.planetName })"
         :title="$t('codex.$action_edit', { planet: planet.data.planetName })"
         :aria-disabled="obliterationDisableControls"
       />
       <LgvButton
-        icon="mingcute:download-line"
+        icon="ph:download"
         :a11y-label="$t('codex.$action_export', { planet: planet.data.planetName })"
         :title="$t('codex.$action_export', { planet: planet.data.planetName })"
         :aria-disabled="obliterationDisableControls"
@@ -112,7 +106,7 @@
       />
       <LgvButton
         class="warn"
-        icon="mingcute:delete-2-line"
+        icon="ph:trash"
         :a11y-label="$t('codex.$action_delete', { planet: planet.data.planetName })"
         :title="$t('codex.$action_delete', { planet: planet.data.planetName })"
         :aria-disabled="obliterationDisableControls"
@@ -124,9 +118,9 @@
 
 <script setup lang="ts">
 import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, uwuifyPath } from '@core/extras';
+import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvLink from '@lib/components/base/LgvLink.vue';
 import { onMounted, ref, useTemplateRef } from 'vue';
-import LgvButton from '@/_lib/components/LgvButton.vue';
-import LgvLink from '@/_lib/components/LgvLink.vue';
 import ExtraMetalSlugPlanetExplosion from '@/components/global/extras/ExtraMetalSlugPlanetExplosion.vue';
 import { makeSVGCircleArc } from '@/core/utils/svg-utils';
 import { type IDBPlanet } from '@/dexie.config';
@@ -238,7 +232,7 @@ function getPlanetCircleRadius() {
   .planet-card-actions {
     display: flex;
     align-items: center;
-    gap: 0.375rem;
+    gap: 0.25rem;
     opacity: 0.5;
 
     :is(button, a):first-child {

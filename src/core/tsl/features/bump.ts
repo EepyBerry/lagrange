@@ -25,7 +25,7 @@ import { vec3, cross, normalize, mix, Fn } from 'three/tsl';
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-export const applyBump = /*@__PURE__*/ Fn(
+export const applyBumpMapping = /*@__PURE__*/ Fn(
   ([i_normal, i_position, i_dx, i_dy, i_height, i_dxHeight, i_dyHeight, i_radius, i_strength]: [
     Node<'vec3'>,
     Node<'vec3'>,
@@ -37,9 +37,10 @@ export const applyBump = /*@__PURE__*/ Fn(
     Node<'float'>,
     Node<'float'>,
   ]) => {
-    const hPos = vec3(i_position.mul(i_radius.add(i_height))).toVar('hPos');
-    const dxPos = vec3(i_position.add(i_dx)).mul(i_radius.add(i_dxHeight)).toVar('dxPos');
-    const dyPos = vec3(i_position.add(i_dy)).mul(i_radius.add(i_dyHeight)).toVar('dyPos');
+    const vPos = vec3(normalize(i_position)).toVar('vPos');
+    const hPos = vec3(vPos.mul(i_radius.add(i_height))).toVar('hPos');
+    const dxPos = vec3(normalize(vPos.add(i_dx)).mul(i_radius.add(i_dxHeight))).toVar('dxPos');
+    const dyPos = vec3(normalize(vPos.add(i_dy)).mul(i_radius.add(i_dyHeight))).toVar('dyPos');
     const bumpN = vec3(normalize(cross(dxPos.sub(hPos), dyPos.sub(hPos)))).toVar('bumpN');
     return normalize(mix(i_normal, bumpN, i_strength));
   },
@@ -47,14 +48,14 @@ export const applyBump = /*@__PURE__*/ Fn(
   name: 'LG_BUMP_applyBump',
   type: 'vec3',
   inputs: [
-    { name: 'normal', type: 'vec3' },
-    { name: 'pos', type: 'vec3' },
-    { name: 'dx', type: 'vec3' },
-    { name: 'dy', type: 'vec3' },
-    { name: 'height', type: 'float' },
-    { name: 'dxHeight', type: 'float' },
-    { name: 'dyHeight', type: 'float' },
-    { name: 'radius', type: 'float' },
-    { name: 'strength', type: 'float' },
+    { name: 'i_normal', type: 'vec3' },
+    { name: 'i_pos', type: 'vec3' },
+    { name: 'i_dx', type: 'vec3' },
+    { name: 'i_dy', type: 'vec3' },
+    { name: 'i_height', type: 'float' },
+    { name: 'i_dxHeight', type: 'float' },
+    { name: 'i_dyHeight', type: 'float' },
+    { name: 'i_radius', type: 'float' },
+    { name: 'i_strength', type: 'float' },
   ],
 });

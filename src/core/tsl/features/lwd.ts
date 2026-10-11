@@ -1,7 +1,41 @@
 import type { Node } from 'three/webgpu';
-import { vec3, float, mix, Fn, clamp } from 'three/tsl';
+import { vec3, float, mix, Fn, clamp, vec4 } from 'three/tsl';
 import { fbm1 } from '../noise/fbm1';
 import { fbm3 } from '../noise/fbm3';
+
+export const applyXYZTransformations = /*@__PURE__*/ Fn(
+  ([i_position, i_warping, i_showWarping, i_displacementParams, i_displacementNoise, i_showDisplacement]: [
+    Node<'vec3'>,
+    Node<'vec4'>,
+    Node<'int'>,
+    Node<'vec3'>,
+    Node<'vec4'>,
+    Node<'int'>,
+  ]) => {
+    const vPos = vec3(i_position).toVar('vPos');
+    const warping = vec4(i_warping).toVar('warping');
+    const showWarping = float(i_showWarping).toVar('showWarping');
+    const displacementParams = vec3(i_displacementParams).toVar('displacementParams');
+    const displacementNoise = vec4(i_displacementNoise).toVar('displacementNoise');
+    const showDisplacement = float(i_showDisplacement).toVar('showDisplacement');
+
+    vPos.assign(warp(vPos, warping, showWarping));
+    return displace(vPos, displacementParams, displacementNoise, showDisplacement);
+  },
+).setLayout({
+  name: 'LG_LWD_applyXYZTransformations',
+  type: 'vec3',
+  inputs: [
+    { name: 'i_position', type: 'vec3' },
+    { name: 'i_warping', type: 'vec4' },
+    { name: 'i_showWarping', type: 'int' },
+    { name: 'i_displacementParams', type: 'vec3' },
+    { name: 'i_displacementNoise', type: 'vec4' },
+    { name: 'i_showDisplacement', type: 'int' },
+  ],
+});
+
+// ----------------------------------------------------------------------------
 
 export const doDisplace = /*@__PURE__*/ Fn(
   ([i_position, i_params, i_noise]: [Node<'vec3'>, Node<'vec3'>, Node<'vec4'>]) => {

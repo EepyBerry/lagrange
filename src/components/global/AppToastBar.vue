@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import type { EditorMessageLevel } from '@core/types';
 import ToastElement from '@components/global/elements/ToastElement.vue';
-import { EventBus } from '@core/event-bus';
+import { UIEventBus } from '@core/ui-event-bus.ts';
 import { ref, watch, type Ref } from 'vue';
 
 const toastType: Ref<EditorMessageLevel> = ref('info');
@@ -18,7 +18,7 @@ const isToastShown: Ref<boolean> = ref(false);
 
 let timeoutId: NodeJS.Timeout | null = null;
 
-watch(EventBus.toastEvent, (evt) => {
+watch(UIEventBus.toastEvent, (evt) => {
   if (evt === null) return;
   showToast(evt.type, evt.translationKey, evt.millis);
 });

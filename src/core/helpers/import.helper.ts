@@ -1,7 +1,7 @@
-import type { IDBKeyBinding, IDBPlanet, IDBSettings } from '@/dexie.config'
-import PlanetData from '@core/models/planet/planet-data.model.ts'
-import pako from 'pako'
-import { nanoid } from 'nanoid'
+import type { IDBKeyBinding, IDBPlanet, IDBSettings } from '@/dexie.config';
+import PlanetData from '@core/models/planet/planet-data.model.ts';
+import * as pako from 'pako';
+import { nanoid } from 'nanoid';
 
 export async function readFileSettings(json: File): Promise<{ settings: IDBSettings; keyBindings: IDBKeyBinding[] }> {
   return new Promise<{ settings: IDBSettings; keyBindings: IDBKeyBinding[] }>((resolve, reject) => {
@@ -21,7 +21,7 @@ export async function readFileSettings(json: File): Promise<{ settings: IDBSetti
 }
 
 export function readFileData(buf: ArrayBuffer): IDBPlanet | undefined {
-  const rawData = JSON.parse(pako.inflate(buf, { to: 'string' }))
+  const rawData = JSON.parse(pako.inflate(buf, { toText: true }))
   if (rawData.version || rawData.data) {
     return readFileV2(rawData)
   } else {

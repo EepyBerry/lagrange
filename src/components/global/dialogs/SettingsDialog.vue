@@ -1,5 +1,5 @@
 <template>
-  <DialogElement
+  <LgvDialog
     id="dialog-settings"
     ref="dialogRef"
     :show-title="true"
@@ -8,12 +8,12 @@
     @close="handleClose()"
   >
     <template #title>
-      <iconify-icon icon="mingcute:settings-3-line" width="1.5rem" aria-hidden="true" />
+      <iconify-icon class="contrast" icon="mingcute:settings-3-line" width="1.5rem" aria-hidden="true" />
       {{ $t('dialog.settings.$title') }}
     </template>
     <template #content>
-      <div class="settings-grid">
-        <CollapsibleSection icon="mingcute:tool-line" class="section-general" expand>
+      <div id="settings-container">
+        <CollapsibleSection id="section-general" icon="mingcute:tool-line" expand>
           <template #title>{{ $t('dialog.settings.general') }}</template>
           <template #content>
             <ParameterGrid>
@@ -31,13 +31,14 @@
                   <option value="en-US">English [en-US]</option>
                   <option value="fr-FR">Français [fr-FR]</option>
                   <option value="de-DE">Deutsch [de-DE]</option>
-                  <option value="_" disabled>{{ $t('main.more_coming_soon') }}</option>
+                  <option value="_" disabled>{{ $t('common.more_coming_soon') }}</option>
                 </template>
               </ParameterSelect>
               <ParameterSelect id="settings-font" v-model="appSettings.font">
                 {{ $t('dialog.settings.general_font') }}:
                 <template #options>
                   <option value="default">{{ $t('dialog.settings.general_font_default') }}</option>
+                  <option value="retro">{{ $t('dialog.settings.general_font_retro') }}</option>
                   <option value="monospace">{{ $t('dialog.settings.general_font_monospace') }}</option>
                   <option value="lowvision">{{ $t('dialog.settings.general_font_lowvision') }}</option>
                   <option value="dyslexia">{{ $t('dialog.settings.general_font_dyslexia') }}</option>
@@ -91,7 +92,7 @@
           </template>
         </CollapsibleSection>
 
-        <CollapsibleSection icon="mingcute:planet-line" class="section-editor">
+        <CollapsibleSection id="section-editor" icon="ph:planet">
           <template #title>
             {{ $t('dialog.settings.editor') }}
           </template>
@@ -165,7 +166,7 @@
                     </ParameterRadioOption>
                   </template>
                 </ParameterRadio>
-                <LgvNotification :type="appSettings.renderingBackend === 'webgl' ? 'info' : 'wip'">
+                <LgvNotification :type="appSettings.renderingBackend === 'webgl' ? 'info' : 'warn'">
                   {{
                     appSettings.renderingBackend === 'webgl'
                       ? $t('dialog.settings.editor_rendering_backend_webgl_notification')
@@ -234,7 +235,7 @@
           </template>
         </CollapsibleSection>
 
-        <CollapsibleSection icon="mingcute:hotkey-line" class="section-keybinds">
+        <CollapsibleSection id="section-keybinds" icon="mingcute:hotkey-line">
           <template #title>
             {{ $t('dialog.settings.keybinds') }}
           </template>
@@ -314,7 +315,7 @@
           </template>
         </CollapsibleSection>
 
-        <CollapsibleSection icon="material-symbols:accessibility-new-rounded" class="section-a11y">
+        <CollapsibleSection id="section-a11y" icon="material-symbols:accessibility-new-rounded">
           <template #title>
             {{ $t('dialog.settings.a11y') }}
           </template>
@@ -342,7 +343,7 @@
           </template>
         </CollapsibleSection>
 
-        <CollapsibleSection icon="mingcute:star-2-line" class="section-a11y">
+        <CollapsibleSection id="section-a11y" icon="mingcute:star-2-line">
           <template #title>
             {{ $t('dialog.settings.extras') }}
           </template>
@@ -389,19 +390,23 @@
           </template>
         </CollapsibleSection>
 
-        <CollapsibleSection icon="mingcute:alert-diamond-line" class="section-advanced">
+        <CollapsibleSection id="section-advanced" icon="mingcute:alert-diamond-line">
           <template #title>
             {{ $t('dialog.settings.advanced') }}
           </template>
           <template #content>
-            <div class="settings-advanced">
+            <div id="settings-advanced">
               <ParameterGrid>
                 <p>{{ $t('dialog.settings.advanced_io') }}:</p>
                 <div id="actions-io">
                   <LgvButton class="sm" icon="mingcute:upload-line" @click="fileInput?.click()">
                     {{ $t('dialog.settings.advanced_import') }}
                   </LgvButton>
+                  <label for="actions-input-import" class="a11y--visually-hidden">{{
+                    $t('dialog.settings.advanced_import')
+                  }}</label>
                   <input
+                    id="actions-input-import"
                     ref="fileInput"
                     type="file"
                     accept=".json"
@@ -430,10 +435,7 @@
                 <LgvNotification type="info">
                   {{ $t('dialog.settings.advanced_persist_info') }}
                 </LgvNotification>
-                <ParameterCategory>
-                  {{ $t('dialog.settings.advanced_danger_zone') }}
-                </ParameterCategory>
-                <ParameterDivider />
+                <p id="settings-advanced-danger-zone">{{ $t('dialog.settings.advanced_danger_zone') }}</p>
                 <LgvButton
                   class="sm warn clear-data"
                   icon="mingcute:delete-2-line"
@@ -448,17 +450,15 @@
         </CollapsibleSection>
       </div>
     </template>
-  </DialogElement>
+  </LgvDialog>
   <AppClearDataConfirmDialog ref="confirmDialogRef" @confirm="clearAllData" />
 </template>
 
 <script setup lang="ts">
 import type { ClearDataConfirmDialogExposes } from '@components/global/dialogs/ClearDataConfirmDialog.types.ts';
 import type { SettingsDialogExposes } from '@components/global/dialogs/SettingsDialog.types.ts';
-import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
+import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
-import DialogElement from '@components/global/elements/DialogElement.vue';
-import ParameterCategory from '@components/global/parameters/ParameterCategory.vue';
 import ParameterCheckbox from '@components/global/parameters/ParameterCheckbox.vue';
 import ParameterDivider from '@components/global/parameters/ParameterDivider.vue';
 import ParameterGrid from '@components/global/parameters/ParameterGrid.vue';
@@ -467,7 +467,7 @@ import ParameterRadio from '@components/global/parameters/ParameterRadio.vue';
 import ParameterRadioOption from '@components/global/parameters/ParameterRadioOption.vue';
 import ParameterSelect from '@components/global/parameters/ParameterSelect.vue';
 import ParameterSlider from '@components/global/parameters/ParameterSlider.vue';
-import { EventBus } from '@core/event-bus';
+import { setCameraControlScheme, setCameraFOV, swapSceneSkybox } from '@core/editor/editor.service.ts';
 import {
   EXTRAS_CAT_MODE,
   EXTRAS_CRT_EFFECT,
@@ -476,15 +476,16 @@ import {
   EXTRAS_SPECIAL_DAYS,
 } from '@core/extras';
 import { readFileSettings } from '@core/helpers/import.helper';
+import { UIEventBus } from '@core/ui-event-bus.ts';
 import { mapLocale } from '@core/utils/utils';
+import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvDialog from '@lib/components/base/LgvDialog.vue';
+import LgvNotification from '@lib/components/custom/LgvNotification.vue';
 import { saveAs } from 'file-saver';
 import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import LgvButton from '@/_lib/components/LgvButton.vue';
-import LgvNotification from '@/_lib/components/LgvNotification.vue';
 import WebGPU from '@/core/capabilities/WebGPU';
 import * as DexieService from '@/core/services/dexie.service';
-import { setCameraControlScheme, setCameraFOV, swapSceneSkybox } from '@/core/services/editor.service';
 import {
   type CameraMouseControlsScheme,
   idb,
@@ -501,7 +502,7 @@ const AppClearDataConfirmDialog = defineAsyncComponent(
 const i18n = useI18n();
 const catModeOverride = ref('en-UwU');
 
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
 const confirmDialogRef = useTemplateRef<ClearDataConfirmDialogExposes>('confirmDialogRef');
 defineExpose<SettingsDialogExposes>({ open });
 
@@ -513,6 +514,8 @@ const appSettings: Ref<IDBSettings> = ref({
   font: '',
   showInitDialog: true,
   renderingBackend: 'webgl',
+  inspectorSide: 'left',
+  inspectorOrdering: 'standard',
   cameraFOV: 50,
   skybox: 'deepspace',
   cameraMouseControlsScheme: 'standard',
@@ -575,7 +578,7 @@ async function importData(event: Event) {
   appSettings.value = data.settings!;
   keyBinds.value.splice(0);
   keyBinds.value.push(...data.keyBindings);
-  await updateSettings().then(() => EventBus.sendToastEvent('success', 'toast.settings_import_success', 5000));
+  await updateSettings().then(() => UIEventBus.sendToastEvent('success', 'toast.settings_import_success', 5000));
 }
 
 async function exportData() {
@@ -587,7 +590,7 @@ async function exportData() {
 async function clearAllData() {
   await DexieService.clearData();
   await loadData();
-  EventBus.sendDataClearEvent();
+  UIEventBus.sendDataClearEvent();
 }
 
 function toggleAction(action: string): void {
@@ -668,31 +671,53 @@ function getKeyBind(action: string) {
   min-width: 36rem;
   max-width: 36rem;
   height: 80%;
-  .settings-grid {
+
+  :deep(.dialog-content) {
+    background: var(--lg-panel);
+  }
+
+  #settings-container {
+    margin-top: 0.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
 
-    .settings-general,
-    .settings-editor,
-    .settings-a11y,
-    .settings-advanced {
+    #settings-general,
+    #settings-editor,
+    #settings-a11y,
+    #settings-advanced {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       gap: 0.75rem;
     }
   }
-  .settings-advanced #actions-io {
-    display: flex;
-    gap: 0.5rem;
-    & > * {
-      flex: 1;
+  #settings-advanced {
+    #actions-io {
+      display: flex;
+      gap: 0.5rem;
+      & > * {
+        flex: 1;
+      }
+    }
+    #settings-advanced-danger-zone {
+      grid-column: span 2;
+      margin: 1rem 0;
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: 500;
+      background: var(--lg-panel);
+      border-radius: 0.25rem;
+      border: 1px solid var(--lg-accent);
     }
   }
-  .setting-persist button {
+  #setting-persist button {
     grid-column: 2;
     padding: 0 0.5rem;
+  }
+  .collapsible-section {
+    border-left: none;
+    border-right: none;
   }
   .notification,
   button.clear-data {

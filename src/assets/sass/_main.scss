@@ -3,7 +3,7 @@
 *::after {
   box-sizing: border-box;
   margin: 0;
-  scrollbar-color: var(--lg-logo) var(--lg-input);
+  scrollbar-color: var(--lg-button) var(--lg-input);
 }
 
 html {
@@ -22,21 +22,11 @@ body {
   border-radius: 2px;
   background: black;
   color: var(--lg-text);
+  overscroll-behavior: contain;
 
   font-family:
-    Poppins,
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    sans-serif;
+    Poppins, Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans',
+    'Droid Sans', 'Helvetica Neue', sans-serif;
   line-height: 1.5;
 
   text-rendering: optimizeLegibility;
@@ -54,8 +44,6 @@ body {
 }
 body:has(dialog[open]) {
   touch-action: none;
-  overflow: hidden;
-  overscroll-behavior: none;
 }
 
 hr {
@@ -77,6 +65,12 @@ hr {
   & > *:last-child {
     margin-bottom: 0;
   }
+}
+
+.mathsymbol {
+  font-family:
+    Computer Modern,
+    serif;
 }
 
 .a11y--visually-hidden {

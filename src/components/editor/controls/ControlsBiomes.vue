@@ -1,205 +1,146 @@
 <template>
   <ParameterGrid>
-    <ParameterCheckbox
-      id="b-biomes"
-      v-model="EDITOR_STATE.planetData.biomesEnabled"
-      :true-value="true"
-      :false-value="false"
-    >
-      {{ $t('editor.controls.biomes.biomes_show') }}
-    </ParameterCheckbox>
-    <template v-if="EDITOR_STATE.planetData.biomesEnabled">
-      <ParameterGroup :toggleable="true">
-        <template #title>{{ $t('editor.controls.biomes.temperature') }}</template>
-        <template #content>
-          <ParameterRadio>
-            <template #title> {{ $t('editor.controls.biomes.gradient_mode') }}: </template>
-            <template #options>
-              <ParameterRadioOption
-                :id="'0'"
-                v-model="EDITOR_STATE.planetData.biomesTemperatureMode"
-                icon="mingcute:photo-album-line"
-                name="temp-mode"
-                :value="GradientMode.REALISTIC"
-                :button-aria-label="$t('editor.controls.biomes.gradient_mode_realistic')"
-                :title="$t('tooltip.gradient_mode_realistic')"
-              >
-                {{ $t('editor.controls.biomes.gradient_mode_realistic') }}
-              </ParameterRadioOption>
-              <ParameterRadioOption
-                :id="'1'"
-                v-model="EDITOR_STATE.planetData.biomesTemperatureMode"
-                icon="material-symbols:gradient-outline"
-                name="temp-mode"
-                :value="GradientMode.POLE_TO_POLE"
-                :button-aria-label="$t('editor.controls.biomes.gradient_mode_poletopole')"
-                :title="$t('tooltip.gradient_mode_poletopole')"
-              >
-                {{ $t('editor.controls.biomes.gradient_mode_poletopole') }}
-              </ParameterRadioOption>
-              <ParameterRadioOption
-                :id="'2'"
-                v-model="EDITOR_STATE.planetData.biomesTemperatureMode"
-                icon="tabler:ease-in-out-control-points"
-                name="temp-mode"
-                :value="GradientMode.FULLNOISE"
-                :button-aria-label="$t('editor.controls.biomes.gradient_mode_fullnoise')"
-                :title="$t('tooltip.gradient_mode_fullnoise')"
-              >
-                {{ $t('editor.controls.biomes.gradient_mode_fullnoise') }}
-              </ParameterRadioOption>
-            </template>
-          </ParameterRadio>
-          <ParameterSlider
-            id="b-tfreq"
-            v-model="EDITOR_STATE.planetData.biomesTemperatureNoise.frequency"
-            :step="0.01"
-            :max="5"
-          >
-            {{ $t('editor.general.noise_fbm_frequency') }}
-          </ParameterSlider>
-          <ParameterSlider
-            id="b-tamp"
-            v-model="EDITOR_STATE.planetData.biomesTemperatureNoise.amplitude"
-            :step="0.01"
-            :min="0"
-            :max="2"
-          >
-            {{ $t('editor.general.noise_fbm_amplitude') }}
-          </ParameterSlider>
-          <ParameterSlider
-            id="b-tlac"
-            v-model="EDITOR_STATE.planetData.biomesTemperatureNoise.lacunarity"
-            :step="0.01"
-            :min="1"
-            :max="3"
-          >
-            {{ $t('editor.general.noise_fbm_lacunarity') }}
-          </ParameterSlider>
-          <ParameterSlider
-            id="b-toct"
-            v-model="EDITOR_STATE.planetData.biomesTemperatureNoise.octaves"
-            :step="1"
-            :min="1"
-            :max="8"
-          >
-            {{ $t('editor.general.noise_fbm_octaves') }}
-          </ParameterSlider>
-        </template>
-      </ParameterGroup>
-      <ParameterGroup :toggleable="true">
-        <template #title>{{ $t('editor.controls.biomes.humidity') }}</template>
-        <template #content>
-          <ParameterRadio>
-            <template #title> {{ $t('editor.controls.biomes.gradient_mode') }}: </template>
-            <template #options>
-              <ParameterRadioOption
-                :id="'0'"
-                v-model="EDITOR_STATE.planetData.biomesHumidityMode"
-                icon="mingcute:photo-album-line"
-                name="humi-mode"
-                :value="GradientMode.REALISTIC"
-                :button-aria-label="$t('editor.controls.biomes.gradient_mode_realistic')"
-                :title="$t('tooltip.gradient_mode_realistic')"
-              >
-                {{ $t('editor.controls.biomes.gradient_mode_realistic') }}
-              </ParameterRadioOption>
-              <ParameterRadioOption
-                :id="'1'"
-                v-model="EDITOR_STATE.planetData.biomesHumidityMode"
-                icon="material-symbols:gradient-outline"
-                name="humi-mode"
-                :value="GradientMode.POLE_TO_POLE"
-                :button-aria-label="$t('editor.controls.biomes.gradient_mode_poletopole')"
-                :title="$t('tooltip.gradient_mode_poletopole')"
-              >
-                {{ $t('editor.controls.biomes.gradient_mode_poletopole') }}
-              </ParameterRadioOption>
-              <ParameterRadioOption
-                :id="'2'"
-                v-model="EDITOR_STATE.planetData.biomesHumidityMode"
-                icon="tabler:ease-in-out-control-points"
-                name="humi-mode"
-                :value="GradientMode.FULLNOISE"
-                :button-aria-label="$t('editor.controls.biomes.gradient_mode_fullnoise')"
-                :title="$t('tooltip.gradient_mode_fullnoise')"
-              >
-                {{ $t('editor.controls.biomes.gradient_mode_fullnoise') }}
-              </ParameterRadioOption>
-            </template>
-          </ParameterRadio>
-          <ParameterSlider
-            id="b-tfreq"
-            v-model="EDITOR_STATE.planetData.biomesHumidityNoise.frequency"
-            :step="0.01"
-            :max="5"
-          >
-            {{ $t('editor.general.noise_fbm_frequency') }}
-          </ParameterSlider>
-          <ParameterSlider
-            id="b-tamp"
-            v-model="EDITOR_STATE.planetData.biomesHumidityNoise.amplitude"
-            :step="0.01"
-            :min="0"
-            :max="2"
-          >
-            {{ $t('editor.general.noise_fbm_amplitude') }}
-          </ParameterSlider>
-          <ParameterSlider
-            id="b-tlac"
-            v-model="EDITOR_STATE.planetData.biomesHumidityNoise.lacunarity"
-            :step="0.01"
-            :min="1"
-            :max="3"
-          >
-            {{ $t('editor.general.noise_fbm_lacunarity') }}
-          </ParameterSlider>
-          <ParameterSlider
-            id="b-toct"
-            v-model="EDITOR_STATE.planetData.biomesHumidityNoise.octaves"
-            :step="1"
-            :min="1"
-            :max="8"
-          >
-            {{ $t('editor.general.noise_fbm_octaves') }}
-          </ParameterSlider>
-        </template>
-      </ParameterGroup>
-      <ParameterGroup :toggleable="true">
-        <template #title>{{ $t('editor.controls.biomes.biome_list') }}</template>
-        <template #content>
-          <template v-for="(b, index) in EDITOR_STATE.planetData.biomesParams" :key="b.id">
-            <!-- prettier-ignore-attribute -->
-            <ParameterBiome
-              v-model="EDITOR_STATE.planetData.biomesParams[index]"
-              :index="index"
-              :max-index="EDITOR_STATE.planetData.biomesParams.length - 1"
-              @moveup="EDITOR_STATE.planetData.moveBiome(b.id, -1)"
-              @movedown="EDITOR_STATE.planetData.moveBiome(b.id, 1)"
-              @delete="EDITOR_STATE.planetData.removeBiome(b.id)"
-            />
+    <ParameterGroup :toggleable="true">
+      <template #title>{{ $t('editor.features.biomes.temperature') }}</template>
+      <template #content>
+        <ParameterSelect id="b-tgrad" v-model="EDITOR_STATE.planetData.biomesTemperatureMode">
+          {{ $t('editor.features.biomes.gradient_mode') }}
+          <template #options>
+            <option :value="GradientMode.REALISTIC">
+              {{ $t('editor.features.biomes.gradient_mode_realistic') }}
+            </option>
+            <option :value="GradientMode.POLE_TO_POLE">
+              {{ $t('editor.features.biomes.gradient_mode_poletopole') }}
+            </option>
+            <option :value="GradientMode.FULLNOISE">
+              {{ $t('editor.features.biomes.gradient_mode_fullnoise') }}
+            </option>
           </template>
-          <LgvButton
-            v-show="EDITOR_STATE.planetData.biomesParams.length < 16"
-            class="sm action-add"
-            icon="mingcute:add-line"
-            @click="EDITOR_STATE.planetData.addBiome()"
-          >
-            {{ $t('editor.$action_add') }}
-          </LgvButton>
-        </template>
-      </ParameterGroup>
+        </ParameterSelect>
+        <ParameterSlider
+          id="b-tfreq"
+          v-model="EDITOR_STATE.planetData.biomesTemperatureNoise.frequency"
+          :step="0.01"
+          :max="5"
+        >
+          {{ $t('editor.general.noise_fbm_frequency') }}
+        </ParameterSlider>
+        <ParameterSlider
+          id="b-tamp"
+          v-model="EDITOR_STATE.planetData.biomesTemperatureNoise.amplitude"
+          :step="0.01"
+          :min="0"
+          :max="2"
+        >
+          {{ $t('editor.general.noise_fbm_amplitude') }}
+        </ParameterSlider>
+        <ParameterSlider
+          id="b-tlac"
+          v-model="EDITOR_STATE.planetData.biomesTemperatureNoise.lacunarity"
+          :step="0.01"
+          :min="1"
+          :max="3"
+        >
+          {{ $t('editor.general.noise_fbm_lacunarity') }}
+        </ParameterSlider>
+        <ParameterSlider
+          id="b-toct"
+          v-model="EDITOR_STATE.planetData.biomesTemperatureNoise.octaves"
+          :step="1"
+          :min="1"
+          :max="8"
+        >
+          {{ $t('editor.general.noise_fbm_octaves') }}
+        </ParameterSlider>
+      </template>
+    </ParameterGroup>
+    <ParameterGroup :toggleable="true">
+      <template #title>{{ $t('editor.features.biomes.humidity') }}</template>
+      <template #content>
+        <ParameterSelect id="b-hgrad" v-model="EDITOR_STATE.planetData.biomesHumidityMode">
+          {{ $t('editor.features.biomes.gradient_mode') }}
+          <template #options>
+            <option :value="GradientMode.REALISTIC">
+              {{ $t('editor.features.biomes.gradient_mode_realistic') }}
+            </option>
+            <option :value="GradientMode.POLE_TO_POLE">
+              {{ $t('editor.features.biomes.gradient_mode_poletopole') }}
+            </option>
+            <option :value="GradientMode.FULLNOISE">
+              {{ $t('editor.features.biomes.gradient_mode_fullnoise') }}
+            </option>
+          </template>
+        </ParameterSelect>
+        <ParameterSlider
+          id="b-tfreq"
+          v-model="EDITOR_STATE.planetData.biomesHumidityNoise.frequency"
+          :step="0.01"
+          :max="5"
+        >
+          {{ $t('editor.general.noise_fbm_frequency') }}
+        </ParameterSlider>
+        <ParameterSlider
+          id="b-tamp"
+          v-model="EDITOR_STATE.planetData.biomesHumidityNoise.amplitude"
+          :step="0.01"
+          :min="0"
+          :max="2"
+        >
+          {{ $t('editor.general.noise_fbm_amplitude') }}
+        </ParameterSlider>
+        <ParameterSlider
+          id="b-tlac"
+          v-model="EDITOR_STATE.planetData.biomesHumidityNoise.lacunarity"
+          :step="0.01"
+          :min="1"
+          :max="3"
+        >
+          {{ $t('editor.general.noise_fbm_lacunarity') }}
+        </ParameterSlider>
+        <ParameterSlider
+          id="b-toct"
+          v-model="EDITOR_STATE.planetData.biomesHumidityNoise.octaves"
+          :step="1"
+          :min="1"
+          :max="8"
+        >
+          {{ $t('editor.general.noise_fbm_octaves') }}
+        </ParameterSlider>
+      </template>
+    </ParameterGroup>
+    <template v-for="(b, index) in EDITOR_STATE.planetData.biomesParams" :key="b.id">
+      <ParameterBiome
+        v-model="EDITOR_STATE.planetData.biomesParams[index]"
+        :index="index"
+        :max-index="EDITOR_STATE.planetData.biomesParams.length - 1"
+        @moveup="EDITOR_STATE.planetData.moveBiomeUp(b)"
+        @movedown="EDITOR_STATE.planetData.moveBiomeDown(b)"
+        @delete="EDITOR_STATE.planetData.removeBiome(b)"
+      />
     </template>
+    <LgvButton
+      v-show="EDITOR_STATE.planetData.biomesParams.length < 16"
+      id="action-add"
+      icon="ph:plus"
+      @click="EDITOR_STATE.planetData.addBiome()"
+    >
+      {{ $t('editor.$action_add') }}
+    </LgvButton>
   </ParameterGrid>
 </template>
+
 <script setup lang="ts">
 import ParameterBiome from '@components/global/parameters/ParameterBiome.vue';
-import { GradientMode } from '@core/types';
-import LgvButton from '@/_lib/components/LgvButton.vue';
-import { EDITOR_STATE } from '@/core/state/editor.state';
+import ParameterGrid from '@components/global/parameters/ParameterGrid.vue';
+import ParameterGroup from '@components/global/parameters/ParameterGroup.vue';
+import ParameterSelect from '@components/global/parameters/ParameterSelect.vue';
+import { EDITOR_STATE } from '@core/editor/state/editor.state.ts';
+import { GradientMode } from '@core/types.ts';
+import LgvButton from '@lib/components/base/LgvButton.vue';
 </script>
+
 <style scoped lang="scss">
-.action-add {
+#action-add {
   grid-column: span 2;
 }
 </style>

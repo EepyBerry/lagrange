@@ -1,15 +1,19 @@
 <template>
-  <input
-    :id="`${name}-${id}`"
-    ref="htmlRadio"
-    v-model="lgParam"
-    class="lg"
-    type="radio"
-    :name="name"
-    :value="value"
-    :checked="value === lgParam"
-    :disabled="disabled"
-  />
+  <div class="inner-input" aria-hidden="true">
+    <label :for="`${name}-${id}`" class="a11y--visually-hidden">INNER_INPUT</label>
+    <input
+      :id="`${name}-${id}`"
+      ref="htmlRadio"
+      v-model="lgParam"
+      class="lg"
+      type="radio"
+      :name="name"
+      :value="value"
+      :checked="value === lgParam"
+      :disabled="disabled"
+      hidden=""
+    />
+  </div>
 
   <LgvButton
     class="sm radio-button"
@@ -25,8 +29,8 @@
 </template>
 
 <script setup lang="ts">
+import LgvButton from '@lib/components/base/LgvButton.vue';
 import { useTemplateRef } from 'vue';
-import LgvButton from '@/_lib/components/LgvButton.vue';
 
 defineProps<{
   name: string;
@@ -51,11 +55,15 @@ function select() {
   height: 100%;
   padding: 0 0.75rem;
   &.selected {
+    pointer-events: none;
     background: var(--lg-button-active);
     cursor: default;
   }
 }
 
+div.inner-input {
+  display: none;
+}
 input[type='radio'] {
   display: none;
 }
