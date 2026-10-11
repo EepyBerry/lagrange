@@ -3,14 +3,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    /**
-     * Legacy route redirection to avoid breaking existing behaviour
-     * @since v0.5.2
-     */
-    {
-      path: '/codex',
-      redirect: '/',
-    },
     {
       path: '/',
       name: 'codex',

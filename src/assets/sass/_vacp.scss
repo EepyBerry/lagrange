@@ -3,6 +3,11 @@
   --vacp-font-family: inherit;
   --vacp-font-size: 1rem;
   --vacp-color-focus: var(--lg-input-contrast-focus);
+  --vacp-color-text: var(--lg-text);
+  --vacp-color-text-input: var(--lg-text);
+  --vacp-color-background: var(--lg-panel);
+  --vacp-color-background-input: var(--lg-input);
+  --vacp-color-border: var(--lg-accent);
 
   display: grid;
   grid-gap: 6px;
@@ -39,10 +44,14 @@
     cursor: pointer;
   }
 
+  input.vacp-color-input,
   input[id^='color-picker-color-'] {
     background: var(--lg-input);
     border-radius: 2px;
   }
+}
+.floating .vacp-color-picker {
+  border: none;
 }
 :where(.vacp-color-picker) button {
   border-radius: 2px;

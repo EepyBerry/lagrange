@@ -38,6 +38,19 @@ export type BakingSceneObjects = {
   renderTarget: RenderTarget;
 };
 export type EditorBackendType = 'webgl' | 'webgpu';
+export type EditorFeatures =
+  | 'data'
+  | 'transform'
+  | 'rendering'
+  | 'lighting'
+  | 'surface'
+  | 'biomes'
+  | 'cracks'
+  | 'craters'
+  | 'clouds'
+  | 'rings'
+  | 'atmosphere'
+  | 'postprocessing';
 
 // ----------------------------------- Model subtypes ---------------------------------
 export enum PlanetType {

@@ -319,6 +319,34 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
           2,
         );
       })
+      .on('biomeMoveUp', async () => {
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes',
+          initData.biomesParams,
+          1,
+        );
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes-emissive',
+          initData.biomesParams,
+          2,
+        );
+      })
+      .on('biomeMoveDown', async () => {
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes',
+          initData.biomesParams,
+          1,
+        );
+        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+          EDITOR_WORKERS.texture!,
+          'biomes-emissive',
+          initData.biomesParams,
+          2,
+        );
+      })
       .on('biomesClear', async () => {
         await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
           EDITOR_WORKERS.texture!,
@@ -596,7 +624,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     // ------------------------------------------ //
 
     // render noise as color
-    const texCoord = vec2(min(height, float(1).sub(EPSILON)), 0.5).toVar('texCoord');
+    const texCoord = vec2(min(heightBeforeCracks, float(1).sub(EPSILON)), 0.5).toVar('texCoord');
     const colour = vec3(this.uniforms.arrayTexture.depth(int(0)).sample(texCoord).xyz).toVar('colour');
 
     // calculate biomes

@@ -149,12 +149,3 @@ export function avg(...values: number[]): number {
 export function diff(a: number, b: number): number {
   return Math.abs(Math.max(a, b) - Math.min(a, b));
 }
-
-/**
- * Simple float truncating function
- * @param a the number to truncate
- * @param multPrecision the precision as an integer (e.g. 10000 => .toFixed(4))
- */
-export function truncateTo(a: number, multPrecision: number): number {
-  return Math.trunc(a * multPrecision) / multPrecision;
-}

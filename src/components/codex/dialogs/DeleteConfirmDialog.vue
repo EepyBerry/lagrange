@@ -1,18 +1,19 @@
 <template>
-  <DialogElement
+  <LgvDialog
     id="dialog-delete-confirm"
     ref="dialogRef"
+    :is-warn="true"
     :show-title="true"
     :show-actions="true"
     :closeable="true"
     :aria-label="$t('a11y.dialog_delete')"
   >
     <template #title>
-      <iconify-icon icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
+      <iconify-icon class="warn" icon="mingcute:warning-line" width="1.5rem" aria-hidden="true" />
       {{ $t('dialog.confirm_delete.$title', { planet: planet?.data.planetName ?? 'PLANET_NAME' }) }}
     </template>
     <template #content>
-      <div class="delete-text">
+      <div id="delete-text">
         <p>{{ $t('dialog.confirm_delete.message') }}</p>
         <p>
           <strong>{{ $t('dialog.confirm_delete.warning') }}</strong>
@@ -27,18 +28,18 @@
         {{ $t('dialog.confirm_delete.$action_confirm') }}
       </LgvButton>
     </template>
-  </DialogElement>
+  </LgvDialog>
 </template>
 <script setup lang="ts">
 import type { DeleteConfirmDialogExposes } from '@components/codex/dialogs/DeleteConfirmDialog.types.ts';
-import type { DialogElementExposes } from '@components/global/elements/DialogElement.types.ts';
-import DialogElement from '@components/global/elements/DialogElement.vue';
+import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
+import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 import type { IDBPlanet } from '@/dexie.config';
-import LgvButton from '@/_lib/components/LgvButton.vue';
 
 const planet: Ref<IDBPlanet | null> = ref(null);
-const dialogRef = useTemplateRef<DialogElementExposes>('dialogRef');
+const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
 
 const $emit = defineEmits(['confirm']);
 defineExpose<DeleteConfirmDialogExposes>({ open });
@@ -60,9 +61,9 @@ function close(confirm: boolean) {
 <style scoped lang="scss">
 #dialog-delete-confirm {
   min-width: 24rem;
-  .delete-text {
+  #delete-text {
+    padding: 1rem 0.5rem;
     text-align: center;
-    font-size: 1rem;
   }
 }
 @media screen and (max-width: 567px) {

@@ -1,32 +1,6 @@
 <template>
   <ParameterGrid>
     <ParameterGroup
-      v-model="EDITOR_STATE.planetData.planetSurfaceShowBumps"
-      :toggleable="EDITOR_STATE.planetData.planetSurfaceShowBumps"
-    >
-      <template #title>{{ $t('editor.surface.bumpmap') }}</template>
-      <template #content>
-        <ParameterSlider
-          id="s-bumpstr"
-          v-model="EDITOR_STATE.planetData.planetSurfaceBumpStrength"
-          :step="0.0005"
-          :min="0.02"
-          :max="0.2"
-        >
-          {{ $t('editor.surface.bumpmap_strength') }}
-        </ParameterSlider>
-        <ParameterSlider
-          id="s-bumpoff"
-          v-model="EDITOR_STATE.planetData.planetSurfaceBumpOffset"
-          :step="0.0005"
-          :min="0.001"
-          :max="0.01"
-        >
-          {{ $t('editor.surface.bumpmap_offset') }}
-        </ParameterSlider>
-      </template>
-    </ParameterGroup>
-    <ParameterGroup
       v-model="EDITOR_STATE.planetData.planetSurfaceShowWarping"
       :toggleable="EDITOR_STATE.planetData.planetSurfaceShowWarping"
     >
@@ -174,19 +148,22 @@
         >
           {{ $t('editor.general.noise_fbm_octaves') }}
         </ParameterSlider>
-        <ParameterDivider />
-        <!-- prettier-ignore-attribute -->
-        <ParameterColorRamp
-          :key="EDITOR_STATE.planetData.planetName"
-          v-model="EDITOR_STATE.planetData.planetSurfaceColorRamp"
-          mode="rgb"
-        >
-          {{ $t('editor.general.colorramp_rgb') }}
-        </ParameterColorRamp>
       </template>
     </ParameterGroup>
+    <ParameterSlider id="p-wlevel" v-model="EDITOR_STATE.planetData.planetWaterLevel" :step="0.01" :min="0" :max="1">
+      {{ $t('editor.planet_rendering.waterlevel') }}
+    </ParameterSlider>
+    <!-- prettier-ignore-attribute -->
+    <ParameterColorRamp
+      :key="EDITOR_STATE.planetData.planetName"
+      v-model="EDITOR_STATE.planetData.planetSurfaceColorRamp"
+      mode="rgb"
+    >
+      {{ $t('editor.general.colorramp_rgb') }}
+    </ParameterColorRamp>
   </ParameterGrid>
 </template>
 <script setup lang="ts">
+import ParameterDivider from '@components/global/parameters/ParameterDivider.vue';
 import { EDITOR_STATE } from '@core/editor/state/editor.state';
 </script>
