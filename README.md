@@ -1,5 +1,5 @@
 <div align="center">
-  <img alt="update-logo" src="https://github.com/user-attachments/assets/277ea5b4-8c9f-4955-b13f-84123260f9a3">
+  <img alt="update-logo" src="https://github.com/user-attachments/assets/a6984c66-d5e1-4cea-b1f7-aba96709a1b5">
 </div>
 
 # Lagrange - Procedural Planet Builder 🪐
@@ -20,11 +20,12 @@ A WebGL2 & WebGPU project using VueJS and ThreeJS! <br> Lagrange is a browser ap
 
 _(**note:** this is something I am working on during my free time, which means that update frequency will vary!)_
 
-## 🚀 Latest major version: "Core Overhaul"!
+## 🚀 Latest major version: "Cosmic Collapse"!
 
 <ul>
-  <li>⭐ Introduces WebGPU support! Renderer selection is now available in the app settings!</li>
-  <li>⭐ Full rewrite of the internal app structure to help future development efforts!</li>
+  <li>⭐ Introduces <b>cracks</b> and <b>craters</b>! Bring even more variety to your worlds by exposing them to the wrath of the universe!</li>
+  <li>⭐ Introduces a <b>texture extraction</b> function! Allows you to directly grab planet textures instead of having to extract them from the .gltf file</li>
+  <li>⭐ Revamps the entire application UI to prepare for upcoming updates; includes a few layout options</li>
 </ul>
 
 Check the [releases](https://github.com/EepyBerry/lagrange/releases) page for a more comprehensive changelog!
@@ -75,29 +76,38 @@ Vite copies the output to the `dist` folder, creating it first if need be.
 
 ### Codex (landing page)
 
-- 📋 Create, import & export your planets!
-- 🔎 See previews of your creations!
-- 🪐 Check basic information for each planet: type, class, radius, axial tilt, biome composition and ring system!
+| Feature group        | Details                                              |
+| -------------------- | ---------------------------------------------------- |
+| 📋 Management        | create, import, export planets                       |
+| 🔎 Visual            | render of each planet as an image                    |
+| 🪐 Information panel | tabbed data for each planet: overview, biomes, rings |
 
 ### Editor
 
-- 📓 **Basic classification!** (type, class)
-- ☀️ **Lighting parameters!** (sunlight, ambient light, color)
-- 🌍 **Planet & Rendering parameters!** (transform, water level, PBR settings, emissivity)
-- 🗺️ **Surface parameters!** (bump mapping, warping, displacement, noise settings, color ramp)
-- ⛰️ **Biome parameters!** (temperature/humidity mapping, per-biome min/max values & color, emissivity)
-- ☁️ **Clouds parameters!** (transform, warping, noise settings, color, opacity ramp)
-- 🌈 **Atmosphere parameters!** (height, density, color mixing modes, Rayleigh/Mie scattering settings)
-- 🪐 **Ring System parameters!** (number of rings, per-ring radii & color ramps)
-- 📷 **Post-Processing!** (base pipeline, additional toggleable effects)
+| Feature group          | Details                                                                    |
+| ---------------------- | -------------------------------------------------------------------------- |
+| 📓 **Basic data**      | type, class                                                                |
+| 📌 **Transform**       | radius, axial tilt, rotation                                               |
+| 🌍 **Rendering**       | bump mapping, metallic roughness                                           |
+| ☀️ **Lighting**        | sunlight, ambient light, emissivity                                        |
+| 🗺️ **Surface**         | warping, displacement, noise settings, water level, color ramp             |
+| 💥 **Cracks**          | distance to edge, base/detail/limiter/color noise, emissivity              |
+| 🕳️ **Craters**         | base/detail noise, profile                                                 |
+| ⛰️ **Biomes**          | temperature/humidity mapping, per-biome min/max values & color, emissivity |
+| ☁️ **Clouds**          | rotation, warping, noise settings, color, opacity ramp                     |
+| 🌈 **Atmosphere**      | height, density, color mixing modes, Rayleigh/Mie scattering settings      |
+| 🪐 **Ring System**     | per-ring radii & color ramps                                               |
+| 📷 **Post-Processing** | base pipeline, additional toggleable effects                               |
 
 ## ⏰ Planned features
 
-- Integrated lore, to craft a story fit for each of your worlds!
-- Dark side "night lights"!
-- Cracks & Craters!
-- Planet animations!
-- _Galactic Map_, to organize them around stars!
+| Planned feature | Description                                                 |
+| --------------- | ----------------------------------------------------------- |
+| 🖼️ 2D Mode      | more direct planet texture creation                         |
+| 📖 Lore         | inhabitants, climate, fauna, flora, and so on               |
+| 🏙️ Civilization | night lights, surface "conversion", bridges                 |
+| ⏯️ Animations   | keyframe-based, most if not all parameters                  |
+| 🌌 Galactic Map | place planets, design solar systems with star configuration |
 
 ## ✨ Inspirations & credits
 
