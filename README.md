@@ -20,11 +20,12 @@ A WebGL2 & WebGPU project using VueJS and ThreeJS! <br> Lagrange is a browser ap
 
 _(**note:** this is something I am working on during my free time, which means that update frequency will vary!)_
 
-## 🚀 Latest major version: "Core Overhaul"!
+## 🚀 Latest major version: "Cosmic Collapse"!
 
 <ul>
-  <li>⭐ Introduces WebGPU support! Renderer selection is now available in the app settings!</li>
-  <li>⭐ Full rewrite of the internal app structure to help future development efforts!</li>
+  <li>⭐ Introduces <b>cracks</b> and <b>craters</b>! Bring even more variety to your worlds by exposing them to the wrath of the universe!</li>
+  <li>⭐ Introduces a <b>texture extraction</b> function! Allows you to directly grab planet textures instead of having to extract them from the .gltf file</li>
+  <li>⭐ Revamps the entire application UI to prepare for upcoming updates; includes a few layout options</li>
 </ul>
 
 Check the [releases](https://github.com/EepyBerry/lagrange/releases) page for a more comprehensive changelog!
