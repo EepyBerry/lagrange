@@ -67,29 +67,36 @@ export const calculateCracksHeight = /*@__PURE__*/ Fn(
 );
 
 export const renderCracks = /*@__PURE__*/ Fn(
-  ([cracksExtents, color, vPos, colorNoise, baseTexture, underwaterStrength, FLAG_SURFACE_TYPE]: [
+  ([cracksExtents, color, vPos, colorNoise, surfaceTexture, underwaterTexture, underwaterStrength, FLAG_SURFACE_TYPE]: [
     Node<'vec2'>,
     Node<'vec3'>,
     Node<'vec3'>,
     Node<'vec4'>,
+    TextureNode,
     TextureNode,
     Node<'float'>,
     Node<'float'>,
   ]) => {
     // compute cracks color
     const cracksColorNoiseHeight = fbm3(vPos, colorNoise).toVar('cracksColorNoiseHeight');
-    const cracksColorNoiseColor = vec3(baseTexture.sample(vec2(cracksColorNoiseHeight, 0.5)).xyz).toVar(
-      'cracksColorNoiseColor',
+    const cracksSurfaceNoiseColor = vec3(surfaceTexture.sample(vec2(cracksColorNoiseHeight, 0.5)).xyz).toVar(
+      'cracksSurfaceNoiseColor',
+    );
+    const cracksUnderwaterNoiseColor = vec3(underwaterTexture.sample(vec2(cracksColorNoiseHeight, 0.5)).xyz).toVar(
+      'cracksUnderwaterNoiseColor',
     );
 
     // if underwater, set the strength of the cracks' color by the given value
-    // if on land, just display the cracks as-is
+    // if on land, just display the cracks as-is (with the proper ramp)
     const cracksColor = vec3(0).toVar('cracksColor');
+    const cracksNoiseColor = vec3(0).toVar('cracksNoiseColor');
     If(FLAG_SURFACE_TYPE.greaterThan(0.5), () => {
-      cracksColor.assign(mix(color, cracksColorNoiseColor, cracksExtents.x));
+      cracksNoiseColor.assign(cracksSurfaceNoiseColor);
+      cracksColor.assign(mix(color, cracksNoiseColor, cracksExtents.x));
     }).Else(() => {
-      cracksColor.assign(mix(color, mix(color, cracksColorNoiseColor, cracksExtents.x), underwaterStrength));
+      cracksNoiseColor.assign(cracksUnderwaterNoiseColor);
+      cracksColor.assign(mix(color, mix(color, cracksNoiseColor, cracksExtents.x), underwaterStrength));
     });
-    return CracksOutput(mix(color, cracksColor, cracksExtents.y), cracksColorNoiseColor);
+    return CracksOutput(mix(color, cracksColor, cracksExtents.y), cracksNoiseColor);
   },
 );

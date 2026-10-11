@@ -434,15 +434,16 @@ export default class PlanetData {
   // --------------------------------------------------
 
   private _cracksEnabled: boolean;
-  private _cracksDistanceToEdge: number = 0.01;
-  private _cracksEmissiveIntensity: number = 3;
-  private _cracksUnderwaterStrength: number = 0.025;
-  private _cracksDetailNoiseStrength: number = 0.25;
+  private _cracksDistanceToEdge: number;
+  private _cracksEmissiveIntensity: number;
+  private _cracksUnderwaterStrength: number;
+  private _cracksDetailNoiseStrength: number;
   private readonly _cracksBaseNoise: VoronoiNoiseParameters;
   private readonly _cracksDetailNoise: FbmNoiseParameters;
   private readonly _cracksLimiterNoise: FbmNoiseParameters;
   private readonly _cracksColorNoise: FbmNoiseParameters;
-  private readonly _cracksColorRamp: ColorRamp;
+  private readonly _cracksSurfaceColorRamp: ColorRamp;
+  private readonly _cracksUnderwaterColorRamp: ColorRamp;
 
   // --------------------------------------------------
 
@@ -507,8 +508,12 @@ export default class PlanetData {
     return this._cracksColorNoise;
   }
 
-  public get cracksColorRamp(): ColorRamp {
-    return this._cracksColorRamp;
+  public get cracksSurfaceColorRamp(): ColorRamp {
+    return this._cracksSurfaceColorRamp;
+  }
+
+  public get cracksUnderwaterColorRamp(): ColorRamp {
+    return this._cracksUnderwaterColorRamp;
   }
 
   // --------------------------------------------------
@@ -516,7 +521,7 @@ export default class PlanetData {
   // --------------------------------------------------
 
   private _cratersEnabled: boolean;
-  private _cratersDetailNoiseStrength: number = 0.25;
+  private _cratersDetailNoiseStrength: number;
   private _cratersBaseNoise: VoronoiNoiseParameters;
   private _cratersDetailNoise: FbmNoiseParameters;
   private _cratersColorRamp: ColorRamp;
@@ -779,6 +784,7 @@ export default class PlanetData {
     this._planetName = this._defaultPlanetName;
 
     // Lighting
+
     this._lensFlareEnabled = true;
     this._lensFlareGlareIntensity = 0.4;
     this._sunLightAngle = -30;
@@ -787,7 +793,7 @@ export default class PlanetData {
     this._ambLightColor = new Color(0xffffff);
     this._ambLightIntensity = 0;
 
-    // Planet & Rendering
+    // Transform, Rendering, Surface
 
     this._planetType = PlanetType.PLANET;
     this._planetClass = PlanetClass.PLANET_TELLURIC;
@@ -801,7 +807,7 @@ export default class PlanetData {
     this._planetGroundMetalness = 0.1;
     this._planetWaterLevel = 0.5;
     this._planetShowEmissive = false;
-    this._planetWaterEmissiveIntensity = 2;
+    this._planetWaterEmissiveIntensity = 0.25;
     this._planetGroundEmissiveIntensity = 0;
 
     // Surface
@@ -834,7 +840,7 @@ export default class PlanetData {
       new ColorRampStep(0x223b05, 0.65),
     ]);
 
-    // Features
+    // Biomes
 
     this._biomesEnabled = true;
     this._biomesTemperatureMode = GradientMode.REALISTIC;
@@ -889,9 +895,12 @@ export default class PlanetData {
       ),
     ];
 
+    // Cracks
+
     this._cracksEnabled = false;
-    this._cracksDistanceToEdge = 0.01;
+    this._cracksDistanceToEdge = 0.004;
     this._cracksEmissiveIntensity = 2.5;
+    this._cracksUnderwaterStrength = 0.75;
     this._cracksDetailNoiseStrength = 0.5;
     this._cracksBaseNoise = new VoronoiNoiseParameters(
       { context: 'cracksBaseNoise', endpointRef: this.dataEventEndpoint },
@@ -914,21 +923,26 @@ export default class PlanetData {
     );
     this._cracksColorNoise = new FbmNoiseParameters(
       { context: 'cracksColorNoise', endpointRef: this.dataEventEndpoint },
-      25,
+      10,
       0.8,
       3,
       4,
     );
-    this._cracksColorRamp = new ColorRamp({ context: 'cracks', endpointRef: this.dataEventEndpoint }, [
+    this._cracksSurfaceColorRamp = new ColorRamp({ context: 'cracksSurface', endpointRef: this.dataEventEndpoint }, [
       new ColorRampStep(0x2e221b, 0),
       new ColorRampStep(0xad5a11, 0.55),
       new ColorRampStep(0xe6962e, 0.8),
       new ColorRampStep(0xffdc73, 1),
     ]);
+    this._cracksUnderwaterColorRamp = new ColorRamp(
+      { context: 'cracksUnderwater', endpointRef: this.dataEventEndpoint },
+      [new ColorRampStep(0x000000, 0), new ColorRampStep(0x230e01, 1)],
+    );
 
     // Craters
 
     this._cratersEnabled = false;
+    this._cratersDetailNoiseStrength = 0.25;
     this._cratersBaseNoise = new VoronoiNoiseParameters(
       { context: 'cratersBaseNoise', endpointRef: this.dataEventEndpoint },
       7.25,

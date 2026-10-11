@@ -405,6 +405,8 @@
         "$title": "Cracks",
         "noise_limiter": "Limiter noise",
         "noise_color": "Color noise",
+        "colorramp_surface": "Surface color ramp",
+        "colorramp_underwater": "Underwater color ramp",
         "distance_to_edge": "Distance to edge",
         "underwater_strength": "Underwater strength"
       },
