@@ -5,7 +5,6 @@
   "compilerOptions": {
     "target": "es2023",
     "lib": ["dom", "ES2023"],
-    "baseUrl": ".",
     "removeComments": false,
     "noUncheckedIndexedAccess": false,
     "paths": {

@@ -11,27 +11,23 @@ export function serializeTextureWorkerData(
   operation: TextureWorkerOperation,
 ): SerializedColorRampStep[] | SerializedBiomeParameters[] | undefined {
   if (operation === 'color-ramp') {
-    return (<ColorRampStep[]>data).map(
-      (step: ColorRampStep): SerializedColorRampStep => ({
-        id: step.id,
-        color: { r: step.color.r, g: step.color.g, b: step.color.b },
-        alpha: step.alpha,
-        factor: step.factor,
-      }),
-    );
+    return (<ColorRampStep[]>data).map((step: ColorRampStep): SerializedColorRampStep => ({
+      id: step.id,
+      color: { r: step.color.r, g: step.color.g, b: step.color.b },
+      alpha: step.alpha,
+      factor: step.factor,
+    }));
   }
   if (operation === 'biomes' || operation === 'biomes-emissive') {
-    return (<BiomeParameters[]>data).map(
-      (biome: BiomeParameters): SerializedBiomeParameters => ({
-        id: biome.id,
-        tempMin: biome.tempMin,
-        tempMax: biome.tempMax,
-        humiMin: biome.humiMin,
-        humiMax: biome.humiMax,
-        color: { r: biome.color.r, g: biome.color.g, b: biome.color.b },
-        smoothness: biome.smoothness,
-        emissiveIntensity: biome.emissiveIntensity,
-      }),
-    );
+    return (<BiomeParameters[]>data).map((biome: BiomeParameters): SerializedBiomeParameters => ({
+      id: biome.id,
+      tempMin: biome.tempMin,
+      tempMax: biome.tempMax,
+      humiMin: biome.humiMin,
+      humiMax: biome.humiMax,
+      color: { r: biome.color.r, g: biome.color.g, b: biome.color.b },
+      smoothness: biome.smoothness,
+      emissiveIntensity: biome.emissiveIntensity,
+    }));
   }
 }
