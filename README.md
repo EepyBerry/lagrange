@@ -1,5 +1,5 @@
 <div align="center">
-  <img alt="update-logo" src="https://github.com/user-attachments/assets/277ea5b4-8c9f-4955-b13f-84123260f9a3">
+  <img alt="update-logo" src="https://github.com/user-attachments/assets/a6984c66-d5e1-4cea-b1f7-aba96709a1b5">
 </div>
 
 # Lagrange - Procedural Planet Builder 🪐
