@@ -405,6 +405,8 @@
         "$title": "Cwacks",
         "noise_limiter": "Wimitew nyoise",
         "noise_color": "Cowow nyoise",
+        "colorramp_surface": "Suwface cowow wamp",
+        "colorramp_underwater": "Undewwatew cowow wamp",
         "distance_to_edge": "Distyance to edge",
         "underwater_strength": "Undewwatew stwength"
       },

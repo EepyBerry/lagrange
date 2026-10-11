@@ -405,6 +405,8 @@
         "$title": "Failles",
         "noise_limiter": "Bruit limiteur",
         "noise_color": "Bruit de couleur",
+        "colorramp_surface": "Dégradé de surface",
+        "colorramp_underwater": "Dégradé sous-marin",
         "distance_to_edge": "Distance des bords",
         "underwater_strength": "Intensité sous-marine"
       },

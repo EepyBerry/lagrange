@@ -112,7 +112,8 @@ export interface SerializedPlanetData {
   cracksDetailNoise: SerializedFbmNoiseParameters;
   cracksLimiterNoise: SerializedFbmNoiseParameters;
   cracksColorNoise: SerializedFbmNoiseParameters;
-  cracksColorRamp: SerializedColorRamp;
+  cracksSurfaceColorRamp: SerializedColorRamp;
+  cracksUnderwaterColorRamp: SerializedColorRamp;
   cratersEnabled: boolean;
   cratersDetailNoiseStrength: number;
   cratersBaseNoise: SerializedVoronoiNoiseParameters;

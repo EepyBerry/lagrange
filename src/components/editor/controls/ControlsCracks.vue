@@ -151,10 +151,17 @@
         <ParameterDivider />
         <ParameterColorRamp
           :key="EDITOR_STATE.planetData.planetName"
-          v-model="EDITOR_STATE.planetData.cracksColorRamp"
+          v-model="EDITOR_STATE.planetData.cracksSurfaceColorRamp"
           mode="rgb"
         >
-          {{ $t('editor.general.colorramp_rgb') }}
+          {{ $t('editor.features.cracks.colorramp_surface') }}
+        </ParameterColorRamp>
+        <ParameterColorRamp
+          :key="EDITOR_STATE.planetData.planetName"
+          v-model="EDITOR_STATE.planetData.cracksUnderwaterColorRamp"
+          mode="rgb"
+        >
+          {{ $t('editor.features.cracks.colorramp_underwater') }}
         </ParameterColorRamp>
       </template>
     </ParameterGroup>

@@ -99,7 +99,8 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
     'biomes',
     'biomesTemperatureNoise',
     'biomesHumidityNoise',
-    'cracks',
+    'cracksSurface',
+    'cracksUnderwater',
     'cracksBaseNoise',
     'cracksDetailNoise',
     'cracksLimiterNoise',
@@ -114,13 +115,14 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
    * - 0: surface
    * - 1: biomes
    * - 2: biomes emissive
-   * - 3: cracks
-   * - 4: craters
+   * - 3: cracks surface
+   * - 4: cracks underwater
+   * - 5: craters
    */
   public readonly workerBoundDataArrayTexture: WorkerBoundDataArrayTexture = new WorkerBoundDataArrayTexture(
     TEXTURE_SIZES.PLANET,
     TEXTURE_SIZES.PLANET,
-    5,
+    6,
   );
 
   constructor(initData: PlanetData) {
@@ -258,7 +260,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
               0,
             );
             break;
-          case 'cracks':
+          case 'cracksSurface':
             await this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
               EDITOR_WORKERS.texture!,
               'color-ramp',
@@ -266,12 +268,20 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
               3,
             );
             break;
-          case 'craters':
+          case 'cracksUnderwater':
             await this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
               EDITOR_WORKERS.texture!,
               'color-ramp',
               payload.value.steps,
               4,
+            );
+            break;
+          case 'craters':
+            await this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
+              EDITOR_WORKERS.texture!,
+              'color-ramp',
+              payload.value.steps,
+              5,
             );
             break;
         }
@@ -523,14 +533,20 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
       this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
         EDITOR_WORKERS.texture!,
         'color-ramp',
-        initData.cracksColorRamp.steps,
+        initData.cracksSurfaceColorRamp.steps,
         3,
       ),
       this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
         EDITOR_WORKERS.texture!,
         'color-ramp',
-        initData.cratersColorRamp.steps,
+        initData.cracksUnderwaterColorRamp.steps,
         4,
+      ),
+      this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
+        EDITOR_WORKERS.texture!,
+        'color-ramp',
+        initData.cratersColorRamp.steps,
+        5,
       ),
     ]).catch(console.error);
   }
@@ -590,7 +606,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
       vPos,
       this.uniforms.surface.noise,
       this.uniforms.surface.warping.x,
-      this.uniforms.arrayTexture.depth(int(4)),
+      this.uniforms.arrayTexture.depth(int(5)),
       CratersInput(
         this.uniforms.features.craters.detailNoiseStrength,
         this.uniforms.features.craters.baseNoise,
@@ -654,6 +670,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
         vPos,
         this.uniforms.features.cracks.colorNoise,
         this.uniforms.arrayTexture.depth(int(3)),
+        this.uniforms.arrayTexture.depth(int(4)),
         this.uniforms.features.cracks.underwaterStrength,
         FLAG_SURFACE_TYPE,
       );
@@ -677,7 +694,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
           vPos.add(dx),
           this.uniforms.surface.noise,
           this.uniforms.surface.warping.x,
-          this.uniforms.arrayTexture.depth(int(4)),
+          this.uniforms.arrayTexture.depth(int(5)),
           CratersInput(
             this.uniforms.features.craters.detailNoiseStrength,
             this.uniforms.features.craters.baseNoise,
@@ -699,7 +716,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
           vPos.add(dy),
           this.uniforms.surface.noise,
           this.uniforms.surface.warping.x,
-          this.uniforms.arrayTexture.depth(int(4)),
+          this.uniforms.arrayTexture.depth(int(5)),
           CratersInput(
             this.uniforms.features.craters.detailNoiseStrength,
             this.uniforms.features.craters.baseNoise,

@@ -32,7 +32,8 @@ type BakingWorkerInitTextures = {
   surface?: DataTexture;
   biomes?: DataTexture;
   biomesEmissive?: DataTexture;
-  cracks?: DataTexture;
+  cracksSurface?: DataTexture;
+  cracksUnderwater?: DataTexture;
   craters?: DataTexture;
   clouds?: DataTexture;
   rings?: DataTexture[];
@@ -109,10 +110,11 @@ self.onmessage = async (event: MessageEvent<BakingWorkerInput | BakingWorkerText
     initTextures.surface = dataTextures[0];
     initTextures.biomes = dataTextures[1];
     initTextures.biomesEmissive = dataTextures[2];
-    initTextures.cracks = dataTextures[3];
-    initTextures.craters = dataTextures[4];
-    initTextures.clouds = dataTextures[5];
-    initTextures.rings = dataTextures.slice(6);
+    initTextures.cracksSurface = dataTextures[3];
+    initTextures.cracksUnderwater = dataTextures[4];
+    initTextures.craters = dataTextures[5];
+    initTextures.clouds = dataTextures[6];
+    initTextures.rings = dataTextures.slice(7);
 
     for (let i = 1; i <= 8; i++) {
       await stepHandlers.get(i)!();
@@ -153,7 +155,14 @@ function requestTextures() {
       width: currentBakingInput.bakingResolution,
       height: currentBakingInput.bakingResolution,
       operation: 'color-ramp',
-      data: currentBakingInput.planetData.cracksColorRamp.steps,
+      data: currentBakingInput.planetData.cracksSurfaceColorRamp.steps,
+    },
+    {
+      type: 'texture-request',
+      width: currentBakingInput.bakingResolution,
+      height: currentBakingInput.bakingResolution,
+      operation: 'color-ramp',
+      data: currentBakingInput.planetData.cracksUnderwaterColorRamp.steps,
     },
     {
       type: 'texture-request',
@@ -229,7 +238,8 @@ async function bakePlanetSurface(): Promise<Uint8Array> {
   const mesh = BakingHelper.createBakingPlanet(currentBakingInput.planetData, [
     initTextures.surface!,
     initTextures.biomes!,
-    initTextures.cracks!,
+    initTextures.cracksSurface!,
+    initTextures.cracksUnderwater!,
     initTextures.craters!,
   ]);
   return await bakeMeshIntoBuffer(mesh, currentBakingInput.renderingBackend === 'webgpu');
@@ -251,7 +261,8 @@ async function bakePlanetEmissivityMap(): Promise<Uint8Array> {
     initTextures.surface!,
     initTextures.biomes!,
     initTextures.biomesEmissive!,
-    initTextures.cracks!,
+    initTextures.cracksSurface!,
+    initTextures.cracksUnderwater!,
   ]);
   return await bakeMeshIntoBuffer(mesh, currentBakingInput.renderingBackend === 'webgpu');
 }
@@ -329,7 +340,8 @@ async function sendOutputAndDisposeTextures(): Promise<void> {
   initTextures.surface?.dispose();
   initTextures.biomes?.dispose();
   initTextures.biomesEmissive?.dispose();
-  initTextures.cracks?.dispose();
+  initTextures.cracksSurface?.dispose();
+  initTextures.cracksUnderwater?.dispose();
   initTextures.craters?.dispose();
   initTextures.clouds?.dispose();
   initTextures.rings?.forEach((tex) => tex.dispose());

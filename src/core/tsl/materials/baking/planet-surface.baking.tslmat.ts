@@ -79,7 +79,8 @@ type BakingPlanetSurfaceUniforms = {
   textures: {
     surface: TextureNode;
     biomes: TextureNode;
-    cracks: TextureNode;
+    cracksSurface: TextureNode;
+    cracksUnderwater: TextureNode;
     craters: TextureNode;
   };
 };
@@ -210,8 +211,9 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
       textures: {
         surface: texture(textures[0]),
         biomes: texture(textures[1]),
-        cracks: texture(textures[2]),
-        craters: texture(textures[3]),
+        cracksSurface: texture(textures[2]),
+        cracksUnderwater: texture(textures[3]),
+        craters: texture(textures[4]),
       },
     };
   }
@@ -322,7 +324,8 @@ export class BakingPlanetSurfaceTSLMaterial extends TSLMaterial<MeshBasicNodeMat
         colour,
         vPos,
         this.uniforms.features.cracks.colorNoise,
-        this.uniforms.textures.cracks,
+        this.uniforms.textures.cracksSurface,
+        this.uniforms.textures.cracksUnderwater,
         this.uniforms.features.cracks.underwaterStrength,
         FLAG_SURFACE_TYPE,
       );

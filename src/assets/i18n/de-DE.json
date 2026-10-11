@@ -405,6 +405,8 @@
         "$title": "Risse",
         "noise_limiter": "Limiter-Rauschen",
         "noise_color": "Farbrauschen",
+        "colorramp_surface": "Oberflächen-Farbverlauf",
+        "colorramp_underwater": "Unterwasser-Farbverlauf",
         "distance_to_edge": "Randabstand",
         "underwater_strength": "Unterwasser Intensität"
       },

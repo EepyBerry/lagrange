@@ -79,7 +79,8 @@ type BakingPlanetEmissivityUniforms = {
     surface: TextureNode;
     biomes: TextureNode;
     biomesEmissive: TextureNode;
-    cracks: TextureNode;
+    cracksSurface: TextureNode;
+    cracksUnderwater: TextureNode;
   };
 };
 export class BakingPlanetEmissivityTSLMaterial extends TSLMaterial<
@@ -221,7 +222,8 @@ export class BakingPlanetEmissivityTSLMaterial extends TSLMaterial<
         surface: texture(textures[0]),
         biomes: texture(textures[1]),
         biomesEmissive: texture(textures[2]),
-        cracks: texture(textures[3]),
+        cracksSurface: texture(textures[3]),
+        cracksUnderwater: texture(textures[4]),
       },
     };
   }
@@ -313,7 +315,8 @@ export class BakingPlanetEmissivityTSLMaterial extends TSLMaterial<
         colour,
         vPos,
         this.uniforms.features.cracks.colorNoise,
-        this.uniforms.textures.cracks,
+        this.uniforms.textures.cracksSurface,
+        this.uniforms.textures.cracksUnderwater,
         this.uniforms.features.cracks.underwaterStrength,
         FLAG_SURFACE_TYPE,
       );
