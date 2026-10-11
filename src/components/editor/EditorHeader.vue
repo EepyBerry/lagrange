@@ -138,7 +138,7 @@
 import { EDITOR_STATE } from '@core/editor/state/editor.state';
 import { uwuifyPath } from '@core/extras.ts';
 import * as MathUtils from '@core/utils/math-utils';
-import { autoUpdate, offset, useFloating } from '@floating-ui/vue';
+import { autoUpdate, offset, useFloating, type UseFloatingReturn } from '@floating-ui/vue';
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import LgvLink from '@lib/components/base/LgvLink.vue';
 import { useEventListener } from '@vueuse/core';
@@ -148,18 +148,18 @@ import AppResetConfirmDialog from './dialogs/ResetConfirmDialog.vue';
 
 // floating-ui start
 const isRandomMenuOpen: Ref<boolean> = ref(false);
-const randomMenuTrigger = useTemplateRef('randomMenuTrigger');
+const randomMenuTrigger = useTemplateRef<InstanceType<typeof LgvButton>>('randomMenuTrigger');
 const randomMenu = useTemplateRef('randomMenu');
-const randomFloating = useFloating(randomMenuTrigger, randomMenu, {
+const randomFloating: UseFloatingReturn = useFloating(randomMenuTrigger, randomMenu, {
   whileElementsMounted: autoUpdate,
   placement: 'bottom-end',
   middleware: [offset(8)],
 });
 
 const isSaveMenuOpen: Ref<boolean> = ref(false);
-const saveMenuTrigger = useTemplateRef('saveMenuTrigger');
+const saveMenuTrigger = useTemplateRef<InstanceType<typeof LgvButton>>('saveMenuTrigger');
 const saveMenu = useTemplateRef('saveMenu');
-const saveFloating = useFloating(saveMenuTrigger, saveMenu, {
+const saveFloating: UseFloatingReturn = useFloating(saveMenuTrigger, saveMenu, {
   whileElementsMounted: autoUpdate,
   placement: 'bottom-end',
   middleware: [offset(8)],

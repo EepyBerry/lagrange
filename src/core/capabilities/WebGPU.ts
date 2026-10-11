@@ -9,10 +9,8 @@ export default class WebGPU {
 
   static async isAvailable() {
     try {
-      // @ts-expect-error navigator.gpu only available in secure contexts
       const isAvailable = typeof navigator !== 'undefined' && navigator.gpu !== undefined;
       if (typeof window !== 'undefined' && isAvailable) {
-        // @ts-expect-error navigator.gpu only available in secure contexts
         return Boolean(await navigator.gpu.requestAdapter());
       }
     } catch (e) {

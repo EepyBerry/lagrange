@@ -82,7 +82,7 @@ import { useHead } from '@unhead/vue';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import { nanoid } from 'nanoid';
-import pako from 'pako';
+import * as pako from 'pako';
 import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import NewCardElement from '@/components/codex/elements/NewCardElement.vue';
