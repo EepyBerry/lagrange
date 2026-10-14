@@ -76,29 +76,38 @@ Vite copies the output to the `dist` folder, creating it first if need be.
 
 ### Codex (landing page)
 
-- 📋 Create, import & export your planets!
-- 🔎 See previews of your creations!
-- 🪐 Check basic information for each planet: type, class, radius, axial tilt, biome composition and ring system!
+| Feature group        | Details                                              |
+| -------------------- | ---------------------------------------------------- |
+| 📋 Management        | create, import, export planets                       |
+| 🔎 Visual            | render of each planet as an image                    |
+| 🪐 Information panel | tabbed data for each planet: overview, biomes, rings |
 
 ### Editor
 
-- 📓 **Basic classification!** (type, class)
-- ☀️ **Lighting parameters!** (sunlight, ambient light, color)
-- 🌍 **Planet & Rendering parameters!** (transform, water level, PBR settings, emissivity)
-- 🗺️ **Surface parameters!** (bump mapping, warping, displacement, noise settings, color ramp)
-- ⛰️ **Biome parameters!** (temperature/humidity mapping, per-biome min/max values & color, emissivity)
-- ☁️ **Clouds parameters!** (transform, warping, noise settings, color, opacity ramp)
-- 🌈 **Atmosphere parameters!** (height, density, color mixing modes, Rayleigh/Mie scattering settings)
-- 🪐 **Ring System parameters!** (number of rings, per-ring radii & color ramps)
-- 📷 **Post-Processing!** (base pipeline, additional toggleable effects)
+| Feature group          | Details                                                                    |
+| ---------------------- | -------------------------------------------------------------------------- |
+| 📓 **Basic data**      | type, class                                                                |
+| 📌 **Transform**       | radius, axial tilt, rotation                                               |
+| 🌍 **Rendering**       | bump mapping, metallic roughness                                           |
+| ☀️ **Lighting**        | sunlight, ambient light, emissivity                                        |
+| 🗺️ **Surface**         | warping, displacement, noise settings, water level, color ramp             |
+| 💥 **Cracks**          | distance to edge, base/detail/limiter/color noise, emissivity              |
+| 🕳️ **Craters**         | base/detail noise, profile                                                 |
+| ⛰️ **Biomes**          | temperature/humidity mapping, per-biome min/max values & color, emissivity |
+| ☁️ **Clouds**          | rotation, warping, noise settings, color, opacity ramp                     |
+| 🌈 **Atmosphere**      | height, density, color mixing modes, Rayleigh/Mie scattering settings      |
+| 🪐 **Ring System**     | per-ring radii & color ramps                                               |
+| 📷 **Post-Processing** | base pipeline, additional toggleable effects                               |
 
 ## ⏰ Planned features
 
-- Integrated lore, to craft a story fit for each of your worlds!
-- Dark side "night lights"!
-- Cracks & Craters!
-- Planet animations!
-- _Galactic Map_, to organize them around stars!
+| Planned feature | Description                                                 |
+| --------------- | ----------------------------------------------------------- |
+| 🖼️ 2D Mode      | more direct planet texture creation                         |
+| 📖 Lore         | inhabitants, climate, fauna, flora, and so on               |
+| 🏙️ Civilization | night lights, surface "conversion", bridges                 |
+| ⏯️ Animations   | keyframe-based, most if not all parameters                  |
+| 🌌 Galactic Map | place planets, design solar systems with star configuration |
 
 ## ✨ Inspirations & credits
 
