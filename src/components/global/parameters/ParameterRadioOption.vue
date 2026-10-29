@@ -1,8 +1,8 @@
 <template>
   <div class="inner-input" aria-hidden="true">
-    <label :for="`${name}-${id}`" class="a11y--visually-hidden">INNER_INPUT</label>
+    <label :for="`${name}-${inputId}`" class="a11y--visually-hidden">INNER_INPUT</label>
     <input
-      :id="`${name}-${id}`"
+      :id="`${name}-${inputId}`"
       ref="htmlRadio"
       v-model="lgParam"
       class="lg"
@@ -34,7 +34,7 @@ import { useTemplateRef } from 'vue';
 
 defineProps<{
   name: string;
-  id: string;
+  inputId: string;
   value: string | number | boolean | object;
   icon?: string;
   buttonAriaLabel: string;

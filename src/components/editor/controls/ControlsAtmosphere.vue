@@ -39,7 +39,7 @@
           <template #title> {{ $t('editor.atmosphere.rgba_mode') }}: </template>
           <template #options>
             <ParameterRadioOption
-              :id="'0'"
+              :inputId="'0'"
               v-model="EDITOR_STATE.planetData.atmosphereColorMode"
               icon="mingcute:photo-album-line"
               name="atmos-mode"
@@ -50,7 +50,7 @@
               {{ $t('editor.atmosphere.rgba_mode_realistic') }}
             </ParameterRadioOption>
             <ParameterRadioOption
-              :id="'1'"
+              :inputId="'1'"
               v-model="EDITOR_STATE.planetData.atmosphereColorMode"
               icon="mingcute:color-picker-line"
               name="atmos-mode"
@@ -61,7 +61,7 @@
               {{ $t('editor.atmosphere.rgba_mode_direct') }}
             </ParameterRadioOption>
             <ParameterRadioOption
-              :id="'2'"
+              :inputId="'2'"
               v-model="EDITOR_STATE.planetData.atmosphereColorMode"
               icon="mingcute:color-filter-line"
               name="atmos-mode"

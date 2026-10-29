@@ -10,7 +10,7 @@ export type LibrarySpecificGraphicsCapabilities = {
 };
 
 // Cache capabilities for later use
-const _cachedWebGLCapabilities: GraphicsCapabilities = {
+const _cachedGraphicsCapabilities: GraphicsCapabilities = {
   webgl: {
     info: { isAvailable: false },
     maxTextureSize: 0,
@@ -22,10 +22,14 @@ const _cachedWebGLCapabilities: GraphicsCapabilities = {
 };
 
 export async function initGraphicsCapabilities() {
-  _cachedWebGLCapabilities.webgl = WebGL2Capabilities.getCapabilities();
-  _cachedWebGLCapabilities.webgpu = await WebgpuCapabilities.getCapabilities();
+  _cachedGraphicsCapabilities.webgl = WebGL2Capabilities.getCapabilities();
+  _cachedGraphicsCapabilities.webgpu = await WebgpuCapabilities.getCapabilities();
+  console.info(
+    '<Lagrange> Loaded system graphics capabilities for backends: [WebGL2, WebGPU]\r\n',
+    _cachedGraphicsCapabilities,
+  );
 }
 
 export function getGraphicsCapabilities(renderingBackend: EditorBackendType): LibrarySpecificGraphicsCapabilities {
-  return _cachedWebGLCapabilities[renderingBackend];
+  return _cachedGraphicsCapabilities[renderingBackend];
 }

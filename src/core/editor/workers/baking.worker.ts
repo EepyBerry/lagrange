@@ -21,7 +21,7 @@ export type BakingWorkerTextureRequest = {
   type: 'texture-request';
   width: number;
   height: number;
-  operation: 'raw' | 'color-ramp' | 'biomes' | 'biomes-emissive';
+  operation: 'color-ramp' | 'biomes' | 'biomes-emissive';
   data: unknown;
 };
 export type BakingWorkerTextureResponse = {

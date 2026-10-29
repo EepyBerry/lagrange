@@ -8,7 +8,7 @@ import Rect from '@core/utils/math/rect.ts';
 import { Color } from 'three';
 import { clamp } from 'three/src/math/MathUtils.js';
 
-export type TextureWorkerOperation = 'raw' | 'color-ramp' | 'biomes' | 'biomes-emissive';
+export type TextureWorkerOperation = 'color-ramp' | 'biomes' | 'biomes-emissive';
 export type TextureWorkerInput<OperationData> = {
   type: 'texture-update';
   id: string;
@@ -50,10 +50,6 @@ function execTextureUpdate(data: TextureWorkerInput<unknown>): void {
   layerCanvas.height = data.height;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   switch (data.operation) {
-    case 'raw':
-      ctx.globalCompositeOperation = 'source-over';
-      drawImageData(<ImageData>data.data);
-      break;
     case 'color-ramp':
       ctx.resetTransform();
       ctx.globalCompositeOperation = 'copy';
@@ -70,12 +66,6 @@ function execTextureUpdate(data: TextureWorkerInput<unknown>): void {
   }
   const imageData = ctx.getImageData(0, 0, data.width, data.height);
   self.postMessage({ id: data.id, type: 'done', data: imageData.data });
-}
-
-// ------------------------------------------------------------------------------------------------
-
-function drawImageData(imageData: ImageData): void {
-  ctx.putImageData(imageData, 0, 0);
 }
 
 // ------------------------------------------------------------------------------------------------

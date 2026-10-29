@@ -48,7 +48,7 @@
                 <template #title> {{ $t('dialog.settings.general_theme') }}: </template>
                 <template #options>
                   <ParameterRadioOption
-                    :id="'0'"
+                    :inputId="'0'"
                     v-model="appSettings.theme"
                     name="theme-select"
                     value="default"
@@ -58,7 +58,7 @@
                     {{ $t('dialog.settings.general_theme_default') }}
                   </ParameterRadioOption>
                   <ParameterRadioOption
-                    :id="'1'"
+                    :inputId="'1'"
                     v-model="appSettings.theme"
                     name="theme-select"
                     value="supernova"
@@ -68,7 +68,7 @@
                     {{ $t('dialog.settings.general_theme_supernova') }}
                   </ParameterRadioOption>
                   <ParameterRadioOption
-                    :id="'2'"
+                    :inputId="'2'"
                     v-model="appSettings.theme"
                     name="theme-select"
                     value="voyager"
@@ -144,7 +144,7 @@
                   <template #title><span v-html="$t('dialog.settings.editor_rendering_backend')"></span>:</template>
                   <template #options>
                     <ParameterRadioOption
-                      :id="'webgl'"
+                      :inputId="'webgl'"
                       v-model="appSettings.renderingBackend"
                       name="rendering-backend-select"
                       :value="'webgl'"
@@ -154,7 +154,7 @@
                       {{ $t('dialog.settings.editor_rendering_backend_webgl') }}
                     </ParameterRadioOption>
                     <ParameterRadioOption
-                      :id="'webgpu'"
+                      :inputId="'webgpu'"
                       v-model="appSettings.renderingBackend"
                       name="rendering-backend-select"
                       :value="'webgpu'"
@@ -184,7 +184,7 @@
                   <template #title> {{ $t('dialog.settings.editor_baking_resolution') }}: </template>
                   <template #options>
                     <ParameterRadioOption
-                      :id="'256'"
+                      :inputId="'256'"
                       v-model="appSettings.bakingResolution"
                       name="baking-res-select"
                       :value="256"
@@ -192,7 +192,7 @@
                       >256</ParameterRadioOption
                     >
                     <ParameterRadioOption
-                      :id="'512'"
+                      :inputId="'512'"
                       v-model="appSettings.bakingResolution"
                       name="baking-res-select"
                       :value="512"
@@ -200,7 +200,7 @@
                       >512</ParameterRadioOption
                     >
                     <ParameterRadioOption
-                      :id="'1024'"
+                      :inputId="'1024'"
                       v-model="appSettings.bakingResolution"
                       name="baking-res-select"
                       :value="1024"
@@ -208,7 +208,7 @@
                       >1024</ParameterRadioOption
                     >
                     <ParameterRadioOption
-                      :id="'2048'"
+                      :inputId="'2048'"
                       v-model="appSettings.bakingResolution"
                       name="baking-res-select"
                       :value="2048"
@@ -216,13 +216,22 @@
                       >2048</ParameterRadioOption
                     >
                     <ParameterRadioOption
-                      :id="'4096'"
+                      :inputId="'4096'"
                       v-model="appSettings.bakingResolution"
                       name="baking-res-select"
                       :value="4096"
                       :button-aria-label="$t('a11y.editor_baking_resolution_4k')"
                       :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 4096"
                       >4096</ParameterRadioOption
+                    >
+                    <ParameterRadioOption
+                      :inputId="'8192'"
+                      v-model="appSettings.bakingResolution"
+                      name="baking-res-select"
+                      :value="8192"
+                      :button-aria-label="$t('a11y.editor_baking_resolution_8k')"
+                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 8192"
+                      >8192</ParameterRadioOption
                     >
                   </template>
                 </ParameterRadio>
