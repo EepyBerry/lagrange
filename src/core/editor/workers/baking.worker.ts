@@ -1,6 +1,7 @@
 import type { SerializedPlanetData } from '@core/editor/workers/worker-serializer.types.ts';
+import type { BakingSceneObjects } from '@core/helpers/baking.helper.ts';
 import * as BakingHelper from '@core/helpers/baking.helper.ts';
-import { type BakingSceneObjects, type EditorBackendType } from '@core/types.ts';
+import { type EditorBackendType } from '@core/types.ts';
 import { flipBufferY } from '@core/utils/render-utils.ts';
 import { NearestFilter, NodeMaterial, DataTexture, WebGPURenderer, Mesh } from 'three/webgpu';
 
@@ -28,7 +29,11 @@ export type BakingWorkerTextureResponse = {
   textures: Uint8ClampedArray[];
 };
 
-type BakingWorkerInitTextures = {
+type BakingResolution = 'square' | 'equirectangular';
+type BakingWorkerMeshes = {
+  planet?: Mesh;
+};
+type BakingWorkerTextures = {
   surface?: DataTexture;
   biomes?: DataTexture;
   biomesEmissive?: DataTexture;
@@ -48,79 +53,102 @@ export type BakingWorkerOutputData = {
 };
 
 // --------------------------------------------------------------------------------------------------------------------
-const bakingObjects: BakingSceneObjects = initBakingObjects(2048, 'webgl');
-const initTextures: BakingWorkerInitTextures = {};
+const bakingObjects: BakingSceneObjects = {};
+const bakingTextures: BakingWorkerTextures = {};
+const bakingMeshes: BakingWorkerMeshes = {};
 const outputData: BakingWorkerOutputData = {};
 let currentBakingInput: BakingWorkerInput;
+
+const stepHandlers: (() => Promise<void>)[] = [];
 // --------------------------------------------------------------------------------------------------------------------
 
-const stepHandlers: Map<number, () => Promise<void>> = new Map();
-stepHandlers
-  .set(1, async () => {
-    self.postMessage({ type: 'progress', progress: 1 });
-    adjustBakingObjects(currentBakingInput.bakingResolution, currentBakingInput.renderingBackend);
+init()
+  .then(() => {
+    // when receiving the initial message, request ALL textures for the current planet (for simplicity, overhead is negligible at this point)
+    // after receiving the textures, start baking every map one by one
+    self.onmessage = async (event: MessageEvent<BakingWorkerInput | BakingWorkerTextureResponse>) => {
+      if (event.data.type === 'baking') {
+        currentBakingInput = event!.data;
+        requestTextures();
+      } else if (event.data.type === 'texture-response') {
+        const dataTextures = event.data.textures?.map((buffer) => {
+          const dt = new DataTexture(buffer, currentBakingInput.bakingResolution, currentBakingInput.bakingResolution);
+          dt.needsUpdate = true;
+          return dt;
+        });
+        bakingTextures.surface = dataTextures[0];
+        bakingTextures.biomes = dataTextures[1];
+        bakingTextures.biomesEmissive = dataTextures[2];
+        bakingTextures.cracksSurface = dataTextures[3];
+        bakingTextures.cracksUnderwater = dataTextures[4];
+        bakingTextures.craters = dataTextures[5];
+        bakingTextures.clouds = dataTextures[6];
+        bakingTextures.rings = dataTextures.slice(7);
+
+        for (const handler of stepHandlers) {
+          await handler();
+        }
+      }
+    };
   })
-  .set(2, async () => {
-    self.postMessage({ type: 'progress', progress: 2 });
-    outputData.planetMap = await bakePlanetSurface();
-  })
-  .set(3, async () => {
-    self.postMessage({ type: 'progress', progress: 3 });
-    outputData.planetMetallicRoughnessMap = await bakePlanetMetallicRoughnessMap();
-  })
-  .set(4, async () => {
-    self.postMessage({ type: 'progress', progress: 4 });
-    outputData.planetEmissiveMap = await bakePlanetEmissivityMap();
-  })
-  .set(5, async () => {
-    self.postMessage({ type: 'progress', progress: 5 });
-    outputData.planetNormalMap = await bakePlanetNormalMap();
-  })
-  .set(6, async () => {
-    self.postMessage({ type: 'progress', progress: 6 });
-    if (currentBakingInput.planetData.cloudsEnabled) {
-      outputData.clouds = await bakeClouds();
-    }
-  })
-  .set(7, async () => {
-    self.postMessage({ type: 'progress', progress: 7 });
-    if (currentBakingInput.planetData.ringsEnabled && currentBakingInput.planetData.ringsParams.length > 0) {
-      outputData.rings = await bakeRings();
-    }
-  })
-  .set(8, async () => {
-    self.postMessage({ type: 'progress', progress: 8 });
-    await sendOutputAndDisposeTextures();
+  .catch((error) => {
+    console.error('<Lagrange> Baking worker failed to initialize!', error);
+    self.postMessage({ type: 'error', error });
   });
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// when receiving the initial message, request ALL textures for the current planet (for simplicity, overhead is negligible at this point)
-// after receiving the textures, start baking every map one by one
-self.onmessage = async (event: MessageEvent<BakingWorkerInput | BakingWorkerTextureResponse>) => {
-  if (event.data.type === 'baking') {
-    currentBakingInput = event!.data;
-    requestTextures();
-  } else if (event.data.type === 'texture-response') {
-    const dataTextures = event.data.textures?.map((buffer) => {
-      const dt = new DataTexture(buffer, currentBakingInput.bakingResolution, currentBakingInput.bakingResolution);
-      dt.needsUpdate = true;
-      return dt;
-    });
-    initTextures.surface = dataTextures[0];
-    initTextures.biomes = dataTextures[1];
-    initTextures.biomesEmissive = dataTextures[2];
-    initTextures.cracksSurface = dataTextures[3];
-    initTextures.cracksUnderwater = dataTextures[4];
-    initTextures.craters = dataTextures[5];
-    initTextures.clouds = dataTextures[6];
-    initTextures.rings = dataTextures.slice(7);
+/**
+ * Initialise this worker
+ */
+async function init(): Promise<void> {
+  const { renderer, camera, renderTarget } = BakingHelper.createBakingSceneObjects('webgl', 2048, 2048, 1);
+  bakingObjects.renderer = renderer;
+  bakingObjects.camera = camera;
+  bakingObjects.renderTarget = renderTarget;
 
-    for (let i = 1; i <= 8; i++) {
-      await stepHandlers.get(i)!();
+  bakingMeshes.planet = await BakingHelper.loadPlaneSphereMesh();
+  //bakingMeshes.planet = new Mesh(new SphereGeometry(1, 48, 48));
+
+  stepHandlers.push(async () => {
+    self.postMessage({ type: 'progress', progress: 1 });
+    updateBakingObjects('equirectangular');
+  });
+  stepHandlers.push(async () => {
+    self.postMessage({ type: 'progress', progress: 2 });
+    outputData.planetMap = await bakePlanetSurface();
+  });
+  stepHandlers.push(async () => {
+    self.postMessage({ type: 'progress', progress: 3 });
+    outputData.planetMetallicRoughnessMap = await bakePlanetMetallicRoughnessMap();
+  });
+  stepHandlers.push(async () => {
+    self.postMessage({ type: 'progress', progress: 4 });
+    outputData.planetEmissiveMap = await bakePlanetEmissivityMap();
+  });
+  stepHandlers.push(async () => {
+    self.postMessage({ type: 'progress', progress: 5 });
+    outputData.planetNormalMap = await bakePlanetNormalMap();
+  });
+  stepHandlers.push(async () => {
+    self.postMessage({ type: 'progress', progress: 6 });
+    if (currentBakingInput.planetData.cloudsEnabled) {
+      outputData.clouds = await bakeClouds();
     }
-  }
-};
+  });
+  stepHandlers.push(async () => {
+    self.postMessage({ type: 'progress', progress: 7 });
+    updateBakingObjects('square');
+    if (currentBakingInput.planetData.ringsEnabled && currentBakingInput.planetData.ringsParams.length > 0) {
+      outputData.rings = await bakeRings();
+    }
+  });
+  stepHandlers.push(async () => {
+    self.postMessage({ type: 'progress', progress: 8 });
+    await sendOutputAndDispose();
+  });
+  console.info('<Lagrange> Baking worker initialized successfully');
+}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -189,22 +217,20 @@ function requestTextures() {
 }
 
 /**
- * Baking step 1: prepare the baking objects
- * @param bakingResolution camera resolution for baking; powers of two only
- * @param renderingBackend backend to render meshes on (WebGL or WebGPU)
+ * Adjust and reload the baking objects according to the given parameters
+ * @param resolutionMode square or equirectangular
  */
-function initBakingObjects(bakingResolution: number, renderingBackend: EditorBackendType): BakingSceneObjects {
-  return BakingHelper.createBakingObjects(renderingBackend, bakingResolution, bakingResolution, 1);
-}
-
-/**
- * Baking step 1 (alt): reset the baking objects
- * @param bakingResolution camera resolution for baking; powers of two only
- * @param renderingBackend backend to render meshes on (WebGL or WebGPU)
- */
-function adjustBakingObjects(bakingResolution: number, renderingBackend: EditorBackendType): void {
-  if (!bakingResolution || bakingResolution <= 0 || !Number.isFinite(bakingResolution)) {
-    self.postMessage({ type: 'error', error: new Error(`Invalid baking resolution: ${bakingResolution}`) });
+function updateBakingObjects(resolutionMode: BakingResolution): void {
+  if (
+    !currentBakingInput.bakingResolution ||
+    currentBakingInput.bakingResolution <= 0 ||
+    !Number.isFinite(currentBakingInput.bakingResolution) ||
+    currentBakingInput.bakingResolution % 2 !== 0
+  ) {
+    self.postMessage({
+      type: 'error',
+      error: new Error(`Invalid baking resolution: ${currentBakingInput.bakingResolution}`),
+    });
     return;
   }
   if (!bakingObjects) {
@@ -212,21 +238,29 @@ function adjustBakingObjects(bakingResolution: number, renderingBackend: EditorB
     return;
   }
 
-  bakingObjects.renderer.dispose();
+  // convert resolution to the correct aspect ratio
+  // note: equirectangular projection has the constraint [width = 2 * height]
+  const bakingWidth =
+    resolutionMode === 'equirectangular'
+      ? currentBakingInput.bakingResolution * 2
+      : currentBakingInput.bakingResolution;
+  const bakingHeight = currentBakingInput.bakingResolution;
+
+  bakingObjects.renderer!.dispose();
   bakingObjects.renderer = new WebGPURenderer({
     antialias: true,
     alpha: true,
-    forceWebGL: renderingBackend == 'webgl',
-    canvas: new OffscreenCanvas(bakingResolution, bakingResolution),
+    forceWebGL: currentBakingInput.renderingBackend == 'webgl',
+    canvas: new OffscreenCanvas(bakingWidth, bakingHeight),
   });
 
-  bakingObjects.camera.left = -bakingResolution / 2;
-  bakingObjects.camera.right = bakingResolution / 2;
-  bakingObjects.camera.top = bakingResolution / 2;
-  bakingObjects.camera.bottom = -bakingResolution / 2;
-  bakingObjects.camera.updateProjectionMatrix();
+  bakingObjects.camera!.left = -bakingWidth / 2;
+  bakingObjects.camera!.right = bakingWidth / 2;
+  bakingObjects.camera!.top = bakingHeight / 2;
+  bakingObjects.camera!.bottom = -bakingHeight / 2;
+  bakingObjects.camera!.updateProjectionMatrix();
 
-  bakingObjects.renderTarget.setSize(bakingResolution, bakingResolution);
+  bakingObjects.renderTarget!.setSize(bakingWidth, bakingHeight);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -235,52 +269,64 @@ function adjustBakingObjects(bakingResolution: number, renderingBackend: EditorB
  * Baking step 2: bake planet surface with features
  */
 async function bakePlanetSurface(): Promise<Uint8Array> {
-  const mesh = BakingHelper.createBakingPlanet(currentBakingInput.planetData, [
-    initTextures.surface!,
-    initTextures.biomes!,
-    initTextures.cracksSurface!,
-    initTextures.cracksUnderwater!,
-    initTextures.craters!,
-  ]);
-  return await bakeMeshIntoBuffer(mesh, currentBakingInput.renderingBackend === 'webgpu');
+  return await bakeMeshIntoBuffer(
+    BakingHelper.createBakingPlanet(bakingMeshes.planet!, currentBakingInput.planetData, [
+      bakingTextures.surface!,
+      bakingTextures.biomes!,
+      bakingTextures.cracksSurface!,
+      bakingTextures.cracksUnderwater!,
+      bakingTextures.craters!,
+    ]),
+    currentBakingInput.renderingBackend === 'webgpu',
+  );
 }
 
 /**
  * Baking step 3: bake planet metallic-roughness map (PBR)
  */
 async function bakePlanetMetallicRoughnessMap(): Promise<Uint8Array> {
-  const mesh = BakingHelper.createBakingMetallicRoughnessMap(currentBakingInput.planetData, [initTextures.craters!]);
-  return await bakeMeshIntoBuffer(mesh, currentBakingInput.renderingBackend === 'webgpu');
+  return await bakeMeshIntoBuffer(
+    BakingHelper.createBakingMetallicRoughnessMap(bakingMeshes.planet!, currentBakingInput.planetData, [
+      bakingTextures.craters!,
+    ]),
+    currentBakingInput.renderingBackend === 'webgpu',
+  );
 }
 
 /**
  * Baking step 4: bake planet emissivity map
  */
 async function bakePlanetEmissivityMap(): Promise<Uint8Array> {
-  const mesh = BakingHelper.createBakingEmissivityMap(currentBakingInput.planetData, [
-    initTextures.surface!,
-    initTextures.biomes!,
-    initTextures.biomesEmissive!,
-    initTextures.cracksSurface!,
-    initTextures.cracksUnderwater!,
-  ]);
-  return await bakeMeshIntoBuffer(mesh, currentBakingInput.renderingBackend === 'webgpu');
+  return await bakeMeshIntoBuffer(
+    BakingHelper.createBakingEmissivityMap(bakingMeshes.planet!, currentBakingInput.planetData, [
+      bakingTextures.surface!,
+      bakingTextures.biomes!,
+      bakingTextures.biomesEmissive!,
+      bakingTextures.cracksSurface!,
+      bakingTextures.cracksUnderwater!,
+    ]),
+    currentBakingInput.renderingBackend === 'webgpu',
+  );
 }
 
 /**
  * Baking step 5: bake planet height map and derive its normal map from that
  */
 async function bakePlanetNormalMap(): Promise<Uint8Array> {
-  const heightMapMesh = BakingHelper.createBakingHeightMap(currentBakingInput.planetData, [initTextures.craters!]);
+  const heightMapMesh = BakingHelper.createBakingHeightMap(bakingMeshes.planet!, currentBakingInput.planetData, [
+    bakingTextures.craters!,
+  ]);
   const heightMapTex = await BakingHelper.bakeMesh(
-    bakingObjects.renderer,
-    bakingObjects.camera,
-    bakingObjects.renderTarget,
+    bakingObjects.renderer!,
+    bakingObjects.camera!,
+    bakingObjects.renderTarget!,
     heightMapMesh,
   );
+  heightMapTex.flipY = true;
+  heightMapTex.needsUpdate = true;
 
-  const mesh = await BakingHelper.createBakingNormalMap(currentBakingInput.planetData, [heightMapTex]);
-  const buffer = await bakeMeshIntoBuffer(mesh);
+  const mesh = BakingHelper.createBakingNormalMap(bakingMeshes.planet!, currentBakingInput.planetData, [heightMapTex]);
+  const buffer = await bakeMeshIntoBuffer(mesh, currentBakingInput.renderingBackend === 'webgpu');
   heightMapMesh.geometry.dispose();
   (<NodeMaterial>heightMapMesh.material).dispose();
   heightMapTex.dispose();
@@ -291,8 +337,10 @@ async function bakePlanetNormalMap(): Promise<Uint8Array> {
  * Baking step 6: bake clouds
  */
 async function bakeClouds(): Promise<Uint8Array> {
-  const mesh = BakingHelper.createBakingClouds(currentBakingInput.planetData, [initTextures.clouds!]);
-  return await bakeMeshIntoBuffer(mesh, currentBakingInput.renderingBackend === 'webgpu');
+  return await bakeMeshIntoBuffer(
+    BakingHelper.createBakingClouds(bakingMeshes.planet!, currentBakingInput.planetData, [bakingTextures.clouds!]),
+    currentBakingInput.renderingBackend === 'webgpu',
+  );
 }
 
 /**
@@ -301,23 +349,25 @@ async function bakeClouds(): Promise<Uint8Array> {
 async function bakeRings(): Promise<Uint8Array[]> {
   const ringTargets: Uint8Array[] = [];
   for (let idx = 0; idx < currentBakingInput.planetData.ringsParams.length; idx++) {
-    const mesh = BakingHelper.createBakingRing(currentBakingInput.planetData, [initTextures.rings![idx]], idx);
-    const buffer = await bakeMeshIntoBuffer(mesh);
+    const mesh = BakingHelper.createBakingRing(currentBakingInput.planetData, [bakingTextures.rings![idx]], idx);
+    const buffer = await bakeMeshIntoBuffer(mesh, false);
     ringTargets.push(buffer);
   }
   return ringTargets;
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 /**
  * Common texture baking process for meshes
  * @param mesh the mesh to bake
- * @param flipY if the resulting image data buffer should be flipped vertically
+ * @param shouldFlip condition to flip the buffer (mostly relevant for WebGPU and normals)
  */
-async function bakeMeshIntoBuffer(mesh: Mesh, flipY: boolean = false): Promise<Uint8Array> {
+async function bakeMeshIntoBuffer(mesh: Mesh, shouldFlip: boolean): Promise<Uint8Array> {
   const texture = await BakingHelper.bakeMesh(
-    bakingObjects.renderer,
-    bakingObjects.camera,
-    bakingObjects.renderTarget,
+    bakingObjects.renderer!,
+    bakingObjects.camera!,
+    bakingObjects.renderTarget!,
     mesh,
   );
   if (currentBakingInput.bakingPixelize) {
@@ -326,25 +376,26 @@ async function bakeMeshIntoBuffer(mesh: Mesh, flipY: boolean = false): Promise<U
   }
 
   const buffer = new Uint8Array(<Uint8Array>texture.image.data);
-  if (flipY) {
-    buffer.set(flipBufferY(buffer, currentBakingInput.bakingResolution, currentBakingInput.bakingResolution));
+  // Note: a quirk of WebGPU texture rendering forces the Y-axis to be flipped compared to WebGL2
+  if (shouldFlip) {
+    buffer.set(flipBufferY(buffer, texture.width, texture.height));
   }
 
-  mesh.geometry.dispose();
   (<NodeMaterial>mesh.material).dispose();
   texture.dispose();
   return buffer;
 }
 
-async function sendOutputAndDisposeTextures(): Promise<void> {
-  initTextures.surface?.dispose();
-  initTextures.biomes?.dispose();
-  initTextures.biomesEmissive?.dispose();
-  initTextures.cracksSurface?.dispose();
-  initTextures.cracksUnderwater?.dispose();
-  initTextures.craters?.dispose();
-  initTextures.clouds?.dispose();
-  initTextures.rings?.forEach((tex) => tex.dispose());
+async function sendOutputAndDispose(): Promise<void> {
+  bakingMeshes.planet!.geometry.dispose();
+  bakingTextures.surface?.dispose();
+  bakingTextures.biomes?.dispose();
+  bakingTextures.biomesEmissive?.dispose();
+  bakingTextures.cracksSurface?.dispose();
+  bakingTextures.cracksUnderwater?.dispose();
+  bakingTextures.craters?.dispose();
+  bakingTextures.clouds?.dispose();
+  bakingTextures.rings?.forEach((tex) => tex.dispose());
   self.postMessage(<BakingWorkerOutput>{
     type: 'done',
     data: outputData,

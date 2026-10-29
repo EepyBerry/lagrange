@@ -1,10 +1,5 @@
 import { Vector3 } from 'three';
 
-// Responsiveness width thresholds
-export const SM_WIDTH_THRESHOLD = 768;
-// Compact controls height
-export const COMPACT_CONTROLS_HEIGHT = 320;
-
 // Internationalization
 export const LOCALE_MAP: { [k: string]: string } = {
   en: 'en-US',
@@ -28,11 +23,6 @@ export const MESH_NAME_NORMALMAP = '_NormalMap';
 
 // Global threejs axes
 export const AXIS_X = new Vector3(1, 0, 0);
-export const AXIS_Y = new Vector3(0, 1, 0);
-export const AXIS_Z = new Vector3(0, 0, 1);
-export const AXIS_NX = new Vector3(-1, 0, 0);
-export const AXIS_NY = new Vector3(0, -1, 0);
-export const AXIS_NZ = new Vector3(0, 0, -1);
 
 // Textures
 export const TEXTURE_SIZES = {

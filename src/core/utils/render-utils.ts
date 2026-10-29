@@ -1,26 +1,5 @@
-import type { EditorBackendType } from '@core/types.ts';
-import type { WebGPURenderer } from 'three/webgpu';
 import { type ColorRamp, ColorRampStep } from '@core/models/planet/color-ramp.model.ts';
 import { CanvasTexture, DataTexture, type TypedArray } from 'three';
-
-/**
- * Renders a buffer onto an OffscreenCanvas
- * @param renderer current renderer
- * @param buf the buffer, represented as a `TypedArray` (usually `UInt8Array`)
- * @param w width of the output (in pixels)
- * @param h height of the output (in pixels)
- * @returns an `OffscreenCanvas` instance containing data from the buffer
- */
-export function renderToCanvas(renderer: WebGPURenderer, buf: TypedArray, w: number, h: number): OffscreenCanvas {
-  const backendType: EditorBackendType = Object.hasOwn(renderer.backend, 'gl') ? 'webgl' : 'webgpu';
-
-  const canvas = new OffscreenCanvas(w, h);
-  const ctx = canvas.getContext('2d')!;
-  const imageData = ctx.createImageData(w, h);
-  imageData.data.set(backendType === 'webgl' ? flipBufferY(buf as Uint8Array, w, h) : buf);
-  ctx.putImageData(imageData, 0, 0);
-  return canvas;
-}
 
 /**
  * Flips an UInt8Array's data vertically to have a normalized +X/+Y image
@@ -120,13 +99,18 @@ export function bufferToDataTexture(buffer: Uint8Array, width: number, height: n
 }
 
 /**
- * Creates an instance of {@link Blob} from the given texture data
- * @param renderer current renderer
+ * Creates an instance of {@link Blob} from the given texture data by rendering it to a canvas
  * @param buf the buffer to write in the blob
  * @param w texture width
  * @param h texture height
  */
-export async function bufferToImageBlob(renderer: WebGPURenderer, buf: TypedArray, w: number, h: number) {
-  const tex = new CanvasTexture(renderToCanvas(renderer, buf, w, h));
+export async function bufferToImageBlob(buf: TypedArray, w: number, h: number) {
+  const canvas = new OffscreenCanvas(w, h);
+  const ctx = canvas.getContext('2d')!;
+  const imageData = ctx.createImageData(w, h);
+  imageData.data.set(buf);
+  ctx.putImageData(imageData, 0, 0);
+
+  const tex = new CanvasTexture(canvas);
   return await tex.image.convertToBlob();
 }

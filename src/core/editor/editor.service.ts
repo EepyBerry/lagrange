@@ -387,37 +387,17 @@ async function processExtractionMessage(
 
 async function exportBakedTextures(data: BakingWorkerOutputData, bakingResolution: number) {
   const textures = {
-    planetMap: await bufferToImageBlob(
-      EDITOR_SCENE_DATA.renderer!,
-      data.planetMap!,
-      bakingResolution,
-      bakingResolution,
-    ),
+    planetMap: await bufferToImageBlob(data.planetMap!, bakingResolution * 2, bakingResolution),
     planetMetallicRoughnessMap: await bufferToImageBlob(
-      EDITOR_SCENE_DATA.renderer!,
       data.planetMetallicRoughnessMap!,
-      bakingResolution,
-      bakingResolution,
-    ),
-    planetEmissiveMap: await bufferToImageBlob(
-      EDITOR_SCENE_DATA.renderer!,
-      data.planetEmissiveMap!,
-      bakingResolution,
+      bakingResolution * 2,
       bakingResolution,
     ),
-    planetNormalMap: await bufferToImageBlob(
-      EDITOR_SCENE_DATA.renderer!,
-      data.planetNormalMap!,
-      bakingResolution,
-      bakingResolution,
-    ),
-    clouds: data.clouds
-      ? await bufferToImageBlob(EDITOR_SCENE_DATA.renderer!, data.clouds!, bakingResolution, bakingResolution)
-      : undefined,
+    planetEmissiveMap: await bufferToImageBlob(data.planetEmissiveMap!, bakingResolution * 2, bakingResolution),
+    planetNormalMap: await bufferToImageBlob(data.planetNormalMap!, bakingResolution * 2, bakingResolution),
+    clouds: data.clouds ? await bufferToImageBlob(data.clouds!, bakingResolution * 2, bakingResolution) : undefined,
     rings: data.rings
-      ? data.rings.map(
-          async (rb) => await bufferToImageBlob(EDITOR_SCENE_DATA.renderer!, rb, bakingResolution, bakingResolution),
-        )
+      ? data.rings.map(async (rb) => await bufferToImageBlob(rb, bakingResolution, bakingResolution))
       : undefined,
   };
 
@@ -487,15 +467,15 @@ async function processBakingMessage(
 
 async function exportBakedTexturesAsMesh(data: BakingWorkerOutputData, bakingResolution: number) {
   const textures = {
-    planetMap: bufferToDataTexture(data.planetMap!, bakingResolution, bakingResolution),
+    planetMap: bufferToDataTexture(data.planetMap!, bakingResolution * 2, bakingResolution),
     planetMetallicRoughnessMap: bufferToDataTexture(
       data.planetMetallicRoughnessMap!,
-      bakingResolution,
+      bakingResolution * 2,
       bakingResolution,
     ),
-    planetEmissiveMap: bufferToDataTexture(data.planetEmissiveMap!, bakingResolution, bakingResolution),
-    planetNormalMap: bufferToDataTexture(data.planetNormalMap!, bakingResolution, bakingResolution),
-    clouds: data.clouds ? bufferToDataTexture(data.clouds!, bakingResolution, bakingResolution) : undefined,
+    planetEmissiveMap: bufferToDataTexture(data.planetEmissiveMap!, bakingResolution * 2, bakingResolution),
+    planetNormalMap: bufferToDataTexture(data.planetNormalMap!, bakingResolution * 2, bakingResolution),
+    clouds: data.clouds ? bufferToDataTexture(data.clouds!, bakingResolution * 2, bakingResolution) : undefined,
     rings: data.rings ? data.rings.map((r) => bufferToDataTexture(r, bakingResolution, bakingResolution)) : undefined,
   };
 

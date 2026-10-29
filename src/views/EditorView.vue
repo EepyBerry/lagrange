@@ -38,9 +38,11 @@
 import type { EditorInitErrorDialogExposes } from '@components/editor/dialogs/EditorInitErrorDialog.types.ts';
 import type { ExportProgressDialogExposes } from '@components/editor/dialogs/ExportProgressDialog.types.ts';
 import type { WarnSaveDialogExposes } from '@components/editor/dialogs/WarnSaveDialog.types.ts';
+import type { EditorBackendType } from '@core/types.ts';
 import EditorHeader from '@components/editor/EditorHeader.vue';
 import EditorInspector from '@components/editor/inspector/EditorInspector.vue';
 import OverlayLoader from '@components/global/elements/OverlayLoader.vue';
+import { getGraphicsCapabilities } from '@core/capabilities/capabilities.ts';
 import {
   bootstrapEditor,
   dollyCamera,
@@ -69,8 +71,6 @@ import { nanoid } from 'nanoid';
 import { defineAsyncComponent, onMounted, onUnmounted, ref, type Ref, toRaw, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
-import WebGL from '@/core/capabilities/WebGL';
-import WebGPU from '@/core/capabilities/WebGPU';
 import { idb, type IDBPlanet, KeyBindingAction } from '@/dexie.config';
 
 const EditorInitErrorDialog = defineAsyncComponent(
@@ -134,48 +134,40 @@ async function initView() {
   inspectorSide.value = settings!.inspectorSide;
   inspectorOrdering.value = settings!.inspectorOrdering;
 
-  // Try starting with WebGPU (fallback to WebGL2 in case of failure)
+  // Initialise with selected rendering backend (WebGL2/WebGPU)
   if (settings!.renderingBackend === 'webgpu') {
-    try {
-      if (!(await WebGPU.isAvailable())) {
-        showSpinner.value = false;
-        const webgpuErrorMessage = WebGPU.getErrorMessage(i18n);
-        editorErrorDialogRef.value!.open(webgpuErrorMessage, undefined, true);
-        return;
-      }
-      await initData();
-      await initCanvas();
-      loadedCorrectly = true;
-      showSpinner.value = false;
-    } catch (error) {
-      handleInitThreeError(error);
-    }
-    // Try starting with WebGL2
+    await tryInitWithRenderingBackend('webgpu');
   } else {
-    try {
-      if (!WebGL.isWebGL2Available()) {
-        showSpinner.value = false;
-        const webglErrorMessage = WebGL.getWebGL2ErrorMessage(i18n);
-        editorErrorDialogRef.value!.open(webglErrorMessage);
-        return;
-      }
-      await initData();
-      await initCanvas();
-      loadedCorrectly = true;
-      showSpinner.value = false;
-    } catch (error) {
-      handleInitThreeError(error);
-    }
+    await tryInitWithRenderingBackend('webgl');
   }
 }
-function handleInitThreeError(error: unknown) {
-  EDITOR_STATE.value.status = EditorStatusCode.Error;
-  if (error instanceof Error || error instanceof DOMException) {
-    editorErrorDialogRef.value!.open(error.message, error.stack);
-  } else if (typeof error === 'string') {
-    editorErrorDialogRef.value!.open(error);
-  } else {
-    editorErrorDialogRef.value!.open(i18n.t('common.error.default_unknown'));
+async function tryInitWithRenderingBackend(backend: EditorBackendType) {
+  const capabilities = getGraphicsCapabilities(backend);
+  if (!capabilities.info.isAvailable) {
+    showSpinner.value = false;
+    if (backend === 'webgpu') {
+      const errorMessage = capabilities.info.initError?.message ?? i18n.t('common.error.default_webgl_support');
+      editorErrorDialogRef.value!.open(errorMessage, undefined, true);
+    } else {
+      const errorMessage = capabilities.info.initError?.message ?? i18n.t('common.error.default_webgpu_support');
+      editorErrorDialogRef.value!.open(errorMessage);
+    }
+    return;
+  }
+
+  try {
+    await loadPlanetAndInitEditor();
+    loadedCorrectly = true;
+    showSpinner.value = false;
+  } catch (error) {
+    EDITOR_STATE.value.status = EditorStatusCode.Error;
+    if (error instanceof Error || error instanceof DOMException) {
+      editorErrorDialogRef.value!.open(error.message, error.stack);
+    } else if (typeof error === 'string') {
+      editorErrorDialogRef.value!.open(error);
+    } else {
+      editorErrorDialogRef.value!.open(i18n.t('common.error.default_unknown'));
+    }
   }
 }
 
@@ -197,7 +189,7 @@ async function handleEditorInitError(reloadWithFallback: boolean = false) {
   }
 }
 
-async function initData() {
+async function loadPlanetAndInitEditor() {
   // https://stackoverflow.com/questions/3891641/regex-test-only-works-every-other-time
   if ((route.params.id as string) === 'new') {
     console.info('No planet ID found in the URL, assuming new planet');
@@ -219,9 +211,7 @@ async function initData() {
   }
   regeneratePRNGIfNecessary(true);
   patchMetaHead();
-}
 
-async function initCanvas() {
   await bootstrapEditor(
     threeCanvas.value!,
     threeCanvasSize.width.value,
@@ -248,6 +238,8 @@ async function onWindowKeydown(event: KeyboardEvent) {
   ) {
     return;
   }
+
+  // Check keybinds for the associated action (ignore combinations)
   const keyBinds = await idb.keyBindings.toArray();
   const kb = keyBinds.find((k) => k.key === event.key.toUpperCase());
   if (!kb) return;

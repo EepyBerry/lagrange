@@ -1,9 +1,16 @@
-import { CanvasTexture, Group, LinearSRGBColorSpace, RenderTarget, Spherical } from 'three';
+import { CanvasTexture, Group, LinearSRGBColorSpace, RenderTarget, Spherical, type TypedArray } from 'three';
 import * as SceneHelper from './scene.helper'
 import type PlanetData from '@core/models/planet/planet-data.model.ts';
-import { EditorSceneCreationMode, type EditorSceneData } from '../types';
-import { blobToDataURL, renderToCanvas } from '../utils/render-utils';
-import { RenderPipeline } from 'three/webgpu';
+import {
+	type EditorBackendType,
+	EditorSceneCreationMode,
+	type EditorSceneData,
+} from '../types';
+import {
+	blobToDataURL,
+	flipBufferY,
+} from '../utils/render-utils';
+import { RenderPipeline, WebGPURenderer } from 'three/webgpu';
 import { pass } from 'three/tsl';
 import { sleep } from "@core/utils/utils.ts";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -47,7 +54,7 @@ export async function generatePlanetPreview(data: PlanetData, orbitControls: Orb
     previewSceneData.renderer!.setRenderTarget(null);
 
     // ----------------- Create preview canvas & write data from buffer -----------------
-    const tex = new CanvasTexture(renderToCanvas(previewSceneData.renderer!, rawBuffer, w, h));
+    const tex = new CanvasTexture(renderPreviewToCanvas(previewSceneData.renderer!, rawBuffer, w, h));
     const blob = await tex.image.convertToBlob();
 
     // ------------------------------- Clean-up resources -------------------------------
@@ -61,3 +68,13 @@ export async function generatePlanetPreview(data: PlanetData, orbitControls: Orb
   }
 }
 
+function renderPreviewToCanvas(renderer: WebGPURenderer, buf: TypedArray, w: number, h: number): OffscreenCanvas {
+	const backendType: EditorBackendType = Object.hasOwn(renderer.backend, 'gl') ? 'webgl' : 'webgpu';
+
+	const canvas = new OffscreenCanvas(w, h);
+	const ctx = canvas.getContext('2d')!;
+	const imageData = ctx.createImageData(w, h);
+	imageData.data.set(backendType === 'webgl' ? flipBufferY(buf as Uint8Array, w, h) : buf);
+	ctx.putImageData(imageData, 0, 0);
+	return canvas;
+}

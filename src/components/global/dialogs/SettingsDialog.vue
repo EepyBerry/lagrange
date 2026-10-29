@@ -159,7 +159,7 @@
                       name="rendering-backend-select"
                       :value="'webgpu'"
                       :button-aria-label="$t('a11y.editor_rendering_backend_webgpu')"
-                      :disabled="!WebGPU.isAvailable()"
+                      :disabled="!getGraphicsCapabilities(appSettings.renderingBackend).info.isAvailable"
                     >
                       <iconify-icon class="icon" icon="simple-icons:webgpu" width="1.5rem" aria-hidden="true" />
                       {{ $t('dialog.settings.editor_rendering_backend_webgpu') }}
@@ -173,7 +173,10 @@
                       : $t('dialog.settings.editor_rendering_backend_webgpu_notification')
                   }}
                 </LgvNotification>
-                <LgvNotification v-if="!WebGPU.isAvailable()" type="warn">
+                <LgvNotification
+                  v-if="!getGraphicsCapabilities(appSettings.renderingBackend).info.isAvailable"
+                  type="warn"
+                >
                   {{ $t('dialog.settings.editor_rendering_backend_webgpu_unavailable') }}
                 </LgvNotification>
                 <ParameterDivider bordered />
@@ -218,6 +221,7 @@
                       name="baking-res-select"
                       :value="4096"
                       :button-aria-label="$t('a11y.editor_baking_resolution_4k')"
+                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 4096"
                       >4096</ParameterRadioOption
                     >
                   </template>
@@ -467,6 +471,7 @@ import ParameterRadio from '@components/global/parameters/ParameterRadio.vue';
 import ParameterRadioOption from '@components/global/parameters/ParameterRadioOption.vue';
 import ParameterSelect from '@components/global/parameters/ParameterSelect.vue';
 import ParameterSlider from '@components/global/parameters/ParameterSlider.vue';
+import { getGraphicsCapabilities } from '@core/capabilities/capabilities.ts';
 import { setCameraControlScheme, setCameraFOV, swapSceneSkybox } from '@core/editor/editor.service.ts';
 import {
   EXTRAS_CAT_MODE,
@@ -484,7 +489,6 @@ import LgvNotification from '@lib/components/custom/LgvNotification.vue';
 import { saveAs } from 'file-saver';
 import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import WebGPU from '@/core/capabilities/WebGPU';
 import * as DexieService from '@/core/services/dexie.service';
 import {
   type CameraMouseControlsScheme,

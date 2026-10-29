@@ -1,10 +1,10 @@
 import * as Globals from "@core/globals";
 import * as ComponentHelper from "@core/helpers/component.helper";
 import {
+	BackSide,
   DataTexture,
   Mesh,
   OrthographicCamera,
-  PlaneGeometry,
   RenderTarget,
   SRGBColorSpace,
   Texture,
@@ -12,7 +12,7 @@ import {
   WebGPURenderer,
 } from "three/webgpu";
 import { BakingPlanetSurfaceTSLMaterial } from "@tsl/materials/baking/planet-surface.baking.tslmat.ts";
-import type { BakingSceneObjects, EditorBackendType } from "@core/types.ts";
+import type { EditorBackendType } from "@core/types.ts";
 import type { SerializedPlanetData } from "@core/editor/workers/worker-serializer.types.ts";
 import {
   BakingPlanetMetallicRoughnessTSLMaterial
@@ -22,58 +22,73 @@ import { BakingPlanetHeightMapTSLMaterial } from "@tsl/materials/baking/planet-h
 import { BakingPlanetNormalMapTSLMaterial } from "@tsl/materials/baking/planet-normalmap.baking.tslmat.ts";
 import { BakingCloudsTSLMaterial } from "@tsl/materials/baking/clouds.baking.tslmat.ts";
 import { BakingRingTSLMaterial } from "@tsl/materials/baking/ring.baking.tslmat.ts";
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import planeSphereMesh from '@assets/meshes/planesphere.glb?url';
 
-export function createBakingPlanet(data: SerializedPlanetData, textures: Texture[]): Mesh {
-  const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality);
-  geometry.computeTangents();
+export type BakingSceneObjects = {
+	renderer?: WebGPURenderer;
+	camera?: OrthographicCamera;
+	renderTarget?: RenderTarget;
+};
+
+const loader = new GLTFLoader();
+
+export async function loadPlaneSphereMesh(): Promise<Mesh> {
+	const gltf = await loader.loadAsync(planeSphereMesh);
+	return <Mesh>(await gltf.parser.loadMesh(0));
+}
+
+export function createBakingPlanet(baseMesh: Mesh, data: SerializedPlanetData, textures: Texture[]): Mesh {
   const tslMaterial = new BakingPlanetSurfaceTSLMaterial(data, textures);
-  const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
-  mesh.name = Globals.MESH_NAME_PLANET;
+	const mesh = baseMesh.clone();
+	mesh.material = tslMaterial.buildMaterial();
+	mesh.material.side = BackSide; // note: required to display the surface with the proper orientation
+	mesh.name = Globals.MESH_NAME_PLANET;
   return mesh;
 }
 
-export function createBakingMetallicRoughnessMap(data: SerializedPlanetData, textures: Texture[]): Mesh {
-  const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality);
-  geometry.computeTangents();
+export function createBakingMetallicRoughnessMap(baseMesh: Mesh, data: SerializedPlanetData, textures: Texture[]): Mesh {
   const tslMaterial = new BakingPlanetMetallicRoughnessTSLMaterial(data, textures);
-  const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
+	const mesh = baseMesh.clone();
+	mesh.material = tslMaterial.buildMaterial();
+	mesh.material.side = BackSide;
   mesh.name = Globals.MESH_NAME_METALLICROUGHNESSMAP;
   return mesh;
 }
 
-export function createBakingEmissivityMap(data: SerializedPlanetData, textures: Texture[]): Mesh {
-  const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality);
-  geometry.computeTangents();
-
+export function createBakingEmissivityMap(baseMesh: Mesh, data: SerializedPlanetData, textures: Texture[]): Mesh {
   const tslMaterial = new BakingPlanetEmissivityTSLMaterial(data, textures);
-  const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
+	const mesh = baseMesh.clone();
+	mesh.material = tslMaterial.buildMaterial();
+	mesh.material.side = BackSide;
   mesh.name = Globals.MESH_NAME_EMISSIVITYMAP;
   return mesh;
 }
 
-export function createBakingHeightMap(data: SerializedPlanetData, textures: Texture[]): Mesh {
-  const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality);
-  geometry.computeTangents();
-
+export function createBakingHeightMap(baseMesh: Mesh, data: SerializedPlanetData, textures: Texture[]): Mesh {
   const tslMaterial = new BakingPlanetHeightMapTSLMaterial(data, textures);
-  const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
+	const mesh = baseMesh.clone();
+	mesh.material = tslMaterial.buildMaterial();
+	mesh.material.side = BackSide;
   mesh.name = Globals.MESH_NAME_HEIGHTMAP;
   return mesh;
 }
 
-export async function createBakingNormalMap(data: SerializedPlanetData, textures: Texture[]): Promise<Mesh> {
+export function createBakingNormalMap(baseMesh: Mesh, data: SerializedPlanetData, textures: Texture[]): Mesh {
   const tslMaterial = new BakingPlanetNormalMapTSLMaterial(data, textures);
-  const mesh = new Mesh(new PlaneGeometry(), tslMaterial.buildMaterial());
+	const mesh = baseMesh.clone();
+	mesh.material = tslMaterial.buildMaterial();
+	mesh.material.side = BackSide;
   mesh.name = Globals.MESH_NAME_NORMALMAP;
   return mesh;
 }
 
-export function createBakingClouds(data: SerializedPlanetData, textures: Texture[]): Mesh {
-  const cloudHeight = data.cloudsHeight;
-  const geometry = ComponentHelper.createSphereGeometryComponent(data.planetMeshQuality, cloudHeight);
-
+export function createBakingClouds(baseMesh: Mesh, data: SerializedPlanetData, textures: Texture[]): Mesh {
   const tslMaterial = new BakingCloudsTSLMaterial(data, textures);
-  const mesh = new Mesh(geometry, tslMaterial.buildMaterial());
+	const mesh = baseMesh.clone();
+	mesh.scale.setScalar(data.cloudsHeight);
+	mesh.material = tslMaterial.buildMaterial();
+	mesh.material.side = BackSide;
   mesh.name = Globals.MESH_NAME_CLOUDS;
   return mesh;
 }
@@ -100,7 +115,7 @@ export function createBakingRing(data: SerializedPlanetData, textures: Texture[]
  * @param pixelRatio device pixel ratio
  * @returns Scene, WebGPURenderer, OrthographicCamera, and RenderTarget root objects
  */
-export function createBakingObjects(renderingBackend: EditorBackendType, width: number, height: number, pixelRatio: number): BakingSceneObjects {
+export function createBakingSceneObjects(renderingBackend: EditorBackendType, width: number, height: number, pixelRatio: number): BakingSceneObjects {
   const renderer = new WebGPURenderer({
     antialias: true,
     alpha: true,

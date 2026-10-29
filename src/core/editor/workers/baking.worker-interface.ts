@@ -23,12 +23,7 @@ export class BakingWorkerInterface {
         const textures: Uint8ClampedArray[] = [];
         for (const request of event.data) {
           textures.push(
-            await textureWorkerInterface.run(
-              input.bakingResolution,
-              input.bakingResolution,
-              request.operation,
-              request.data,
-            ),
+            await textureWorkerInterface.run(request.width, request.height, request.operation, request.data),
           );
         }
         this._worker.postMessage(<BakingWorkerTextureResponse>{
