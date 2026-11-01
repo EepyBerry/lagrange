@@ -110,6 +110,7 @@ export async function bufferToImageBlob(buf: TypedArray, w: number, h: number) {
   const imageData = ctx.createImageData(w, h);
   imageData.data.set(buf);
   ctx.putImageData(imageData, 0, 0);
+  console.log('converting buffer to image blob');
 
   const tex = new CanvasTexture(canvas);
   return await tex.image.convertToBlob();

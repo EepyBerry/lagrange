@@ -23,7 +23,7 @@ export class WorkerBoundDataTexture {
       throw new Error(`Cannot serialize data for operation ${operation}`);
     }
     const outputData = await textureWorker.run(this.texture.width, this.texture.height, operation, serializedData);
-    this.texture.image.data!.set(outputData);
+    this.texture.image.data!.set(outputData.buffer);
     this.texture.needsUpdate = true;
   }
 }

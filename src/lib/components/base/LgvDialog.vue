@@ -167,7 +167,7 @@ dialog[open] {
     gap: 0;
 
     .dialog-header {
-      padding: 0.875rem 4rem 0.75rem 0.75rem;
+      padding: 0.75rem 4rem 0.625rem 0.625rem;
       font-weight: 600;
       color: var(--lg-text);
 

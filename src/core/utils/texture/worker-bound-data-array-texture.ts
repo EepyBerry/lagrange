@@ -28,7 +28,7 @@ export class WorkerBoundDataArrayTexture {
     }
 
     const outputData = await textureWorker.run(this.texture.width, this.texture.height, operation, serializedData);
-    this.texture.image.data!.set(outputData, this.texture.width * this.texture.height * 4 * depthIndex);
+    this.texture.image.data!.set(outputData.buffer, this.texture.width * this.texture.height * 4 * depthIndex);
     this.texture.addLayerUpdate(depthIndex);
     this.texture.needsUpdate = true;
   }

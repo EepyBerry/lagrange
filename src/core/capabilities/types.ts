@@ -11,7 +11,7 @@ export type GraphicsLibraryAvailability = {
 /**
  * Base class for graphics library capabilities
  */
-export default abstract class Types {
+export default abstract class GraphicsLibraryBackend {
   protected static checkAvailability(): GraphicsLibraryAvailability | Promise<GraphicsLibraryAvailability> {
     throw new Error('Not implemented');
   }

@@ -1,33 +1,71 @@
+import type { RawBufferTexture } from '@core/editor/workers/utils.ts';
 import type { SerializedPlanetData } from '@core/editor/workers/worker-serializer.types.ts';
 import type { BakingSceneObjects } from '@core/helpers/baking.helper.ts';
+import { getGraphicsCapabilities, initGraphicsCapabilities } from '@core/capabilities/capabilities.ts';
 import * as BakingHelper from '@core/helpers/baking.helper.ts';
 import { type EditorBackendType } from '@core/types.ts';
 import { flipBufferY } from '@core/utils/render-utils.ts';
-import { NearestFilter, NodeMaterial, DataTexture, WebGPURenderer, Mesh } from 'three/webgpu';
+import { DataTexture, Mesh, NearestFilter, NodeMaterial, WebGPURenderer } from 'three/webgpu';
 
-export type BakingWorkerInput = {
-  type: 'baking';
-  planetData: SerializedPlanetData;
-  bakingResolution: number;
-  bakingPixelize: boolean;
-  renderingBackend: EditorBackendType;
-};
-export type BakingWorkerOutput =
-  | { type: 'progress'; progress: number; texture?: string }
-  | { type: 'error'; error: Error }
-  | { type: 'done'; data: BakingWorkerOutputData };
+interface BakingWorkerInputPayloadMap {
+  run: {
+    type: 'run';
+    planetData: SerializedPlanetData;
+    bakingResolution: number;
+    bakingPixelize: boolean;
+    renderingBackend: EditorBackendType;
+  };
+  'texture-part': {
+    type: 'texture-part';
+    target: BakingWorkerTextureTarget;
+    targetIndex?: number;
+    texture: RawBufferTexture;
+  };
+  'texture-done': { type: 'texture-done' };
+}
+export type BakingWorkerInputType = keyof BakingWorkerInputPayloadMap;
+export type BakingWorkerInput<T extends BakingWorkerInputType = BakingWorkerInputType> = {
+  [K in T]: { type: T } & BakingWorkerInputPayloadMap[K];
+}[T];
 
-export type BakingWorkerTextureRequest = {
-  type: 'texture-request';
-  width: number;
-  height: number;
-  operation: 'color-ramp' | 'biomes' | 'biomes-emissive';
-  data: unknown;
-};
-export type BakingWorkerTextureResponse = {
-  type: 'texture-response';
-  textures: Uint8ClampedArray[];
-};
+interface BakingWorkerOutputPayloadMap {
+  'texture-request': {
+    type: 'texture-request';
+    items: {
+      width: number;
+      height: number;
+      target: BakingWorkerTextureTarget;
+      targetIndex?: number;
+      operation: 'color-ramp' | 'biomes' | 'biomes-emissive';
+      data: unknown;
+    }[];
+  };
+  progress: { type: 'progress'; progress: number; texture?: string };
+  error: { type: 'error'; error: Error };
+  part: { type: 'part'; target: BakingWorkerOutputPartTarget; targetIndex?: number; buffer: Uint8Array };
+  done: { type: 'done' };
+}
+export type BakingWorkerOutputType = keyof BakingWorkerOutputPayloadMap;
+export type BakingWorkerOutput<T extends BakingWorkerOutputType = BakingWorkerOutputType> = {
+  [K in T]: { type: T } & BakingWorkerOutputPayloadMap[K];
+}[T];
+
+export type BakingWorkerTextureTarget =
+  | 'surface'
+  | 'biomes'
+  | 'biomes-emissive'
+  | 'cracks-surface'
+  | 'cracks-underwater'
+  | 'craters'
+  | 'clouds'
+  | 'rings';
+export type BakingWorkerOutputPartTarget =
+  | 'map'
+  | 'metallic-roughness-map'
+  | 'emissive-map'
+  | 'normal-map'
+  | 'clouds'
+  | 'rings';
 
 type BakingResolution = 'square' | 'equirectangular';
 type BakingWorkerMeshes = {
@@ -41,59 +79,50 @@ type BakingWorkerTextures = {
   cracksUnderwater?: DataTexture;
   craters?: DataTexture;
   clouds?: DataTexture;
-  rings?: DataTexture[];
-};
-export type BakingWorkerOutputData = {
-  planetMap?: Uint8Array;
-  planetMetallicRoughnessMap?: Uint8Array;
-  planetEmissiveMap?: Uint8Array;
-  planetNormalMap?: Uint8Array;
-  clouds?: Uint8Array;
-  rings?: Uint8Array[];
+  rings: DataTexture[];
 };
 
 // --------------------------------------------------------------------------------------------------------------------
 const bakingObjects: BakingSceneObjects = {};
-const bakingTextures: BakingWorkerTextures = {};
+const bakingTextures: BakingWorkerTextures = { rings: [] };
 const bakingMeshes: BakingWorkerMeshes = {};
-const outputData: BakingWorkerOutputData = {};
-let currentBakingInput: BakingWorkerInput;
+let currentBakingInput: BakingWorkerInput<'run'>;
 
 const stepHandlers: (() => Promise<void>)[] = [];
 // --------------------------------------------------------------------------------------------------------------------
 
 init()
   .then(() => {
-    // when receiving the initial message, request ALL textures for the current planet (for simplicity, overhead is negligible at this point)
+    // when receiving the initial message, request ALL textures for the current planet
     // after receiving the textures, start baking every map one by one
-    self.onmessage = async (event: MessageEvent<BakingWorkerInput | BakingWorkerTextureResponse>) => {
-      if (event.data.type === 'baking') {
-        currentBakingInput = event!.data;
-        requestTextures();
-      } else if (event.data.type === 'texture-response') {
-        const dataTextures = event.data.textures?.map((buffer) => {
-          const dt = new DataTexture(buffer, currentBakingInput.bakingResolution, currentBakingInput.bakingResolution);
-          dt.needsUpdate = true;
-          return dt;
-        });
-        bakingTextures.surface = dataTextures[0];
-        bakingTextures.biomes = dataTextures[1];
-        bakingTextures.biomesEmissive = dataTextures[2];
-        bakingTextures.cracksSurface = dataTextures[3];
-        bakingTextures.cracksUnderwater = dataTextures[4];
-        bakingTextures.craters = dataTextures[5];
-        bakingTextures.clouds = dataTextures[6];
-        bakingTextures.rings = dataTextures.slice(7);
-
-        for (const handler of stepHandlers) {
-          await handler();
+    self.onmessage = async (event: MessageEvent<BakingWorkerInput>) => {
+      console.debug('(bak:wrk) got message', event.data);
+      switch (event.data.type) {
+        case 'run':
+          currentBakingInput = event!.data;
+          bakingTextures.rings.push(...Array(currentBakingInput.planetData.ringsParams.length).fill(null));
+          requestTextures();
+          break;
+        case 'texture-part':
+          processTextureResponse(event.data);
+          break;
+        case 'texture-done': {
+          let hasHandlerFailure = false;
+          for (const handler of stepHandlers) {
+            await handler().catch((error) => {
+              hasHandlerFailure = true;
+              self.postMessage(<BakingWorkerOutput<'error'>>{ type: 'error', error });
+            });
+            if (hasHandlerFailure) break;
+          }
+          break;
         }
       }
     };
   })
   .catch((error) => {
     console.error('<Lagrange> Baking worker failed to initialize!', error);
-    self.postMessage({ type: 'error', error });
+    self.postMessage(<BakingWorkerOutput<'error'>>{ type: 'error', error });
   });
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -102,50 +131,60 @@ init()
  * Initialise this worker
  */
 async function init(): Promise<void> {
+  // note: has to be called in the worker to work properly
+  await initGraphicsCapabilities();
+
   const { renderer, camera, renderTarget } = BakingHelper.createBakingSceneObjects('webgl', 2048, 2048, 1);
   bakingObjects.renderer = renderer;
   bakingObjects.camera = camera;
   bakingObjects.renderTarget = renderTarget;
 
   bakingMeshes.planet = await BakingHelper.loadPlaneSphereMesh();
-  //bakingMeshes.planet = new Mesh(new SphereGeometry(1, 48, 48));
 
   stepHandlers.push(async () => {
-    self.postMessage({ type: 'progress', progress: 1 });
+    self.postMessage(<BakingWorkerOutput<'progress'>>{ type: 'progress', progress: 1 });
     updateBakingObjects('equirectangular');
   });
   stepHandlers.push(async () => {
-    self.postMessage({ type: 'progress', progress: 2 });
-    outputData.planetMap = await bakePlanetSurface();
+    self.postMessage(<BakingWorkerOutput<'progress'>>{ type: 'progress', progress: 2 });
+    const buffer = await bakePlanetSurface();
+    self.postMessage(<BakingWorkerOutput<'part'>>{ type: 'part', target: 'map', buffer });
   });
   stepHandlers.push(async () => {
-    self.postMessage({ type: 'progress', progress: 3 });
-    outputData.planetMetallicRoughnessMap = await bakePlanetMetallicRoughnessMap();
+    self.postMessage(<BakingWorkerOutput<'progress'>>{ type: 'progress', progress: 3 });
+    const buffer = await bakePlanetMetallicRoughnessMap();
+    self.postMessage(<BakingWorkerOutput<'part'>>{ type: 'part', target: 'metallic-roughness-map', buffer });
   });
   stepHandlers.push(async () => {
-    self.postMessage({ type: 'progress', progress: 4 });
-    outputData.planetEmissiveMap = await bakePlanetEmissivityMap();
+    self.postMessage(<BakingWorkerOutput<'progress'>>{ type: 'progress', progress: 4 });
+    const buffer = await bakePlanetEmissivityMap();
+    self.postMessage(<BakingWorkerOutput<'part'>>{ type: 'part', target: 'emissive-map', buffer });
   });
   stepHandlers.push(async () => {
-    self.postMessage({ type: 'progress', progress: 5 });
-    outputData.planetNormalMap = await bakePlanetNormalMap();
+    self.postMessage(<BakingWorkerOutput<'progress'>>{ type: 'progress', progress: 5 });
+    const buffer = await bakePlanetNormalMap();
+    self.postMessage(<BakingWorkerOutput<'part'>>{ type: 'part', target: 'normal-map', buffer });
   });
   stepHandlers.push(async () => {
-    self.postMessage({ type: 'progress', progress: 6 });
+    self.postMessage(<BakingWorkerOutput<'progress'>>{ type: 'progress', progress: 6 });
     if (currentBakingInput.planetData.cloudsEnabled) {
-      outputData.clouds = await bakeClouds();
+      const buffer = await bakeClouds();
+      self.postMessage(<BakingWorkerOutput<'part'>>{ type: 'part', target: 'clouds', buffer });
     }
   });
   stepHandlers.push(async () => {
-    self.postMessage({ type: 'progress', progress: 7 });
+    self.postMessage(<BakingWorkerOutput<'progress'>>{ type: 'progress', progress: 7 });
     updateBakingObjects('square');
     if (currentBakingInput.planetData.ringsEnabled && currentBakingInput.planetData.ringsParams.length > 0) {
-      outputData.rings = await bakeRings();
+      const buffers = await bakeRings();
+      buffers.forEach((buffer, index) =>
+        self.postMessage(<BakingWorkerOutput<'part'>>{ type: 'part', target: 'rings', targetIndex: index, buffer }),
+      );
     }
   });
   stepHandlers.push(async () => {
-    self.postMessage({ type: 'progress', progress: 8 });
-    await sendOutputAndDispose();
+    self.postMessage(<BakingWorkerOutput<'progress'>>{ type: 'progress', progress: 8 });
+    await disposeResourcesAndFinishTask();
   });
   console.info('<Lagrange> Baking worker initialized successfully');
 }
@@ -156,64 +195,122 @@ async function init(): Promise<void> {
  * Baking pre-step: request the necessary textures
  */
 function requestTextures() {
-  self.postMessage(<BakingWorkerTextureRequest[]>[
-    {
-      type: 'texture-request',
-      width: currentBakingInput.bakingResolution,
-      height: currentBakingInput.bakingResolution,
-      operation: 'color-ramp',
-      data: currentBakingInput.planetData.planetSurfaceColorRamp.steps,
-    },
-    {
-      type: 'texture-request',
-      width: currentBakingInput.bakingResolution,
-      height: currentBakingInput.bakingResolution,
-      operation: 'biomes',
-      data: currentBakingInput.planetData.biomesParams,
-    },
-    {
-      type: 'texture-request',
-      width: currentBakingInput.bakingResolution,
-      height: currentBakingInput.bakingResolution,
-      operation: 'biomes-emissive',
-      data: currentBakingInput.planetData.biomesParams,
-    },
-    {
-      type: 'texture-request',
-      width: currentBakingInput.bakingResolution,
-      height: currentBakingInput.bakingResolution,
-      operation: 'color-ramp',
-      data: currentBakingInput.planetData.cracksSurfaceColorRamp.steps,
-    },
-    {
-      type: 'texture-request',
-      width: currentBakingInput.bakingResolution,
-      height: currentBakingInput.bakingResolution,
-      operation: 'color-ramp',
-      data: currentBakingInput.planetData.cracksUnderwaterColorRamp.steps,
-    },
-    {
-      type: 'texture-request',
-      width: currentBakingInput.bakingResolution,
-      height: currentBakingInput.bakingResolution,
-      operation: 'color-ramp',
-      data: currentBakingInput.planetData.cratersColorRamp.steps,
-    },
-    {
-      type: 'texture-request',
-      width: currentBakingInput.bakingResolution,
-      height: currentBakingInput.bakingResolution,
-      operation: 'color-ramp',
-      data: currentBakingInput.planetData.cloudsColorRamp.steps,
-    },
-    ...(<BakingWorkerTextureRequest[]>currentBakingInput.planetData.ringsParams.map((ringParams) => ({
-      type: 'texture-request',
-      width: currentBakingInput.bakingResolution,
-      height: currentBakingInput.bakingResolution,
-      operation: 'color-ramp',
-      data: ringParams.colorRamp.steps,
-    }))),
-  ]);
+  self.postMessage(<BakingWorkerOutput<'texture-request'>>{
+    type: 'texture-request',
+    items: [
+      {
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: 'surface',
+        operation: 'color-ramp',
+        data: currentBakingInput.planetData.planetSurfaceColorRamp.steps,
+      },
+      {
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: 'biomes',
+        operation: 'biomes',
+        data: currentBakingInput.planetData.biomesParams,
+      },
+      {
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: 'biomes-emissive',
+        operation: 'biomes-emissive',
+        data: currentBakingInput.planetData.biomesParams,
+      },
+      {
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: 'cracks-surface',
+        operation: 'color-ramp',
+        data: currentBakingInput.planetData.cracksSurfaceColorRamp.steps,
+      },
+      {
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: 'cracks-underwater',
+        operation: 'color-ramp',
+        data: currentBakingInput.planetData.cracksUnderwaterColorRamp.steps,
+      },
+      {
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: 'craters',
+        operation: 'color-ramp',
+        data: currentBakingInput.planetData.cratersColorRamp.steps,
+      },
+      {
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: 'clouds',
+        operation: 'color-ramp',
+        data: currentBakingInput.planetData.cloudsColorRamp.steps,
+      },
+      ...currentBakingInput.planetData.ringsParams.map((ringParams, index) => ({
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: 'rings',
+        targetIndex: index,
+        operation: 'color-ramp',
+        data: ringParams.colorRamp.steps,
+      })),
+    ],
+  });
+}
+
+function processTextureResponse(response: BakingWorkerInput<'texture-part'>) {
+  switch (response.target) {
+    case 'surface': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.surface = dt;
+      break;
+    }
+    case 'biomes': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.biomes = dt;
+      break;
+    }
+    case 'biomes-emissive': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.biomesEmissive = dt;
+      break;
+    }
+    case 'cracks-surface': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.cracksSurface = dt;
+      break;
+    }
+    case 'cracks-underwater': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.cracksUnderwater = dt;
+      break;
+    }
+    case 'craters': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.craters = dt;
+      break;
+    }
+    case 'clouds': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.clouds = dt;
+      break;
+    }
+    case 'rings': {
+      console.log(response.targetIndex);
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.rings[response.targetIndex!] = dt;
+      break;
+    }
+  }
 }
 
 /**
@@ -246,12 +343,17 @@ function updateBakingObjects(resolutionMode: BakingResolution): void {
       : currentBakingInput.bakingResolution;
   const bakingHeight = currentBakingInput.bakingResolution;
 
+  const capabilities = getGraphicsCapabilities(currentBakingInput.renderingBackend);
   bakingObjects.renderer!.dispose();
   bakingObjects.renderer = new WebGPURenderer({
     antialias: true,
     alpha: true,
     forceWebGL: currentBakingInput.renderingBackend == 'webgl',
     canvas: new OffscreenCanvas(bakingWidth, bakingHeight),
+    requiredLimits: {
+      maxTextureDimension2D: capabilities.maxTextureSize,
+      maxBufferSize: capabilities.maxBufferSize,
+    },
   });
 
   bakingObjects.camera!.left = -bakingWidth / 2;
@@ -349,7 +451,7 @@ async function bakeClouds(): Promise<Uint8Array> {
 async function bakeRings(): Promise<Uint8Array[]> {
   const ringTargets: Uint8Array[] = [];
   for (let idx = 0; idx < currentBakingInput.planetData.ringsParams.length; idx++) {
-    const mesh = BakingHelper.createBakingRing(currentBakingInput.planetData, [bakingTextures.rings![idx]], idx);
+    const mesh = BakingHelper.createBakingRing(currentBakingInput.planetData, [bakingTextures.rings[idx]], idx);
     const buffer = await bakeMeshIntoBuffer(mesh, false);
     ringTargets.push(buffer);
   }
@@ -386,7 +488,7 @@ async function bakeMeshIntoBuffer(mesh: Mesh, shouldFlip: boolean): Promise<Uint
   return buffer;
 }
 
-async function sendOutputAndDispose(): Promise<void> {
+async function disposeResourcesAndFinishTask(): Promise<void> {
   bakingMeshes.planet!.geometry.dispose();
   bakingTextures.surface?.dispose();
   bakingTextures.biomes?.dispose();
@@ -395,9 +497,7 @@ async function sendOutputAndDispose(): Promise<void> {
   bakingTextures.cracksUnderwater?.dispose();
   bakingTextures.craters?.dispose();
   bakingTextures.clouds?.dispose();
-  bakingTextures.rings?.forEach((tex) => tex.dispose());
-  self.postMessage(<BakingWorkerOutput>{
-    type: 'done',
-    data: outputData,
-  });
+  bakingTextures.rings.forEach((tex) => tex.dispose());
+  bakingTextures.rings.splice(0);
+  self.postMessage(<BakingWorkerOutput<'done'>>{ type: 'done' });
 }

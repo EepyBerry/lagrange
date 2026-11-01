@@ -10,7 +10,7 @@ import { clamp } from 'three/src/math/MathUtils.js';
 
 export type TextureWorkerOperation = 'color-ramp' | 'biomes' | 'biomes-emissive';
 export type TextureWorkerInput<OperationData> = {
-  type: 'texture-update';
+  type: 'run';
   id: string;
   width: number;
   height: number;
@@ -20,55 +20,80 @@ export type TextureWorkerInput<OperationData> = {
 export type TextureWorkerOutput = {
   id: string;
   type: 'done';
-  data: Uint8ClampedArray;
+  buffer: Uint8ClampedArray;
+  width: number;
+  height: number;
 };
 
-const canvas: OffscreenCanvas = new OffscreenCanvas(1, 1);
-const layerCanvas: OffscreenCanvas = new OffscreenCanvas(1, 1);
+// --------------------------------------------------------------------------------------------------------------------
+let canvas: OffscreenCanvas;
+let ctx: OffscreenCanvasRenderingContext2D;
+let layerCanvas: OffscreenCanvas;
+let layerCtx: OffscreenCanvasRenderingContext2D;
+// --------------------------------------------------------------------------------------------------------------------
 
-const ctx: OffscreenCanvasRenderingContext2D = canvas.getContext('2d', { willReadFrequently: true })!;
-ctx.imageSmoothingEnabled = false;
+init().then(() => {
+  self.onmessage = (msg: MessageEvent<TextureWorkerInput<unknown>>) => {
+    if (!msg.data.type) return;
+    console.debug('(tex:wrk) got message', msg.data);
+    const data = msg.data;
+    if (!data || data.type !== 'run') {
+      return;
+    }
+    if (!data.width || !data.height || data.width <= 0 || data.height <= 0) {
+      // TODO use a dedicated export dialog
+      console.error(`Invalid texture resolution: ${data.width} / ${data.height}`);
+      return;
+    }
 
-const layerCtx: OffscreenCanvasRenderingContext2D = layerCanvas.getContext('2d', { willReadFrequently: true })!;
-layerCtx.imageSmoothingEnabled = false;
-
-self.onmessage = (msg: MessageEvent<TextureWorkerInput<unknown>>) => {
-  if (msg.data && msg.data.type === 'texture-update') {
-    execTextureUpdate(msg.data);
-  }
-};
-function execTextureUpdate(data: TextureWorkerInput<unknown>): void {
-  if (!data.width || !data.height || data.width <= 0 || data.height <= 0) {
-    // TODO use a dedicated export dialog
-    console.error(`Invalid texture resolution: ${data.width} / ${data.height}`);
-    return;
-  }
-
-  canvas.width = data.width;
-  canvas.height = data.height;
-  layerCanvas.width = data.width;
-  layerCanvas.height = data.height;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  switch (data.operation) {
-    case 'color-ramp':
-      ctx.resetTransform();
-      ctx.globalCompositeOperation = 'copy';
-      drawColorRamp(<SerializedColorRampStep[]>data.data);
-      break;
-    case 'biomes':
-      ctx.globalCompositeOperation = 'source-over';
-      (<SerializedBiomeParameters[]>data.data).toReversed().forEach((biome) => drawBiomeLayer(biome));
-      break;
-    case 'biomes-emissive':
-      ctx.globalCompositeOperation = 'source-over';
-      (<SerializedBiomeParameters[]>data.data).toReversed().forEach((biome) => drawBiomeEmissivityLayer(biome));
-      break;
-  }
-  const imageData = ctx.getImageData(0, 0, data.width, data.height);
-  self.postMessage({ id: data.id, type: 'done', data: imageData.data });
-}
+    canvas.width = data.width;
+    canvas.height = data.height;
+    layerCanvas.width = data.width;
+    layerCanvas.height = data.height;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    switch (data.operation) {
+      case 'color-ramp':
+        ctx.resetTransform();
+        ctx.globalCompositeOperation = 'copy';
+        drawColorRamp(<SerializedColorRampStep[]>data.data);
+        break;
+      case 'biomes':
+        ctx.globalCompositeOperation = 'source-over';
+        (<SerializedBiomeParameters[]>data.data).toReversed().forEach((biome) => drawBiomeLayer(biome));
+        break;
+      case 'biomes-emissive':
+        ctx.globalCompositeOperation = 'source-over';
+        (<SerializedBiomeParameters[]>data.data).toReversed().forEach((biome) => drawBiomeEmissivityLayer(biome));
+        break;
+    }
+    const imageData = ctx.getImageData(0, 0, data.width, data.height);
+    self.postMessage(<TextureWorkerOutput>{
+      id: data.id,
+      type: 'done',
+      buffer: imageData.data,
+      width: imageData.width,
+      height: imageData.height,
+    });
+  };
+});
 
 // ------------------------------------------------------------------------------------------------
+
+/**
+ * Initialise this worker
+ */
+async function init(): Promise<void> {
+  canvas = new OffscreenCanvas(1, 1);
+  ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+  ctx.imageSmoothingEnabled = false;
+
+  layerCanvas = new OffscreenCanvas(1, 1);
+  layerCtx = layerCanvas.getContext('2d', { willReadFrequently: true })!;
+  layerCtx.imageSmoothingEnabled = false;
+  console.info('<Lagrange> Texture worker initialized successfully');
+}
+
+// --------------------------------------------------------------------------------------------------------------------
 
 function drawColorRamp(steps: SerializedColorRampStep[]): void {
   if (!steps || steps.length === 0) {
@@ -170,25 +195,25 @@ function shrinkFillRect(startRect: Rect, baseColor: SerializedColor, smoothingDi
 
   // ---- Precalculation phase ----
   // Fetch canvas border overlaps and prepare raw drawing data (ImageData, RGB components)
-  const overlaps = startRect.findCanvasBorderOverlaps(canvas.width, canvas.width);
+  const overlaps = startRect.findPlaneBorderOverlaps(canvas.width, canvas.height);
   const imageData = new ImageData(startRect.w, startRect.h);
   const r = Math.round(baseColor.r * 255);
   const g = Math.round(baseColor.g * 255);
   const b = Math.round(baseColor.b * 255);
 
   // ---- Drawing phase ----
-  // For each pixel, calculate its minimum X/Y distance to the rect bounds.
-  // If a side overlaps with the canvas border, set the distance to Infinity so it's never smoothed.
+  // For each pixel, calculate its minimum X/Y distance to the rect bounds
+  // If a side overlaps with the canvas border, set the distance to Infinity so it's never smoothed
   const iterPixelData = { minDistX: Infinity, minDistY: Infinity, minDist: Infinity, alpha: 255 };
   let rowOffset = 0;
   let dataIndex = 0;
   let alpha = 255;
   for (let y = 0; y < startRect.h; y++) {
-    iterPixelData.minDistY = Math.min(overlaps[0] ? Infinity : y, overlaps[2] ? Infinity : startRect.h - 1 - y);
+    iterPixelData.minDistY = Math.min(overlaps.top ? Infinity : y, overlaps.bottom ? Infinity : startRect.h - 1 - y);
     rowOffset = y * startRect.w * 4;
 
     for (let x = 0; x < startRect.w; x++) {
-      iterPixelData.minDistX = Math.min(overlaps[3] ? Infinity : x, overlaps[1] ? Infinity : startRect.w - 1 - x);
+      iterPixelData.minDistX = Math.min(overlaps.left ? Infinity : x, overlaps.right ? Infinity : startRect.w - 1 - x);
       iterPixelData.minDist = Math.min(iterPixelData.minDistX, iterPixelData.minDistY);
       // set alpha value according to the min distance to a rect border
       if (iterPixelData.minDist >= smoothingDistance) alpha = 255;

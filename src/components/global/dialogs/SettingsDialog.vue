@@ -189,6 +189,7 @@
                       name="baking-res-select"
                       :value="256"
                       :button-aria-label="$t('a11y.editor_baking_resolution_256')"
+                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 512"
                       >256</ParameterRadioOption
                     >
                     <ParameterRadioOption
@@ -197,6 +198,7 @@
                       name="baking-res-select"
                       :value="512"
                       :button-aria-label="$t('a11y.editor_baking_resolution_512')"
+                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 1024"
                       >512</ParameterRadioOption
                     >
                     <ParameterRadioOption
@@ -205,6 +207,7 @@
                       name="baking-res-select"
                       :value="1024"
                       :button-aria-label="$t('a11y.editor_baking_resolution_1k')"
+                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 2048"
                       >1024</ParameterRadioOption
                     >
                     <ParameterRadioOption
@@ -213,6 +216,7 @@
                       name="baking-res-select"
                       :value="2048"
                       :button-aria-label="$t('a11y.editor_baking_resolution_2k')"
+                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 4096"
                       >2048</ParameterRadioOption
                     >
                     <ParameterRadioOption
@@ -221,7 +225,7 @@
                       name="baking-res-select"
                       :value="4096"
                       :button-aria-label="$t('a11y.editor_baking_resolution_4k')"
-                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 4096"
+                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 8192"
                       >4096</ParameterRadioOption
                     >
                     <ParameterRadioOption
@@ -230,7 +234,7 @@
                       name="baking-res-select"
                       :value="8192"
                       :button-aria-label="$t('a11y.editor_baking_resolution_8k')"
-                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 8192"
+                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 16384"
                       >8192</ParameterRadioOption
                     >
                   </template>

@@ -13,7 +13,7 @@
       <iconify-icon
         :class="_progressError ? 'warn' : 'contrast'"
         icon="mingcute:sandglass-line"
-        width="2rem"
+        width="1.5rem"
         aria-hidden="true"
       />
       <span v-if="_dialogMode === 'textures'">{{ $t('dialog.export_progress.$title_textures') }}</span>

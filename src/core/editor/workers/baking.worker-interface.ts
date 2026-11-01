@@ -1,9 +1,4 @@
-import type {
-  BakingWorkerInput,
-  BakingWorkerOutput,
-  BakingWorkerTextureRequest,
-  BakingWorkerTextureResponse,
-} from '@core/editor/workers/baking.worker.ts';
+import type { BakingWorkerInput, BakingWorkerOutput } from '@core/editor/workers/baking.worker.ts';
 import type { TextureWorkerInterface } from '@core/editor/workers/texture.worker-interface.ts';
 import type PlanetData from '@core/models/planet/planet-data.model.ts';
 import { serializeBakingWorkerData } from '@core/editor/workers/baking.worker-serializer.ts';
@@ -15,30 +10,38 @@ export class BakingWorkerInterface {
 
   public run(
     textureWorkerInterface: TextureWorkerInterface,
-    input: BakingWorkerInput & { planetData: PlanetData },
+    input: BakingWorkerInput<'run'> & { planetData: PlanetData },
     onBakingMessage: (msg: MessageEvent) => void,
   ): void {
-    this._worker.onmessage = async (event: MessageEvent<BakingWorkerTextureRequest[] | BakingWorkerOutput>) => {
-      if (Array.isArray(event.data) && event.data.length > 0 && event.data[0].type === 'texture-request') {
-        const textures: Uint8ClampedArray[] = [];
-        for (const request of event.data) {
-          textures.push(
-            await textureWorkerInterface.run(request.width, request.height, request.operation, request.data),
+    this._worker.onmessage = async (event: MessageEvent<BakingWorkerOutput>) => {
+      console.log('(b:w:if) got response', event.data);
+      if (event.data.type === 'texture-request') {
+        for (const request of event.data.items) {
+          const rawBufferTex = await textureWorkerInterface.run(
+            request.width,
+            request.height,
+            request.operation,
+            request.data,
           );
+          this._worker.postMessage(<BakingWorkerInput<'texture-part'>>{
+            type: 'texture-part',
+            target: request.target,
+            targetIndex: request.targetIndex,
+            texture: rawBufferTex,
+          });
         }
-        this._worker.postMessage(<BakingWorkerTextureResponse>{
-          type: 'texture-response',
-          textures,
-        });
+        this._worker.postMessage(<BakingWorkerInput<'texture-done'>>{ type: 'texture-done' });
       } else {
         onBakingMessage(event);
       }
     };
-    this._worker.postMessage({
+
+    const message: BakingWorkerInput<'run'> = {
       ...input,
-      type: 'baking',
+      type: 'run',
       planetData: serializeBakingWorkerData(input.planetData),
-    });
+    };
+    this._worker.postMessage(message);
   }
 
   public terminate(): void {

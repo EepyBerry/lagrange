@@ -139,7 +139,3 @@ export type DataEventPayloadTypeMap = {
   renderEffectVignette: DataEventPayload<{ enabled: boolean; intensity: number; smoothness: number }>;
   renderEffectAntiAliasing: DataEventPayload<{ enabled: boolean; mode: AntiAliasingMode }>;
 };
-
-export type DataEventHandlers<K extends keyof DataEventPayloadTypeMap = never> = {
-  [P in K]: (event: DataEventPayload<P>) => void;
-};

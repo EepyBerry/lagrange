@@ -3,13 +3,13 @@ import {
   type TextureWorkerOperation,
   type TextureWorkerOutput,
 } from '@core/editor/workers/texture.worker.ts';
+import { type RawBufferTexture, toBufferTexture } from '@core/editor/workers/utils.ts';
 import { nanoid } from 'nanoid';
 
 export class TextureWorkerInterface {
   private readonly _worker: Worker = new Worker(new URL('@core/editor/workers/texture.worker.ts', import.meta.url), {
     type: 'module',
   });
-
   private readonly _callbacks: Map<string, (output: TextureWorkerOutput) => void> = new Map();
 
   constructor() {
@@ -36,15 +36,21 @@ export class TextureWorkerInterface {
     height: number,
     operation: TextureWorkerOperation,
     data: OperationData,
-  ): Promise<Uint8ClampedArray> {
+  ): Promise<RawBufferTexture> {
     if (!width || !height || width <= 0 || height <= 0) {
       return Promise.reject(new Error(`Invalid dimensions for texture worker: ${width}x${height}`));
     }
     return new Promise((resolve) => {
       const id: string = nanoid();
-      this._callbacks.set(id, async (output) => resolve(output.data));
-      const input: TextureWorkerInput<OperationData> = { type: 'texture-update', id, width, height, operation, data };
-      this._worker.postMessage(input);
+      this._callbacks.set(id, async (output) => resolve(toBufferTexture(output)));
+      this._worker.postMessage(<TextureWorkerInput<OperationData>>{
+        type: 'run',
+        id,
+        width,
+        height,
+        operation,
+        data,
+      });
     });
   }
 

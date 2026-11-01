@@ -24,6 +24,7 @@ import { BakingCloudsTSLMaterial } from "@tsl/materials/baking/clouds.baking.tsl
 import { BakingRingTSLMaterial } from "@tsl/materials/baking/ring.baking.tslmat.ts";
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import planeSphereMesh from '@assets/meshes/planesphere.glb?url';
+import { getGraphicsCapabilities } from '@core/capabilities/capabilities.ts';
 
 export type BakingSceneObjects = {
 	renderer?: WebGPURenderer;
@@ -116,12 +117,18 @@ export function createBakingRing(data: SerializedPlanetData, textures: Texture[]
  * @returns Scene, WebGPURenderer, OrthographicCamera, and RenderTarget root objects
  */
 export function createBakingSceneObjects(renderingBackend: EditorBackendType, width: number, height: number, pixelRatio: number): BakingSceneObjects {
-  const renderer = new WebGPURenderer({
+  const capabilities = getGraphicsCapabilities(renderingBackend);
+	const renderer = new WebGPURenderer({
     antialias: true,
     alpha: true,
     forceWebGL: renderingBackend == "webgl",
     canvas: new OffscreenCanvas(width, height),
+		requiredLimits: {
+			maxTextureDimension2D: capabilities.maxTextureSize,
+			maxBufferSize: capabilities.maxBufferSize,
+		}
   });
+	console.log(renderer)
   renderer.setPixelRatio(pixelRatio);
   return {
     renderer,
