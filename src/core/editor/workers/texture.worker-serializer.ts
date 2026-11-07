@@ -1,4 +1,4 @@
-import type { TextureWorkerOperation } from '@core/editor/workers/texture.worker.ts';
+import type { TextureWorkerInputDataType } from '@core/editor/workers/texture.worker.ts';
 import type {
   SerializedBiomeParameters,
   SerializedColorRampStep,
@@ -8,9 +8,9 @@ import type { BiomeParameters } from '@core/models/planet/features/biome-paramet
 
 export function serializeTextureWorkerData(
   data: unknown,
-  operation: TextureWorkerOperation,
+  dataType: TextureWorkerInputDataType,
 ): SerializedColorRampStep[] | SerializedBiomeParameters[] | undefined {
-  if (operation === 'color-ramp') {
+  if (dataType === 'color-ramp') {
     return (<ColorRampStep[]>data).map((step: ColorRampStep): SerializedColorRampStep => ({
       id: step.id,
       color: { r: step.color.r, g: step.color.g, b: step.color.b },
@@ -18,7 +18,7 @@ export function serializeTextureWorkerData(
       factor: step.factor,
     }));
   }
-  if (operation === 'biomes' || operation === 'biomes-emissive') {
+  if (dataType === 'biomes' || dataType === 'biomes-emissive') {
     return (<BiomeParameters[]>data).map((biome: BiomeParameters): SerializedBiomeParameters => ({
       id: biome.id,
       tempMin: biome.tempMin,

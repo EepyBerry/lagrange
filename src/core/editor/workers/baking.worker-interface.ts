@@ -20,7 +20,7 @@ export class BakingWorkerInterface {
           const rawBufferTex = await textureWorkerInterface.run(
             request.width,
             request.height,
-            request.operation,
+            request.dataType,
             request.data,
           );
           this._worker.postMessage(<BakingWorkerInput<'texture-part'>>{

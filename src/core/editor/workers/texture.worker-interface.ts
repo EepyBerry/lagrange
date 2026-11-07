@@ -1,6 +1,6 @@
 import {
   type TextureWorkerInput,
-  type TextureWorkerOperation,
+  type TextureWorkerInputDataType,
   type TextureWorkerOutput,
 } from '@core/editor/workers/texture.worker.ts';
 import { type RawBufferTexture, toBufferTexture } from '@core/editor/workers/utils.ts';
@@ -27,15 +27,15 @@ export class TextureWorkerInterface {
    * Runs an operation on the texture worker
    * @param width texture width
    * @param height texture height
-   * @param operation operation to run
+   * @param dataType operation to run
    * @param data operation data
    * @returns a promise that resolves with the generated texture data
    */
-  public run<OperationData>(
+  public run(
     width: number,
     height: number,
-    operation: TextureWorkerOperation,
-    data: OperationData,
+    dataType: TextureWorkerInputDataType,
+    data: unknown,
   ): Promise<RawBufferTexture> {
     if (!width || !height || width <= 0 || height <= 0) {
       return Promise.reject(new Error(`Invalid dimensions for texture worker: ${width}x${height}`));
@@ -43,12 +43,12 @@ export class TextureWorkerInterface {
     return new Promise((resolve) => {
       const id: string = nanoid();
       this._callbacks.set(id, async (output) => resolve(toBufferTexture(output)));
-      this._worker.postMessage(<TextureWorkerInput<OperationData>>{
+      this._worker.postMessage(<TextureWorkerInput>{
         type: 'run',
         id,
         width,
         height,
-        operation,
+        dataType,
         data,
       });
     });

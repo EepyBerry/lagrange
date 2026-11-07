@@ -1,7 +1,7 @@
-import type { RawBufferTexture } from '@core/editor/workers/utils.ts';
 import type { SerializedPlanetData } from '@core/editor/workers/worker-serializer.types.ts';
 import type { BakingSceneObjects } from '@core/helpers/baking.helper.ts';
 import { getGraphicsCapabilities, initGraphicsCapabilities } from '@core/capabilities/capabilities.ts';
+import { WorkerTextureDataType, type RawBufferTexture } from '@core/editor/workers/utils.ts';
 import * as BakingHelper from '@core/helpers/baking.helper.ts';
 import { type EditorBackendType } from '@core/types.ts';
 import { flipBufferY } from '@core/utils/render-utils.ts';
@@ -36,7 +36,7 @@ interface BakingWorkerOutputPayloadMap {
       height: number;
       target: BakingWorkerTextureTarget;
       targetIndex?: number;
-      operation: 'color-ramp' | 'biomes' | 'biomes-emissive';
+      dataType: WorkerTextureDataType;
       data: unknown;
     }[];
   };
@@ -98,14 +98,18 @@ init()
     self.onmessage = async (event: MessageEvent<BakingWorkerInput>) => {
       console.debug('(bak:wrk) got message', event.data);
       switch (event.data.type) {
-        case 'run':
+        case 'run': {
           currentBakingInput = event!.data;
-          bakingTextures.rings.push(...Array(currentBakingInput.planetData.ringsParams.length).fill(null));
+          if (currentBakingInput.planetData.ringsEnabled) {
+            bakingTextures.rings.push(...Array(currentBakingInput.planetData.ringsParams.length).fill(null));
+          }
           requestTextures();
           break;
-        case 'texture-part':
+        }
+        case 'texture-part': {
           processTextureResponse(event.data);
           break;
+        }
         case 'texture-done': {
           let hasHandlerFailure = false;
           for (const handler of stepHandlers) {
@@ -189,130 +193,6 @@ async function init(): Promise<void> {
   console.info('<Lagrange> Baking worker initialized successfully');
 }
 
-// --------------------------------------------------------------------------------------------------------------------
-
-/**
- * Baking pre-step: request the necessary textures
- */
-function requestTextures() {
-  self.postMessage(<BakingWorkerOutput<'texture-request'>>{
-    type: 'texture-request',
-    items: [
-      {
-        width: currentBakingInput.bakingResolution,
-        height: currentBakingInput.bakingResolution,
-        target: 'surface',
-        operation: 'color-ramp',
-        data: currentBakingInput.planetData.planetSurfaceColorRamp.steps,
-      },
-      {
-        width: currentBakingInput.bakingResolution,
-        height: currentBakingInput.bakingResolution,
-        target: 'biomes',
-        operation: 'biomes',
-        data: currentBakingInput.planetData.biomesParams,
-      },
-      {
-        width: currentBakingInput.bakingResolution,
-        height: currentBakingInput.bakingResolution,
-        target: 'biomes-emissive',
-        operation: 'biomes-emissive',
-        data: currentBakingInput.planetData.biomesParams,
-      },
-      {
-        width: currentBakingInput.bakingResolution,
-        height: currentBakingInput.bakingResolution,
-        target: 'cracks-surface',
-        operation: 'color-ramp',
-        data: currentBakingInput.planetData.cracksSurfaceColorRamp.steps,
-      },
-      {
-        width: currentBakingInput.bakingResolution,
-        height: currentBakingInput.bakingResolution,
-        target: 'cracks-underwater',
-        operation: 'color-ramp',
-        data: currentBakingInput.planetData.cracksUnderwaterColorRamp.steps,
-      },
-      {
-        width: currentBakingInput.bakingResolution,
-        height: currentBakingInput.bakingResolution,
-        target: 'craters',
-        operation: 'color-ramp',
-        data: currentBakingInput.planetData.cratersColorRamp.steps,
-      },
-      {
-        width: currentBakingInput.bakingResolution,
-        height: currentBakingInput.bakingResolution,
-        target: 'clouds',
-        operation: 'color-ramp',
-        data: currentBakingInput.planetData.cloudsColorRamp.steps,
-      },
-      ...currentBakingInput.planetData.ringsParams.map((ringParams, index) => ({
-        width: currentBakingInput.bakingResolution,
-        height: currentBakingInput.bakingResolution,
-        target: 'rings',
-        targetIndex: index,
-        operation: 'color-ramp',
-        data: ringParams.colorRamp.steps,
-      })),
-    ],
-  });
-}
-
-function processTextureResponse(response: BakingWorkerInput<'texture-part'>) {
-  switch (response.target) {
-    case 'surface': {
-      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
-      dt.needsUpdate = true;
-      bakingTextures.surface = dt;
-      break;
-    }
-    case 'biomes': {
-      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
-      dt.needsUpdate = true;
-      bakingTextures.biomes = dt;
-      break;
-    }
-    case 'biomes-emissive': {
-      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
-      dt.needsUpdate = true;
-      bakingTextures.biomesEmissive = dt;
-      break;
-    }
-    case 'cracks-surface': {
-      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
-      dt.needsUpdate = true;
-      bakingTextures.cracksSurface = dt;
-      break;
-    }
-    case 'cracks-underwater': {
-      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
-      dt.needsUpdate = true;
-      bakingTextures.cracksUnderwater = dt;
-      break;
-    }
-    case 'craters': {
-      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
-      dt.needsUpdate = true;
-      bakingTextures.craters = dt;
-      break;
-    }
-    case 'clouds': {
-      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
-      dt.needsUpdate = true;
-      bakingTextures.clouds = dt;
-      break;
-    }
-    case 'rings': {
-      console.log(response.targetIndex);
-      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
-      dt.needsUpdate = true;
-      bakingTextures.rings[response.targetIndex!] = dt;
-      break;
-    }
-  }
-}
-
 /**
  * Adjust and reload the baking objects according to the given parameters
  * @param resolutionMode square or equirectangular
@@ -363,6 +243,136 @@ function updateBakingObjects(resolutionMode: BakingResolution): void {
   bakingObjects.camera!.updateProjectionMatrix();
 
   bakingObjects.renderTarget!.setSize(bakingWidth, bakingHeight);
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Baking pre-step: request the necessary textures
+ */
+function requestTextures() {
+  const request: BakingWorkerOutput<'texture-request'> = {
+    type: 'texture-request',
+    items: [
+      {
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: 'surface',
+        dataType: 'color-ramp',
+        data: currentBakingInput.planetData.planetSurfaceColorRamp.steps,
+      },
+      {
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: 'biomes',
+        dataType: 'biomes',
+        data: currentBakingInput.planetData.biomesParams,
+      },
+      {
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: 'biomes-emissive',
+        dataType: 'biomes-emissive',
+        data: currentBakingInput.planetData.biomesParams,
+      },
+      {
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: 'cracks-surface',
+        dataType: 'color-ramp',
+        data: currentBakingInput.planetData.cracksSurfaceColorRamp.steps,
+      },
+      {
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: 'cracks-underwater',
+        dataType: 'color-ramp',
+        data: currentBakingInput.planetData.cracksUnderwaterColorRamp.steps,
+      },
+      {
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: 'craters',
+        dataType: 'color-ramp',
+        data: currentBakingInput.planetData.cratersColorRamp.steps,
+      },
+    ],
+  };
+  if (currentBakingInput.planetData.cloudsEnabled) {
+    request.items.push({
+      width: currentBakingInput.bakingResolution,
+      height: currentBakingInput.bakingResolution,
+      target: 'clouds',
+      dataType: 'color-ramp',
+      data: currentBakingInput.planetData.cloudsColorRamp.steps,
+    });
+  }
+  if (currentBakingInput.planetData.ringsEnabled) {
+    request.items.push(
+      ...currentBakingInput.planetData.ringsParams.map((ringParams, index) => ({
+        width: currentBakingInput.bakingResolution,
+        height: currentBakingInput.bakingResolution,
+        target: <BakingWorkerTextureTarget>'rings',
+        targetIndex: index,
+        dataType: WorkerTextureDataType.ColorRamp,
+        data: ringParams.colorRamp.steps,
+      })),
+    );
+  }
+  self.postMessage(request);
+}
+
+function processTextureResponse(response: BakingWorkerInput<'texture-part'>) {
+  switch (response.target) {
+    case 'surface': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.surface = dt;
+      break;
+    }
+    case 'biomes': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.biomes = dt;
+      break;
+    }
+    case 'biomes-emissive': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.biomesEmissive = dt;
+      break;
+    }
+    case 'cracks-surface': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.cracksSurface = dt;
+      break;
+    }
+    case 'cracks-underwater': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.cracksUnderwater = dt;
+      break;
+    }
+    case 'craters': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.craters = dt;
+      break;
+    }
+    case 'clouds': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.clouds = dt;
+      break;
+    }
+    case 'rings': {
+      const dt = new DataTexture(response.texture.buffer, response.texture.width, response.texture.height);
+      dt.needsUpdate = true;
+      bakingTextures.rings[response.targetIndex!] = dt;
+      break;
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -489,6 +499,7 @@ async function bakeMeshIntoBuffer(mesh: Mesh, shouldFlip: boolean): Promise<Uint
 }
 
 async function disposeResourcesAndFinishTask(): Promise<void> {
+  console.log(bakingTextures);
   bakingMeshes.planet!.geometry.dispose();
   bakingTextures.surface?.dispose();
   bakingTextures.biomes?.dispose();

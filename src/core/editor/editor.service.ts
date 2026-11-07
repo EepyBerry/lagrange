@@ -5,7 +5,7 @@ import { DataEventEndpoint } from '@core/editor/event/data-event-endpoint.ts';
 import { EDITOR_SCENE_DATA, EDITOR_STATE, EDITOR_WORKERS, EditorStatusCode } from '@core/editor/state/editor.state.ts';
 import { BakingWorkerInterface } from '@core/editor/workers/baking.worker-interface.ts';
 import { TextureWorkerInterface } from '@core/editor/workers/texture.worker-interface.ts';
-import { type BakedData, mapOutputPart } from '@core/editor/workers/utils.ts';
+import { type BakedData, makeBakedData, mapOutputPartToBakedData } from '@core/editor/workers/utils.ts';
 import * as Globals from '@core/globals.ts';
 import { AXIS_X } from '@core/globals.ts';
 import * as ComponentHelper from '@core/helpers/component.helper.ts';
@@ -349,7 +349,7 @@ export async function exportPlanetPreview(): Promise<string> {
 export async function extractPlanetTextures(progressDialog: ExportProgressDialogExposes): Promise<void> {
   EDITOR_STATE.value.status = EditorStatusCode.TextureExtraction;
   const settings = await idb.settings.limit(1).first();
-  const bakedData: BakedData = { rings: Array(EDITOR_STATE.value.planetData.ringsParams.length).fill(null) };
+  const bakedData: BakedData = makeBakedData(EDITOR_STATE.value.planetData);
   try {
     EDITOR_WORKERS.baking!.run(
       EDITOR_WORKERS.texture!,
@@ -374,26 +374,33 @@ async function processExtractionMessage(
   progressDialog: ExportProgressDialogExposes,
   bakingResolution: number,
 ) {
-  switch (event.data.type) {
-    case 'progress':
-      progressDialog.setProgress(event.data.progress);
-      break;
-    case 'error':
-      progressDialog.setError(event.data.error);
-      EDITOR_STATE.value.status = EditorStatusCode.Edition;
-      break;
-    case 'part':
-      mapOutputPart(bakedData, event.data);
-      break;
-    case 'done':
-      await exportBakedTextures(bakedData, bakingResolution);
-      progressDialog.setDone();
-      EDITOR_STATE.value.status = EditorStatusCode.Edition;
-      break;
+  try {
+    switch (event.data.type) {
+      case 'progress':
+        progressDialog.setProgress(event.data.progress);
+        break;
+      case 'error':
+        progressDialog.setError(event.data.error);
+        EDITOR_STATE.value.status = EditorStatusCode.Edition;
+        break;
+      case 'part':
+        mapOutputPartToBakedData(bakedData, event.data);
+        break;
+      case 'done':
+        await exportBakedTextures(bakedData, bakingResolution);
+        progressDialog.setDone();
+        EDITOR_STATE.value.status = EditorStatusCode.Edition;
+        break;
+    }
+  } catch (error) {
+    console.error(error);
+    progressDialog.setError(error);
+    EDITOR_STATE.value.status = EditorStatusCode.Edition;
   }
 }
 
 async function exportBakedTextures(data: BakedData, bakingResolution: number) {
+  console.log('exportBakedTextures', data);
   const textures = {
     planetMap: await bufferToImageBlob(data.planetMap!, bakingResolution * 2, bakingResolution),
     planetMetallicRoughnessMap: await bufferToImageBlob(
@@ -435,7 +442,7 @@ async function exportBakedTextures(data: BakedData, bakingResolution: number) {
 export async function exportPlanetToGLTF(progressDialog: ExportProgressDialogExposes) {
   EDITOR_STATE.value.status = EditorStatusCode.Export;
   const settings = await idb.settings.limit(1).first();
-  const bakedData: BakedData = { rings: Array(EDITOR_STATE.value.planetData.ringsParams.length).fill(null) };
+  const bakedData: BakedData = makeBakedData(EDITOR_STATE.value.planetData);
   try {
     EDITOR_WORKERS.baking!.run(
       EDITOR_WORKERS.texture!,
@@ -460,22 +467,28 @@ async function processBakingMessage(
   progressDialog: ExportProgressDialogExposes,
   bakingResolution: number,
 ) {
-  switch (event.data.type) {
-    case 'progress':
-      progressDialog.setProgress(event.data.progress);
-      break;
-    case 'error':
-      progressDialog.setError(event.data.error);
-      EDITOR_STATE.value.status = EditorStatusCode.Edition;
-      break;
-    case 'part':
-      mapOutputPart(bakedData, event.data);
-      break;
-    case 'done':
-      await exportBakedTexturesAsMesh(bakedData, bakingResolution);
-      progressDialog.setDone();
-      EDITOR_STATE.value.status = EditorStatusCode.Edition;
-      break;
+  try {
+    switch (event.data.type) {
+      case 'progress':
+        progressDialog.setProgress(event.data.progress);
+        break;
+      case 'error':
+        progressDialog.setError(event.data.error);
+        EDITOR_STATE.value.status = EditorStatusCode.Edition;
+        break;
+      case 'part':
+        mapOutputPartToBakedData(bakedData, event.data);
+        break;
+      case 'done':
+        await exportBakedTexturesAsMesh(bakedData, bakingResolution);
+        progressDialog.setDone();
+        EDITOR_STATE.value.status = EditorStatusCode.Edition;
+        break;
+    }
+  } catch (error) {
+    console.error(error);
+    progressDialog.setError(error);
+    EDITOR_STATE.value.status = EditorStatusCode.Edition;
   }
 }
 

@@ -3,27 +3,39 @@ import type {
   SerializedColor,
   SerializedColorRampStep,
 } from '@core/editor/workers/worker-serializer.types.ts';
+import { WorkerTextureDataType } from '@core/editor/workers/utils.ts';
 import { avg } from '@core/utils/math-utils.ts';
 import Rect from '@core/utils/math/rect.ts';
 import { Color } from 'three';
 import { clamp } from 'three/src/math/MathUtils.js';
 
-export type TextureWorkerOperation = 'color-ramp' | 'biomes' | 'biomes-emissive';
-export type TextureWorkerInput<OperationData> = {
-  type: 'run';
-  id: string;
-  width: number;
-  height: number;
-  operation: TextureWorkerOperation;
-  data: OperationData;
-};
-export type TextureWorkerOutput = {
-  id: string;
-  type: 'done';
-  buffer: Uint8ClampedArray;
-  width: number;
-  height: number;
-};
+interface TextureWorkerInputPayloadMap {
+  run: {
+    type: 'run';
+    id: string;
+    width: number;
+    height: number;
+    dataType: WorkerTextureDataType;
+    data: unknown;
+  };
+}
+type TextureWorkerInputType = keyof TextureWorkerInputPayloadMap;
+export type TextureWorkerInput<T extends TextureWorkerInputType = TextureWorkerInputType> = {
+  [K in T]: { type: T } & TextureWorkerInputPayloadMap[K];
+}[T];
+
+interface TextureWorkerOutputPayloadMap {
+  done: {
+    id: string;
+    buffer: Uint8ClampedArray;
+    width: number;
+    height: number;
+  };
+}
+type TextureWorkerOutputType = keyof TextureWorkerOutputPayloadMap;
+export type TextureWorkerOutput<T extends TextureWorkerOutputType = TextureWorkerOutputType> = {
+  [K in T]: { type: T } & TextureWorkerOutputPayloadMap[K];
+}[T];
 
 // --------------------------------------------------------------------------------------------------------------------
 let canvas: OffscreenCanvas;
@@ -33,7 +45,7 @@ let layerCtx: OffscreenCanvasRenderingContext2D;
 // --------------------------------------------------------------------------------------------------------------------
 
 init().then(() => {
-  self.onmessage = (msg: MessageEvent<TextureWorkerInput<unknown>>) => {
+  self.onmessage = (msg: MessageEvent<TextureWorkerInput>) => {
     if (!msg.data.type) return;
     console.debug('(tex:wrk) got message', msg.data);
     const data = msg.data;
@@ -51,25 +63,25 @@ init().then(() => {
     layerCanvas.width = data.width;
     layerCanvas.height = data.height;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    switch (data.operation) {
-      case 'color-ramp':
+    switch (data.dataType) {
+      case WorkerTextureDataType.ColorRamp:
         ctx.resetTransform();
         ctx.globalCompositeOperation = 'copy';
         drawColorRamp(<SerializedColorRampStep[]>data.data);
         break;
-      case 'biomes':
+      case WorkerTextureDataType.Biomes:
         ctx.globalCompositeOperation = 'source-over';
         (<SerializedBiomeParameters[]>data.data).toReversed().forEach((biome) => drawBiomeLayer(biome));
         break;
-      case 'biomes-emissive':
+      case WorkerTextureDataType.BiomesEmissive:
         ctx.globalCompositeOperation = 'source-over';
         (<SerializedBiomeParameters[]>data.data).toReversed().forEach((biome) => drawBiomeEmissivityLayer(biome));
         break;
     }
     const imageData = ctx.getImageData(0, 0, data.width, data.height);
     self.postMessage(<TextureWorkerOutput>{
-      id: data.id,
       type: 'done',
+      id: data.id,
       buffer: imageData.data,
       width: imageData.width,
       height: imageData.height,
