@@ -3,7 +3,7 @@ import type {
   SerializedColor,
   SerializedColorRampStep,
 } from '@core/editor/workers/worker-serializer.types.ts';
-import { WorkerTextureDataType } from '@core/editor/workers/utils.ts';
+import { WorkerTextureDataType } from '@core/utils/baking-utils.ts';
 import { avg } from '@core/utils/math-utils.ts';
 import Rect from '@core/utils/math/rect.ts';
 import { Color } from 'three';

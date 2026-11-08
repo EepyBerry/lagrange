@@ -128,7 +128,6 @@ export function createBakingSceneObjects(renderingBackend: EditorBackendType, wi
 			maxBufferSize: capabilities.maxBufferSize,
 		}
   });
-	console.log(renderer)
   renderer.setPixelRatio(pixelRatio);
   return {
     renderer,

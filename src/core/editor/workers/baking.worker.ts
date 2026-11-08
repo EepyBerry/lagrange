@@ -1,11 +1,11 @@
 import type { SerializedPlanetData } from '@core/editor/workers/worker-serializer.types.ts';
 import type { BakingSceneObjects } from '@core/helpers/baking.helper.ts';
 import { getGraphicsCapabilities, initGraphicsCapabilities } from '@core/capabilities/capabilities.ts';
-import { WorkerTextureDataType, type RawBufferTexture } from '@core/editor/workers/utils.ts';
 import * as BakingHelper from '@core/helpers/baking.helper.ts';
 import { type EditorBackendType } from '@core/types.ts';
+import { WorkerTextureDataType, type RawBufferTexture } from '@core/utils/baking-utils.ts';
 import { flipBufferY } from '@core/utils/render-utils.ts';
-import { DataTexture, Mesh, NearestFilter, NodeMaterial, WebGPURenderer } from 'three/webgpu';
+import { DataTexture, Mesh, NodeMaterial, WebGPURenderer } from 'three/webgpu';
 
 interface BakingWorkerInputPayloadMap {
   run: {
@@ -19,6 +19,7 @@ interface BakingWorkerInputPayloadMap {
     type: 'texture-part';
     target: BakingWorkerTextureTarget;
     targetIndex?: number;
+    dataType: WorkerTextureDataType;
     texture: RawBufferTexture;
   };
   'texture-done': { type: 'texture-done' };
@@ -40,9 +41,11 @@ interface BakingWorkerOutputPayloadMap {
       data: unknown;
     }[];
   };
+  'texture-received': { type: 'texture-received'; target: BakingWorkerTextureTarget; dataType: WorkerTextureDataType };
   progress: { type: 'progress'; progress: number; texture?: string };
-  error: { type: 'error'; error: Error };
   part: { type: 'part'; target: BakingWorkerOutputPartTarget; targetIndex?: number; buffer: Uint8Array };
+  skipped: { type: 'skipped' };
+  error: { type: 'error'; error: Error };
   done: { type: 'done' };
 }
 export type BakingWorkerOutputType = keyof BakingWorkerOutputPayloadMap;
@@ -107,6 +110,11 @@ init()
           break;
         }
         case 'texture-part': {
+          self.postMessage(<BakingWorkerOutput<'texture-received'>>{
+            type: 'texture-received',
+            target: event.data.target,
+            dataType: event.data.dataType,
+          });
           processTextureResponse(event.data);
           break;
         }
@@ -146,7 +154,6 @@ async function init(): Promise<void> {
   bakingMeshes.planet = await BakingHelper.loadPlaneSphereMesh();
 
   stepHandlers.push(async () => {
-    self.postMessage(<BakingWorkerOutput<'progress'>>{ type: 'progress', progress: 1 });
     updateBakingObjects('equirectangular');
   });
   stepHandlers.push(async () => {
@@ -174,6 +181,8 @@ async function init(): Promise<void> {
     if (currentBakingInput.planetData.cloudsEnabled) {
       const buffer = await bakeClouds();
       self.postMessage(<BakingWorkerOutput<'part'>>{ type: 'part', target: 'clouds', buffer });
+    } else {
+      self.postMessage(<BakingWorkerOutput<'skipped'>>{ type: 'skipped' });
     }
   });
   stepHandlers.push(async () => {
@@ -181,14 +190,22 @@ async function init(): Promise<void> {
     updateBakingObjects('square');
     if (currentBakingInput.planetData.ringsEnabled && currentBakingInput.planetData.ringsParams.length > 0) {
       const buffers = await bakeRings();
-      buffers.forEach((buffer, index) =>
-        self.postMessage(<BakingWorkerOutput<'part'>>{ type: 'part', target: 'rings', targetIndex: index, buffer }),
-      );
+      for (let i = 0; i < buffers.length; i++) {
+        self.postMessage(<BakingWorkerOutput<'part'>>{
+          type: 'part',
+          target: 'rings',
+          targetIndex: i,
+          buffer: buffers[i],
+        });
+      }
+    } else {
+      self.postMessage(<BakingWorkerOutput<'skipped'>>{ type: 'skipped' });
     }
   });
   stepHandlers.push(async () => {
     self.postMessage(<BakingWorkerOutput<'progress'>>{ type: 'progress', progress: 8 });
-    await disposeResourcesAndFinishTask();
+    await disposeResources();
+    self.postMessage(<BakingWorkerOutput<'done'>>{ type: 'done' });
   });
   console.info('<Lagrange> Baking worker initialized successfully');
 }
@@ -482,13 +499,9 @@ async function bakeMeshIntoBuffer(mesh: Mesh, shouldFlip: boolean): Promise<Uint
     bakingObjects.renderTarget!,
     mesh,
   );
-  if (currentBakingInput.bakingPixelize) {
-    texture.minFilter = NearestFilter;
-    texture.magFilter = NearestFilter;
-  }
 
   const buffer = new Uint8Array(<Uint8Array>texture.image.data);
-  // Note: a quirk of WebGPU texture rendering forces the Y-axis to be flipped compared to WebGL2
+  // Note: a quirk of WebGPU texture rendering forces the Y-axis to be flipped compared to WebGL2 (in some cases)
   if (shouldFlip) {
     buffer.set(flipBufferY(buffer, texture.width, texture.height));
   }
@@ -498,8 +511,7 @@ async function bakeMeshIntoBuffer(mesh: Mesh, shouldFlip: boolean): Promise<Uint
   return buffer;
 }
 
-async function disposeResourcesAndFinishTask(): Promise<void> {
-  console.log(bakingTextures);
+async function disposeResources(): Promise<void> {
   bakingMeshes.planet!.geometry.dispose();
   bakingTextures.surface?.dispose();
   bakingTextures.biomes?.dispose();
@@ -510,5 +522,4 @@ async function disposeResourcesAndFinishTask(): Promise<void> {
   bakingTextures.clouds?.dispose();
   bakingTextures.rings.forEach((tex) => tex.dispose());
   bakingTextures.rings.splice(0);
-  self.postMessage(<BakingWorkerOutput<'done'>>{ type: 'done' });
 }

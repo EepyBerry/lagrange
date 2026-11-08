@@ -27,6 +27,7 @@ export class BakingWorkerInterface {
             type: 'texture-part',
             target: request.target,
             targetIndex: request.targetIndex,
+            dataType: request.dataType,
             texture: rawBufferTex,
           });
         }

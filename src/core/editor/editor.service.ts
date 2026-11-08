@@ -5,7 +5,6 @@ import { DataEventEndpoint } from '@core/editor/event/data-event-endpoint.ts';
 import { EDITOR_SCENE_DATA, EDITOR_STATE, EDITOR_WORKERS, EditorStatusCode } from '@core/editor/state/editor.state.ts';
 import { BakingWorkerInterface } from '@core/editor/workers/baking.worker-interface.ts';
 import { TextureWorkerInterface } from '@core/editor/workers/texture.worker-interface.ts';
-import { type BakedData, makeBakedData, mapOutputPartToBakedData } from '@core/editor/workers/utils.ts';
 import * as Globals from '@core/globals.ts';
 import { AXIS_X } from '@core/globals.ts';
 import * as ComponentHelper from '@core/helpers/component.helper.ts';
@@ -17,6 +16,13 @@ import * as TextureHelper from '@core/helpers/texture.helper.ts';
 import { randomizePlanetData, resetPlanetData } from '@core/models/planet/planet-data.utils.ts';
 import { EditorSceneCreationMode, type EditorSceneData } from '@core/types.ts';
 import { UIEventBus } from '@core/ui-event-bus.ts';
+import {
+  type BakedData,
+  type ExportBlobs,
+  type ExportTextures,
+  makeBakedData,
+  mapOutputPartToBakedData,
+} from '@core/utils/baking-utils.ts';
 import { regeneratePRNGIfNecessary } from '@core/utils/math-utils.ts';
 import { bufferToDataTexture, bufferToImageBlob } from '@core/utils/render-utils.ts';
 import { sleep } from '@core/utils/utils.ts';
@@ -27,7 +33,7 @@ import { GLTFExporter } from 'three/addons';
 import { clamp, degToRad } from 'three/src/math/MathUtils.js';
 import { Mesh, MeshStandardNodeMaterial, type NodeMaterial } from 'three/webgpu';
 import { watch } from 'vue';
-import { type CameraMouseControlsScheme, idb } from '@/dexie.config.ts';
+import { type CameraMouseControlsScheme, idb, type IDBSettings } from '@/dexie.config.ts';
 
 // Internal attributes
 const gltfExporter = new GLTFExporter();
@@ -348,7 +354,7 @@ export async function exportPlanetPreview(): Promise<string> {
 
 export async function extractPlanetTextures(progressDialog: ExportProgressDialogExposes): Promise<void> {
   EDITOR_STATE.value.status = EditorStatusCode.TextureExtraction;
-  const settings = await idb.settings.limit(1).first();
+  const idbSettings = (await idb.settings.limit(1).first())!;
   const bakedData: BakedData = makeBakedData(EDITOR_STATE.value.planetData);
   try {
     EDITOR_WORKERS.baking!.run(
@@ -356,11 +362,11 @@ export async function extractPlanetTextures(progressDialog: ExportProgressDialog
       {
         type: 'run',
         planetData: EDITOR_STATE.value.planetData,
-        bakingPixelize: settings!.bakingPixelize ?? false,
-        bakingResolution: settings!.bakingResolution ?? 2048,
-        renderingBackend: settings!.renderingBackend,
+        bakingPixelize: idbSettings!.bakingPixelize ?? false,
+        bakingResolution: idbSettings!.bakingResolution ?? 2048,
+        renderingBackend: idbSettings!.renderingBackend,
       },
-      (message) => processExtractionMessage(bakedData, message, progressDialog, settings!.bakingResolution ?? 2048),
+      (message) => processExtractionMessage(idbSettings, bakedData, message, progressDialog),
     );
   } catch (error) {
     EDITOR_STATE.value.status = EditorStatusCode.Edition;
@@ -369,25 +375,42 @@ export async function extractPlanetTextures(progressDialog: ExportProgressDialog
 }
 
 async function processExtractionMessage(
+  idbSettings: IDBSettings,
   bakedData: BakedData,
   event: MessageEvent<BakingWorkerOutput>,
   progressDialog: ExportProgressDialogExposes,
-  bakingResolution: number,
 ) {
   try {
     switch (event.data.type) {
+      case 'texture-received':
+        progressDialog.updateProgressLog('dialog.export_progress.log_worker_texture_received', {
+          target: event.data.target,
+          textype: event.data.dataType,
+        });
+        break;
       case 'progress':
         progressDialog.setProgress(event.data.progress);
+        break;
+      case 'part':
+        if (event.data.targetIndex !== undefined) {
+          progressDialog.updateProgressLog('dialog.export_progress.log_part_indexed', {
+            map: event.data.target,
+            index: event.data.targetIndex,
+          });
+        } else {
+          progressDialog.updateProgressLog('dialog.export_progress.log_part', { map: event.data.target });
+        }
+        mapOutputPartToBakedData(bakedData, event.data);
+        break;
+      case 'skipped':
+        progressDialog.updateProgressLog('dialog.export_progress.log_skipped', {});
         break;
       case 'error':
         progressDialog.setError(event.data.error);
         EDITOR_STATE.value.status = EditorStatusCode.Edition;
         break;
-      case 'part':
-        mapOutputPartToBakedData(bakedData, event.data);
-        break;
       case 'done':
-        await exportBakedTextures(bakedData, bakingResolution);
+        await exportBakedTextures(progressDialog, bakedData, idbSettings!.bakingResolution ?? 2048);
         progressDialog.setDone();
         EDITOR_STATE.value.status = EditorStatusCode.Edition;
         break;
@@ -399,35 +422,57 @@ async function processExtractionMessage(
   }
 }
 
-async function exportBakedTextures(data: BakedData, bakingResolution: number) {
-  console.log('exportBakedTextures', data);
-  const textures = {
-    planetMap: await bufferToImageBlob(data.planetMap!, bakingResolution * 2, bakingResolution),
-    planetMetallicRoughnessMap: await bufferToImageBlob(
-      data.planetMetallicRoughnessMap!,
-      bakingResolution * 2,
-      bakingResolution,
-    ),
-    planetEmissiveMap: await bufferToImageBlob(data.planetEmissiveMap!, bakingResolution * 2, bakingResolution),
-    planetNormalMap: await bufferToImageBlob(data.planetNormalMap!, bakingResolution * 2, bakingResolution),
-    clouds: data.clouds ? await bufferToImageBlob(data.clouds!, bakingResolution * 2, bakingResolution) : undefined,
-    rings: data.rings
-      ? data.rings.map(async (rb) => await bufferToImageBlob(rb, bakingResolution, bakingResolution))
-      : undefined,
+async function exportBakedTextures(
+  progressDialog: ExportProgressDialogExposes,
+  data: BakedData,
+  bakingResolution: number,
+) {
+  const blobs: ExportBlobs = {
+    planetMap: undefined,
+    planetMetallicRoughnessMap: undefined,
+    planetEmissiveMap: undefined,
+    planetNormalMap: undefined,
+    clouds: undefined,
+    rings: [],
   };
+  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'main' });
+  blobs.planetMap = await bufferToImageBlob(data.planetMap!, bakingResolution * 2, bakingResolution);
+  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'metallic-roughness-map' });
+  blobs.planetMetallicRoughnessMap = await bufferToImageBlob(
+    data.planetMetallicRoughnessMap!,
+    bakingResolution * 2,
+    bakingResolution,
+  );
+  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'emissive-map' });
+  blobs.planetEmissiveMap = await bufferToImageBlob(data.planetEmissiveMap!, bakingResolution * 2, bakingResolution);
+  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'normal-map' });
+  blobs.planetNormalMap = await bufferToImageBlob(data.planetNormalMap!, bakingResolution * 2, bakingResolution);
+  if (data.clouds) {
+    progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'clouds' });
+    blobs.clouds = await bufferToImageBlob(data.clouds!, bakingResolution * 2, bakingResolution);
+  }
+  if (data.rings) {
+    for (let i = 0; i < data.rings.length; i++) {
+      progressDialog.updateProgressLog('dialog.export_progress.log_convert_indexed', {
+        map: 'rings',
+        index: i,
+      });
+      blobs.rings.push(await bufferToImageBlob(data.rings[i]!, bakingResolution, bakingResolution));
+    }
+  }
 
   const texZip = new JSZip();
-  texZip.file('main.png', textures.planetMap);
-  texZip.file('metallic_roughness.png', textures.planetMetallicRoughnessMap);
-  texZip.file('emissive.png', textures.planetEmissiveMap);
-  texZip.file('normal.png', textures.planetNormalMap);
-  if (textures.clouds) {
-    texZip.file('clouds.png', textures.clouds);
+  texZip.file('main.png', blobs.planetMap);
+  texZip.file('metallic_roughness.png', blobs.planetMetallicRoughnessMap);
+  texZip.file('emissive.png', blobs.planetEmissiveMap);
+  texZip.file('normal.png', blobs.planetNormalMap);
+  if (blobs.clouds) {
+    texZip.file('clouds.png', blobs.clouds);
   }
-  if (textures.rings) {
-    for (let i = 0; i < textures.rings.length; i++) {
+  if (blobs.rings) {
+    for (let i = 0; i < blobs.rings.length; i++) {
       const ringLetter = String.fromCharCode(i + 65).toLowerCase();
-      texZip.file(`ring_${ringLetter}.png`, textures.rings[i]);
+      texZip.file(`ring_${ringLetter}.png`, blobs.rings[i]);
     }
   }
   const generatedTexZip = await texZip.generateAsync({ type: 'blob' });
@@ -441,7 +486,7 @@ async function exportBakedTextures(data: BakedData, bakingResolution: number) {
 
 export async function exportPlanetToGLTF(progressDialog: ExportProgressDialogExposes) {
   EDITOR_STATE.value.status = EditorStatusCode.Export;
-  const settings = await idb.settings.limit(1).first();
+  const idbSettings = (await idb.settings.limit(1).first())!;
   const bakedData: BakedData = makeBakedData(EDITOR_STATE.value.planetData);
   try {
     EDITOR_WORKERS.baking!.run(
@@ -449,11 +494,11 @@ export async function exportPlanetToGLTF(progressDialog: ExportProgressDialogExp
       {
         type: 'run',
         planetData: EDITOR_STATE.value.planetData,
-        bakingPixelize: settings!.bakingPixelize ?? false,
-        bakingResolution: settings!.bakingResolution ?? 2048,
-        renderingBackend: settings!.renderingBackend,
+        bakingPixelize: idbSettings!.bakingPixelize ?? false,
+        bakingResolution: idbSettings!.bakingResolution ?? 2048,
+        renderingBackend: idbSettings!.renderingBackend,
       },
-      (message) => processBakingMessage(bakedData, message, progressDialog, settings!.bakingResolution ?? 2048),
+      (message) => processBakingMessage(idbSettings, bakedData, message, progressDialog),
     );
   } catch (error) {
     progressDialog.setError(error);
@@ -462,25 +507,42 @@ export async function exportPlanetToGLTF(progressDialog: ExportProgressDialogExp
 }
 
 async function processBakingMessage(
+  idbSettings: IDBSettings,
   bakedData: BakedData,
   event: MessageEvent<BakingWorkerOutput>,
   progressDialog: ExportProgressDialogExposes,
-  bakingResolution: number,
 ) {
   try {
     switch (event.data.type) {
+      case 'texture-received':
+        progressDialog.updateProgressLog('dialog.export_progress.log_worker_texture_received', {
+          target: event.data.target,
+          textype: event.data.dataType,
+        });
+        break;
       case 'progress':
         progressDialog.setProgress(event.data.progress);
+        break;
+      case 'part':
+        if (event.data.targetIndex !== undefined) {
+          progressDialog.updateProgressLog('dialog.export_progress.log_part_indexed', {
+            map: event.data.target,
+            index: event.data.targetIndex,
+          });
+        } else {
+          progressDialog.updateProgressLog('dialog.export_progress.log_part', { map: event.data.target });
+        }
+        mapOutputPartToBakedData(bakedData, event.data);
+        break;
+      case 'skipped':
+        progressDialog.updateProgressLog('dialog.export_progress.log_skipped', {});
         break;
       case 'error':
         progressDialog.setError(event.data.error);
         EDITOR_STATE.value.status = EditorStatusCode.Edition;
         break;
-      case 'part':
-        mapOutputPartToBakedData(bakedData, event.data);
-        break;
       case 'done':
-        await exportBakedTexturesAsMesh(bakedData, bakingResolution);
+        await exportBakedTexturesAsMesh(progressDialog, bakedData, idbSettings.bakingResolution ?? 2048);
         progressDialog.setDone();
         EDITOR_STATE.value.status = EditorStatusCode.Edition;
         break;
@@ -492,19 +554,44 @@ async function processBakingMessage(
   }
 }
 
-async function exportBakedTexturesAsMesh(data: BakedData, bakingResolution: number) {
-  const textures = {
-    planetMap: bufferToDataTexture(data.planetMap!, bakingResolution * 2, bakingResolution),
-    planetMetallicRoughnessMap: bufferToDataTexture(
-      data.planetMetallicRoughnessMap!,
-      bakingResolution * 2,
-      bakingResolution,
-    ),
-    planetEmissiveMap: bufferToDataTexture(data.planetEmissiveMap!, bakingResolution * 2, bakingResolution),
-    planetNormalMap: bufferToDataTexture(data.planetNormalMap!, bakingResolution * 2, bakingResolution),
-    clouds: data.clouds ? bufferToDataTexture(data.clouds!, bakingResolution * 2, bakingResolution) : undefined,
-    rings: data.rings ? data.rings.map((r) => bufferToDataTexture(r, bakingResolution, bakingResolution)) : [],
+async function exportBakedTexturesAsMesh(
+  progressDialog: ExportProgressDialogExposes,
+  data: BakedData,
+  bakingResolution: number,
+) {
+  const textures: ExportTextures = {
+    planetMap: undefined,
+    planetMetallicRoughnessMap: undefined,
+    planetEmissiveMap: undefined,
+    planetNormalMap: undefined,
+    clouds: undefined,
+    rings: [],
   };
+  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'main' });
+  textures.planetMap = bufferToDataTexture(data.planetMap!, bakingResolution * 2, bakingResolution);
+  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'metallic-roughness-map' });
+  textures.planetMetallicRoughnessMap = bufferToDataTexture(
+    data.planetMetallicRoughnessMap!,
+    bakingResolution * 2,
+    bakingResolution,
+  );
+  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'emissive-map' });
+  textures.planetEmissiveMap = bufferToDataTexture(data.planetEmissiveMap!, bakingResolution * 2, bakingResolution);
+  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'normal-map' });
+  textures.planetNormalMap = bufferToDataTexture(data.planetNormalMap!, bakingResolution * 2, bakingResolution);
+  if (data.clouds) {
+    progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'clouds' });
+    textures.clouds = bufferToDataTexture(data.clouds!, bakingResolution * 2, bakingResolution);
+  }
+  if (data.rings) {
+    for (let i = 0; i < data.rings.length; i++) {
+      progressDialog.updateProgressLog('dialog.export_progress.log_convert_indexed', {
+        map: 'rings',
+        index: i,
+      });
+      textures.rings.push(bufferToDataTexture(data.rings[i]!, bakingResolution, bakingResolution));
+    }
+  }
 
   const planetData = EDITOR_STATE.value.planetData;
   const geometry = ComponentHelper.createSphereGeometryComponent(planetData.planetMeshQuality);

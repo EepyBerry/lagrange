@@ -1,14 +1,14 @@
-import type { TextureWorkerInputDataType } from '@core/editor/workers/texture.worker.ts';
 import type {
   SerializedBiomeParameters,
   SerializedColorRampStep,
 } from '@core/editor/workers/worker-serializer.types.ts';
 import type { ColorRampStep } from '@core/models/planet/color-ramp.model.ts';
 import type { BiomeParameters } from '@core/models/planet/features/biome-parameters.model.ts';
+import type { WorkerTextureDataType } from '@core/utils/baking-utils.ts';
 
 export function serializeTextureWorkerData(
   data: unknown,
-  dataType: TextureWorkerInputDataType,
+  dataType: WorkerTextureDataType,
 ): SerializedColorRampStep[] | SerializedBiomeParameters[] | undefined {
   if (dataType === 'color-ramp') {
     return (<ColorRampStep[]>data).map((step: ColorRampStep): SerializedColorRampStep => ({

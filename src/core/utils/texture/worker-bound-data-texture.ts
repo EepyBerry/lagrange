@@ -1,6 +1,6 @@
 import { TextureWorkerInterface } from '@core/editor/workers/texture.worker-interface.ts';
 import { serializeTextureWorkerData } from '@core/editor/workers/texture.worker-serializer.ts';
-import { WorkerTextureDataType } from '@core/editor/workers/utils.ts';
+import { WorkerTextureDataType } from '@core/utils/baking-utils.ts';
 import { DataTexture } from 'three/webgpu';
 
 /**

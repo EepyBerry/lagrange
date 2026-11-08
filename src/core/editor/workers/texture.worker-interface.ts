@@ -1,9 +1,5 @@
-import {
-  type TextureWorkerInput,
-  type TextureWorkerInputDataType,
-  type TextureWorkerOutput,
-} from '@core/editor/workers/texture.worker.ts';
-import { type RawBufferTexture, toBufferTexture } from '@core/editor/workers/utils.ts';
+import { type TextureWorkerInput, type TextureWorkerOutput } from '@core/editor/workers/texture.worker.ts';
+import { type RawBufferTexture, toBufferTexture, type WorkerTextureDataType } from '@core/utils/baking-utils.ts';
 import { nanoid } from 'nanoid';
 
 export class TextureWorkerInterface {
@@ -31,12 +27,7 @@ export class TextureWorkerInterface {
    * @param data operation data
    * @returns a promise that resolves with the generated texture data
    */
-  public run(
-    width: number,
-    height: number,
-    dataType: TextureWorkerInputDataType,
-    data: unknown,
-  ): Promise<RawBufferTexture> {
+  public run(width: number, height: number, dataType: WorkerTextureDataType, data: unknown): Promise<RawBufferTexture> {
     if (!width || !height || width <= 0 || height <= 0) {
       return Promise.reject(new Error(`Invalid dimensions for texture worker: ${width}x${height}`));
     }

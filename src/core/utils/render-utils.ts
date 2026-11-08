@@ -1,5 +1,5 @@
 import { type ColorRamp, ColorRampStep } from '@core/models/planet/color-ramp.model.ts';
-import { CanvasTexture, DataTexture, type TypedArray } from 'three';
+import { CanvasTexture, DataTexture } from 'three';
 
 /**
  * Flips an UInt8Array's data vertically to have a normalized +X/+Y image
@@ -100,15 +100,15 @@ export function bufferToDataTexture(buffer: Uint8Array, width: number, height: n
 
 /**
  * Creates an instance of {@link Blob} from the given texture data by rendering it to a canvas
- * @param buf the buffer to write in the blob
- * @param w texture width
- * @param h texture height
+ * @param buffer the buffer to write in the blob
+ * @param width texture width
+ * @param height texture height
  */
-export async function bufferToImageBlob(buf: TypedArray, w: number, h: number) {
-  const canvas = new OffscreenCanvas(w, h);
+export async function bufferToImageBlob(buffer: Uint8Array, width: number, height: number) {
+  const canvas = new OffscreenCanvas(width, height);
   const ctx = canvas.getContext('2d')!;
-  const imageData = ctx.createImageData(w, h);
-  imageData.data.set(buf);
+  const imageData = ctx.createImageData(width, height);
+  imageData.data.set(buffer);
   ctx.putImageData(imageData, 0, 0);
 
   const tex = new CanvasTexture(canvas);

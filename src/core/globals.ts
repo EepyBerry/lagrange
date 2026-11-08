@@ -13,7 +13,6 @@ export const MESH_NAME_CLOUDS = 'Clouds';
 export const MESH_NAME_ATMOSPHERE = 'Atmosphere';
 export const MESH_NAME_RING_ANCHOR = 'RingSystem';
 export const MESH_NAME_SUN = 'Sun';
-export const MESH_NAME_SUNLIGHT = 'SunLight';
 export const MESH_NAME_AMBLIGHT = 'AmbientLight';
 // Baking scene object names
 export const MESH_NAME_METALLICROUGHNESSMAP = '_MetallicRoughnessMap';

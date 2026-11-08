@@ -1,6 +1,7 @@
 import type { BakingWorkerOutput } from '@core/editor/workers/baking.worker.ts';
 import type { TextureWorkerOutput } from '@core/editor/workers/texture.worker.ts';
 import type PlanetData from '@core/models/planet/planet-data.model.ts';
+import type { DataTexture } from 'three';
 
 // ----------------------------------------------------------------------------
 // Common worker types
@@ -62,4 +63,21 @@ export const mapOutputPartToBakedData = (bakedData: BakedData, data: BakingWorke
       bakedData.rings![data.targetIndex!] = data.buffer;
       break;
   }
+};
+
+export type ExportBlobs = {
+  planetMap: Blob | undefined;
+  planetMetallicRoughnessMap: Blob | undefined;
+  planetEmissiveMap: Blob | undefined;
+  planetNormalMap: Blob | undefined;
+  clouds: Blob | undefined;
+  rings: Blob[];
+};
+export type ExportTextures = {
+  planetMap: DataTexture | undefined;
+  planetMetallicRoughnessMap: DataTexture | undefined;
+  planetEmissiveMap: DataTexture | undefined;
+  planetNormalMap: DataTexture | undefined;
+  clouds: DataTexture | undefined;
+  rings: DataTexture[];
 };
