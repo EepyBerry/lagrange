@@ -13,6 +13,7 @@ import { exportMeshesToGLTF } from '@core/helpers/export.helper.ts';
 import * as PreviewHelper from '@core/helpers/preview.helper.ts';
 import * as SceneHelper from '@core/helpers/scene.helper.ts';
 import * as TextureHelper from '@core/helpers/texture.helper.ts';
+import { getLogMessage, LogMessage } from '@core/messages.ts';
 import { randomizePlanetData, resetPlanetData } from '@core/models/planet/planet-data.utils.ts';
 import { EditorSceneCreationMode, type EditorSceneData } from '@core/types.ts';
 import { UIEventBus } from '@core/ui-event-bus.ts';
@@ -33,7 +34,7 @@ import { GLTFExporter } from 'three/addons';
 import { clamp, degToRad } from 'three/src/math/MathUtils.js';
 import { Mesh, MeshStandardNodeMaterial, type NodeMaterial } from 'three/webgpu';
 import { watch } from 'vue';
-import { type CameraMouseControlsScheme, idb, type IDBSettings } from '@/dexie.config.ts';
+import { type CameraMouseControlsScheme, idb } from '@/dexie.config.ts';
 
 // Internal attributes
 const gltfExporter = new GLTFExporter();
@@ -248,7 +249,6 @@ export function unloadEditor() {
 function renderFrame() {
   EDITOR_SCENE_DATA.timer!.update();
   EDITOR_SCENE_DATA.lensFlare!.update(EDITOR_SCENE_DATA.renderer!, EDITOR_SCENE_DATA.scene!, EDITOR_SCENE_DATA.camera!);
-  //editorSceneData.renderer.render(editorSceneData.scene, editorSceneData.camera);
   EDITOR_SCENE_DATA.renderPipeline?.pipeline.render();
 }
 
@@ -366,59 +366,14 @@ export async function extractPlanetTextures(progressDialog: ExportProgressDialog
         bakingResolution: idbSettings!.bakingResolution ?? 2048,
         renderingBackend: idbSettings!.renderingBackend,
       },
-      (message) => processExtractionMessage(idbSettings, bakedData, message, progressDialog),
+      (message) =>
+        processWorkerMessage(bakedData, message, progressDialog, () =>
+          exportBakedTextures(progressDialog, bakedData, idbSettings!.bakingResolution ?? 2048),
+        ),
     );
   } catch (error) {
     EDITOR_STATE.value.status = EditorStatusCode.Edition;
     throw error;
-  }
-}
-
-async function processExtractionMessage(
-  idbSettings: IDBSettings,
-  bakedData: BakedData,
-  event: MessageEvent<BakingWorkerOutput>,
-  progressDialog: ExportProgressDialogExposes,
-) {
-  try {
-    switch (event.data.type) {
-      case 'texture-received':
-        progressDialog.updateProgressLog('dialog.export_progress.log_worker_texture_received', {
-          target: event.data.target,
-          textype: event.data.dataType,
-        });
-        break;
-      case 'progress':
-        progressDialog.setProgress(event.data.progress);
-        break;
-      case 'part':
-        if (event.data.targetIndex !== undefined) {
-          progressDialog.updateProgressLog('dialog.export_progress.log_part_indexed', {
-            map: event.data.target,
-            index: event.data.targetIndex,
-          });
-        } else {
-          progressDialog.updateProgressLog('dialog.export_progress.log_part', { map: event.data.target });
-        }
-        mapOutputPartToBakedData(bakedData, event.data);
-        break;
-      case 'skipped':
-        progressDialog.updateProgressLog('dialog.export_progress.log_skipped', {});
-        break;
-      case 'error':
-        progressDialog.setError(event.data.error);
-        EDITOR_STATE.value.status = EditorStatusCode.Edition;
-        break;
-      case 'done':
-        await exportBakedTextures(progressDialog, bakedData, idbSettings!.bakingResolution ?? 2048);
-        progressDialog.setDone();
-        EDITOR_STATE.value.status = EditorStatusCode.Edition;
-        break;
-    }
-  } catch (error) {
-    console.error(error);
-    progressDialog.setError(error);
-    EDITOR_STATE.value.status = EditorStatusCode.Edition;
   }
 }
 
@@ -435,27 +390,36 @@ async function exportBakedTextures(
     clouds: undefined,
     rings: [],
   };
-  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'main' });
+  progressDialog.updateProgressLog('info', {
+    message: getLogMessage(LogMessage.BakingConvert, { map: 'main' }),
+  });
   blobs.planetMap = await bufferToImageBlob(data.planetMap!, bakingResolution * 2, bakingResolution);
-  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'metallic-roughness-map' });
+  progressDialog.updateProgressLog('info', {
+    message: getLogMessage(LogMessage.BakingConvert, { map: 'metallic-roughness-map' }),
+  });
   blobs.planetMetallicRoughnessMap = await bufferToImageBlob(
     data.planetMetallicRoughnessMap!,
     bakingResolution * 2,
     bakingResolution,
   );
-  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'emissive-map' });
+  progressDialog.updateProgressLog('info', {
+    message: getLogMessage(LogMessage.BakingConvert, { map: 'emissive-map' }),
+  });
   blobs.planetEmissiveMap = await bufferToImageBlob(data.planetEmissiveMap!, bakingResolution * 2, bakingResolution);
-  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'normal-map' });
+  progressDialog.updateProgressLog('info', {
+    message: getLogMessage(LogMessage.BakingConvert, { map: 'normal-map' }),
+  });
   blobs.planetNormalMap = await bufferToImageBlob(data.planetNormalMap!, bakingResolution * 2, bakingResolution);
   if (data.clouds) {
-    progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'clouds' });
+    progressDialog.updateProgressLog('info', {
+      message: getLogMessage(LogMessage.BakingConvert, { map: 'clouds' }),
+    });
     blobs.clouds = await bufferToImageBlob(data.clouds!, bakingResolution * 2, bakingResolution);
   }
   if (data.rings) {
     for (let i = 0; i < data.rings.length; i++) {
-      progressDialog.updateProgressLog('dialog.export_progress.log_convert_indexed', {
-        map: 'rings',
-        index: i,
+      progressDialog.updateProgressLog('info', {
+        message: getLogMessage(LogMessage.BakingConvertIndexed, { map: 'rings', index: i }),
       });
       blobs.rings.push(await bufferToImageBlob(data.rings[i]!, bakingResolution, bakingResolution));
     }
@@ -498,58 +462,13 @@ export async function exportPlanetToGLTF(progressDialog: ExportProgressDialogExp
         bakingResolution: idbSettings!.bakingResolution ?? 2048,
         renderingBackend: idbSettings!.renderingBackend,
       },
-      (message) => processBakingMessage(idbSettings, bakedData, message, progressDialog),
+      (message) =>
+        processWorkerMessage(bakedData, message, progressDialog, () =>
+          exportBakedTexturesAsMesh(progressDialog, bakedData, idbSettings.bakingResolution ?? 2048),
+        ),
     );
   } catch (error) {
-    progressDialog.setError(error);
-    EDITOR_STATE.value.status = EditorStatusCode.Edition;
-  }
-}
-
-async function processBakingMessage(
-  idbSettings: IDBSettings,
-  bakedData: BakedData,
-  event: MessageEvent<BakingWorkerOutput>,
-  progressDialog: ExportProgressDialogExposes,
-) {
-  try {
-    switch (event.data.type) {
-      case 'texture-received':
-        progressDialog.updateProgressLog('dialog.export_progress.log_worker_texture_received', {
-          target: event.data.target,
-          textype: event.data.dataType,
-        });
-        break;
-      case 'progress':
-        progressDialog.setProgress(event.data.progress);
-        break;
-      case 'part':
-        if (event.data.targetIndex !== undefined) {
-          progressDialog.updateProgressLog('dialog.export_progress.log_part_indexed', {
-            map: event.data.target,
-            index: event.data.targetIndex,
-          });
-        } else {
-          progressDialog.updateProgressLog('dialog.export_progress.log_part', { map: event.data.target });
-        }
-        mapOutputPartToBakedData(bakedData, event.data);
-        break;
-      case 'skipped':
-        progressDialog.updateProgressLog('dialog.export_progress.log_skipped', {});
-        break;
-      case 'error':
-        progressDialog.setError(event.data.error);
-        EDITOR_STATE.value.status = EditorStatusCode.Edition;
-        break;
-      case 'done':
-        await exportBakedTexturesAsMesh(progressDialog, bakedData, idbSettings.bakingResolution ?? 2048);
-        progressDialog.setDone();
-        EDITOR_STATE.value.status = EditorStatusCode.Edition;
-        break;
-    }
-  } catch (error) {
-    console.error(error);
-    progressDialog.setError(error);
+    progressDialog.setError(error as Error | string);
     EDITOR_STATE.value.status = EditorStatusCode.Edition;
   }
 }
@@ -567,27 +486,36 @@ async function exportBakedTexturesAsMesh(
     clouds: undefined,
     rings: [],
   };
-  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'main' });
+  progressDialog.updateProgressLog('info', {
+    message: getLogMessage(LogMessage.BakingConvert, { map: 'main' }),
+  });
   textures.planetMap = bufferToDataTexture(data.planetMap!, bakingResolution * 2, bakingResolution);
-  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'metallic-roughness-map' });
+  progressDialog.updateProgressLog('info', {
+    message: getLogMessage(LogMessage.BakingConvert, { map: 'metallic-roughness-map' }),
+  });
   textures.planetMetallicRoughnessMap = bufferToDataTexture(
     data.planetMetallicRoughnessMap!,
     bakingResolution * 2,
     bakingResolution,
   );
-  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'emissive-map' });
+  progressDialog.updateProgressLog('info', {
+    message: getLogMessage(LogMessage.BakingConvert, { map: 'emissive-map' }),
+  });
   textures.planetEmissiveMap = bufferToDataTexture(data.planetEmissiveMap!, bakingResolution * 2, bakingResolution);
-  progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'normal-map' });
+  progressDialog.updateProgressLog('info', {
+    message: getLogMessage(LogMessage.BakingConvert, { map: 'normal-map' }),
+  });
   textures.planetNormalMap = bufferToDataTexture(data.planetNormalMap!, bakingResolution * 2, bakingResolution);
   if (data.clouds) {
-    progressDialog.updateProgressLog('dialog.export_progress.log_convert', { map: 'clouds' });
+    progressDialog.updateProgressLog('info', {
+      message: getLogMessage(LogMessage.BakingConvert, { map: 'clouds' }),
+    });
     textures.clouds = bufferToDataTexture(data.clouds!, bakingResolution * 2, bakingResolution);
   }
   if (data.rings) {
     for (let i = 0; i < data.rings.length; i++) {
-      progressDialog.updateProgressLog('dialog.export_progress.log_convert_indexed', {
-        map: 'rings',
-        index: i,
+      progressDialog.updateProgressLog('info', {
+        message: getLogMessage(LogMessage.BakingConvertIndexed, { map: 'rings', index: i }),
       });
       textures.rings.push(bufferToDataTexture(data.rings[i]!, bakingResolution, bakingResolution));
     }
@@ -671,4 +599,59 @@ async function exportBakedTexturesAsMesh(
     mesh.geometry?.dispose();
     (<NodeMaterial>mesh.material)?.dispose();
   });
+}
+
+async function processWorkerMessage(
+  bakedData: BakedData,
+  event: MessageEvent<BakingWorkerOutput>,
+  progressDialog: ExportProgressDialogExposes,
+  onDone: () => Promise<void>,
+) {
+  try {
+    switch (event.data.type) {
+      case 'texture-received':
+        progressDialog.updateProgressLog('info', {
+          message: getLogMessage(LogMessage.BakingWorkerTextureReceived, {
+            target: event.data.target,
+            textype: event.data.dataType,
+          }),
+        });
+        break;
+      case 'progress':
+        progressDialog.setProgress(event.data.progress);
+        break;
+      case 'part':
+        if (event.data.targetIndex !== undefined) {
+          progressDialog.updateProgressLog('info', {
+            message: getLogMessage(LogMessage.BakingPartIndexed, {
+              map: event.data.target,
+              index: event.data.targetIndex,
+            }),
+          });
+        } else {
+          progressDialog.updateProgressLog('info', {
+            message: getLogMessage(LogMessage.BakingPart, { map: event.data.target }),
+          });
+        }
+        mapOutputPartToBakedData(bakedData, event.data);
+        break;
+      case 'skipped':
+        progressDialog.updateProgressLog('alert', {
+          message: getLogMessage(LogMessage.BakingSkipped),
+        });
+        break;
+      case 'error':
+        progressDialog.setError(event.data.error);
+        EDITOR_STATE.value.status = EditorStatusCode.Edition;
+        break;
+      case 'done':
+        await onDone();
+        progressDialog.setDone();
+        EDITOR_STATE.value.status = EditorStatusCode.Edition;
+        break;
+    }
+  } catch (error) {
+    progressDialog.setError(error as Error | string);
+    EDITOR_STATE.value.status = EditorStatusCode.Edition;
+  }
 }

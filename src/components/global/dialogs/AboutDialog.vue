@@ -59,7 +59,7 @@
         <LgvTabGroup :tabs="aboutTabs">
           <template #tab-changelog>
             <section id="tab-changelogs">
-              <CollapsibleSection icon="mingcute:world-2-line">
+              <LgvCollapsibleSection icon="mingcute:world-2-line">
                 <template #title>{{ $t('dialog.about.changelogs.02_title') }}</template>
                 <template #content>
                   <div class="update-features">
@@ -70,8 +70,8 @@
                     </ul>
                   </div>
                 </template>
-              </CollapsibleSection>
-              <CollapsibleSection icon="ph:mountains">
+              </LgvCollapsibleSection>
+              <LgvCollapsibleSection icon="ph:mountains">
                 <template #title>{{ $t('dialog.about.changelogs.03_title') }}</template>
                 <template #content>
                   <div class="update-features">
@@ -82,8 +82,8 @@
                     </ul>
                   </div>
                 </template>
-              </CollapsibleSection>
-              <CollapsibleSection icon="ph:planet">
+              </LgvCollapsibleSection>
+              <LgvCollapsibleSection icon="ph:planet">
                 <template #title>{{ $t('dialog.about.changelogs.04_title') }}</template>
                 <template #content>
                   <div class="update-features">
@@ -101,8 +101,13 @@
                     </ul>
                   </div>
                 </template>
-              </CollapsibleSection>
-              <CollapsibleSection id="update-05" icon="ph:lightning" style="background: var(--lg-update-05-background)">
+              </LgvCollapsibleSection>
+              <LgvCollapsibleSection
+                variant="filled"
+                id="update-05"
+                icon="ph:lightning"
+                style="background: var(--lg-update-05-background)"
+              >
                 <template #title>{{ $t('dialog.about.changelogs.05_title') }}</template>
                 <template #content>
                   <div class="update-features">
@@ -122,8 +127,9 @@
                     </ul>
                   </div>
                 </template>
-              </CollapsibleSection>
-              <CollapsibleSection
+              </LgvCollapsibleSection>
+              <LgvCollapsibleSection
+                variant="filled"
                 id="update-06"
                 icon="hugeicons:moon-01"
                 style="background: var(--lg-update-06-background)"
@@ -138,7 +144,7 @@
                     </ul>
                   </div>
                 </template>
-              </CollapsibleSection>
+              </LgvCollapsibleSection>
             </section>
           </template>
           <template #tab-credits>
@@ -201,10 +207,10 @@ import type { AboutDialogExposes } from '@components/global/dialogs/AboutDialog.
 import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import type { LvgTabGroupTab } from '@lib/components/layout/LgvTabGroup.types.ts';
 import AppLogo from '@components/global/elements/AppLogo.vue';
-import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import LgvLink from '@lib/components/base/LgvLink.vue';
 import LgvBadge from '@lib/components/custom/LgvBadge.vue';
+import LgvCollapsibleSection from '@lib/components/layout/LgvCollapsibleSection.vue';
 import LgvTabGroup from '@lib/components/layout/LgvTabGroup.vue';
 import { computed, useTemplateRef, type ComputedRef } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -324,15 +330,9 @@ const appVersion = import.meta.env.APP_VERSION;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    .collapsible-section {
-      &#update-05,
-      &#update-06 {
-        border: none;
-      }
-      &:last-child {
-        $clip-length: 0.75rem;
-        clip-path: polygon(0 0, 100% 0, 100% calc(100% - $clip-length), calc(100% - $clip-length) 100%, 0 100%);
-      }
+    .collapsible-section:last-child {
+      $clip-length: 0.75rem;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - $clip-length), calc(100% - $clip-length) 100%, 0 100%);
     }
     .update-features {
       display: flex;

@@ -265,7 +265,8 @@
       "step_7": "Ringe Baking",
       "step_8": "Finalisierung",
       "step_9": "Fertig !",
-      "step_failed": "Fehler"
+      "step_failed": "Fehler",
+      "log": "Loggen"
     },
     "confirm_reset": {
       "$title": "Zurücksetzen",

@@ -28,16 +28,16 @@
             <LgvNotification id="tmp-notification" type="warn">
               {{ $t('dialog.init.$tmp_wip') }}
             </LgvNotification>
-            <CollapsibleSection id="init-update-brief" icon="mingcute:news-line">
+            <LgvCollapsibleSection id="init-update-brief" icon="mingcute:news-line">
               <template #title>{{ $t('dialog.init.update_title') }}</template>
               <template #content>
                 {{ $t('dialog.init.update_brief') }}
               </template>
-            </CollapsibleSection>
+            </LgvCollapsibleSection>
           </div>
         </section>
 
-        <CollapsibleSection icon="mingcute-hotkey-line">
+        <LgvCollapsibleSection icon="mingcute-hotkey-line">
           <template #title>{{ $t('dialog.init.keybinds') }}</template>
           <template #content>
             <p>
@@ -74,9 +74,9 @@
               </li>
             </ul>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
 
-        <CollapsibleSection icon="mingcute:settings-1-line">
+        <LgvCollapsibleSection icon="mingcute:settings-1-line">
           <template #title>{{ $t('dialog.init.topbar') }}</template>
           <template #content>
             <div class="controls-container">
@@ -133,9 +133,9 @@
               </ul>
             </div>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
 
-        <CollapsibleSection icon="mingcute:layout-bottom-close-line">
+        <LgvCollapsibleSection icon="mingcute:layout-bottom-close-line">
           <template #title>{{ $t('dialog.init.footer') }}</template>
           <template #content>
             <ul class="controls-container controls">
@@ -153,7 +153,7 @@
               </li>
             </ul>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
 
         <div id="init-actions">
           <div class="init-checkbox">
@@ -179,10 +179,10 @@
 import type { InitDialogExposes } from '@components/global/dialogs/InitDialog.types.ts';
 import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import AppLogo from '@components/global/elements/AppLogo.vue';
-import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import LgvNotification from '@lib/components/custom/LgvNotification.vue';
+import LgvCollapsibleSection from '@lib/components/layout/LgvCollapsibleSection.vue';
 import { onMounted, ref, useTemplateRef } from 'vue';
 import type { IDBKeyBinding } from '@/dexie.config';
 

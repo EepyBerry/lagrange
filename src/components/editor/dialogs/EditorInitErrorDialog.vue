@@ -25,14 +25,12 @@
         <hr class="error-divider" />
         <p class="error-container">{{ _error }}</p>
       </div>
-      <CollapsibleSection v-show="_stack.length > 0" class="warn code">
+      <LgvCollapsibleSection v-show="!!_error" class="warn">
         <template #title>{{ $t('common.error.stacktrace') }}</template>
         <template #content>
-          <div class="code-block">
-            <pre v-for="(line, i) of _stack" :key="i">{{ line }}</pre>
-          </div>
+          <LgvLogBlock ref="errorLogBlockRef" id="error-log-block" class="warn" :show-glyphs="false" />
         </template>
-      </CollapsibleSection>
+      </LgvCollapsibleSection>
     </template>
     <template #actions>
       <LgvButton v-if="allowRendererFallback" class="warn" icon="tabler:reload" @click="closeWithFallback">
@@ -44,36 +42,36 @@
 <script setup lang="ts">
 import type { EditorInitErrorDialogExposes } from '@components/editor/dialogs/EditorInitErrorDialog.types.ts';
 import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
-import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
+import type { LgvLogBlockExposes } from '@lib/components/custom/LgvLogBlock.types.ts';
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import LgvDialog from '@lib/components/base/LgvDialog.vue';
+import LgvLogBlock from '@lib/components/custom/LgvLogBlock.vue';
+import LgvCollapsibleSection from '@lib/components/layout/LgvCollapsibleSection.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
 
 const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
+const errorLogBlockRef = useTemplateRef<LgvLogBlockExposes>('errorLogBlockRef');
+const $emit = defineEmits(['close']);
 defineExpose<EditorInitErrorDialogExposes>({ open: openWithError });
 
 const _error: Ref<string> = ref('');
-const _stack: Ref<string[]> = ref([]);
 const _wantsFallback: Ref<boolean> = ref(false);
 const allowRendererFallback: Ref<boolean> = ref(false);
 
-function openWithError(error: string, stack?: string, isWebGPUError: boolean = false) {
-  _error.value = error;
+function openWithError(error: Error | string, isWebGPUError: boolean = false) {
+  _error.value = error instanceof Error ? error.message : error;
   allowRendererFallback.value = isWebGPUError;
-  if (stack) {
-    _stack.value.push(
-      ...stack
-        .replaceAll('\n', '¤')
-        .split('¤')
-        .filter((d) => d.length > 0),
-    );
-  }
+  errorLogBlockRef.value!.log('error', { error });
   dialogRef.value?.open();
 }
 
 async function closeWithFallback() {
   _wantsFallback.value = true;
   dialogRef.value!.close();
+}
+
+function onClose() {
+  $emit('close', _wantsFallback);
 }
 </script>
 <style scoped lang="scss">

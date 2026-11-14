@@ -157,7 +157,7 @@ main {
     z-index: 1;
     position: fixed;
     inset: 0 -4rem;
-    box-shadow: inset 0 0 2.5rem 1.5rem var(--black);
+    box-shadow: inset 0 0 2.5rem 1.5rem var(--lg-black);
     pointer-events: none;
     user-select: none;
   }

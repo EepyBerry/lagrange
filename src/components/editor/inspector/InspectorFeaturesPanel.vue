@@ -199,7 +199,7 @@ function selectFeature(feature: EditorFeatures) {
     }
     iconify-icon {
       color: var(--lg-features);
-      filter: drop-shadow(0 0 4px black);
+      filter: drop-shadow(0 0 4px var(--lg-black));
     }
   }
 

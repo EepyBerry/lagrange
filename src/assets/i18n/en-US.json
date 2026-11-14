@@ -266,16 +266,7 @@
       "step_8": "Finalizing",
       "step_9": "Done!",
       "step_failed": "failed!",
-      "log": "Progress log",
-      "log_step": "Baking progress: step {curstep} of {maxstep}",
-      "log_complete": "Baking operation completed",
-      "log_skipped": " > Skipped, associated mesh/meshes disabled or non-existent",
-      "log_worker_texture_received": " > Received shader texture '{target}' from worker, type={textype}",
-      "log_part": " > Received baked texture map '{map}' from worker",
-      "log_part_indexed": " > Received baked texture map {map} from worker, index={index}",
-      "log_convert": " > Converting baked texture map '{map}'...",
-      "log_convert_indexed": " > Converting baked texture map '{map}'...",
-      "log_convert_complete": " > Done"
+      "log": "Progress log"
     },
     "confirm_reset": {
       "$title": "Confirm reset",

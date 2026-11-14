@@ -13,7 +13,7 @@
     </template>
     <template #content>
       <div id="settings-container">
-        <CollapsibleSection id="section-general" icon="mingcute:tool-line" expand>
+        <LgvCollapsibleSection id="section-general" icon="mingcute:tool-line" expand>
           <template #title>{{ $t('dialog.settings.general') }}</template>
           <template #content>
             <ParameterGrid>
@@ -90,9 +90,9 @@
               </ParameterCheckbox>
             </ParameterGrid>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
 
-        <CollapsibleSection id="section-editor" icon="ph:planet">
+        <LgvCollapsibleSection id="section-editor" icon="ph:planet">
           <template #title>
             {{ $t('dialog.settings.editor') }}
           </template>
@@ -250,9 +250,9 @@
               </ParameterGrid>
             </div>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
 
-        <CollapsibleSection id="section-keybinds" icon="mingcute:hotkey-line">
+        <LgvCollapsibleSection id="section-keybinds" icon="mingcute:hotkey-line">
           <template #title>
             {{ $t('dialog.settings.keybinds') }}
           </template>
@@ -330,9 +330,9 @@
               </ParameterKeyBinding>
             </ParameterGrid>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
 
-        <CollapsibleSection id="section-a11y" icon="material-symbols:accessibility-new-rounded">
+        <LgvCollapsibleSection id="section-a11y" icon="material-symbols:accessibility-new-rounded">
           <template #title>
             {{ $t('dialog.settings.a11y') }}
           </template>
@@ -358,9 +358,9 @@
               </ParameterGrid>
             </div>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
 
-        <CollapsibleSection id="section-a11y" icon="mingcute:star-2-line">
+        <LgvCollapsibleSection id="section-a11y" icon="mingcute:star-2-line">
           <template #title>
             {{ $t('dialog.settings.extras') }}
           </template>
@@ -405,9 +405,9 @@
               </ParameterGrid>
             </div>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
 
-        <CollapsibleSection id="section-advanced" icon="mingcute:alert-diamond-line">
+        <LgvCollapsibleSection id="section-advanced" icon="mingcute:alert-diamond-line">
           <template #title>
             {{ $t('dialog.settings.advanced') }}
           </template>
@@ -464,7 +464,7 @@
               </ParameterGrid>
             </div>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
       </div>
     </template>
   </LgvDialog>
@@ -475,7 +475,6 @@
 import type { ClearDataConfirmDialogExposes } from '@components/global/dialogs/ClearDataConfirmDialog.types.ts';
 import type { SettingsDialogExposes } from '@components/global/dialogs/SettingsDialog.types.ts';
 import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
-import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import ParameterCheckbox from '@components/global/parameters/ParameterCheckbox.vue';
 import ParameterDivider from '@components/global/parameters/ParameterDivider.vue';
 import ParameterGrid from '@components/global/parameters/ParameterGrid.vue';
@@ -499,6 +498,7 @@ import { mapLocale } from '@core/utils/utils';
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import LgvNotification from '@lib/components/custom/LgvNotification.vue';
+import LgvCollapsibleSection from '@lib/components/layout/LgvCollapsibleSection.vue';
 import { saveAs } from 'file-saver';
 import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';

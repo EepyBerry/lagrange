@@ -34,14 +34,12 @@
             <p>{{ _progressError }}</p>
           </div>
         </section>
-        <CollapsibleSection id="export-log" class="code" :class="_progressError ? 'warn' : ''">
+        <LgvCollapsibleSection id="export-log" class="code" :class="{ warn: !!_progressError }">
           <template #title>{{ $t('dialog.export_progress.log') }}</template>
           <template #content>
-            <div id="export-log-block" class="code-block">
-              <pre v-for="(line, i) of _progressStepLog" :key="i">{{ line }}</pre>
-            </div>
+            <LgvLogBlock ref="exportLogBlockRef" id="export-log-block" :class="{ warn: !!_progressError }" />
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
       </div>
     </template>
   </LgvDialog>
@@ -49,13 +47,15 @@
 <script setup lang="ts">
 import type { ExportProgressDialogExposes } from '@components/editor/dialogs/ExportProgressDialog.types.ts';
 import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
-import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
+import type { LgvLogBlockExposes, LogEventTypeMap, LogLevel } from '@lib/components/custom/LgvLogBlock.types.ts';
+import { getLogMessage, LogMessage } from '@core/messages.ts';
 import LgvDialog from '@lib/components/base/LgvDialog.vue';
+import LgvLogBlock from '@lib/components/custom/LgvLogBlock.vue';
+import LgvCollapsibleSection from '@lib/components/layout/LgvCollapsibleSection.vue';
 import { ref, type Ref, useTemplateRef } from 'vue';
-import { useI18n } from 'vue-i18n';
 
-const i18n = useI18n();
 const dialogRef = useTemplateRef<LgvDialogExposes>('dialogRef');
+const exportLogBlockRef = useTemplateRef<LgvLogBlockExposes>('exportLogBlockRef');
 defineExpose<ExportProgressDialogExposes>({ open, setProgress, updateProgressLog, setDone, setError });
 
 const bakingSteps = 9;
@@ -75,42 +75,27 @@ function open(mode: 'textures' | 'gltf') {
 function setProgress(value: number) {
   if (_progressError.value) return;
   _progressStep.value = value;
-  _progressStepLog.value.push(
-    i18n.t('dialog.export_progress.log_step', { curstep: _progressStep.value, maxstep: bakingSteps }),
-  );
+  updateProgressLog('info', {
+    message: getLogMessage(LogMessage.BakingStep, { curstep: _progressStep.value, maxstep: bakingSteps }),
+  });
   if (value >= bakingSteps) {
     setDone();
   }
 }
 
-function updateProgressLog(i18nTranslationKey: string, params: Record<string, string | number>) {
-  _progressStepLog.value.push(i18n.t(i18nTranslationKey, params));
+function updateProgressLog<L extends LogLevel>(level: L, params: LogEventTypeMap[L]) {
+  exportLogBlockRef.value!.log(level, params);
 }
 
 function setDone() {
   if (_progressError.value) return;
   _progressStep.value = bakingSteps;
-  _progressStepLog.value.push(i18n.t('dialog.export_progress.log_complete'));
+  updateProgressLog('success', { message: getLogMessage(LogMessage.BakingComplete) });
 }
 
-function setError(value: Error | string | unknown) {
-  if (value instanceof Error) {
-    _progressError.value = value + '\n';
-    if (value.stack) {
-      _progressStepLog.value.push(
-        ...value.stack
-          .replaceAll('\n', '¤')
-          .split('¤')
-          .filter((d) => d.length > 0),
-      );
-    }
-  } else if (typeof value === 'string') {
-    _progressError.value = value;
-    _progressStepLog.value.push(value);
-  } else {
-    _progressError.value = value;
-    _progressStepLog.value.push(value + '');
-  }
+function setError(value: Error | string) {
+  _progressError.value = value;
+  updateProgressLog('error', { error: value });
 }
 </script>
 <style scoped lang="scss">
@@ -144,6 +129,9 @@ function setError(value: Error | string | unknown) {
     }
   }
   #export-log {
+    $clip-length: 0.75rem;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - $clip-length), calc(100% - $clip-length) 100%, 0 100%);
+
     #export-log-block {
       max-height: 300px;
       overflow-y: auto;

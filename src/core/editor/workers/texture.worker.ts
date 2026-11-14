@@ -47,7 +47,6 @@ let layerCtx: OffscreenCanvasRenderingContext2D;
 init().then(() => {
   self.onmessage = (msg: MessageEvent<TextureWorkerInput>) => {
     if (!msg.data.type) return;
-    console.debug('(tex:wrk) got message', msg.data);
     const data = msg.data;
     if (!data || data.type !== 'run') {
       return;

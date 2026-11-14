@@ -69,7 +69,7 @@ const specialDay: Ref<SpecialDayInfo | undefined> = ref(checkSpecialDay());
   iconify-icon:last-child {
     position: absolute;
     inset: auto 0 0.1875rem auto;
-    filter: drop-shadow(-1px -1px var(--black));
+    filter: drop-shadow(-1px -1px var(--lg-black));
   }
 }
 

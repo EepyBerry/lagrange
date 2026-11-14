@@ -1,6 +1,5 @@
 :root {
-  --black: #000;
-  --code-background: #050505;
+  --lg-black: #000;
 
   --lg-shadow: #0003;
   --lg-shadow-dark: #0008;
@@ -61,6 +60,12 @@
   --lg-warn-panel: #2e0f06;
   --lg-warn-dark: #1d0903;
 
+  --lg-log-panel: #050505;
+  --lg-log-success: #33ff4e;
+  --lg-log-info: #64b3ff;
+  --lg-log-alert: #ffc23f;
+  --lg-log-error: #ff5c3f;
+
   --lg-hue-background: linear-gradient(
     to right,
     #00ffff50 0%,
@@ -93,19 +98,6 @@
   --lg-update-06-border: #984122;
   --lg-update-06-panel: #35110e;
   --lg-update-06-background: linear-gradient(to bottom, #984122 0%, #5d1914 100%);
-
-  --lg-planet-class-ice-background: #d1f6ff;
-  --lg-planet-class-ice-text: #091641;
-  --lg-planet-class-ocean-background: #10256b;
-  --lg-planet-class-ocean-text: var(--lg-text);
-  --lg-planet-class-tropical-background: #335f00;
-  --lg-planet-class-tropical-text: var(--lg-text);
-  --lg-planet-class-arid-background: #6d5000;
-  --lg-planet-class-arid-text: var(--lg-text);
-  --lg-planet-class-chthonian-background: #110805;
-  --lg-planet-class-chthonian-text: #ffa047;
-  --lg-planet-class-magmatic-background: #ff782b;
-  --lg-planet-class-magmatic-text: #110805;
 }
 :root[data-theme='supernova'] {
   --lg-primary: linear-gradient(to bottom, #110a20 0%, #06030c 100%);

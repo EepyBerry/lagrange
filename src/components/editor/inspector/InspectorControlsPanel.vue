@@ -105,13 +105,13 @@ const featureColor = computed(() => `var(--lg-feature-${selectedFeature.value})`
       gap: 6px;
     }
     iconify-icon {
-      filter: drop-shadow(0 0 4px black);
+      filter: drop-shadow(0 0 4px var(--lg-black));
     }
     #panel-controls-header__color {
       width: 1rem;
       height: 1rem;
       border-radius: 4px;
-      filter: drop-shadow(0 0 4px black);
+      filter: drop-shadow(0 0 4px var(--lg-black));
     }
   }
   #panel-controls-content {

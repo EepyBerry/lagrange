@@ -265,7 +265,8 @@
       "step_7": "Baking des anneaux",
       "step_8": "Finalisation",
       "step_9": "Terminé !",
-      "step_failed": "échec !"
+      "step_failed": "échec !",
+      "log": "Journal"
     },
     "confirm_reset": {
       "$title": "Confirm reset",

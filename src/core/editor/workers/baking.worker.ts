@@ -99,7 +99,6 @@ init()
     // when receiving the initial message, request ALL textures for the current planet
     // after receiving the textures, start baking every map one by one
     self.onmessage = async (event: MessageEvent<BakingWorkerInput>) => {
-      console.debug('(bak:wrk) got message', event.data);
       switch (event.data.type) {
         case 'run': {
           currentBakingInput = event!.data;
