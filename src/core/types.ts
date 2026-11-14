@@ -3,17 +3,7 @@ import type { CloudsTSLMaterial } from '@tsl/materials/clouds.tslmat';
 import type { PlanetTSLMaterial } from '@tsl/materials/planet.tslmat';
 import type { RingTSLMaterial } from '@tsl/materials/ring.tslmat';
 import type TSLRenderPipeline from '@tsl/rendering/render-pipeline.ts';
-import type {
-  AmbientLight,
-  DirectionalLight,
-  Group,
-  Mesh,
-  OrthographicCamera,
-  PerspectiveCamera,
-  RenderTarget,
-  Scene,
-  Timer,
-} from 'three';
+import type { AmbientLight, DirectionalLight, Group, Mesh, PerspectiveCamera, Scene, Timer } from 'three';
 import type { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import type { WebGPURenderer } from 'three/webgpu';
 import type { LensFlareEffect } from './effects/lens-flare.effect';
@@ -31,11 +21,6 @@ export type EditorSceneObjects = {
   scene: Scene;
   renderer: WebGPURenderer;
   camera: PerspectiveCamera;
-};
-export type BakingSceneObjects = {
-  renderer: WebGPURenderer;
-  camera: OrthographicCamera;
-  renderTarget: RenderTarget;
 };
 export type EditorBackendType = 'webgl' | 'webgpu';
 export type EditorFeatures =

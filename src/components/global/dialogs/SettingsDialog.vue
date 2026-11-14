@@ -13,7 +13,7 @@
     </template>
     <template #content>
       <div id="settings-container">
-        <CollapsibleSection id="section-general" icon="mingcute:tool-line" expand>
+        <LgvCollapsibleSection id="section-general" icon="mingcute:tool-line" expand>
           <template #title>{{ $t('dialog.settings.general') }}</template>
           <template #content>
             <ParameterGrid>
@@ -48,7 +48,7 @@
                 <template #title> {{ $t('dialog.settings.general_theme') }}: </template>
                 <template #options>
                   <ParameterRadioOption
-                    :id="'0'"
+                    :inputId="'0'"
                     v-model="appSettings.theme"
                     name="theme-select"
                     value="default"
@@ -58,7 +58,7 @@
                     {{ $t('dialog.settings.general_theme_default') }}
                   </ParameterRadioOption>
                   <ParameterRadioOption
-                    :id="'1'"
+                    :inputId="'1'"
                     v-model="appSettings.theme"
                     name="theme-select"
                     value="supernova"
@@ -68,7 +68,7 @@
                     {{ $t('dialog.settings.general_theme_supernova') }}
                   </ParameterRadioOption>
                   <ParameterRadioOption
-                    :id="'2'"
+                    :inputId="'2'"
                     v-model="appSettings.theme"
                     name="theme-select"
                     value="voyager"
@@ -90,9 +90,9 @@
               </ParameterCheckbox>
             </ParameterGrid>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
 
-        <CollapsibleSection id="section-editor" icon="ph:planet">
+        <LgvCollapsibleSection id="section-editor" icon="ph:planet">
           <template #title>
             {{ $t('dialog.settings.editor') }}
           </template>
@@ -144,7 +144,7 @@
                   <template #title><span v-html="$t('dialog.settings.editor_rendering_backend')"></span>:</template>
                   <template #options>
                     <ParameterRadioOption
-                      :id="'webgl'"
+                      :inputId="'webgl'"
                       v-model="appSettings.renderingBackend"
                       name="rendering-backend-select"
                       :value="'webgl'"
@@ -154,12 +154,12 @@
                       {{ $t('dialog.settings.editor_rendering_backend_webgl') }}
                     </ParameterRadioOption>
                     <ParameterRadioOption
-                      :id="'webgpu'"
+                      :inputId="'webgpu'"
                       v-model="appSettings.renderingBackend"
                       name="rendering-backend-select"
                       :value="'webgpu'"
                       :button-aria-label="$t('a11y.editor_rendering_backend_webgpu')"
-                      :disabled="!WebGPU.isAvailable()"
+                      :disabled="!getGraphicsCapabilities(appSettings.renderingBackend).info.isAvailable"
                     >
                       <iconify-icon class="icon" icon="simple-icons:webgpu" width="1.5rem" aria-hidden="true" />
                       {{ $t('dialog.settings.editor_rendering_backend_webgpu') }}
@@ -173,7 +173,10 @@
                       : $t('dialog.settings.editor_rendering_backend_webgpu_notification')
                   }}
                 </LgvNotification>
-                <LgvNotification v-if="!WebGPU.isAvailable()" type="warn">
+                <LgvNotification
+                  v-if="!getGraphicsCapabilities(appSettings.renderingBackend).info.isAvailable"
+                  type="warn"
+                >
                   {{ $t('dialog.settings.editor_rendering_backend_webgpu_unavailable') }}
                 </LgvNotification>
                 <ParameterDivider bordered />
@@ -181,44 +184,58 @@
                   <template #title> {{ $t('dialog.settings.editor_baking_resolution') }}: </template>
                   <template #options>
                     <ParameterRadioOption
-                      :id="'256'"
+                      :inputId="'256'"
                       v-model="appSettings.bakingResolution"
                       name="baking-res-select"
                       :value="256"
                       :button-aria-label="$t('a11y.editor_baking_resolution_256')"
+                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 512"
                       >256</ParameterRadioOption
                     >
                     <ParameterRadioOption
-                      :id="'512'"
+                      :inputId="'512'"
                       v-model="appSettings.bakingResolution"
                       name="baking-res-select"
                       :value="512"
                       :button-aria-label="$t('a11y.editor_baking_resolution_512')"
+                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 1024"
                       >512</ParameterRadioOption
                     >
                     <ParameterRadioOption
-                      :id="'1024'"
+                      :inputId="'1024'"
                       v-model="appSettings.bakingResolution"
                       name="baking-res-select"
                       :value="1024"
                       :button-aria-label="$t('a11y.editor_baking_resolution_1k')"
+                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 2048"
                       >1024</ParameterRadioOption
                     >
                     <ParameterRadioOption
-                      :id="'2048'"
+                      :inputId="'2048'"
                       v-model="appSettings.bakingResolution"
                       name="baking-res-select"
                       :value="2048"
                       :button-aria-label="$t('a11y.editor_baking_resolution_2k')"
+                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 4096"
                       >2048</ParameterRadioOption
                     >
                     <ParameterRadioOption
-                      :id="'4096'"
+                      :inputId="'4096'"
                       v-model="appSettings.bakingResolution"
                       name="baking-res-select"
                       :value="4096"
                       :button-aria-label="$t('a11y.editor_baking_resolution_4k')"
+                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 8192"
                       >4096</ParameterRadioOption
+                    >
+                    <ParameterRadioOption
+                      :inputId="'8192'"
+                      v-model="appSettings.bakingResolution"
+                      name="baking-res-select"
+                      :value="8192"
+                      :button-aria-label="$t('a11y.editor_baking_resolution_8k')"
+                      :disabled="getGraphicsCapabilities(appSettings.renderingBackend).maxTextureSize < 16384"
+                      >8192</ParameterRadioOption
                     >
                   </template>
                 </ParameterRadio>
@@ -233,9 +250,9 @@
               </ParameterGrid>
             </div>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
 
-        <CollapsibleSection id="section-keybinds" icon="mingcute:hotkey-line">
+        <LgvCollapsibleSection id="section-keybinds" icon="mingcute:hotkey-line">
           <template #title>
             {{ $t('dialog.settings.keybinds') }}
           </template>
@@ -313,9 +330,9 @@
               </ParameterKeyBinding>
             </ParameterGrid>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
 
-        <CollapsibleSection id="section-a11y" icon="material-symbols:accessibility-new-rounded">
+        <LgvCollapsibleSection id="section-a11y" icon="material-symbols:accessibility-new-rounded">
           <template #title>
             {{ $t('dialog.settings.a11y') }}
           </template>
@@ -341,9 +358,9 @@
               </ParameterGrid>
             </div>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
 
-        <CollapsibleSection id="section-a11y" icon="mingcute:star-2-line">
+        <LgvCollapsibleSection id="section-a11y" icon="mingcute:star-2-line">
           <template #title>
             {{ $t('dialog.settings.extras') }}
           </template>
@@ -388,9 +405,9 @@
               </ParameterGrid>
             </div>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
 
-        <CollapsibleSection id="section-advanced" icon="mingcute:alert-diamond-line">
+        <LgvCollapsibleSection id="section-advanced" icon="mingcute:alert-diamond-line">
           <template #title>
             {{ $t('dialog.settings.advanced') }}
           </template>
@@ -447,7 +464,7 @@
               </ParameterGrid>
             </div>
           </template>
-        </CollapsibleSection>
+        </LgvCollapsibleSection>
       </div>
     </template>
   </LgvDialog>
@@ -458,7 +475,6 @@
 import type { ClearDataConfirmDialogExposes } from '@components/global/dialogs/ClearDataConfirmDialog.types.ts';
 import type { SettingsDialogExposes } from '@components/global/dialogs/SettingsDialog.types.ts';
 import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
-import CollapsibleSection from '@components/global/elements/CollapsibleSection.vue';
 import ParameterCheckbox from '@components/global/parameters/ParameterCheckbox.vue';
 import ParameterDivider from '@components/global/parameters/ParameterDivider.vue';
 import ParameterGrid from '@components/global/parameters/ParameterGrid.vue';
@@ -467,6 +483,7 @@ import ParameterRadio from '@components/global/parameters/ParameterRadio.vue';
 import ParameterRadioOption from '@components/global/parameters/ParameterRadioOption.vue';
 import ParameterSelect from '@components/global/parameters/ParameterSelect.vue';
 import ParameterSlider from '@components/global/parameters/ParameterSlider.vue';
+import { getGraphicsCapabilities } from '@core/capabilities/capabilities.ts';
 import { setCameraControlScheme, setCameraFOV, swapSceneSkybox } from '@core/editor/editor.service.ts';
 import {
   EXTRAS_CAT_MODE,
@@ -481,10 +498,10 @@ import { mapLocale } from '@core/utils/utils';
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import LgvNotification from '@lib/components/custom/LgvNotification.vue';
+import LgvCollapsibleSection from '@lib/components/layout/LgvCollapsibleSection.vue';
 import { saveAs } from 'file-saver';
 import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import WebGPU from '@/core/capabilities/WebGPU';
 import * as DexieService from '@/core/services/dexie.service';
 import {
   type CameraMouseControlsScheme,

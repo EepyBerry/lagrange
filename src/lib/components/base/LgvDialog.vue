@@ -130,9 +130,8 @@ dialog[open] {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    width: 4rem;
     background: var(--lg-accent);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 2rem 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 6px 100%, 0 calc(100% - 6px));
 
     button.dialog-close {
       min-width: 0;
@@ -152,14 +151,7 @@ dialog[open] {
   & > div {
     height: 100%;
     background: var(--lg-primary);
-    clip-path: polygon(
-      0 $inner-corner-length,
-      $inner-corner-length 0,
-      100% 0,
-      100% calc(100% - $outer-corner-length),
-      calc(100% - $outer-corner-length) 100%,
-      0 100%
-    );
+    clip-path: inherit;
 
     overflow-y: auto;
     display: flex;
@@ -167,7 +159,7 @@ dialog[open] {
     gap: 0;
 
     .dialog-header {
-      padding: 0.875rem 4rem 0.75rem 0.75rem;
+      padding: 0.75rem 4rem 0.625rem 0.625rem;
       font-weight: 600;
       color: var(--lg-text);
 
@@ -246,12 +238,12 @@ dialog[open].warn {
     .dialog-header,
     .dialog-actions {
       background: var(--lg-warn-panel);
-      scrollbar-color: var(--lg-warn) var(--code-background);
+      scrollbar-color: var(--lg-warn) var(--lg-warn-panel);
       border-color: var(--lg-warn);
     }
     .dialog-content {
       background: var(--lg-warn-dark);
-      scrollbar-color: var(--lg-warn) var(--code-background);
+      scrollbar-color: var(--lg-warn) var(--lg-warn-panel);
       border-color: var(--lg-warn);
 
       & > .dialog-content__layout {

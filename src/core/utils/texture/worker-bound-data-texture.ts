@@ -1,6 +1,6 @@
-import type { TextureWorkerOperation } from '@core/editor/workers/texture.worker.ts';
 import { TextureWorkerInterface } from '@core/editor/workers/texture.worker-interface.ts';
 import { serializeTextureWorkerData } from '@core/editor/workers/texture.worker-serializer.ts';
+import { WorkerTextureDataType } from '@core/utils/baking-utils.ts';
 import { DataTexture } from 'three/webgpu';
 
 /**
@@ -13,17 +13,17 @@ export class WorkerBoundDataTexture {
     this.texture = new DataTexture(new Uint8Array(width * height * 4), width, height);
   }
 
-  public async update<DataType>(
+  public async update(
     textureWorker: TextureWorkerInterface,
-    operation: TextureWorkerOperation,
-    data: DataType,
+    dataType: WorkerTextureDataType,
+    data: unknown,
   ): Promise<void> {
-    const serializedData = serializeTextureWorkerData(data, operation);
+    const serializedData = serializeTextureWorkerData(data, dataType);
     if (!serializedData) {
-      throw new Error(`Cannot serialize data for operation ${operation}`);
+      throw new Error(`Cannot serialize data for data-type ${dataType}`);
     }
-    const outputData = await textureWorker.run(this.texture.width, this.texture.height, operation, serializedData);
-    this.texture.image.data!.set(outputData);
+    const outputData = await textureWorker.run(this.texture.width, this.texture.height, dataType, serializedData);
+    this.texture.image.data!.set(outputData.buffer);
     this.texture.needsUpdate = true;
   }
 }

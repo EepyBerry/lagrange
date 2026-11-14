@@ -1,3 +1,10 @@
+export type RectOverlaps = {
+  top: boolean;
+  right: boolean;
+  bottom: boolean;
+  left: boolean;
+};
+
 export default class Rect {
   private _x: number;
   private _y: number;
@@ -40,29 +47,17 @@ export default class Rect {
   }
 
   /**
-   * Clones this rect
-   * @returns a new Rect instance with the same x,y,w,h values
-   */
-  public clone() {
-    return new Rect(Number(this.x), Number(this.y), Number(this.w), Number(this.h));
-  }
-
-  /**
    * Finds overlaps on a given w*h plane's borders with this Rect
    * @param w total plane width
    * @param h total plane height
-   * @returns an array containing overlaps for the top, right, bottom, and left sides, in that order
+   * @returns an object containing overlaps for the top, right, bottom, and left sides
    */
-  public findCanvasBorderOverlaps(w: number, h: number): boolean[] {
-    const borderOverlaps: boolean[] = [false, false, false, false];
-    borderOverlaps[0] = this.y <= 0;
-    borderOverlaps[1] = this.x + this.w >= w;
-    borderOverlaps[2] = this.y + this.h >= h;
-    borderOverlaps[3] = this.x <= 0;
+  public findPlaneBorderOverlaps(w: number, h: number): RectOverlaps {
+    const borderOverlaps: RectOverlaps = { top: false, right: false, bottom: false, left: false };
+    borderOverlaps.top = this.y <= 0;
+    borderOverlaps.right = this.x + this.w >= w;
+    borderOverlaps.bottom = this.y + this.h >= h;
+    borderOverlaps.left = this.x <= 0;
     return borderOverlaps;
-  }
-
-  public isValid(): boolean {
-    return this.x >= 0 && this.w >= 0 && this.h >= 0;
   }
 }

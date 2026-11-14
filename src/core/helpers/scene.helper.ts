@@ -89,6 +89,7 @@ async function buildScene(
 
 function buildSceneLighting(sceneData: EditorSceneData, data: PlanetData): void {
   const sun = ComponentHelper.createSun(data);
+	sun.name = Globals.MESH_NAME_SUN;
   sceneData.scene.add(sun);
   sceneData.sunLight = sun;
 

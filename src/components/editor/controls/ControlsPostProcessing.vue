@@ -223,7 +223,7 @@
           <template #title> {{ $t('editor.post_processing.antialiasing_mode') }}: </template>
           <template #options>
             <ParameterRadioOption
-              :id="'0'"
+              :inputId="'0'"
               v-model="EDITOR_STATE.renderPipelineData.antiAliasingMode"
               name="antialiasing-mode"
               :value="AntiAliasingMode.FXAA"
@@ -233,7 +233,7 @@
               {{ $t('editor.post_processing.antialiasing_mode_fxaa') }}
             </ParameterRadioOption>
             <ParameterRadioOption
-              :id="'1'"
+              :inputId="'1'"
               v-model="EDITOR_STATE.renderPipelineData.antiAliasingMode"
               name="antialiasing-mode"
               :value="AntiAliasingMode.SMAA"

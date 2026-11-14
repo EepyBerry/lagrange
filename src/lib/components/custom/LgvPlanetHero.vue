@@ -71,7 +71,7 @@ async function applyStyle() {
       width: $img-size;
       height: $img-size;
       transform: scale(v-bind(planetImageScale));
-      filter: drop-shadow(0 0 4px #0008);
+      filter: drop-shadow(0 0 4px var(--lg-shadow-dark));
     }
   }
   h3 {

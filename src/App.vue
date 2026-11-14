@@ -1,7 +1,7 @@
 <template>
   <main>
     <span v-if="$route.path === '/'" class="blur" />
-    <RouterView></RouterView>
+    <RouterView />
   </main>
   <AppToastBar />
   <LgvFooter>
@@ -45,6 +45,7 @@
 import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import AppToastBar from '@components/global/AppToastBar.vue';
 import ExtraSpecialDayElement from '@components/global/extras/ExtraSpecialDayElement.vue';
+import { initGraphicsCapabilities } from '@core/capabilities/capabilities.ts';
 import { UIEventBus } from '@core/ui-event-bus.ts';
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import LgvLink from '@lib/components/base/LgvLink.vue';
@@ -81,6 +82,9 @@ const keybinds: Ref<IDBKeyBinding[]> = ref([]);
 const settings: Ref<IDBSettings | undefined> = ref(undefined);
 
 onMounted(async () => {
+  // init graphics capabilities
+  await initGraphicsCapabilities();
+
   // Init IndexedDB via Dexie
   await DexieService.initStoragePersistence();
   await initDexie();
@@ -109,7 +113,6 @@ onMounted(async () => {
 
 function openInitDialog() {
   if (settings.value?.showInitDialog) {
-    console.log(initDialog.value);
     initDialog.value?.open();
   }
 }
@@ -154,7 +157,7 @@ main {
     z-index: 1;
     position: fixed;
     inset: 0 -4rem;
-    box-shadow: inset 0 0 2.5rem 1.5rem var(--black);
+    box-shadow: inset 0 0 2.5rem 1.5rem var(--lg-black);
     pointer-events: none;
     user-select: none;
   }

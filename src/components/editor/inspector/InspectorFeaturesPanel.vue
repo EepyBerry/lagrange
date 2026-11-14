@@ -181,8 +181,9 @@ function selectFeature(feature: EditorFeatures) {
   #panel-features-header {
     width: 100%;
     height: 2.5rem;
+    min-height: 2.5rem;
     padding: 0.5rem;
-    background: linear-gradient(to right, var(--lg-accent), var(--lg-primary-static));
+    background: var(--lg-primary);
     border-bottom: var(--lg-var-border-width) solid var(--lg-accent);
 
     display: flex;
@@ -198,7 +199,7 @@ function selectFeature(feature: EditorFeatures) {
     }
     iconify-icon {
       color: var(--lg-features);
-      filter: drop-shadow(0 0 4px black);
+      filter: drop-shadow(0 0 4px var(--lg-black));
     }
   }
 
