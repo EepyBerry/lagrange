@@ -84,7 +84,6 @@ export function serializeBakingWorkerData(planetData: PlanetData): SerializedPla
     cloudsColorRamp: serializeColorRamp(planetData.cloudsColorRamp),
     atmosphereEnabled: planetData.atmosphereEnabled,
     atmosphereHeight: planetData.atmosphereHeight,
-    atmosphereDensityScale: planetData.atmosphereDensityScale,
     atmosphereIntensity: planetData.atmosphereIntensity,
     atmosphereColorMode: planetData.atmosphereColorMode,
     atmosphereHue: planetData.atmosphereHue,

@@ -130,7 +130,6 @@ export interface SerializedPlanetData {
   cloudsColorRamp: SerializedColorRamp;
   atmosphereEnabled: boolean;
   atmosphereHeight: number;
-  atmosphereDensityScale: number;
   atmosphereIntensity: number;
   atmosphereColorMode: number;
   atmosphereHue: number;
