@@ -83,7 +83,7 @@ function onClose() {
     padding: 1rem 0.5rem;
   }
   hr.error-divider {
-    border: 1px solid var(--lg-warn);
+    border-top: 1px solid var(--lg-warn);
     margin: 1rem 0;
   }
   .error-info {

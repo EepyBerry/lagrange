@@ -122,7 +122,6 @@ export function loadPlanetData(target: PlanetData, data?: PrefixedWith<PlanetDat
   // Atmosphere
   target.atmosphereEnabled = data?._atmosphereEnabled ?? true;
   target.atmosphereHeight = data?._atmosphereHeight ?? 0.01;
-  target.atmosphereDensityScale = data?._atmosphereDensityScale ?? 7.5;
   target.atmosphereIntensity = data?._atmosphereIntensity ?? 1.35;
   target.atmosphereColorMode = data?._atmosphereColorMode ?? ColorMode.REALISTIC;
   target.atmosphereHue = data?._atmosphereHue ?? 0;
@@ -240,7 +239,6 @@ export function randomizePlanetData(target: PlanetData): void {
   // Atmosphere
   target.atmosphereEnabled = randomBoolean();
   target.atmosphereHeight = clampedPRNG(0.0075, 0.025);
-  target.atmosphereDensityScale = clampedPRNG(0.25, 10);
   target.atmosphereIntensity = clampedPRNG(0.25, 2.5);
   target.atmosphereColorMode = Math.round(clampedPRNG(0, 2)) as ColorMode;
   target.atmosphereHue = clampedPRNG(0, 2);
@@ -249,7 +247,7 @@ export function randomizePlanetData(target: PlanetData): void {
   target.atmosphereMieScatteringConstant = clampedPRNG(-0.999, -0.5);
   target.atmosphereRayleighDensityRatio = clampedPRNG(0.05, 0.95);
   target.atmosphereMieDensityRatio = clampedPRNG(0.05, 0.95);
-  target.atmosphereOpticalDensityRatio = clampedPRNG(0.05, 0.95);
+  target.atmosphereOpticalDensityRatio = clampedPRNG(0.05, 15);
 
   // Ring
   target.ringsEnabled = randomBoolean();
@@ -402,7 +400,6 @@ export function resetPlanetData(target: PlanetData): void {
   // Atmosphere
   target.atmosphereEnabled = true;
   target.atmosphereHeight = 0.01;
-  target.atmosphereDensityScale = 10;
   target.atmosphereIntensity = 1.5;
   target.atmosphereColorMode = ColorMode.REALISTIC;
   target.atmosphereHue = 0;
@@ -410,7 +407,7 @@ export function resetPlanetData(target: PlanetData): void {
   target.atmosphereMieScatteringConstant = -0.999;
   target.atmosphereRayleighDensityRatio = 0.05;
   target.atmosphereMieDensityRatio = 0.02;
-  target.atmosphereOpticalDensityRatio = 0.25;
+  target.atmosphereOpticalDensityRatio = 5;
 
   // Ring
   target.ringsEnabled = false;

@@ -12,15 +12,6 @@
         >
           {{ $t('editor.atmosphere.transform_height') }}
         </ParameterSlider>
-        <ParameterSlider
-          id="a-density"
-          v-model="EDITOR_STATE.planetData.atmosphereDensityScale"
-          :step="0.05"
-          :min="0.25"
-          :max="20"
-        >
-          {{ $t('editor.atmosphere.transform_density') }}
-        </ParameterSlider>
       </template>
     </ParameterGroup>
     <ParameterGroup :toggleable="true">
@@ -127,7 +118,7 @@
           v-model="EDITOR_STATE.planetData.atmosphereOpticalDensityRatio"
           :step="0.01"
           :min="0"
-          :max="1"
+          :max="20"
         >
           {{ $t('editor.atmosphere.advanced_optical_density_ratio') }}
         </ParameterSlider>

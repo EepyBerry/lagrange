@@ -126,6 +126,7 @@ dialog[open] {
     z-index: 1;
     position: absolute;
     inset: 0 0 auto auto;
+    padding-left: 1px;
 
     display: flex;
     align-items: center;

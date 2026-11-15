@@ -47,7 +47,8 @@ body:has(dialog[open]) {
 }
 
 hr {
-  border: 1px solid var(--lg-accent);
+  border: none;
+  border-top: var(--lg-var-border-width) solid var(--lg-accent);
 }
 
 .mathsymbol {

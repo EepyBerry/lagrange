@@ -46,7 +46,6 @@ export type AtmosphereUniforms = {
     surfaceRadius: UniformNode<'float', number>;
   };
   render: {
-    density: UniformNode<'float', number>;
     intensity: UniformNode<'float', number>;
     colorMode: UniformNode<'float', number>;
     hue: UniformNode<'float', number>;
@@ -75,7 +74,6 @@ export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereU
         this.uniforms.transform.radius.value = payload.value.atmosphere;
       })
       .on('atmosphereHeight', (payload) => (this.uniforms.transform.radius.value = payload.value))
-      .on('atmosphereDensityScale', (payload) => this.uniforms.render.density.value = payload.value)
       .on('atmosphereIntensity', (payload) => this.uniforms.render.intensity.value = payload.value)
       .on('atmosphereColorMode', (payload) => this.uniforms.render.colorMode.value = payload.value)
       .on('atmosphereHue', (payload) => this.uniforms.render.hue.value = payload.value)
@@ -97,7 +95,6 @@ export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereU
         surfaceRadius: uniform(data.planetRadius).setName('uSurfaceRadius'),
       },
       render: {
-        density: uniform(data.atmosphereDensityScale).setName('uDensity'),
         intensity: uniform(data.atmosphereIntensity).setName('uIntensity'),
         colorMode: uniform(data.atmosphereColorMode).setName('uColorMode'),
         hue: uniform(data.atmosphereHue).setName('uHue'),
@@ -132,7 +129,7 @@ export class AtmosphereTSLMaterial extends TSLMaterial<NodeMaterial, AtmosphereU
           rayDir,
           e,
           vec4(sunglightDir, this.uniforms.sunlight.intensity),
-          vec3(this.uniforms.transform.radius, this.uniforms.transform.surfaceRadius, this.uniforms.render.density),
+          vec2(this.uniforms.transform.radius, this.uniforms.transform.surfaceRadius),
           vec4(
             this.uniforms.render.advanced.mieScatteringConstant,
             this.uniforms.render.advanced.rayleighDensityRatio,
@@ -268,18 +265,9 @@ export const computeRayleigh = /*@__PURE__*/ Fn(([i_cc]: [Node<'float'>]) => {
 });
 
 export const computeDensity = /*@__PURE__*/ Fn(
-  ([i_p, i_ph, i_radius, i_surfaceRadius, i_density]: [
-    Node<'vec3'>,
-    Node<'float'>,
-    Node<'float'>,
-    Node<'float'>,
-    Node<'float'>,
-  ]) => {
-    const rho = float(i_density).toVar('rho');
+  ([i_p, i_ph, i_radius, i_surfaceRadius]: [Node<'vec3'>, Node<'float'>, Node<'float'>, Node<'float'>]) => {
     const scalingFactor = float(1).div(i_radius.sub(i_surfaceRadius)).toVar('scalingFactor');
-    return exp(negate(length(i_p).sub(i_surfaceRadius)).mul(scalingFactor))
-      .mul(rho)
-      .mul(i_ph);
+    return exp(negate(length(i_p).sub(i_surfaceRadius)).mul(scalingFactor)).mul(i_ph);
   },
 ).setLayout({
   name: 'LG_ATMOS_computeDensity',
@@ -289,15 +277,13 @@ export const computeDensity = /*@__PURE__*/ Fn(
     { name: 'i_ph', type: 'float' },
     { name: 'i_radius', type: 'float' },
     { name: 'i_surfaceRadius', type: 'float' },
-    { name: 'i_density', type: 'float' },
   ],
 });
 
 export const optic = /*@__PURE__*/ Fn(
-  ([i_p, i_q, i_ph, i_radius, i_surfaceRadius, i_density]: [
+  ([i_p, i_q, i_ph, i_radius, i_surfaceRadius]: [
     Node<'vec3'>,
     Node<'vec3'>,
-    Node<'float'>,
     Node<'float'>,
     Node<'float'>,
     Node<'float'>,
@@ -307,7 +293,7 @@ export const optic = /*@__PURE__*/ Fn(
 
     const sum = float(0).toVar('sum');
     Loop({ start: int(0), end: NUM_OUT_SCATTER, condition: '<' }, () => {
-      sum.addAssign(computeDensity(v, i_ph, i_radius, i_surfaceRadius, i_density));
+      sum.addAssign(computeDensity(v, i_ph, i_radius, i_surfaceRadius));
       v.addAssign(stepValue);
     });
     return sum.mul(length(stepValue));
@@ -321,7 +307,6 @@ export const optic = /*@__PURE__*/ Fn(
     { name: 'i_ph', type: 'float' },
     { name: 'i_radius', type: 'float' },
     { name: 'i_surfaceRadius', type: 'float' },
-    { name: 'i_density', type: 'float' },
   ],
 });
 
@@ -331,7 +316,7 @@ export const applyInScatter = /*@__PURE__*/ Fn(
     Node<'vec3'>,
     Node<'vec2'>,
     Node<'vec4'>, // XYZ = direction, W = intensity
-    Node<'vec3'>, // radius, surface radius, density (passed to rayVsSphere & computeDensity)
+    Node<'vec2'>, // radius, surface radius
     Node<'vec4'>, // mie scattering, rayleigh density ratio (phRay), mie density ratio (phMie), optical density ratio (phOptical)
   ]) => {
     // density ratios
@@ -357,15 +342,15 @@ export const applyInScatter = /*@__PURE__*/ Fn(
       const f = vec2(rayVsSphere(v, i_light.xyz, i_atmos.x)).toVar('f');
       const u = vec3(v.add(i_light.xyz.mul(f.y))).toVar('u');
 
-      const d_ray = float(computeDensity(v, phRay, i_atmos.x, i_atmos.y, i_atmos.z).mul(len)).toVar('d_ray');
-      const d_mie = float(computeDensity(v, phMie, i_atmos.x, i_atmos.y, i_atmos.z).mul(len)).toVar('d_mie');
-      const d_alpha = float(computeDensity(v, phOptical, i_atmos.x, i_atmos.y, i_atmos.z).mul(len)).toVar('d_alpha');
+      const d_ray = float(computeDensity(v, phRay, i_atmos.x, i_atmos.y).mul(len)).toVar('d_ray');
+      const d_mie = float(computeDensity(v, phMie, i_atmos.x, i_atmos.y).mul(len)).toVar('d_mie');
+      const d_alpha = float(computeDensity(v, phOptical, i_atmos.x, i_atmos.y).mul(len)).toVar('d_alpha');
 
       n_ray0.addAssign(d_ray);
       n_mie0.addAssign(d_mie);
 
-      const n_ray1 = float(optic(v, u, phRay, i_atmos.x, i_atmos.y, i_atmos.z)).toVar('n_ray1');
-      const n_mie1 = float(optic(v, u, phMie, i_atmos.x, i_atmos.y, i_atmos.z)).toVar('n_mie1');
+      const n_ray1 = float(optic(v, u, phRay, i_atmos.x, i_atmos.y)).toVar('n_ray1');
+      const n_mie1 = float(optic(v, u, phMie, i_atmos.x, i_atmos.y)).toVar('n_mie1');
 
       const raw_att = n_ray0.add(n_ray1).negate().mul(k_ray).sub(n_mie0.add(n_mie1).mul(k_mie)).toVar('raw_att');
       const att = vec3(exp(raw_att.x), exp(raw_att.y), exp(raw_att.z)).toVar('att');
@@ -398,7 +383,7 @@ export const applyInScatter = /*@__PURE__*/ Fn(
     { name: 'i_dir', type: 'vec3' },
     { name: 'i_e', type: 'vec2' },
     { name: 'i_light', type: 'vec4' },
-    { name: 'i_atmos', type: 'vec3' },
+    { name: 'i_atmos', type: 'vec2' },
     { name: 'i_constants', type: 'vec4' },
   ],
 });

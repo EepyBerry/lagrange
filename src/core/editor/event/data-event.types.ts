@@ -106,7 +106,6 @@ export type DataEventPayloadTypeMap = {
   // atmosphere
   atmosphereEnabled: DataEventPayload<boolean>;
   atmosphereHeight: DataEventPayload<number>;
-  atmosphereDensityScale: DataEventPayload<number>;
   atmosphereIntensity: DataEventPayload<number>;
   atmosphereColorMode: DataEventPayload<number>;
   atmosphereHue: DataEventPayload<number>;

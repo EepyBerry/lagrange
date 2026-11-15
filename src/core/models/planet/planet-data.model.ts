@@ -641,7 +641,6 @@ export default class PlanetData {
 
   private _atmosphereEnabled: boolean;
   private _atmosphereHeight: number;
-  private _atmosphereDensityScale: number;
   private _atmosphereIntensity: number;
   private _atmosphereColorMode: number;
   private _atmosphereHue: number;
@@ -670,15 +669,6 @@ export default class PlanetData {
   public set atmosphereHeight(value: number) {
     this._atmosphereHeight = clamp(value, 0.0075, 0.025);
     this.dataEventEndpoint.emit('atmosphereHeight', { value: this.planetRadius + this.atmosphereHeight });
-  }
-
-  public get atmosphereDensityScale(): number {
-    return this._atmosphereDensityScale;
-  }
-
-  public set atmosphereDensityScale(value: number) {
-    this._atmosphereDensityScale = clamp(value, 0.25, 20);
-    this.dataEventEndpoint.emit('atmosphereDensityScale', { value: this.atmosphereDensityScale });
   }
 
   public get atmosphereIntensity(): number {
@@ -749,7 +739,7 @@ export default class PlanetData {
   }
 
   public set atmosphereOpticalDensityRatio(value: number) {
-    this._atmosphereOpticalDensityRatio = clamp(value, 0, 1);
+    this._atmosphereOpticalDensityRatio = clamp(value, 0, 20);
     this.dataEventEndpoint.emit('atmosphereOpticalDensityRatio', { value: this.atmosphereOpticalDensityRatio });
   }
 
@@ -992,7 +982,6 @@ export default class PlanetData {
 
     this._atmosphereEnabled = true;
     this._atmosphereHeight = 0.01;
-    this._atmosphereDensityScale = 10;
     this._atmosphereIntensity = 1.5;
     this._atmosphereColorMode = ColorMode.REALISTIC;
     this._atmosphereHue = 0;
@@ -1000,7 +989,7 @@ export default class PlanetData {
     this._atmosphereMieScatteringConstant = -0.999;
     this._atmosphereRayleighDensityRatio = 0.05;
     this._atmosphereMieDensityRatio = 0.02;
-    this._atmosphereOpticalDensityRatio = 0.25;
+    this._atmosphereOpticalDensityRatio = 7.5;
 
     // Ring
 
