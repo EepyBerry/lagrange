@@ -28,7 +28,7 @@ const $props = withDefaults(defineProps<{ showGlyphs?: boolean; maxLines?: numbe
 defineExpose<LgvLogBlockExposes>({ log, clear });
 
 const _log: Ref<InternalLogEntry[]> = ref([]);
-let _logEventMapper: LogEventHandlers = {
+const _logEventMapper: LogEventHandlers = {
   success: (params) =>
     _log.value.push({
       level: 'success',

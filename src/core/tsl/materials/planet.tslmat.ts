@@ -1,6 +1,4 @@
 import type { DataEventContext, DataEventPayloadTypeMap } from '@core/editor/event/data-event.types.ts';
-import type { ColorRampStep } from '@core/models/planet/color-ramp.model.ts';
-import type { BiomeParameters } from '@core/models/planet/features/biome-parameters.model.ts';
 import type PlanetData from '@core/models/planet/planet-data.model.ts';
 import { DataEventEndpoint } from '@core/editor/event/data-event-endpoint.ts';
 import { EDITOR_WORKERS } from '@core/editor/state/editor.state.ts';
@@ -150,7 +148,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
       .on('emissiveIntensity', async (payload) => {
         this.uniforms.pbr.emissive.value.x = payload.value.water;
         this.uniforms.pbr.emissive.value.y = payload.value.ground;
-        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+        await this.workerBoundDataArrayTexture.update(
           EDITOR_WORKERS.texture!,
           'biomes-emissive',
           initData.biomesParams,
@@ -253,7 +251,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
       .on('colorRampUpdate', async (payload) => {
         switch (payload.context) {
           case 'surface':
-            await this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
+            await this.workerBoundDataArrayTexture.update(
               EDITOR_WORKERS.texture!,
               'color-ramp',
               payload.value.steps,
@@ -261,7 +259,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
             );
             break;
           case 'cracksSurface':
-            await this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
+            await this.workerBoundDataArrayTexture.update(
               EDITOR_WORKERS.texture!,
               'color-ramp',
               payload.value.steps,
@@ -269,7 +267,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
             );
             break;
           case 'cracksUnderwater':
-            await this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
+            await this.workerBoundDataArrayTexture.update(
               EDITOR_WORKERS.texture!,
               'color-ramp',
               payload.value.steps,
@@ -277,7 +275,7 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
             );
             break;
           case 'craters':
-            await this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
+            await this.workerBoundDataArrayTexture.update(
               EDITOR_WORKERS.texture!,
               'color-ramp',
               payload.value.steps,
@@ -288,13 +286,8 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
       })
       // biomes
       .on('biomeParametersUpdate', async () => {
-        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
-          EDITOR_WORKERS.texture!,
-          'biomes',
-          initData.biomesParams,
-          1,
-        );
-        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+        await this.workerBoundDataArrayTexture.update(EDITOR_WORKERS.texture!, 'biomes', initData.biomesParams, 1);
+        await this.workerBoundDataArrayTexture.update(
           EDITOR_WORKERS.texture!,
           'biomes-emissive',
           initData.biomesParams,
@@ -302,13 +295,8 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
         );
       })
       .on('biomeAdd', async () => {
-        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
-          EDITOR_WORKERS.texture!,
-          'biomes',
-          initData.biomesParams,
-          1,
-        );
-        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+        await this.workerBoundDataArrayTexture.update(EDITOR_WORKERS.texture!, 'biomes', initData.biomesParams, 1);
+        await this.workerBoundDataArrayTexture.update(
           EDITOR_WORKERS.texture!,
           'biomes-emissive',
           initData.biomesParams,
@@ -316,13 +304,8 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
         );
       })
       .on('biomeRemove', async () => {
-        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
-          EDITOR_WORKERS.texture!,
-          'biomes',
-          initData.biomesParams,
-          1,
-        );
-        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+        await this.workerBoundDataArrayTexture.update(EDITOR_WORKERS.texture!, 'biomes', initData.biomesParams, 1);
+        await this.workerBoundDataArrayTexture.update(
           EDITOR_WORKERS.texture!,
           'biomes-emissive',
           initData.biomesParams,
@@ -330,13 +313,8 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
         );
       })
       .on('biomeMoveUp', async () => {
-        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
-          EDITOR_WORKERS.texture!,
-          'biomes',
-          initData.biomesParams,
-          1,
-        );
-        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+        await this.workerBoundDataArrayTexture.update(EDITOR_WORKERS.texture!, 'biomes', initData.biomesParams, 1);
+        await this.workerBoundDataArrayTexture.update(
           EDITOR_WORKERS.texture!,
           'biomes-emissive',
           initData.biomesParams,
@@ -344,13 +322,8 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
         );
       })
       .on('biomeMoveDown', async () => {
-        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
-          EDITOR_WORKERS.texture!,
-          'biomes',
-          initData.biomesParams,
-          1,
-        );
-        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+        await this.workerBoundDataArrayTexture.update(EDITOR_WORKERS.texture!, 'biomes', initData.biomesParams, 1);
+        await this.workerBoundDataArrayTexture.update(
           EDITOR_WORKERS.texture!,
           'biomes-emissive',
           initData.biomesParams,
@@ -358,13 +331,8 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
         );
       })
       .on('biomesClear', async () => {
-        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
-          EDITOR_WORKERS.texture!,
-          'biomes',
-          initData.biomesParams,
-          1,
-        );
-        await this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
+        await this.workerBoundDataArrayTexture.update(EDITOR_WORKERS.texture!, 'biomes', initData.biomesParams, 1);
+        await this.workerBoundDataArrayTexture.update(
           EDITOR_WORKERS.texture!,
           'biomes-emissive',
           initData.biomesParams,
@@ -512,37 +480,27 @@ export class PlanetTSLMaterial extends TSLMaterial<MeshStandardNodeMaterial, Pla
 
   initTextures(initData: PlanetData) {
     Promise.all([
-      this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
+      this.workerBoundDataArrayTexture.update(
         EDITOR_WORKERS.texture!,
         'color-ramp',
         initData.planetSurfaceColorRamp.steps,
         0,
       ),
-      this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
-        EDITOR_WORKERS.texture!,
-        'biomes',
-        initData.biomesParams,
-        1,
-      ),
-      this.workerBoundDataArrayTexture.update<BiomeParameters[]>(
-        EDITOR_WORKERS.texture!,
-        'biomes-emissive',
-        initData.biomesParams,
-        2,
-      ),
-      this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
+      this.workerBoundDataArrayTexture.update(EDITOR_WORKERS.texture!, 'biomes', initData.biomesParams, 1),
+      this.workerBoundDataArrayTexture.update(EDITOR_WORKERS.texture!, 'biomes-emissive', initData.biomesParams, 2),
+      this.workerBoundDataArrayTexture.update(
         EDITOR_WORKERS.texture!,
         'color-ramp',
         initData.cracksSurfaceColorRamp.steps,
         3,
       ),
-      this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
+      this.workerBoundDataArrayTexture.update(
         EDITOR_WORKERS.texture!,
         'color-ramp',
         initData.cracksUnderwaterColorRamp.steps,
         4,
       ),
-      this.workerBoundDataArrayTexture.update<ColorRampStep[]>(
+      this.workerBoundDataArrayTexture.update(
         EDITOR_WORKERS.texture!,
         'color-ramp',
         initData.cratersColorRamp.steps,

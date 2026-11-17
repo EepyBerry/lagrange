@@ -69,10 +69,6 @@ async function closeWithFallback() {
   _wantsFallback.value = true;
   dialogRef.value!.close();
 }
-
-function onClose() {
-  $emit('close', _wantsFallback);
-}
 </script>
 <style scoped lang="scss">
 #dialog-editorerror {

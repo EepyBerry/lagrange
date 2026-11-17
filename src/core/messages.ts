@@ -10,6 +10,6 @@ export const LogMessage = {
 } as const;
 export type LogMessage = (typeof LogMessage)[keyof typeof LogMessage];
 
-export const getLogMessage = (msg: LogMessage, tokens: Record<string, any> = {}) => {
-  return msg.replace(/{(\w+)}/g, (match, key) => tokens[key] || match);
+export const getLogMessage = (msg: LogMessage, tokens: Record<string, string | number> = {}) => {
+  return msg.replace(/{(\w+)}/g, (match, key) => tokens[key].toString() || match);
 };
