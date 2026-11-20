@@ -1,6 +1,5 @@
 <template>
   <main>
-    <span v-if="$route.path === '/'" class="blur" />
     <RouterView />
   </main>
   <AppToastBar />
@@ -48,8 +47,8 @@ import ExtraSpecialDayElement from '@components/global/extras/ExtraSpecialDayEle
 import { initGraphicsCapabilities } from '@core/capabilities/capabilities.ts';
 import { UIEventBus } from '@core/ui-event-bus.ts';
 import LgvButton from '@lib/components/base/LgvButton.vue';
+import LgvFooter from '@lib/components/base/LgvFooter.vue';
 import LgvLink from '@lib/components/base/LgvLink.vue';
-import LgvFooter from '@lib/components/main/LgvFooter.vue';
 import { useHead } from '@unhead/vue';
 import { defineAsyncComponent, onMounted, ref, useTemplateRef, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -153,13 +152,5 @@ main {
   flex-direction: column;
   overflow: hidden;
   background: transparent;
-  .blur {
-    z-index: 1;
-    position: fixed;
-    inset: 0 -4rem;
-    box-shadow: inset 0 0 2.5rem 1.5rem var(--lg-black);
-    pointer-events: none;
-    user-select: none;
-  }
 }
 </style>

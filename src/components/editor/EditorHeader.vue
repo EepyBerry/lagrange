@@ -1,17 +1,6 @@
 <template>
-  <div id="editor-header">
-    <div id="editor-header-nav">
-      <LgvLink
-        id="editor-header-link-codex"
-        variant="icon"
-        link-type="internal"
-        icon="material-symbols:home-outline"
-        iconWidth="1.5rem"
-        :aria-label="$t('main.nav.codex')"
-        :title="$t('main.nav.codex')"
-        :href="uwuifyPath('/')"
-      />
-    </div>
+  <section id="editor-header">
+    <AppHeaderNavigation />
     <div id="editor-header-positioning">
       <LgvButton
         variant="icon"
@@ -78,7 +67,7 @@
         :a11y-label="$t('main.header.menu_save')"
       />
     </div>
-  </div>
+  </section>
 
   <!------ BEGIN floating menus ------>
   <Teleport to="body">
@@ -135,12 +124,11 @@
 </template>
 
 <script setup lang="ts">
+import AppHeaderNavigation from '@components/global/AppHeaderNavigation.vue';
 import { EDITOR_STATE } from '@core/editor/state/editor.state';
-import { uwuifyPath } from '@core/extras.ts';
 import * as MathUtils from '@core/utils/math-utils';
 import { autoUpdate, offset, useFloating, type UseFloatingReturn } from '@floating-ui/vue';
 import LgvButton from '@lib/components/base/LgvButton.vue';
-import LgvLink from '@lib/components/base/LgvLink.vue';
 import { useEventListener } from '@vueuse/core';
 import { onMounted, ref, useTemplateRef, type Ref } from 'vue';
 import { idb } from '@/dexie.config.ts';
@@ -307,6 +295,8 @@ function toggleSaveMenu(override?: boolean) {
 #randomizer-menu {
   z-index: 10;
   padding: 0.5rem;
+  box-shadow: 0 0 1rem var(--lg-black);
+
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -314,6 +304,8 @@ function toggleSaveMenu(override?: boolean) {
 }
 #save-menu {
   z-index: 10;
+  box-shadow: 0 0 1rem var(--lg-black);
+
   display: flex;
   flex-direction: column;
   align-items: flex-start;

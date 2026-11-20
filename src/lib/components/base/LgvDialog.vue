@@ -137,8 +137,8 @@ dialog[open] {
     button.dialog-close {
       min-width: 0;
       min-height: 0;
-      width: 2rem;
-      height: 2rem;
+      width: 2.375rem;
+      height: 2.375rem;
       filter: drop-shadow(0 1px 1px var(--lg-accent));
     }
     button.dialog-close:hover,
@@ -264,33 +264,29 @@ dialog[open] > .deco {
   top: 1px;
   left: 0;
   height: $height;
-  width: 2.5rem;
+  width: 2rem;
+
+  $leftmost-notch-clip: polygon(0 0, 100% 0, 100% calc(100% - $height), calc(100% - $height) 100%, 0 100%);
+  $full-notch-clip: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - $height),
+    calc(100% - $height) 100%,
+    $height 100%,
+    0 calc(100% - $height)
+  );
 
   &:first-child {
-    left: 0;
-    clip-path: polygon(0 0, 100% 0, 100% calc(100% - $height), calc(100% - $height) 100%, 0 100%);
+    left: 0.5rem;
+    clip-path: $leftmost-notch-clip;
   }
   &:nth-child(2) {
-    left: 3.5rem;
-    clip-path: polygon(
-      0 0,
-      100% 0,
-      100% calc(100% - $height),
-      calc(100% - $height) 100%,
-      $height 100%,
-      0 calc(100% - $height)
-    );
+    left: 3rem;
+    clip-path: $full-notch-clip;
   }
   &:nth-child(3) {
-    left: 7rem;
-    clip-path: polygon(
-      0 0,
-      100% 0,
-      100% calc(100% - $height),
-      calc(100% - $height) 100%,
-      $height 100%,
-      0 calc(100% - $height)
-    );
+    left: 5.5rem;
+    clip-path: $full-notch-clip;
   }
 }
 

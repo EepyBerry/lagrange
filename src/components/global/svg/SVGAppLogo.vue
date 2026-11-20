@@ -1,4 +1,3 @@
-<script setup lang="ts"></script>
 <template>
   <svg id="app-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 330">
     <g id="circles">

@@ -1,62 +1,33 @@
 <template>
+  <span class="blur" />
   <span id="codex-background"></span>
   <h1 class="a11y--visually-hidden">{{ $t('main.nav.codex') }}</h1>
-  <LgvHeader id="codex-header">
-    <!-- file input -->
-    <label for="codex-header-controls-import" class="a11y--visually-hidden">{{ $t('main.header.import') }}</label>
-    <input
-      id="codex-header-controls-import"
-      ref="fileInput"
-      type="file"
-      accept=".lagrange"
-      multiple
-      hidden
-      @change="importPlanetFile"
-    />
-    <LgvButton
-      variant="icon"
-      icon="ph:upload"
-      icon-width="1.75rem"
-      :a11y-label="$t('main.header.import')"
-      @click="openFileDialog"
-    />
+  <CodexHeader @open-file="openFileDialog" @export="exportPlanets" />
 
-    <!-- new planet -->
-    <LgvLink
-      id="codex-header-controls-newplanet"
-      variant="dark"
-      link-type="internal"
-      class="contrast"
-      icon="ph:plus"
-      :href="uwuifyPath('/planet-editor/new')"
-    >
-      {{ $t('codex.$action_add') }}
-    </LgvLink>
-
-    <!-- export planets -->
-    <LgvButton
-      variant="icon"
-      icon="octicon:file-zip-24"
-      icon-width="1.75rem"
-      :aria-label="$t('main.header.export_all')"
-      @click="exportPlanets"
-    />
-  </LgvHeader>
+  <!-- file input -->
+  <label for="codex-header-controls-import" class="a11y--visually-hidden">{{ $t('main.header.import') }}</label>
+  <input
+    id="codex-header-controls-import"
+    ref="fileInput"
+    type="file"
+    accept=".lagrange"
+    multiple
+    hidden
+    @change="importPlanetFile"
+  />
 
   <template v-if="ready">
-    <div v-if="planets.length > 0" id="codex-grid">
-      <!-- prettier-ignore-attribute -->
+    <section v-if="planets.length > 0" id="codex-grid">
       <PlanetCardElement
         v-for="planet of planets"
         :key="planet.id"
         ref="planetCardRef"
-        :planet="(planet as IDBPlanet)"
-        @info="openPlanetInfoDialog(planet as IDBPlanet)"
-        @export="exportPlanet(planet as IDBPlanet)"
-        @delete="openDeleteConfirmDialog(planet as IDBPlanet)"
+        :planet="planet"
+        @info="openPlanetInfoDialog(planet)"
+        @export="exportPlanet(planet)"
+        @delete="openDeleteConfirmDialog(planet)"
       />
-      <NewCardElement />
-    </div>
+    </section>
     <div v-else id="codex-grid" class="empty">
       <iconify-icon icon="ph:planet-thin" width="16rem" />
       <span>{{ $t('codex.no_planets') }}</span>
@@ -70,14 +41,12 @@
 <script setup lang="ts">
 import type { DeleteConfirmDialogExposes } from '@components/codex/dialogs/DeleteConfirmDialog.types.ts';
 import type { PlanetInfoDialogExposes } from '@components/codex/dialogs/PlanetInfoDialog.types.ts';
+import CodexHeader from '@components/codex/CodexHeader.vue';
 import OverlayLoader from '@components/global/elements/OverlayLoader.vue';
-import { EXTRAS_METAL_SLUG_MODE, uwuifyPath } from '@core/extras';
+import { EXTRAS_METAL_SLUG_MODE } from '@core/extras';
 import { readFileData } from '@core/helpers/import.helper';
 import PlanetData from '@core/models/planet/planet-data.model.ts';
 import { UIEventBus } from '@core/ui-event-bus.ts';
-import LgvButton from '@lib/components/base/LgvButton.vue';
-import LgvLink from '@lib/components/base/LgvLink.vue';
-import LgvHeader from '@lib/components/main/LgvHeader.vue';
 import { useHead } from '@unhead/vue';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
@@ -85,7 +54,6 @@ import { nanoid } from 'nanoid';
 import * as pako from 'pako';
 import { defineAsyncComponent, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import NewCardElement from '@/components/codex/elements/NewCardElement.vue';
 import PlanetCardElement from '@/components/codex/elements/PlanetCardElement.vue';
 import { idb, type IDBPlanet } from '@/dexie.config';
 
@@ -240,18 +208,12 @@ async function deleteTargetedPlanet(id: string) {
   background-position: center;
   background-repeat: repeat;
 }
-#codex-header {
-  position: fixed;
-
-  #codex-header-controls-newplanet {
-    margin: 0 0.25rem;
-    font-size: 0.875rem;
-  }
-}
 #codex-grid {
-  margin: 4rem 1rem 4rem;
-  height: calc(100% - 4.75rem);
-
+  flex: 1;
+  padding: 1rem 1rem 5rem;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
   gap: 2rem;
@@ -277,6 +239,15 @@ async function deleteTargetedPlanet(id: string) {
   flex-direction: column;
   justify-content: center;
   width: 100%;
+}
+
+.blur {
+  z-index: 1;
+  position: fixed;
+  inset: 2.75rem -4rem 0;
+  box-shadow: inset 0 0 3rem 1rem var(--lg-black);
+  pointer-events: none;
+  user-select: none;
 }
 
 @media screen and (max-width: 1199px) {
