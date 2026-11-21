@@ -64,7 +64,7 @@
             id="rp-retro-scanlineintensity"
             v-model="EDITOR_STATE.renderPipelineData.basePipelineRetro.scanlineIntensity"
             :step="0.01"
-            :min="0.01"
+            :min="0"
             :max="1"
           >
             {{ $t('editor.post_processing.basepipeline_retro_scanlineintensity') }}
@@ -82,7 +82,7 @@
             id="rp-retro-scanlinespeed"
             v-model="EDITOR_STATE.renderPipelineData.basePipelineRetro.scanlineSpeed"
             :step="0.01"
-            :min="0.01"
+            :min="0"
             :max="0.1"
           >
             {{ $t('editor.post_processing.basepipeline_retro_scanlinespeed') }}
@@ -92,7 +92,7 @@
             id="rp-retro-curvature"
             v-model="EDITOR_STATE.renderPipelineData.basePipelineRetro.curvature"
             :step="0.01"
-            :min="0.01"
+            :min="0"
             :max="0.2"
           >
             {{ $t('editor.post_processing.basepipeline_retro_curvature') }}

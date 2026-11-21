@@ -34,6 +34,9 @@
   --lg-button-icon-hover: #abf3ed;
   --lg-button-icon-active: #8cc2c4;
 
+  --lg-tab-group-button: var(--lg-primary);
+  --lg-tab-group-button-active-text: #74d1cb;
+
   --lg-link: var(--lg-input-contrast-focus);
   --lg-link-visited: var(--lg-input-contrast-focus);
   --lg-link-error: #ffd7c4;
@@ -121,6 +124,8 @@
   --lg-button-icon-hover: #abf3bf;
   --lg-button-icon-active: #8cc49e;
 
+  --lg-tab-group-button-active-text: #51bf8b;
+
   --lg-link: var(--lg-input-contrast-focus);
   --lg-link-visited: var(--lg-input-contrast-focus);
 
@@ -165,6 +170,8 @@
   --lg-button-dark-contrast-hover: #493800;
   --lg-button-icon-hover: #f3daab;
   --lg-button-icon-active: #c4b08c;
+
+  --lg-tab-group-button-active-text: #e1b119;
 
   --lg-link: var(--lg-input-contrast-focus);
   --lg-link-visited: var(--lg-contrast);

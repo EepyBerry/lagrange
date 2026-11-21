@@ -168,7 +168,7 @@ function getPartialId() {
   padding: 0.5rem;
 
   .biome-header {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     grid-column: span 2;
     overflow: hidden;
 
@@ -178,7 +178,7 @@ function getPartialId() {
     gap: 0.5rem;
 
     .biome-name {
-      font-weight: 400;
+      font-weight: 500;
       min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;

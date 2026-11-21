@@ -23,9 +23,13 @@
       <EditorInspector :inspectorOrdering="inspectorOrdering" />
     </template>
     <template #right>
+      <SVGGizmoPlanetEdition />
       <div ref="threeCanvasWrapper" id="scene-canvas__wrapper">
         <canvas ref="threeCanvas" id="scene-canvas" />
       </div>
+      <SVGGizmoBorderNotch class="tl" />
+      <SVGGizmoBorderNotch class="bl" />
+      <SVGGizmoBorderNotch class="br" />
     </template>
   </LgvResizableHContainer>
 
@@ -45,6 +49,8 @@ import WarnSaveDialog from '@components/editor/dialogs/WarnSaveDialog.vue';
 import EditorHeader from '@components/editor/EditorHeader.vue';
 import EditorInspector from '@components/editor/inspector/EditorInspector.vue';
 import OverlayLoader from '@components/global/elements/OverlayLoader.vue';
+import SVGGizmoBorderNotch from '@components/global/svg/SVGGizmoBorderNotch.vue';
+import SVGGizmoPlanetEdition from '@components/global/svg/SVGGizmoPlanetEdition.vue';
 import { getGraphicsCapabilities } from '@core/capabilities/capabilities.ts';
 import {
   bootstrapEditor,

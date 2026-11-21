@@ -72,6 +72,7 @@ defineProps<{ type: EditorMessageLevel }>();
   grid-template-columns: auto 1fr;
   align-items: center;
   font-size: 0.875rem;
+  font-weight: 500;
   text-wrap: wrap;
 
   border: none;

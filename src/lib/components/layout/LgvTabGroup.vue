@@ -96,10 +96,13 @@ function getTabIndex(tabName: string): number {
         position: relative;
         padding-left: 12px;
         width: 100%;
+
         overflow: visible;
         border: none;
         border-bottom: var(--lg-var-border-width) solid var(--lg-accent);
-        box-shadow: inset 0 -12px 12px var(--lg-shadow-dark);
+        font-weight: 700;
+        text-transform: uppercase;
+
         clip-path: polygon(0 0, calc(100% - $button-corner-length) 0, 100% $button-corner-length, 100% 100%, 0 100%);
         user-select: none;
 
@@ -115,8 +118,12 @@ function getTabIndex(tabName: string): number {
         &.active {
           pointer-events: none;
           box-shadow: none;
-          color: var(--lg-contrast);
+          color: var(--lg-tab-group-button-active-text);
           border-bottom-color: var(--lg-primary-static);
+        }
+
+        &[disabled] {
+          background: var(--lg-panel);
         }
 
         & > * {
@@ -139,8 +146,9 @@ function getTabIndex(tabName: string): number {
   }
   & > .tabgroup-content {
     grid-row: 2;
-    margin: calc(0.5rem + 1px) 0.5rem 0.5rem;
+    padding: calc(0.5rem + 1px) 0.5rem 0.5rem;
     overflow-y: auto;
+    background: var(--lg-primary);
 
     display: flex;
     flex-direction: column;

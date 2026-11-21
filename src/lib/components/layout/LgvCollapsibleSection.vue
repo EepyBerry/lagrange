@@ -53,13 +53,15 @@ function toggleExpand() {
   }
 
   .collapsible-section-title {
+    padding: 0.625rem;
+
     background: none;
     border: none;
     color: unset;
-    font-size: 1rem;
-    font-weight: 600;
+
     font-family: inherit;
-    padding: 0.625rem;
+    font-size: 1.125rem;
+    font-weight: 700;
 
     cursor: pointer;
     user-select: none;
@@ -70,9 +72,6 @@ function toggleExpand() {
 
     .title-container {
       gap: 0.5rem;
-      font-size: 1.125rem;
-      font-weight: 600;
-      font-family: inherit;
       line-height: 1;
 
       display: flex;
@@ -81,7 +80,7 @@ function toggleExpand() {
     }
   }
   .collapsible-section-content {
-    font-size: 0.875rem;
+    font-size: 1rem;
     font-weight: 300;
     margin: 0 0.75rem 0.75rem;
     overflow-x: auto;

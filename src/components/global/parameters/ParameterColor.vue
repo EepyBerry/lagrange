@@ -99,7 +99,8 @@ function closePicker(): void {
 
 <style scoped lang="scss">
 p {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 .color-wrapper {
   display: flex;
@@ -113,6 +114,7 @@ p {
     align-self: center;
     border-radius: 2px;
     border: 1px solid var(--lg-accent);
+    box-shadow: none;
     cursor: pointer;
   }
 }

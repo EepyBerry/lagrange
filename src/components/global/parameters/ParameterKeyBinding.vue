@@ -54,13 +54,17 @@ function tryGetKeyRepresentation(key?: string) {
   gap: 0.5rem;
 }
 .keybinds-label {
+  flex: 1;
   grid-column: 1;
+  padding-right: 0.5rem;
+
+  font-size: 0.875rem;
+  font-weight: 500;
+  word-wrap: anywhere;
+
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding-right: 0.5rem;
-  flex: 1;
-  word-wrap: anywhere;
 }
 
 .keybinds-key-wrapper {

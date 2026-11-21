@@ -1,11 +1,14 @@
 <template>
   <div ref="cardRoot" class="planet-card">
+    <!-- gizmos -->
+
     <!-- effects -->
     <ExtraMetalSlugPlanetExplosion ref="extraPlanetExplosionRef" @obliteration="obliterationHidePlanetImage = true" />
 
     <div class="planet-preview" :class="{ 'effect-hologram': EXTRAS_HOLOGRAM_EFFECT }">
       <!-- decoration -->
-      <svg viewBox="0 0 256 256" role="presentation">
+      <svg class="planet-preview__decoration" viewBox="0 0 256 256" role="presentation">
+        <SVGGizmoPlanetCard width="2rem" height="2rem" x="236" y="0" />
         <g v-show="!obliterationHidePlanetImage" class="planet-preview-gizmo">
           <g class="planet-preview-gizmo inner">
             <circle
@@ -57,7 +60,7 @@
       </svg>
 
       <!-- preview -->
-      <div v-show="!obliterationHidePlanetImage" class="planet-preview-inner">
+      <div v-show="!obliterationHidePlanetImage" class="planet-preview__inner">
         <img v-if="planet.preview" class="planet-image" :src="planet.preview" :alt="planet.data.planetName" />
         <iconify-icon
           v-else
@@ -117,6 +120,7 @@
 </template>
 
 <script setup lang="ts">
+import SVGGizmoPlanetCard from '@components/global/svg/SVGGizmoPlanetCard.vue';
 import { EXTRAS_CRT_EFFECT, EXTRAS_HOLOGRAM_EFFECT, uwuifyPath } from '@core/extras';
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import LgvLink from '@lib/components/base/LgvLink.vue';
@@ -172,7 +176,7 @@ function getPlanetCircleRadius() {
     align-items: center;
     justify-content: center;
 
-    svg {
+    .planet-preview__decoration {
       position: absolute;
       inset: 0;
       overflow: visible;
@@ -181,7 +185,7 @@ function getPlanetCircleRadius() {
         transition: all 150ms ease-in-out;
       }
     }
-    .planet-preview-inner {
+    .planet-preview__inner {
       width: 100%;
       height: 100%;
       .planet-image {

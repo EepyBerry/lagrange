@@ -76,12 +76,14 @@ function stepResizeHandlePosition(direction: 'left' | 'right') {
   display: flex;
 
   & > .resizable-container__left {
+    position: relative;
     user-select: none;
     flex: 0 0 auto;
     min-width: 6rem;
     overflow-y: auto;
   }
   & > .resizable-container__right {
+    position: relative;
     user-select: none;
     flex: 1 1 0;
     min-width: 6rem;

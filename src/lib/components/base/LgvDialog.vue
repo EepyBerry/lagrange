@@ -124,23 +124,14 @@ dialog[open] {
 
   .dialog-close-anchor {
     z-index: 1;
-    position: absolute;
-    inset: 0 0 auto auto;
-    padding-left: 1px;
+    padding-left: 2px;
 
     display: flex;
     align-items: center;
     justify-content: flex-end;
     background: var(--lg-accent);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 
-    button.dialog-close {
-      min-width: 0;
-      min-height: 0;
-      width: 2.375rem;
-      height: 2.375rem;
-      filter: drop-shadow(0 1px 1px var(--lg-accent));
-    }
     button.dialog-close:hover,
     button.dialog-close:focus {
       iconify-icon {
@@ -160,14 +151,17 @@ dialog[open] {
     gap: 0;
 
     .dialog-header {
-      padding: 0.75rem 4rem 0.625rem 0.625rem;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--lg-text);
 
       display: flex;
+      align-items: center;
+      justify-content: space-between;
 
       .dialog-title {
         font-size: 1.25rem;
+        text-transform: uppercase;
+        padding: 0.5rem 4rem 0.5rem 0.75rem;
       }
     }
 
@@ -175,8 +169,8 @@ dialog[open] {
       flex: 1;
       overflow-y: auto;
 
-      background: var(--lg-primary);
-      font-size: 0.9375rem;
+      background: var(--lg-panel);
+      font-size: 1rem;
 
       display: flex;
       flex-direction: column;
@@ -259,7 +253,7 @@ dialog[open].warn {
 
 dialog[open] > .deco {
   z-index: 1;
-  $height: 4px;
+  $height: 3px;
   position: absolute;
   top: 1px;
   left: 0;

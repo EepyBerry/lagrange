@@ -245,7 +245,8 @@ function removeStep(id: string) {
 <style scoped lang="scss">
 p {
   grid-column: span 2;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 .color-ramp-header {
   grid-column: span 2;
@@ -291,7 +292,7 @@ p {
     text-align: end;
   }
   .factor-wrapper {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     display: flex;
     justify-content: space-between;
     flex: 1;

@@ -5,7 +5,7 @@
       ref="navMenuTrigger"
       variant="icon"
       icon="material-symbols:menu"
-      iconWidth="1.75rem"
+      iconWidth="1.5rem"
       :class="{ active: isNavMenuOpen }"
     />
     <div id="header-nav-logo-wrapper">
@@ -80,18 +80,19 @@ function toggleNavMenu(override?: boolean) {
 <style scoped lang="scss">
 #header-nav {
   height: 100%;
-  padding-left: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 0.25rem;
 
-  button {
+  #nav-menu-trigger {
     color: var(--lg-contrast);
+    border-right: var(--lg-var-border-width) solid var(--lg-accent);
+    padding: 0.5rem;
   }
   #header-nav-logo-wrapper {
     height: 100%;
-    padding-right: 1rem;
+    padding: 0 0.5rem 0 0.625rem;
     border-right: var(--lg-var-border-width) solid var(--lg-accent);
     display: flex;
     align-items: center;

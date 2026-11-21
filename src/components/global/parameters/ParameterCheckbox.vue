@@ -22,6 +22,8 @@ defineProps<{ id: string; trueValue: AcceptedType; falseValue: AcceptedType; dis
 <style scoped lang="scss">
 label {
   grid-column: 1;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 input {
   grid-column: 2;

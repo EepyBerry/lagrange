@@ -275,8 +275,7 @@ function toggleSaveMenu(override?: boolean) {
     input {
       width: 24ch;
       height: 2rem;
-      font-size: 0.875rem;
-      font-family: Poppins, Inter, sans-serif;
+      font-size: 1rem;
     }
     p {
       white-space: nowrap;

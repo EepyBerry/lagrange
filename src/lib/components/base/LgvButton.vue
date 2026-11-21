@@ -27,6 +27,7 @@ button.lgv {
   border: none;
   color: var(--lg-text);
   font-family: inherit;
+  font-size: 0.875rem;
   cursor: pointer;
 
   display: flex;

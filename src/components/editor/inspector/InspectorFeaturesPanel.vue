@@ -193,6 +193,7 @@ function selectFeature(feature: EditorFeatures) {
     p {
       line-height: 1;
       text-shadow: 0 0 4px black;
+      font-weight: 500;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -219,6 +220,10 @@ function selectFeature(feature: EditorFeatures) {
       width: 100%;
       list-style-type: none;
       padding: 0;
+
+      button {
+        font-weight: 500;
+      }
     }
   }
 }

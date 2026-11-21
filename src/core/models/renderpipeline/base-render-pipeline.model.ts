@@ -1,5 +1,6 @@
 import type { DataEventEndpoint } from '@core/editor/event/data-event-endpoint.ts';
 import type { DataEventPayloadTypeMap } from '@core/editor/event/data-event.types.ts';
+import { clamp } from 'three/src/math/MathUtils.js';
 
 export type BaseRenderPipelineIdentifier = 'none' | 'pixelation' | 'retro';
 export abstract class BaseRenderPipeline {
@@ -77,7 +78,7 @@ export class BaseRenderPipelineRetro extends BaseRenderPipeline {
     return this._colorDepthSteps;
   }
   public set colorDepthSteps(value: number) {
-    this._colorDepthSteps = value;
+    this._colorDepthSteps = clamp(value, 1, 32);
     this._parentDataEventEndpointRef.emit('renderPipelineRetro', { value: this });
   }
 
@@ -93,7 +94,7 @@ export class BaseRenderPipelineRetro extends BaseRenderPipeline {
     return this._scanlineIntensity;
   }
   public set scanlineIntensity(value: number) {
-    this._scanlineIntensity = value;
+    this._scanlineIntensity = clamp(value, 0, 1);
     this._parentDataEventEndpointRef.emit('renderPipelineRetro', { value: this });
   }
 
@@ -101,7 +102,7 @@ export class BaseRenderPipelineRetro extends BaseRenderPipeline {
     return this._scanlineDensity;
   }
   public set scanlineDensity(value: number) {
-    this._scanlineDensity = value;
+    this._scanlineDensity = clamp(value, 0.02, 1);
     this._parentDataEventEndpointRef.emit('renderPipelineRetro', { value: this });
   }
 
@@ -109,7 +110,7 @@ export class BaseRenderPipelineRetro extends BaseRenderPipeline {
     return this._scanlineSpeed;
   }
   public set scanlineSpeed(value: number) {
-    this._scanlineSpeed = value;
+    this._scanlineSpeed = clamp(value, 0, 0.1);
     this._parentDataEventEndpointRef.emit('renderPipelineRetro', { value: this });
   }
 
@@ -117,7 +118,7 @@ export class BaseRenderPipelineRetro extends BaseRenderPipeline {
     return this._curvature;
   }
   public set curvature(value: number) {
-    this._curvature = value;
+    this._curvature = clamp(value, 0, 0.2);
     this._parentDataEventEndpointRef.emit('renderPipelineRetro', { value: this });
   }
 

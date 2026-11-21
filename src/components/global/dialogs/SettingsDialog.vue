@@ -710,6 +710,10 @@ function getKeyBind(action: string) {
     }
   }
   #settings-advanced {
+    p {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
     #actions-io {
       display: flex;
       gap: 0.5rem;

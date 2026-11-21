@@ -72,7 +72,8 @@ function toggleExpand() {
   .parameter-group-title {
     min-height: 2.25rem;
     font-family: inherit;
-    font-size: 0.875rem;
+    font-size: 1rem;
+    font-weight: 500;
     padding: 0 0.5rem;
     text-align: left;
 

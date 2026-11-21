@@ -100,6 +100,7 @@ const featureColor = computed(() => `var(--lg-feature-${selectedFeature.value})`
     p {
       line-height: 1;
       text-shadow: 0 0 4px black;
+      font-weight: 500;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -110,7 +111,7 @@ const featureColor = computed(() => `var(--lg-feature-${selectedFeature.value})`
     #panel-controls-header__color {
       width: 1rem;
       height: 1rem;
-      border-radius: 4px;
+      border-radius: 1px;
       filter: drop-shadow(0 0 4px var(--lg-black));
     }
   }

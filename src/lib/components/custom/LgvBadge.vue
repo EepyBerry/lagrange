@@ -5,10 +5,13 @@
 </template>
 <style scoped lang="scss">
 .lgv.badge {
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: var(--lg-accent);
   height: min-content;
+  padding: 1px 6px;
+
+  border-radius: 4px;
+  background: var(--lg-update-06-background);
+
+  font-weight: 500;
   text-wrap: nowrap;
   word-break: keep-all;
 

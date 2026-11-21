@@ -31,12 +31,15 @@
         @click="$emit('export')"
       />
     </div>
-    <span class="filler"></span>
+    <span class="filler">
+      <SVGLagrangeBarcode />
+    </span>
   </section>
 </template>
 
 <script setup lang="ts">
 import AppHeaderNavigation from '@components/global/AppHeaderNavigation.vue';
+import SVGLagrangeBarcode from '@components/global/svg/SVGLagrangeBarcode.vue';
 import { uwuifyPath } from '@core/extras.ts';
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import LgvLink from '@lib/components/base/LgvLink.vue';
@@ -70,17 +73,10 @@ defineEmits(['open-file', 'export']);
       height: 100%;
     }
   }
-}
-
-@media screen and (max-width: 1199px) {
-  #codex-header {
-    grid-template-columns: 1fr auto;
-    #codex-header-controls {
-      border-right: none;
-    }
-  }
   .filler {
-    display: none;
+    padding: 0 0.5rem;
+    display: flex;
+    justify-content: flex-end;
   }
 }
 </style>

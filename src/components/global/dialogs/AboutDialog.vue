@@ -32,14 +32,14 @@
                   <iconify-icon mode="svg" icon="simple-icons:vuedotjs" width="3rem" style="fill: var(--lg-text)" />
                   <div>
                     <p>{{ $t('dialog.about.prefix_framework') }} <span class="highlight nowrap">Vue + Vite</span></p>
-                    <LgvBadge class="info">3.5.32</LgvBadge> <LgvBadge class="info">8.2.1</LgvBadge>
+                    <LgvBadge>3.5.32</LgvBadge> <LgvBadge>8.2.1</LgvBadge>
                   </div>
                 </div>
                 <div class="tech-block">
                   <iconify-icon mode="svg" icon="logos:threejs" width="3rem" style="fill: var(--lg-text)" />
                   <div>
                     <p>{{ $t('dialog.about.prefix_engine') }} <span class="highlight">three.js</span></p>
-                    <LgvBadge class="info">r185</LgvBadge>
+                    <LgvBadge>r185</LgvBadge>
                   </div>
                 </div>
               </div>
@@ -229,7 +229,7 @@ const aboutTabs: ComputedRef<LvgTabGroupTab[]> = computed(() => [
   {
     name: 'credits',
     icon: 'ph:sparkle',
-    iconWidth: '2rem',
+    iconWidth: '1.5rem',
     title: i18n.t('dialog.about.tabs.credits'),
   },
 ]);

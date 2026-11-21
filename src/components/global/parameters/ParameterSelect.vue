@@ -21,7 +21,8 @@ const $emit = defineEmits(['change']);
 <style scoped lang="scss">
 label {
   grid-column: 1;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
+  font-weight: 500;
   line-height: 1.2;
 }
 select {

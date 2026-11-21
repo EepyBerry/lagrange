@@ -83,8 +83,8 @@ function getPartialId() {
     justify-content: space-between;
     gap: 0.5rem;
     .ring-name {
-      font-weight: 400;
-      font-size: 0.8125rem;
+      font-weight: 500;
+      font-size: 0.875rem;
     }
     .ring-info,
     .ring-actions {

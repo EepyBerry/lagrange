@@ -190,8 +190,7 @@ function addGradientStep(gradient: string[], step: ColorRampStep, factor: number
 
   clip-path: polygon(
     0 0,
-    calc(100% - $corner-length) 0,
-    100% $corner-length,
+    100% 0,
     100% calc(100% - $corner-length),
     calc(100% - $corner-length) 100%,
     $corner-length 100%,

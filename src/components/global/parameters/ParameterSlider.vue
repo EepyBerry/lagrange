@@ -25,7 +25,8 @@ defineProps<{ id: string; step?: number; min?: number; max?: number; extras?: Sl
 <style scoped lang="scss">
 label {
   grid-column: 1;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 input {
   grid-column: 2;
