@@ -131,10 +131,12 @@ defineProps<{ planet: PlanetData }>();
     gap: 0.25rem;
 
     & > li {
-      width: 100%;
       list-style-type: none;
-
+      width: 100%;
       max-width: 16ch;
+      padding: 0;
+
+      font-weight: 500;
       white-space: wrap;
       overflow: hidden;
       text-overflow: ellipsis;

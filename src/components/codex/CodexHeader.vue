@@ -31,15 +31,17 @@
         @click="$emit('export')"
       />
     </div>
-    <span class="filler">
-      <SVGLagrangeBarcode />
-    </span>
+    <div id="codex-header-filler">
+      <div id="codex-header-filler__inner">
+        <SVGGizmoLagrangeBarcode />
+      </div>
+    </div>
   </section>
 </template>
 
 <script setup lang="ts">
 import AppHeaderNavigation from '@components/global/AppHeaderNavigation.vue';
-import SVGLagrangeBarcode from '@components/global/svg/SVGLagrangeBarcode.vue';
+import SVGGizmoLagrangeBarcode from '@components/global/svg/SVGGizmoLagrangeBarcode.vue';
 import { uwuifyPath } from '@core/extras.ts';
 import LgvButton from '@lib/components/base/LgvButton.vue';
 import LgvLink from '@lib/components/base/LgvLink.vue';
@@ -73,10 +75,26 @@ defineEmits(['open-file', 'export']);
       height: 100%;
     }
   }
-  .filler {
-    padding: 0 0.5rem;
+  #codex-header-filler {
+    height: 100%;
     display: flex;
     justify-content: flex-end;
+
+    #codex-header-filler__inner {
+      height: 100%;
+      padding: 0 0.5rem;
+      border-left: var(--lg-var-border-width) solid var(--lg-accent);
+
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #codex-header > #codex-header-filler > #codex-header-filler__inner {
+    display: none;
   }
 }
 </style>

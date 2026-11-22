@@ -13,9 +13,10 @@
 
 <style scoped lang="scss">
 #gizmo-planet-card {
+  z-index: 5;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 0.5rem;
+  right: 0.5rem;
   width: 2rem;
 }
 .fill {

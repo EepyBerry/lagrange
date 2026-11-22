@@ -17,6 +17,7 @@
             <p>{{ appVersion }}</p>
           </div>
           <div id="about-logo">
+            <SvgGizmoBorderNotchFilled />
             <AppLogo />
           </div>
           <div id="about-brief">
@@ -207,6 +208,7 @@ import type { AboutDialogExposes } from '@components/global/dialogs/AboutDialog.
 import type { LgvDialogExposes } from '@lib/components/base/LgvDialog.types.ts';
 import type { LvgTabGroupTab } from '@lib/components/layout/LgvTabGroup.types.ts';
 import AppLogo from '@components/global/elements/AppLogo.vue';
+import SvgGizmoBorderNotchFilled from '@components/global/svg/SVGGizmoBorderNotchFilled.vue';
 import LgvDialog from '@lib/components/base/LgvDialog.vue';
 import LgvLink from '@lib/components/base/LgvLink.vue';
 import LgvBadge from '@lib/components/custom/LgvBadge.vue';
@@ -268,6 +270,7 @@ const appVersion = import.meta.env.APP_VERSION;
     }
 
     #about-logo {
+      height: 100%;
       position: relative;
       padding: 1rem;
       background: var(--lg-panel);
@@ -275,6 +278,7 @@ const appVersion = import.meta.env.APP_VERSION;
 
       display: flex;
       justify-content: center;
+      align-items: center;
     }
 
     #about-brief {

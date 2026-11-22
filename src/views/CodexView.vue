@@ -1,5 +1,7 @@
 <template>
+  <!-- gizmos -->
   <span class="blur" />
+
   <span id="codex-background"></span>
   <h1 class="a11y--visually-hidden">{{ $t('main.nav.codex') }}</h1>
   <CodexHeader @open-file="openFileDialog" @export="exportPlanets" />
@@ -16,24 +18,30 @@
     @change="importPlanetFile"
   />
 
-  <template v-if="ready">
-    <section v-if="planets.length > 0" id="codex-grid">
-      <PlanetCardElement
-        v-for="planet of planets"
-        :key="planet.id"
-        ref="planetCardRef"
-        :planet="planet"
-        @info="openPlanetInfoDialog(planet)"
-        @export="exportPlanet(planet)"
-        @delete="openDeleteConfirmDialog(planet)"
-      />
+  <section id="codex-corners">
+    <section v-if="ready" id="codex-grid" :class="{ empty: planets.length === 0 }">
+      <template v-if="planets.length > 0">
+        <PlanetCardElement
+          v-for="planet of planets"
+          :key="planet.id"
+          ref="planetCardRef"
+          :planet="planet"
+          @info="openPlanetInfoDialog(planet)"
+          @export="exportPlanet(planet)"
+          @delete="openDeleteConfirmDialog(planet)"
+        />
+      </template>
+      <template v-else>
+        <iconify-icon icon="ph:planet-thin" width="16rem" />
+        <span>{{ $t('codex.no_planets') }}</span>
+      </template>
     </section>
-    <div v-else id="codex-grid" class="empty">
-      <iconify-icon icon="ph:planet-thin" width="16rem" />
-      <span>{{ $t('codex.no_planets') }}</span>
-    </div>
-  </template>
-  <OverlayLoader v-else :load="!ready" />
+    <OverlayLoader v-else :load="!ready" />
+    <SvgGizmoBorderNotchFilled />
+    <SVGGizmoBorderNotch class="tl" />
+    <SVGGizmoBorderNotch class="bl" />
+    <SVGGizmoBorderNotch class="br" />
+  </section>
   <AppPlanetInfoDialog ref="planetInfoDialogRef" />
   <AppDeleteConfirmDialog ref="deleteDialogRef" @confirm="(id) => deleteTargetedPlanet(id)" />
 </template>
@@ -43,6 +51,8 @@ import type { DeleteConfirmDialogExposes } from '@components/codex/dialogs/Delet
 import type { PlanetInfoDialogExposes } from '@components/codex/dialogs/PlanetInfoDialog.types.ts';
 import CodexHeader from '@components/codex/CodexHeader.vue';
 import OverlayLoader from '@components/global/elements/OverlayLoader.vue';
+import SVGGizmoBorderNotch from '@components/global/svg/SVGGizmoBorderNotch.vue';
+import SvgGizmoBorderNotchFilled from '@components/global/svg/SVGGizmoBorderNotchFilled.vue';
 import { EXTRAS_METAL_SLUG_MODE } from '@core/extras';
 import { readFileData } from '@core/helpers/import.helper';
 import PlanetData from '@core/models/planet/planet-data.model.ts';
@@ -207,6 +217,13 @@ async function deleteTargetedPlanet(id: string) {
   background-size: 50%;
   background-position: center;
   background-repeat: repeat;
+}
+#codex-corners {
+  flex: 1;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: grid;
 }
 #codex-grid {
   flex: 1;

@@ -1,4 +1,3 @@
-<script setup lang="ts"></script>
 <template>
   <svg id="gizmo-border-notch" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48.5 48.5">
     <polygon

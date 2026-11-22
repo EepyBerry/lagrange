@@ -7,6 +7,7 @@
       icon="material-symbols:menu"
       iconWidth="1.5rem"
       :class="{ active: isNavMenuOpen }"
+      :a11y-label="$t('a11y.action_nav_toggle')"
     />
     <div id="header-nav-logo-wrapper">
       <SVGAppLogoText />

@@ -1,5 +1,6 @@
 <template>
   <section v-if="planet" id="planet-hero" :style="{ background: cssPlanetGradient }">
+    <SVGGizmoPlanetHeroBarcode />
     <div>
       <img
         v-if="planet.preview"
@@ -24,6 +25,7 @@
 </template>
 
 <script setup lang="ts">
+import SVGGizmoPlanetHeroBarcode from '@components/global/svg/SVGGizmoPlanetHeroBarcode.vue';
 import { getI18nPlanetClass, getI18nPlanetType } from '@core/utils/i18n-utils.ts';
 import { prominent } from 'color.js';
 import { computed, ref, watch, type ComputedRef, type Ref } from 'vue';

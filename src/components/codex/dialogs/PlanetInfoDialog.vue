@@ -307,9 +307,6 @@ async function open(p: IDBPlanet) {
   }
 }
 
-#tab-topography {
-}
-
 #tab-biomes {
   width: 100%;
   max-height: 300px;
@@ -464,9 +461,6 @@ async function open(p: IDBPlanet) {
   }
   #tab-rings {
     #rings__list li {
-      button {
-        height: 3rem;
-      }
       .ring__data {
         font-size: 16px;
       }
@@ -495,6 +489,10 @@ async function open(p: IDBPlanet) {
       flex-direction: column;
       li {
         width: 100%;
+        .ring__data {
+          flex-direction: row;
+          gap: 0.25rem;
+        }
       }
     }
     #rings__graph {

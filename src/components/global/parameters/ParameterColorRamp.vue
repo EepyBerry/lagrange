@@ -320,6 +320,7 @@ p {
     align-self: center;
     border-radius: 2px;
     border: 1px solid var(--lg-accent);
+    box-shadow: none;
     cursor: pointer;
   }
   .add-step {

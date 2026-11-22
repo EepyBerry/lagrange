@@ -25,18 +25,18 @@ const specialDay: Ref<SpecialDayInfo | undefined> = ref(checkSpecialDay());
 <style lang="scss">
 .special-day-box {
   $flat-angle: 1.25rem;
-  z-index: 10;
+  z-index: 8;
   position: fixed;
   bottom: -1px;
-  right: 11rem;
+  right: 8.25rem;
 
   padding: var(--lg-var-border-width) var(--lg-var-border-width) 0;
 
   background: var(--lg-accent);
-  clip-path: polygon($flat-angle 0, calc(100% - $flat-angle) 0, 100% 100%, 0 100%);
+  clip-path: polygon($flat-angle 0, 100% 0, 100% 100%, 0 100%);
 
   & > div {
-    padding: 0.125rem calc($flat-angle + 0.25rem) 0.125rem calc($flat-angle + 0.25rem);
+    padding: 0.125rem calc($flat-angle + 0.25rem) 0.125rem $flat-angle;
     background: var(--lg-primary);
     clip-path: inherit;
 
