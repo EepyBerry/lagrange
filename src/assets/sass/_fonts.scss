@@ -1,14 +1,9 @@
-@font-face {
-  font-family: VCR OSD Mono;
-  src: url('@assets/fonts/VCR_OSD_MONO_1.001.ttf');
-}
+// Main fonts
+@use '@assets/fonts/Jura/_font' as font-jura;
+@use '@assets/fonts/AtkinsonHyperlegible/_font' as font-atkinson-hyperlegible;
+@use '@assets/fonts/JetBrainsMono/_font' as font-jetbrains-mono;
+@use '@assets/fonts/OpenDyslexic/_font' as font-opendyslexic;
 
-@font-face {
-  font-family: Computer Modern;
-  src: url('@assets/fonts/ComputerModern/CMU_Serif_Roman.woff2');
-}
-
-@font-face {
-  font-family: Jura;
-  src: url('@assets/fonts/Jura/Jura-VariableFont_wght.ttf');
-}
+// Specific-use fonts
+@use '@assets/fonts/ComputerModern/_font' as font-computer-modern;
+@use '@assets/fonts/VCR_OSD_MONO/_font' as font-vcr-osd-mono;

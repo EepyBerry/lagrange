@@ -554,6 +554,8 @@
     "editor_rendering_backend_webgpu": "@:dialog.settings.editor_rendering_backend_webgpu",
     "editor_generic_input": "Parameterwert",
     "action_nav_toggle": "Navigationsmenü",
+    "action_toggle_feature": "Funktion ein-/ausschalten",
+    "action_toggle_parametergroup": "Gruppe ein-/ausschalten",
     "action_edit_keybind": "Taste ändern",
     "action_edit_ramp": "Rampe ändern",
     "action_open_colorpanel": "Das Farbfeld löschen",

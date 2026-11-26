@@ -554,6 +554,8 @@
     "editor_rendering_backend_webgpu": "@:dialog.settings.editor_rendering_backend_webgpu",
     "editor_generic_input": "Parameter value",
     "action_nav_toggle": "Navigation menu",
+    "action_toggle_feature": "Toggle feature",
+    "action_toggle_parametergroup": "Toggle feature group",
     "action_edit_keybind": "Edit key binding",
     "action_edit_ramp": "Edit ramp",
     "action_open_colorpanel": "Open color panel",

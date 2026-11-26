@@ -554,6 +554,8 @@
     "editor_rendering_backend_webgpu": "@:dialog.settings.editor_rendering_backend_webgpu",
     "editor_generic_input": "Pawametew vawue",
     "action_nav_toggle": "Nyavigation menyu",
+    "action_toggle_feature": "Toggwe featuwe",
+    "action_toggle_parametergroup": "Toggwe featuwe gwoup",
     "action_edit_keybind": "Edit key binding",
     "action_edit_ramp": "Edit wamp",
     "action_open_colorpanel": "Open cowow panyew",

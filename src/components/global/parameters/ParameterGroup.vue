@@ -14,6 +14,7 @@
           class="lg"
           :class="{ 'no-model': _toggleParam === undefined }"
           @click="handleCheckboxClick"
+          :aria-label="$t('a11y.action_toggle_parametergroup')"
         />
         <span><slot name="title">GROUP_TITLE</slot></span>
       </span>

@@ -93,12 +93,10 @@ function stepResizeHandlePosition(direction: 'left' | 'right') {
   & > .resizable-container-handle {
     flex-shrink: 0;
     position: relative;
-    width: 0.375rem;
+    width: 3px;
     padding: 0;
-    background: var(--lg-primary);
+    background: var(--lg-accent);
     border: none;
-    border-left: var(--lg-var-border-width) solid var(--lg-accent);
-    border-right: var(--lg-var-border-width) solid var(--lg-accent);
     color: white;
 
     display: flex;
