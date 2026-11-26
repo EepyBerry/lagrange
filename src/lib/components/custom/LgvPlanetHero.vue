@@ -1,7 +1,6 @@
 <template>
   <section v-if="planet" id="planet-hero" :style="{ background: cssPlanetGradient }">
-    <SVGGizmoPlanetHeroBarcode />
-    <div>
+    <div id="planet-hero__inner">
       <img
         v-if="planet.preview"
         ref="planetImage"
@@ -12,8 +11,7 @@
       />
       <iconify-icon v-else icon="ph:planet-thin" width="auto" aria-hidden="true" />
     </div>
-    <iconify-icon id="planet-star" icon="ph:star-four-fill" width="1.25rem" aria-hidden="true" />
-    <article>
+    <article id="planet-hero-header">
       <h3 id="planet-name">{{ planet.data.planetName }}</h3>
       <p id="planet-type-class">
         <span>{{ $t(getI18nPlanetType(planet.data.planetType)) }}</span>
@@ -21,6 +19,10 @@
         <span>{{ $t(getI18nPlanetClass(planet.data.planetClass)) }}</span>
       </p>
     </article>
+    <div id="planet-hero-side">
+      <iconify-icon id="planet-star" icon="ph:star-four-fill" width="1.25rem" aria-hidden="true" />
+      <SVGGizmoPlanetHeroBarcode />
+    </div>
   </section>
 </template>
 
@@ -50,7 +52,6 @@ async function applyStyle() {
 #planet-hero {
   position: relative;
   width: 100%;
-  padding: 0.5rem;
 
   display: flex;
   align-items: center;
@@ -59,13 +60,11 @@ async function applyStyle() {
 
   $img-size: 10rem;
   #planet-star {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
     color: v-bind(cssStarColor);
     filter: drop-shadow(0 0 8px v-bind(cssStarColor));
   }
-  & > div {
+  #planet-hero__inner {
+    margin: 0.5rem;
     width: $img-size;
     height: $img-size;
 
@@ -79,26 +78,45 @@ async function applyStyle() {
   h3 {
     font-size: 1.25rem;
   }
-  article {
+  #planet-hero-header {
+    z-index: 1;
+    flex: 1;
+    margin: 0.5rem;
+    height: 100%;
+    text-shadow: 0 0 4px black;
+
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
     gap: 4px;
-    text-shadow: 0 0 4px black;
 
     #planet-type-class {
       color: var(--lg-text-alt);
       letter-spacing: 0.5px;
       font-weight: 400;
 
+      text-wrap: nowrap;
       display: flex;
+      flex-wrap: wrap;
       gap: 8px;
+      row-gap: 0;
     }
+  }
+  #planet-hero-side {
+    height: 100%;
+    padding: 1.25rem 0.5rem 0.5rem;
+    border-left: var(--lg-var-border-width) solid var(--lg-accent);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 }
 
 @media screen and (max-width: 767px) {
   #planet-hero {
-    & > article {
+    #planet-hero-header {
       #planet-name {
         font-size: 1.5rem;
       }
@@ -111,9 +129,18 @@ async function applyStyle() {
 @media screen and (max-width: 567px) {
   #planet-hero {
     flex-direction: column;
-    & > article {
+    #planet-hero-header {
       align-items: center;
       text-align: center;
+    }
+    #planet-hero-side {
+      z-index: 0;
+      position: absolute;
+      right: 0;
+      border: none;
+      svg {
+        display: none;
+      }
     }
   }
 }
