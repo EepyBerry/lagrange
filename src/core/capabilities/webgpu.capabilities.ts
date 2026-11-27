@@ -26,6 +26,15 @@ export default class WebGPUCapabilities extends GraphicsLibraryBackend {
   protected static override async checkAvailability(): Promise<GraphicsLibraryAvailability> {
     try {
       const hasNavigatorGpuAPI = typeof navigator !== 'undefined' && navigator.gpu !== undefined;
+      const gpuAdapter = await navigator.gpu.requestAdapter();
+      if (!gpuAdapter) {
+        return {
+          isAvailable: false,
+          initError: new Error(
+            'Failed to retrieve WebGPU adapter. Your browser does not support WebGPU, or WebGPU is disabled.',
+          ),
+        };
+      }
       return { isAvailable: hasNavigatorGpuAPI && !!(await navigator.gpu.requestAdapter()) };
     } catch (e) {
       return {

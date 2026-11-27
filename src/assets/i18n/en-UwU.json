@@ -344,7 +344,7 @@
     "inspector": {
       "features": {
         "$title": "Featuwes",
-        "data": "Objyect data",
+        "data": "Objyect descwiption",
         "transform": "Twansfowm",
         "rendering": "Wendewing",
         "lighting": "Wighting",
@@ -361,6 +361,7 @@
     },
     "basic_data": {
       "$title": "Basic Data",
+      "feature_notice": "T-this featuwe contains puwely descwiptive ewements fow youw pw-pwanyet. They do NYOT affect its appeawance o-or wendewing!!!",
       "classification": "Cwassification",
       "classification_type": "Objyect type",
       "classification_class": "Objyect cwass"

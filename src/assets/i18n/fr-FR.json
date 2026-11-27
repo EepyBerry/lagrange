@@ -344,7 +344,7 @@
     "inspector": {
       "features": {
         "$title": "Fonctionnalités",
-        "data": "Données d'objet",
+        "data": "Description de l'objet",
         "transform": "Transformation",
         "rendering": "Rendu",
         "lighting": "Éclairage",
@@ -361,6 +361,7 @@
     },
     "basic_data": {
       "$title": "Données de base",
+      "feature_notice": "Cette fonctionnalité contient des éléments purement descriptifs pour votre planète. Elles n'affectent en rien son apparence ou son rendu.",
       "classification": "Classification",
       "classification_type": "Type d'objet",
       "classification_class": "Classe de l'objet"

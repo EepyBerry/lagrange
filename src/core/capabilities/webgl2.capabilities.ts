@@ -28,6 +28,14 @@ export default class WebGL2Capabilities extends GraphicsLibraryBackend {
     try {
       const canvas = new OffscreenCanvas(1, 1);
       const gl = canvas.getContext('webgl2');
+      if (!gl) {
+        return {
+          isAvailable: false,
+          initError: new Error(
+            'Failed to initialize WebGL2 context. Your browser does not support WebGL2, or WebGL2 is disabled.',
+          ),
+        };
+      }
       return { isAvailable: !!(globalThis.WebGL2RenderingContext && gl) };
     } catch (e) {
       return {
